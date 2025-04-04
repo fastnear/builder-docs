@@ -125,7 +125,7 @@ const config = {
         copyright: `Copyright © ${new Date().getFullYear()} FastNEAR`,
       },
       prism: {
-        theme: prismThemes.gruvboxMaterialLight,
+        theme: prismThemes.oneLight,
         darkTheme: prismThemes.gruvboxMaterialDark,
       },
     }),

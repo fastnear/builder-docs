@@ -1,4 +1,5 @@
 ---
+sidebar_position: 1
 id: rpcApiLanding
 title: RPC / API Reference
 description: Advanced documentation for interacting with the blockchain via Remote Procedure Calls (RPCs) and an API accessing helpful, indexed information.

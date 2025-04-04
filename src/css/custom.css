@@ -6,7 +6,7 @@
 
 /* You can override the default Infima variables here. */
 :root {
-  --ifm-color-primary: #555; /* Neutral gray */
+  --ifm-color-primary: #555;
   --ifm-color-primary-dark: #444;
   --ifm-color-primary-darker: #333;
   --ifm-color-primary-darkest: #111;
@@ -24,9 +24,14 @@
   --ifm-font-size-base: 1.125rem;
   --ifm-line-height-base: 1.6;
   --ifm-link-font-size: 1.15rem;
+
+  --ifm-code-background: #f0f0f0;
+  --ifm-code-color: #333;
 }
 
 [data-theme='dark'] {
+  --ifm-code-background: orange;
+  --ifm-code-color: pink;
   --ifm-color-primary: #B0C4D8;
   --ifm-color-primary-dark: #8899aa;
   --ifm-color-primary-darker: #778899;
@@ -49,4 +54,10 @@ html[data-theme='light'] a:hover {
 .paragraph-large {
   font-size: 1.24rem;
   line-height: 1.6;
+}
+
+pre code {
+  border: none;
+  background: transparent;
+  padding: 0;
 }
