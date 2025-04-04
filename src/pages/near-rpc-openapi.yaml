@@ -1,0 +1,724 @@
+openapi: 3.0.3
+info:
+  title: NEAR Protocol JSON-RPC API
+  description: |
+    This API provides access to the NEAR Protocol blockchain through JSON-RPC endpoints.
+    It supports querying account information, transaction status, block information,
+    and other blockchain operations.
+  version: 1.0.0
+  contact:
+    name: NEAR Protocol Documentation
+    url: https://docs.near.org
+
+servers:
+  - url: https://rpc.mainnet.near.org
+    description: NEAR Mainnet RPC
+  - url: https://rpc.testnet.near.org
+    description: NEAR Testnet RPC
+
+tags:
+  - name: Query
+    description: Endpoints for querying blockchain data
+  - name: Transactions
+    description: Endpoints for managing transactions
+  - name: Blocks
+    description: Endpoints for retrieving block information
+  - name: Status
+    description: Endpoints for checking node status
+
+paths:
+  /query:
+    post:
+      tags:
+        - Query
+      summary: Query blockchain data
+      operationId: query
+      description: |
+        Query various types of information from the NEAR blockchain, including
+        account details, state, function calls, and access keys.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RpcQueryRequest'
+            examples:
+              viewAccount:
+                value:
+                  jsonrpc: '2.0'
+                  id: 'dontcare'
+                  method: 'query'
+                  params:
+                    request_type: 'view_account'
+                    finality: 'final'
+                    account_id: 'example.near'
+              viewAccessKey:
+                value:
+                  jsonrpc: '2.0'
+                  id: 'dontcare'
+                  method: 'query'
+                  params:
+                    request_type: 'view_access_key'
+                    finality: 'final'
+                    account_id: 'example.near'
+                    public_key: 'ed25519:8LXEySyBYewiTTLxjfF1TKDsxxxxxxxxxxxxxxxxxx'
+              callFunction:
+                value:
+                  jsonrpc: '2.0'
+                  id: 'dontcare'
+                  method: 'query'
+                  params:
+                    request_type: 'call_function'
+                    finality: 'final'
+                    account_id: 'example.near'
+                    method_name: 'get_status'
+                    args_base64: 'e30='
+      responses:
+        '200':
+          description: Successful query response
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/RpcQuerySuccessResponse'
+                  - $ref: '#/components/schemas/RpcErrorResponse'
+              examples:
+                viewAccountSuccess:
+                  value:
+                    jsonrpc: '2.0'
+                    id: 'dontcare'
+                    result:
+                      block_hash: 'ADTnYw97RCa5d4ibaX7Caj5kQfJAJGtfKwrDx6ZK2sLB'
+                      block_height: 91050589
+                      kind:
+                        type: 'account'
+                        amount: '100000000000000000000000000'
+                        locked: '0'
+                        code_hash: '11111111111111111111111111111111'
+                        storage_usage: 642
+                        storage_paid_at: 0
+                errorExample:
+                  value:
+                    jsonrpc: '2.0'
+                    id: 'dontcare'
+                    error:
+                      code: -32000
+                      message: 'Server error'
+                      data:
+                        error_message: 'No such account exists'
+
+  /status:
+    post:
+      tags:
+        - Status
+      summary: Get node status
+      operationId: status
+      description: |
+        Get current status of the node and the network.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                jsonrpc:
+                  type: string
+                  example: '2.0'
+                id:
+                  type: string
+                  example: 'dontcare'
+                method:
+                  type: string
+                  example: 'status'
+                params:
+                  type: array
+                  items: {}
+                  example: []
+      responses:
+        '200':
+          description: Successful status response
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/RpcStatusSuccessResponse'
+                  - $ref: '#/components/schemas/RpcErrorResponse'
+
+  /tx:
+    post:
+      tags:
+        - Transactions
+      summary: Send or check transaction
+      operationId: sendTransaction
+      description: |
+        Send a transaction or check transaction status.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: '#/components/schemas/RpcSendTransactionRequest'
+                - $ref: '#/components/schemas/RpcTransactionStatusRequest'
+            examples:
+              sendTransactionExample:
+                value:
+                  jsonrpc: '2.0'
+                  id: 'dontcare'
+                  method: 'broadcast_tx_async'
+                  params:
+                    signed_tx_base64: 'AAAAAWE3Yz1jb20ubmVhcgAAAAAAAAAA1QcCsb...'
+              checkStatusExample:
+                value:
+                  jsonrpc: '2.0'
+                  id: 'dontcare'
+                  method: 'tx'
+                  params:
+                    tx_hash: 'CJ42tMSwx5BXXXK7KvnrFJ81Lm1SiPWcf8bMCsG5H7nK'
+                    sender_account_id: 'sender.testnet'
+      responses:
+        '200':
+          description: Successful transaction response
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/RpcTransactionSuccessResponse'
+                  - $ref: '#/components/schemas/RpcErrorResponse'
+
+  /block:
+    post:
+      tags:
+        - Blocks
+      summary: Get block information
+      operationId: getBlock
+      description: |
+        Get information about a specific block or the latest block.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RpcBlockRequest'
+            examples:
+              getLatestBlock:
+                value:
+                  jsonrpc: '2.0'
+                  id: 'dontcare'
+                  method: 'block'
+                  params:
+                    finality: 'final'
+              getBlockById:
+                value:
+                  jsonrpc: '2.0'
+                  id: 'dontcare'
+                  method: 'block'
+                  params:
+                    block_id: 'ADTnYw97RCa5d4ibaX7Caj5kQfJAJGtfKwrDx6ZK2sLB'
+      responses:
+        '200':
+          description: Successful block response
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/RpcBlockSuccessResponse'
+                  - $ref: '#/components/schemas/RpcErrorResponse'
+
+components:
+  schemas:
+    # Common structures
+    BlockReference:
+      oneOf:
+        - type: object
+          properties:
+            finality:
+              type: string
+              enum: [optimistic, final, near_final]
+          required: [finality]
+        - type: object
+          properties:
+            block_id:
+              type: string
+              description: Block hash or block height
+          required: [block_id]
+        - type: object
+          properties:
+            sync_checkpoint:
+              type: string
+              enum: [genesis, earliest_available]
+          required: [sync_checkpoint]
+
+    RpcErrorResponse:
+      type: object
+      properties:
+        jsonrpc:
+          type: string
+          example: '2.0'
+        id:
+          type: string
+        error:
+          type: object
+          properties:
+            code:
+              type: integer
+              format: int32
+            message:
+              type: string
+            data:
+              type: object
+              properties:
+                error_message:
+                  type: string
+      required: [jsonrpc, id, error]
+
+    # Query related schemas
+    RpcQueryRequest:
+      type: object
+      properties:
+        jsonrpc:
+          type: string
+          example: '2.0'
+        id:
+          type: string
+        method:
+          type: string
+          enum: [query]
+        params:
+          type: object
+          properties:
+            request_type:
+              type: string
+              enum: [view_account, view_code, view_state, call_function, view_access_key, view_access_key_list]
+            finality:
+              type: string
+              enum: [optimistic, final, near_final]
+            block_id:
+              type: string
+            account_id:
+              type: string
+            prefix_base64:
+              type: string
+            public_key:
+              type: string
+            method_name:
+              type: string
+            args_base64:
+              type: string
+          required: [request_type, account_id]
+      required: [jsonrpc, id, method, params]
+
+    RpcQuerySuccessResponse:
+      type: object
+      properties:
+        jsonrpc:
+          type: string
+          example: '2.0'
+        id:
+          type: string
+        result:
+          type: object
+          properties:
+            block_hash:
+              type: string
+            block_height:
+              type: integer
+              format: int64
+            kind:
+              type: object
+              oneOf:
+                - $ref: '#/components/schemas/ViewAccountResult'
+                - $ref: '#/components/schemas/ViewCodeResult'
+                - $ref: '#/components/schemas/ViewStateResult'
+                - $ref: '#/components/schemas/CallFunctionResult'
+                - $ref: '#/components/schemas/AccessKeyViewResult'
+                - $ref: '#/components/schemas/AccessKeyListResult'
+      required: [jsonrpc, id, result]
+
+    ViewAccountResult:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: [account]
+        amount:
+          type: string
+        locked:
+          type: string
+        code_hash:
+          type: string
+        storage_usage:
+          type: integer
+          format: int64
+        storage_paid_at:
+          type: integer
+          format: int64
+      required: [type, amount, locked, code_hash, storage_usage, storage_paid_at]
+
+    ViewCodeResult:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: [contract_code]
+        code_base64:
+          type: string
+        hash:
+          type: string
+      required: [type, code_base64, hash]
+
+    ViewStateResult:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: [state]
+        values:
+          type: array
+          items:
+            type: object
+            properties:
+              key_base64:
+                type: string
+              value_base64:
+                type: string
+            required: [key_base64, value_base64]
+        proof:
+          type: array
+          items:
+            type: string
+      required: [type, values]
+
+    CallFunctionResult:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: [call_result]
+        result:
+          type: array
+          items:
+            type: integer
+            format: int8
+        logs:
+          type: array
+          items:
+            type: string
+      required: [type, result, logs]
+
+    AccessKeyViewResult:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: [access_key]
+        nonce:
+          type: integer
+          format: int64
+        permission:
+          type: object
+          oneOf:
+            - type: object
+              properties:
+                type:
+                  type: string
+                  enum: [full_access]
+              required: [type]
+            - type: object
+              properties:
+                type:
+                  type: string
+                  enum: [function_call]
+                allowance:
+                  type: string
+                receiver_id:
+                  type: string
+                method_names:
+                  type: array
+                  items:
+                    type: string
+              required: [type, receiver_id, method_names]
+      required: [type, nonce, permission]
+
+    AccessKeyListResult:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: [access_key_list]
+        keys:
+          type: array
+          items:
+            type: object
+            properties:
+              public_key:
+                type: string
+              access_key:
+                $ref: '#/components/schemas/AccessKeyViewResult'
+            required: [public_key, access_key]
+      required: [type, keys]
+
+    # Transaction related schemas
+    RpcSendTransactionRequest:
+      type: object
+      properties:
+        jsonrpc:
+          type: string
+          example: '2.0'
+        id:
+          type: string
+        method:
+          type: string
+          enum: [broadcast_tx_async, broadcast_tx_commit]
+        params:
+          type: object
+          properties:
+            signed_tx_base64:
+              type: string
+              description: Base64 encoded signed transaction
+            wait_until:
+              type: string
+              enum: [SUBMITTED, INCLUDED, EXECUTED, FINAL_EXECUTION_OUTCOME, INCLUDED_FINAL, NULL]
+              default: NULL
+          required: [signed_tx_base64]
+      required: [jsonrpc, id, method, params]
+
+    RpcTransactionStatusRequest:
+      type: object
+      properties:
+        jsonrpc:
+          type: string
+          example: '2.0'
+        id:
+          type: string
+        method:
+          type: string
+          enum: [tx]
+        params:
+          oneOf:
+            - type: object
+              properties:
+                tx_hash:
+                  type: string
+                sender_account_id:
+                  type: string
+                wait_until:
+                  type: string
+                  enum: [SUBMITTED, INCLUDED, EXECUTED, FINAL_EXECUTION_OUTCOME, INCLUDED_FINAL, NULL]
+                  default: NULL
+              required: [tx_hash, sender_account_id]
+            - type: object
+              properties:
+                signed_tx_base64:
+                  type: string
+                wait_until:
+                  type: string
+                  enum: [SUBMITTED, INCLUDED, EXECUTED, FINAL_EXECUTION_OUTCOME, INCLUDED_FINAL, NULL]
+                  default: NULL
+              required: [signed_tx_base64]
+      required: [jsonrpc, id, method, params]
+
+    RpcTransactionSuccessResponse:
+      type: object
+      properties:
+        jsonrpc:
+          type: string
+          example: '2.0'
+        id:
+          type: string
+        result:
+          type: object
+          properties:
+            transaction:
+              type: object
+              properties:
+                signer_id:
+                  type: string
+                public_key:
+                  type: string
+                nonce:
+                  type: integer
+                  format: int64
+                receiver_id:
+                  type: string
+                actions:
+                  type: array
+                  items:
+                    type: object
+                signature:
+                  type: string
+                hash:
+                  type: string
+            transaction_outcome:
+              type: object
+              properties:
+                id:
+                  type: string
+                proof:
+                  type: array
+                  items:
+                    type: object
+                block_hash:
+                  type: string
+                outcome:
+                  type: object
+            receipts_outcome:
+              type: array
+              items:
+                type: object
+      required: [jsonrpc, id, result]
+
+    # Status related schemas
+    RpcStatusSuccessResponse:
+      type: object
+      properties:
+        jsonrpc:
+          type: string
+          example: '2.0'
+        id:
+          type: string
+        result:
+          type: object
+          properties:
+            version:
+              type: object
+              properties:
+                version:
+                  type: string
+                build:
+                  type: string
+            chain_id:
+              type: string
+            protocol_version:
+              type: integer
+            latest_protocol_version:
+              type: integer
+            rpc_addr:
+              type: string
+            validators:
+              type: array
+              items:
+                type: object
+            sync_info:
+              type: object
+              properties:
+                latest_block_hash:
+                  type: string
+                latest_block_height:
+                  type: integer
+                latest_state_root:
+                  type: string
+                latest_block_time:
+                  type: string
+                syncing:
+                  type: boolean
+            validator_account_id:
+              type: string
+            validator_public_key:
+              type: string
+            node_key:
+              type: string
+      required: [jsonrpc, id, result]
+
+    # Block related schemas
+    RpcBlockRequest:
+      type: object
+      properties:
+        jsonrpc:
+          type: string
+          example: '2.0'
+        id:
+          type: string
+        method:
+          type: string
+          enum: [block]
+        params:
+          $ref: '#/components/schemas/BlockReference'
+      required: [jsonrpc, id, method, params]
+
+    RpcBlockSuccessResponse:
+      type: object
+      properties:
+        jsonrpc:
+          type: string
+          example: '2.0'
+        id:
+          type: string
+        result:
+          type: object
+          properties:
+            author:
+              type: string
+            header:
+              type: object
+              properties:
+                height:
+                  type: integer
+                  format: int64
+                epoch_id:
+                  type: string
+                next_epoch_id:
+                  type: string
+                hash:
+                  type: string
+                prev_hash:
+                  type: string
+                prev_state_root:
+                  type: string
+                chunk_receipts_root:
+                  type: string
+                chunk_headers_root:
+                  type: string
+                chunk_tx_root:
+                  type: string
+                outcome_root:
+                  type: string
+                chunks_included:
+                  type: integer
+                challenges_root:
+                  type: string
+                timestamp:
+                  type: integer
+                  format: int64
+                timestamp_nanosec:
+                  type: string
+                random_value:
+                  type: string
+                validator_proposals:
+                  type: array
+                  items:
+                    type: object
+                chunk_mask:
+                  type: array
+                  items:
+                    type: boolean
+                gas_price:
+                  type: string
+                rent_paid:
+                  type: string
+                validator_reward:
+                  type: string
+                total_supply:
+                  type: string
+                challenges_result:
+                  type: array
+                  items:
+                    type: object
+                last_final_block:
+                  type: string
+                last_ds_final_block:
+                  type: string
+                next_bp_hash:
+                  type: string
+                block_merkle_root:
+                  type: string
+                approvals:
+                  type: array
+                  items:
+                    type: string
+                signature:
+                  type: string
+                latest_protocol_version:
+                  type: integer
+            chunks:
+              type: array
+              items:
+                type: object
+      required: [jsonrpc, id, result]

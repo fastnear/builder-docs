@@ -1,0 +1,8 @@
+{
+  "label": "RPC / API Documentation",
+  "position": 1,
+  "link": {
+    "type": "generated-index",
+    "description": "RPC calls directly to a node, as well as an API that’s collated data for improved data collection."
+  }
+}

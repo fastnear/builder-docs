@@ -1,0 +1,52 @@
+/**
+ * Any CSS included here will be global. The classic template
+ * bundles Infima by default. Infima is a CSS framework designed to
+ * work well for content-centric websites.
+ */
+
+/* You can override the default Infima variables here. */
+:root {
+  --ifm-color-primary: #555; /* Neutral gray */
+  --ifm-color-primary-dark: #444;
+  --ifm-color-primary-darker: #333;
+  --ifm-color-primary-darkest: #111;
+  --ifm-color-primary-light: #777;
+  --ifm-color-primary-lighter: #aaa;
+  --ifm-color-primary-lightest: #ddd;
+
+  --ifm-background-color: #fff;
+  --ifm-background-surface-color: #f9f9f9;
+  --ifm-font-color-base: #111;
+
+  --ifm-code-font-size: 95%;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.05);
+
+  --ifm-font-size-base: 1.125rem;
+  --ifm-line-height-base: 1.6;
+  --ifm-link-font-size: 1.15rem;
+}
+
+[data-theme='dark'] {
+  --ifm-color-primary: #B0C4D8;
+  --ifm-color-primary-dark: #8899aa;
+  --ifm-color-primary-darker: #778899;
+  --ifm-color-primary-darkest: #556677;
+  --ifm-color-primary-light: #aab;
+  --ifm-color-primary-lighter: #bbc;
+  --ifm-color-primary-lightest: #ccd;
+
+  --ifm-background-color: #111;
+  --ifm-background-surface-color: #1a1a1a;
+  --ifm-font-color-base: #ddd;
+
+  --docusaurus-highlighted-code-line-bg: rgba(255, 255, 255, 0.05);
+}
+
+html[data-theme='light'] a:hover {
+  color: #003f88;
+}
+
+.paragraph-large {
+  font-size: 1.24rem;
+  line-height: 1.6;
+}
