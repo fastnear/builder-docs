@@ -1,7 +1,5 @@
-/* Mike: keeping this for ez reference */
-
+import React from 'react';
 import clsx from 'clsx';
-import Heading from '@theme/Heading';
 import styles from './styles.module.css';
 
 const FeatureList = [
@@ -10,8 +8,7 @@ const FeatureList = [
     imgSrc: require('@site/static/img/cargo.png').default,
     description: (
       <>
-        Docusaurus was designed from the ground up to be easily installed and
-        used to get your website up and running quickly.
+        NEAR supports smart contracts written in different languages. These docs will focus on Rust smart contracts. These are compiled to WebAssembly, using the <strong>target wasm32-unknown-unknown</strong>, and outputs deterministic code hashes using containers. This optimization is typically done before a production deploy, and can be done with <strong>cargo near</strong>.
       </>
     ),
   },
@@ -20,8 +17,7 @@ const FeatureList = [
     imgSrc: require('@site/static/img/protocol.png').default,
     description: (
       <>
-        Docusaurus lets you focus on your docs, and we&apos;ll do the chores. Go
-        ahead and move your docs into the <code>docs</code> directory.
+        NEAR is a sharded blockchain, but it doesn't increase the difficulty of tracking transactions. There are two types of transaction finality: <strong>optimistic</strong> and <strong>final</strong>. Transactions also have a status that can be queried by RPC calls, or subscribed to via event listeners. <strong>Pending</strong>, <strong>Included</strong>, and <strong>Executed</strong> are examples of tx statuses.
       </>
     ),
   },
@@ -30,46 +26,39 @@ const FeatureList = [
     imgSrc: require('@site/static/img/brief-examples.png').default,
     description: (
       <>
-        Extend or customize your website layout by reusing React. Docusaurus can
-        be extended while reusing the same header and footer.
+        We'll be populating this resource with dead-simple snippets/examples, for reference and reminders. Candidate topics include:
+        <ul>
+          <li>Simple Rust daemon interacting with NEAR</li>
+          <li>Simple JS/TS service</li>
+          <li>Indexing fundamentals</li>
+          <li>Customizing a validator's staking pool contract</li>
+          <li>Cross-contract calls that saves and references state by promise index</li>
+          <li>Killer yield/resume example</li>
+          <li>Running your own RPC</li>
+        </ul>
       </>
     ),
   },
 ];
 
-// function Feature({Svg, title, description}) {
-//   return (
-//     <div className={clsx('col col--4')}>
-//       <div className="text--center">
-//         <Svg className={styles.featureSvg} role="img" />
-//       </div>
-//       <div className="text--center padding-horiz--md">
-//         <Heading as="h3">{title}</Heading>
-//         <p>{description}</p>
-//       </div>
-//     </div>
-//   );
-// }
-
-function Feature({ Svg, imgSrc, title, description }) {
+function Feature({imgSrc, title, description}) {
   return (
     <div className={clsx('col col--4')}>
       <div className="text--center">
-        {Svg ? (
-          <Svg className={styles.featureSvg} role="img" />
-        ) : (
-          <img src={imgSrc} className={styles.featureSvg} alt={title} />
-        )}
+        <img
+          className={styles.featureSvg}
+          src={imgSrc}
+          alt={title}
+        />
       </div>
       <div className="text--center padding-horiz--md">
-        <Heading as="h3">{title}</Heading>
-        <p className={"text--left"}>{description}</p>
+        <h3>{title}</h3>
+        <p className="text--left">{description}</p>
       </div>
     </div>
   );
 }
 
-// Mike: no usages of this, kept for ez reference of components
 export default function HomepageFeatures() {
   return (
     <section className={styles.features}>
