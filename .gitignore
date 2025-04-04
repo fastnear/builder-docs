@@ -1,9 +1,8 @@
 # Dependencies
 /node_modules
 
-# Mike: we're using CloudFlare Pages, and want to revision the static artifacts
 # Production
-#/build
+/build
 
 # Generated files
 .docusaurus
