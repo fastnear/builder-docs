@@ -49,6 +49,7 @@ function HomepageHeader() {
             </div>
           </div>
         </div>
+        {/* Mike: want to bring back this button and add a page with content. */}
         {/*<div className={styles.buttons}>*/}
         {/*  <Link*/}
         {/*    className="button button--secondary button--lg"*/}
@@ -63,8 +64,8 @@ export default function Home() {
   const {siteConfig} = useDocusaurusContext();
   return (
     <Layout
-      title={`Hello from ${siteConfig.title}`}
-      description="Description will go into a meta tag in <head />">
+      title={siteConfig.title}
+      description="NEAR Protocol technical documentation for builders, indie hackers, founders, and hobbyists.">
       <HomepageHeader />
       <main>
         <HomepageFeatures />

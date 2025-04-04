@@ -10,7 +10,7 @@ import {themes as prismThemes} from 'prism-react-renderer';
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: 'Builder Documentation',
+  title: 'Builder Docs',
   tagline: 'Fundamentals for advanced building on NEAR',
   favicon: 'img/favicon.png',
 
