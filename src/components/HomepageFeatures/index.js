@@ -24,13 +24,11 @@ const FeatureList = [
   {
     title: 'Brief code snippets',
     imgSrc: require('@site/static/img/brief-examples.png').default,
-    // Split this into a description and a separate list prop
     description: (
       <>
         We'll be populating this resource with dead-simple snippets/examples, for reference and reminders. Candidate topics include:
       </>
     ),
-    // Add a new property for the list items
     listItems: [
       'Simple Rust daemon interacting with NEAR',
       'Simple JS/TS service',
@@ -43,7 +41,6 @@ const FeatureList = [
   },
 ];
 
-// Update Feature component to handle the listItems prop
 function Feature({imgSrc, title, description, listItems}) {
   return (
     <div className={clsx('col col--4')}>
