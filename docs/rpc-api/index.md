@@ -1,10 +1,11 @@
 ---
 sidebar_position: 1
-id: rpcApiLanding
+id: rpc-api-landing
+slug: /rpc-api
 title: RPC / API Reference
 description: Advanced documentation for interacting with the blockchain via Remote Procedure Calls (RPCs) and an API accessing helpful, indexed information.
 sidebar_label: Endpoints
-displayed_sidebar: rpcApiSidebars
+displayed_sidebar: rpcApiSidebar
 keywords:
 - blockchain
 - RPC

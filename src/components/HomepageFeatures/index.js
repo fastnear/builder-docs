@@ -27,21 +27,21 @@ const FeatureList = [
     description: (
       <>
         We'll be populating this resource with dead-simple snippets/examples, for reference and reminders. Candidate topics include:
-        <ul>
-          <li>Simple Rust daemon interacting with NEAR</li>
-          <li>Simple JS/TS service</li>
-          <li>Indexing fundamentals</li>
-          <li>Customizing a validator's staking pool contract</li>
-          <li>Cross-contract calls that saves and references state by promise index</li>
-          <li>Killer yield/resume example</li>
-          <li>Running your own RPC</li>
-        </ul>
       </>
     ),
+    listItems: [
+      'Simple Rust daemon interacting with NEAR',
+      'Simple JS/TS service',
+      'Indexing fundamentals',
+      'Customizing a validator\'s staking pool contract',
+      'Cross-contract calls that saves and references state by promise index',
+      'Killer yield/resume example',
+      'Running your own RPC'
+    ]
   },
 ];
 
-function Feature({imgSrc, title, description}) {
+function Feature({imgSrc, title, description, listItems}) {
   return (
     <div className={clsx('col col--4')}>
       <div className="text--center">
@@ -53,7 +53,16 @@ function Feature({imgSrc, title, description}) {
       </div>
       <div className="text--center padding-horiz--md">
         <h3>{title}</h3>
-        <p className="text--left">{description}</p>
+        <div className="text--left">
+          <p>{description}</p>
+          {listItems && (
+            <ul>
+              {listItems.map((item, idx) => (
+                <li key={idx}>{item}</li>
+              ))}
+            </ul>
+          )}
+        </div>
       </div>
     </div>
   );

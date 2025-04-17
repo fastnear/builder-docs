@@ -1,0 +1,22 @@
+---
+title: View Account
+description: View account information on the NEAR blockchain
+sidebar_position: 1
+hide_table_of_contents: true
+---
+
+import RpcEndpointViewer from '@site/src/components/RpcEndpointViewer';
+
+# View Account
+
+`view_account` request type
+
+This endpoint allows you to view account information on the NEAR blockchain.
+
+<RpcEndpointViewer
+  endpoint="account/view_account"
+  params={{
+    account_id: "example.near"
+  }}
+  height="1600px"
+/>
