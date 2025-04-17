@@ -4,7 +4,7 @@
 // There are various equivalent ways to declare your Docusaurus config.
 // See: https://docusaurus.io/docs/api/docusaurus-config
 
-import {themes as prismThemes} from 'prism-react-renderer';
+import { themes as prismThemes } from 'prism-react-renderer';
 
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 
@@ -19,6 +19,7 @@ const config = {
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
   baseUrl: '/',
+  trailingSlash: false,
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
@@ -42,8 +43,9 @@ const config = {
       /** @type {import('@docusaurus/preset-classic').Options} */
       ({
         docs: {
+          breadcrumbs: false,
           path: './docs',
-          sidebarPath: require.resolve('./docs/sidebars.js'),
+          sidebarPath: require.resolve('./sidebars.js'),
           editUrl: 'https://github.com/fastnear/builder-docs/edit/main/',
         },
         theme: {
@@ -59,18 +61,25 @@ const config = {
       navbar: {
         title: 'Builder Docs',
         items: [
-          // Seems like we'll want to have sidebars, don't get this yet
-          // {
-          //   type: 'docSidebar',
-          //   sidebarId: 'tutorialSidebar',
-          //   position: 'left',
-          //   label: 'Tutorial',
-          //   className: 'header-github-link',
-          // },
           {
             to: '/docs/rpc-api/',
             label: 'RPC / API',
             position: 'left',
+          },
+          {
+            to: '/docs/snapshots/',
+            label: 'Snapshots',
+            position: 'left',
+          },
+          {
+            href: 'https://status.fastnear.com',
+            position: 'left',
+            label: 'Status',
+          },
+          {
+            href: 'https://fastnear.com/#pricing',
+            position: 'left',
+            label: 'Subscriptions',
           },
           {
             href: 'https://github.com/fastnear/builder-docs',
@@ -78,6 +87,9 @@ const config = {
             position: 'right',
           },
         ],
+      },
+      sidebar: {
+        hideable: true,
       },
       footer: {
         style: 'dark',
@@ -125,7 +137,7 @@ const config = {
         copyright: `Copyright © ${new Date().getFullYear()} FastNEAR`,
       },
       prism: {
-        theme: prismThemes.oneLight,
+        theme: prismThemes.github,
         darkTheme: prismThemes.gruvboxMaterialDark,
       },
     }),

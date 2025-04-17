@@ -1,0 +1,82 @@
+---
+sidebar_label: Testnet
+slug: testnet
+id: snapshot-testnet
+---
+
+# Testnet
+
+## RPC Testnet Snapshot
+
+This is likely the preferred approach for syncing, as opposed to downloading an archival snapshot, which is significantly larger and more special-purpose.
+
+Before running the snapshot download script, you can set the following environment variables:
+
+- `CHAIN_ID` to either `mainnet` or `testnet`. (default: `mainnet`)
+- `THREADS` to the number of threads you want to use for downloading. Use `128` for 10Gbps, and `16` for 1Gbps (default: `128`).
+- `TPSLIMIT` to the maximum number of HTTP new actions per second. (default: `4096`)
+- `BWLIMIT` to the maximum bandwidth to use for download in case you want to limit it. (default: `10G`)
+- `DATA_PATH` to the path where you want to download the snapshot (default: `~/.near/data`)
+- `BLOCK` to the block height of the snapshot you want to download. If not set, it will download the latest snapshot.
+
+**Run this command to download the RPC Testnet snapshot:**
+
+:::info
+We will set the following environment variables:
+- `DATA_PATH=~/.near/data` - the standard nearcore path
+- `CHAIN_ID=testnet` - to explicitly specify the testnet data
+:::
+
+`RPC Testnet Snapshot » ~/.near/data`:
+
+```bash
+curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/fastnear/static/refs/heads/main/down_rclone.sh | DATA_PATH=~/.near/data CHAIN_ID=testnet bash
+```
+
+## Archival Testnet snapshot
+
+:::warning
+**Time and storage intensive.**
+
+Be prepared for a large download and the inherent time constraints involved.
+:::
+
+Before running the download script, you can set the following environment variables:
+
+- `CHAIN_ID` to either `mainnet` or `testnet`. (default: `mainnet`)
+- `THREADS` to the number of threads you want to use for downloading. Use `128` for 10Gbps, and `16` for 1Gbps (default: `128`).
+- `TPSLIMIT` to the maximum number of HTTP new actions per second. (default: `4096`)
+- `DATA_TYPE` to either `hot-data` or `cold-data` (default: `cold-data`)
+- `BWLIMIT` to the maximum bandwidth to use for download in case you want to limit it. (default: `10G`)
+- `DATA_PATH` to the path where you want to download the snapshot (default: `/mnt/nvme/data/$DATA_TYPE`)
+- `BLOCK` to the block height of the snapshot you want to download. If not set, it will download the latest snapshot.
+
+By default the script assumes the paths for the data:
+- Hot data (has to be on NVME): `/mnt/nvme/data/hot-data`
+
+**Run the following commands to download the Archival Testnet snapshot:**
+
+1. Download the latest snapshot block height:
+
+`Latest archival testnet snapshot block`:
+
+```bash
+LATEST=$(curl -s "https://snapshot.neardata.xyz/testnet/archival/latest.txt")
+echo "Latest snapshot block: $LATEST"
+```
+
+2. Download the HOT data from the snapshot. It has to be placed on NVME.
+
+:::info
+We will set the following environment variables:
+- `DATA_TYPE=hot-data` - downloads the Hot data
+- `DATA_PATH=~/.near/data` - the standard nearcore path
+- `CHAIN_ID=testnet` - set to testnet network
+- `BLOCK=$LATEST` - specify the snapshot block
+:::
+
+`Archival Testnet Snapshot (hot-data) » ~/.near/data`:
+
+```bash
+curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/fastnear/static/refs/heads/main/down_rclone_archival.sh | DATA_TYPE=hot-data DATA_PATH=~/.near/data CHAIN_ID=testnet BLOCK=$LATEST bash
+```

@@ -1,0 +1,41 @@
+---
+sidebar_position: 2
+id: snapshotsLanding
+title: Validator snapshots
+description: Regular and archival snapshots are available for validators, to assist in remaining current with block updates, and fetch historical data.
+sidebar_label: Snapshots Overview
+displayed_sidebar: snapshotsSidebars
+keywords:
+  - blockchain
+  - validator
+  - snapshots
+  - archival
+---
+
+import React from 'react';
+import Link from '@docusaurus/Link';
+import SimpleButton from '@site/src/components/SimpleButton';
+
+# Blockchain snapshots
+
+Download blockchain state in order to set up a validator node or RPC. See <Link to="https://github.com/near/nearcore?tab=readme-ov-file#about-near">nearcore</Link> for more information on node requirements and usage.
+
+:::info[Getting rclone]
+These large downloads utilize `rclone`, which can be installed by running:
+
+```
+sudo -v ; curl https://rclone.org/install.sh | sudo bash
+```
+:::
+
+Validators can find more details on set-up by visiting <Link to="https://near-nodes.io">NEAR Nodes</Link>.
+
+These guides utilize logic from <Link to="https://github.com/fastnear/static">this FastNEAR repository</Link>.
+
+## Choose a network
+
+<div style={{display: 'flex', margin: '2rem 0'}}>
+  <SimpleButton to="/docs/snapshots/mainnet">Mainnet Snapshots</SimpleButton>
+  <SimpleButton to="/docs/snapshots/testnet">Testnet Snapshots</SimpleButton>
+</div>
+
