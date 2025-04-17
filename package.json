@@ -15,12 +15,16 @@
   },
   "dependencies": {
     "@docusaurus/core": "3.7.0",
+    "@docusaurus/plugin-client-redirects": "^3.7.0",
+    "@docusaurus/plugin-content-docs": "^3.7.0",
     "@docusaurus/preset-classic": "3.7.0",
-    "@mdx-js/react": "^3.0.0",
+    "@fastnear/api": "^0.9.7",
+    "@mdx-js/react": "^3.1.0",
     "clsx": "^2.0.0",
+    "near-api-js": "^5.1.1",
     "prism-react-renderer": "^2.3.0",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
   },
   "devDependencies": {
     "@docusaurus/module-type-aliases": "3.7.0",
@@ -42,5 +46,5 @@
   "engines": {
     "node": ">=18.0"
   },
-  "packageManager": "yarn@4.7.0+sha512.5a0afa1d4c1d844b3447ee3319633797bcd6385d9a44be07993ae52ff4facabccafb4af5dcd1c2f9a94ac113e5e9ff56f6130431905884414229e284e37bb7c9"
+  "packageManager": "yarn@4.9.1"
 }

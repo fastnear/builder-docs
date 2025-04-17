@@ -1,0 +1,14 @@
+.viewerContainer {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+.viewer {
+    width: 100%;
+    border: none;
+    display: block;
+    margin: 0;
+    padding: 0;
+}
