@@ -21,15 +21,11 @@ keywords:
 
 Regular RPCs have the last 3 epochs in the state (which is about 21 hours).
 
-### Mainnet Regular RPC
-
-```bash title="mainnet-rpc"
+```bash title="Mainnet Regular RPC"
 https://rpc.mainnet.fastnear.com
 ```
 
-### Testnet Regular RPC
-
-```bash title="testnet-rpc"
+```bash title="Testnet Regular RPC"
 https://rpc.testnet.fastnear.com
 ```
 
@@ -37,15 +33,11 @@ https://rpc.testnet.fastnear.com
 
 Archival RPC endpoints contain the entire NEAR blockchain history from the genesis blocks.
 
-### Mainnet Archival RPC
-
-```bash title="archival-mainnet-rpc"
+```bash title="Mainnet Archival RPC"
 https://archival-rpc.mainnet.fastnear.com
 ```
 
-### Testnet Archival RPC
-
-```bash title="archival-testnet-rpc"
+```bash title="Testnet Archival RPC"
 https://archival-rpc.testnet.fastnear.com
 ```
 
@@ -58,8 +50,6 @@ The Big Powerful RPCs have custom configuration that allows you to retrieve more
 
 Note, the The Big Powerful RPCs are only available for paid customers. Non authorized requests will be rate-limited to 1 call in `2**16-1` seconds per IP.
 
-### Mainnet Powerful Big RPC
-
-```bash title="big-mainnet-rpc"
+```bash title="Mainnet Powerful Big RPC"
 https://big.rpc.fastnear.com
 ```
