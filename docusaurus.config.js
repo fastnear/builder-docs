@@ -28,10 +28,12 @@ const config = {
 
   onBrokenLinks: 'throw',
   markdown: {
+    mermaid: true,
     hooks: {
       onBrokenMarkdownLinks: 'warn',
     },
   },
+  themes: ['@docusaurus/theme-mermaid'],
 
   // Even if you don't use internationalization, you can use this field to set
   // useful metadata like html lang. For example, if your site is Chinese, you
@@ -77,13 +79,13 @@ const config = {
             position: 'left',
           },
           {
-            to: '/docs/transaction-flow/',
-            label: 'Transaction Flow',
+            to: '/docs/snapshots/',
+            label: 'Snapshots',
             position: 'left',
           },
           {
-            to: '/docs/snapshots/',
-            label: 'Snapshots',
+            to: '/docs/transaction-flow/',
+            label: 'Transaction Flow',
             position: 'left',
           },
           {
@@ -92,7 +94,7 @@ const config = {
             label: 'Status',
           },
           {
-            href: 'https://fastnear.com/#pricing',
+            href: 'https://dashboard.fastnear.com/#pricing',
             position: 'left',
             label: 'Subscriptions',
           },
