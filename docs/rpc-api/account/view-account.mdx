@@ -5,7 +5,7 @@ sidebar_position: 1
 hide_table_of_contents: true
 ---
 
-import RpcEndpointViewer from '@site/src/components/RpcEndpointViewer';
+import RpcRedoc from '@site/src/components/RpcRedoc';
 
 # View Account
 
@@ -13,10 +13,8 @@ import RpcEndpointViewer from '@site/src/components/RpcEndpointViewer';
 
 This endpoint allows you to view account information on the NEAR blockchain.
 
-<RpcEndpointViewer
-  endpoint="account/view_account"
-  params={{
-    account_id: "example.near"
-  }}
+<RpcRedoc
+  redoclyBase="https://fastnear.redocly.app"
+  path="/rpcs/account/view_account"
   height="1600px"
 />

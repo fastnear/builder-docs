@@ -4,15 +4,19 @@
  * work well for content-centric websites.
  */
 
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
+
 /* You can override the default Infima variables here. */
 :root {
-  --ifm-color-primary: #555;
-  --ifm-color-primary-dark: #444;
-  --ifm-color-primary-darker: #333;
-  --ifm-color-primary-darkest: #111;
-  --ifm-color-primary-light: #777;
-  --ifm-color-primary-lighter: #aaa;
-  --ifm-color-primary-lightest: #ddd;
+  --ifm-font-family-base: 'DM Sans', system-ui, -apple-system, sans-serif;
+
+  --ifm-color-primary: #0f56b3;
+  --ifm-color-primary-dark: #0d4da1;
+  --ifm-color-primary-darker: #0c4998;
+  --ifm-color-primary-darkest: #0a3c7d;
+  --ifm-color-primary-light: #1160c5;
+  --ifm-color-primary-lighter: #1264ce;
+  --ifm-color-primary-lightest: #2a79de;
 
   --ifm-background-color: #fff;
   --ifm-background-surface-color: #f9f9f9;
@@ -30,34 +34,43 @@
 }
 
 [data-theme='dark'] {
-  --ifm-code-background: orange;
-  --ifm-code-color: pink;
-  --ifm-color-primary: #B0C4D8;
-  --ifm-color-primary-dark: #8899aa;
-  --ifm-color-primary-darker: #778899;
-  --ifm-color-primary-darkest: #556677;
-  --ifm-color-primary-light: #aab;
-  --ifm-color-primary-lighter: #bbc;
-  --ifm-color-primary-lightest: #ccd;
+  --ifm-code-background: #1e2340;
+  --ifm-code-color: #e0e0e0;
+  --ifm-color-primary: #60a5fa;
+  --ifm-color-primary-dark: #3b8ef8;
+  --ifm-color-primary-darker: #2883f7;
+  --ifm-color-primary-darkest: #0768e8;
+  --ifm-color-primary-light: #85bcfc;
+  --ifm-color-primary-lighter: #98c7fd;
+  --ifm-color-primary-lightest: #c0defe;
 
-  --ifm-background-color: #111;
-  --ifm-background-surface-color: #1a1a1a;
-  --ifm-font-color-base: #ddd;
+  --ifm-background-color: #0d102d;
+  --ifm-background-surface-color: #1a1f36;
+  --ifm-font-color-base: #ffffff;
 
   --docusaurus-highlighted-code-line-bg: rgba(255, 255, 255, 0.05);
 }
 
 html[data-theme='light'] a:hover {
-  color: #003f88;
-}
-
-.paragraph-large {
-  font-size: 1.24rem;
-  line-height: 1.6;
+  color: var(--ifm-color-primary-dark);
 }
 
 pre code {
   border: none;
   background: transparent;
   padding: 0;
+}
+
+/* Swap toggle icons: show destination mode instead of current mode */
+[data-theme-choice='light'] [class*='lightToggleIcon'] {
+  display: none !important;
+}
+[data-theme-choice='light'] [class*='darkToggleIcon'] {
+  display: initial !important;
+}
+[data-theme-choice='dark'] [class*='darkToggleIcon'] {
+  display: none !important;
+}
+[data-theme-choice='dark'] [class*='lightToggleIcon'] {
+  display: initial !important;
 }

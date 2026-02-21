@@ -2,7 +2,7 @@
     display: inline-block;
     padding: 0.75rem 1.5rem;
     border-radius: 4px;
-    background-color: #0072CE;
+    background-color: var(--ifm-color-primary);
     color: white;
     font-weight: 600;
     text-decoration: none;
@@ -12,7 +12,7 @@
 }
 
 .button:hover {
-    background-color: #0061B0;
+    background-color: var(--ifm-color-primary-dark);
     text-decoration: none;
     color: white;
 }

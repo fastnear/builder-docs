@@ -1,0 +1,39 @@
+---
+title: API Key Configuration
+description: Configure your FastNEAR API key for authenticated RPC requests
+sidebar_position: 0
+---
+
+import ApiKeyManager from '@site/src/components/ApiKeyManager';
+
+# API Key Configuration
+
+Configure your FastNEAR API key to enable authenticated requests with higher rate limits and additional features.
+
+<ApiKeyManager />
+
+## How it works
+
+1. **Set your API key** - Enter your FastNEAR API key in the field above and click "Save API Key"
+2. **Automatic inclusion** - Your API key will be automatically included in all RPC documentation examples
+3. **Secure storage** - The key is stored locally in your browser's localStorage
+4. **Privacy** - Your API key never leaves your browser and is only sent to FastNEAR endpoints
+
+## Getting an API Key
+
+To get a FastNEAR API key:
+
+1. Visit [FastNEAR Subscriptions](https://fastnear.com/#pricing)
+2. Choose a subscription plan that fits your needs
+3. Create an account and generate your API key
+4. Copy the key and paste it in the field above
+
+## Using the API Key
+
+Once configured, your API key will be automatically appended to all RPC requests as a query parameter:
+
+```bash
+https://rpc.mainnet.fastnear.com?apiKey=YOUR_API_KEY
+```
+
+This approach ensures compatibility with various HTTP clients and frameworks while maintaining security.

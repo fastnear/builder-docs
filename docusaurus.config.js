@@ -27,7 +27,11 @@ const config = {
   projectName: 'builder-docs', // Usually your repo name.
 
   onBrokenLinks: 'throw',
-  onBrokenMarkdownLinks: 'warn',
+  markdown: {
+    hooks: {
+      onBrokenMarkdownLinks: 'warn',
+    },
+  },
 
   // Even if you don't use internationalization, you can use this field to set
   // useful metadata like html lang. For example, if your site is Chinese, you
@@ -59,11 +63,22 @@ const config = {
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
       navbar: {
-        title: 'Builder Docs',
+        title: '',
+        logo: {
+          alt: 'FastNEAR Builder Docs',
+          src: 'img/fastnear_logo_black.png',
+          srcDark: 'img/fastnear_logo_white.png',
+          href: '/docs/rpc-api',
+        },
         items: [
           {
             to: '/docs/rpc-api/',
             label: 'RPC / API',
+            position: 'left',
+          },
+          {
+            to: '/docs/transaction-flow/',
+            label: 'Transaction Flow',
             position: 'left',
           },
           {
