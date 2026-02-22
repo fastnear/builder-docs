@@ -41,9 +41,9 @@ Gas (computational units)  ×  Gas Price (NEAR per gas)  =  NEAR Cost
 
 | Operation | Gas | Cost (NEAR) |
 |-----------|-----|-------------|
-| Simple transfer | ~0.5 TGas | 0.00005 |
-| Function call | 5-50 TGas | 0.0005-0.005 |
-| Contract deployment | 50-200 TGas | 0.005-0.02 |
+| Simple transfer | ~0.11 TGas | ~0.000011 |
+| Function call (base) | ~2.3 TGas + execution | varies |
+| Contract deployment (base) | ~0.18 TGas + per-byte | varies |
 
 ## Gas Prepayment
 
@@ -210,40 +210,31 @@ Receipt::new_balance_refund(
 )
 ```
 
-## The NEP-536 Penalty
+## The NEP-536 Refund Penalty
 
-To discourage gas overestimation, NEAR applies a penalty on refunds.
+NEAR supports a configurable penalty on gas refunds via `gas_refund_penalty` to discourage gas overestimation.
 
 ```rust
-// Simplified calculation
-let penalty_rate = 0.30;  // 30% of refunded gas
-let penalty = refunded_gas * penalty_rate;
-let actual_refund = refunded_gas - penalty;
+// The penalty is configurable via runtime parameters
+let refund_penalty = config.fees.gas_penalty_for_gas_refund(gross_gas_refund);
+let net_gas_refund = gross_gas_refund.checked_sub(refund_penalty).unwrap();
 ```
 
-### Why the Penalty?
+:::note
+The `gas_refund_penalty` is currently set to **0%** (numerator: 0, denominator: 100) in the mainnet runtime configuration. This means all unused gas is fully refunded. The penalty mechanism exists in the code and can be activated via a protocol parameter change.
+:::
 
-Without penalties:
-- Users would always prepay maximum gas (300 TGas)
-- No downside to overestimation
-- Network resources would be reserved unnecessarily
-
-With NEP-536:
-- Overestimating gas costs 30% of the overestimate
-- Encourages accurate gas estimation
-- More efficient network resource allocation
-
-### Penalty Calculation Example
+### Refund Calculation Example (with 0% penalty)
 
 ```
 Prepaid:     100 TGas
 Burnt:        30 TGas
 Gross Refund: 70 TGas
-Penalty (30%): 21 TGas
-Net Refund:   49 TGas
+Penalty (0%):  0 TGas
+Net Refund:   70 TGas
 ```
 
-You lose 21 TGas worth of NEAR due to overestimation.
+All unused gas is currently refunded in full.
 
 ## Gas Price Dynamics
 
@@ -415,7 +406,7 @@ sequenceDiagram
     ShardA->>ShardA: Execute (burn 30 TGas)
     ShardA->>ShardB: Cross-shard receipt
     ShardB->>ShardB: Execute
-    ShardB->>ShardA: Refund receipt (70 TGas - penalty)
+    ShardB->>ShardA: Refund receipt (unused gas)
     ShardA->>ShardA: Apply refund to User balance
 ```
 
@@ -427,8 +418,8 @@ Common operations and their approximate gas costs:
 
 | Operation | Gas (TGas) | Notes |
 |-----------|------------|-------|
-| Simple transfer | 0.5 | Fixed cost |
-| Contract call overhead | 2.5 | Per receipt |
+| Simple transfer | ~0.11 | Fixed cost |
+| Contract call overhead | ~2.3 | Per receipt |
 | Storage write (per byte) | 0.01 | Plus storage staking |
 | Storage read (per byte) | 0.005 | Cheaper than write |
 | WASM instruction | 0.0001 | Per instruction |

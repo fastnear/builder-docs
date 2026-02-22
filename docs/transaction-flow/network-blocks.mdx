@@ -170,7 +170,7 @@ pub struct TransactionPool {
 │  ├─ tx_nonce=1001 (waiting)                                │
 │  └─ tx_nonce=1002 (waiting)                                │
 │                                                             │
-│  Pool Size: 2.3 MB / 32 MB limit                           │
+│  Pool Size: 2.3 MB / 100 MB limit                          │
 │  Transaction Count: 1,247                                   │
 └─────────────────────────────────────────────────────────────┘
 ```
@@ -180,7 +180,7 @@ pub struct TransactionPool {
 1. **Per-shard pools**: Transactions targeting different shards never compete for the same pool space
 2. **Grouped by account+key**: Enables fair selection across different users
 3. **Randomized keys**: The `key_seed` randomizes group ordering, preventing attackers from gaming transaction order
-4. **Size limits**: Pool has a configurable maximum size (~32MB). When full, new transactions are rejected
+4. **Size limits**: Pool has a configurable maximum size (default 100MB). When full, new transactions are rejected
 
 ### Insertion Results
 

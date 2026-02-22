@@ -23,7 +23,7 @@ NEAR uses a **Merkle Patricia Trie** to store all state. Every piece of on-chain
 
 **Source:** `core/primitives/src/trie_key.rs`
 
-NEAR's trie has **19 column types**, each storing different data:
+NEAR's trie has **20 column types**, each storing different data:
 
 ```rust
 pub enum TrieKey {
@@ -34,10 +34,20 @@ pub enum TrieKey {
     PostponedReceiptId { receiver_id: AccountId, data_id: CryptoHash } = 4,
     PendingDataCount { receiver_id: AccountId, receipt_id: CryptoHash } = 5,
     PostponedReceipt { receiver_id: AccountId, index: u64 } = 6,
-    DelayedReceiptIndices = 7,
-    DelayedReceipt { index: u64 } = 8,
+    DelayedReceiptOrIndices = 7,
+    DelayedReceipt { index: u64 } = 8,  // shares column 7
     ContractData { account_id: AccountId, key: Vec<u8> } = 9,
-    // ... and more for buffered receipts, yield timeouts, etc.
+    PromiseYieldIndices = 10,
+    PromiseYieldTimeout { index: u64 } = 11,
+    PromiseYieldReceipt { receiver_id: AccountId, data_id: CryptoHash } = 12,
+    BufferedReceiptIndices = 13,
+    BufferedReceipt { receiving_shard: ShardId, index: u64 } = 14,
+    BandwidthSchedulerState = 15,
+    BufferedReceiptGroupsQueueData { ... } = 16,
+    BufferedReceiptGroupsQueueItem { ... } = 17,
+    GlobalContractCode { code_hash: CryptoHash } = 18,
+    GlobalContractNonce { account_id: AccountId } = 19,
+    PromiseYieldStatus { account_id: AccountId, data_id: CryptoHash } = 20,
 }
 ```
 
@@ -50,6 +60,10 @@ pub enum TrieKey {
 | 4-6 | Postponed* | Receipts waiting for data dependencies |
 | 7-8 | Delayed* | FIFO queue for overflow receipts |
 | 9 | ContractData | Contract storage key-values |
+| 10-12 | PromiseYield* | Yield/resume receipt tracking |
+| 13-17 | Buffered* | Cross-shard receipt buffering |
+| 18-19 | GlobalContract* | Network-wide shared contracts |
+| 20 | PromiseYieldStatus | Yield status tracking |
 
 ### Key Serialization
 
@@ -106,7 +120,7 @@ NEAR uses **storage staking** instead of rent. You lock NEAR proportional to you
 ```rust
 pub struct StorageUsageConfig {
     pub storage_amount_per_byte: Balance,
-    // ~0.00001 NEAR per byte on mainnet
+    // 0.0001 NEAR per byte on mainnet (10^14 yoctoNEAR)
 }
 ```
 
@@ -114,8 +128,8 @@ pub struct StorageUsageConfig {
 
 ```
 Required Balance = storage_usage × storage_amount_per_byte
-                 = 10,000 bytes × 0.00001 NEAR/byte
-                 = 0.1 NEAR staked
+                 = 10,000 bytes × 0.0001 NEAR/byte
+                 = 1.0 NEAR staked
 ```
 
 ### Storage Staking Rules
@@ -166,10 +180,10 @@ pub fn storage_has_key(&mut self, key_len: u64, key_ptr: u64) -> Result<u64>
 
 | Operation | Base Cost | Per-Byte Cost (key) | Per-Byte Cost (value) |
 |-----------|-----------|---------------------|----------------------|
-| `storage_write` | ~21 TGas | ~23 Ggas/byte | ~10 Ggas/byte |
-| `storage_read` | ~19 TGas | ~10 Ggas/byte | ~2 Ggas/byte |
-| `storage_remove` | ~22 TGas | ~23 Ggas/byte | - |
-| `storage_has_key` | ~19 TGas | ~10 Ggas/byte | - |
+| `storage_write` | ~0.064 TGas | ~23 Ggas/byte | ~10 Ggas/byte |
+| `storage_read` | ~0.056 TGas | ~10 Ggas/byte | ~2 Ggas/byte |
+| `storage_remove` | ~0.053 TGas | ~23 Ggas/byte | - |
+| `storage_has_key` | ~0.054 TGas | ~10 Ggas/byte | - |
 
 **Reads are cheaper than writes** because they don't require persistence.
 
@@ -195,7 +209,7 @@ pub struct ChunkStateWitnessV2 {
 |-----------|-------------|
 | Trie nodes | Only the nodes needed for this chunk's execution |
 | Merkle proofs | Proof for each accessed key |
-| Compression | zstd compressed (~48MB max) |
+| Compression | zstd compressed (~64MB max uncompressed) |
 | Encoding | Reed-Solomon encoded for network efficiency |
 
 This enables validators to verify execution without storing full state.

@@ -454,8 +454,8 @@ pub struct CryptoHash(pub [u8; 32]);
 // Variable-length account name (2-64 bytes)
 pub struct AccountId(String);
 
-// 128-bit unsigned integer for balances
-pub type Balance = u128;
+// Wrapper type around u128 for balances (in yoctoNEAR)
+pub type Balance = near_token::NearToken;  // internally u128
 
 // 64-bit unsigned integer for gas
 pub type Gas = u64;

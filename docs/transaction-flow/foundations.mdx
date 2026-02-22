@@ -127,21 +127,31 @@ pub struct TransactionV0 {
 | `block_hash` | `CryptoHash` | Reference to a recent block. Provides fork protection and expiration (86,400 blocks / ~24 hours). |
 | `actions` | `Vec<Action>` | The list of operations to perform. Multiple actions are batched atomically. |
 
-### TransactionV1: Priority Fees
+### TransactionV1: Gas Key Nonces
 
-TransactionV1 adds support for priority fees:
+TransactionV1 uses the same fields as V0 but replaces the nonce type with `TransactionNonce`, which supports gas key nonces:
 
 ```rust
 pub struct TransactionV1 {
-    // ... same fields as V0 ...
+    pub signer_id: AccountId,
+    pub public_key: PublicKey,
+    /// Nonce with support for gas key indexing
+    pub nonce: TransactionNonce,
+    pub receiver_id: AccountId,
+    pub block_hash: CryptoHash,
+    pub actions: Vec<Action>,
+}
 
-    /// Priority fee. Unit is 10^12 yoctoNEAR
-    pub priority_fee: u64,
+pub enum TransactionNonce {
+    /// Simple nonce without index, used by ordinary access keys
+    Nonce { nonce: Nonce },
+    /// Nonce with index, used by gas keys
+    GasKeyNonce { nonce: Nonce, nonce_index: NonceIndex },
 }
 ```
 
 :::note
-As of this writing, V1 transactions are not yet enabled on mainnet.
+V1 transactions add support for gas keys via the `TransactionNonce` type, which allows a nonce index alongside the standard nonce.
 :::
 
 ## Action Types
@@ -164,6 +174,8 @@ pub enum Action {
     DeployGlobalContract(DeployGlobalContractAction) = 9,
     UseGlobalContract(Box<UseGlobalContractAction>) = 10,
     DeterministicStateInit(Box<DeterministicStateInitAction>) = 11,
+    TransferToGasKey(Box<TransferToGasKeyAction>) = 12,
+    WithdrawFromGasKey(Box<WithdrawFromGasKeyAction>) = 13,
 }
 ```
 

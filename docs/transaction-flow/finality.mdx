@@ -108,27 +108,30 @@ Transaction Hash: TX1
 The aggregated view of all outcomes:
 
 ```rust
-pub struct FinalExecutionOutcome {
+pub struct FinalExecutionOutcomeView {
     /// Status of the whole transaction
     pub status: FinalExecutionStatus,
 
+    /// The original signed transaction
+    pub transaction: SignedTransactionView,
+
     /// Transaction outcome
-    pub transaction_outcome: ExecutionOutcomeWithId,
+    pub transaction_outcome: ExecutionOutcomeWithIdView,
 
     /// All receipt outcomes
-    pub receipts_outcome: Vec<ExecutionOutcomeWithId>,
+    pub receipts_outcome: Vec<ExecutionOutcomeWithIdView>,
 }
 
 pub enum FinalExecutionStatus {
     /// Still processing
-    NotStarted,
-    Started,
-
-    /// All done with final value
-    SuccessValue(Vec<u8>),
+    NotStarted = 0,
+    Started = 1,
 
     /// All done but the final receipt failed
-    Failure(TxExecutionError),
+    Failure(TxExecutionError) = 2,
+
+    /// All done with final value
+    SuccessValue(Vec<u8>) = 3,
 }
 ```
 
