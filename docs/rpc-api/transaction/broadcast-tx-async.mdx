@@ -5,7 +5,7 @@ sidebar_position: 3
 hide_table_of_contents: true
 ---
 
-import RpcRedoc from '@site/src/components/RpcRedoc';
+import FastnearDirectOperation from '@site/src/components/FastnearDirectOperation';
 
 # Broadcast Transaction (Async)
 
@@ -13,8 +13,4 @@ import RpcRedoc from '@site/src/components/RpcRedoc';
 
 This endpoint allows you to send a signed transaction asynchronously. It returns immediately with the transaction hash without waiting for execution.
 
-<RpcRedoc
-  redoclyBase="https://fastnear.redocly.app"
-  path="/rpcs/transaction/broadcast_tx_async"
-  height="1600px"
-/>
+<FastnearDirectOperation pageModelId="rpc-broadcast-tx-async" />

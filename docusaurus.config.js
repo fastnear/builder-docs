@@ -8,6 +8,10 @@ import { themes as prismThemes } from 'prism-react-renderer';
 
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 
+const hideEarlyApiFamilies = /^(1|true|yes|on)$/i.test(
+  process.env.HIDE_EARLY_API_FAMILIES || ''
+);
+
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: 'Builder Docs',
@@ -60,6 +64,9 @@ const config = {
       }),
     ],
   ],
+  customFields: {
+    hideEarlyApiFamilies,
+  },
 
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
@@ -67,25 +74,64 @@ const config = {
       navbar: {
         title: '',
         logo: {
-          alt: 'FastNEAR Builder Docs',
+          alt: 'FastNear Builder Docs',
           src: 'img/fastnear_logo_black.png',
           srcDark: 'img/fastnear_logo_white.png',
           href: '/docs/rpc-api',
         },
         items: [
           {
-            to: '/docs/rpc-api/',
-            label: 'RPC / API',
+            type: 'docSidebar',
+            sidebarId: 'rpcSidebar',
+            label: 'RPC',
             position: 'left',
           },
+          {
+            type: 'docSidebar',
+            sidebarId: 'fastnearApiSidebar',
+            label: 'API',
+            position: 'left',
+          },
+          {
+            type: 'docSidebar',
+            sidebarId: 'transactionsApiSidebar',
+            label: 'Transactions',
+            position: 'left',
+          },
+          ...(!hideEarlyApiFamilies
+            ? [
+                {
+                  type: 'docSidebar',
+                  sidebarId: 'transfersApiSidebar',
+                  label: 'Transfers',
+                  position: 'left',
+                },
+              ]
+            : []),
+          {
+            type: 'docSidebar',
+            sidebarId: 'nearDataApiSidebar',
+            label: 'NEAR Data',
+            position: 'left',
+          },
+          ...(!hideEarlyApiFamilies
+            ? [
+                {
+                  label: 'FastData',
+                  position: 'left',
+                  items: [
+                    {
+                      type: 'doc',
+                      docId: 'rpc-api/kv-fastdata-api/index',
+                      label: 'KV FastData API',
+                    },
+                  ],
+                },
+              ]
+            : []),
           {
             to: '/docs/snapshots/',
             label: 'Snapshots',
-            position: 'left',
-          },
-          {
-            to: '/docs/transaction-flow/',
-            label: 'Transaction Flow',
             position: 'left',
           },
           {
@@ -94,25 +140,23 @@ const config = {
             label: 'Status',
           },
           {
-            href: 'https://dashboard.fastnear.com/#pricing',
-            position: 'left',
-            label: 'Subscriptions',
-          },
-          {
             href: 'https://github.com/fastnear/builder-docs',
             label: 'GitHub',
             position: 'right',
           },
         ],
       },
-      sidebar: {
-        hideable: true,
+      docs: {
+        sidebar: {
+          hideable: true,
+          autoCollapseCategories: true,
+        },
       },
       footer: {
         style: 'dark',
         links: [
           {
-            title: 'FastNEAR',
+            title: 'FastNear',
             items: [
               {
                 label: 'Company',
@@ -151,7 +195,7 @@ const config = {
             ],
           },
         ],
-        copyright: `Copyright © ${new Date().getFullYear()} FastNEAR`,
+        copyright: `Copyright © ${new Date().getFullYear()} FastNear`,
       },
       prism: {
         theme: prismThemes.github,

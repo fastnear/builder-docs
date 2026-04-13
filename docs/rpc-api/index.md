@@ -5,7 +5,7 @@ slug: /rpc-api
 title: RPC / API Reference
 description: Advanced documentation for interacting with the blockchain via Remote Procedure Calls (RPCs) and an API accessing helpful, indexed information.
 sidebar_label: Endpoints
-displayed_sidebar: rpcApiSidebar
+displayed_sidebar: null
 keywords:
 - blockchain
 - RPC
@@ -15,7 +15,11 @@ keywords:
 - JSON-RPC
 ---
 
+import RpcApiServiceLinks from '@site/src/components/RpcApiServiceLinks';
+
 # RPC Endpoints
+
+Need a FastNear API key for higher limits on RPC and API access? [Get one in the FastNear dashboard](https://dashboard.fastnear.com). Sign up and receive 500,000 trial credits.
 
 ## Regular RPCs
 
@@ -53,3 +57,9 @@ Note, the The Big Powerful RPCs are only available for paid customers. Non autho
 ```bash title="Mainnet Powerful Big RPC"
 https://big.rpc.fastnear.com
 ```
+
+## Indexed API Services
+
+These indexed APIs complement JSON-RPC with higher-level queries and precomputed views:
+
+<RpcApiServiceLinks />
