@@ -1,4 +1,5 @@
 import React, { useEffect, useId, useMemo, useState } from "react";
+import Head from "@docusaurus/Head";
 
 import PageActions from "@site/src/components/PageActions";
 import { copyTextToClipboard } from "@site/src/utils/clipboard";
@@ -6,6 +7,7 @@ import {
   buildOperationMarkdown,
   sanitizePublicUrl,
 } from "@site/src/utils/markdownExport";
+import { buildOperationKeywords } from "@site/src/utils/seo";
 import { FINALITY_OPTIONS } from "./finalityOptions";
 import { getFastnearPageModelById } from "./pageModels";
 import {
@@ -1650,6 +1652,7 @@ function FastnearOperationPage({ pageModel }) {
 
 export default function FastnearDirectOperation({ pageModelId }) {
   const pageModel = getFastnearPageModelById(pageModelId);
+  const seoKeywords = useMemo(() => buildOperationKeywords(pageModel), [pageModel]);
 
   if (!pageModel) {
     return (
@@ -1663,6 +1666,11 @@ export default function FastnearDirectOperation({ pageModelId }) {
 
   return (
     <div className="builder-fastnear-direct">
+      {seoKeywords.length ? (
+        <Head>
+          <meta name="keywords" content={seoKeywords.join(', ')} />
+        </Head>
+      ) : null}
       <FastnearOperationPage pageModel={pageModel} />
     </div>
   );

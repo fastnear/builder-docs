@@ -10,7 +10,7 @@ async function setTheme(page, theme) {
 for (const theme of ['light', 'dark']) {
   test(`snapshot chooser buttons stay legible in ${theme} mode`, async ({ page }) => {
     await setTheme(page, theme);
-    await page.goto('/docs/snapshots/');
+    await page.goto('/snapshots/');
 
     const button = page.getByRole('link', { name: 'Mainnet Snapshots' });
     await button.hover();

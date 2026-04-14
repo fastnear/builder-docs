@@ -2,6 +2,9 @@ const { defineConfig, devices } = require('@playwright/test');
 
 const PORT = process.env.PLAYWRIGHT_PORT || '3100';
 const baseURL = `http://127.0.0.1:${PORT}`;
+const webServerEnv = { ...process.env };
+
+delete webServerEnv.NO_COLOR;
 
 module.exports = defineConfig({
   testDir: './tests/playwright',
@@ -25,6 +28,7 @@ module.exports = defineConfig({
   ],
   webServer: {
     command: `yarn start --host 127.0.0.1 --port ${PORT}`,
+    env: webServerEnv,
     url: baseURL,
     reuseExistingServer: !process.env.CI,
     timeout: 180 * 1000,

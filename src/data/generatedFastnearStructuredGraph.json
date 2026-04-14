@@ -1,0 +1,3280 @@
+{
+  "breadcrumbs": [
+    {
+      "canonicalPath": "/apis/fastnear/system/health",
+      "items": [
+        {
+          "label": "FastNear API",
+          "path": "/api"
+        },
+        {
+          "label": "Get service health",
+          "path": "/apis/fastnear/system/health"
+        }
+      ],
+      "pageModelId": "fastnear-system-health"
+    },
+    {
+      "canonicalPath": "/apis/fastnear/system/status",
+      "items": [
+        {
+          "label": "FastNear API",
+          "path": "/api"
+        },
+        {
+          "label": "Get service sync status",
+          "path": "/apis/fastnear/system/status"
+        }
+      ],
+      "pageModelId": "fastnear-system-status"
+    },
+    {
+      "canonicalPath": "/apis/fastnear/v0/account_ft",
+      "items": [
+        {
+          "label": "FastNear API",
+          "path": "/api"
+        },
+        {
+          "label": "Lookup fungible token contract IDs for an account",
+          "path": "/apis/fastnear/v0/account_ft"
+        }
+      ],
+      "pageModelId": "fastnear-v0-account-ft"
+    },
+    {
+      "canonicalPath": "/apis/fastnear/v0/account_nft",
+      "items": [
+        {
+          "label": "FastNear API",
+          "path": "/api"
+        },
+        {
+          "label": "Lookup NFT contract IDs for an account",
+          "path": "/apis/fastnear/v0/account_nft"
+        }
+      ],
+      "pageModelId": "fastnear-v0-account-nft"
+    },
+    {
+      "canonicalPath": "/apis/fastnear/v0/account_staking",
+      "items": [
+        {
+          "label": "FastNear API",
+          "path": "/api"
+        },
+        {
+          "label": "Lookup staking pool account IDs for an account",
+          "path": "/apis/fastnear/v0/account_staking"
+        }
+      ],
+      "pageModelId": "fastnear-v0-account-staking"
+    },
+    {
+      "canonicalPath": "/apis/fastnear/v0/public_key_lookup",
+      "items": [
+        {
+          "label": "FastNear API",
+          "path": "/api"
+        },
+        {
+          "label": "Lookup full-access accounts by public key",
+          "path": "/apis/fastnear/v0/public_key_lookup"
+        }
+      ],
+      "pageModelId": "fastnear-v0-public-key-lookup"
+    },
+    {
+      "canonicalPath": "/apis/fastnear/v0/public_key_lookup_all",
+      "items": [
+        {
+          "label": "FastNear API",
+          "path": "/api"
+        },
+        {
+          "label": "Lookup all indexed accounts by public key",
+          "path": "/apis/fastnear/v0/public_key_lookup_all"
+        }
+      ],
+      "pageModelId": "fastnear-v0-public-key-lookup-all"
+    },
+    {
+      "canonicalPath": "/apis/fastnear/v1/account_ft",
+      "items": [
+        {
+          "label": "FastNear API",
+          "path": "/api"
+        },
+        {
+          "label": "Lookup indexed fungible token rows for an account",
+          "path": "/apis/fastnear/v1/account_ft"
+        }
+      ],
+      "pageModelId": "fastnear-v1-account-ft"
+    },
+    {
+      "canonicalPath": "/apis/fastnear/v1/account_full",
+      "items": [
+        {
+          "label": "FastNear API",
+          "path": "/api"
+        },
+        {
+          "label": "Lookup full indexed account information",
+          "path": "/apis/fastnear/v1/account_full"
+        }
+      ],
+      "pageModelId": "fastnear-v1-account-full"
+    },
+    {
+      "canonicalPath": "/apis/fastnear/v1/account_nft",
+      "items": [
+        {
+          "label": "FastNear API",
+          "path": "/api"
+        },
+        {
+          "label": "Lookup indexed NFT contract rows for an account",
+          "path": "/apis/fastnear/v1/account_nft"
+        }
+      ],
+      "pageModelId": "fastnear-v1-account-nft"
+    },
+    {
+      "canonicalPath": "/apis/fastnear/v1/account_staking",
+      "items": [
+        {
+          "label": "FastNear API",
+          "path": "/api"
+        },
+        {
+          "label": "Lookup indexed staking pools for an account",
+          "path": "/apis/fastnear/v1/account_staking"
+        }
+      ],
+      "pageModelId": "fastnear-v1-account-staking"
+    },
+    {
+      "canonicalPath": "/apis/fastnear/v1/ft_top",
+      "items": [
+        {
+          "label": "FastNear API",
+          "path": "/api"
+        },
+        {
+          "label": "Lookup top indexed holders for a fungible token",
+          "path": "/apis/fastnear/v1/ft_top"
+        }
+      ],
+      "pageModelId": "fastnear-v1-ft-top"
+    },
+    {
+      "canonicalPath": "/apis/fastnear/v1/public_key_lookup",
+      "items": [
+        {
+          "label": "FastNear API",
+          "path": "/api"
+        },
+        {
+          "label": "Lookup full-access accounts by public key",
+          "path": "/apis/fastnear/v1/public_key_lookup"
+        }
+      ],
+      "pageModelId": "fastnear-v1-public-key-lookup"
+    },
+    {
+      "canonicalPath": "/apis/fastnear/v1/public_key_lookup_all",
+      "items": [
+        {
+          "label": "FastNear API",
+          "path": "/api"
+        },
+        {
+          "label": "Lookup all indexed accounts by public key",
+          "path": "/apis/fastnear/v1/public_key_lookup_all"
+        }
+      ],
+      "pageModelId": "fastnear-v1-public-key-lookup-all"
+    },
+    {
+      "canonicalPath": "/apis/kv-fastdata/v0/all_by_predecessor",
+      "items": [
+        {
+          "label": "KV FastData API",
+          "path": "/fastdata/kv"
+        },
+        {
+          "label": "Fetch latest key-value rows for one predecessor across all contracts",
+          "path": "/apis/kv-fastdata/v0/all_by_predecessor"
+        }
+      ],
+      "pageModelId": "kv-fastdata-v0-all-by-predecessor"
+    },
+    {
+      "canonicalPath": "/apis/kv-fastdata/v0/get_history_key",
+      "items": [
+        {
+          "label": "KV FastData API",
+          "path": "/fastdata/kv"
+        },
+        {
+          "label": "Fetch historical rows for one exact key under one predecessor and contract",
+          "path": "/apis/kv-fastdata/v0/get_history_key"
+        }
+      ],
+      "pageModelId": "kv-fastdata-v0-get-history-key"
+    },
+    {
+      "canonicalPath": "/apis/kv-fastdata/v0/get_latest_key",
+      "items": [
+        {
+          "label": "KV FastData API",
+          "path": "/fastdata/kv"
+        },
+        {
+          "label": "Fetch the latest row for one exact key under one predecessor and contract",
+          "path": "/apis/kv-fastdata/v0/get_latest_key"
+        }
+      ],
+      "pageModelId": "kv-fastdata-v0-get-latest-key"
+    },
+    {
+      "canonicalPath": "/apis/kv-fastdata/v0/history_by_account",
+      "items": [
+        {
+          "label": "KV FastData API",
+          "path": "/fastdata/kv"
+        },
+        {
+          "label": "Fetch historical key-value writes for one contract across all predecessors",
+          "path": "/apis/kv-fastdata/v0/history_by_account"
+        }
+      ],
+      "pageModelId": "kv-fastdata-v0-history-by-account"
+    },
+    {
+      "canonicalPath": "/apis/kv-fastdata/v0/history_by_key",
+      "items": [
+        {
+          "label": "KV FastData API",
+          "path": "/fastdata/kv"
+        },
+        {
+          "label": "Fetch historical rows by exact key across all indexed contracts",
+          "path": "/apis/kv-fastdata/v0/history_by_key"
+        }
+      ],
+      "pageModelId": "kv-fastdata-v0-history-by-key"
+    },
+    {
+      "canonicalPath": "/apis/kv-fastdata/v0/history_by_predecessor",
+      "items": [
+        {
+          "label": "KV FastData API",
+          "path": "/fastdata/kv"
+        },
+        {
+          "label": "Fetch historical key-value writes for one predecessor and contract",
+          "path": "/apis/kv-fastdata/v0/history_by_predecessor"
+        }
+      ],
+      "pageModelId": "kv-fastdata-v0-history-by-predecessor"
+    },
+    {
+      "canonicalPath": "/apis/kv-fastdata/v0/latest_by_account",
+      "items": [
+        {
+          "label": "KV FastData API",
+          "path": "/fastdata/kv"
+        },
+        {
+          "label": "Fetch latest key-value rows for one contract across all predecessors",
+          "path": "/apis/kv-fastdata/v0/latest_by_account"
+        }
+      ],
+      "pageModelId": "kv-fastdata-v0-latest-by-account"
+    },
+    {
+      "canonicalPath": "/apis/kv-fastdata/v0/latest_by_predecessor",
+      "items": [
+        {
+          "label": "KV FastData API",
+          "path": "/fastdata/kv"
+        },
+        {
+          "label": "Fetch latest key-value rows for one predecessor and contract",
+          "path": "/apis/kv-fastdata/v0/latest_by_predecessor"
+        }
+      ],
+      "pageModelId": "kv-fastdata-v0-latest-by-predecessor"
+    },
+    {
+      "canonicalPath": "/apis/kv-fastdata/v0/multi",
+      "items": [
+        {
+          "label": "KV FastData API",
+          "path": "/fastdata/kv"
+        },
+        {
+          "label": "Fetch the latest rows for multiple fully qualified keys",
+          "path": "/apis/kv-fastdata/v0/multi"
+        }
+      ],
+      "pageModelId": "kv-fastdata-v0-multi"
+    },
+    {
+      "canonicalPath": "/apis/neardata/system/health",
+      "items": [
+        {
+          "label": "NEAR Data API",
+          "path": "/neardata"
+        },
+        {
+          "label": "Get service health",
+          "path": "/apis/neardata/system/health"
+        }
+      ],
+      "pageModelId": "neardata-system-health"
+    },
+    {
+      "canonicalPath": "/apis/neardata/v0/block",
+      "items": [
+        {
+          "label": "NEAR Data API",
+          "path": "/neardata"
+        },
+        {
+          "label": "Fetch a finalized block by height",
+          "path": "/apis/neardata/v0/block"
+        }
+      ],
+      "pageModelId": "neardata-v0-block"
+    },
+    {
+      "canonicalPath": "/apis/neardata/v0/block_chunk",
+      "items": [
+        {
+          "label": "NEAR Data API",
+          "path": "/neardata"
+        },
+        {
+          "label": "Fetch one chunk from a finalized block",
+          "path": "/apis/neardata/v0/block_chunk"
+        }
+      ],
+      "pageModelId": "neardata-v0-block-chunk"
+    },
+    {
+      "canonicalPath": "/apis/neardata/v0/block_headers",
+      "items": [
+        {
+          "label": "NEAR Data API",
+          "path": "/neardata"
+        },
+        {
+          "label": "Fetch the block-level object for a finalized block",
+          "path": "/apis/neardata/v0/block_headers"
+        }
+      ],
+      "pageModelId": "neardata-v0-block-headers"
+    },
+    {
+      "canonicalPath": "/apis/neardata/v0/block_optimistic",
+      "items": [
+        {
+          "label": "NEAR Data API",
+          "path": "/neardata"
+        },
+        {
+          "label": "Fetch an optimistic block by height",
+          "path": "/apis/neardata/v0/block_optimistic"
+        }
+      ],
+      "pageModelId": "neardata-v0-block-optimistic"
+    },
+    {
+      "canonicalPath": "/apis/neardata/v0/block_shard",
+      "items": [
+        {
+          "label": "NEAR Data API",
+          "path": "/neardata"
+        },
+        {
+          "label": "Fetch one shard from a finalized block",
+          "path": "/apis/neardata/v0/block_shard"
+        }
+      ],
+      "pageModelId": "neardata-v0-block-shard"
+    },
+    {
+      "canonicalPath": "/apis/neardata/v0/first_block",
+      "items": [
+        {
+          "label": "NEAR Data API",
+          "path": "/neardata"
+        },
+        {
+          "label": "Redirect to the first block after genesis",
+          "path": "/apis/neardata/v0/first_block"
+        }
+      ],
+      "pageModelId": "neardata-v0-first-block"
+    },
+    {
+      "canonicalPath": "/apis/neardata/v0/last_block_final",
+      "items": [
+        {
+          "label": "NEAR Data API",
+          "path": "/neardata"
+        },
+        {
+          "label": "Redirect to the latest finalized block",
+          "path": "/apis/neardata/v0/last_block_final"
+        }
+      ],
+      "pageModelId": "neardata-v0-last-block-final"
+    },
+    {
+      "canonicalPath": "/apis/neardata/v0/last_block_optimistic",
+      "items": [
+        {
+          "label": "NEAR Data API",
+          "path": "/neardata"
+        },
+        {
+          "label": "Redirect to the latest optimistic block",
+          "path": "/apis/neardata/v0/last_block_optimistic"
+        }
+      ],
+      "pageModelId": "neardata-v0-last-block-optimistic"
+    },
+    {
+      "canonicalPath": "/apis/transactions/v0/account",
+      "items": [
+        {
+          "label": "Transactions API",
+          "path": "/tx"
+        },
+        {
+          "label": "Fetch account transaction history",
+          "path": "/apis/transactions/v0/account"
+        }
+      ],
+      "pageModelId": "transactions-v0-account"
+    },
+    {
+      "canonicalPath": "/apis/transactions/v0/block",
+      "items": [
+        {
+          "label": "Transactions API",
+          "path": "/tx"
+        },
+        {
+          "label": "Fetch a block by height or hash",
+          "path": "/apis/transactions/v0/block"
+        }
+      ],
+      "pageModelId": "transactions-v0-block"
+    },
+    {
+      "canonicalPath": "/apis/transactions/v0/blocks",
+      "items": [
+        {
+          "label": "Transactions API",
+          "path": "/tx"
+        },
+        {
+          "label": "Fetch a list of blocks",
+          "path": "/apis/transactions/v0/blocks"
+        }
+      ],
+      "pageModelId": "transactions-v0-blocks"
+    },
+    {
+      "canonicalPath": "/apis/transactions/v0/receipt",
+      "items": [
+        {
+          "label": "Transactions API",
+          "path": "/tx"
+        },
+        {
+          "label": "Fetch a receipt by ID",
+          "path": "/apis/transactions/v0/receipt"
+        }
+      ],
+      "pageModelId": "transactions-v0-receipt"
+    },
+    {
+      "canonicalPath": "/apis/transactions/v0/transactions",
+      "items": [
+        {
+          "label": "Transactions API",
+          "path": "/tx"
+        },
+        {
+          "label": "Fetch transactions by hash",
+          "path": "/apis/transactions/v0/transactions"
+        }
+      ],
+      "pageModelId": "transactions-v0-transactions"
+    },
+    {
+      "canonicalPath": "/apis/transfers/v0/transfers",
+      "items": [
+        {
+          "label": "Transfers API",
+          "path": "/transfers"
+        },
+        {
+          "label": "Query transfers for an account",
+          "path": "/apis/transfers/v0/transfers"
+        }
+      ],
+      "pageModelId": "transfers-v0-transfers"
+    },
+    {
+      "canonicalPath": "/rpcs/account/view_access_key",
+      "items": [
+        {
+          "label": "Account RPC",
+          "path": "/rpc"
+        },
+        {
+          "label": "View account access key",
+          "path": "/rpcs/account/view_access_key"
+        }
+      ],
+      "pageModelId": "rpc-view-access-key"
+    },
+    {
+      "canonicalPath": "/rpcs/account/view_access_key_list",
+      "items": [
+        {
+          "label": "Account RPC",
+          "path": "/rpc"
+        },
+        {
+          "label": "View all account access keys",
+          "path": "/rpcs/account/view_access_key_list"
+        }
+      ],
+      "pageModelId": "rpc-view-access-key-list"
+    },
+    {
+      "canonicalPath": "/rpcs/account/view_account",
+      "items": [
+        {
+          "label": "Account RPC",
+          "path": "/rpc"
+        },
+        {
+          "label": "View account",
+          "path": "/rpcs/account/view_account"
+        }
+      ],
+      "pageModelId": "rpc-view-account"
+    },
+    {
+      "canonicalPath": "/rpcs/block/block_by_height",
+      "items": [
+        {
+          "label": "Block RPC",
+          "path": "/rpc"
+        },
+        {
+          "label": "Get block by height",
+          "path": "/rpcs/block/block_by_height"
+        }
+      ],
+      "pageModelId": "rpc-block-by-height"
+    },
+    {
+      "canonicalPath": "/rpcs/block/block_by_id",
+      "items": [
+        {
+          "label": "Block RPC",
+          "path": "/rpc"
+        },
+        {
+          "label": "Get block by ID",
+          "path": "/rpcs/block/block_by_id"
+        }
+      ],
+      "pageModelId": "rpc-block-by-id"
+    },
+    {
+      "canonicalPath": "/rpcs/block/block_effects",
+      "items": [
+        {
+          "label": "Block RPC",
+          "path": "/rpc"
+        },
+        {
+          "label": "Get block effects",
+          "path": "/rpcs/block/block_effects"
+        }
+      ],
+      "pageModelId": "rpc-block-effects"
+    },
+    {
+      "canonicalPath": "/rpcs/contract/call",
+      "items": [
+        {
+          "label": "Contract RPC",
+          "path": "/rpc"
+        },
+        {
+          "label": "Call contract function",
+          "path": "/rpcs/contract/call"
+        }
+      ],
+      "pageModelId": "rpc-call-function"
+    },
+    {
+      "canonicalPath": "/rpcs/contract/view_code",
+      "items": [
+        {
+          "label": "Contract RPC",
+          "path": "/rpc"
+        },
+        {
+          "label": "View contract code",
+          "path": "/rpcs/contract/view_code"
+        }
+      ],
+      "pageModelId": "rpc-view-code"
+    },
+    {
+      "canonicalPath": "/rpcs/contract/view_global_contract_code",
+      "items": [
+        {
+          "label": "Contract RPC",
+          "path": "/rpc"
+        },
+        {
+          "label": "View global contract code",
+          "path": "/rpcs/contract/view_global_contract_code"
+        }
+      ],
+      "pageModelId": "rpc-view-global-contract-code"
+    },
+    {
+      "canonicalPath": "/rpcs/contract/view_global_contract_code_by_account_id",
+      "items": [
+        {
+          "label": "Contract RPC",
+          "path": "/rpc"
+        },
+        {
+          "label": "View global contract code by account",
+          "path": "/rpcs/contract/view_global_contract_code_by_account_id"
+        }
+      ],
+      "pageModelId": "rpc-view-global-contract-code-by-account-id"
+    },
+    {
+      "canonicalPath": "/rpcs/contract/view_state",
+      "items": [
+        {
+          "label": "Contract RPC",
+          "path": "/rpc"
+        },
+        {
+          "label": "View contract state",
+          "path": "/rpcs/contract/view_state"
+        }
+      ],
+      "pageModelId": "rpc-view-state"
+    },
+    {
+      "canonicalPath": "/rpcs/protocol/changes",
+      "items": [
+        {
+          "label": "Protocol RPC",
+          "path": "/rpc"
+        },
+        {
+          "label": "Get state changes",
+          "path": "/rpcs/protocol/changes"
+        }
+      ],
+      "pageModelId": "rpc-changes"
+    },
+    {
+      "canonicalPath": "/rpcs/protocol/chunk_by_block_shard",
+      "items": [
+        {
+          "label": "Protocol RPC",
+          "path": "/rpc"
+        },
+        {
+          "label": "Get chunk by block ID and shard ID",
+          "path": "/rpcs/protocol/chunk_by_block_shard"
+        }
+      ],
+      "pageModelId": "rpc-chunk-by-block-shard"
+    },
+    {
+      "canonicalPath": "/rpcs/protocol/chunk_by_hash",
+      "items": [
+        {
+          "label": "Protocol RPC",
+          "path": "/rpc"
+        },
+        {
+          "label": "Get chunk by hash",
+          "path": "/rpcs/protocol/chunk_by_hash"
+        }
+      ],
+      "pageModelId": "rpc-chunk-by-hash"
+    },
+    {
+      "canonicalPath": "/rpcs/protocol/client_config",
+      "items": [
+        {
+          "label": "Protocol RPC",
+          "path": "/rpc"
+        },
+        {
+          "label": "Get client config",
+          "path": "/rpcs/protocol/client_config"
+        }
+      ],
+      "pageModelId": "rpc-client-config"
+    },
+    {
+      "canonicalPath": "/rpcs/protocol/EXPERIMENTAL_congestion_level",
+      "items": [
+        {
+          "label": "Protocol RPC",
+          "path": "/rpc"
+        },
+        {
+          "label": "Get congestion level",
+          "path": "/rpcs/protocol/EXPERIMENTAL_congestion_level"
+        }
+      ],
+      "pageModelId": "rpc-EXPERIMENTAL-congestion-level"
+    },
+    {
+      "canonicalPath": "/rpcs/protocol/EXPERIMENTAL_light_client_block_proof",
+      "items": [
+        {
+          "label": "Protocol RPC",
+          "path": "/rpc"
+        },
+        {
+          "label": "Get light client block proof",
+          "path": "/rpcs/protocol/EXPERIMENTAL_light_client_block_proof"
+        }
+      ],
+      "pageModelId": "rpc-EXPERIMENTAL-light-client-block-proof"
+    },
+    {
+      "canonicalPath": "/rpcs/protocol/EXPERIMENTAL_light_client_proof",
+      "items": [
+        {
+          "label": "Protocol RPC",
+          "path": "/rpc"
+        },
+        {
+          "label": "Get light client execution proof",
+          "path": "/rpcs/protocol/EXPERIMENTAL_light_client_proof"
+        }
+      ],
+      "pageModelId": "rpc-EXPERIMENTAL-light-client-proof"
+    },
+    {
+      "canonicalPath": "/rpcs/protocol/EXPERIMENTAL_protocol_config",
+      "items": [
+        {
+          "label": "Protocol RPC",
+          "path": "/rpc"
+        },
+        {
+          "label": "Get protocol config",
+          "path": "/rpcs/protocol/EXPERIMENTAL_protocol_config"
+        }
+      ],
+      "pageModelId": "rpc-EXPERIMENTAL-protocol-config"
+    },
+    {
+      "canonicalPath": "/rpcs/protocol/EXPERIMENTAL_split_storage_info",
+      "items": [
+        {
+          "label": "Protocol RPC",
+          "path": "/rpc"
+        },
+        {
+          "label": "Get split storage info",
+          "path": "/rpcs/protocol/EXPERIMENTAL_split_storage_info"
+        }
+      ],
+      "pageModelId": "rpc-EXPERIMENTAL-split-storage-info"
+    },
+    {
+      "canonicalPath": "/rpcs/protocol/gas_price",
+      "items": [
+        {
+          "label": "Protocol RPC",
+          "path": "/rpc"
+        },
+        {
+          "label": "Get current gas price",
+          "path": "/rpcs/protocol/gas_price"
+        }
+      ],
+      "pageModelId": "rpc-gas-price"
+    },
+    {
+      "canonicalPath": "/rpcs/protocol/gas_price_by_block",
+      "items": [
+        {
+          "label": "Protocol RPC",
+          "path": "/rpc"
+        },
+        {
+          "label": "Get gas price by block",
+          "path": "/rpcs/protocol/gas_price_by_block"
+        }
+      ],
+      "pageModelId": "rpc-gas-price-by-block"
+    },
+    {
+      "canonicalPath": "/rpcs/protocol/genesis_config",
+      "items": [
+        {
+          "label": "Protocol RPC",
+          "path": "/rpc"
+        },
+        {
+          "label": "Get genesis config",
+          "path": "/rpcs/protocol/genesis_config"
+        }
+      ],
+      "pageModelId": "rpc-genesis-config"
+    },
+    {
+      "canonicalPath": "/rpcs/protocol/health",
+      "items": [
+        {
+          "label": "Protocol RPC",
+          "path": "/rpc"
+        },
+        {
+          "label": "Check node health",
+          "path": "/rpcs/protocol/health"
+        }
+      ],
+      "pageModelId": "rpc-health"
+    },
+    {
+      "canonicalPath": "/rpcs/protocol/latest_block",
+      "items": [
+        {
+          "label": "Protocol RPC",
+          "path": "/rpc"
+        },
+        {
+          "label": "Get latest block",
+          "path": "/rpcs/protocol/latest_block"
+        }
+      ],
+      "pageModelId": "rpc-latest-block"
+    },
+    {
+      "canonicalPath": "/rpcs/protocol/light_client_proof",
+      "items": [
+        {
+          "label": "Protocol RPC",
+          "path": "/rpc"
+        },
+        {
+          "label": "Get light client proof",
+          "path": "/rpcs/protocol/light_client_proof"
+        }
+      ],
+      "pageModelId": "rpc-light-client-proof"
+    },
+    {
+      "canonicalPath": "/rpcs/protocol/maintenance_windows",
+      "items": [
+        {
+          "label": "Protocol RPC",
+          "path": "/rpc"
+        },
+        {
+          "label": "Get maintenance windows",
+          "path": "/rpcs/protocol/maintenance_windows"
+        }
+      ],
+      "pageModelId": "rpc-maintenance-windows"
+    },
+    {
+      "canonicalPath": "/rpcs/protocol/metrics",
+      "items": [
+        {
+          "label": "Protocol RPC",
+          "path": "/rpc"
+        },
+        {
+          "label": "Get node metrics",
+          "path": "/rpcs/protocol/metrics"
+        }
+      ],
+      "pageModelId": "rpc-metrics"
+    },
+    {
+      "canonicalPath": "/rpcs/protocol/network_info",
+      "items": [
+        {
+          "label": "Protocol RPC",
+          "path": "/rpc"
+        },
+        {
+          "label": "Get network information",
+          "path": "/rpcs/protocol/network_info"
+        }
+      ],
+      "pageModelId": "rpc-network-info"
+    },
+    {
+      "canonicalPath": "/rpcs/protocol/next_light_client_block",
+      "items": [
+        {
+          "label": "Protocol RPC",
+          "path": "/rpc"
+        },
+        {
+          "label": "Get next light client block",
+          "path": "/rpcs/protocol/next_light_client_block"
+        }
+      ],
+      "pageModelId": "rpc-next-light-client-block"
+    },
+    {
+      "canonicalPath": "/rpcs/protocol/status",
+      "items": [
+        {
+          "label": "Protocol RPC",
+          "path": "/rpc"
+        },
+        {
+          "label": "Get node status",
+          "path": "/rpcs/protocol/status"
+        }
+      ],
+      "pageModelId": "rpc-status"
+    },
+    {
+      "canonicalPath": "/rpcs/transaction/broadcast_tx_async",
+      "items": [
+        {
+          "label": "Transaction RPC",
+          "path": "/rpc"
+        },
+        {
+          "label": "Send transaction asynchronously",
+          "path": "/rpcs/transaction/broadcast_tx_async"
+        }
+      ],
+      "pageModelId": "rpc-broadcast-tx-async"
+    },
+    {
+      "canonicalPath": "/rpcs/transaction/broadcast_tx_commit",
+      "items": [
+        {
+          "label": "Transaction RPC",
+          "path": "/rpc"
+        },
+        {
+          "label": "Send transaction and wait for commit",
+          "path": "/rpcs/transaction/broadcast_tx_commit"
+        }
+      ],
+      "pageModelId": "rpc-broadcast-tx-commit"
+    },
+    {
+      "canonicalPath": "/rpcs/transaction/EXPERIMENTAL_receipt",
+      "items": [
+        {
+          "label": "Transaction RPC",
+          "path": "/rpc"
+        },
+        {
+          "label": "Get receipt by ID",
+          "path": "/rpcs/transaction/EXPERIMENTAL_receipt"
+        }
+      ],
+      "pageModelId": "rpc-EXPERIMENTAL-receipt"
+    },
+    {
+      "canonicalPath": "/rpcs/transaction/EXPERIMENTAL_tx_status",
+      "items": [
+        {
+          "label": "Transaction RPC",
+          "path": "/rpc"
+        },
+        {
+          "label": "Get detailed transaction status",
+          "path": "/rpcs/transaction/EXPERIMENTAL_tx_status"
+        }
+      ],
+      "pageModelId": "rpc-EXPERIMENTAL-tx-status"
+    },
+    {
+      "canonicalPath": "/rpcs/transaction/send_tx",
+      "items": [
+        {
+          "label": "Transaction RPC",
+          "path": "/rpc"
+        },
+        {
+          "label": "Send transaction",
+          "path": "/rpcs/transaction/send_tx"
+        }
+      ],
+      "pageModelId": "rpc-send-tx"
+    },
+    {
+      "canonicalPath": "/rpcs/transaction/tx_status",
+      "items": [
+        {
+          "label": "Transaction RPC",
+          "path": "/rpc"
+        },
+        {
+          "label": "Check transaction status",
+          "path": "/rpcs/transaction/tx_status"
+        }
+      ],
+      "pageModelId": "rpc-tx-status"
+    },
+    {
+      "canonicalPath": "/rpcs/validators/EXPERIMENTAL_validators_ordered",
+      "items": [
+        {
+          "label": "Validators RPC",
+          "path": "/rpc"
+        },
+        {
+          "label": "Get validators ordered",
+          "path": "/rpcs/validators/EXPERIMENTAL_validators_ordered"
+        }
+      ],
+      "pageModelId": "rpc-EXPERIMENTAL-validators-ordered"
+    },
+    {
+      "canonicalPath": "/rpcs/validators/validators_by_epoch",
+      "items": [
+        {
+          "label": "Validators RPC",
+          "path": "/rpc"
+        },
+        {
+          "label": "Get validators by epoch",
+          "path": "/rpcs/validators/validators_by_epoch"
+        }
+      ],
+      "pageModelId": "rpc-validators-by-epoch"
+    },
+    {
+      "canonicalPath": "/rpcs/validators/validators_current",
+      "items": [
+        {
+          "label": "Validators RPC",
+          "path": "/rpc"
+        },
+        {
+          "label": "Get current validators",
+          "path": "/rpcs/validators/validators_current"
+        }
+      ],
+      "pageModelId": "rpc-validators-current"
+    }
+  ],
+  "families": [
+    {
+      "description": "Indexed FastNear REST endpoints for account views, public-key lookups, and system status.",
+      "docsPath": "/api",
+      "hostedPathPrefix": "/apis/fastnear",
+      "id": "api-fastnear",
+      "key": "fastnear",
+      "kind": "api",
+      "name": "FastNear API",
+      "schemaType": "WebAPI"
+    },
+    {
+      "description": "REST endpoints for indexed key-value history and latest-state lookups across NEAR contracts.",
+      "docsPath": "/fastdata/kv",
+      "hostedPathPrefix": "/apis/kv-fastdata",
+      "id": "api-kv-fastdata",
+      "key": "kv-fastdata",
+      "kind": "api",
+      "name": "KV FastData API",
+      "schemaType": "WebAPI"
+    },
+    {
+      "description": "REST endpoints for finalized and optimistic block data, headers, shards, and block streams.",
+      "docsPath": "/neardata",
+      "hostedPathPrefix": "/apis/neardata",
+      "id": "api-neardata",
+      "key": "neardata",
+      "kind": "api",
+      "name": "NEAR Data API",
+      "schemaType": "WebAPI"
+    },
+    {
+      "description": "REST endpoints for transaction, block, account-history, and receipt lookups backed by indexed data.",
+      "docsPath": "/tx",
+      "hostedPathPrefix": "/apis/transactions",
+      "id": "api-transactions",
+      "key": "transactions",
+      "kind": "api",
+      "name": "Transactions API",
+      "schemaType": "WebAPI"
+    },
+    {
+      "description": "REST endpoints for indexed transfer history and pagination over account transfer activity.",
+      "docsPath": "/transfers",
+      "hostedPathPrefix": "/apis/transfers",
+      "id": "api-transfers",
+      "key": "transfers",
+      "kind": "api",
+      "name": "Transfers API",
+      "schemaType": "WebAPI"
+    },
+    {
+      "description": "JSON-RPC methods for account state, balances, and access-key lookups on NEAR.",
+      "docsPath": "/rpc",
+      "hostedPathPrefix": "/rpcs/account",
+      "id": "rpc-account",
+      "key": "account",
+      "kind": "rpc",
+      "name": "Account RPC",
+      "schemaType": "WebAPI"
+    },
+    {
+      "description": "JSON-RPC methods for block lookup, block effects, and block-oriented reads on NEAR.",
+      "docsPath": "/rpc",
+      "hostedPathPrefix": "/rpcs/block",
+      "id": "rpc-block",
+      "key": "block",
+      "kind": "rpc",
+      "name": "Block RPC",
+      "schemaType": "WebAPI"
+    },
+    {
+      "description": "JSON-RPC methods for contract calls, contract code inspection, and contract state queries.",
+      "docsPath": "/rpc",
+      "hostedPathPrefix": "/rpcs/contract",
+      "id": "rpc-contract",
+      "key": "contract",
+      "kind": "rpc",
+      "name": "Contract RPC",
+      "schemaType": "WebAPI"
+    },
+    {
+      "description": "JSON-RPC methods for protocol status, gas, chunks, proofs, and network configuration.",
+      "docsPath": "/rpc",
+      "hostedPathPrefix": "/rpcs/protocol",
+      "id": "rpc-protocol",
+      "key": "protocol",
+      "kind": "rpc",
+      "name": "Protocol RPC",
+      "schemaType": "WebAPI"
+    },
+    {
+      "description": "JSON-RPC methods for transaction submission, receipt lookup, and transaction status checks.",
+      "docsPath": "/rpc",
+      "hostedPathPrefix": "/rpcs/transaction",
+      "id": "rpc-transaction",
+      "key": "transaction",
+      "kind": "rpc",
+      "name": "Transaction RPC",
+      "schemaType": "WebAPI"
+    },
+    {
+      "description": "JSON-RPC methods for validator sets, epochs, and validator-ordering reads.",
+      "docsPath": "/rpc",
+      "hostedPathPrefix": "/rpcs/validators",
+      "id": "rpc-validators",
+      "key": "validators",
+      "kind": "rpc",
+      "name": "Validators RPC",
+      "schemaType": "WebAPI"
+    }
+  ],
+  "operations": [
+    {
+      "authSummary": "API key via query apiKey",
+      "canonicalPath": "/apis/fastnear/system/health",
+      "description": "Returns `ok` when the service is healthy. When FastNEAR is degraded, the same `status` field carries a diagnostic string instead.",
+      "docsPath": "/api/system/health",
+      "familyId": "api-fastnear",
+      "headline": "FastNEAR API - Health",
+      "httpMethod": "GET",
+      "id": "fastnear-system-health",
+      "name": "FastNEAR API - Health",
+      "networkKeys": [
+        "mainnet",
+        "testnet"
+      ],
+      "operationId": "get_health",
+      "pageModelId": "fastnear-system-health",
+      "requestPath": "/health",
+      "requestType": null,
+      "routeAliases": [
+        "/apis/fastnear/openapi/system/get_health"
+      ],
+      "schemaType": "APIReference",
+      "sourceSpec": "apis/fastnear/system/health.yaml",
+      "summary": "Get service health",
+      "transport": "http"
+    },
+    {
+      "authSummary": "API key via query apiKey",
+      "canonicalPath": "/apis/fastnear/system/status",
+      "description": "Returns the latest indexed sync heights, the indexed block timestamp, the measured sync latency, and the deployed FastNEAR API version.",
+      "docsPath": "/api/system/status",
+      "familyId": "api-fastnear",
+      "headline": "FastNEAR API - Status",
+      "httpMethod": "GET",
+      "id": "fastnear-system-status",
+      "name": "FastNEAR API - Status",
+      "networkKeys": [
+        "mainnet",
+        "testnet"
+      ],
+      "operationId": "get_status",
+      "pageModelId": "fastnear-system-status",
+      "requestPath": "/status",
+      "requestType": null,
+      "routeAliases": [
+        "/apis/fastnear/openapi/system/get_status"
+      ],
+      "schemaType": "APIReference",
+      "sourceSpec": "apis/fastnear/system/status.yaml",
+      "summary": "Get service sync status",
+      "transport": "http"
+    },
+    {
+      "authSummary": "API key via query apiKey",
+      "canonicalPath": "/apis/fastnear/v0/account_ft",
+      "description": "Returns only fungible token contract account IDs that FastNEAR has indexed for the requested account. Unlike the v1 route, this response does not include balances or block-height metadata.",
+      "docsPath": "/api/v0/account-ft",
+      "familyId": "api-fastnear",
+      "headline": "FastNEAR API - V0 Account FT",
+      "httpMethod": "GET",
+      "id": "fastnear-v0-account-ft",
+      "name": "FastNEAR API - V0 Account FT",
+      "networkKeys": [
+        "mainnet",
+        "testnet"
+      ],
+      "operationId": "account_ft_v0",
+      "pageModelId": "fastnear-v0-account-ft",
+      "requestPath": "/v0/account/{account_id}/ft",
+      "requestType": null,
+      "routeAliases": [
+        "/apis/fastnear/openapi/fungible-tokens/account_ft_v0"
+      ],
+      "schemaType": "APIReference",
+      "sourceSpec": "apis/fastnear/v0/account_ft.yaml",
+      "summary": "Lookup fungible token contract IDs for an account",
+      "transport": "http"
+    },
+    {
+      "authSummary": "API key via query apiKey",
+      "canonicalPath": "/apis/fastnear/v0/account_nft",
+      "description": "Returns only NFT contract account IDs that FastNEAR has indexed for the requested account. Unlike the v1 route, this response does not include `last_update_block_height` metadata.",
+      "docsPath": "/api/v0/account-nft",
+      "familyId": "api-fastnear",
+      "headline": "FastNEAR API - V0 Account NFT",
+      "httpMethod": "GET",
+      "id": "fastnear-v0-account-nft",
+      "name": "FastNEAR API - V0 Account NFT",
+      "networkKeys": [
+        "mainnet",
+        "testnet"
+      ],
+      "operationId": "account_nft_v0",
+      "pageModelId": "fastnear-v0-account-nft",
+      "requestPath": "/v0/account/{account_id}/nft",
+      "requestType": null,
+      "routeAliases": [
+        "/apis/fastnear/openapi/non-fungible-tokens/account_nft_v0"
+      ],
+      "schemaType": "APIReference",
+      "sourceSpec": "apis/fastnear/v0/account_nft.yaml",
+      "summary": "Lookup NFT contract IDs for an account",
+      "transport": "http"
+    },
+    {
+      "authSummary": "API key via query apiKey",
+      "canonicalPath": "/apis/fastnear/v0/account_staking",
+      "description": "Returns staking pool account IDs that FastNEAR has indexed for the requested account. Unlike the v1 route, this response does not include `last_update_block_height` metadata.",
+      "docsPath": "/api/v0/account-staking",
+      "familyId": "api-fastnear",
+      "headline": "FastNEAR API - V0 Account Staking",
+      "httpMethod": "GET",
+      "id": "fastnear-v0-account-staking",
+      "name": "FastNEAR API - V0 Account Staking",
+      "networkKeys": [
+        "mainnet",
+        "testnet"
+      ],
+      "operationId": "account_staking_v0",
+      "pageModelId": "fastnear-v0-account-staking",
+      "requestPath": "/v0/account/{account_id}/staking",
+      "requestType": null,
+      "routeAliases": [
+        "/apis/fastnear/openapi/staking/account_staking_v0"
+      ],
+      "schemaType": "APIReference",
+      "sourceSpec": "apis/fastnear/v0/account_staking.yaml",
+      "summary": "Lookup staking pool account IDs for an account",
+      "transport": "http"
+    },
+    {
+      "authSummary": "API key via query apiKey",
+      "canonicalPath": "/apis/fastnear/v0/public_key_lookup",
+      "description": "Returns account IDs currently associated with the provided full-access public key. The response includes account IDs only.",
+      "docsPath": "/api/v0/public-key",
+      "familyId": "api-fastnear",
+      "headline": "FastNEAR API - V0 Public Key Lookup",
+      "httpMethod": "GET",
+      "id": "fastnear-v0-public-key-lookup",
+      "name": "FastNEAR API - V0 Public Key Lookup",
+      "networkKeys": [
+        "mainnet",
+        "testnet"
+      ],
+      "operationId": "lookup_by_public_key_v0",
+      "pageModelId": "fastnear-v0-public-key-lookup",
+      "requestPath": "/v0/public_key/{public_key}",
+      "requestType": null,
+      "routeAliases": [
+        "/apis/fastnear/openapi/public-key/lookup_by_public_key_v0"
+      ],
+      "schemaType": "APIReference",
+      "sourceSpec": "apis/fastnear/v0/public_key_lookup.yaml",
+      "summary": "Lookup full-access accounts by public key",
+      "transport": "http"
+    },
+    {
+      "authSummary": "API key via query apiKey",
+      "canonicalPath": "/apis/fastnear/v0/public_key_lookup_all",
+      "description": "Returns account IDs currently associated with the supplied public key, including limited-access keys when they are present in the FastNEAR index.",
+      "docsPath": "/api/v0/public-key-all",
+      "familyId": "api-fastnear",
+      "headline": "FastNEAR API - V0 Public Key Lookup (All)",
+      "httpMethod": "GET",
+      "id": "fastnear-v0-public-key-lookup-all",
+      "name": "FastNEAR API - V0 Public Key Lookup (All)",
+      "networkKeys": [
+        "mainnet",
+        "testnet"
+      ],
+      "operationId": "lookup_by_public_key_all_v0",
+      "pageModelId": "fastnear-v0-public-key-lookup-all",
+      "requestPath": "/v0/public_key/{public_key}/all",
+      "requestType": null,
+      "routeAliases": [
+        "/apis/fastnear/openapi/public-key/lookup_by_public_key_all_v0"
+      ],
+      "schemaType": "APIReference",
+      "sourceSpec": "apis/fastnear/v0/public_key_lookup_all.yaml",
+      "summary": "Lookup all indexed accounts by public key",
+      "transport": "http"
+    },
+    {
+      "authSummary": "API key via query apiKey",
+      "canonicalPath": "/apis/fastnear/v1/account_ft",
+      "description": "Returns fungible token rows for the requested account. Balances and `last_update_block_height` remain nullable when the index has not recorded them yet.",
+      "docsPath": "/api/v1/account-ft",
+      "familyId": "api-fastnear",
+      "headline": "FastNEAR API - V1 Account FT",
+      "httpMethod": "GET",
+      "id": "fastnear-v1-account-ft",
+      "name": "FastNEAR API - V1 Account FT",
+      "networkKeys": [
+        "mainnet",
+        "testnet"
+      ],
+      "operationId": "account_ft_v1",
+      "pageModelId": "fastnear-v1-account-ft",
+      "requestPath": "/v1/account/{account_id}/ft",
+      "requestType": null,
+      "routeAliases": [
+        "/apis/fastnear/openapi/fungible-tokens/account_ft_v1"
+      ],
+      "schemaType": "APIReference",
+      "sourceSpec": "apis/fastnear/v1/account_ft.yaml",
+      "summary": "Lookup indexed fungible token rows for an account",
+      "transport": "http"
+    },
+    {
+      "authSummary": "API key via query apiKey",
+      "canonicalPath": "/apis/fastnear/v1/account_full",
+      "description": "Returns staking, fungible token, NFT, and account-state information for the requested account. `state` remains nullable when the account state has not been recorded.",
+      "docsPath": "/api/v1/account-full",
+      "familyId": "api-fastnear",
+      "headline": "FastNEAR API - V1 Account Full",
+      "httpMethod": "GET",
+      "id": "fastnear-v1-account-full",
+      "name": "FastNEAR API - V1 Account Full",
+      "networkKeys": [
+        "mainnet",
+        "testnet"
+      ],
+      "operationId": "account_full_v1",
+      "pageModelId": "fastnear-v1-account-full",
+      "requestPath": "/v1/account/{account_id}/full",
+      "requestType": null,
+      "routeAliases": [
+        "/apis/fastnear/openapi/accounts/account_full_v1"
+      ],
+      "schemaType": "APIReference",
+      "sourceSpec": "apis/fastnear/v1/account_full.yaml",
+      "summary": "Lookup full indexed account information",
+      "transport": "http"
+    },
+    {
+      "authSummary": "API key via query apiKey",
+      "canonicalPath": "/apis/fastnear/v1/account_nft",
+      "description": "Returns NFT contract rows for the requested account. `last_update_block_height` is nullable when FastNEAR has not recorded a recent indexed update for that contract relationship.",
+      "docsPath": "/api/v1/account-nft",
+      "familyId": "api-fastnear",
+      "headline": "FastNEAR API - V1 Account NFT",
+      "httpMethod": "GET",
+      "id": "fastnear-v1-account-nft",
+      "name": "FastNEAR API - V1 Account NFT",
+      "networkKeys": [
+        "mainnet",
+        "testnet"
+      ],
+      "operationId": "account_nft_v1",
+      "pageModelId": "fastnear-v1-account-nft",
+      "requestPath": "/v1/account/{account_id}/nft",
+      "requestType": null,
+      "routeAliases": [
+        "/apis/fastnear/openapi/non-fungible-tokens/account_nft_v1"
+      ],
+      "schemaType": "APIReference",
+      "sourceSpec": "apis/fastnear/v1/account_nft.yaml",
+      "summary": "Lookup indexed NFT contract rows for an account",
+      "transport": "http"
+    },
+    {
+      "authSummary": "API key via query apiKey",
+      "canonicalPath": "/apis/fastnear/v1/account_staking",
+      "description": "Returns staking pool rows for the requested account. `last_update_block_height` is nullable when FastNEAR has not recorded a recent indexed update for that pool relationship.",
+      "docsPath": "/api/v1/account-staking",
+      "familyId": "api-fastnear",
+      "headline": "FastNEAR API - V1 Account Staking",
+      "httpMethod": "GET",
+      "id": "fastnear-v1-account-staking",
+      "name": "FastNEAR API - V1 Account Staking",
+      "networkKeys": [
+        "mainnet",
+        "testnet"
+      ],
+      "operationId": "account_staking_v1",
+      "pageModelId": "fastnear-v1-account-staking",
+      "requestPath": "/v1/account/{account_id}/staking",
+      "requestType": null,
+      "routeAliases": [
+        "/apis/fastnear/openapi/staking/account_staking_v1"
+      ],
+      "schemaType": "APIReference",
+      "sourceSpec": "apis/fastnear/v1/account_staking.yaml",
+      "summary": "Lookup indexed staking pools for an account",
+      "transport": "http"
+    },
+    {
+      "authSummary": "API key via query apiKey",
+      "canonicalPath": "/apis/fastnear/v1/ft_top",
+      "description": "Returns the top indexed accounts by balance for the requested fungible token.",
+      "docsPath": "/api/v1/ft-top",
+      "familyId": "api-fastnear",
+      "headline": "FastNEAR API - V1 FT Top Holders",
+      "httpMethod": "GET",
+      "id": "fastnear-v1-ft-top",
+      "name": "FastNEAR API - V1 FT Top Holders",
+      "networkKeys": [
+        "mainnet",
+        "testnet"
+      ],
+      "operationId": "ft_top_v1",
+      "pageModelId": "fastnear-v1-ft-top",
+      "requestPath": "/v1/ft/{token_id}/top",
+      "requestType": null,
+      "routeAliases": [
+        "/apis/fastnear/openapi/fungible-tokens/ft_top_v1"
+      ],
+      "schemaType": "APIReference",
+      "sourceSpec": "apis/fastnear/v1/ft_top.yaml",
+      "summary": "Lookup top indexed holders for a fungible token",
+      "transport": "http"
+    },
+    {
+      "authSummary": "API key via query apiKey",
+      "canonicalPath": "/apis/fastnear/v1/public_key_lookup",
+      "description": "Returns account IDs currently associated with the supplied full-access public key. This v1 route currently uses the same `{ public_key, account_ids }` response shape as the v0 route.",
+      "docsPath": "/api/v1/public-key",
+      "familyId": "api-fastnear",
+      "headline": "FastNEAR API - V1 Public Key Lookup",
+      "httpMethod": "GET",
+      "id": "fastnear-v1-public-key-lookup",
+      "name": "FastNEAR API - V1 Public Key Lookup",
+      "networkKeys": [
+        "mainnet",
+        "testnet"
+      ],
+      "operationId": "lookup_by_public_key_v1",
+      "pageModelId": "fastnear-v1-public-key-lookup",
+      "requestPath": "/v1/public_key/{public_key}",
+      "requestType": null,
+      "routeAliases": [
+        "/apis/fastnear/openapi/public-key/lookup_by_public_key_v1"
+      ],
+      "schemaType": "APIReference",
+      "sourceSpec": "apis/fastnear/v1/public_key_lookup.yaml",
+      "summary": "Lookup full-access accounts by public key",
+      "transport": "http"
+    },
+    {
+      "authSummary": "API key via query apiKey",
+      "canonicalPath": "/apis/fastnear/v1/public_key_lookup_all",
+      "description": "Returns account IDs currently associated with the supplied public key, including limited-access keys when they are present in the FastNEAR index. This v1 route currently uses the same `{ public_key, account_ids }` response shape as the v0 route.",
+      "docsPath": "/api/v1/public-key-all",
+      "familyId": "api-fastnear",
+      "headline": "FastNEAR API - V1 Public Key Lookup (All)",
+      "httpMethod": "GET",
+      "id": "fastnear-v1-public-key-lookup-all",
+      "name": "FastNEAR API - V1 Public Key Lookup (All)",
+      "networkKeys": [
+        "mainnet",
+        "testnet"
+      ],
+      "operationId": "lookup_by_public_key_all_v1",
+      "pageModelId": "fastnear-v1-public-key-lookup-all",
+      "requestPath": "/v1/public_key/{public_key}/all",
+      "requestType": null,
+      "routeAliases": [
+        "/apis/fastnear/openapi/public-key/lookup_by_public_key_all_v1"
+      ],
+      "schemaType": "APIReference",
+      "sourceSpec": "apis/fastnear/v1/public_key_lookup_all.yaml",
+      "summary": "Lookup all indexed accounts by public key",
+      "transport": "http"
+    },
+    {
+      "authSummary": "No auth required",
+      "canonicalPath": "/apis/kv-fastdata/v0/all_by_predecessor",
+      "description": "Returns the latest row for each `(current_account_id, key)` pair written by the selected predecessor. `page_token` values are opaque and scoped to this endpoint and predecessor.",
+      "docsPath": "/fastdata/kv/all-by-predecessor",
+      "familyId": "api-kv-fastdata",
+      "headline": "KV FastData API - All Latest Keys by Predecessor",
+      "httpMethod": "POST",
+      "id": "kv-fastdata-v0-all-by-predecessor",
+      "name": "KV FastData API - All Latest Keys by Predecessor",
+      "networkKeys": [
+        "mainnet",
+        "testnet"
+      ],
+      "operationId": "all_by_predecessor",
+      "pageModelId": "kv-fastdata-v0-all-by-predecessor",
+      "requestPath": "/v0/all/{predecessor_id}",
+      "requestType": null,
+      "routeAliases": [
+        "/apis/kv-fastdata/openapi/latest/all_by_predecessor"
+      ],
+      "schemaType": "APIReference",
+      "sourceSpec": "apis/kv-fastdata/v0/all_by_predecessor.yaml",
+      "summary": "Fetch latest key-value rows for one predecessor across all contracts",
+      "transport": "http"
+    },
+    {
+      "authSummary": "No auth required",
+      "canonicalPath": "/apis/kv-fastdata/v0/get_history_key",
+      "description": "Returns historical rows for one exact key written by the selected predecessor to the selected contract.",
+      "docsPath": "/fastdata/kv/get-history-key",
+      "familyId": "api-kv-fastdata",
+      "headline": "KV FastData API - History by Exact Key",
+      "httpMethod": "GET",
+      "id": "kv-fastdata-v0-get-history-key",
+      "name": "KV FastData API - History by Exact Key",
+      "networkKeys": [
+        "mainnet",
+        "testnet"
+      ],
+      "operationId": "get_history_key",
+      "pageModelId": "kv-fastdata-v0-get-history-key",
+      "requestPath": "/v0/history/{current_account_id}/{predecessor_id}/{key}",
+      "requestType": null,
+      "routeAliases": [
+        "/apis/kv-fastdata/openapi/history/get_history_key"
+      ],
+      "schemaType": "APIReference",
+      "sourceSpec": "apis/kv-fastdata/v0/get_history_key.yaml",
+      "summary": "Fetch historical rows for one exact key under one predecessor and contract",
+      "transport": "http"
+    },
+    {
+      "authSummary": "No auth required",
+      "canonicalPath": "/apis/kv-fastdata/v0/get_latest_key",
+      "description": "Returns the latest row for one exact key written by the selected predecessor to the selected contract.",
+      "docsPath": "/fastdata/kv/get-latest-key",
+      "familyId": "api-kv-fastdata",
+      "headline": "KV FastData API - Latest by Exact Key",
+      "httpMethod": "GET",
+      "id": "kv-fastdata-v0-get-latest-key",
+      "name": "KV FastData API - Latest by Exact Key",
+      "networkKeys": [
+        "mainnet",
+        "testnet"
+      ],
+      "operationId": "get_latest_key",
+      "pageModelId": "kv-fastdata-v0-get-latest-key",
+      "requestPath": "/v0/latest/{current_account_id}/{predecessor_id}/{key}",
+      "requestType": null,
+      "routeAliases": [
+        "/apis/kv-fastdata/openapi/latest/get_latest_key"
+      ],
+      "schemaType": "APIReference",
+      "sourceSpec": "apis/kv-fastdata/v0/get_latest_key.yaml",
+      "summary": "Fetch the latest row for one exact key under one predecessor and contract",
+      "transport": "http"
+    },
+    {
+      "authSummary": "No auth required",
+      "canonicalPath": "/apis/kv-fastdata/v0/history_by_account",
+      "description": "Returns historical rows for the requested contract account across all predecessors. `page_token` values are opaque and only valid when reused with the same endpoint and filters.",
+      "docsPath": "/fastdata/kv/history-by-account",
+      "familyId": "api-kv-fastdata",
+      "headline": "KV FastData API - History by Account",
+      "httpMethod": "POST",
+      "id": "kv-fastdata-v0-history-by-account",
+      "name": "KV FastData API - History by Account",
+      "networkKeys": [
+        "mainnet",
+        "testnet"
+      ],
+      "operationId": "history_by_account",
+      "pageModelId": "kv-fastdata-v0-history-by-account",
+      "requestPath": "/v0/history/{current_account_id}",
+      "requestType": null,
+      "routeAliases": [
+        "/apis/kv-fastdata/openapi/history/history_by_account"
+      ],
+      "schemaType": "APIReference",
+      "sourceSpec": "apis/kv-fastdata/v0/history_by_account.yaml",
+      "summary": "Fetch historical key-value writes for one contract across all predecessors",
+      "transport": "http"
+    },
+    {
+      "authSummary": "No auth required",
+      "canonicalPath": "/apis/kv-fastdata/v0/history_by_key",
+      "description": "Returns historical FastData rows for one exact key across every indexed contract and predecessor. `page_token` values are opaque and only valid when reused with the same endpoint and filters.",
+      "docsPath": "/fastdata/kv/history-by-key",
+      "familyId": "api-kv-fastdata",
+      "headline": "KV FastData API - History by Global Key",
+      "httpMethod": "POST",
+      "id": "kv-fastdata-v0-history-by-key",
+      "name": "KV FastData API - History by Global Key",
+      "networkKeys": [
+        "mainnet",
+        "testnet"
+      ],
+      "operationId": "history_by_key",
+      "pageModelId": "kv-fastdata-v0-history-by-key",
+      "requestPath": "/v0/history",
+      "requestType": null,
+      "routeAliases": [
+        "/apis/kv-fastdata/openapi/history/history_by_key"
+      ],
+      "schemaType": "APIReference",
+      "sourceSpec": "apis/kv-fastdata/v0/history_by_key.yaml",
+      "summary": "Fetch historical rows by exact key across all indexed contracts",
+      "transport": "http"
+    },
+    {
+      "authSummary": "No auth required",
+      "canonicalPath": "/apis/kv-fastdata/v0/history_by_predecessor",
+      "description": "Returns historical rows for one `predecessor_id` + `current_account_id` pair. Use `key` or `key_prefix` to narrow the search. `page_token` values are opaque and only valid when reused with the same endpoint and filters.",
+      "docsPath": "/fastdata/kv/history-by-predecessor",
+      "familyId": "api-kv-fastdata",
+      "headline": "KV FastData API - History by Predecessor",
+      "httpMethod": "POST",
+      "id": "kv-fastdata-v0-history-by-predecessor",
+      "name": "KV FastData API - History by Predecessor",
+      "networkKeys": [
+        "mainnet",
+        "testnet"
+      ],
+      "operationId": "history_by_predecessor",
+      "pageModelId": "kv-fastdata-v0-history-by-predecessor",
+      "requestPath": "/v0/history/{current_account_id}/{predecessor_id}",
+      "requestType": null,
+      "routeAliases": [
+        "/apis/kv-fastdata/openapi/history/history_by_predecessor"
+      ],
+      "schemaType": "APIReference",
+      "sourceSpec": "apis/kv-fastdata/v0/history_by_predecessor.yaml",
+      "summary": "Fetch historical key-value writes for one predecessor and contract",
+      "transport": "http"
+    },
+    {
+      "authSummary": "No auth required",
+      "canonicalPath": "/apis/kv-fastdata/v0/latest_by_account",
+      "description": "Returns the latest row for each `(predecessor_id, key)` pair written to the contract. `page_token` values are opaque and scoped to this endpoint, the contract account, and the active filters.",
+      "docsPath": "/fastdata/kv/latest-by-account",
+      "familyId": "api-kv-fastdata",
+      "headline": "KV FastData API - Latest by Account",
+      "httpMethod": "POST",
+      "id": "kv-fastdata-v0-latest-by-account",
+      "name": "KV FastData API - Latest by Account",
+      "networkKeys": [
+        "mainnet",
+        "testnet"
+      ],
+      "operationId": "latest_by_account",
+      "pageModelId": "kv-fastdata-v0-latest-by-account",
+      "requestPath": "/v0/latest/{current_account_id}",
+      "requestType": null,
+      "routeAliases": [
+        "/apis/kv-fastdata/openapi/latest/latest_by_account"
+      ],
+      "schemaType": "APIReference",
+      "sourceSpec": "apis/kv-fastdata/v0/latest_by_account.yaml",
+      "summary": "Fetch latest key-value rows for one contract across all predecessors",
+      "transport": "http"
+    },
+    {
+      "authSummary": "No auth required",
+      "canonicalPath": "/apis/kv-fastdata/v0/latest_by_predecessor",
+      "description": "Returns the latest row for each key written by the selected predecessor to the requested contract. `page_token` values are opaque and scoped to this endpoint and filter set.",
+      "docsPath": "/fastdata/kv/latest-by-predecessor",
+      "familyId": "api-kv-fastdata",
+      "headline": "KV FastData API - Latest by Predecessor",
+      "httpMethod": "POST",
+      "id": "kv-fastdata-v0-latest-by-predecessor",
+      "name": "KV FastData API - Latest by Predecessor",
+      "networkKeys": [
+        "mainnet",
+        "testnet"
+      ],
+      "operationId": "latest_by_predecessor",
+      "pageModelId": "kv-fastdata-v0-latest-by-predecessor",
+      "requestPath": "/v0/latest/{current_account_id}/{predecessor_id}",
+      "requestType": null,
+      "routeAliases": [
+        "/apis/kv-fastdata/openapi/latest/latest_by_predecessor"
+      ],
+      "schemaType": "APIReference",
+      "sourceSpec": "apis/kv-fastdata/v0/latest_by_predecessor.yaml",
+      "summary": "Fetch latest key-value rows for one predecessor and contract",
+      "transport": "http"
+    },
+    {
+      "authSummary": "No auth required",
+      "canonicalPath": "/apis/kv-fastdata/v0/multi",
+      "description": "Returns the latest entry for each requested fully qualified key. Missing keys are represented as `null` entries in the response array.",
+      "docsPath": "/fastdata/kv/multi",
+      "familyId": "api-kv-fastdata",
+      "headline": "KV FastData API - Multi-Key Lookup",
+      "httpMethod": "POST",
+      "id": "kv-fastdata-v0-multi",
+      "name": "KV FastData API - Multi-Key Lookup",
+      "networkKeys": [
+        "mainnet",
+        "testnet"
+      ],
+      "operationId": "multi",
+      "pageModelId": "kv-fastdata-v0-multi",
+      "requestPath": "/v0/multi",
+      "requestType": null,
+      "routeAliases": [
+        "/apis/kv-fastdata/openapi/latest/multi"
+      ],
+      "schemaType": "APIReference",
+      "sourceSpec": "apis/kv-fastdata/v0/multi.yaml",
+      "summary": "Fetch the latest rows for multiple fully qualified keys",
+      "transport": "http"
+    },
+    {
+      "authSummary": "API key via query apiKey",
+      "canonicalPath": "/apis/neardata/system/health",
+      "description": "Returns `ok` when the current deployment is healthy and `unhealthy` when the latest indexed block is too stale. Invalid API keys can be rejected upstream before the request reaches the app.",
+      "docsPath": "/neardata/system/health",
+      "familyId": "api-neardata",
+      "headline": "NEAR Data API - Health",
+      "httpMethod": "GET",
+      "id": "neardata-system-health",
+      "name": "NEAR Data API - Health",
+      "networkKeys": [
+        "mainnet",
+        "testnet"
+      ],
+      "operationId": "get_health",
+      "pageModelId": "neardata-system-health",
+      "requestPath": "/health",
+      "requestType": null,
+      "routeAliases": [
+        "/apis/neardata/openapi/system/get_health"
+      ],
+      "schemaType": "APIReference",
+      "sourceSpec": "apis/neardata/system/health.yaml",
+      "summary": "Get service health",
+      "transport": "http"
+    },
+    {
+      "authSummary": "API key via query apiKey",
+      "canonicalPath": "/apis/neardata/v0/block",
+      "description": "Returns the finalized block document for the requested height, or `null` when the block does not exist within the requested archive segment. Depending on deployment topology, the request may redirect to another host that owns the canonical archive range.",
+      "docsPath": "/neardata/block",
+      "familyId": "api-neardata",
+      "headline": "NEAR Data API - Block",
+      "httpMethod": "GET",
+      "id": "neardata-v0-block",
+      "name": "NEAR Data API - Block",
+      "networkKeys": [
+        "mainnet",
+        "testnet"
+      ],
+      "operationId": "get_block",
+      "pageModelId": "neardata-v0-block",
+      "requestPath": "/v0/block/{block_height}",
+      "requestType": null,
+      "routeAliases": [
+        "/apis/neardata/openapi/blocks/get_block"
+      ],
+      "schemaType": "APIReference",
+      "sourceSpec": "apis/neardata/v0/block.yaml",
+      "summary": "Fetch a finalized block by height",
+      "transport": "http"
+    },
+    {
+      "authSummary": "API key via query apiKey",
+      "canonicalPath": "/apis/neardata/v0/block_chunk",
+      "description": "Returns the chunk object for the requested shard ID, or `null` when that chunk is absent. Depending on deployment topology, the request may redirect to another host that owns the canonical archive range.",
+      "docsPath": "/neardata/block-chunk",
+      "familyId": "api-neardata",
+      "headline": "NEAR Data API - Block Chunk",
+      "httpMethod": "GET",
+      "id": "neardata-v0-block-chunk",
+      "name": "NEAR Data API - Block Chunk",
+      "networkKeys": [
+        "mainnet",
+        "testnet"
+      ],
+      "operationId": "get_chunk",
+      "pageModelId": "neardata-v0-block-chunk",
+      "requestPath": "/v0/block/{block_height}/chunk/{shard_id}",
+      "requestType": null,
+      "routeAliases": [
+        "/apis/neardata/openapi/blocks/get_chunk"
+      ],
+      "schemaType": "APIReference",
+      "sourceSpec": "apis/neardata/v0/block_chunk.yaml",
+      "summary": "Fetch one chunk from a finalized block",
+      "transport": "http"
+    },
+    {
+      "authSummary": "API key via query apiKey",
+      "canonicalPath": "/apis/neardata/v0/block_headers",
+      "description": "Returns the `block` object extracted from the full block response, not just the nested `header` sub-object. Depending on deployment topology, the request may redirect to another host that owns the canonical archive range.",
+      "docsPath": "/neardata/block-headers",
+      "familyId": "api-neardata",
+      "headline": "NEAR Data API - Block Headers",
+      "httpMethod": "GET",
+      "id": "neardata-v0-block-headers",
+      "name": "NEAR Data API - Block Headers",
+      "networkKeys": [
+        "mainnet",
+        "testnet"
+      ],
+      "operationId": "get_block_headers",
+      "pageModelId": "neardata-v0-block-headers",
+      "requestPath": "/v0/block/{block_height}/headers",
+      "requestType": null,
+      "routeAliases": [
+        "/apis/neardata/openapi/blocks/get_block_headers"
+      ],
+      "schemaType": "APIReference",
+      "sourceSpec": "apis/neardata/v0/block_headers.yaml",
+      "summary": "Fetch the block-level object for a finalized block",
+      "transport": "http"
+    },
+    {
+      "authSummary": "API key via query apiKey",
+      "canonicalPath": "/apis/neardata/v0/block_optimistic",
+      "description": "Returns an optimistic block document when the deployment can serve it directly. Older or archive-only heights may redirect to a canonical finalized or archive URL instead.",
+      "docsPath": "/neardata/block-optimistic",
+      "familyId": "api-neardata",
+      "headline": "NEAR Data API - Optimistic Block",
+      "httpMethod": "GET",
+      "id": "neardata-v0-block-optimistic",
+      "name": "NEAR Data API - Optimistic Block",
+      "networkKeys": [
+        "mainnet",
+        "testnet"
+      ],
+      "operationId": "get_block_optimistic",
+      "pageModelId": "neardata-v0-block-optimistic",
+      "requestPath": "/v0/block_opt/{block_height}",
+      "requestType": null,
+      "routeAliases": [
+        "/apis/neardata/openapi/blocks/get_block_optimistic"
+      ],
+      "schemaType": "APIReference",
+      "sourceSpec": "apis/neardata/v0/block_optimistic.yaml",
+      "summary": "Fetch an optimistic block by height",
+      "transport": "http"
+    },
+    {
+      "authSummary": "API key via query apiKey",
+      "canonicalPath": "/apis/neardata/v0/block_shard",
+      "description": "Returns the shard object for the requested shard ID, or `null` when that shard is absent. Depending on deployment topology, the request may redirect to another host that owns the canonical archive range.",
+      "docsPath": "/neardata/block-shard",
+      "familyId": "api-neardata",
+      "headline": "NEAR Data API - Block Shard",
+      "httpMethod": "GET",
+      "id": "neardata-v0-block-shard",
+      "name": "NEAR Data API - Block Shard",
+      "networkKeys": [
+        "mainnet",
+        "testnet"
+      ],
+      "operationId": "get_shard",
+      "pageModelId": "neardata-v0-block-shard",
+      "requestPath": "/v0/block/{block_height}/shard/{shard_id}",
+      "requestType": null,
+      "routeAliases": [
+        "/apis/neardata/openapi/blocks/get_shard"
+      ],
+      "schemaType": "APIReference",
+      "sourceSpec": "apis/neardata/v0/block_shard.yaml",
+      "summary": "Fetch one shard from a finalized block",
+      "transport": "http"
+    },
+    {
+      "authSummary": "API key via query apiKey",
+      "canonicalPath": "/apis/neardata/v0/first_block",
+      "description": "Returns a redirect to the canonical first block URL for the selected deployment. Clients that automatically follow redirects will receive the full block document instead.",
+      "docsPath": "/neardata/first-block",
+      "familyId": "api-neardata",
+      "headline": "NEAR Data API - First Block",
+      "httpMethod": "GET",
+      "id": "neardata-v0-first-block",
+      "name": "NEAR Data API - First Block",
+      "networkKeys": [
+        "mainnet",
+        "testnet"
+      ],
+      "operationId": "get_first_block",
+      "pageModelId": "neardata-v0-first-block",
+      "requestPath": "/v0/first_block",
+      "requestType": null,
+      "routeAliases": [
+        "/apis/neardata/openapi/blocks/get_first_block"
+      ],
+      "schemaType": "APIReference",
+      "sourceSpec": "apis/neardata/v0/first_block.yaml",
+      "summary": "Redirect to the first block after genesis",
+      "transport": "http"
+    },
+    {
+      "authSummary": "API key via query apiKey",
+      "canonicalPath": "/apis/neardata/v0/last_block_final",
+      "description": "Returns a redirect to the canonical latest finalized block URL for the current deployment. Clients that automatically follow redirects will receive the full block document instead.",
+      "docsPath": "/neardata/last-block-final",
+      "familyId": "api-neardata",
+      "headline": "NEAR Data API - Last Final Block",
+      "httpMethod": "GET",
+      "id": "neardata-v0-last-block-final",
+      "name": "NEAR Data API - Last Final Block",
+      "networkKeys": [
+        "mainnet",
+        "testnet"
+      ],
+      "operationId": "get_last_block_final",
+      "pageModelId": "neardata-v0-last-block-final",
+      "requestPath": "/v0/last_block/final",
+      "requestType": null,
+      "routeAliases": [
+        "/apis/neardata/openapi/blocks/get_last_block_final"
+      ],
+      "schemaType": "APIReference",
+      "sourceSpec": "apis/neardata/v0/last_block_final.yaml",
+      "summary": "Redirect to the latest finalized block",
+      "transport": "http"
+    },
+    {
+      "authSummary": "API key via query apiKey",
+      "canonicalPath": "/apis/neardata/v0/last_block_optimistic",
+      "description": "Returns a redirect to the canonical latest optimistic block URL for the current deployment. Clients that automatically follow redirects will receive the resulting block document instead.",
+      "docsPath": "/neardata/last-block-optimistic",
+      "familyId": "api-neardata",
+      "headline": "NEAR Data API - Last Optimistic Block",
+      "httpMethod": "GET",
+      "id": "neardata-v0-last-block-optimistic",
+      "name": "NEAR Data API - Last Optimistic Block",
+      "networkKeys": [
+        "mainnet",
+        "testnet"
+      ],
+      "operationId": "get_last_block_optimistic",
+      "pageModelId": "neardata-v0-last-block-optimistic",
+      "requestPath": "/v0/last_block/optimistic",
+      "requestType": null,
+      "routeAliases": [
+        "/apis/neardata/openapi/blocks/get_last_block_optimistic"
+      ],
+      "schemaType": "APIReference",
+      "sourceSpec": "apis/neardata/v0/last_block_optimistic.yaml",
+      "summary": "Redirect to the latest optimistic block",
+      "transport": "http"
+    },
+    {
+      "authSummary": "No auth required",
+      "canonicalPath": "/apis/transactions/v0/account",
+      "description": "Returns account transaction rows, an optional total count on the first page, and an optional resume token.",
+      "docsPath": "/tx/account",
+      "familyId": "api-transactions",
+      "headline": "Transactions API - Account History",
+      "httpMethod": "POST",
+      "id": "transactions-v0-account",
+      "name": "Transactions API - Account History",
+      "networkKeys": [
+        "mainnet",
+        "testnet"
+      ],
+      "operationId": "get_account",
+      "pageModelId": "transactions-v0-account",
+      "requestPath": "/v0/account",
+      "requestType": null,
+      "routeAliases": [
+        "/apis/transactions/openapi/account/get_account"
+      ],
+      "schemaType": "APIReference",
+      "sourceSpec": "apis/transactions/v0/account.yaml",
+      "summary": "Fetch account transaction history",
+      "transport": "http"
+    },
+    {
+      "authSummary": "No auth required",
+      "canonicalPath": "/apis/transactions/v0/block",
+      "description": "Returns a block row and optionally its transactions and receipts.",
+      "docsPath": "/tx/block",
+      "familyId": "api-transactions",
+      "headline": "Transactions API - Block Lookup",
+      "httpMethod": "POST",
+      "id": "transactions-v0-block",
+      "name": "Transactions API - Block Lookup",
+      "networkKeys": [
+        "mainnet",
+        "testnet"
+      ],
+      "operationId": "get_block",
+      "pageModelId": "transactions-v0-block",
+      "requestPath": "/v0/block",
+      "requestType": null,
+      "routeAliases": [
+        "/apis/transactions/openapi/blocks/get_block"
+      ],
+      "schemaType": "APIReference",
+      "sourceSpec": "apis/transactions/v0/block.yaml",
+      "summary": "Fetch a block by height or hash",
+      "transport": "http"
+    },
+    {
+      "authSummary": "No auth required",
+      "canonicalPath": "/apis/transactions/v0/blocks",
+      "description": "Returns up to 100 block rows for the requested height window.",
+      "docsPath": "/tx/blocks",
+      "familyId": "api-transactions",
+      "headline": "Transactions API - Block Range",
+      "httpMethod": "POST",
+      "id": "transactions-v0-blocks",
+      "name": "Transactions API - Block Range",
+      "networkKeys": [
+        "mainnet",
+        "testnet"
+      ],
+      "operationId": "get_blocks",
+      "pageModelId": "transactions-v0-blocks",
+      "requestPath": "/v0/blocks",
+      "requestType": null,
+      "routeAliases": [
+        "/apis/transactions/openapi/blocks/get_blocks"
+      ],
+      "schemaType": "APIReference",
+      "sourceSpec": "apis/transactions/v0/blocks.yaml",
+      "summary": "Fetch a list of blocks",
+      "transport": "http"
+    },
+    {
+      "authSummary": "No auth required",
+      "canonicalPath": "/apis/transactions/v0/receipt",
+      "description": "Returns a receipt row and, when present, the associated raw transaction payload.",
+      "docsPath": "/tx/receipt",
+      "familyId": "api-transactions",
+      "headline": "Transactions API - Receipt Lookup",
+      "httpMethod": "POST",
+      "id": "transactions-v0-receipt",
+      "name": "Transactions API - Receipt Lookup",
+      "networkKeys": [
+        "mainnet",
+        "testnet"
+      ],
+      "operationId": "get_receipt",
+      "pageModelId": "transactions-v0-receipt",
+      "requestPath": "/v0/receipt",
+      "requestType": null,
+      "routeAliases": [
+        "/apis/transactions/openapi/receipts/get_receipt"
+      ],
+      "schemaType": "APIReference",
+      "sourceSpec": "apis/transactions/v0/receipt.yaml",
+      "summary": "Fetch a receipt by ID",
+      "transport": "http"
+    },
+    {
+      "authSummary": "No auth required",
+      "canonicalPath": "/apis/transactions/v0/transactions",
+      "description": "Returns up to 20 raw transaction payloads for the supplied transaction hashes.",
+      "docsPath": "/tx/transactions",
+      "familyId": "api-transactions",
+      "headline": "Transactions API - Transactions by Hash",
+      "httpMethod": "POST",
+      "id": "transactions-v0-transactions",
+      "name": "Transactions API - Transactions by Hash",
+      "networkKeys": [
+        "mainnet",
+        "testnet"
+      ],
+      "operationId": "get_transactions",
+      "pageModelId": "transactions-v0-transactions",
+      "requestPath": "/v0/transactions",
+      "requestType": null,
+      "routeAliases": [
+        "/apis/transactions/openapi/transactions/get_transactions"
+      ],
+      "schemaType": "APIReference",
+      "sourceSpec": "apis/transactions/v0/transactions.yaml",
+      "summary": "Fetch transactions by hash",
+      "transport": "http"
+    },
+    {
+      "authSummary": "No auth required",
+      "canonicalPath": "/apis/transfers/v0/transfers",
+      "description": "Returns transfer rows plus an opaque resume token for pagination.",
+      "docsPath": "/transfers/query",
+      "familyId": "api-transfers",
+      "headline": "Transfers API - Query Transfers",
+      "httpMethod": "POST",
+      "id": "transfers-v0-transfers",
+      "name": "Transfers API - Query Transfers",
+      "networkKeys": [
+        "mainnet"
+      ],
+      "operationId": "get_transfers_by_account",
+      "pageModelId": "transfers-v0-transfers",
+      "requestPath": "/v0/transfers",
+      "requestType": null,
+      "routeAliases": [
+        "/apis/transfers/openapi/transfers/get_transfers_by_account"
+      ],
+      "schemaType": "APIReference",
+      "sourceSpec": "apis/transfers/v0/transfers.yaml",
+      "summary": "Query transfers for an account",
+      "transport": "http"
+    },
+    {
+      "authSummary": "API key via query apiKey",
+      "canonicalPath": "/rpcs/account/view_access_key",
+      "description": "Retrieves information about a specific access key for a NEAR account",
+      "docsPath": "/rpc/account/view-access-key",
+      "familyId": "rpc-account",
+      "headline": "NEAR Protocol RPC: View Access Key",
+      "httpMethod": "POST",
+      "id": "rpc-view-access-key",
+      "name": "NEAR Protocol RPC: View Access Key",
+      "networkKeys": [
+        "mainnet",
+        "testnet"
+      ],
+      "operationId": "view_access_key",
+      "pageModelId": "rpc-view-access-key",
+      "requestPath": "/",
+      "requestType": "view_access_key",
+      "routeAliases": [
+        "/rpcs/account/view_access_key/other/view_access_key",
+        "/reference/operation/view_access_key"
+      ],
+      "schemaType": "APIReference",
+      "sourceSpec": "rpcs/account/view_access_key.yaml",
+      "summary": "View account access key",
+      "transport": "json-rpc"
+    },
+    {
+      "authSummary": "API key via query apiKey",
+      "canonicalPath": "/rpcs/account/view_access_key_list",
+      "description": "Retrieves a list of all access keys for a NEAR account",
+      "docsPath": "/rpc/account/view-access-key-list",
+      "familyId": "rpc-account",
+      "headline": "NEAR Protocol RPC: View Access Key List",
+      "httpMethod": "POST",
+      "id": "rpc-view-access-key-list",
+      "name": "NEAR Protocol RPC: View Access Key List",
+      "networkKeys": [
+        "mainnet",
+        "testnet"
+      ],
+      "operationId": "view_access_key_list",
+      "pageModelId": "rpc-view-access-key-list",
+      "requestPath": "/",
+      "requestType": "view_access_key_list",
+      "routeAliases": [
+        "/rpcs/account/view_access_key_list/other/view_access_key_list",
+        "/reference/operation/view_access_key_list"
+      ],
+      "schemaType": "APIReference",
+      "sourceSpec": "rpcs/account/view_access_key_list.yaml",
+      "summary": "View all account access keys",
+      "transport": "json-rpc"
+    },
+    {
+      "authSummary": "API key via query apiKey",
+      "canonicalPath": "/rpcs/account/view_account",
+      "description": "Retrieves detailed information about a NEAR account including balance and storage usage",
+      "docsPath": "/rpc/account/view-account",
+      "familyId": "rpc-account",
+      "headline": "NEAR Protocol RPC: View account",
+      "httpMethod": "POST",
+      "id": "rpc-view-account",
+      "name": "NEAR Protocol RPC: View account",
+      "networkKeys": [
+        "mainnet",
+        "testnet"
+      ],
+      "operationId": "view_account",
+      "pageModelId": "rpc-view-account",
+      "requestPath": "/",
+      "requestType": "view_account",
+      "routeAliases": [
+        "/rpcs/account/view_account/other/view_account",
+        "/reference/operation/view_account"
+      ],
+      "schemaType": "APIReference",
+      "sourceSpec": "rpcs/account/view_account.yaml",
+      "summary": "View account",
+      "transport": "json-rpc"
+    },
+    {
+      "authSummary": "API key via query apiKey",
+      "canonicalPath": "/rpcs/block/block_by_height",
+      "description": "Retrieves block details using a specific block height (number)",
+      "docsPath": "/rpc/block/block-by-height",
+      "familyId": "rpc-block",
+      "headline": "NEAR Protocol RPC: Block by Height",
+      "httpMethod": "POST",
+      "id": "rpc-block-by-height",
+      "name": "NEAR Protocol RPC: Block by Height",
+      "networkKeys": [
+        "mainnet",
+        "testnet"
+      ],
+      "operationId": "block_by_height",
+      "pageModelId": "rpc-block-by-height",
+      "requestPath": "/",
+      "requestType": null,
+      "routeAliases": [
+        "/rpcs/block/block_by_height/other/block_by_height",
+        "/reference/operation/block_by_height"
+      ],
+      "schemaType": "APIReference",
+      "sourceSpec": "rpcs/block/block_by_height.yaml",
+      "summary": "Get block by height",
+      "transport": "json-rpc"
+    },
+    {
+      "authSummary": "API key via query apiKey",
+      "canonicalPath": "/rpcs/block/block_by_id",
+      "description": "Retrieves block details using a specific block hash",
+      "docsPath": "/rpc/block/block-by-id",
+      "familyId": "rpc-block",
+      "headline": "NEAR Protocol RPC: Block by ID",
+      "httpMethod": "POST",
+      "id": "rpc-block-by-id",
+      "name": "NEAR Protocol RPC: Block by ID",
+      "networkKeys": [
+        "mainnet",
+        "testnet"
+      ],
+      "operationId": "block_by_id",
+      "pageModelId": "rpc-block-by-id",
+      "requestPath": "/",
+      "requestType": null,
+      "routeAliases": [
+        "/rpcs/block/block_by_id/other/block_by_id",
+        "/reference/operation/block_by_id"
+      ],
+      "schemaType": "APIReference",
+      "sourceSpec": "rpcs/block/block_by_id.yaml",
+      "summary": "Get block by ID",
+      "transport": "json-rpc"
+    },
+    {
+      "authSummary": "API key via query apiKey",
+      "canonicalPath": "/rpcs/block/block_effects",
+      "description": "Returns changes in block for given block height or hash over all transactions for all types",
+      "docsPath": "/rpc/block/block-effects",
+      "familyId": "rpc-block",
+      "headline": "NEAR Protocol RPC: Get block effects",
+      "httpMethod": "POST",
+      "id": "rpc-block-effects",
+      "name": "NEAR Protocol RPC: Get block effects",
+      "networkKeys": [
+        "mainnet",
+        "testnet"
+      ],
+      "operationId": "block_effects",
+      "pageModelId": "rpc-block-effects",
+      "requestPath": "/",
+      "requestType": null,
+      "routeAliases": [
+        "/rpcs/block/block_effects/other/block_effects",
+        "/reference/operation/block_effects"
+      ],
+      "schemaType": "APIReference",
+      "sourceSpec": "rpcs/block/block_effects.yaml",
+      "summary": "Get block effects",
+      "transport": "json-rpc"
+    },
+    {
+      "authSummary": "API key via query apiKey",
+      "canonicalPath": "/rpcs/contract/call",
+      "description": "Execute a view method on a smart contract without modifying state",
+      "docsPath": "/rpc/contract/call-function",
+      "familyId": "rpc-contract",
+      "headline": "NEAR Protocol RPC: Call Function",
+      "httpMethod": "POST",
+      "id": "rpc-call-function",
+      "name": "NEAR Protocol RPC: Call Function",
+      "networkKeys": [
+        "mainnet",
+        "testnet"
+      ],
+      "operationId": "call_function",
+      "pageModelId": "rpc-call-function",
+      "requestPath": "/",
+      "requestType": "call_function",
+      "routeAliases": [
+        "/rpcs/contract/call/other/call_function",
+        "/reference/operation/call_function"
+      ],
+      "schemaType": "APIReference",
+      "sourceSpec": "rpcs/contract/call.yaml",
+      "summary": "Call contract function",
+      "transport": "json-rpc"
+    },
+    {
+      "authSummary": "API key via query apiKey",
+      "canonicalPath": "/rpcs/contract/view_code",
+      "description": "Returns the contract code (Wasm binary) deployed to the account",
+      "docsPath": "/rpc/contract/view-code",
+      "familyId": "rpc-contract",
+      "headline": "NEAR Protocol RPC: View contract code",
+      "httpMethod": "POST",
+      "id": "rpc-view-code",
+      "name": "NEAR Protocol RPC: View contract code",
+      "networkKeys": [
+        "mainnet",
+        "testnet"
+      ],
+      "operationId": "view_code",
+      "pageModelId": "rpc-view-code",
+      "requestPath": "/",
+      "requestType": "view_code",
+      "routeAliases": [
+        "/rpcs/contract/view_code/other/view_code",
+        "/reference/operation/view_code"
+      ],
+      "schemaType": "APIReference",
+      "sourceSpec": "rpcs/contract/view_code.yaml",
+      "summary": "View contract code",
+      "transport": "json-rpc"
+    },
+    {
+      "authSummary": "API key via query apiKey",
+      "canonicalPath": "/rpcs/contract/view_global_contract_code",
+      "description": "Returns a globally deployed contract code by its code hash",
+      "docsPath": "/rpc/contract/view-global-contract-code",
+      "familyId": "rpc-contract",
+      "headline": "NEAR Protocol RPC: View global contract code",
+      "httpMethod": "POST",
+      "id": "rpc-view-global-contract-code",
+      "name": "NEAR Protocol RPC: View global contract code",
+      "networkKeys": [
+        "mainnet",
+        "testnet"
+      ],
+      "operationId": "view_global_contract_code",
+      "pageModelId": "rpc-view-global-contract-code",
+      "requestPath": "/",
+      "requestType": "view_global_contract_code",
+      "routeAliases": [
+        "/rpcs/contract/view_global_contract_code/other/view_global_contract_code",
+        "/reference/operation/view_global_contract_code"
+      ],
+      "schemaType": "APIReference",
+      "sourceSpec": "rpcs/contract/view_global_contract_code.yaml",
+      "summary": "View global contract code",
+      "transport": "json-rpc"
+    },
+    {
+      "authSummary": "API key via query apiKey",
+      "canonicalPath": "/rpcs/contract/view_global_contract_code_by_account_id",
+      "description": "Returns the globally deployed contract code used by a specific account",
+      "docsPath": "/rpc/contract/view-global-contract-code-by-account-id",
+      "familyId": "rpc-contract",
+      "headline": "NEAR Protocol RPC: View global contract code by account",
+      "httpMethod": "POST",
+      "id": "rpc-view-global-contract-code-by-account-id",
+      "name": "NEAR Protocol RPC: View global contract code by account",
+      "networkKeys": [
+        "mainnet",
+        "testnet"
+      ],
+      "operationId": "view_global_contract_code_by_account_id",
+      "pageModelId": "rpc-view-global-contract-code-by-account-id",
+      "requestPath": "/",
+      "requestType": "view_global_contract_code_by_account_id",
+      "routeAliases": [
+        "/rpcs/contract/view_global_contract_code_by_account_id/other/view_global_contract_code_by_account_id",
+        "/reference/operation/view_global_contract_code_by_account_id"
+      ],
+      "schemaType": "APIReference",
+      "sourceSpec": "rpcs/contract/view_global_contract_code_by_account_id.yaml",
+      "summary": "View global contract code by account",
+      "transport": "json-rpc"
+    },
+    {
+      "authSummary": "API key via query apiKey",
+      "canonicalPath": "/rpcs/contract/view_state",
+      "description": "Retrieves the state (key-value pairs) stored for a contract account",
+      "docsPath": "/rpc/contract/view-state",
+      "familyId": "rpc-contract",
+      "headline": "NEAR Protocol RPC: View Contract State",
+      "httpMethod": "POST",
+      "id": "rpc-view-state",
+      "name": "NEAR Protocol RPC: View Contract State",
+      "networkKeys": [
+        "mainnet",
+        "testnet"
+      ],
+      "operationId": "view_state",
+      "pageModelId": "rpc-view-state",
+      "requestPath": "/",
+      "requestType": "view_state",
+      "routeAliases": [
+        "/rpcs/contract/view_state/other/view_state",
+        "/reference/operation/view_state"
+      ],
+      "schemaType": "APIReference",
+      "sourceSpec": "rpcs/contract/view_state.yaml",
+      "summary": "View contract state",
+      "transport": "json-rpc"
+    },
+    {
+      "authSummary": "API key via query apiKey",
+      "canonicalPath": "/rpcs/protocol/changes",
+      "description": "Returns changes for a given account, contract or contract code for given block height or hash",
+      "docsPath": "/rpc/protocol/changes",
+      "familyId": "rpc-protocol",
+      "headline": "NEAR Protocol RPC: Get state changes",
+      "httpMethod": "POST",
+      "id": "rpc-changes",
+      "name": "NEAR Protocol RPC: Get state changes",
+      "networkKeys": [
+        "mainnet",
+        "testnet"
+      ],
+      "operationId": "changes",
+      "pageModelId": "rpc-changes",
+      "requestPath": "/",
+      "requestType": null,
+      "routeAliases": [
+        "/rpcs/protocol/changes/other/changes",
+        "/reference/operation/changes"
+      ],
+      "schemaType": "APIReference",
+      "sourceSpec": "rpcs/protocol/changes.yaml",
+      "summary": "Get state changes",
+      "transport": "json-rpc"
+    },
+    {
+      "authSummary": "API key via query apiKey",
+      "canonicalPath": "/rpcs/protocol/chunk_by_block_shard",
+      "description": "Retrieves chunk details using block ID and shard ID coordinates",
+      "docsPath": "/rpc/protocol/chunk-by-block-shard",
+      "familyId": "rpc-protocol",
+      "headline": "NEAR Protocol RPC: Chunk by Block ID and Shard ID",
+      "httpMethod": "POST",
+      "id": "rpc-chunk-by-block-shard",
+      "name": "NEAR Protocol RPC: Chunk by Block ID and Shard ID",
+      "networkKeys": [
+        "mainnet",
+        "testnet"
+      ],
+      "operationId": "chunk_by_block_shard",
+      "pageModelId": "rpc-chunk-by-block-shard",
+      "requestPath": "/",
+      "requestType": null,
+      "routeAliases": [
+        "/rpcs/protocol/chunk_by_block_shard/other/chunk_by_block_shard",
+        "/reference/operation/chunk_by_block_shard"
+      ],
+      "schemaType": "APIReference",
+      "sourceSpec": "rpcs/protocol/chunk_by_block_shard.yaml",
+      "summary": "Get chunk by block ID and shard ID",
+      "transport": "json-rpc"
+    },
+    {
+      "authSummary": "API key via query apiKey",
+      "canonicalPath": "/rpcs/protocol/chunk_by_hash",
+      "description": "Retrieves chunk details using a specific chunk hash",
+      "docsPath": "/rpc/protocol/chunk-by-hash",
+      "familyId": "rpc-protocol",
+      "headline": "NEAR Protocol RPC: Chunk by Hash",
+      "httpMethod": "POST",
+      "id": "rpc-chunk-by-hash",
+      "name": "NEAR Protocol RPC: Chunk by Hash",
+      "networkKeys": [
+        "mainnet",
+        "testnet"
+      ],
+      "operationId": "chunk_by_hash",
+      "pageModelId": "rpc-chunk-by-hash",
+      "requestPath": "/",
+      "requestType": null,
+      "routeAliases": [
+        "/rpcs/protocol/chunk_by_hash/other/chunk_by_hash",
+        "/reference/operation/chunk_by_hash"
+      ],
+      "schemaType": "APIReference",
+      "sourceSpec": "rpcs/protocol/chunk_by_hash.yaml",
+      "summary": "Get chunk by hash",
+      "transport": "json-rpc"
+    },
+    {
+      "authSummary": "API key via query apiKey",
+      "canonicalPath": "/rpcs/protocol/client_config",
+      "description": "Queries client node configuration",
+      "docsPath": "/rpc/protocol/client-config",
+      "familyId": "rpc-protocol",
+      "headline": "NEAR Protocol RPC: Get client config",
+      "httpMethod": "POST",
+      "id": "rpc-client-config",
+      "name": "NEAR Protocol RPC: Get client config",
+      "networkKeys": [
+        "mainnet",
+        "testnet"
+      ],
+      "operationId": "client_config",
+      "pageModelId": "rpc-client-config",
+      "requestPath": "/",
+      "requestType": null,
+      "routeAliases": [
+        "/rpcs/protocol/client_config/other/client_config",
+        "/reference/operation/client_config"
+      ],
+      "schemaType": "APIReference",
+      "sourceSpec": "rpcs/protocol/client_config.yaml",
+      "summary": "Get client config",
+      "transport": "json-rpc"
+    },
+    {
+      "authSummary": "API key via query apiKey",
+      "canonicalPath": "/rpcs/protocol/EXPERIMENTAL_congestion_level",
+      "description": "Queries the congestion level of a shard",
+      "docsPath": "/rpc/protocol/experimental-congestion-level",
+      "familyId": "rpc-protocol",
+      "headline": "NEAR Protocol RPC: Get congestion level",
+      "httpMethod": "POST",
+      "id": "rpc-EXPERIMENTAL-congestion-level",
+      "name": "NEAR Protocol RPC: Get congestion level",
+      "networkKeys": [
+        "mainnet",
+        "testnet"
+      ],
+      "operationId": "EXPERIMENTAL_congestion_level",
+      "pageModelId": "rpc-EXPERIMENTAL-congestion-level",
+      "requestPath": "/",
+      "requestType": null,
+      "routeAliases": [
+        "/rpcs/protocol/EXPERIMENTAL_congestion_level/other/EXPERIMENTAL_congestion_level",
+        "/reference/operation/EXPERIMENTAL_congestion_level"
+      ],
+      "schemaType": "APIReference",
+      "sourceSpec": "rpcs/protocol/EXPERIMENTAL_congestion_level.yaml",
+      "summary": "Get congestion level",
+      "transport": "json-rpc"
+    },
+    {
+      "authSummary": "API key via query apiKey",
+      "canonicalPath": "/rpcs/protocol/EXPERIMENTAL_light_client_block_proof",
+      "description": "Returns the proofs for a transaction execution",
+      "docsPath": "/rpc/protocol/experimental-light-client-block-proof",
+      "familyId": "rpc-protocol",
+      "headline": "NEAR Protocol RPC: Get light client block proof",
+      "httpMethod": "POST",
+      "id": "rpc-EXPERIMENTAL-light-client-block-proof",
+      "name": "NEAR Protocol RPC: Get light client block proof",
+      "networkKeys": [
+        "mainnet",
+        "testnet"
+      ],
+      "operationId": "EXPERIMENTAL_light_client_block_proof",
+      "pageModelId": "rpc-EXPERIMENTAL-light-client-block-proof",
+      "requestPath": "/",
+      "requestType": null,
+      "routeAliases": [
+        "/rpcs/protocol/EXPERIMENTAL_light_client_block_proof/other/EXPERIMENTAL_light_client_block_proof",
+        "/reference/operation/EXPERIMENTAL_light_client_block_proof"
+      ],
+      "schemaType": "APIReference",
+      "sourceSpec": "rpcs/protocol/EXPERIMENTAL_light_client_block_proof.yaml",
+      "summary": "Get light client block proof",
+      "transport": "json-rpc"
+    },
+    {
+      "authSummary": "API key via query apiKey",
+      "canonicalPath": "/rpcs/protocol/EXPERIMENTAL_light_client_proof",
+      "description": "Returns the proofs for a transaction execution",
+      "docsPath": "/rpc/protocol/experimental-light-client-proof",
+      "familyId": "rpc-protocol",
+      "headline": "NEAR Protocol RPC: Get light client execution proof",
+      "httpMethod": "POST",
+      "id": "rpc-EXPERIMENTAL-light-client-proof",
+      "name": "NEAR Protocol RPC: Get light client execution proof",
+      "networkKeys": [
+        "mainnet",
+        "testnet"
+      ],
+      "operationId": "EXPERIMENTAL_light_client_proof",
+      "pageModelId": "rpc-EXPERIMENTAL-light-client-proof",
+      "requestPath": "/",
+      "requestType": null,
+      "routeAliases": [
+        "/rpcs/protocol/EXPERIMENTAL_light_client_proof/other/EXPERIMENTAL_light_client_proof",
+        "/reference/operation/EXPERIMENTAL_light_client_proof"
+      ],
+      "schemaType": "APIReference",
+      "sourceSpec": "rpcs/protocol/EXPERIMENTAL_light_client_proof.yaml",
+      "summary": "Get light client execution proof",
+      "transport": "json-rpc"
+    },
+    {
+      "authSummary": "API key via query apiKey",
+      "canonicalPath": "/rpcs/protocol/EXPERIMENTAL_protocol_config",
+      "description": "A configuration that defines the protocol-level parameters such as gas/storage costs, limits, feature flags, and other settings",
+      "docsPath": "/rpc/protocol/experimental-protocol-config",
+      "familyId": "rpc-protocol",
+      "headline": "NEAR Protocol RPC: Get protocol config",
+      "httpMethod": "POST",
+      "id": "rpc-EXPERIMENTAL-protocol-config",
+      "name": "NEAR Protocol RPC: Get protocol config",
+      "networkKeys": [
+        "mainnet",
+        "testnet"
+      ],
+      "operationId": "EXPERIMENTAL_protocol_config",
+      "pageModelId": "rpc-EXPERIMENTAL-protocol-config",
+      "requestPath": "/",
+      "requestType": null,
+      "routeAliases": [
+        "/rpcs/protocol/EXPERIMENTAL_protocol_config/other/EXPERIMENTAL_protocol_config",
+        "/reference/operation/EXPERIMENTAL_protocol_config"
+      ],
+      "schemaType": "APIReference",
+      "sourceSpec": "rpcs/protocol/EXPERIMENTAL_protocol_config.yaml",
+      "summary": "Get protocol config",
+      "transport": "json-rpc"
+    },
+    {
+      "authSummary": "API key via query apiKey",
+      "canonicalPath": "/rpcs/protocol/EXPERIMENTAL_split_storage_info",
+      "description": "Contains the split storage information for archival nodes",
+      "docsPath": "/rpc/protocol/experimental-split-storage-info",
+      "familyId": "rpc-protocol",
+      "headline": "NEAR Protocol RPC: Get split storage info",
+      "httpMethod": "POST",
+      "id": "rpc-EXPERIMENTAL-split-storage-info",
+      "name": "NEAR Protocol RPC: Get split storage info",
+      "networkKeys": [
+        "mainnet",
+        "testnet"
+      ],
+      "operationId": "EXPERIMENTAL_split_storage_info",
+      "pageModelId": "rpc-EXPERIMENTAL-split-storage-info",
+      "requestPath": "/",
+      "requestType": null,
+      "routeAliases": [
+        "/rpcs/protocol/EXPERIMENTAL_split_storage_info/other/EXPERIMENTAL_split_storage_info",
+        "/reference/operation/EXPERIMENTAL_split_storage_info"
+      ],
+      "schemaType": "APIReference",
+      "sourceSpec": "rpcs/protocol/EXPERIMENTAL_split_storage_info.yaml",
+      "summary": "Get split storage info",
+      "transport": "json-rpc"
+    },
+    {
+      "authSummary": "API key via query apiKey",
+      "canonicalPath": "/rpcs/protocol/gas_price",
+      "description": "Retrieves information about the current gas price",
+      "docsPath": "/rpc/protocol/gas-price",
+      "familyId": "rpc-protocol",
+      "headline": "NEAR Protocol RPC: Gas Price",
+      "httpMethod": "POST",
+      "id": "rpc-gas-price",
+      "name": "NEAR Protocol RPC: Gas Price",
+      "networkKeys": [
+        "mainnet",
+        "testnet"
+      ],
+      "operationId": "gas_price",
+      "pageModelId": "rpc-gas-price",
+      "requestPath": "/",
+      "requestType": null,
+      "routeAliases": [
+        "/rpcs/protocol/gas_price/other/gas_price",
+        "/reference/operation/gas_price"
+      ],
+      "schemaType": "APIReference",
+      "sourceSpec": "rpcs/protocol/gas_price.yaml",
+      "summary": "Get current gas price",
+      "transport": "json-rpc"
+    },
+    {
+      "authSummary": "API key via query apiKey",
+      "canonicalPath": "/rpcs/protocol/gas_price_by_block",
+      "description": "Retrieves gas price information for a specific block",
+      "docsPath": "/rpc/protocol/gas-price-by-block",
+      "familyId": "rpc-protocol",
+      "headline": "NEAR Protocol RPC: Gas Price By Block",
+      "httpMethod": "POST",
+      "id": "rpc-gas-price-by-block",
+      "name": "NEAR Protocol RPC: Gas Price By Block",
+      "networkKeys": [
+        "mainnet",
+        "testnet"
+      ],
+      "operationId": "gas_price_by_block",
+      "pageModelId": "rpc-gas-price-by-block",
+      "requestPath": "/",
+      "requestType": null,
+      "routeAliases": [
+        "/rpcs/protocol/gas_price_by_block/other/gas_price_by_block",
+        "/reference/operation/gas_price_by_block"
+      ],
+      "schemaType": "APIReference",
+      "sourceSpec": "rpcs/protocol/gas_price_by_block.yaml",
+      "summary": "Get gas price by block",
+      "transport": "json-rpc"
+    },
+    {
+      "authSummary": "API key via query apiKey",
+      "canonicalPath": "/rpcs/protocol/genesis_config",
+      "description": "Get initial state and parameters for the genesis block",
+      "docsPath": "/rpc/protocol/genesis-config",
+      "familyId": "rpc-protocol",
+      "headline": "NEAR Protocol RPC: Get genesis config",
+      "httpMethod": "POST",
+      "id": "rpc-genesis-config",
+      "name": "NEAR Protocol RPC: Get genesis config",
+      "networkKeys": [
+        "mainnet",
+        "testnet"
+      ],
+      "operationId": "genesis_config",
+      "pageModelId": "rpc-genesis-config",
+      "requestPath": "/",
+      "requestType": null,
+      "routeAliases": [
+        "/rpcs/protocol/genesis_config/other/genesis_config",
+        "/reference/operation/genesis_config"
+      ],
+      "schemaType": "APIReference",
+      "sourceSpec": "rpcs/protocol/genesis_config.yaml",
+      "summary": "Get genesis config",
+      "transport": "json-rpc"
+    },
+    {
+      "authSummary": "API key via query apiKey",
+      "canonicalPath": "/rpcs/protocol/health",
+      "description": "Performs a health check on the node to determine if it's operating correctly",
+      "docsPath": "/rpc/protocol/health",
+      "familyId": "rpc-protocol",
+      "headline": "NEAR Protocol RPC: Node Health",
+      "httpMethod": "POST",
+      "id": "rpc-health",
+      "name": "NEAR Protocol RPC: Node Health",
+      "networkKeys": [
+        "mainnet",
+        "testnet"
+      ],
+      "operationId": "health",
+      "pageModelId": "rpc-health",
+      "requestPath": "/",
+      "requestType": null,
+      "routeAliases": [
+        "/rpcs/protocol/health/other/health",
+        "/reference/operation/health"
+      ],
+      "schemaType": "APIReference",
+      "sourceSpec": "rpcs/protocol/health.yaml",
+      "summary": "Check node health",
+      "transport": "json-rpc"
+    },
+    {
+      "authSummary": "API key via query apiKey",
+      "canonicalPath": "/rpcs/protocol/latest_block",
+      "description": "Retrieves the most recent block from the blockchain",
+      "docsPath": "/rpc/protocol/latest-block",
+      "familyId": "rpc-protocol",
+      "headline": "NEAR Protocol RPC: Latest Block",
+      "httpMethod": "POST",
+      "id": "rpc-latest-block",
+      "name": "NEAR Protocol RPC: Latest Block",
+      "networkKeys": [
+        "mainnet",
+        "testnet",
+        "mainnet",
+        "testnet"
+      ],
+      "operationId": "latest_block",
+      "pageModelId": "rpc-latest-block",
+      "requestPath": "/",
+      "requestType": null,
+      "routeAliases": [
+        "/rpcs/protocol/latest_block/other/latest_block",
+        "/reference/operation/latest_block"
+      ],
+      "schemaType": "APIReference",
+      "sourceSpec": "rpcs/protocol/latest_block.yaml",
+      "summary": "Get latest block",
+      "transport": "json-rpc"
+    },
+    {
+      "authSummary": "API key via query apiKey",
+      "canonicalPath": "/rpcs/protocol/light_client_proof",
+      "description": "Retrieves verification proof data for light clients",
+      "docsPath": "/rpc/protocol/light-client-proof",
+      "familyId": "rpc-protocol",
+      "headline": "NEAR Protocol RPC: Light Client Proof",
+      "httpMethod": "POST",
+      "id": "rpc-light-client-proof",
+      "name": "NEAR Protocol RPC: Light Client Proof",
+      "networkKeys": [
+        "mainnet",
+        "testnet"
+      ],
+      "operationId": "light_client_proof",
+      "pageModelId": "rpc-light-client-proof",
+      "requestPath": "/",
+      "requestType": null,
+      "routeAliases": [
+        "/rpcs/protocol/light_client_proof/other/light_client_proof",
+        "/reference/operation/light_client_proof"
+      ],
+      "schemaType": "APIReference",
+      "sourceSpec": "rpcs/protocol/light_client_proof.yaml",
+      "summary": "Get light client proof",
+      "transport": "json-rpc"
+    },
+    {
+      "authSummary": "API key via query apiKey",
+      "canonicalPath": "/rpcs/protocol/maintenance_windows",
+      "description": "Returns the future windows for maintenance in current epoch for the specified account",
+      "docsPath": "/rpc/protocol/maintenance-windows",
+      "familyId": "rpc-protocol",
+      "headline": "NEAR Protocol RPC: Get maintenance windows",
+      "httpMethod": "POST",
+      "id": "rpc-maintenance-windows",
+      "name": "NEAR Protocol RPC: Get maintenance windows",
+      "networkKeys": [
+        "mainnet",
+        "testnet"
+      ],
+      "operationId": "maintenance_windows",
+      "pageModelId": "rpc-maintenance-windows",
+      "requestPath": "/",
+      "requestType": null,
+      "routeAliases": [
+        "/rpcs/protocol/maintenance_windows/other/maintenance_windows",
+        "/reference/operation/maintenance_windows"
+      ],
+      "schemaType": "APIReference",
+      "sourceSpec": "rpcs/protocol/maintenance_windows.yaml",
+      "summary": "Get maintenance windows",
+      "transport": "json-rpc"
+    },
+    {
+      "authSummary": "API key via query apiKey",
+      "canonicalPath": "/rpcs/protocol/metrics",
+      "description": "Retrieves Prometheus-format node metrics from the HTTP `/metrics` endpoint. Requires an API key.",
+      "docsPath": "/rpc/protocol/metrics",
+      "familyId": "rpc-protocol",
+      "headline": "NEAR Protocol RPC: Node Metrics",
+      "httpMethod": "GET",
+      "id": "rpc-metrics",
+      "name": "NEAR Protocol RPC: Node Metrics",
+      "networkKeys": [
+        "mainnet",
+        "testnet"
+      ],
+      "operationId": "metrics",
+      "pageModelId": "rpc-metrics",
+      "requestPath": "/metrics",
+      "requestType": null,
+      "routeAliases": [
+        "/rpcs/protocol/metrics/other/metrics",
+        "/reference/operation/metrics"
+      ],
+      "schemaType": "APIReference",
+      "sourceSpec": "rpcs/protocol/metrics.yaml",
+      "summary": "Get node metrics",
+      "transport": "json-rpc"
+    },
+    {
+      "authSummary": "API key via query apiKey",
+      "canonicalPath": "/rpcs/protocol/network_info",
+      "description": "Retrieves information about the network and connected peers including active connections, peer addresses, and network configuration",
+      "docsPath": "/rpc/protocol/network-info",
+      "familyId": "rpc-protocol",
+      "headline": "NEAR Protocol RPC: Network Information",
+      "httpMethod": "POST",
+      "id": "rpc-network-info",
+      "name": "NEAR Protocol RPC: Network Information",
+      "networkKeys": [
+        "mainnet",
+        "testnet"
+      ],
+      "operationId": "network_info",
+      "pageModelId": "rpc-network-info",
+      "requestPath": "/",
+      "requestType": null,
+      "routeAliases": [
+        "/rpcs/protocol/network_info/other/network_info",
+        "/reference/operation/network_info"
+      ],
+      "schemaType": "APIReference",
+      "sourceSpec": "rpcs/protocol/network_info.yaml",
+      "summary": "Get network information",
+      "transport": "json-rpc"
+    },
+    {
+      "authSummary": "API key via query apiKey",
+      "canonicalPath": "/rpcs/protocol/next_light_client_block",
+      "description": "Returns the next light client block",
+      "docsPath": "/rpc/protocol/next-light-client-block",
+      "familyId": "rpc-protocol",
+      "headline": "NEAR Protocol RPC: Get next light client block",
+      "httpMethod": "POST",
+      "id": "rpc-next-light-client-block",
+      "name": "NEAR Protocol RPC: Get next light client block",
+      "networkKeys": [
+        "mainnet",
+        "testnet"
+      ],
+      "operationId": "next_light_client_block",
+      "pageModelId": "rpc-next-light-client-block",
+      "requestPath": "/",
+      "requestType": null,
+      "routeAliases": [
+        "/rpcs/protocol/next_light_client_block/other/next_light_client_block",
+        "/reference/operation/next_light_client_block"
+      ],
+      "schemaType": "APIReference",
+      "sourceSpec": "rpcs/protocol/next_light_client_block.yaml",
+      "summary": "Get next light client block",
+      "transport": "json-rpc"
+    },
+    {
+      "authSummary": "API key via query apiKey",
+      "canonicalPath": "/rpcs/protocol/status",
+      "description": "Retrieves current status of the node including sync info, validator status and build information",
+      "docsPath": "/rpc/protocol/status",
+      "familyId": "rpc-protocol",
+      "headline": "NEAR Protocol RPC: Node Status",
+      "httpMethod": "POST",
+      "id": "rpc-status",
+      "name": "NEAR Protocol RPC: Node Status",
+      "networkKeys": [
+        "mainnet",
+        "testnet"
+      ],
+      "operationId": "status",
+      "pageModelId": "rpc-status",
+      "requestPath": "/",
+      "requestType": null,
+      "routeAliases": [
+        "/rpcs/protocol/status/other/status",
+        "/reference/operation/status"
+      ],
+      "schemaType": "APIReference",
+      "sourceSpec": "rpcs/protocol/status.yaml",
+      "summary": "Get node status",
+      "transport": "json-rpc"
+    },
+    {
+      "authSummary": "API key via query apiKey",
+      "canonicalPath": "/rpcs/transaction/broadcast_tx_async",
+      "description": "Submits a transaction to the network without waiting for its execution. Requires a freshly signed transaction; the default example is illustrative and is not part of the live audit.",
+      "docsPath": "/rpc/transaction/broadcast-tx-async",
+      "familyId": "rpc-transaction",
+      "headline": "NEAR Protocol RPC: Broadcast Transaction Async",
+      "httpMethod": "POST",
+      "id": "rpc-broadcast-tx-async",
+      "name": "NEAR Protocol RPC: Broadcast Transaction Async",
+      "networkKeys": [
+        "mainnet",
+        "testnet"
+      ],
+      "operationId": "broadcast_tx_async",
+      "pageModelId": "rpc-broadcast-tx-async",
+      "requestPath": "/",
+      "requestType": null,
+      "routeAliases": [
+        "/rpcs/transaction/broadcast_tx_async/other/broadcast_tx_async",
+        "/reference/operation/broadcast_tx_async"
+      ],
+      "schemaType": "APIReference",
+      "sourceSpec": "rpcs/transaction/broadcast_tx_async.yaml",
+      "summary": "Send transaction asynchronously",
+      "transport": "json-rpc"
+    },
+    {
+      "authSummary": "API key via query apiKey",
+      "canonicalPath": "/rpcs/transaction/broadcast_tx_commit",
+      "description": "Submits a transaction and waits until it's fully committed to the blockchain. Requires a freshly signed transaction; the default example is illustrative and is not part of the live audit.",
+      "docsPath": "/rpc/transaction/broadcast-tx-commit",
+      "familyId": "rpc-transaction",
+      "headline": "NEAR Protocol RPC: Broadcast Transaction Commit",
+      "httpMethod": "POST",
+      "id": "rpc-broadcast-tx-commit",
+      "name": "NEAR Protocol RPC: Broadcast Transaction Commit",
+      "networkKeys": [
+        "mainnet",
+        "testnet"
+      ],
+      "operationId": "broadcast_tx_commit",
+      "pageModelId": "rpc-broadcast-tx-commit",
+      "requestPath": "/",
+      "requestType": null,
+      "routeAliases": [
+        "/rpcs/transaction/broadcast_tx_commit/other/broadcast_tx_commit",
+        "/reference/operation/broadcast_tx_commit"
+      ],
+      "schemaType": "APIReference",
+      "sourceSpec": "rpcs/transaction/broadcast_tx_commit.yaml",
+      "summary": "Send transaction and wait for commit",
+      "transport": "json-rpc"
+    },
+    {
+      "authSummary": "API key via query apiKey",
+      "canonicalPath": "/rpcs/transaction/EXPERIMENTAL_receipt",
+      "description": "Fetches a receipt by its ID (as is, without a status or execution outcome)",
+      "docsPath": "/rpc/transaction/experimental-receipt",
+      "familyId": "rpc-transaction",
+      "headline": "NEAR Protocol RPC: Get receipt by ID",
+      "httpMethod": "POST",
+      "id": "rpc-EXPERIMENTAL-receipt",
+      "name": "NEAR Protocol RPC: Get receipt by ID",
+      "networkKeys": [
+        "mainnet",
+        "testnet"
+      ],
+      "operationId": "EXPERIMENTAL_receipt",
+      "pageModelId": "rpc-EXPERIMENTAL-receipt",
+      "requestPath": "/",
+      "requestType": null,
+      "routeAliases": [
+        "/rpcs/transaction/EXPERIMENTAL_receipt/other/EXPERIMENTAL_receipt",
+        "/reference/operation/EXPERIMENTAL_receipt"
+      ],
+      "schemaType": "APIReference",
+      "sourceSpec": "rpcs/transaction/EXPERIMENTAL_receipt.yaml",
+      "summary": "Get receipt by ID",
+      "transport": "json-rpc"
+    },
+    {
+      "authSummary": "API key via query apiKey",
+      "canonicalPath": "/rpcs/transaction/EXPERIMENTAL_tx_status",
+      "description": "Queries status of a transaction by hash, returning the final transaction result and details of all receipts",
+      "docsPath": "/rpc/transaction/experimental-tx-status",
+      "familyId": "rpc-transaction",
+      "headline": "NEAR Protocol RPC: Get detailed transaction status",
+      "httpMethod": "POST",
+      "id": "rpc-EXPERIMENTAL-tx-status",
+      "name": "NEAR Protocol RPC: Get detailed transaction status",
+      "networkKeys": [
+        "mainnet",
+        "testnet"
+      ],
+      "operationId": "EXPERIMENTAL_tx_status",
+      "pageModelId": "rpc-EXPERIMENTAL-tx-status",
+      "requestPath": "/",
+      "requestType": null,
+      "routeAliases": [
+        "/rpcs/transaction/EXPERIMENTAL_tx_status/other/EXPERIMENTAL_tx_status",
+        "/reference/operation/EXPERIMENTAL_tx_status"
+      ],
+      "schemaType": "APIReference",
+      "sourceSpec": "rpcs/transaction/EXPERIMENTAL_tx_status.yaml",
+      "summary": "Get detailed transaction status",
+      "transport": "json-rpc"
+    },
+    {
+      "authSummary": "API key via query apiKey",
+      "canonicalPath": "/rpcs/transaction/send_tx",
+      "description": "Sends transaction and returns the guaranteed execution status and results. Requires a freshly signed transaction; the default example is illustrative and is not part of the live audit.",
+      "docsPath": "/rpc/transaction/send-tx",
+      "familyId": "rpc-transaction",
+      "headline": "NEAR Protocol RPC: Send transaction",
+      "httpMethod": "POST",
+      "id": "rpc-send-tx",
+      "name": "NEAR Protocol RPC: Send transaction",
+      "networkKeys": [
+        "mainnet",
+        "testnet"
+      ],
+      "operationId": "send_tx",
+      "pageModelId": "rpc-send-tx",
+      "requestPath": "/",
+      "requestType": null,
+      "routeAliases": [
+        "/rpcs/transaction/send_tx/other/send_tx",
+        "/reference/operation/send_tx"
+      ],
+      "schemaType": "APIReference",
+      "sourceSpec": "rpcs/transaction/send_tx.yaml",
+      "summary": "Send transaction",
+      "transport": "json-rpc"
+    },
+    {
+      "authSummary": "API key via query apiKey",
+      "canonicalPath": "/rpcs/transaction/tx_status",
+      "description": "Get the status and details of a transaction",
+      "docsPath": "/rpc/transaction/tx-status",
+      "familyId": "rpc-transaction",
+      "headline": "NEAR Protocol RPC: Transaction Status",
+      "httpMethod": "POST",
+      "id": "rpc-tx-status",
+      "name": "NEAR Protocol RPC: Transaction Status",
+      "networkKeys": [
+        "mainnet",
+        "testnet"
+      ],
+      "operationId": "tx_status",
+      "pageModelId": "rpc-tx-status",
+      "requestPath": "/",
+      "requestType": null,
+      "routeAliases": [
+        "/rpcs/transaction/tx_status/other/tx_status",
+        "/reference/operation/tx_status"
+      ],
+      "schemaType": "APIReference",
+      "sourceSpec": "rpcs/transaction/tx_status.yaml",
+      "summary": "Check transaction status",
+      "transport": "json-rpc"
+    },
+    {
+      "authSummary": "API key via query apiKey",
+      "canonicalPath": "/rpcs/validators/EXPERIMENTAL_validators_ordered",
+      "description": "Returns the current epoch validators ordered in the block producer order with repetition",
+      "docsPath": "/rpc/validators/experimental-validators-ordered",
+      "familyId": "rpc-validators",
+      "headline": "NEAR Protocol RPC: Get validators ordered",
+      "httpMethod": "POST",
+      "id": "rpc-EXPERIMENTAL-validators-ordered",
+      "name": "NEAR Protocol RPC: Get validators ordered",
+      "networkKeys": [
+        "mainnet",
+        "testnet"
+      ],
+      "operationId": "EXPERIMENTAL_validators_ordered",
+      "pageModelId": "rpc-EXPERIMENTAL-validators-ordered",
+      "requestPath": "/",
+      "requestType": null,
+      "routeAliases": [
+        "/rpcs/validators/EXPERIMENTAL_validators_ordered/other/EXPERIMENTAL_validators_ordered",
+        "/reference/operation/EXPERIMENTAL_validators_ordered"
+      ],
+      "schemaType": "APIReference",
+      "sourceSpec": "rpcs/validators/EXPERIMENTAL_validators_ordered.yaml",
+      "summary": "Get validators ordered",
+      "transport": "json-rpc"
+    },
+    {
+      "authSummary": "API key via query apiKey",
+      "canonicalPath": "/rpcs/validators/validators_by_epoch",
+      "description": "Retrieves the list of validators and their details for a specific epoch",
+      "docsPath": "/rpc/validators/validators-by-epoch",
+      "familyId": "rpc-validators",
+      "headline": "NEAR Protocol RPC: Validators By Epoch",
+      "httpMethod": "POST",
+      "id": "rpc-validators-by-epoch",
+      "name": "NEAR Protocol RPC: Validators By Epoch",
+      "networkKeys": [
+        "mainnet",
+        "testnet"
+      ],
+      "operationId": "validators_by_epoch",
+      "pageModelId": "rpc-validators-by-epoch",
+      "requestPath": "/",
+      "requestType": null,
+      "routeAliases": [
+        "/rpcs/validators/validators_by_epoch/other/validators_by_epoch",
+        "/reference/operation/validators_by_epoch"
+      ],
+      "schemaType": "APIReference",
+      "sourceSpec": "rpcs/validators/validators_by_epoch.yaml",
+      "summary": "Get validators by epoch",
+      "transport": "json-rpc"
+    },
+    {
+      "authSummary": "API key via query apiKey",
+      "canonicalPath": "/rpcs/validators/validators_current",
+      "description": "Retrieves the list of current validators and their details",
+      "docsPath": "/rpc/validators/validators-current",
+      "familyId": "rpc-validators",
+      "headline": "NEAR Protocol RPC: Current Validators",
+      "httpMethod": "POST",
+      "id": "rpc-validators-current",
+      "name": "NEAR Protocol RPC: Current Validators",
+      "networkKeys": [
+        "mainnet",
+        "testnet"
+      ],
+      "operationId": "validators_current",
+      "pageModelId": "rpc-validators-current",
+      "requestPath": "/",
+      "requestType": null,
+      "routeAliases": [
+        "/rpcs/validators/validators_current/other/validators_current",
+        "/reference/operation/validators_current"
+      ],
+      "schemaType": "APIReference",
+      "sourceSpec": "rpcs/validators/validators_current.yaml",
+      "summary": "Get current validators",
+      "transport": "json-rpc"
+    }
+  ],
+  "version": 1
+}

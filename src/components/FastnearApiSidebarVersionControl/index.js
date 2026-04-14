@@ -5,7 +5,7 @@ import { useHistory, useLocation } from '@docusaurus/router';
 const STORAGE_KEY = 'fastnear-api:selected-version';
 const VERSION_LABEL_RE = /^V(\d+)$/i;
 const VERSIONED_ITEM_LABEL_RE = /^V\d+\s+/i;
-const VERSION_PATH_RE = /(\/docs\/rpc-api\/fastnear-api\/)(v\d+)(-[^/?#]+)$/i;
+const VERSION_PATH_RE = /^(\/api\/)(v\d+)(\/[^?#]+)?\/?$/i;
 
 function getVersionKeyFromLabel(label) {
   const match = String(label).match(VERSION_LABEL_RE);
@@ -40,7 +40,7 @@ function getVersionCategories(items) {
 }
 
 function getVersionFromPath(pathname, versionKeys) {
-  const match = pathname.match(/\/docs\/rpc-api\/fastnear-api\/(v\d+)-/i);
+  const match = pathname.match(/\/api\/(v\d+)(?:\/|$)/i);
   if (!match) {
     return null;
   }
@@ -82,7 +82,7 @@ function findTargetHref(versionCategories, currentPath, targetVersion) {
 
   const matchedVersionPath = currentPath.match(VERSION_PATH_RE);
   if (matchedVersionPath) {
-    const candidatePath = `${matchedVersionPath[1]}${targetVersion}${matchedVersionPath[3]}`;
+    const candidatePath = `${matchedVersionPath[1]}${targetVersion}${matchedVersionPath[3] || ''}`;
     if (targetCategory.links.includes(candidatePath)) {
       return candidatePath;
     }

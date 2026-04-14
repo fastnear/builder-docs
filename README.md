@@ -16,12 +16,14 @@ Public API and RPC pages are no longer iframe embeds. They render directly in `b
 ## What Lives Here
 
 - MDX content under `docs/`
-- `src/components/FastnearDirectOperation/` for native interactive API and RPC docs inside `/docs/**` reference pages
+- `src/components/FastnearDirectOperation/` for native interactive API and RPC docs inside the root-mounted public reference pages (`/rpc/**`, `/api/**`, `/tx/**`, and related families)
 - `src/components/FastnearHostedOperationPage/` for canonical hosted `/rpcs/...` and `/apis/...` routes
 - `src/components/ApiKeyManager/` for browser-persisted FastNear API keys
 - `src/components/FastnearApiSidebarVersionControl/` for FastNear API version-aware sidebar filtering
 - `src/data/generatedFastnearPageModels.json`, vendored from `mike-docs`
+- `src/data/generatedFastnearStructuredGraph.json`, vendored from `mike-docs`
 - `scripts/generate-bespoke-host-pages.js`, which generates `src/pages/rpcs/**` and `src/pages/apis/**`
+- `scripts/generate-ai-surfaces.js`, which generates Markdown mirrors, `llms.txt`, and `/structured-data/site-graph.json`
 
 ## Development
 
@@ -50,6 +52,24 @@ yarn test:e2e
 
 The Playwright config starts a local Docusaurus server automatically, then runs a small Chromium-based smoke suite against the public docs experience. Use it for routing, theming, copy-action, and interaction regressions as the bespoke docs UI evolves.
 
+### Algolia crawler contract
+
+Treat the clean root-mounted public docs as the public search surface.
+
+- Crawl: `/`, `/rpc/**`, `/api/**`, `/tx/**`, `/transfers/**`, `/neardata/**`, `/fastdata/**`, `/auth/**`, `/agents/**`, `/snapshots/**`, `/transaction-flow/**`
+- Exclude: `/rpcs/**`, `/apis/**`, `/**/index.md`, `/llms.txt`, `/llms-full.txt`, `/guides/llms.txt`, `/rpcs/llms.txt`, `/apis/llms.txt`, `/structured-data/**`
+- Exclude low-value utility pages already kept out of the sitemap: `/api/reference`, `/redocly-config`
+- Add `category` and `method_type` to `attributesForFaceting`
+
+The docs runtime now emits `docsearch:category` and `docsearch:method_type` meta tags centrally, so the crawler can facet reference pages without hand-authored `<head>` blocks in MDX.
+
+Structured data is emitted centrally too:
+
+- global `WebSite` and `Organization` JSON-LD from `docusaurus.config.js`
+- page-level `CollectionPage`, `TechArticle`, or `WebPage` graphs from the docs runtime
+- `APIReference` and `WebAPI` entities from the vendored `generatedFastnearStructuredGraph.json`
+- a public machine-readable site graph at `/structured-data/site-graph.json`
+
 ### Refreshing the generated docs models
 
 If you changed specs, enhancements, or the shared runtime in `mike-docs`, refresh the vendored artifacts first:
@@ -61,6 +81,7 @@ npm run sync:apis
 ```
 
 That updates the generated page models copied into `builder-docs/src/data/generatedFastnearPageModels.json`.
+It also refreshes the structured graph copied into `builder-docs/src/data/generatedFastnearStructuredGraph.json`.
 
 ## Feature Branch Workflow
 
@@ -94,7 +115,7 @@ The Redocly preview in `mike-docs` is now legacy infrastructure. Use it only whe
 
 ## Creating Or Updating Docs Pages
 
-Docs pages under `docs/rpc-api/**` should use the native direct renderer:
+Docs pages under the root-mounted docs tree should use the native direct renderer:
 
 ```mdx
 ---
@@ -106,7 +127,7 @@ import FastnearDirectOperation from '@site/src/components/FastnearDirectOperatio
 <FastnearDirectOperation pageModelId="rpc-view-account" />
 ```
 
-RPC source files currently live under `docs/rpc-api/<category>/`, but they publish at `/docs/rpc/<category>/<route-segment>` via frontmatter `slug`.
+RPC source files now live under `docs/rpc/<category>/` and publish at `/rpc/<category>/<route-segment>`.
 
 Use the generated `pageModelId` from `mike-docs`. The canonical hosted `/rpcs/...` and `/apis/...` routes are generated automatically; do not hand-edit files under `src/pages/rpcs/**` or `src/pages/apis/**`.
 
@@ -121,7 +142,14 @@ These paths are the public contract:
 /apis/transactions/v0/account
 ```
 
-They are generated and hosted directly by this repo. The matching `/docs/rpc/**` pages and service-specific `/docs/**` reference pages use the same underlying page-model data and interactive runtime.
+They are generated and hosted directly by this repo. The matching public wrapper pages use the same underlying page-model data and interactive runtime:
+
+- `/rpc/**`
+- `/api/**`
+- `/tx/**`
+- `/transfers/**`
+- `/neardata/**`
+- `/fastdata/kv/**`
 
 ## Useful URLs
 

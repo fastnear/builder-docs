@@ -1,3 +1,8 @@
+---
+slug: /redocly-config
+description: Historical notes about the legacy Redocly backend and where it still matters for FastNear docs verification.
+---
+
 # Legacy Redocly Backend Notes
 
 This document is historical context for the legacy Redocly backend in `mike-docs`.

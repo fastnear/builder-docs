@@ -6,7 +6,16 @@ const path = require("path");
 const ROOT = path.resolve(__dirname, "..");
 const DOCS_ROOT = path.resolve(ROOT, "docs");
 const PAGE_MODELS_PATH = path.resolve(ROOT, "src/data/generatedFastnearPageModels.json");
+const STRUCTURED_GRAPH_PATH = path.resolve(
+  ROOT,
+  "src/data/generatedFastnearStructuredGraph.json"
+);
 const STATIC_ROOT = path.resolve(ROOT, "static");
+const SITE_ORIGIN = "https://docs.fastnear.com";
+const WEBSITE_ID = `${SITE_ORIGIN}/#website`;
+const ORGANIZATION_ID = `${SITE_ORIGIN}/#organization`;
+const ORGANIZATION_LOGO_URL = `${SITE_ORIGIN}/img/fastnear_logo_black.png`;
+const ORGANIZATION_SAME_AS = ["https://github.com/fastnear", "https://x.com/fast_near"];
 
 const hideEarlyApiFamilies = /^(1|true|yes|on)$/i.test(
   process.env.HIDE_EARLY_API_FAMILIES || ""
@@ -14,19 +23,30 @@ const hideEarlyApiFamilies = /^(1|true|yes|on)$/i.test(
 
 const GENERATED_STATIC_ROOTS = [
   path.join(STATIC_ROOT, "docs"),
+  path.join(STATIC_ROOT, "guides"),
+  path.join(STATIC_ROOT, "rpc"),
+  path.join(STATIC_ROOT, "api"),
+  path.join(STATIC_ROOT, "tx"),
+  path.join(STATIC_ROOT, "transfers"),
+  path.join(STATIC_ROOT, "neardata"),
+  path.join(STATIC_ROOT, "fastdata"),
+  path.join(STATIC_ROOT, "auth"),
+  path.join(STATIC_ROOT, "agents"),
+  path.join(STATIC_ROOT, "snapshots"),
+  path.join(STATIC_ROOT, "transaction-flow"),
   path.join(STATIC_ROOT, "rpcs"),
   path.join(STATIC_ROOT, "apis"),
+  path.join(STATIC_ROOT, "structured-data"),
 ];
 const GENERATED_STATIC_FILES = [
+  path.join(STATIC_ROOT, "index.md"),
   path.join(STATIC_ROOT, "llms.txt"),
   path.join(STATIC_ROOT, "llms-full.txt"),
 ];
 
 const HIDDEN_DOC_PREFIXES = [
-  "/docs/rpc-api/transfers-api",
-  "/docs/rpc-api/kv-fastdata-api",
-  "/docs/transfers",
-  "/docs/fastdata",
+  "/transfers",
+  "/fastdata",
 ];
 const HIDDEN_CANONICAL_PREFIXES = ["/apis/transfers", "/apis/kv-fastdata"];
 const SECRET_QUERY_PARAM_PATTERNS = [/^apiKey$/i, /^token$/i, /^header\./i];
@@ -48,9 +68,30 @@ const API_SERVICE_LABELS = {
   transfers: "Transfers API",
 };
 
+const COLLECTION_ROUTE_SET = new Set([
+  "/",
+  "/api",
+  "/api/reference",
+  "/auth",
+  "/fastdata/kv",
+  "/neardata",
+  "/rpc",
+  "/snapshots",
+  "/transaction-flow",
+  "/transfers",
+  "/tx",
+]);
+
 const pageModels = JSON.parse(fs.readFileSync(PAGE_MODELS_PATH, "utf8"));
+const structuredGraph = JSON.parse(fs.readFileSync(STRUCTURED_GRAPH_PATH, "utf8"));
 const pageModelsById = Object.fromEntries(
   pageModels.map((pageModel) => [pageModel.pageModelId, pageModel])
+);
+const structuredFamiliesById = Object.fromEntries(
+  (structuredGraph.families || []).map((family) => [family.id, family])
+);
+const structuredOperationsByPageModelId = Object.fromEntries(
+  (structuredGraph.operations || []).map((operation) => [operation.pageModelId, operation])
 );
 
 function removeGeneratedStaticRoots() {
@@ -97,6 +138,34 @@ function buildMarkdownMirrorPath(route) {
   }
 
   return `${normalizedRoute}/index.md`;
+}
+
+function buildAbsoluteUrl(route) {
+  return new URL(normalizeRoute(route).replace(/^\//, ""), `${SITE_ORIGIN}/`).toString();
+}
+
+function buildPageEntityId(url) {
+  return `${url}#page`;
+}
+
+function buildFamilyEntityId(familyId) {
+  return `${SITE_ORIGIN}/structured-data/families/${familyId}`;
+}
+
+function buildOperationEntityId(pageModelId) {
+  return `${SITE_ORIGIN}/structured-data/operations/${pageModelId}`;
+}
+
+function isCollectionRoute(route) {
+  return COLLECTION_ROUTE_SET.has(normalizeRoute(route));
+}
+
+function getDocsPageSchemaType(entry) {
+  if (entry.kind === "wrapper") {
+    return "WebPage";
+  }
+
+  return isCollectionRoute(entry.route) ? "CollectionPage" : "TechArticle";
 }
 
 function normalizeMarkdown(markdown) {
@@ -179,12 +248,10 @@ function computeDocRoute(relativePath, frontmatter) {
 
   if (frontmatter.slug) {
     if (frontmatter.slug.startsWith("/")) {
-      return normalizeRoute(`/docs${frontmatter.slug}`);
+      return normalizeRoute(frontmatter.slug);
     }
 
-    return normalizeRoute(
-      `/docs/${[...directorySegments, frontmatter.slug].filter(Boolean).join("/")}`
-    );
+    return normalizeRoute(`/${[...directorySegments, frontmatter.slug].filter(Boolean).join("/")}`);
   }
 
   const routeSegments =
@@ -192,7 +259,8 @@ function computeDocRoute(relativePath, frontmatter) {
       ? directorySegments
       : [...directorySegments, parsedPath.name];
 
-  return normalizeRoute(`/docs/${routeSegments.filter(Boolean).join("/")}`);
+  const route = `/${routeSegments.filter(Boolean).join("/")}`;
+  return normalizeRoute(route);
 }
 
 function isHiddenRoute(route) {
@@ -231,18 +299,49 @@ function stripInlineTags(value) {
 
 function buildRpcApiServiceLinks() {
   const links = [
-    { href: "/docs/api", label: "FastNear API" },
-    { href: "/docs/tx", label: "Transactions API" },
+    {
+      href: "/api",
+      label: "FastNear API",
+      description:
+        "Indexed account views for balances, NFTs, staking, and public-key lookups.",
+    },
+    {
+      href: "/tx",
+      label: "Transactions API",
+      description:
+        "Account, block, receipt, and transaction history from indexed execution data.",
+    },
     ...(!hideEarlyApiFamilies
-      ? [{ href: "/docs/transfers", label: "Transfers API" }]
+      ? [
+          {
+            href: "/transfers",
+            label: "Transfers API",
+            description:
+              "Purpose-built transfer history for account activity and pagination-heavy UIs.",
+          },
+        ]
       : []),
     ...(!hideEarlyApiFamilies
-      ? [{ href: "/docs/fastdata/kv", label: "KV FastData API" }]
+      ? [
+          {
+            href: "/fastdata/kv",
+            label: "KV FastData API",
+            description:
+              "Indexed key-value history and latest-state lookups for contract storage analysis.",
+          },
+        ]
       : []),
-    { href: "/docs/neardata", label: "NEAR Data API" },
+    {
+      href: "/neardata",
+      label: "NEAR Data API",
+      description:
+        "Recent finalized and optimistic block-family reads for low-latency polling workflows.",
+    },
   ];
 
-  return links.map((link) => `- [${link.label}](${link.href})`).join("\n");
+  return links
+    .map((link) => `- [${link.label}](${link.href}): ${link.description}`)
+    .join("\n");
 }
 
 function transformCardGrid(markdown) {
@@ -269,6 +368,11 @@ function transformCardGrid(markdown) {
           const title = stripInlineTags(
             body.match(/<strong>([\s\S]*?)<\/strong>/)?.[1] || "Reference"
           );
+          const titleHref = (
+            body.match(
+              /<Link\b[^>]*className="fastnear-doc-card__title"[^>]*to="([^"]+)"[^>]*>[\s\S]*?<strong>/
+            )?.[1] || ""
+          ).trim();
           const summary = stripInlineTags(
             body.match(
               /<span(?![^>]*fastnear-doc-card__(?:eyebrow|bestfor-label))[^>]*>([\s\S]*?)<\/span>/
@@ -292,7 +396,7 @@ function transformCardGrid(markdown) {
 
           const lines = [];
           lines.push(
-            `### ${ctaHref ? `[${title}](${ctaHref})` : title}`
+            `### ${titleHref ? `[${title}](${titleHref})` : ctaHref ? `[${title}](${ctaHref})` : title}`
           );
 
           if (eyebrow) {
@@ -315,7 +419,7 @@ function transformCardGrid(markdown) {
             );
           }
 
-          if (ctaHref) {
+          if (ctaHref && ctaHref !== titleHref) {
             lines.push(`Open: [${ctaLabel}](${ctaHref})`);
           }
 
@@ -346,7 +450,7 @@ function transformSimpleJsx(markdown) {
       [
         "> The interactive browser key manager is omitted from this static Markdown mirror.",
         "> Use the live docs page for the browser demo flow, or see",
-        "> [Production Backend Auth](/docs/rpc-api/auth-production-backend)",
+        "> [Production Backend Auth](/auth/backend)",
         "> for secure backend usage.",
       ].join(" ")
     )
@@ -389,27 +493,29 @@ function renderAuthoredMarkdown(content, route, filePath) {
 }
 
 function getDocSectionLabel(route) {
-  if (route.startsWith("/docs/ai-agents")) {
+  if (route.startsWith("/agents")) {
     return "AI & Agents";
   }
 
-  if (route.startsWith("/docs/transaction-flow")) {
+  if (route.startsWith("/transaction-flow")) {
     return "Transaction Flow";
   }
 
-  if (route.startsWith("/docs/snapshots")) {
+  if (route.startsWith("/snapshots")) {
     return "Snapshots";
   }
 
   if (
-    route.startsWith("/docs/rpc-api") ||
-    route.startsWith("/docs/rpc/") ||
-    route === "/docs/rpc" ||
-    route === "/docs/api" ||
-    route === "/docs/tx" ||
-    route === "/docs/transfers" ||
-    route === "/docs/neardata" ||
-    route.startsWith("/docs/fastdata")
+    route === "/" ||
+    route.startsWith("/rpc/") ||
+    route === "/rpc" ||
+    route === "/api" ||
+    route === "/api/reference" ||
+    route === "/tx" ||
+    route === "/transfers" ||
+    route === "/neardata" ||
+    route === "/auth" ||
+    route.startsWith("/fastdata")
   ) {
     return "RPC / API Guides";
   }
@@ -1103,6 +1209,146 @@ function createCanonicalEntries() {
     .sort((left, right) => left.route.localeCompare(right.route));
 }
 
+function buildWebsiteEntity() {
+  return {
+    "@id": WEBSITE_ID,
+    "@type": "WebSite",
+    description:
+      "API and RPC documentation for FastNear, high-performance infrastructure for the NEAR Protocol.",
+    name: "FastNear Docs",
+    url: SITE_ORIGIN,
+  };
+}
+
+function buildOrganizationEntity() {
+  return {
+    "@id": ORGANIZATION_ID,
+    "@type": "Organization",
+    description:
+      "High-performance RPC and API infrastructure for the NEAR Protocol blockchain.",
+    logo: ORGANIZATION_LOGO_URL,
+    name: "FastNear",
+    sameAs: ORGANIZATION_SAME_AS,
+    url: "https://fastnear.com",
+  };
+}
+
+function buildSiteGraphFamilyRecord(family) {
+  return {
+    ...family,
+    "@id": buildFamilyEntityId(family.id),
+    docsUrl: buildAbsoluteUrl(family.docsPath),
+    hostedPathPrefixUrl: buildAbsoluteUrl(family.hostedPathPrefix),
+    providerId: ORGANIZATION_ID,
+  };
+}
+
+function buildSiteGraphOperationRecord(operation) {
+  return {
+    ...operation,
+    "@id": buildOperationEntityId(operation.pageModelId),
+    docsUrl: buildAbsoluteUrl(operation.docsPath),
+    canonicalUrl: buildAbsoluteUrl(operation.canonicalPath),
+    familyEntityId: buildFamilyEntityId(operation.familyId),
+    publisherId: ORGANIZATION_ID,
+    sameAs: [
+      buildAbsoluteUrl(operation.docsPath),
+      buildAbsoluteUrl(operation.canonicalPath),
+      ...(operation.routeAliases || []).map((route) => buildAbsoluteUrl(route)),
+    ].filter((value, index, values) => values.indexOf(value) === index),
+  };
+}
+
+function buildSiteGraphArtifact({ authoredDocEntries, canonicalEntries, docEntries }) {
+  const visibleCanonicalRoutes = new Set(canonicalEntries.map((entry) => normalizeRoute(entry.route)));
+  const visibleOperations = (structuredGraph.operations || []).filter((operation) =>
+    visibleCanonicalRoutes.has(normalizeRoute(operation.canonicalPath))
+  );
+  const usedFamilyIds = [...new Set(visibleOperations.map((operation) => operation.familyId))];
+  const families = usedFamilyIds
+    .map((familyId) => structuredFamiliesById[familyId])
+    .filter(Boolean)
+    .map((family) => buildSiteGraphFamilyRecord(family))
+    .sort((left, right) => left.id.localeCompare(right.id));
+  const operations = visibleOperations
+    .map((operation) => buildSiteGraphOperationRecord(operation))
+    .sort((left, right) => left.canonicalPath.localeCompare(right.canonicalPath));
+  const pages = [
+    ...docEntries.map((entry) => {
+      const route = normalizeRoute(entry.route);
+      const url = buildAbsoluteUrl(route);
+      const markdownMirrorUrl = buildAbsoluteUrl(entry.markdownPath);
+      const linkedOperation =
+        entry.kind === "wrapper"
+          ? visibleOperations.find((operation) => normalizeRoute(operation.docsPath) === route)
+          : null;
+      const linkedFamilies =
+        entry.kind === "wrapper"
+          ? linkedOperation
+            ? [linkedOperation.familyId]
+            : []
+          : families
+              .filter((family) => normalizeRoute(family.docsPath) === route)
+              .map((family) => family.id);
+
+      return {
+        entityIds: {
+          familyIds: linkedFamilies.map((familyId) => buildFamilyEntityId(familyId)),
+          mainEntityId: linkedOperation ? buildOperationEntityId(linkedOperation.pageModelId) : null,
+          pageId: buildPageEntityId(url),
+        },
+        indexable: true,
+        markdownMirrorUrl,
+        pageSchemaType: getDocsPageSchemaType(entry),
+        route,
+        routeType: "docs",
+        url,
+      };
+    }),
+    ...canonicalEntries.map((entry) => {
+      const route = normalizeRoute(entry.route);
+      const operation = visibleOperations.find(
+        (candidate) => normalizeRoute(candidate.canonicalPath) === route
+      );
+      if (!operation) {
+        throw new Error(`Missing structured operation for hosted route ${route}`);
+      }
+
+      const url = buildAbsoluteUrl(route);
+      return {
+        entityIds: {
+          familyIds: [buildFamilyEntityId(operation.familyId)],
+          mainEntityId: buildOperationEntityId(operation.pageModelId),
+          pageId: buildPageEntityId(url),
+        },
+        indexable: false,
+        markdownMirrorUrl: buildAbsoluteUrl(entry.markdownPath),
+        pageSchemaType: "WebPage",
+        route,
+        routeType: entry.kind === "rpc" ? "hosted-rpc" : "hosted-api",
+        url,
+      };
+    }),
+  ].sort((left, right) => left.url.localeCompare(right.url));
+
+  return {
+    discovery: {
+      apiLlmsIndexUrl: buildAbsoluteUrl("/apis/llms.txt"),
+      docsLlmsIndexUrl: buildAbsoluteUrl("/guides/llms.txt"),
+      llmsFullUrl: buildAbsoluteUrl("/llms-full.txt"),
+      llmsIndexUrl: buildAbsoluteUrl("/llms.txt"),
+      markdownMirrorRootUrl: buildAbsoluteUrl("/index.md"),
+      rpcLlmsIndexUrl: buildAbsoluteUrl("/rpcs/llms.txt"),
+    },
+    families,
+    operations,
+    organization: buildOrganizationEntity(),
+    pages,
+    version: 1,
+    website: buildWebsiteEntity(),
+  };
+}
+
 function writeMirrorEntries(entries) {
   for (const entry of entries) {
     writeTextFile(path.join(STATIC_ROOT, entry.markdownPath), entry.markdown);
@@ -1175,7 +1421,7 @@ function main() {
   writeMirrorEntries([...docEntries, ...canonicalEntries]);
 
   writeTextFile(
-    path.join(STATIC_ROOT, "docs/llms.txt"),
+    path.join(STATIC_ROOT, "guides/llms.txt"),
     buildGroupedIndex(
       "FastNear Builder Docs Guides",
       "Author-written guides and overview pages in AI-readable Markdown form.",
@@ -1210,7 +1456,7 @@ function main() {
       "FastNear Builder Docs",
       "AI-readable indexes for FastNear guides, RPC reference, and REST API reference.",
       [
-        { href: "/docs/llms.txt", label: "Guides index" },
+        { href: "/guides/llms.txt", label: "Guides index" },
         { href: "/rpcs/llms.txt", label: "RPC reference index" },
         { href: "/apis/llms.txt", label: "REST API reference index" },
         { href: "/llms-full.txt", label: "Full archive" },
@@ -1222,6 +1468,19 @@ function main() {
   writeTextFile(
     path.join(STATIC_ROOT, "llms-full.txt"),
     buildFullArchive([...authoredDocEntries, ...rpcEntries, ...apiEntries])
+  );
+
+  writeTextFile(
+    path.join(STATIC_ROOT, "structured-data/site-graph.json"),
+    `${JSON.stringify(
+      buildSiteGraphArtifact({
+        authoredDocEntries,
+        canonicalEntries,
+        docEntries,
+      }),
+      null,
+      2
+    )}\n`
   );
 
   if (wrapperDocEntries.length === 0) {

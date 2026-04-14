@@ -17,13 +17,13 @@ test('FastNear API sidebar does not trigger the DocsSidebarProvider hook warning
     }
   });
 
-  await page.goto('/docs/rpc-api/fastnear-api/v1-public-key');
+  await page.goto('/api/v1/public-key');
   await expect(page.getByRole('navigation', { name: 'Docs sidebar' })).toBeVisible();
   expect(sidebarWarnings).toHaveLength(0);
 });
 
 test('FastNear API sidebar hides redundant version prefixes once a version is selected', async ({ page }) => {
-  await page.goto('/docs/rpc-api/fastnear-api/v1-public-key');
+  await page.goto('/api/v1/public-key');
 
   const sidebar = page.getByRole('navigation', { name: 'Docs sidebar' });
 
@@ -34,7 +34,7 @@ test('FastNear API sidebar hides redundant version prefixes once a version is se
 });
 
 test('FastNear API sidebar groups utility pages under System below versioned endpoints', async ({ page }) => {
-  await page.goto('/docs/rpc-api/fastnear-api/v1-public-key');
+  await page.goto('/api/v1/public-key');
 
   const sidebar = page.getByRole('navigation', { name: 'Docs sidebar' });
 

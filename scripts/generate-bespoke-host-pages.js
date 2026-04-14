@@ -2,6 +2,7 @@
 
 const fs = require("fs");
 const path = require("path");
+const { auditPageModels } = require("./audit-generated-page-models");
 
 const ROOT = path.resolve(__dirname, "..");
 const PAGE_MODELS_PATH = path.resolve(ROOT, "src/data/generatedFastnearPageModels.json");
@@ -40,6 +41,7 @@ function writeRouteFile(routePath, pageModelId) {
 
 function main() {
   const pageModels = JSON.parse(fs.readFileSync(PAGE_MODELS_PATH, "utf8"));
+  auditPageModels(pageModels);
 
   removeGeneratedRoots();
 

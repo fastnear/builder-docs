@@ -1,8 +1,10 @@
 import React, { useEffect } from "react";
 import Head from "@docusaurus/Head";
+import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 
 import FastnearDirectOperation from "@site/src/components/FastnearDirectOperation";
 import { getFastnearPageModelById } from "@site/src/components/FastnearDirectOperation/pageModels";
+import { buildHostedOperationStructuredData } from "@site/src/utils/structuredData";
 
 function useEmbedAutoHeight() {
   useEffect(() => {
@@ -105,6 +107,8 @@ function useColorSchemaParam() {
 
 export default function FastnearHostedOperationPage({ pageModelId }) {
   const pageModel = getFastnearPageModelById(pageModelId);
+  const { siteConfig } = useDocusaurusContext();
+  const structuredData = buildHostedOperationStructuredData({ pageModelId, siteConfig });
 
   useEmbedAutoHeight();
   useColorSchemaParam();
@@ -114,6 +118,16 @@ export default function FastnearHostedOperationPage({ pageModelId }) {
       <Head>
         <title>{pageModel?.info?.title || "FastNear Docs"}</title>
         <meta name="robots" content="noindex" />
+        {structuredData?.structuredData ? (
+          <script type="application/ld+json">
+            {JSON.stringify(structuredData.structuredData)}
+          </script>
+        ) : null}
+        {structuredData?.breadcrumbStructuredData ? (
+          <script type="application/ld+json">
+            {JSON.stringify(structuredData.breadcrumbStructuredData)}
+          </script>
+        ) : null}
       </Head>
       <FastnearDirectOperation pageModelId={pageModelId} />
     </div>

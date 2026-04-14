@@ -39,14 +39,14 @@ yarn serve
 
 ## High-Level Architecture
 
-This is a Docusaurus v3.9.2 documentation site focused on providing advanced NEAR Protocol documentation for seasoned developers, builders, and founders. The site complements the general NEAR documentation at docs.near.org with more technical, precise definitions.
+This is a Docusaurus v3.10.0 documentation site focused on providing advanced NEAR Protocol documentation for seasoned developers, builders, and founders. The site complements the general NEAR documentation at docs.near.org with more technical, precise definitions.
 
 ### Documentation Structure
 
-- `/docs/rpc/` — canonical RPC operation documentation rendered natively with the shared bespoke runtime
-- `/docs/rpc-api/` — chooser, auth, and cross-surface guidance for the reference docs
-- `/docs/transaction-flow/` — 11-page deep dive on NEAR transaction lifecycle (async model, finality, gas economics, runtime execution, etc.)
-- `/docs/snapshots/` — Validator snapshot documentation for mainnet/testnet
+- `/rpc/` — canonical RPC operation documentation rendered natively with the shared bespoke runtime
+- `/` — chooser, auth, and cross-surface guidance for the reference docs
+- `/transaction-flow/` — 11-page deep dive on NEAR transaction lifecycle (async model, finality, gas economics, runtime execution, etc.)
+- `/snapshots/` — Validator snapshot documentation for mainnet/testnet
 - Content is written in MDX format, allowing React components within markdown
 
 Current navigation model:
@@ -54,12 +54,12 @@ Current navigation model:
 - `API` is the top-level entry for the FastNear REST API section only.
 - `Transactions`, `Transfers`, and `NEAR Data` each have their own top-level API entry and their own section-specific sidebar.
 - `FastData` is a grouped section for the `KV FastData API`.
-- `/docs/rpc-api` remains as a neutral overview page and is no longer the main navbar target for either `RPC` or `API`.
+- `/` remains the neutral overview page and is no longer represented as a dedicated navbar item.
 - This section-aware sidebar behavior is intentionally implemented in Docusaurus. `builder-docs` is the public docs runtime; `mike-docs` is the generation pipeline plus legacy verification backend.
 
 ### React Components
 
-- **`FastnearDirectOperation`** (`src/components/FastnearDirectOperation/index.js`) — Shared native renderer for interactive RPC and API docs inside `/docs/**` reference pages.
+- **`FastnearDirectOperation`** (`src/components/FastnearDirectOperation/index.js`) — Shared native renderer for interactive RPC and API docs inside the root-mounted public reference pages.
 - **`FastnearHostedOperationPage`** (`src/components/FastnearHostedOperationPage/index.js`) — Lightweight page wrapper used by the generated canonical `/rpcs/**` and `/apis/**` hosted pages. Also posts resize messages when embedded externally.
 - **`ApiKeyManager`** (`src/components/ApiKeyManager/index.js`) — UI for users to set/manage their FastNear API key, stored in localStorage.
 - **`FastnearApiSidebarVersionControl`** (`src/components/FastnearApiSidebarVersionControl/index.js`) — FastNear API version selector for the sidebar.
@@ -89,7 +89,7 @@ This is the main expansion pattern for the site. Each RPC method gets its own MD
 
 ### Step 1: Create the MDX file
 
-Create a new file under `docs/rpc-api/<category>/`, following the existing pattern:
+Create a new file under `docs/rpc/<category>/`, following the existing pattern:
 
 ```mdx
 ---
@@ -115,7 +115,7 @@ The `pageModelId` comes from the generated registry synced from `mike-docs`. For
 
 ## Adding New REST API Pages
 
-Use `FastnearDirectOperation` for FastNear and REST API content under `docs/rpc-api/<service>/`.
+Use `FastnearDirectOperation` for FastNear and REST API content under `docs/api/`, `docs/tx/`, `docs/transfers/`, `docs/neardata/`, and `docs/fastdata/kv/`.
 
 For a standard REST operation page:
 
@@ -149,8 +149,8 @@ Add the new doc ID to the appropriate category in `sidebars.js`:
   type: 'category',
   label: 'Account',
   items: [
-    'rpc-api/account/view-account',
-    'rpc-api/account/your-new-page',   // <-- add here
+    'rpc/account/view-account',
+    'rpc/account/your-new-page',   // <-- add here
   ],
 },
 ```
@@ -161,8 +161,8 @@ Run `yarn start` and navigate to the new page. The direct renderer should load w
 
 ### Existing endpoint pages
 
-- `docs/rpc-api/account/view-account.mdx` → `pageModelId="rpc-view-account"`
-- `docs/rpc-api/contract/call-function.mdx` → `pageModelId="rpc-call"`
+- `docs/rpc/account/view-account.mdx` → `pageModelId="rpc-view-account"`
+- `docs/rpc/contract/call-function.mdx` → `pageModelId="rpc-call"`
 
 ## Docs Backend Integration
 
@@ -173,7 +173,7 @@ The site now treats `mike-docs` as a generation pipeline, not an embedded runtim
 1. Each YAML file in mike-docs `rpcs/` gets its own canonical page path (e.g. `rpcs/account/view_account.yaml` → `/rpcs/account/view_account`).
 2. REST API service repos now own only aggregate `openapi/openapi.yaml`; mike-docs syncs those aggregate specs and splits them into canonical `/apis/<service>/...` leaf pages.
 3. `mike-docs` generates the shared page-model registry and vendors it into `builder-docs/src/data/generatedFastnearPageModels.json`.
-4. `builder-docs` renders `/docs/rpc/**` and service-specific `/docs/**` reference pages with `FastnearDirectOperation`.
+4. `builder-docs` renders `/rpc/**` and service-specific root-mounted reference pages with `FastnearDirectOperation`.
 5. `builder-docs` generates canonical hosted pages under `src/pages/rpcs/**` and `src/pages/apis/**` so `docs.fastnear.com` serves the same bespoke runtime directly.
 6. Redocly remains available in `mike-docs` only for validation and legacy debugging.
 
@@ -205,7 +205,7 @@ curl "https://rpc.mainnet.fastnear.com?apiKey=${apiKey}" \
 - Deployed to https://docs.fastnear.com
 - GitHub repository: https://github.com/fastnear/builder-docs
 - Yarn v4.9.2 as package manager
-- Node.js 18.0 or higher required
+- Node.js 20.0 or higher required
 - Legacy Redocly pages can be previewed locally using `npm run preview:headless` in the **mike-docs** repo root — runs on http://127.0.0.1:4000
 - Bespoke pages can be previewed locally using `npm run standalone:dev` in the **mike-docs** repo root — runs on http://127.0.0.1:4010
 - Public docs pages in this repo no longer depend on the legacy iframe routing layer
@@ -231,7 +231,7 @@ To add a new RPC operation from nearcore:
 
 1. In **mike-docs**: add an entry to `OPERATIONS` in `scripts/nearcore-operation-map.js`
 2. In **mike-docs**: run `npm run generate-rpc` to generate the YAML
-3. In **builder-docs**: create an MDX page under `docs/rpc-api/<category>/` using `FastnearDirectOperation`
+3. In **builder-docs**: create an MDX page under `docs/rpc/<category>/` using `FastnearDirectOperation`
 4. In **builder-docs**: add the page to `sidebars.js`
 
 See mike-docs `CLAUDE.md` and `README.md` for full generator documentation.

@@ -23,7 +23,6 @@ const docsearchConfig = {
   appId: process.env.DOCSEARCH_APP_ID,
   apiKey: process.env.DOCSEARCH_API_KEY,
   indexName: process.env.DOCSEARCH_INDEX_NAME,
-  assistantId: process.env.DOCSEARCH_ASSISTANT_ID,
 };
 const hasDocsearchConfig = Boolean(
   docsearchConfig.appId && docsearchConfig.apiKey && docsearchConfig.indexName
@@ -33,7 +32,7 @@ const resolvedSearchProvider =
 const localSearchTheme = [
   require.resolve('@easyops-cn/docusaurus-search-local'),
   {
-    docsRouteBasePath: '/docs',
+    docsRouteBasePath: '/',
     explicitSearchResultPath: true,
     hashed: 'filename',
     ignoreCssSelectors: [
@@ -43,10 +42,8 @@ const localSearchTheme = [
     ],
     ignoreFiles: hideEarlyApiFamilies
       ? [
-          /\/docs\/rpc-api\/transfers-api(?:\/|$)/,
-          /\/docs\/rpc-api\/kv-fastdata-api(?:\/|$)/,
-          /\/docs\/transfers(?:\/|$)/,
-          /\/docs\/fastdata(?:\/|$)/,
+          /\/transfers(?:\/|$)/,
+          /\/fastdata(?:\/|$)/,
         ]
       : [],
     indexBlog: false,
@@ -74,6 +71,37 @@ const config = {
   // For GitHub pages deployment, it is often '/<projectName>/'
   baseUrl: '/',
   trailingSlash: false,
+  headTags: [
+    {
+      tagName: 'script',
+      attributes: { type: 'application/ld+json' },
+      innerHTML: JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'WebSite',
+        name: 'FastNear Docs',
+        url: 'https://docs.fastnear.com',
+        publisher: {
+          '@type': 'Organization',
+          name: 'FastNear',
+          url: 'https://fastnear.com',
+        },
+      }),
+    },
+    {
+      tagName: 'script',
+      attributes: { type: 'application/ld+json' },
+      innerHTML: JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'Organization',
+        name: 'FastNear',
+        url: 'https://fastnear.com',
+        logo: 'https://docs.fastnear.com/img/fastnear_logo_black.png',
+        description:
+          'High-performance RPC and API infrastructure for the NEAR Protocol blockchain.',
+        sameAs: ['https://github.com/fastnear', 'https://x.com/fast_near'],
+      }),
+    },
+  ],
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
@@ -106,12 +134,24 @@ const config = {
       'classic',
       /** @type {import('@docusaurus/preset-classic').Options} */
       ({
+        blog: false,
         debug: false,
         docs: {
-          breadcrumbs: false,
+          breadcrumbs: true,
           path: './docs',
+          routeBasePath: '/',
           sidebarPath: require.resolve('./sidebars.js'),
           editUrl: 'https://github.com/fastnear/builder-docs/edit/main/',
+        },
+        sitemap: {
+          changefreq: null,
+          ignorePatterns: [
+            '/api/reference',
+            '/redocly-config',
+            ...(hideEarlyApiFamilies ? ['/transfers/**', '/fastdata/**'] : []),
+          ],
+          lastmod: 'date',
+          priority: null,
         },
         theme: {
           customCss: './src/css/custom.css',
@@ -141,32 +181,12 @@ const config = {
       {
         redirects: [
           {
-            from: ['/docs/rpc-api/fastnear-api'],
-            to: '/docs/api',
+            from: ['/rpcs/openapi'],
+            to: '/rpc',
           },
           {
-            from: ['/docs/rpc-api/rpc'],
-            to: '/docs/rpc',
-          },
-          {
-            from: ['/docs/rpc-api/transactions-api'],
-            to: '/docs/tx',
-          },
-          {
-            from: ['/docs/rpc-api/transfers-api'],
-            to: '/docs/transfers',
-          },
-          {
-            from: ['/docs/rpc-api/neardata-api'],
-            to: '/docs/neardata',
-          },
-          {
-            from: ['/docs/rpc-api/kv-fastdata-api'],
-            to: '/docs/fastdata/kv',
-          },
-          {
-            from: ['/docs/ai-agents'],
-            to: '/docs/ai-agents/choosing-surfaces',
+            from: ['/apis/openapi'],
+            to: '/api/reference',
           },
         ],
       },
@@ -176,7 +196,6 @@ const config = {
     hideEarlyApiFamilies,
     requestedSearchProvider,
     resolvedSearchProvider,
-    docsearchAssistantId: docsearchConfig.assistantId || null,
   },
 
   themeConfig:
@@ -188,7 +207,7 @@ const config = {
           alt: 'FastNear Builder Docs',
           src: 'img/fastnear_logo_black.png',
           srcDark: 'img/fastnear_logo_white.png',
-          href: '/docs/rpc-api',
+          href: '/',
         },
         items: [
           {
@@ -233,7 +252,7 @@ const config = {
                   items: [
                     {
                       type: 'doc',
-                      docId: 'rpc-api/kv-fastdata-api/index',
+                      docId: 'fastdata/kv/index',
                       label: 'KV FastData API',
                     },
                   ],
@@ -241,7 +260,7 @@ const config = {
               ]
             : []),
           {
-            to: '/docs/snapshots/',
+            to: '/snapshots/',
             label: 'Snapshots',
             position: 'left',
           },
@@ -274,14 +293,6 @@ const config = {
               apiKey: docsearchConfig.apiKey,
               indexName: docsearchConfig.indexName,
               contextualSearch: true,
-              ...(docsearchConfig.assistantId
-                ? {
-                    askAi: {
-                      assistantId: docsearchConfig.assistantId,
-                      sidePanel: true,
-                    },
-                  }
-                : {}),
             },
           }
         : {}),
