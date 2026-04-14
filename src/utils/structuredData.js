@@ -21,6 +21,7 @@ const ORGANIZATION_DESCRIPTION =
   'High-performance RPC and API infrastructure for the NEAR Protocol blockchain.';
 const ORGANIZATION_LOGO_PATH = '/img/fastnear_logo_black.png';
 const ORGANIZATION_SAME_AS = ['https://github.com/fastnear', 'https://x.com/fast_near'];
+const SITE_LANGUAGE = 'en';
 
 function normalizeRoute(route) {
   const normalized = String(route || '').trim();
@@ -61,6 +62,15 @@ function buildOrganizationId(siteConfig) {
 
 function buildPageId(url) {
   return `${url}#page`;
+}
+
+function buildPageEntityRef(pathname, siteConfig) {
+  const pageUrl = buildAbsoluteUrl(pathname, siteConfig);
+  if (!pageUrl) {
+    return null;
+  }
+
+  return { '@id': buildPageId(pageUrl) };
 }
 
 function buildFamilyEntityId(siteConfig, familyId) {
@@ -148,7 +158,9 @@ function buildWebsiteEntity(siteConfig) {
     '@id': buildWebsiteId(siteConfig),
     '@type': 'WebSite',
     description: WEBSITE_DESCRIPTION,
+    inLanguage: SITE_LANGUAGE,
     name: WEBSITE_NAME,
+    publisher: { '@id': buildOrganizationId(siteConfig) },
     url: getSiteOrigin(siteConfig),
   };
 }
@@ -166,19 +178,28 @@ function buildOrganizationEntity(siteConfig) {
 }
 
 function buildFamilyEntity(family, siteConfig) {
+  const docsUrl = buildAbsoluteUrl(family.docsPath, siteConfig);
   return {
     '@id': buildFamilyEntityId(siteConfig, family.id),
     '@type': family.schemaType || 'WebAPI',
     description: family.description,
+    documentation: docsUrl,
     identifier: family.id,
+    mainEntityOfPage: buildPageEntityRef(family.docsPath, siteConfig) || undefined,
     name: family.name,
     provider: { '@id': buildOrganizationId(siteConfig) },
-    url: buildAbsoluteUrl(family.docsPath, siteConfig),
+    serviceType: family.kind === 'rpc' ? 'JSON-RPC API' : 'REST API',
+    url: docsUrl,
   };
 }
 
 function buildOperationEntity(operation, siteConfig) {
-  const primaryUrl = buildAbsoluteUrl(operation.docsPath || operation.canonicalPath, siteConfig);
+  const docsUrl = buildAbsoluteUrl(operation.docsPath || operation.canonicalPath, siteConfig);
+  const docsPageRef = buildPageEntityRef(operation.docsPath || operation.canonicalPath, siteConfig);
+  const canonicalPageRef = buildPageEntityRef(operation.canonicalPath, siteConfig);
+  const subjectOf = dedupeUrls(
+    [docsPageRef?.['@id'], canonicalPageRef?.['@id']]
+  ).map((id) => ({ '@id': id }));
   const sameAs = dedupeUrls(
     [operation.canonicalPath, operation.docsPath, ...(operation.routeAliases || [])].map((value) =>
       buildAbsoluteUrl(value, siteConfig)
@@ -188,14 +209,18 @@ function buildOperationEntity(operation, siteConfig) {
   return {
     '@id': buildOperationEntityId(siteConfig, operation.pageModelId),
     '@type': operation.schemaType || 'APIReference',
+    abstract: operation.summary || operation.name,
     description: operation.description,
     headline: operation.headline || operation.name,
     identifier: operation.pageModelId,
+    inLanguage: SITE_LANGUAGE,
     isPartOf: { '@id': buildFamilyEntityId(siteConfig, operation.familyId) },
+    mainEntityOfPage: docsPageRef || undefined,
     name: operation.name,
     publisher: { '@id': buildOrganizationId(siteConfig) },
     sameAs,
-    url: primaryUrl,
+    subjectOf: subjectOf.length ? subjectOf : undefined,
+    url: docsUrl,
   };
 }
 
@@ -224,20 +249,36 @@ function isCollectionDocsRoute(permalink) {
   return COLLECTION_ROUTE_SET.has(normalizeRoute(permalink));
 }
 
+function formatLastUpdatedTimestamp(lastUpdatedAt) {
+  if (!lastUpdatedAt) {
+    return undefined;
+  }
+
+  try {
+    return new Date(lastUpdatedAt).toISOString();
+  } catch (_error) {
+    return undefined;
+  }
+}
+
 function buildDocsPageEntity({ description, metadata, pageType, siteConfig, url }) {
+  const dateModified = formatLastUpdatedTimestamp(metadata?.lastUpdatedAt);
   const baseEntity = {
     '@id': buildPageId(url),
     '@type': pageType,
     description,
+    inLanguage: SITE_LANGUAGE,
     isPartOf: { '@id': buildWebsiteId(siteConfig) },
     name: metadata.title,
     publisher: { '@id': buildOrganizationId(siteConfig) },
     url,
+    ...(dateModified ? { dateModified } : {}),
   };
 
   if (pageType === 'TechArticle') {
     return {
       ...baseEntity,
+      abstract: description,
       headline: metadata.title,
     };
   }
@@ -319,7 +360,9 @@ export function buildHostedOperationStructuredData({ pageModelId, siteConfig }) 
   const pageEntity = {
     '@id': buildPageId(url),
     '@type': 'WebPage',
+    about: [{ '@id': buildFamilyEntityId(siteConfig, operation.familyId) }],
     description: operation.description,
+    inLanguage: SITE_LANGUAGE,
     isPartOf: { '@id': buildWebsiteId(siteConfig) },
     mainEntity: { '@id': buildOperationEntityId(siteConfig, operation.pageModelId) },
     name: operation.name,

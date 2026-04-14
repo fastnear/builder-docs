@@ -4,6 +4,7 @@
 // There are various equivalent ways to declare your Docusaurus config.
 // See: https://docusaurus.io/docs/api/docusaurus-config
 
+import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { themes as prismThemes } from 'prism-react-renderer';
@@ -29,6 +30,7 @@ const hasDocsearchConfig = Boolean(
 );
 const resolvedSearchProvider =
   requestedSearchProvider === 'algolia' && hasDocsearchConfig ? 'algolia' : 'local';
+const docsRoot = path.join(configDir, 'docs');
 const localSearchTheme = [
   require.resolve('@easyops-cn/docusaurus-search-local'),
   {
@@ -59,6 +61,109 @@ const localSearchTheme = [
   },
 ];
 
+function walkDocsFiles(dirPath) {
+  const collected = [];
+
+  for (const entry of fs.readdirSync(dirPath, { withFileTypes: true })) {
+    const fullPath = path.join(dirPath, entry.name);
+    if (entry.isDirectory()) {
+      collected.push(...walkDocsFiles(fullPath));
+      continue;
+    }
+
+    if (/\.(md|mdx)$/.test(entry.name)) {
+      collected.push(fullPath);
+    }
+  }
+
+  return collected;
+}
+
+function readDocSlugs() {
+  return walkDocsFiles(docsRoot)
+    .map((filePath) => {
+      const rawContent = fs.readFileSync(filePath, 'utf8');
+      const frontmatterMatch = rawContent.match(/^---\n([\s\S]*?)\n---\n?/);
+      if (!frontmatterMatch) {
+        return null;
+      }
+
+      const slugMatch = frontmatterMatch[1].match(/^slug:\s*(.+)$/m);
+      if (!slugMatch) {
+        return null;
+      }
+
+      return slugMatch[1].trim().replace(/^['"]|['"]$/g, '');
+    })
+    .filter(Boolean)
+    .sort();
+}
+
+function buildLegacyRedirects() {
+  const redirectsByTarget = new Map();
+
+  function addRedirect(from, to) {
+    if (!from || !to || from === to) {
+      return;
+    }
+
+    if (!redirectsByTarget.has(to)) {
+      redirectsByTarget.set(to, new Set());
+    }
+
+    redirectsByTarget.get(to).add(from);
+  }
+
+  addRedirect('/docs', '/');
+  addRedirect('/docs/rpc-api', '/');
+  addRedirect('/docs/redocly-config', '/redocly-config');
+
+  readDocSlugs().forEach((slug) => {
+    if (slug === '/rpc') {
+      addRedirect('/docs/rpc-api/rpc', slug);
+      return;
+    }
+
+    if (slug.startsWith('/rpc/')) {
+      addRedirect(`/docs/rpc-api/${slug.slice('/rpc/'.length)}`, slug);
+      return;
+    }
+
+    if (slug === '/api') {
+      addRedirect('/docs/rpc-api/api', slug);
+      return;
+    }
+
+    if (slug === '/auth') {
+      addRedirect('/docs/rpc-api/api-key', slug);
+      return;
+    }
+
+    if (slug === '/auth/browser-demo') {
+      addRedirect('/docs/rpc-api/auth-browser-demo', slug);
+      return;
+    }
+
+    if (slug === '/auth/backend') {
+      addRedirect('/docs/rpc-api/auth-production-backend', slug);
+      return;
+    }
+
+    if (slug.startsWith('/snapshots') || slug.startsWith('/transaction-flow')) {
+      addRedirect(`/docs${slug}`, slug);
+    }
+  });
+
+  return [...redirectsByTarget.entries()]
+    .map(([to, from]) => ({
+      from: [...from].sort(),
+      to,
+    }))
+    .sort((left, right) => left.to.localeCompare(right.to));
+}
+
+const legacyRedirects = buildLegacyRedirects();
+
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: 'Builder Docs',
@@ -77,13 +182,15 @@ const config = {
       attributes: { type: 'application/ld+json' },
       innerHTML: JSON.stringify({
         '@context': 'https://schema.org',
+        '@id': 'https://docs.fastnear.com/#website',
         '@type': 'WebSite',
+        description:
+          'API and RPC documentation for FastNear, high-performance infrastructure for the NEAR Protocol.',
+        inLanguage: 'en',
         name: 'FastNear Docs',
         url: 'https://docs.fastnear.com',
         publisher: {
-          '@type': 'Organization',
-          name: 'FastNear',
-          url: 'https://fastnear.com',
+          '@id': 'https://docs.fastnear.com/#organization',
         },
       }),
     },
@@ -92,6 +199,7 @@ const config = {
       attributes: { type: 'application/ld+json' },
       innerHTML: JSON.stringify({
         '@context': 'https://schema.org',
+        '@id': 'https://docs.fastnear.com/#organization',
         '@type': 'Organization',
         name: 'FastNear',
         url: 'https://fastnear.com',
@@ -142,6 +250,8 @@ const config = {
           routeBasePath: '/',
           sidebarPath: require.resolve('./sidebars.js'),
           editUrl: 'https://github.com/fastnear/builder-docs/edit/main/',
+          showLastUpdateAuthor: false,
+          showLastUpdateTime: true,
         },
         sitemap: {
           changefreq: null,
@@ -180,6 +290,7 @@ const config = {
       '@docusaurus/plugin-client-redirects',
       {
         redirects: [
+          ...legacyRedirects,
           {
             from: ['/rpcs/openapi'],
             to: '/rpc',

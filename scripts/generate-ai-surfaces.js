@@ -99,6 +99,14 @@ function removeGeneratedStaticRoots() {
     fs.rmSync(root, { recursive: true, force: true });
   }
 
+  if (fs.existsSync(STATIC_ROOT)) {
+    for (const entry of fs.readdirSync(STATIC_ROOT, { withFileTypes: true })) {
+      if (entry.isFile() && /\.md$/i.test(entry.name)) {
+        fs.rmSync(path.join(STATIC_ROOT, entry.name), { force: true });
+      }
+    }
+  }
+
   for (const filePath of GENERATED_STATIC_FILES) {
     fs.rmSync(filePath, { force: true });
   }
@@ -131,13 +139,28 @@ function normalizeRoute(route) {
   return prefixed.replace(/\/+$/, "");
 }
 
-function buildMarkdownMirrorPath(route) {
+function buildLegacyMarkdownMirrorPath(route) {
   const normalizedRoute = normalizeRoute(route).replace(/\/index\.md$/, "").replace(/\.html$/, "");
   if (normalizedRoute === "/") {
     return "/index.md";
   }
 
   return `${normalizedRoute}/index.md`;
+}
+
+function buildMarkdownMirrorPath(route) {
+  const normalizedRoute = normalizeRoute(route).replace(/\/index\.md$/, "").replace(/\.html$/, "");
+  if (normalizedRoute === "/") {
+    return "/index.md";
+  }
+
+  return `${normalizedRoute}.md`;
+}
+
+function buildMarkdownMirrorAliases(route) {
+  const preferredPath = buildMarkdownMirrorPath(route);
+  const legacyPath = buildLegacyMarkdownMirrorPath(route);
+  return legacyPath === preferredPath ? [preferredPath] : [preferredPath, legacyPath];
 }
 
 function buildAbsoluteUrl(route) {
@@ -170,6 +193,14 @@ function getDocsPageSchemaType(entry) {
 
 function normalizeMarkdown(markdown) {
   return markdown.replace(/[ \t]+\n/g, "\n").replace(/\n{3,}/g, "\n\n").trim();
+}
+
+function rewriteRootRelativeMarkdownLinks(markdown) {
+  return markdown.replace(
+    /(!?\[[^\]]*]\()((?:<)?\/[^)\s>]+(?:>)?)(\))/g,
+    (_match, prefix, href, suffix) =>
+      `${prefix}${sanitizePublicUrl(href.replace(/^<|>$/g, ""), SITE_ORIGIN)}${suffix}`
+  );
 }
 
 function sanitizePublicUrl(input, baseUrl) {
@@ -485,10 +516,11 @@ function renderAuthoredMarkdown(content, route, filePath) {
   markdown = transformCardGrid(markdown);
   markdown = transformInlineLinks(markdown);
   markdown = transformSimpleJsx(markdown);
+  markdown = rewriteRootRelativeMarkdownLinks(markdown);
   assertNoUnsupportedJsx(markdown, filePath);
 
   return `${normalizeMarkdown(
-    `**Source:** [${route}](${route})\n\n${markdown}`
+    `**Source:** [${buildAbsoluteUrl(route)}](${buildAbsoluteUrl(route)})\n\n${markdown}`
   )}\n`;
 }
 
@@ -1045,7 +1077,7 @@ function buildOperationMarkdown({
 
   [currentUrl, pageModel.canonicalPath, ...(pageModel.routeAliases || [])]
     .filter(Boolean)
-    .forEach((value) => sourceLinks.add(sanitizePublicUrl(value)));
+    .forEach((value) => sourceLinks.add(sanitizePublicUrl(value, SITE_ORIGIN)));
 
   const sections = [`# ${pageModel.info.title}`, ""];
 
@@ -1162,6 +1194,7 @@ function createAuthoredDocEntries() {
           kind: "wrapper",
           markdown: buildOperationMarkdownForRoute(pageModel, route),
           markdownPath: buildMarkdownMirrorPath(route),
+          markdownPaths: buildMarkdownMirrorAliases(route),
           route,
           title: pageModel.info.title,
         };
@@ -1176,6 +1209,7 @@ function createAuthoredDocEntries() {
         kind: "authored",
         markdown,
         markdownPath: buildMarkdownMirrorPath(route),
+        markdownPaths: buildMarkdownMirrorAliases(route),
         route,
         title: data.title || path.parse(filePath).name,
       };
@@ -1202,6 +1236,7 @@ function createCanonicalEntries() {
         kind: topLevel === "rpcs" ? "rpc" : "api",
         markdown: buildOperationMarkdownForRoute(pageModel, route),
         markdownPath: buildMarkdownMirrorPath(route),
+        markdownPaths: buildMarkdownMirrorAliases(route),
         route,
         title: pageModel.info.title,
       };
@@ -1215,7 +1250,11 @@ function buildWebsiteEntity() {
     "@type": "WebSite",
     description:
       "API and RPC documentation for FastNear, high-performance infrastructure for the NEAR Protocol.",
+    inLanguage: "en",
     name: "FastNear Docs",
+    publisher: {
+      "@id": ORGANIZATION_ID,
+    },
     url: SITE_ORIGIN,
   };
 }
@@ -1234,27 +1273,42 @@ function buildOrganizationEntity() {
 }
 
 function buildSiteGraphFamilyRecord(family) {
+  const docsUrl = buildAbsoluteUrl(family.docsPath);
   return {
     ...family,
     "@id": buildFamilyEntityId(family.id),
-    docsUrl: buildAbsoluteUrl(family.docsPath),
+    docsPageId: buildPageEntityId(docsUrl),
+    docsUrl,
+    documentationUrl: docsUrl,
     hostedPathPrefixUrl: buildAbsoluteUrl(family.hostedPathPrefix),
     providerId: ORGANIZATION_ID,
+    serviceType: family.kind === "rpc" ? "JSON-RPC API" : "REST API",
   };
 }
 
 function buildSiteGraphOperationRecord(operation) {
+  const docsUrl = buildAbsoluteUrl(operation.docsPath);
+  const canonicalUrl = buildAbsoluteUrl(operation.canonicalPath);
   return {
     ...operation,
     "@id": buildOperationEntityId(operation.pageModelId),
-    docsUrl: buildAbsoluteUrl(operation.docsPath),
-    canonicalUrl: buildAbsoluteUrl(operation.canonicalPath),
+    abstract: operation.summary || operation.name,
+    canonicalPageId: buildPageEntityId(canonicalUrl),
+    canonicalUrl,
+    docsPageId: buildPageEntityId(docsUrl),
+    docsUrl,
     familyEntityId: buildFamilyEntityId(operation.familyId),
+    inLanguage: "en",
+    mainEntityOfPageId: buildPageEntityId(docsUrl),
     publisherId: ORGANIZATION_ID,
     sameAs: [
-      buildAbsoluteUrl(operation.docsPath),
-      buildAbsoluteUrl(operation.canonicalPath),
+      docsUrl,
+      canonicalUrl,
       ...(operation.routeAliases || []).map((route) => buildAbsoluteUrl(route)),
+    ].filter((value, index, values) => values.indexOf(value) === index),
+    subjectOfPageIds: [
+      buildPageEntityId(docsUrl),
+      buildPageEntityId(canonicalUrl),
     ].filter((value, index, values) => values.indexOf(value) === index),
   };
 }
@@ -1351,7 +1405,10 @@ function buildSiteGraphArtifact({ authoredDocEntries, canonicalEntries, docEntri
 
 function writeMirrorEntries(entries) {
   for (const entry of entries) {
-    writeTextFile(path.join(STATIC_ROOT, entry.markdownPath), entry.markdown);
+    const markdownPaths = entry.markdownPaths || [entry.markdownPath];
+    for (const markdownPath of markdownPaths) {
+      writeTextFile(path.join(STATIC_ROOT, markdownPath), entry.markdown);
+    }
   }
 }
 
@@ -1371,7 +1428,7 @@ function groupEntries(entries) {
 
 function formatLlmsEntry(entry) {
   const description = entry.description ? `: ${entry.description}` : "";
-  return `- [${entry.title}](${entry.markdownPath})${description}`;
+  return `- [${entry.title}](${buildAbsoluteUrl(entry.markdownPath)})${description}`;
 }
 
 function buildGroupedIndex(title, intro, sectionIndexes, entries) {
@@ -1379,7 +1436,7 @@ function buildGroupedIndex(title, intro, sectionIndexes, entries) {
 
   if (sectionIndexes?.length) {
     lines.push("## Indexes", "");
-    lines.push(...sectionIndexes.map((entry) => `- [${entry.label}](${entry.href})`));
+    lines.push(...sectionIndexes.map((entry) => `- [${entry.label}](${buildAbsoluteUrl(entry.href)})`));
     lines.push("");
   }
 
@@ -1401,7 +1458,15 @@ function buildFullArchive(entries) {
   ];
 
   for (const entry of entries) {
-    sections.push("---", "", `## ${entry.title}`, "", `- HTML path: ${entry.htmlPath}`, `- Markdown path: ${entry.markdownPath}`, "");
+    sections.push(
+      "---",
+      "",
+      `## ${entry.title}`,
+      "",
+      `- HTML path: ${buildAbsoluteUrl(entry.htmlPath)}`,
+      `- Markdown path: ${buildAbsoluteUrl(entry.markdownPath)}`,
+      ""
+    );
     sections.push(entry.markdown.trim(), "");
   }
 

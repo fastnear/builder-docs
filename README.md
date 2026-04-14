@@ -24,6 +24,7 @@ Public API and RPC pages are no longer iframe embeds. They render directly in `b
 - `src/data/generatedFastnearStructuredGraph.json`, vendored from `mike-docs`
 - `scripts/generate-bespoke-host-pages.js`, which generates `src/pages/rpcs/**` and `src/pages/apis/**`
 - `scripts/generate-ai-surfaces.js`, which generates Markdown mirrors, `llms.txt`, and `/structured-data/site-graph.json`
+- `scripts/submit-indexnow.js`, which submits changed canonical docs URLs to IndexNow after production deploys
 
 ## Development
 
@@ -57,11 +58,17 @@ The Playwright config starts a local Docusaurus server automatically, then runs 
 Treat the clean root-mounted public docs as the public search surface.
 
 - Crawl: `/`, `/rpc/**`, `/api/**`, `/tx/**`, `/transfers/**`, `/neardata/**`, `/fastdata/**`, `/auth/**`, `/agents/**`, `/snapshots/**`, `/transaction-flow/**`
-- Exclude: `/rpcs/**`, `/apis/**`, `/**/index.md`, `/llms.txt`, `/llms-full.txt`, `/guides/llms.txt`, `/rpcs/llms.txt`, `/apis/llms.txt`, `/structured-data/**`
+- Exclude: `/rpcs/**`, `/apis/**`, `/**/*.md`, `/llms.txt`, `/llms-full.txt`, `/guides/llms.txt`, `/rpcs/llms.txt`, `/apis/llms.txt`, `/structured-data/**`
 - Exclude low-value utility pages already kept out of the sitemap: `/api/reference`, `/redocly-config`
 - Add `category` and `method_type` to `attributesForFaceting`
 
 The docs runtime now emits `docsearch:category` and `docsearch:method_type` meta tags centrally, so the crawler can facet reference pages without hand-authored `<head>` blocks in MDX.
+
+Generated discovery surfaces are emitted centrally too:
+
+- machine-readable Markdown mirrors at both `/path.md` and `/path/index.md`
+- top-level and per-family `llms.txt` indexes
+- a public machine-readable site graph at `/structured-data/site-graph.json`
 
 Structured data is emitted centrally too:
 
@@ -69,6 +76,25 @@ Structured data is emitted centrally too:
 - page-level `CollectionPage`, `TechArticle`, or `WebPage` graphs from the docs runtime
 - `APIReference` and `WebAPI` entities from the vendored `generatedFastnearStructuredGraph.json`
 - a public machine-readable site graph at `/structured-data/site-graph.json`
+
+### Discovery verification
+
+```bash
+yarn audit:indexing
+yarn submit:indexnow:dry-run
+```
+
+`yarn audit:indexing` rebuilds the site, verifies sitemap/robots/structured-data coverage, confirms hosted `/rpcs/**` and `/apis/**` stay `noindex`, checks the generated Markdown mirrors, and validates the root IndexNow key file.
+
+`yarn deploy` now publishes the site and then submits the canonical route set to IndexNow automatically.
+
+For reruns or nonstandard deploy flows, you can still submit IndexNow manually with either the deployed diff range or the full canonical route set:
+
+```bash
+yarn submit:indexnow --from <previous-sha> --to <current-sha>
+# or fall back to the full canonical docs set
+yarn submit:indexnow
+```
 
 ### Refreshing the generated docs models
 
@@ -133,7 +159,7 @@ Use the generated `pageModelId` from `mike-docs`. The canonical hosted `/rpcs/..
 
 ## Canonical Route Contract
 
-These paths are the public contract:
+These hosted paths remain the stable embed and reference contract:
 
 ```text
 /rpcs/account/view_account
@@ -142,7 +168,7 @@ These paths are the public contract:
 /apis/transactions/v0/account
 ```
 
-They are generated and hosted directly by this repo. The matching public wrapper pages use the same underlying page-model data and interactive runtime:
+They are generated and hosted directly by this repo and remain reachable for embeds and AI mirrors, but the indexed public docs surface is the root-mounted wrapper tree:
 
 - `/rpc/**`
 - `/api/**`
@@ -150,6 +176,8 @@ They are generated and hosted directly by this repo. The matching public wrapper
 - `/transfers/**`
 - `/neardata/**`
 - `/fastdata/kv/**`
+
+Legacy `/docs/...` routes now exist only as permanent redirects to the matching root-mounted pages.
 
 ## Useful URLs
 

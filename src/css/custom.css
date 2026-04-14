@@ -834,6 +834,11 @@ pre code {
   background: var(--fastnear-chip-bg);
 }
 
+.builder-fastnear-direct .fastnear-interaction__copy-button:disabled {
+  cursor: progress;
+  opacity: 0.72;
+}
+
 .builder-fastnear-direct .fastnear-interaction__copy-button:focus-visible {
   outline: 2px solid var(--fastnear-accent-border);
   outline-offset: 2px;
@@ -863,6 +868,10 @@ pre code {
   word-break: break-word;
 }
 
+.builder-fastnear-direct .fastnear-interaction__result-shell[aria-busy='true'] {
+  background: var(--fastnear-panel-subtle-bg);
+}
+
 .builder-fastnear-direct .fastnear-interaction__placeholder--panel,
 .builder-fastnear-direct .fastnear-interaction__error {
   display: flex;
@@ -878,6 +887,12 @@ pre code {
 .builder-fastnear-direct .fastnear-interaction__placeholder--panel {
   border: 1px dashed var(--fastnear-border-strong);
   color: var(--fastnear-text-soft);
+}
+
+.builder-fastnear-direct .fastnear-interaction__placeholder--pending {
+  border-style: solid;
+  background: var(--fastnear-panel-bg);
+  color: var(--fastnear-text-muted);
 }
 
 .builder-fastnear-direct .fastnear-interaction__error {

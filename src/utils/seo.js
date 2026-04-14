@@ -73,12 +73,6 @@ const DOCSEARCH_METHOD_TYPE_RULES = [
   { prefix: '/fastdata', value: 'kv-fastdata' },
 ];
 
-const FASTNEAR_PUBLISHER = {
-  '@type': 'Organization',
-  name: 'FastNear',
-  url: 'https://fastnear.com',
-};
-
 function normalizeRoute(route) {
   const normalized = String(route || '').trim();
   if (!normalized) {
@@ -104,17 +98,6 @@ function resolveDocsearchValue(route, rules) {
   }
 
   return rules.find((rule) => matchesRoutePrefix(normalizedRoute, rule.prefix))?.value || null;
-}
-
-function buildAbsoluteUrl(pathname, siteConfig) {
-  const normalizedPath = normalizeRoute(pathname);
-  if (!normalizedPath || !siteConfig?.url) {
-    return null;
-  }
-
-  const baseUrl = String(siteConfig.baseUrl || '/');
-  const siteBase = new URL(baseUrl, `${String(siteConfig.url).replace(/\/+$/, '')}/`);
-  return new URL(normalizedPath.replace(/^\//, ''), siteBase).toString();
 }
 
 function dedupeKeywords(values) {
@@ -220,32 +203,4 @@ export function getDocsearchCategory(permalink) {
 
 export function getDocsearchMethodType(permalink) {
   return resolveDocsearchValue(permalink, DOCSEARCH_METHOD_TYPE_RULES);
-}
-
-export function buildDocJsonLd({ description, keywords, permalink, siteConfig, title }) {
-  if (!title || !description || !isPublicDocsPermalink(permalink)) {
-    return null;
-  }
-
-  const url = buildAbsoluteUrl(permalink, siteConfig);
-  if (!url) {
-    return null;
-  }
-
-  const normalizedKeywords = Array.isArray(keywords) ? dedupeKeywords(keywords) : [];
-
-  return {
-    '@context': 'https://schema.org',
-    '@type': 'TechArticle',
-    headline: title,
-    description,
-    url,
-    publisher: FASTNEAR_PUBLISHER,
-    isPartOf: {
-      '@type': 'WebSite',
-      name: 'FastNear Docs',
-      url: String(siteConfig?.url || '').replace(/\/+$/, ''),
-    },
-    ...(normalizedKeywords.length ? { keywords: normalizedKeywords.join(', ') } : {}),
-  };
 }

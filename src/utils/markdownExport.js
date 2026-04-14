@@ -59,7 +59,7 @@ export function buildMarkdownMirrorPath(inputPath) {
     return '/index.md';
   }
 
-  return `${normalizedPath.replace(/\/+$/, '')}/index.md`;
+  return `${normalizedPath.replace(/\/+$/, '')}.md`;
 }
 
 export function buildMarkdownMirrorUrl(input, baseUrl) {

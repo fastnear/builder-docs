@@ -1,4 +1,4 @@
-import React, { useEffect, useId, useMemo, useState } from "react";
+import React, { startTransition, useDeferredValue, useEffect, useId, useMemo, useState } from "react";
 import Head from "@docusaurus/Head";
 
 import PageActions from "@site/src/components/PageActions";
@@ -164,6 +164,16 @@ async function fetchLatestBlockHeight(baseUrl, signal) {
   } catch {}
 
   return null;
+}
+
+function waitForNextPaint() {
+  if (typeof window === "undefined" || typeof window.requestAnimationFrame !== "function") {
+    return Promise.resolve();
+  }
+
+  return new Promise((resolve) => {
+    window.requestAnimationFrame(() => resolve());
+  });
 }
 
 function getFieldLocationLabel(field) {
@@ -1069,7 +1079,9 @@ function FastnearOperationPage({ pageModel }) {
     apiKeyDraft.trim() !== (auth.storedApiKey || "");
   const canClearStoredApiKey = !isUrlApiKeyOverride && !!auth.storedApiKey;
   const hasRpcError = runResult?.kind === "json" && !!runResult.value?.error;
-  const runResultText = useMemo(() => getRunResultText(runResult), [runResult]);
+  const deferredRunResult = useDeferredValue(runResult);
+  const isRunResultTextPending = Boolean(runResult && deferredRunResult !== runResult);
+  const runResultText = useMemo(() => getRunResultText(deferredRunResult), [deferredRunResult]);
   const currentUrl =
     typeof window !== "undefined" ? sanitizePublicUrl(window.location.href) : pageModel.canonicalPath;
   const operationMarkdown = useMemo(
@@ -1181,7 +1193,9 @@ function FastnearOperationPage({ pageModel }) {
     try {
       setIsRunning(true);
       setRunError(null);
+      setRunResult(null);
       setCopiedResponse(false);
+      await waitForNextPaint();
 
       if (pageModel.route.transport === "json-rpc") {
         if (!selectedNetworkDetails?.url || !rpcPayload) {
@@ -1202,23 +1216,27 @@ function FastnearOperationPage({ pageModel }) {
           method: "POST",
         });
         const responseText = await response.text();
+        let nextRunResult;
         try {
-          setRunResult({
+          nextRunResult = {
             kind: "json",
             ok: response.ok,
             status: response.status,
             url: selectedNetworkDetails.url,
             value: JSON.parse(responseText),
-          });
+          };
         } catch (_error) {
-          setRunResult({
+          nextRunResult = {
             kind: "text",
             ok: response.ok,
             status: response.status,
             url: selectedNetworkDetails.url,
             value: responseText,
-          });
+          };
         }
+        startTransition(() => {
+          setRunResult(nextRunResult);
+        });
         return;
       }
 
@@ -1242,23 +1260,27 @@ function FastnearOperationPage({ pageModel }) {
         method: pageModel.route.method,
       });
       const responseText = await response.text();
+      let nextRunResult;
       try {
-        setRunResult({
+        nextRunResult = {
           kind: "json",
           ok: response.ok,
           status: response.status,
           url: requestUrl.toString(),
           value: JSON.parse(responseText),
-        });
+        };
       } catch (_error) {
-        setRunResult({
+        nextRunResult = {
           kind: "text",
           ok: response.ok,
           status: response.status,
           url: requestUrl.toString(),
           value: responseText,
-        });
+        };
       }
+      startTransition(() => {
+        setRunResult(nextRunResult);
+      });
     } catch (error) {
       setRunError(error instanceof Error ? error.message : "Request failed.");
       setRunResult(null);
@@ -1603,20 +1625,24 @@ function FastnearOperationPage({ pageModel }) {
                     <code className="fastnear-interaction__result-url">{runResult.url}</code>
                   </div>
 
-                  <div className="fastnear-interaction__result-shell">
+                  <div
+                    className="fastnear-interaction__result-shell"
+                    aria-busy={isRunResultTextPending ? "true" : "false"}
+                  >
                     <button
                       type="button"
                       className={`fastnear-interaction__copy-button ${
                         copiedResponse ? "is-copied" : ""
                       }`}
                       onClick={async () => {
-                        if (!runResultText) {
+                        if (!runResultText || isRunResultTextPending) {
                           return;
                         }
 
                         await copyTextToClipboard(runResultText);
                         setCopiedResponse(true);
                       }}
+                      disabled={!runResultText || isRunResultTextPending}
                       aria-label={copiedResponse ? "Response copied" : "Copy response"}
                       title={copiedResponse ? "Response copied" : "Copy response"}
                     >
@@ -1626,11 +1652,21 @@ function FastnearOperationPage({ pageModel }) {
                         <CopyGlyph className="fastnear-interaction__copy-icon" />
                       )}
                     </button>
-                    <pre className="fastnear-interaction__text-response">
-                      {runResultText}
-                    </pre>
+                    {isRunResultTextPending ? (
+                      <p className="fastnear-interaction__placeholder fastnear-interaction__placeholder--panel fastnear-interaction__placeholder--pending">
+                        Formatting response output...
+                      </p>
+                    ) : (
+                      <pre className="fastnear-interaction__text-response">
+                        {runResultText}
+                      </pre>
+                    )}
                   </div>
                 </>
+              ) : isRunning ? (
+                <p className="fastnear-interaction__placeholder fastnear-interaction__placeholder--panel fastnear-interaction__placeholder--pending">
+                  Sending request to the selected endpoint...
+                </p>
               ) : (
                 <p className="fastnear-interaction__placeholder fastnear-interaction__placeholder--panel">
                   Live response output will appear here after you run a request.
