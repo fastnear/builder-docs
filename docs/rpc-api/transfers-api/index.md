@@ -1,23 +1,43 @@
 ---
 title: Transfers API
-description: Account-centric NEAR and fungible token transfer history.
+description: Account-centric NEAR and fungible-token transfer history for product feeds and investigative tooling.
 sidebar_position: 1
 displayed_sidebar: transfersApiSidebar
+slug: /transfers
+page_actions:
+  - markdown
 ---
 
 # Transfers API
 
-Base URL: `https://transfers.main.fastnear.com`
+Transfers API focuses on account-centric transfer history. It is the simplest starting point when the question is specifically about movement of NEAR or fungible tokens.
 
-Authentication: these pages do not use API keys or bearer tokens.
+## Best fit
 
-Pagination: responses include an opaque `resume_token` that can be passed back into the next request.
+- Transfer feeds.
+- Wallet history views.
+- Compliance or support tooling focused on sends and receives.
 
-Interaction notes:
-- the page opens with a seeded example body so the request is runnable immediately
-- because this service is currently mainnet-only, `?network=` does not change the backend here
+## When not to use it
 
-The sidebar for this section is intentionally scoped to Transfers so the endpoint stays easy to reach without the noise of unrelated APIs.
+- Use [Transactions API](/docs/tx) when you need broader transaction or receipt history.
+- Use [FastNear API](/docs/api) when you need balances or holdings rather than transfer events.
 
-Operations:
-- [Query transfers](/docs/rpc-api/transfers-api/transfers)
+## Base URL
+
+- `https://transfers.main.fastnear.com`
+
+## Auth and availability
+
+- These pages do not use API keys or bearer tokens.
+- Responses include an opaque `resume_token` for pagination.
+
+## Troubleshooting
+
+### I need full transaction metadata
+
+Move to [Transactions API](/docs/tx) if transfer history alone is too narrow.
+
+### I expected testnet switching
+
+This surface is currently mainnet-focused, so `?network=` does not change the backend here.

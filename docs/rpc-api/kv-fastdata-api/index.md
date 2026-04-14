@@ -1,34 +1,53 @@
 ---
 title: KV FastData API
-description: Read-only key-value lookups over FastData stored in ScyllaDB.
+description: Read-only key-value lookups over FastData for predecessor, account, key, and batch retrieval flows.
 sidebar_position: 1
 displayed_sidebar: kvFastDataSidebar
+slug: /fastdata/kv
+page_actions:
+  - markdown
 ---
 
 # KV FastData API
 
-Base URLs:
+KV FastData API is the read-only key-value family. It works best when you already know the account, predecessor, or key patterns you want to inspect and you want those rows without building your own storage indexing layer.
+
+## Best fit
+
+- Predecessor-centric key-value history.
+- Account-centric key-value lookups.
+- Exact-key or prefix-style retrieval.
+- Batch lookup flows for debugging and agent backends.
+
+## When not to use it
+
+- Use [FastNear API](/docs/api) for higher-level account, token, and NFT views.
+- Use [NEAR Data API](/docs/neardata) for block-family reads instead of key-value history.
+
+## Base URLs
+
 - `https://kv.main.fastnear.com`
 - `https://kv.test.fastnear.com`
 
-Authentication: these embeds do not forward API keys or bearer tokens.
-Authentication: these pages do not use API keys or bearer tokens.
+## Auth and availability
 
-Pagination: list responses omit `page_token` when there are no more results.
+- These embeds do not forward API keys or bearer tokens.
+- Add `?network=testnet` to switch the page to the testnet backend where supported.
+- List responses omit `page_token` when there are no more results.
 
-Interaction notes:
-- add `?network=testnet` to switch the page to the testnet server and testnet defaults where supported
-- body-based pages expose their editable request fields directly in the native UI
+## Common starting points
 
-The sidebar for this section is intentionally scoped to KV FastData so the key-value operation list stays visible while you move between predecessor, account, key, and batch lookup flows.
+- `All by predecessor` for a broad predecessor scan.
+- `History by predecessor` when you need a filtered history stream.
+- `History by account` or `History by key` for narrower retrieval.
+- `Multi lookup` when you already know the exact keys.
 
-Operations:
-- [All by predecessor](/docs/rpc-api/kv-fastdata-api/all-by-predecessor)
-- [History by predecessor](/docs/rpc-api/kv-fastdata-api/history-by-predecessor)
-- [Latest by predecessor](/docs/rpc-api/kv-fastdata-api/latest-by-predecessor)
-- [History by account](/docs/rpc-api/kv-fastdata-api/history-by-account)
-- [Latest by account](/docs/rpc-api/kv-fastdata-api/latest-by-account)
-- [History by key](/docs/rpc-api/kv-fastdata-api/history-by-key)
-- [Multi lookup](/docs/rpc-api/kv-fastdata-api/multi)
-- [GET history by exact key](/docs/rpc-api/kv-fastdata-api/get-history-key)
-- [GET latest by exact key](/docs/rpc-api/kv-fastdata-api/get-latest-key)
+## Troubleshooting
+
+### My pagination token stopped working
+
+Treat `page_token` values as opaque and reuse them only with the same endpoint and filters.
+
+### I need product-facing account balances instead of raw key-value rows
+
+Move up to [FastNear API](/docs/api).

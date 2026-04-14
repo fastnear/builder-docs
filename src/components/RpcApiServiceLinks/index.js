@@ -4,15 +4,15 @@ import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 
 function buildServiceLinks(hideEarlyApiFamilies) {
   return [
-    { href: '/docs/rpc-api/fastnear-api', label: 'FastNear API' },
-    { href: '/docs/rpc-api/transactions-api', label: 'Transactions API' },
+    { href: '/docs/api', label: 'FastNear API' },
+    { href: '/docs/tx', label: 'Transactions API' },
     ...(!hideEarlyApiFamilies
-      ? [{ href: '/docs/rpc-api/transfers-api', label: 'Transfers API' }]
+      ? [{ href: '/docs/transfers', label: 'Transfers API' }]
       : []),
     ...(!hideEarlyApiFamilies
-      ? [{ href: '/docs/rpc-api/kv-fastdata-api', label: 'KV FastData API' }]
+      ? [{ href: '/docs/fastdata/kv', label: 'KV FastData API' }]
       : []),
-    { href: '/docs/rpc-api/neardata-api', label: 'NEAR Data API' },
+    { href: '/docs/neardata', label: 'NEAR Data API' },
   ];
 }
 

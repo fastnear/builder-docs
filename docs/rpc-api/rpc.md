@@ -1,9 +1,12 @@
 ---
 sidebar_label: RPC
 id: rpc
-slug: rpc
+slug: /rpc
 title: RPC Reference
+description: Direct JSON-RPC access to FastNear NEAR nodes for state queries, blocks, contract calls, and transaction submission.
 displayed_sidebar: rpcSidebar
+page_actions:
+  - markdown
 ---
 
 # RPC Reference
@@ -32,17 +35,46 @@ https://archival-rpc.mainnet.fastnear.com
 https://archival-rpc.testnet.fastnear.com
 ```
 
-## What You’ll Find Here
+## Common starting points
 
-- `Account` covers account, access key, and key-list queries.
-- `Block` covers block lookup and block effects.
-- `Contract` covers view calls, code lookup, and state inspection.
-- `Protocol` covers status, health, gas price, config, network, and experimental protocol methods.
-- `Transaction` covers submission and execution-status methods.
-- `Validators` covers current and epoch-scoped validator views.
+- `Account`: account, access key, and key-list queries.
+- `Block`: finalized or height/hash-based block lookup.
+- `Contract`: view calls, code lookup, and state inspection.
+- `Protocol`: status, health, gas price, config, network, and experimental protocol methods.
+- `Transaction`: submission and execution status methods.
+- `Validators`: current and epoch-scoped validator views.
 
-## When To Use RPC vs API
+## Use RPC when
 
-Use RPC when you want canonical node-backed behavior and low-level control over the NEAR protocol surface.
+- You want protocol-native request and response shapes.
+- You need canonical node-backed behavior for state queries or block lookups.
+- You are submitting transactions or inspecting execution outcomes.
+- You want the lowest-level surface before adding indexed or product-specific views.
 
-Use the separate API docs when you want indexed, higher-level, and often easier-to-query REST services such as FastNear account views, transactions history, transfers, or NEAR Data.
+## Skip RPC when
+
+- You want wallet-style balances, NFTs, staking positions, or public-key lookups in one call.
+- You need indexed transaction history by account instead of polling and stitching together node responses.
+- You are optimizing for product simplicity over raw protocol control.
+
+In those cases, move to the indexed REST families such as [FastNear API](/docs/api), [Transactions API](/docs/tx), or [NEAR Data API](/docs/neardata).
+
+## Auth and limits
+
+- FastNear API keys are optional for the docs experience and higher-limit access patterns.
+- Browser-based docs demos can use the in-page API key flow, but production traffic should move to a backend-controlled key strategy.
+- Start with [Auth & Access](/docs/rpc-api/api-key) if you need paid access or production guidance.
+
+## Troubleshooting
+
+### My request worked locally but fails in production
+
+Check whether you relied on the docs UI to append an API key for you. Production backends should inject credentials explicitly and never depend on browser storage.
+
+### I need older state than the default RPC returns
+
+Switch from the regular RPC endpoint to the archival RPC endpoint.
+
+### I need a simpler response than JSON-RPC gives me
+
+That usually means you want an indexed REST family instead of raw RPC. Use the chooser page to pick the higher-level surface.

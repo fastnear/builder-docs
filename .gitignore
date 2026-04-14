@@ -7,6 +7,13 @@
 # Generated files
 .docusaurus
 .cache-loader
+/static/apis
+/static/docs
+/static/rpcs
+/static/llms.txt
+/static/llms-full.txt
+/playwright-report
+/test-results
 
 # Misc
 .DS_Store

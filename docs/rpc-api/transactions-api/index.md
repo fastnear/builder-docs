@@ -1,29 +1,56 @@
 ---
 title: Transactions API
-description: Indexed transaction, receipt, block, and account-history queries.
+description: Indexed transaction, receipt, account-history, and block-history queries for FastNear builders.
 sidebar_position: 1
 displayed_sidebar: transactionsApiSidebar
+slug: /tx
+page_actions:
+  - markdown
 ---
 
 # Transactions API
 
-Base URL: `https://tx.main.fastnear.com`
+Transactions API is the history surface. Use it when you want indexed transaction or receipt views without repeatedly polling raw RPC methods and joining the results yourself.
 
-Authentication: these pages do not use API keys or bearer tokens.
+## Best fit
 
-Pagination:
-- `/v0/account` uses an opaque `resume_token`.
-- `/v0/blocks` is range and limit based.
+- Account activity feeds.
+- Debugging and support tooling.
+- Transaction and receipt lookups by hash.
+- Block and block-range history queries.
 
-Interaction notes:
-- account and block pages open with seeded example request bodies
-- because this service is currently mainnet-only, `?network=` does not change the backend here
+## When not to use it
 
-The sidebar for this section is intentionally scoped to Transactions so the operation list stays visible while you move between hash, account, block, range, and receipt queries.
+- Use [FastNear API](/docs/api) when you need balances, NFTs, staking, or public-key lookups.
+- Use [RPC Reference](/docs/rpc) when you need canonical node behavior or transaction submission.
 
-Operations:
-- [Transactions by hash](/docs/rpc-api/transactions-api/transactions)
-- [Account history](/docs/rpc-api/transactions-api/account)
-- [Block lookup](/docs/rpc-api/transactions-api/block)
-- [Block range](/docs/rpc-api/transactions-api/blocks)
-- [Receipt lookup](/docs/rpc-api/transactions-api/receipt)
+## Base URLs
+
+- `https://tx.main.fastnear.com`
+- `https://tx.test.fastnear.com`
+
+## Auth and availability
+
+- These pages do not currently use API keys or bearer tokens.
+- The service is built for indexed history access rather than transaction submission.
+
+## Common starting points
+
+- `Transactions by hash` when you already know the transaction ID.
+- `Account history` for activity feeds and account debugging.
+- `Receipt lookup` for execution-flow investigation.
+- `Block range` when you want a bounded history scan.
+
+## Troubleshooting
+
+### I expected to submit a transaction here
+
+This family is for indexed history queries, not for sending signed transactions. Use raw RPC for submission.
+
+### I need pagination guidance
+
+`/v0/account` uses an opaque `resume_token`, while `/v0/blocks` is range and limit based. Reuse opaque tokens exactly as returned.
+
+### I only need one canonical RPC transaction status result
+
+Use raw RPC instead of the indexed history family.

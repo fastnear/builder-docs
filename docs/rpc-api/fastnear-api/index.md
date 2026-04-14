@@ -1,41 +1,58 @@
 ---
 title: FastNear API
-description: Indexed account, token, and public-key lookup APIs for wallets and explorers.
+description: Indexed account, token, NFT, and public-key views for wallets, explorers, analytics, and agent backends.
 sidebar_position: 1
 displayed_sidebar: fastnearApiSidebar
+slug: /api
+page_actions:
+  - markdown
 ---
 
 # FastNear API
 
-Base URLs:
+FastNear API is the indexed REST family for builder-facing account views. It is the fastest way to answer questions like "what does this account own?" or "which accounts map to this public key?" without stitching together raw RPC calls.
+
+## Best fit
+
+- Wallet balances and asset overviews.
+- NFT and fungible-token account views.
+- Public-key to account lookups.
+- Combined account snapshots for dashboards, explorers, and agents.
+
+## When not to use it
+
+- Use [RPC Reference](/docs/rpc) when you need protocol-native JSON-RPC methods.
+- Use [Transactions API](/docs/tx) when the primary job is transaction or receipt history.
+- Use [NEAR Data API](/docs/neardata) when the job is block-family polling and freshness checks.
+
+## Base URLs
+
 - `https://api.fastnear.com`
 - `https://test.api.fastnear.com`
 
-Authentication:
+## Auth and network availability
+
 - FastNear public REST endpoints do not require an API key.
-- The native docs UI can still use an optional `?apiKey=` override when you want to exercise authenticated behavior.
+- The docs UI can still forward an optional FastNear key when you want authenticated behavior or higher limits on supported surfaces.
+- Add `?network=testnet` to move compatible pages to the testnet backend and seeded testnet defaults.
 
-Interaction notes:
-- Account and token pages open with seeded example values so the interaction is runnable immediately.
-- Add `?network=testnet` to switch the page to the testnet server and testnet-friendly defaults.
+## Common starting points
 
-Versioning:
-- `v0` covers the original public-key and account asset endpoints.
-- `v1` adds richer indexed account/token responses, top-holder queries, and combined account views.
-- `v1` public-key lookup currently keeps the same `{ public_key, account_ids }` response shape as `v0`.
+- `V1 full account view` for a combined account snapshot.
+- `V1 account FT` and `V1 account NFT` for product-facing asset views.
+- `V1 public key` when you need account resolution from a key.
+- `V1 FT top holders` for token-distribution views.
 
-Operations:
-- [Status](/docs/rpc-api/fastnear-api/status)
-- [Health](/docs/rpc-api/fastnear-api/health)
-- [V0 public key lookup](/docs/rpc-api/fastnear-api/v0-public-key)
-- [V0 public key lookup, all accounts](/docs/rpc-api/fastnear-api/v0-public-key-all)
-- [V0 account staking](/docs/rpc-api/fastnear-api/v0-account-staking)
-- [V0 account fungible tokens](/docs/rpc-api/fastnear-api/v0-account-ft)
-- [V0 account NFTs](/docs/rpc-api/fastnear-api/v0-account-nft)
-- [V1 public key lookup](/docs/rpc-api/fastnear-api/v1-public-key)
-- [V1 public key lookup, all accounts](/docs/rpc-api/fastnear-api/v1-public-key-all)
-- [V1 account staking](/docs/rpc-api/fastnear-api/v1-account-staking)
-- [V1 account fungible tokens](/docs/rpc-api/fastnear-api/v1-account-ft)
-- [V1 account NFTs](/docs/rpc-api/fastnear-api/v1-account-nft)
-- [V1 FT top holders](/docs/rpc-api/fastnear-api/v1-ft-top)
-- [V1 full account view](/docs/rpc-api/fastnear-api/v1-account-full)
+## Troubleshooting
+
+### I only need one low-level value from chain state
+
+Use raw RPC instead. The indexed surface is optimized for product views, not for mirroring every RPC method.
+
+### My page is still on mainnet data
+
+Check whether the page supports `?network=testnet`. Some flows are mainnet-only; the docs call that out when it applies.
+
+### I need transactions, not balances
+
+Move to [Transactions API](/docs/tx) so you do not overload the account-view surface with history queries.

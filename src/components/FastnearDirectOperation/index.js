@@ -1,5 +1,11 @@
 import React, { useEffect, useId, useMemo, useState } from "react";
 
+import PageActions from "@site/src/components/PageActions";
+import { copyTextToClipboard } from "@site/src/utils/clipboard";
+import {
+  buildOperationMarkdown,
+  sanitizePublicUrl,
+} from "@site/src/utils/markdownExport";
 import { FINALITY_OPTIONS } from "./finalityOptions";
 import { getFastnearPageModelById } from "./pageModels";
 import {
@@ -7,39 +13,6 @@ import {
   setPortalApiKey,
   usePortalAuth,
 } from "./portalAuth";
-
-function copyText(value) {
-  if (typeof navigator !== "undefined" && navigator.clipboard?.writeText) {
-    return navigator.clipboard.writeText(value);
-  }
-
-  if (typeof document === "undefined") {
-    return Promise.resolve();
-  }
-
-  return new Promise((resolve, reject) => {
-    try {
-      const textArea = document.createElement("textarea");
-      textArea.value = value;
-      textArea.style.position = "fixed";
-      textArea.style.left = "-999999px";
-      document.body.appendChild(textArea);
-      textArea.focus();
-      textArea.select();
-
-      try {
-        document.execCommand("copy");
-        resolve();
-      } catch (error) {
-        reject(error);
-      } finally {
-        document.body.removeChild(textArea);
-      }
-    } catch (error) {
-      reject(error);
-    }
-  });
-}
 
 function CopyGlyph(props) {
   return (
@@ -1095,6 +1068,45 @@ function FastnearOperationPage({ pageModel }) {
   const canClearStoredApiKey = !isUrlApiKeyOverride && !!auth.storedApiKey;
   const hasRpcError = runResult?.kind === "json" && !!runResult.value?.error;
   const runResultText = useMemo(() => getRunResultText(runResult), [runResult]);
+  const currentUrl =
+    typeof window !== "undefined" ? sanitizePublicUrl(window.location.href) : pageModel.canonicalPath;
+  const operationMarkdown = useMemo(
+    () =>
+      buildOperationMarkdown({
+        currentUrl,
+        httpRequestBody,
+        pageModel,
+        requestUrl,
+        rpcPayload,
+        selectedExample,
+        selectedFinality,
+        selectedNetworkDetails,
+      }),
+    [
+      currentUrl,
+      httpRequestBody,
+      pageModel,
+      requestUrl,
+      rpcPayload,
+      selectedExample,
+      selectedFinality,
+      selectedNetworkDetails,
+    ]
+  );
+  const pageActions = useMemo(
+    () => [
+      {
+        id: "copy-markdown",
+        label: "Copy Markdown",
+        pendingLabel: "Copying...",
+        completedLabel: "Copied",
+        onSelect: async () => {
+          await copyTextToClipboard(operationMarkdown);
+        },
+      },
+    ],
+    [operationMarkdown]
+  );
 
   const handleNetworkChange = (networkKey) => {
     setSelectedNetwork(networkKey);
@@ -1255,6 +1267,10 @@ function FastnearOperationPage({ pageModel }) {
 
   return (
     <div className="fastnear-operation-page">
+      <div className="fastnear-operation-page__toolbar">
+        <PageActions actions={pageActions} />
+      </div>
+
       <div className="fastnear-interaction">
         <div className="fastnear-interaction__layout">
           <div className="fastnear-interaction__sidebar">
@@ -1506,7 +1522,7 @@ function FastnearOperationPage({ pageModel }) {
                     return;
                   }
 
-                  await copyText(curlCommand);
+                  await copyTextToClipboard(curlCommand);
                   setCopiedCurl(true);
                 }}
                 disabled={!curlCommand}
@@ -1596,7 +1612,7 @@ function FastnearOperationPage({ pageModel }) {
                           return;
                         }
 
-                        await copyText(runResultText);
+                        await copyTextToClipboard(runResultText);
                         setCopiedResponse(true);
                       }}
                       aria-label={copiedResponse ? "Response copied" : "Copy response"}

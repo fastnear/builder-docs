@@ -3,33 +3,43 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
+    "generate:ai-surfaces": "node scripts/generate-ai-surfaces.js",
     "generate:bespoke-host-pages": "node scripts/generate-bespoke-host-pages.js",
     "docusaurus": "docusaurus",
-    "start": "yarn generate:bespoke-host-pages && docusaurus start",
-    "build": "yarn generate:bespoke-host-pages && docusaurus build",
+    "start": "yarn generate:ai-surfaces && yarn generate:bespoke-host-pages && docusaurus start",
+    "build": "yarn generate:ai-surfaces && yarn generate:bespoke-host-pages && docusaurus build",
+    "playwright:install": "playwright install chromium",
     "swizzle": "docusaurus swizzle",
-    "deploy": "yarn generate:bespoke-host-pages && docusaurus deploy",
+    "deploy": "yarn generate:ai-surfaces && yarn generate:bespoke-host-pages && docusaurus deploy",
     "clear": "docusaurus clear",
     "serve": "docusaurus serve",
+    "test:e2e": "playwright test",
+    "test:e2e:headed": "playwright test --headed",
     "write-translations": "docusaurus write-translations",
     "write-heading-ids": "docusaurus write-heading-ids"
   },
   "dependencies": {
+    "@docsearch/docusaurus-adapter": "^4.6.2",
     "@docusaurus/core": "3.9.2",
     "@docusaurus/plugin-client-redirects": "^3.9.2",
     "@docusaurus/plugin-content-docs": "^3.9.2",
     "@docusaurus/preset-classic": "3.9.2",
+    "@docusaurus/theme-common": "3.9.2",
     "@docusaurus/theme-mermaid": "^3.9.2",
+    "@easyops-cn/docusaurus-search-local": "^0.55.1",
     "@fastnear/api": "^0.9.7",
     "@mdx-js/react": "^3.1.1",
     "clsx": "^2.1.1",
     "prism-react-renderer": "^2.4.1",
     "react": "^19.2.3",
-    "react-dom": "^19.2.3"
+    "react-dom": "^19.2.3",
+    "turndown": "^7.2.0",
+    "turndown-plugin-gfm": "^1.0.2"
   },
   "devDependencies": {
     "@docusaurus/module-type-aliases": "3.9.2",
     "@docusaurus/types": "3.9.2",
+    "@playwright/test": "^1.59.1",
     "@types/react": "^19.2.7"
   },
   "browserslist": {
@@ -45,7 +55,7 @@
     ]
   },
   "engines": {
-    "node": ">=18.0"
+    "node": ">=20.0"
   },
   "packageManager": "yarn@4.9.2"
 }

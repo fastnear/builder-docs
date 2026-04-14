@@ -11,6 +11,8 @@ const hideEarlyApiFamilies = /^(1|true|yes|on)$/i.test(
 const rpcSidebar = [
   'rpc-api/rpc',
   'rpc-api/api-key',
+  'rpc-api/auth-browser-demo',
+  'rpc-api/auth-production-backend',
   {
     type: 'category',
     label: 'Account',
@@ -90,6 +92,7 @@ const rpcSidebar = [
 ];
 
 const fastnearApiSidebar = [
+  'rpc-api/fastnear-api/index',
   {
     type: 'category',
     label: 'V0',
@@ -118,20 +121,12 @@ const fastnearApiSidebar = [
       'rpc-api/fastnear-api/v1-account-full',
     ],
   },
-  {
-    type: 'category',
-    label: 'System',
-    collapsible: false,
-    collapsed: false,
-    items: [
-      'rpc-api/fastnear-api/index',
-      'rpc-api/fastnear-api/status',
-      'rpc-api/fastnear-api/health',
-    ],
-  },
+  'rpc-api/fastnear-api/status',
+  'rpc-api/fastnear-api/health',
 ];
 
 const transactionsApiSidebar = [
+  'rpc-api/transactions-api/index',
   'rpc-api/transactions-api/transactions',
   'rpc-api/transactions-api/account',
   'rpc-api/transactions-api/block',
@@ -141,9 +136,10 @@ const transactionsApiSidebar = [
 
 const transfersApiSidebar = hideEarlyApiFamilies
   ? []
-  : ['rpc-api/transfers-api/transfers'];
+  : ['rpc-api/transfers-api/index', 'rpc-api/transfers-api/transfers'];
 
 const nearDataApiSidebar = [
+  'rpc-api/neardata-api/index',
   'rpc-api/neardata-api/first-block',
   'rpc-api/neardata-api/block',
   'rpc-api/neardata-api/block-headers',
@@ -158,6 +154,7 @@ const nearDataApiSidebar = [
 const kvFastDataSidebar = hideEarlyApiFamilies
   ? []
   : [
+      'rpc-api/kv-fastdata-api/index',
       'rpc-api/kv-fastdata-api/all-by-predecessor',
       'rpc-api/kv-fastdata-api/history-by-predecessor',
       'rpc-api/kv-fastdata-api/latest-by-predecessor',

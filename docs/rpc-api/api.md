@@ -14,7 +14,7 @@ The sidebar for this section is intentionally FastNear-only. Other REST families
 
 ## FastNear API
 
-- [FastNear API](/docs/rpc-api/fastnear-api) for indexed account, token, NFT, and public-key lookups.
+- [FastNear API](/docs/api) for indexed account, token, NFT, and public-key lookups.
 
 ## How To Think About This Section
 

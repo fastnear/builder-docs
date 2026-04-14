@@ -11,6 +11,7 @@ import {
   FastnearApiSidebarVersionControl,
   useFastnearApiSidebarSelection,
 } from '@site/src/components/FastnearApiSidebarVersionControl';
+
 import styles from './styles.module.css';
 
 function useShowAnnouncementBar() {

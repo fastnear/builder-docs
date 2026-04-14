@@ -4,13 +4,63 @@
 // There are various equivalent ways to declare your Docusaurus config.
 // See: https://docusaurus.io/docs/api/docusaurus-config
 
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { themes as prismThemes } from 'prism-react-renderer';
 
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 
+const configDir = path.dirname(fileURLToPath(import.meta.url));
+const vscodeLanguageServerTypesEsmPath = path.join(
+  configDir,
+  'node_modules/vscode-languageserver-types/lib/esm/main.js'
+);
 const hideEarlyApiFamilies = /^(1|true|yes|on)$/i.test(
   process.env.HIDE_EARLY_API_FAMILIES || ''
 );
+const requestedSearchProvider = (process.env.DOCS_SEARCH_PROVIDER || 'local').toLowerCase();
+const docsearchConfig = {
+  appId: process.env.DOCSEARCH_APP_ID,
+  apiKey: process.env.DOCSEARCH_API_KEY,
+  indexName: process.env.DOCSEARCH_INDEX_NAME,
+  assistantId: process.env.DOCSEARCH_ASSISTANT_ID,
+};
+const hasDocsearchConfig = Boolean(
+  docsearchConfig.appId && docsearchConfig.apiKey && docsearchConfig.indexName
+);
+const resolvedSearchProvider =
+  requestedSearchProvider === 'algolia' && hasDocsearchConfig ? 'algolia' : 'local';
+const localSearchTheme = [
+  require.resolve('@easyops-cn/docusaurus-search-local'),
+  {
+    docsRouteBasePath: '/docs',
+    explicitSearchResultPath: true,
+    hashed: 'filename',
+    ignoreCssSelectors: [
+      '[data-markdown-skip]',
+      '.fastnear-doc-page-actions',
+      '.builder-fastnear-direct',
+    ],
+    ignoreFiles: hideEarlyApiFamilies
+      ? [
+          /\/docs\/rpc-api\/transfers-api(?:\/|$)/,
+          /\/docs\/rpc-api\/kv-fastdata-api(?:\/|$)/,
+          /\/docs\/transfers(?:\/|$)/,
+          /\/docs\/fastdata(?:\/|$)/,
+        ]
+      : [],
+    indexBlog: false,
+    indexDocs: true,
+    indexPages: false,
+    language: 'en',
+    searchBarPosition: 'right',
+    searchBarShortcut: true,
+    searchBarShortcutHint: true,
+    searchBarShortcutKeymap: 'mod+k',
+    searchResultContextMaxLength: 80,
+    searchResultLimits: 8,
+  },
+];
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
@@ -19,7 +69,7 @@ const config = {
   favicon: 'img/favicon.png',
 
   // Set the production url of your site here
-  url: 'https://builder-docs.fastnear.com',
+  url: 'https://docs.fastnear.com',
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
   baseUrl: '/',
@@ -37,7 +87,11 @@ const config = {
       onBrokenMarkdownLinks: 'warn',
     },
   },
-  themes: ['@docusaurus/theme-mermaid'],
+  themes: [
+    '@docusaurus/theme-mermaid',
+    ...(resolvedSearchProvider === 'local' ? [localSearchTheme] : []),
+    ...(resolvedSearchProvider === 'algolia' ? [require.resolve('@docsearch/docusaurus-adapter')] : []),
+  ],
 
   // Even if you don't use internationalization, you can use this field to set
   // useful metadata like html lang. For example, if your site is Chinese, you
@@ -52,6 +106,7 @@ const config = {
       'classic',
       /** @type {import('@docusaurus/preset-classic').Options} */
       ({
+        debug: false,
         docs: {
           breadcrumbs: false,
           path: './docs',
@@ -64,8 +119,64 @@ const config = {
       }),
     ],
   ],
+  plugins: [
+    function vscodeLanguageServerTypesWebpackAlias() {
+      return {
+        name: 'fastnear-vscode-languageserver-types-webpack-alias',
+        configureWebpack() {
+          return {
+            resolve: {
+              alias: {
+                // Mermaid's Langium parser stack otherwise resolves the UMD entry,
+                // which triggers a noisy webpack critical-dependency warning.
+                'vscode-languageserver-types$': vscodeLanguageServerTypesEsmPath,
+              },
+            },
+          };
+        },
+      };
+    },
+    [
+      '@docusaurus/plugin-client-redirects',
+      {
+        redirects: [
+          {
+            from: ['/docs/rpc-api/fastnear-api'],
+            to: '/docs/api',
+          },
+          {
+            from: ['/docs/rpc-api/rpc'],
+            to: '/docs/rpc',
+          },
+          {
+            from: ['/docs/rpc-api/transactions-api'],
+            to: '/docs/tx',
+          },
+          {
+            from: ['/docs/rpc-api/transfers-api'],
+            to: '/docs/transfers',
+          },
+          {
+            from: ['/docs/rpc-api/neardata-api'],
+            to: '/docs/neardata',
+          },
+          {
+            from: ['/docs/rpc-api/kv-fastdata-api'],
+            to: '/docs/fastdata/kv',
+          },
+          {
+            from: ['/docs/ai-agents'],
+            to: '/docs/ai-agents/choosing-surfaces',
+          },
+        ],
+      },
+    ],
+  ],
   customFields: {
     hideEarlyApiFamilies,
+    requestedSearchProvider,
+    resolvedSearchProvider,
+    docsearchAssistantId: docsearchConfig.assistantId || null,
   },
 
   themeConfig:
@@ -140,6 +251,10 @@ const config = {
             label: 'Status',
           },
           {
+            type: 'search',
+            position: 'right',
+          },
+          {
             href: 'https://github.com/fastnear/builder-docs',
             label: 'GitHub',
             position: 'right',
@@ -152,6 +267,24 @@ const config = {
           autoCollapseCategories: true,
         },
       },
+      ...(resolvedSearchProvider === 'algolia'
+        ? {
+            docsearch: {
+              appId: docsearchConfig.appId,
+              apiKey: docsearchConfig.apiKey,
+              indexName: docsearchConfig.indexName,
+              contextualSearch: true,
+              ...(docsearchConfig.assistantId
+                ? {
+                    askAi: {
+                      assistantId: docsearchConfig.assistantId,
+                      sidePanel: true,
+                    },
+                  }
+                : {}),
+            },
+          }
+        : {}),
       footer: {
         style: 'dark',
         links: [

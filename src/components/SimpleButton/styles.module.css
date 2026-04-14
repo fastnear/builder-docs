@@ -1,18 +1,48 @@
 .button {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 3.5rem;
     padding: 0.75rem 1.5rem;
+    border: 1px solid transparent;
     border-radius: 4px;
     background-color: var(--ifm-color-primary);
-    color: white;
+    color: #fff;
     font-weight: 600;
+    text-align: center;
     text-decoration: none;
     margin-right: 1rem;
     margin-bottom: 1rem;
-    transition: background-color 0.2s;
+    transition:
+        background-color 0.2s,
+        border-color 0.2s,
+        box-shadow 0.2s,
+        transform 0.2s;
 }
 
-.button:hover {
-    background-color: var(--ifm-color-primary-dark);
+:global(a).button,
+:global(a).button:link,
+:global(a).button:visited,
+:global(a).button:hover,
+:global(a).button:active {
+    color: #fff !important;
     text-decoration: none;
-    color: white;
+}
+
+.button:hover,
+.button:active,
+:global(a).button:hover,
+:global(a).button:active {
+    background-color: var(--ifm-color-primary-dark);
+    border-color: var(--ifm-color-primary-darkest);
+    color: #fff !important;
+    text-decoration: none;
+    box-shadow: 0 10px 24px rgba(30, 74, 186, 0.18);
+    transform: translateY(-1px);
+}
+
+.button:focus-visible,
+:global(a).button:focus-visible {
+    outline: 2px solid color-mix(in srgb, var(--ifm-color-primary) 24%, transparent);
+    outline-offset: 2px;
 }

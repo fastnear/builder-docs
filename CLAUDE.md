@@ -43,7 +43,8 @@ This is a Docusaurus v3.9.2 documentation site focused on providing advanced NEA
 
 ### Documentation Structure
 
-- `/docs/rpc-api/` — RPC and API reference documentation rendered natively with the shared bespoke runtime
+- `/docs/rpc/` — canonical RPC operation documentation rendered natively with the shared bespoke runtime
+- `/docs/rpc-api/` — chooser, auth, and cross-surface guidance for the reference docs
 - `/docs/transaction-flow/` — 11-page deep dive on NEAR transaction lifecycle (async model, finality, gas economics, runtime execution, etc.)
 - `/docs/snapshots/` — Validator snapshot documentation for mainnet/testnet
 - Content is written in MDX format, allowing React components within markdown
@@ -58,7 +59,7 @@ Current navigation model:
 
 ### React Components
 
-- **`FastnearDirectOperation`** (`src/components/FastnearDirectOperation/index.js`) — Shared native renderer for interactive RPC and API docs inside `/docs/rpc-api/**`.
+- **`FastnearDirectOperation`** (`src/components/FastnearDirectOperation/index.js`) — Shared native renderer for interactive RPC and API docs inside `/docs/**` reference pages.
 - **`FastnearHostedOperationPage`** (`src/components/FastnearHostedOperationPage/index.js`) — Lightweight page wrapper used by the generated canonical `/rpcs/**` and `/apis/**` hosted pages. Also posts resize messages when embedded externally.
 - **`ApiKeyManager`** (`src/components/ApiKeyManager/index.js`) — UI for users to set/manage their FastNear API key, stored in localStorage.
 - **`FastnearApiSidebarVersionControl`** (`src/components/FastnearApiSidebarVersionControl/index.js`) — FastNear API version selector for the sidebar.
@@ -94,6 +95,7 @@ Create a new file under `docs/rpc-api/<category>/`, following the existing patte
 ---
 title: <Method Title>
 description: <Brief description>
+slug: /rpc/<category>/<route-segment>
 sidebar_position: <N>
 hide_table_of_contents: true
 ---
@@ -171,7 +173,7 @@ The site now treats `mike-docs` as a generation pipeline, not an embedded runtim
 1. Each YAML file in mike-docs `rpcs/` gets its own canonical page path (e.g. `rpcs/account/view_account.yaml` → `/rpcs/account/view_account`).
 2. REST API service repos now own only aggregate `openapi/openapi.yaml`; mike-docs syncs those aggregate specs and splits them into canonical `/apis/<service>/...` leaf pages.
 3. `mike-docs` generates the shared page-model registry and vendors it into `builder-docs/src/data/generatedFastnearPageModels.json`.
-4. `builder-docs` renders `/docs/rpc-api/**` pages with `FastnearDirectOperation`.
+4. `builder-docs` renders `/docs/rpc/**` and service-specific `/docs/**` reference pages with `FastnearDirectOperation`.
 5. `builder-docs` generates canonical hosted pages under `src/pages/rpcs/**` and `src/pages/apis/**` so `docs.fastnear.com` serves the same bespoke runtime directly.
 6. Redocly remains available in `mike-docs` only for validation and legacy debugging.
 

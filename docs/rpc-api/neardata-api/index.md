@@ -1,36 +1,55 @@
 ---
 title: NEAR Data API
-description: Cached and archived NEAR block data with redirect helpers.
+description: Cached and archived block-family reads for optimistic, finalized, and redirect-style block access patterns.
 sidebar_position: 1
 displayed_sidebar: nearDataApiSidebar
+slug: /neardata
+page_actions:
+  - markdown
 ---
 
 # NEAR Data API
 
-Base URLs:
+NEAR Data API is the near-realtime and block-family surface. Use it when you want fresh block slices, redirect helpers, or recent finalized and optimistic block reads without presenting it as a streaming product.
+
+## Best fit
+
+- Polling for recent finalized or optimistic blocks.
+- Block-family helpers and redirect flows.
+- Lightweight freshness checks and monitoring paths.
+
+## When not to use it
+
+- Use [RPC Reference](/docs/rpc) for canonical JSON-RPC methods and transaction submission.
+- Use [Snapshots](/docs/snapshots/) for infrastructure bootstrap rather than live reads.
+
+## Base URLs
+
 - `https://mainnet.neardata.xyz`
 - `https://testnet.neardata.xyz`
 
-Authentication:
-- Optional `apiKey` query parameter for FastNear subscription traffic.
-- Invalid API keys may return `401` before the neardata app handles redirects.
+## Auth and availability
 
-Behavior notes:
-- Some endpoints redirect to canonical block URLs.
-- Some block-by-height routes may also redirect depending on archive and freshness topology.
-- Block responses may be `null` when the requested height does not exist.
-- Examples seed known block heights so you can try the block-family endpoints immediately.
-- Add `?network=testnet` to switch the page to testnet and seed testnet-friendly defaults.
+- FastNear subscriptions can use an optional `apiKey` query parameter on supported traffic.
+- Invalid API keys may return `401` before the NEAR Data application handles redirects.
+- Add `?network=testnet` to switch compatible pages to testnet defaults.
 
-The sidebar for this section is intentionally NEAR Data-only so the block-family operations stay grouped together as you move between redirect, health, and block-slice endpoints.
+## Common starting points
 
-Operations:
-- [First block redirect](/docs/rpc-api/neardata-api/first-block)
-- [Final block by height](/docs/rpc-api/neardata-api/block)
-- [Block headers](/docs/rpc-api/neardata-api/block-headers)
-- [Block chunk](/docs/rpc-api/neardata-api/block-chunk)
-- [Block shard](/docs/rpc-api/neardata-api/block-shard)
-- [Optimistic block](/docs/rpc-api/neardata-api/block-optimistic)
-- [Last final block redirect](/docs/rpc-api/neardata-api/last-block-final)
-- [Last optimistic block redirect](/docs/rpc-api/neardata-api/last-block-optimistic)
-- [Health](/docs/rpc-api/neardata-api/health)
+- `Optimistic block` for freshest block polling.
+- `Final block by height` and `Block headers` for finalized block-family queries.
+- `Last final block redirect` and `Last optimistic block redirect` when you want helper redirects.
+
+## Troubleshooting
+
+### Some endpoints redirect instead of returning the final payload directly
+
+That is expected on redirect-style helpers. Follow the canonical target if your client needs the final resource.
+
+### A block response is `null`
+
+That usually means the requested height does not exist on that network or the request is outside the expected freshness/archive range.
+
+### I need streaming, not polling
+
+This surface is for polling-oriented near-realtime reads. Do not position it as a websocket or webhook product.

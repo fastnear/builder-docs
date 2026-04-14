@@ -16,7 +16,7 @@ Public API and RPC pages are no longer iframe embeds. They render directly in `b
 ## What Lives Here
 
 - MDX content under `docs/`
-- `src/components/FastnearDirectOperation/` for native interactive API and RPC docs inside `/docs/rpc-api/...`
+- `src/components/FastnearDirectOperation/` for native interactive API and RPC docs inside `/docs/**` reference pages
 - `src/components/FastnearHostedOperationPage/` for canonical hosted `/rpcs/...` and `/apis/...` routes
 - `src/components/ApiKeyManager/` for browser-persisted FastNear API keys
 - `src/components/FastnearApiSidebarVersionControl/` for FastNear API version-aware sidebar filtering
@@ -27,7 +27,7 @@ Public API and RPC pages are no longer iframe embeds. They render directly in `b
 
 ### Prerequisites
 
-- Node.js 18+
+- Node.js 20+ (`.node-version` currently pins `24` for local development)
 - Yarn 4 (`corepack` supported)
 
 ### Local builder-docs development
@@ -40,6 +40,15 @@ yarn start
 `yarn start` regenerates the hosted canonical route files before starting Docusaurus.
 
 For most UI/content work in this repo, that is enough. The docs pages render directly from the vendored page-model registry and make live network requests themselves.
+
+### Playwright smoke tests
+
+```bash
+yarn playwright:install
+yarn test:e2e
+```
+
+The Playwright config starts a local Docusaurus server automatically, then runs a small Chromium-based smoke suite against the public docs experience. Use it for routing, theming, copy-action, and interaction regressions as the bespoke docs UI evolves.
 
 ### Refreshing the generated docs models
 
@@ -88,10 +97,16 @@ The Redocly preview in `mike-docs` is now legacy infrastructure. Use it only whe
 Docs pages under `docs/rpc-api/**` should use the native direct renderer:
 
 ```mdx
+---
+slug: /rpc/<category>/<route-segment>
+---
+
 import FastnearDirectOperation from '@site/src/components/FastnearDirectOperation';
 
 <FastnearDirectOperation pageModelId="rpc-view-account" />
 ```
+
+RPC source files currently live under `docs/rpc-api/<category>/`, but they publish at `/docs/rpc/<category>/<route-segment>` via frontmatter `slug`.
 
 Use the generated `pageModelId` from `mike-docs`. The canonical hosted `/rpcs/...` and `/apis/...` routes are generated automatically; do not hand-edit files under `src/pages/rpcs/**` or `src/pages/apis/**`.
 
@@ -106,7 +121,7 @@ These paths are the public contract:
 /apis/transactions/v0/account
 ```
 
-They are generated and hosted directly by this repo. The matching `/docs/rpc-api/...` pages use the same underlying page-model data and interactive runtime.
+They are generated and hosted directly by this repo. The matching `/docs/rpc/**` pages and service-specific `/docs/**` reference pages use the same underlying page-model data and interactive runtime.
 
 ## Useful URLs
 

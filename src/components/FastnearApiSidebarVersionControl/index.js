@@ -1,10 +1,10 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import clsx from 'clsx';
-import { useDocsSidebar } from '@docusaurus/plugin-content-docs/client';
 import { useHistory, useLocation } from '@docusaurus/router';
 
 const STORAGE_KEY = 'fastnear-api:selected-version';
 const VERSION_LABEL_RE = /^V(\d+)$/i;
+const VERSIONED_ITEM_LABEL_RE = /^V\d+\s+/i;
 const VERSION_PATH_RE = /(\/docs\/rpc-api\/fastnear-api\/)(v\d+)(-[^/?#]+)$/i;
 
 function getVersionKeyFromLabel(label) {
@@ -91,8 +91,46 @@ function findTargetHref(versionCategories, currentPath, targetVersion) {
   return targetCategory.links[0] || null;
 }
 
+function stripVersionPrefix(label) {
+  return typeof label === 'string' ? label.replace(VERSIONED_ITEM_LABEL_RE, '') : label;
+}
+
+function normalizeVersionedItem(item) {
+  if (!item || typeof item !== 'object') {
+    return item;
+  }
+
+  if (item.type === 'category') {
+    return {
+      ...item,
+      label: stripVersionPrefix(item.label),
+      items: (item.items || []).map(normalizeVersionedItem),
+    };
+  }
+
+  return {
+    ...item,
+    label: stripVersionPrefix(item.label),
+  };
+}
+
+function createSystemSection(items) {
+  if (!items.length) {
+    return [];
+  }
+
+  return [
+    {
+      type: 'category',
+      label: 'System',
+      collapsible: false,
+      collapsed: false,
+      items,
+    },
+  ];
+}
+
 export function useFastnearApiSidebarSelection(sidebarItems) {
-  const docsSidebar = useDocsSidebar();
   const history = useHistory();
   const location = useLocation();
 
@@ -100,6 +138,7 @@ export function useFastnearApiSidebarSelection(sidebarItems) {
     () => getVersionCategories(sidebarItems),
     [sidebarItems]
   );
+  const isVersionedSidebar = versionCategories.length > 0;
   const versionKeys = useMemo(
     () => versionCategories.map((category) => category.key),
     [versionCategories]
@@ -114,7 +153,7 @@ export function useFastnearApiSidebarSelection(sidebarItems) {
   });
 
   useEffect(() => {
-    if (!docsSidebar || docsSidebar.name !== 'fastnearApiSidebar') {
+    if (!isVersionedSidebar) {
       return;
     }
 
@@ -134,24 +173,43 @@ export function useFastnearApiSidebarSelection(sidebarItems) {
     if (defaultVersion && defaultVersion !== selectedVersion) {
       setSelectedVersion(defaultVersion);
     }
-  }, [activeVersionFromPath, docsSidebar, selectedVersion, versionKeys]);
+  }, [activeVersionFromPath, isVersionedSidebar, selectedVersion, versionKeys]);
 
   const filteredItems = useMemo(() => {
-    if (!docsSidebar || docsSidebar.name !== 'fastnearApiSidebar' || !selectedVersion) {
+    if (!isVersionedSidebar || !selectedVersion) {
       return sidebarItems;
     }
 
-    return sidebarItems.filter((item) => {
+    const leadingItems = [];
+    const trailingItems = [];
+    let selectedVersionItems = [];
+    let hasSeenVersionCategory = false;
+
+    sidebarItems.forEach((item) => {
       if (!isVersionCategory(item)) {
-        return true;
+        if (hasSeenVersionCategory) {
+          trailingItems.push(item);
+        } else {
+          leadingItems.push(item);
+        }
+        return;
       }
 
-      return getVersionKeyFromLabel(item.label) === selectedVersion;
-    });
-  }, [docsSidebar, selectedVersion, sidebarItems]);
+      hasSeenVersionCategory = true;
 
-  const showVersionControl =
-    docsSidebar?.name === 'fastnearApiSidebar' && versionCategories.length > 1;
+      if (getVersionKeyFromLabel(item.label) === selectedVersion) {
+        selectedVersionItems = (item.items || []).map(normalizeVersionedItem);
+      }
+    });
+
+    return [
+      ...leadingItems,
+      ...selectedVersionItems,
+      ...createSystemSection(trailingItems),
+    ];
+  }, [isVersionedSidebar, selectedVersion, sidebarItems]);
+
+  const showVersionControl = isVersionedSidebar && versionCategories.length > 1;
 
   function onVersionChange(nextVersion) {
     setSelectedVersion(nextVersion);

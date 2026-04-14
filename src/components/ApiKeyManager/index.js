@@ -56,7 +56,7 @@ export default function ApiKeyManager() {
   };
 
   return (
-    <div className={styles.container}>
+    <div className={styles.container} data-markdown-skip>
       <h3>API Key Configuration</h3>
       <p className={styles.description}>
         Set your FastNear API key here. It will be automatically included in all RPC documentation examples.
@@ -75,7 +75,7 @@ export default function ApiKeyManager() {
           className={styles.toggleButton}
           type="button"
         >
-          {showKey ? '🙈' : '👁️'}
+          {showKey ? 'Hide' : 'Show'}
         </button>
       </div>
 
@@ -90,7 +90,7 @@ export default function ApiKeyManager() {
 
       {saved && (
         <div className={styles.successMessage}>
-          ✅ API key {apiKey ? 'saved' : 'cleared'} successfully!
+          API key {apiKey ? 'saved' : 'cleared'} successfully.
         </div>
       )}
 
