@@ -3,33 +3,52 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
+    "generate:ai-surfaces": "node scripts/generate-ai-surfaces.js",
+    "generate:bespoke-host-pages": "node scripts/generate-bespoke-host-pages.js",
+    "submit:indexnow": "node scripts/submit-indexnow.js",
+    "submit:indexnow:dry-run": "node scripts/submit-indexnow.js --dry-run",
     "docusaurus": "docusaurus",
-    "start": "docusaurus start",
-    "build": "docusaurus build",
+    "start": "yarn generate:ai-surfaces && yarn generate:bespoke-host-pages && docusaurus start",
+    "build": "yarn generate:ai-surfaces && yarn generate:bespoke-host-pages && docusaurus build",
+    "audit:page-models": "node scripts/audit-generated-page-models.js",
+    "audit:indexing": "yarn audit:page-models && yarn build && node scripts/audit-indexing-surface.js",
+    "playwright:install": "env -u NO_COLOR playwright install chromium",
     "swizzle": "docusaurus swizzle",
-    "deploy": "docusaurus deploy",
+    "deploy": "yarn generate:ai-surfaces && yarn generate:bespoke-host-pages && docusaurus deploy && yarn submit:indexnow",
     "clear": "docusaurus clear",
     "serve": "docusaurus serve",
+    "test:e2e": "env -u NO_COLOR playwright test",
+    "test:e2e:headed": "env -u NO_COLOR playwright test --headed",
     "write-translations": "docusaurus write-translations",
     "write-heading-ids": "docusaurus write-heading-ids"
   },
   "dependencies": {
-    "@docusaurus/core": "3.9.2",
-    "@docusaurus/plugin-client-redirects": "^3.9.2",
-    "@docusaurus/plugin-content-docs": "^3.9.2",
-    "@docusaurus/preset-classic": "3.9.2",
-    "@docusaurus/theme-mermaid": "^3.9.2",
+    "@algolia/client-search": "5.49.0",
+    "@docsearch/docusaurus-adapter": "^4.6.2",
+    "@docusaurus/core": "3.10.0",
+    "@docusaurus/plugin-client-redirects": "3.10.0",
+    "@docusaurus/plugin-content-docs": "3.10.0",
+    "@docusaurus/preset-classic": "3.10.0",
+    "@docusaurus/theme-common": "3.10.0",
+    "@docusaurus/theme-mermaid": "3.10.0",
+    "@easyops-cn/docusaurus-search-local": "^0.55.1",
     "@fastnear/api": "^0.9.7",
     "@mdx-js/react": "^3.1.1",
+    "algoliasearch": "5.49.0",
     "clsx": "^2.1.1",
     "prism-react-renderer": "^2.4.1",
     "react": "^19.2.3",
-    "react-dom": "^19.2.3"
+    "react-dom": "^19.2.3",
+    "search-insights": "^2.17.3",
+    "turndown": "^7.2.0",
+    "turndown-plugin-gfm": "^1.0.2"
   },
   "devDependencies": {
-    "@docusaurus/module-type-aliases": "3.9.2",
-    "@docusaurus/types": "3.9.2",
-    "@types/react": "^19.2.7"
+    "@docusaurus/module-type-aliases": "3.10.0",
+    "@docusaurus/types": "3.10.0",
+    "@playwright/test": "^1.59.1",
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3"
   },
   "browserslist": {
     "production": [
@@ -44,7 +63,7 @@
     ]
   },
   "engines": {
-    "node": ">=18.0"
+    "node": ">=20.0"
   },
   "packageManager": "yarn@4.9.2"
 }

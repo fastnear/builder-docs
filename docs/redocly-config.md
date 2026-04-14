@@ -1,122 +1,53 @@
-# Redocly Configuration Guide
+---
+slug: /redocly-config
+description: Historical notes about the legacy Redocly backend and where it still matters for FastNear docs verification.
+---
 
-This document outlines the required Redocly configuration to enable headless operation embedding with API key support.
+# Legacy Redocly Backend Notes
 
-## 1. Reference Page Configuration
+This document is historical context for the legacy Redocly backend in `mike-docs`.
 
-Create or update your reference page configuration file (e.g., `reference.page.yaml`):
+## Current Reality
 
-```yaml
-type: reference-docs
-definitionId: near
-label: Near RPC
-settings:
-  pagination: item        # Enables per-operation pages
-  showConsole: true       # Shows Try-It console
-  hideInfoSection: true   # Hides info section for cleaner embed
-  hideDownloadButton: true # Removes download button
-  disableSidebar: true    # Disables internal Reference sidebar
-```
+The public docs no longer use Redocly as their primary runtime.
 
-Key setting: `pagination: item` creates individual operation pages at `/reference/operation/<operationId>`
+- Public API and RPC pages render directly in `builder-docs`
+- Canonical `/rpcs/...` and `/apis/...` routes are hosted by `builder-docs`
+- `mike-docs` keeps Redocly only for verification, parity checks, and migration cleanup
 
-## 2. Portal-Wide Chrome Configuration
+## Where Redocly Still Matters
 
-Update your `redocly.yaml` to hide portal chrome:
+Use the Redocly path only when you need to validate:
 
-```yaml
-sidebar:
-  hide: true    # Hides portal sidebar
-navbar:
-  hide: true    # Hides portal navbar
-openapi:
-  settings:
-    showConsole: true
-```
+- `@theme/ext/configure.ts` behavior
+- request-shaping inputs such as `preset`, `body`, `path.*`, `query.*`, and `header.*`
+- local parity between the direct runtime and the legacy portal
 
-## 3. Auto-Inject Authentication (configure.ts)
-
-Eject and customize the configure.ts file to handle auth injection:
+Local commands:
 
 ```bash
-npx @redocly/cli eject component ext/configure.ts
+cd /Users/mikepurvis/near/mike-docs
+npm run preview:headless
+npm run preview:portal
 ```
 
-Then update `@theme/ext/configure.ts`:
+## Current Auth Notes
 
-```typescript
-/* eslint-disable no-restricted-globals */
-type RequestValues = {
-  headers?: Record<string, string>;
-  query?: Record<string, string>;
-  security?: Record<string, any>;
-  envVariables?: Record<string, string>;
-};
+The shared browser auth contract is:
 
-const API_KEY_SCHEMES = ["ApiKeyAuth", "api_key", "api_keys"];
-const BEARER_SCHEMES = ["bearerAuth", "jwt"];
+1. `?apiKey=`
+2. `localStorage.fastnear:apiKey`
+3. legacy `localStorage.fastnear_api_key`
 
-export function configure(context: any) {
-  const search =
-    typeof window !== "undefined" ? new URLSearchParams(window.location.search) : new URLSearchParams();
+Bearer tokens continue to use:
 
-  const apiKey =
-    search.get("apiKey") ||
-    (typeof window !== "undefined" ? window.localStorage.getItem("fastnear:apiKey") : null) ||
-    undefined;
+1. `?token=`
+2. `localStorage.fastnear:bearer`
 
-  const bearer =
-    search.get("token") ||
-    (typeof window !== "undefined" ? window.localStorage.getItem("fastnear:bearer") : null) ||
-    undefined;
+## Current Source Of Truth
 
-  const rv: RequestValues = { headers: {}, query: {}, security: {}, envVariables: {} };
+For current implementation details, use:
 
-  if (apiKey) {
-    rv.query!["apiKey"] = apiKey;                 // API key as query param
-    rv.headers!["x-api-key"] = apiKey;            // API key as header
-    for (const id of API_KEY_SCHEMES) rv.security![id] = apiKey;
-    rv.envVariables!.API_KEY = apiKey;            // For code samples
-  }
-
-  if (bearer) {
-    rv.headers!["Authorization"] = `Bearer ${bearer}`;
-    for (const id of BEARER_SCHEMES) rv.security![id] = bearer;
-    rv.envVariables!.ACCESS_TOKEN = bearer;
-  }
-
-  return { requestValues: rv };
-}
-```
-
-## 4. URL Structure
-
-With these configurations, you'll have:
-
-- **Pretty routes** (if configured): `/rpcs/account/view_account`
-- **Operation routes** (with pagination): `/reference/operation/view_account`
-
-## 5. Embedding Considerations
-
-### CORS and Frame Options
-If you encounter iframe blocking issues, ensure your Redocly domain allows embedding:
-- Check `X-Frame-Options` headers
-- Verify `Content-Security-Policy: frame-ancestors` settings
-- Consider using a custom domain or proxy for same-site embedding
-
-### API Key Flow
-1. User sets API key in the Docusaurus site (stored in localStorage)
-2. RpcRedoc component reads the key from localStorage
-3. Key is appended as URL parameter: `?apiKey=USER_KEY`
-4. Redocly's configure.ts picks up the key and injects it into:
-   - Query parameters for the API
-   - Headers for authentication
-   - Code samples as environment variables
-
-## Testing
-
-To test the integration:
-1. Set an API key using the ApiKeyManager component
-2. Visit a documentation page with RpcRedoc
-3. Check browser DevTools Network tab to verify the iframe URL includes `?apiKey=YOUR_KEY`
-4. Verify the Try-It console includes the API key in requests
+- `mike-docs/README.md`
+- `mike-docs/INTEGRATION_GUIDE.md`
+- `builder-docs/CLAUDE.md`

@@ -19,28 +19,60 @@ yarn build
 yarn serve
 ```
 
+## Feature Branch Workflow
+
+- Treat `builder-docs` as the primary feature branch, review, and deployment repo for public docs work.
+- Start here first for user-facing changes: layout, MDX content, navigation, sidebar behavior, theming, and native docs UI.
+- Only create a paired `mike-docs` branch when the work needs generated inputs or shared-runtime changes:
+  - spec sync
+  - enhancement manifests
+  - page-model generation
+  - nearcore RPC generation
+  - shared logic that feeds the native docs renderer
+- If both repos are involved, use the same branch suffix in both repos, for example `codex/response-shell-polish`.
+- Preferred sequence:
+  1. change and validate generation/shared logic in `mike-docs`
+  2. sync the generated artifacts into `builder-docs`
+  3. finish the user-facing work here
+  4. open the `builder-docs` PR as the main PR and link the supporting `mike-docs` PR
+- Keep branches narrow and single-purpose. Avoid bundling generation churn, large cleanup, and unrelated UI polish into one PR.
+
 ## High-Level Architecture
 
-This is a Docusaurus v3.9.2 documentation site focused on providing advanced NEAR Protocol documentation for seasoned developers, builders, and founders. The site complements the general NEAR documentation at docs.near.org with more technical, precise definitions.
+This is a Docusaurus v3.10.0 documentation site focused on providing advanced NEAR Protocol documentation for seasoned developers, builders, and founders. The site complements the general NEAR documentation at docs.near.org with more technical, precise definitions.
 
 ### Documentation Structure
 
-- `/docs/rpc-api/` — RPC and API reference documentation (embedded Redocly pages)
-- `/docs/transaction-flow/` — 11-page deep dive on NEAR transaction lifecycle (async model, finality, gas economics, runtime execution, etc.)
-- `/docs/snapshots/` — Validator snapshot documentation for mainnet/testnet
+- `/rpc/` — canonical RPC operation documentation rendered natively with the shared bespoke runtime
+- `/` — chooser, auth, and cross-surface guidance for the reference docs
+- `/transaction-flow/` — 11-page deep dive on NEAR transaction lifecycle (async model, finality, gas economics, runtime execution, etc.)
+- `/snapshots/` — Validator snapshot documentation for mainnet/testnet
 - Content is written in MDX format, allowing React components within markdown
+
+Current navigation model:
+- `RPC` is the top-level entry for JSON-RPC reference docs.
+- `API` is the top-level entry for the FastNear REST API section only.
+- `Transactions`, `Transfers`, and `NEAR Data` each have their own top-level API entry and their own section-specific sidebar.
+- `FastData` is a grouped section for the `KV FastData API`.
+- `/` remains the neutral overview page and is no longer represented as a dedicated navbar item.
+- This section-aware sidebar behavior is intentionally implemented in Docusaurus. `builder-docs` is the public docs runtime; `mike-docs` is the generation pipeline plus legacy verification backend.
 
 ### React Components
 
-- **`RpcRedoc`** (`src/components/RpcRedoc/index.js`) — The primary component for embedding single Redocly operation pages via iframe. Used by all RPC endpoint doc pages.
-- **`ApiKeyManager`** (`src/components/ApiKeyManager/index.js`) — UI for users to set/manage their FastNEAR API key, stored in localStorage.
+- **`FastnearDirectOperation`** (`src/components/FastnearDirectOperation/index.js`) — Shared native renderer for interactive RPC and API docs inside the root-mounted public reference pages.
+- **`FastnearHostedOperationPage`** (`src/components/FastnearHostedOperationPage/index.js`) — Lightweight page wrapper used by the generated canonical `/rpcs/**` and `/apis/**` hosted pages. Also posts resize messages when embedded externally.
+- **`ApiKeyManager`** (`src/components/ApiKeyManager/index.js`) — UI for users to set/manage their FastNear API key, stored in localStorage.
+- **`FastnearApiSidebarVersionControl`** (`src/components/FastnearApiSidebarVersionControl/index.js`) — FastNear API version selector for the sidebar.
 - **`SimpleButton`** — Reusable button component, used in the snapshots landing page.
+- **`src/css/custom.css`** — Canonical bespoke UI stylesheet. Public layout/spacing/polish changes belong here first.
 
 ### Other Notable Files
 
 - **`src/pages/near-rpc-openapi.yaml`** — A local snapshot of the OpenAPI spec. The canonical source of truth is `rpcs/openapi.yaml` in the mike-docs repo (auto-generated from nearcore via `npm run generate-rpc`). This local copy may drift from the upstream.
 - **`static/js-loaded-globally/`** — Vendored JS bundles (`near-api-js` 5.1.1, `@fastnear/api` 0.9.7) loaded globally for interactive docs. The vendored bundles are separate pinned copies for browser use and are not managed via `package.json`.
-- **`REDOCLY_SETUP.md`** — Guide for how the Redocly portal itself must be configured (pagination, hidden chrome, auth injection). These changes live on the Redocly side, not in this repo.
+- **`src/data/generatedFastnearPageModels.json`** — Vendored page-model registry generated in `mike-docs`. This is the source of truth for native docs rendering here.
+- **`scripts/generate-bespoke-host-pages.js`** — Generates canonical hosted route pages under `src/pages/rpcs/**` and `src/pages/apis/**` from the vendored page-model registry so `docs.fastnear.com` can serve the bespoke contract directly.
+- **`/Users/mikepurvis/near/mike-docs/README.md`** — The authoritative docs-backend workflow, including aggregate REST spec sync, portal-side splitting, bespoke generation, and local preview.
 - **`@docusaurus/plugin-client-redirects`** — Installed as a dependency for URL redirect management.
 
 ### Content Focus Areas
@@ -53,21 +85,22 @@ This is a Docusaurus v3.9.2 documentation site focused on providing advanced NEA
 
 ## Adding New RPC Endpoint Pages
 
-This is the main expansion pattern for the site. Each RPC method gets its own MDX page that embeds the corresponding Redocly operation.
+This is the main expansion pattern for the site. Each RPC method gets its own MDX page that renders the corresponding generated page model.
 
 ### Step 1: Create the MDX file
 
-Create a new file under `docs/rpc-api/<category>/`, following the existing pattern:
+Create a new file under `docs/rpc/<category>/`, following the existing pattern:
 
 ```mdx
 ---
 title: <Method Title>
 description: <Brief description>
+slug: /rpc/<category>/<route-segment>
 sidebar_position: <N>
 hide_table_of_contents: true
 ---
 
-import RpcRedoc from '@site/src/components/RpcRedoc';
+import FastnearDirectOperation from '@site/src/components/FastnearDirectOperation';
 
 # <Method Title>
 
@@ -75,14 +108,37 @@ import RpcRedoc from '@site/src/components/RpcRedoc';
 
 <Brief description of what this endpoint does.>
 
-<RpcRedoc
-  redoclyBase="https://fastnear.redocly.app"
-  path="/rpcs/<category>/<yaml_filename_without_ext>"
-  height="1600px"
-/>
+<FastnearDirectOperation pageModelId="<page_model_id>" />
 ```
 
-The `path` value corresponds to the YAML file path in the mike-docs repo under `rpcs/`. For example, `rpcs/account/view_account.yaml` becomes `path="/rpcs/account/view_account"`. Check the mike-docs repo's `rpcs/` directory for available operations — these are generated from nearcore via `npm run generate-rpc` in mike-docs (see "Upstream: nearcore Generator Pipeline" below).
+The `pageModelId` comes from the generated registry synced from `mike-docs`. For example, `view_account` uses `pageModelId="rpc-view-account"`.
+
+## Adding New REST API Pages
+
+Use `FastnearDirectOperation` for FastNear and REST API content under `docs/api/`, `docs/tx/`, `docs/transfers/`, `docs/neardata/`, and `docs/fastdata/kv/`.
+
+For a standard REST operation page:
+
+```mdx
+---
+title: Account Full
+description: Fetch a combined FastNear account view
+sidebar_position: 1
+hide_table_of_contents: true
+---
+
+import FastnearDirectOperation from '@site/src/components/FastnearDirectOperation';
+
+# Account Full
+
+<FastnearDirectOperation pageModelId="fastnear-v1-account-full" />
+```
+
+Guidelines:
+
+- Use the generated `pageModelId`, not a raw `/apis/...` path string.
+- Keep the existing doc IDs and folder routes stable when reorganizing nav or sidebar labels. The current IA is section-sidebar driven, not route-driven.
+- If the underlying page model is missing or wrong, fix it in `mike-docs` and resync instead of papering over it locally.
 
 ### Step 2: Add to sidebars.js
 
@@ -93,59 +149,48 @@ Add the new doc ID to the appropriate category in `sidebars.js`:
   type: 'category',
   label: 'Account',
   items: [
-    'rpc-api/account/view-account',
-    'rpc-api/account/your-new-page',   // <-- add here
+    'rpc/account/view-account',
+    'rpc/account/your-new-page',   // <-- add here
   ],
 },
 ```
 
 ### Step 3: Verify
 
-Run `yarn start` and navigate to the new page. The Redocly iframe should load the operation documentation with the Try-It console.
+Run `yarn start` and navigate to the new page. The direct renderer should load without needing any iframe or backend routing glue.
 
 ### Existing endpoint pages
 
-- `docs/rpc-api/account/view-account.mdx` → `path="/rpcs/account/view_account"`
-- `docs/rpc-api/contract/call-function.mdx` → `path="/rpcs/contract/call"`
+- `docs/rpc/account/view-account.mdx` → `pageModelId="rpc-view-account"`
+- `docs/rpc/contract/call-function.mdx` → `pageModelId="rpc-call"`
 
-## Redocly Integration
+## Docs Backend Integration
 
-The site uses Redocly (paid plan) as a headless API documentation renderer, embedding single-operation pages at `fastnear.redocly.app` without navigation chrome.
+The site now treats `mike-docs` as a generation pipeline, not an embedded runtime. Public docs pages render directly from the vendored page-model registry.
 
 ### How it works
 
-1. Each YAML file in mike-docs `rpcs/` gets its own page at the corresponding path (e.g. `rpcs/account/view_account.yaml` → `/rpcs/account/view_account`)
-2. Portal chrome (sidebar, navbar) is hidden via `redocly.yaml` settings
-3. The `RpcRedoc` component embeds these pages in iframes using the `path` prop
-4. API keys flow from localStorage → iframe URL param → Redocly's `configure.ts` → Try-It console
+1. Each YAML file in mike-docs `rpcs/` gets its own canonical page path (e.g. `rpcs/account/view_account.yaml` → `/rpcs/account/view_account`).
+2. REST API service repos now own only aggregate `openapi/openapi.yaml`; mike-docs syncs those aggregate specs and splits them into canonical `/apis/<service>/...` leaf pages.
+3. `mike-docs` generates the shared page-model registry and vendors it into `builder-docs/src/data/generatedFastnearPageModels.json`.
+4. `builder-docs` renders `/rpc/**` and service-specific root-mounted reference pages with `FastnearDirectOperation`.
+5. `builder-docs` generates canonical hosted pages under `src/pages/rpcs/**` and `src/pages/apis/**` so `docs.fastnear.com` serves the same bespoke runtime directly.
+6. Redocly remains available in `mike-docs` only for validation and legacy debugging.
 
-See `REDOCLY_SETUP.md` for the full Redocly portal configuration guide.
-
-### RpcRedoc props
-
-| Prop | Default | Description |
-|------|---------|-------------|
-| `redoclyBase` | (required) | Base URL, e.g. `"https://fastnear.redocly.app"` |
-| `path` | — | Path to the operation page, e.g. `"/rpcs/account/view_account"` |
-| `operationHref` | — | Alternative: path to operation page if using `pagination: item` routes |
-| `apiKey` | — | Optional explicit API key (overrides localStorage/URL) |
-| `bearerToken` | — | Optional explicit bearer token (overrides localStorage/URL) |
-| `apiKeyStorageKey` | `"fastnear:apiKey"` | localStorage key to read API key from |
-| `bearerStorageKey` | `"fastnear:bearer"` | localStorage key to read bearer token from |
-| `height` | `"calc(100vh - 140px)"` | iframe height |
+See [`/Users/mikepurvis/near/mike-docs/README.md`](/Users/mikepurvis/near/mike-docs/README.md) and [`/Users/mikepurvis/near/mike-docs/INTEGRATION_GUIDE.md`](/Users/mikepurvis/near/mike-docs/INTEGRATION_GUIDE.md) for the current portal-side configuration guide.
 
 ## Authentication & API Keys
 
 ### Storage keys
 
-All MDX pages use the default localStorage key `"fastnear:apiKey"`. The `ApiKeyManager` component also writes to the legacy key `fastnear_api_key` for backward compatibility, and migrates on read.
+All docs pages use the default localStorage key `fastnear:apiKey`. The UI migrates away from the legacy `fastnear_api_key` key automatically when encountered.
 
 ### API key flow
 
-1. User enters key in `ApiKeyManager` → saved to both localStorage keys
-2. `RpcRedoc` reads key from localStorage (using the `apiKeyStorageKey` prop)
-3. Key is appended to iframe URL as `?apiKey=<key>`
-4. Redocly's `configure.ts` reads it from the URL and injects into Try-It requests
+1. User enters key in `ApiKeyManager` → saved to `localStorage.fastnear:apiKey`
+2. `FastnearDirectOperation` reads key from localStorage or `?apiKey=`
+3. The live request uses the transport configured by the page model, usually `Authorization: Bearer ...`
+4. The copied curl command matches the live request shape
 
 ### Usage example
 
@@ -157,12 +202,13 @@ curl "https://rpc.mainnet.fastnear.com?apiKey=${apiKey}" \
 
 ## Development Notes
 
-- Deployed to https://builder-docs.fastnear.com
+- Deployed to https://docs.fastnear.com
 - GitHub repository: https://github.com/fastnear/builder-docs
 - Yarn v4.9.2 as package manager
-- Node.js 18.0 or higher required
-- Redocly documentation can be previewed locally using `npm run preview` in the **mike-docs** repo root (not this repo) — runs on http://127.0.0.1:4000
-- Redocly integration files are tracked in this repo alongside the documentation content
+- Node.js 20.0 or higher required
+- Legacy Redocly pages can be previewed locally using `npm run preview:headless` in the **mike-docs** repo root — runs on http://127.0.0.1:4000
+- Bespoke pages can be previewed locally using `npm run standalone:dev` in the **mike-docs** repo root — runs on http://127.0.0.1:4010
+- Public docs pages in this repo no longer depend on the legacy iframe routing layer
 
 ## Upstream: nearcore Generator Pipeline
 
@@ -177,15 +223,15 @@ scripts/nearcore-operation-map.js  →  scripts/generate-from-nearcore.js
     ↓
 mike-docs/rpcs/<category>/<operation>.yaml    (per-operation specs)
 mike-docs/rpcs/openapi.yaml                  (aggregate spec)
-    ↓  Redocly renders at fastnear.redocly.app
-builder-docs embeds via RpcRedoc iframe
+    ↓  shared page-model generation + vendor sync
+builder-docs renders via FastnearDirectOperation
 ```
 
 To add a new RPC operation from nearcore:
 
 1. In **mike-docs**: add an entry to `OPERATIONS` in `scripts/nearcore-operation-map.js`
 2. In **mike-docs**: run `npm run generate-rpc` to generate the YAML
-3. In **builder-docs**: create an MDX page under `docs/rpc-api/<category>/` using the `RpcRedoc` component
+3. In **builder-docs**: create an MDX page under `docs/rpc/<category>/` using `FastnearDirectOperation`
 4. In **builder-docs**: add the page to `sidebars.js`
 
 See mike-docs `CLAUDE.md` and `README.md` for full generator documentation.

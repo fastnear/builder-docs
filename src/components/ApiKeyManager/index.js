@@ -1,8 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import styles from './styles.module.css';
 
+const PORTAL_AUTH_EVENT = 'fastnear:authchange';
+
+function dispatchPortalAuthChange() {
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new Event(PORTAL_AUTH_EVENT));
+  }
+}
+
 /**
- * ApiKeyManager component for managing FastNEAR API keys
+ * ApiKeyManager component for managing FastNear API keys
  * 
  * This component allows users to set and manage their API key
  * which will be used across all RPC documentation pages
@@ -28,9 +36,9 @@ export default function ApiKeyManager() {
 
   const handleSave = () => {
     if (typeof window !== 'undefined') {
-      // Save to both keys for compatibility
       localStorage.setItem('fastnear:apiKey', apiKey);
-      localStorage.setItem('fastnear_api_key', apiKey);
+      localStorage.removeItem('fastnear_api_key');
+      dispatchPortalAuthChange();
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
     }
@@ -40,6 +48,7 @@ export default function ApiKeyManager() {
     if (typeof window !== 'undefined') {
       localStorage.removeItem('fastnear:apiKey');
       localStorage.removeItem('fastnear_api_key');
+      dispatchPortalAuthChange();
       setApiKey('');
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
@@ -47,10 +56,10 @@ export default function ApiKeyManager() {
   };
 
   return (
-    <div className={styles.container}>
+    <div className={styles.container} data-markdown-skip>
       <h3>API Key Configuration</h3>
       <p className={styles.description}>
-        Set your FastNEAR API key here. It will be automatically included in all RPC documentation examples.
+        Set your FastNear API key here. It will be automatically included in all RPC documentation examples.
       </p>
       
       <div className={styles.inputGroup}>
@@ -58,7 +67,7 @@ export default function ApiKeyManager() {
           type={showKey ? 'text' : 'password'}
           value={apiKey}
           onChange={(e) => setApiKey(e.target.value)}
-          placeholder="Enter your FastNEAR API key"
+          placeholder="Enter your FastNear API key"
           className={styles.input}
         />
         <button
@@ -66,7 +75,7 @@ export default function ApiKeyManager() {
           className={styles.toggleButton}
           type="button"
         >
-          {showKey ? '🙈' : '👁️'}
+          {showKey ? 'Hide' : 'Show'}
         </button>
       </div>
 
@@ -81,7 +90,7 @@ export default function ApiKeyManager() {
 
       {saved && (
         <div className={styles.successMessage}>
-          ✅ API key {apiKey ? 'saved' : 'cleared'} successfully!
+          API key {apiKey ? 'saved' : 'cleared'} successfully.
         </div>
       )}
 

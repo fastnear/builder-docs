@@ -7,6 +7,28 @@
 # Generated files
 .docusaurus
 .cache-loader
+/static/apis
+/static/agents
+/static/api
+/static/auth
+/static/docs
+/static/fastdata
+/static/guides
+/static/*.md
+/static/index.md
+/static/rpcs
+/static/neardata
+/static/redocly-config
+/static/rpc
+/static/snapshots
+/static/transaction-flow
+/static/transfers
+/static/tx
+/static/llms.txt
+/static/llms-full.txt
+/static/structured-data
+/playwright-report
+/test-results
 
 # Misc
 .DS_Store

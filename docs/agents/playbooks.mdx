@@ -1,0 +1,30 @@
+---
+title: Agent Playbooks
+description: Suggested FastNear surface combinations for common AI and automation workflows.
+slug: /agents/playbooks
+sidebar_position: 4
+displayed_sidebar: null
+page_actions:
+  - markdown
+---
+
+# Agent Playbooks
+
+## Account research
+
+- Start with [FastNear API](/api) for balances, NFTs, staking, and public-key resolution.
+- Drop to [RPC Reference](/rpc) only when you need canonical state details the indexed view does not expose.
+
+## Transaction investigation
+
+- Start with [Transactions API](/tx) for account history, block lookups, and receipt investigation.
+- Fall back to [RPC Reference](/rpc) for canonical status checks or transaction submission-related workflows.
+
+## Near-realtime monitoring
+
+- Poll [NEAR Data API](/neardata) for optimistic or recent finalized block-family reads.
+- Keep the polling logic explicit. This is not a websocket or webhook surface.
+
+## Operator bootstrap
+
+- Use [Snapshots](/snapshots/) when the workflow is about standing up infrastructure, not when the agent simply needs chain data.
