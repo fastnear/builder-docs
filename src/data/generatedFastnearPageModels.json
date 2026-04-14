@@ -1,7 +1,6 @@
 [
   {
     "canonicalPath": "/rpcs/account/view_access_key",
-    "generatedAt": "2026-04-13T14:51:41.726Z",
     "info": {
       "description": "Retrieves information about a specific access key for a NEAR account",
       "operationId": "view_access_key",
@@ -41,7 +40,7 @@
         {
           "defaultFields": {
             "account_id": "root.near",
-            "public_key": "ed25519:6666666666666666666666666666666666666666666"
+            "public_key": "ed25519:CByX7HPjgSGFi5G26zwgZGDFCFyBHvSv1fe7AFzmVe3"
           },
           "key": "mainnet",
           "label": "Mainnet",
@@ -50,7 +49,7 @@
         {
           "defaultFields": {
             "account_id": "root.testnet",
-            "public_key": "ed25519:Bt6gx87fRm99KkkN1Q9UEA8vY9DBLkRSntqcLDuZt3S"
+            "public_key": "ed25519:4eUPQ64CXPrKd3CBVzpjDHkvZeDmPZtoU5U6nTZozz1A"
           },
           "key": "testnet",
           "label": "Testnet",
@@ -62,7 +61,6 @@
       "supportsFinality": true,
       "transport": "json-rpc"
     },
-    "outputModel": "standalone/generated/rpc-view-access-key-page-model.json",
     "pageModelId": "rpc-view-access-key",
     "replaceOperationPage": true,
     "request": {
@@ -171,7 +169,7 @@
               "method": "query",
               "params": {
                 "account_id": "root.near",
-                "public_key": "ed25519:6666666666666666666666666666666666666666666",
+                "public_key": "ed25519:CByX7HPjgSGFi5G26zwgZGDFCFyBHvSv1fe7AFzmVe3",
                 "request_type": "view_access_key",
                 "finality": "final"
               }
@@ -192,7 +190,7 @@
               "method": "query",
               "params": {
                 "account_id": "root.testnet",
-                "public_key": "ed25519:Bt6gx87fRm99KkkN1Q9UEA8vY9DBLkRSntqcLDuZt3S",
+                "public_key": "ed25519:4eUPQ64CXPrKd3CBVzpjDHkvZeDmPZtoU5U6nTZozz1A",
                 "request_type": "view_access_key",
                 "finality": "final"
               }
@@ -334,7 +332,6 @@
   },
   {
     "canonicalPath": "/rpcs/account/view_access_key_list",
-    "generatedAt": "2026-04-13T14:51:41.733Z",
     "info": {
       "description": "Retrieves a list of all access keys for a NEAR account",
       "operationId": "view_access_key_list",
@@ -382,7 +379,6 @@
       "supportsFinality": true,
       "transport": "json-rpc"
     },
-    "outputModel": "standalone/generated/rpc-view-access-key-list-page-model.json",
     "pageModelId": "rpc-view-access-key-list",
     "replaceOperationPage": true,
     "request": {
@@ -637,7 +633,6 @@
   },
   {
     "canonicalPath": "/rpcs/account/view_account",
-    "generatedAt": "2026-04-13T14:51:41.735Z",
     "info": {
       "description": "Retrieves detailed information about a NEAR account including balance and storage usage",
       "operationId": "view_account",
@@ -685,7 +680,6 @@
       "supportsFinality": true,
       "transport": "json-rpc"
     },
-    "outputModel": "standalone/generated/rpc-view-account-page-model.json",
     "pageModelId": "rpc-view-account",
     "replaceOperationPage": true,
     "request": {
@@ -992,7 +986,6 @@
   },
   {
     "canonicalPath": "/rpcs/block/block_by_height",
-    "generatedAt": "2026-04-13T14:51:41.737Z",
     "info": {
       "description": "Retrieves block details using a specific block height (number)",
       "operationId": "block_by_height",
@@ -1020,7 +1013,7 @@
       "networks": [
         {
           "defaultFields": {
-            "block_id": 193543361
+            "block_id": 193909529
           },
           "key": "mainnet",
           "label": "Mainnet",
@@ -1028,7 +1021,7 @@
         },
         {
           "defaultFields": {
-            "block_id": 245254793
+            "block_id": 245639469
           },
           "key": "testnet",
           "label": "Testnet",
@@ -1039,7 +1032,6 @@
       "supportsFinality": false,
       "transport": "json-rpc"
     },
-    "outputModel": "standalone/generated/rpc-block-by-height-page-model.json",
     "pageModelId": "rpc-block-by-height",
     "replaceOperationPage": true,
     "request": {
@@ -1113,7 +1105,7 @@
               "id": "fastnear",
               "method": "block",
               "params": {
-                "block_id": 193543361
+                "block_id": 193909529
               }
             },
             "headers": {},
@@ -1131,7 +1123,7 @@
               "id": "fastnear",
               "method": "block",
               "params": {
-                "block_id": 245254793
+                "block_id": 245639469
               }
             },
             "headers": {},
@@ -1248,7 +1240,6 @@
   },
   {
     "canonicalPath": "/rpcs/block/block_by_id",
-    "generatedAt": "2026-04-13T14:51:41.738Z",
     "info": {
       "description": "Retrieves block details using a specific block hash",
       "operationId": "block_by_id",
@@ -1276,7 +1267,7 @@
       "networks": [
         {
           "defaultFields": {
-            "block_id": "CU1KcVSuYAZUiehn7TnCxSdpb3RGoHxK1hABC5AKKo2Q"
+            "block_id": "6sddgq8nkENAz4f8qR72qxRPM25QWNBVMrkYr63DgC2E"
           },
           "key": "mainnet",
           "label": "Mainnet",
@@ -1284,7 +1275,7 @@
         },
         {
           "defaultFields": {
-            "block_id": "CoPszhGFqcx9L1HQYM62g3UjxMpuZD8RiZL6QdpBZXA4"
+            "block_id": "Ayfw9wu3T3zEqCbrvq9CuKmGmuyiJiETvwCApXZHmCho"
           },
           "key": "testnet",
           "label": "Testnet",
@@ -1295,7 +1286,6 @@
       "supportsFinality": false,
       "transport": "json-rpc"
     },
-    "outputModel": "standalone/generated/rpc-block-by-id-page-model.json",
     "pageModelId": "rpc-block-by-id",
     "replaceOperationPage": true,
     "request": {
@@ -1369,7 +1359,7 @@
               "id": "fastnear",
               "method": "block",
               "params": {
-                "block_id": "CU1KcVSuYAZUiehn7TnCxSdpb3RGoHxK1hABC5AKKo2Q"
+                "block_id": "6sddgq8nkENAz4f8qR72qxRPM25QWNBVMrkYr63DgC2E"
               }
             },
             "headers": {},
@@ -1387,7 +1377,7 @@
               "id": "fastnear",
               "method": "block",
               "params": {
-                "block_id": "CoPszhGFqcx9L1HQYM62g3UjxMpuZD8RiZL6QdpBZXA4"
+                "block_id": "Ayfw9wu3T3zEqCbrvq9CuKmGmuyiJiETvwCApXZHmCho"
               }
             },
             "headers": {},
@@ -1504,7 +1494,6 @@
   },
   {
     "canonicalPath": "/rpcs/block/block_effects",
-    "generatedAt": "2026-04-13T14:51:41.739Z",
     "info": {
       "description": "Returns changes in block for given block height or hash over all transactions for all types",
       "operationId": "block_effects",
@@ -1541,7 +1530,7 @@
       "networks": [
         {
           "defaultFields": {
-            "block_id": 193543361
+            "block_id": 193909529
           },
           "key": "mainnet",
           "label": "Mainnet",
@@ -1549,7 +1538,7 @@
         },
         {
           "defaultFields": {
-            "block_id": 245254793
+            "block_id": 245639469
           },
           "key": "testnet",
           "label": "Testnet",
@@ -1560,7 +1549,6 @@
       "supportsFinality": false,
       "transport": "json-rpc"
     },
-    "outputModel": "standalone/generated/rpc-block-effects-page-model.json",
     "pageModelId": "rpc-block-effects",
     "replaceOperationPage": true,
     "request": {
@@ -1643,7 +1631,7 @@
               "id": "fastnear",
               "method": "block_effects",
               "params": {
-                "block_id": 193543361
+                "block_id": 193909529
               }
             },
             "headers": {},
@@ -1661,7 +1649,7 @@
               "id": "fastnear",
               "method": "block_effects",
               "params": {
-                "block_id": 245254793
+                "block_id": 245639469
               }
             },
             "headers": {},
@@ -1803,7 +1791,6 @@
   },
   {
     "canonicalPath": "/rpcs/contract/call",
-    "generatedAt": "2026-04-13T14:51:41.741Z",
     "info": {
       "description": "Execute a view method on a smart contract without modifying state",
       "operationId": "call_function",
@@ -1875,7 +1862,6 @@
       "supportsFinality": true,
       "transport": "json-rpc"
     },
-    "outputModel": "standalone/generated/rpc-call-function-page-model.json",
     "pageModelId": "rpc-call-function",
     "replaceOperationPage": true,
     "request": {
@@ -2162,7 +2148,6 @@
   },
   {
     "canonicalPath": "/rpcs/contract/view_code",
-    "generatedAt": "2026-04-13T14:51:41.743Z",
     "info": {
       "description": "Returns the contract code (Wasm binary) deployed to the account",
       "operationId": "view_code",
@@ -2190,7 +2175,7 @@
       "networks": [
         {
           "defaultFields": {
-            "account_id": "example.near"
+            "account_id": "intents.near"
           },
           "key": "mainnet",
           "label": "Mainnet",
@@ -2198,7 +2183,7 @@
         },
         {
           "defaultFields": {
-            "account_id": "example.near"
+            "account_id": "guest-book.testnet"
           },
           "key": "testnet",
           "label": "Testnet",
@@ -2210,7 +2195,6 @@
       "supportsFinality": true,
       "transport": "json-rpc"
     },
-    "outputModel": "standalone/generated/rpc-view-code-page-model.json",
     "pageModelId": "rpc-view-code",
     "replaceOperationPage": true,
     "request": {
@@ -2309,7 +2293,7 @@
               "id": "fastnear",
               "method": "query",
               "params": {
-                "account_id": "example.near",
+                "account_id": "intents.near",
                 "request_type": "view_code",
                 "finality": "final"
               }
@@ -2329,7 +2313,7 @@
               "id": "fastnear",
               "method": "query",
               "params": {
-                "account_id": "example.near",
+                "account_id": "guest-book.testnet",
                 "request_type": "view_code",
                 "finality": "final"
               }
@@ -2470,7 +2454,6 @@
   },
   {
     "canonicalPath": "/rpcs/contract/view_global_contract_code",
-    "generatedAt": "2026-04-13T14:51:41.745Z",
     "info": {
       "description": "Returns a globally deployed contract code by its code hash",
       "operationId": "view_global_contract_code",
@@ -2506,7 +2489,7 @@
         },
         {
           "defaultFields": {
-            "code_hash": "ExampleCodeHash"
+            "code_hash": "3vaopJ7aRoivvzZLngPQRBEd8VJr2zPLTxQfnRCoFgNX"
           },
           "key": "testnet",
           "label": "Testnet",
@@ -2518,7 +2501,6 @@
       "supportsFinality": true,
       "transport": "json-rpc"
     },
-    "outputModel": "standalone/generated/rpc-view-global-contract-code-page-model.json",
     "pageModelId": "rpc-view-global-contract-code",
     "replaceOperationPage": true,
     "request": {
@@ -2637,7 +2619,7 @@
               "id": "fastnear",
               "method": "query",
               "params": {
-                "code_hash": "ExampleCodeHash",
+                "code_hash": "3vaopJ7aRoivvzZLngPQRBEd8VJr2zPLTxQfnRCoFgNX",
                 "request_type": "view_global_contract_code",
                 "finality": "final"
               }
@@ -2778,7 +2760,6 @@
   },
   {
     "canonicalPath": "/rpcs/contract/view_global_contract_code_by_account_id",
-    "generatedAt": "2026-04-13T14:51:41.747Z",
     "info": {
       "description": "Returns the globally deployed contract code used by a specific account",
       "operationId": "view_global_contract_code_by_account_id",
@@ -2806,7 +2787,7 @@
       "networks": [
         {
           "defaultFields": {
-            "account_id": "example.near"
+            "account_id": "global-contract.nfts.tg"
           },
           "key": "mainnet",
           "label": "Mainnet",
@@ -2814,7 +2795,7 @@
         },
         {
           "defaultFields": {
-            "account_id": "example.near"
+            "account_id": "ft.globals.primitives.testnet"
           },
           "key": "testnet",
           "label": "Testnet",
@@ -2826,7 +2807,6 @@
       "supportsFinality": true,
       "transport": "json-rpc"
     },
-    "outputModel": "standalone/generated/rpc-view-global-contract-code-by-account-id-page-model.json",
     "pageModelId": "rpc-view-global-contract-code-by-account-id",
     "replaceOperationPage": true,
     "request": {
@@ -2925,7 +2905,7 @@
               "id": "fastnear",
               "method": "query",
               "params": {
-                "account_id": "example.near",
+                "account_id": "global-contract.nfts.tg",
                 "request_type": "view_global_contract_code_by_account_id",
                 "finality": "final"
               }
@@ -2945,7 +2925,7 @@
               "id": "fastnear",
               "method": "query",
               "params": {
-                "account_id": "example.near",
+                "account_id": "ft.globals.primitives.testnet",
                 "request_type": "view_global_contract_code_by_account_id",
                 "finality": "final"
               }
@@ -3086,7 +3066,6 @@
   },
   {
     "canonicalPath": "/rpcs/contract/view_state",
-    "generatedAt": "2026-04-13T14:51:41.749Z",
     "info": {
       "description": "Retrieves the state (key-value pairs) stored for a contract account",
       "operationId": "view_state",
@@ -3134,8 +3113,8 @@
       "networks": [
         {
           "defaultFields": {
-            "account_id": "contract.near",
-            "prefix_base64": ""
+            "account_id": "lockup.near",
+            "prefix_base64": "U1RBVEU="
           },
           "key": "mainnet",
           "label": "Mainnet",
@@ -3143,8 +3122,8 @@
         },
         {
           "defaultFields": {
-            "account_id": "contract.testnet",
-            "prefix_base64": ""
+            "account_id": "v1.signer-prod.testnet",
+            "prefix_base64": "U1RBVEU="
           },
           "key": "testnet",
           "label": "Testnet",
@@ -3156,7 +3135,6 @@
       "supportsFinality": true,
       "transport": "json-rpc"
     },
-    "outputModel": "standalone/generated/rpc-view-state-page-model.json",
     "pageModelId": "rpc-view-state",
     "replaceOperationPage": true,
     "request": {
@@ -3273,8 +3251,8 @@
               "params": {
                 "request_type": "view_state",
                 "finality": "final",
-                "account_id": "contract.near",
-                "prefix_base64": ""
+                "account_id": "lockup.near",
+                "prefix_base64": "U1RBVEU="
               }
             },
             "headers": {},
@@ -3294,8 +3272,8 @@
               "params": {
                 "request_type": "view_state",
                 "finality": "final",
-                "account_id": "contract.testnet",
-                "prefix_base64": ""
+                "account_id": "v1.signer-prod.testnet",
+                "prefix_base64": "U1RBVEU="
               }
             },
             "headers": {},
@@ -3439,7 +3417,6 @@
   },
   {
     "canonicalPath": "/rpcs/protocol/EXPERIMENTAL_congestion_level",
-    "generatedAt": "2026-04-13T14:51:41.750Z",
     "info": {
       "description": "Queries the congestion level of a shard",
       "operationId": "EXPERIMENTAL_congestion_level",
@@ -3487,8 +3464,8 @@
       "networks": [
         {
           "defaultFields": {
-            "block_id": 12345,
-            "shard_id": 0
+            "block_id": "6sddgq8nkENAz4f8qR72qxRPM25QWNBVMrkYr63DgC2E",
+            "shard_id": 10
           },
           "key": "mainnet",
           "label": "Mainnet",
@@ -3496,8 +3473,8 @@
         },
         {
           "defaultFields": {
-            "block_id": 12345,
-            "shard_id": 0
+            "block_id": "Ayfw9wu3T3zEqCbrvq9CuKmGmuyiJiETvwCApXZHmCho",
+            "shard_id": 10
           },
           "key": "testnet",
           "label": "Testnet",
@@ -3508,7 +3485,6 @@
       "supportsFinality": false,
       "transport": "json-rpc"
     },
-    "outputModel": "standalone/generated/rpc-EXPERIMENTAL-congestion-level-page-model.json",
     "pageModelId": "rpc-EXPERIMENTAL-congestion-level",
     "replaceOperationPage": true,
     "request": {
@@ -3601,8 +3577,8 @@
               "id": "fastnear",
               "method": "EXPERIMENTAL_congestion_level",
               "params": {
-                "block_id": 12345,
-                "shard_id": 0
+                "block_id": "6sddgq8nkENAz4f8qR72qxRPM25QWNBVMrkYr63DgC2E",
+                "shard_id": 10
               }
             },
             "headers": {},
@@ -3620,8 +3596,8 @@
               "id": "fastnear",
               "method": "EXPERIMENTAL_congestion_level",
               "params": {
-                "block_id": 12345,
-                "shard_id": 0
+                "block_id": "Ayfw9wu3T3zEqCbrvq9CuKmGmuyiJiETvwCApXZHmCho",
+                "shard_id": 10
               }
             },
             "headers": {},
@@ -3751,7 +3727,6 @@
   },
   {
     "canonicalPath": "/rpcs/protocol/EXPERIMENTAL_light_client_block_proof",
-    "generatedAt": "2026-04-13T14:51:41.751Z",
     "info": {
       "description": "Returns the proofs for a transaction execution",
       "operationId": "EXPERIMENTAL_light_client_block_proof",
@@ -3790,8 +3765,8 @@
       "networks": [
         {
           "defaultFields": {
-            "block_hash": "ExampleBlockHash",
-            "light_client_head": "ExampleBlockHash"
+            "block_hash": "8fbT7nWhBwsBJjPcwhv2uqzseFJSd5Y4XcqfLAWryBsu",
+            "light_client_head": "6sddgq8nkENAz4f8qR72qxRPM25QWNBVMrkYr63DgC2E"
           },
           "key": "mainnet",
           "label": "Mainnet",
@@ -3799,8 +3774,8 @@
         },
         {
           "defaultFields": {
-            "block_hash": "ExampleBlockHash",
-            "light_client_head": "ExampleBlockHash"
+            "block_hash": "6MSNnEmewGXHVCbW6hSqNRgptByQbfyrvQJyho88EM1A",
+            "light_client_head": "Ayfw9wu3T3zEqCbrvq9CuKmGmuyiJiETvwCApXZHmCho"
           },
           "key": "testnet",
           "label": "Testnet",
@@ -3811,7 +3786,6 @@
       "supportsFinality": false,
       "transport": "json-rpc"
     },
-    "outputModel": "standalone/generated/rpc-EXPERIMENTAL-light-client-block-proof-page-model.json",
     "pageModelId": "rpc-EXPERIMENTAL-light-client-block-proof",
     "replaceOperationPage": true,
     "request": {
@@ -3894,8 +3868,8 @@
               "id": "fastnear",
               "method": "EXPERIMENTAL_light_client_block_proof",
               "params": {
-                "block_hash": "ExampleBlockHash",
-                "light_client_head": "ExampleBlockHash"
+                "block_hash": "8fbT7nWhBwsBJjPcwhv2uqzseFJSd5Y4XcqfLAWryBsu",
+                "light_client_head": "6sddgq8nkENAz4f8qR72qxRPM25QWNBVMrkYr63DgC2E"
               }
             },
             "headers": {},
@@ -3913,8 +3887,8 @@
               "id": "fastnear",
               "method": "EXPERIMENTAL_light_client_block_proof",
               "params": {
-                "block_hash": "ExampleBlockHash",
-                "light_client_head": "ExampleBlockHash"
+                "block_hash": "6MSNnEmewGXHVCbW6hSqNRgptByQbfyrvQJyho88EM1A",
+                "light_client_head": "Ayfw9wu3T3zEqCbrvq9CuKmGmuyiJiETvwCApXZHmCho"
               }
             },
             "headers": {},
@@ -4085,7 +4059,6 @@
   },
   {
     "canonicalPath": "/rpcs/protocol/EXPERIMENTAL_light_client_proof",
-    "generatedAt": "2026-04-13T14:51:41.757Z",
     "info": {
       "description": "Returns the proofs for a transaction execution",
       "operationId": "EXPERIMENTAL_light_client_proof",
@@ -4138,30 +4111,8 @@
           "schema": {
             "type": "string",
             "enum": [
-              "receipt"
+              "transaction"
             ]
-          }
-        },
-        {
-          "description": "Base58-encoded hash",
-          "label": "Receipt Id",
-          "location": "body",
-          "name": "receipt_id",
-          "required": false,
-          "schema": {
-            "type": "string",
-            "description": "Base58-encoded hash"
-          }
-        },
-        {
-          "description": "NEAR account ID",
-          "label": "Receiver Id",
-          "location": "body",
-          "name": "receiver_id",
-          "required": false,
-          "schema": {
-            "type": "string",
-            "description": "NEAR account ID"
           }
         }
       ],
@@ -4169,12 +4120,10 @@
       "networks": [
         {
           "defaultFields": {
-            "light_client_head": "CU1KcVSuYAZUiehn7TnCxSdpb3RGoHxK1hABC5AKKo2Q",
-            "sender_id": "5764995617.tg",
-            "transaction_hash": "HrRxPdtUGRGqubmHzmuyhhh2RCQ8hytFGwbXfmqdXBAj",
-            "type": "receipt",
-            "receipt_id": "HuwE9YUBuxA87eZrwbHxEN47FgujwyDhn2nena1ypdH3",
-            "receiver_id": "5764995617.tg"
+            "light_client_head": "6sddgq8nkENAz4f8qR72qxRPM25QWNBVMrkYr63DgC2E",
+            "sender_id": "intents.near",
+            "transaction_hash": "4EQZ5qoEJUbz8SRNkNwrAPtsn2VFhg9Ci1weaNNpiuR7",
+            "type": "transaction"
           },
           "key": "mainnet",
           "label": "Mainnet",
@@ -4182,12 +4131,10 @@
         },
         {
           "defaultFields": {
-            "light_client_head": "CoPszhGFqcx9L1HQYM62g3UjxMpuZD8RiZL6QdpBZXA4",
-            "sender_id": "zerochltest.testnet",
-            "transaction_hash": "d68i4vS3cwSyqk2oVYkWwDbnhSYYbLBfCzSkciJ2X3Y",
-            "type": "receipt",
-            "receipt_id": "5cJM47ytx5JH4JUqxTPFihnnb9hWpoDU4ZqgR8fAXdJQ",
-            "receiver_id": "zerochltest.testnet"
+            "light_client_head": "Ayfw9wu3T3zEqCbrvq9CuKmGmuyiJiETvwCApXZHmCho",
+            "sender_id": "relay.aurora",
+            "transaction_hash": "2HVQfqHKu78VEW1aRidvR5Auqu1bw1V12TJywoqw1aup",
+            "type": "transaction"
           },
           "key": "testnet",
           "label": "Testnet",
@@ -4198,7 +4145,6 @@
       "supportsFinality": false,
       "transport": "json-rpc"
     },
-    "outputModel": "standalone/generated/rpc-EXPERIMENTAL-light-client-proof-page-model.json",
     "pageModelId": "rpc-EXPERIMENTAL-light-client-proof",
     "replaceOperationPage": true,
     "request": {
@@ -4278,24 +4224,8 @@
                   "schema": {
                     "type": "string",
                     "enum": [
-                      "receipt"
+                      "transaction"
                     ]
-                  }
-                },
-                {
-                  "name": "receipt_id",
-                  "required": false,
-                  "schema": {
-                    "type": "string",
-                    "description": "Base58-encoded hash"
-                  }
-                },
-                {
-                  "name": "receiver_id",
-                  "required": false,
-                  "schema": {
-                    "type": "string",
-                    "description": "NEAR account ID"
                   }
                 }
               ]
@@ -4314,12 +4244,10 @@
               "id": "fastnear",
               "method": "EXPERIMENTAL_light_client_proof",
               "params": {
-                "light_client_head": "CU1KcVSuYAZUiehn7TnCxSdpb3RGoHxK1hABC5AKKo2Q",
-                "sender_id": "5764995617.tg",
-                "transaction_hash": "HrRxPdtUGRGqubmHzmuyhhh2RCQ8hytFGwbXfmqdXBAj",
-                "type": "receipt",
-                "receipt_id": "HuwE9YUBuxA87eZrwbHxEN47FgujwyDhn2nena1ypdH3",
-                "receiver_id": "5764995617.tg"
+                "light_client_head": "6sddgq8nkENAz4f8qR72qxRPM25QWNBVMrkYr63DgC2E",
+                "sender_id": "intents.near",
+                "transaction_hash": "4EQZ5qoEJUbz8SRNkNwrAPtsn2VFhg9Ci1weaNNpiuR7",
+                "type": "transaction"
               }
             },
             "headers": {},
@@ -4337,12 +4265,10 @@
               "id": "fastnear",
               "method": "EXPERIMENTAL_light_client_proof",
               "params": {
-                "light_client_head": "CoPszhGFqcx9L1HQYM62g3UjxMpuZD8RiZL6QdpBZXA4",
-                "sender_id": "zerochltest.testnet",
-                "transaction_hash": "d68i4vS3cwSyqk2oVYkWwDbnhSYYbLBfCzSkciJ2X3Y",
-                "type": "receipt",
-                "receipt_id": "5cJM47ytx5JH4JUqxTPFihnnb9hWpoDU4ZqgR8fAXdJQ",
-                "receiver_id": "zerochltest.testnet"
+                "light_client_head": "Ayfw9wu3T3zEqCbrvq9CuKmGmuyiJiETvwCApXZHmCho",
+                "sender_id": "relay.aurora",
+                "transaction_hash": "2HVQfqHKu78VEW1aRidvR5Auqu1bw1V12TJywoqw1aup",
+                "type": "transaction"
               }
             },
             "headers": {},
@@ -4573,7 +4499,6 @@
   },
   {
     "canonicalPath": "/rpcs/protocol/EXPERIMENTAL_protocol_config",
-    "generatedAt": "2026-04-13T14:51:41.764Z",
     "info": {
       "description": "A configuration that defines the protocol-level parameters such as gas/storage costs, limits, feature flags, and other settings",
       "operationId": "EXPERIMENTAL_protocol_config",
@@ -4601,10 +4526,9 @@
         }
       ],
       "requestMethod": "EXPERIMENTAL_protocol_config",
-      "supportsFinality": false,
+      "supportsFinality": true,
       "transport": "json-rpc"
     },
-    "outputModel": "standalone/generated/rpc-EXPERIMENTAL-protocol-config-page-model.json",
     "pageModelId": "rpc-EXPERIMENTAL-protocol-config",
     "replaceOperationPage": true,
     "request": {
@@ -4650,7 +4574,24 @@
             "required": true,
             "schema": {
               "type": "object",
-              "description": "One of multiple possible types"
+              "required": [
+                "finality"
+              ],
+              "properties": [
+                {
+                  "name": "finality",
+                  "required": true,
+                  "schema": {
+                    "type": "string",
+                    "description": "Block finality",
+                    "enum": [
+                      "final",
+                      "near-final",
+                      "optimistic"
+                    ]
+                  }
+                }
+              ]
             }
           }
         ]
@@ -4665,7 +4606,9 @@
               "jsonrpc": "2.0",
               "id": "fastnear",
               "method": "EXPERIMENTAL_protocol_config",
-              "params": {}
+              "params": {
+                "finality": "final"
+              }
             },
             "headers": {},
             "path": {},
@@ -4681,7 +4624,9 @@
               "jsonrpc": "2.0",
               "id": "fastnear",
               "method": "EXPERIMENTAL_protocol_config",
-              "params": {}
+              "params": {
+                "finality": "final"
+              }
             },
             "headers": {},
             "path": {},
@@ -5163,7 +5108,6 @@
   },
   {
     "canonicalPath": "/rpcs/protocol/EXPERIMENTAL_split_storage_info",
-    "generatedAt": "2026-04-13T14:51:41.770Z",
     "info": {
       "description": "Contains the split storage information for archival nodes",
       "operationId": "EXPERIMENTAL_split_storage_info",
@@ -5194,7 +5138,6 @@
       "supportsFinality": false,
       "transport": "json-rpc"
     },
-    "outputModel": "standalone/generated/rpc-EXPERIMENTAL-split-storage-info-page-model.json",
     "pageModelId": "rpc-EXPERIMENTAL-split-storage-info",
     "replaceOperationPage": true,
     "request": {
@@ -5426,7 +5369,6 @@
   },
   {
     "canonicalPath": "/rpcs/protocol/changes",
-    "generatedAt": "2026-04-13T14:51:41.771Z",
     "info": {
       "description": "Returns changes for a given account, contract or contract code for given block height or hash",
       "operationId": "changes",
@@ -5437,27 +5379,66 @@
     "interaction": {
       "authTransport": "bearer",
       "defaultId": "fastnear",
-      "fields": [],
+      "fields": [
+        {
+          "description": "State change selector used by this example",
+          "label": "Changes Type",
+          "location": "body",
+          "name": "changes_type",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "description": "State change selector used by this example",
+            "enum": [
+              "account_changes"
+            ]
+          }
+        },
+        {
+          "description": "Accounts whose state changes should be returned",
+          "label": "Account Ids",
+          "location": "body",
+          "name": "account_ids",
+          "required": true,
+          "schema": {
+            "type": "array",
+            "description": "Accounts whose state changes should be returned",
+            "items": {
+              "type": "string",
+              "description": "NEAR account ID"
+            }
+          }
+        }
+      ],
       "kind": "rpc-changes",
       "networks": [
         {
-          "defaultFields": {},
+          "defaultFields": {
+            "changes_type": "account_changes",
+            "account_ids": [
+              "root.near"
+            ]
+          },
           "key": "mainnet",
           "label": "Mainnet",
           "url": "https://rpc.mainnet.fastnear.com"
         },
         {
-          "defaultFields": {},
+          "defaultFields": {
+            "changes_type": "account_changes",
+            "account_ids": [
+              "root.testnet"
+            ]
+          },
           "key": "testnet",
           "label": "Testnet",
           "url": "https://rpc.testnet.fastnear.com"
         }
       ],
       "requestMethod": "changes",
-      "supportsFinality": false,
+      "supportsFinality": true,
       "transport": "json-rpc"
     },
-    "outputModel": "standalone/generated/rpc-changes-page-model.json",
     "pageModelId": "rpc-changes",
     "replaceOperationPage": true,
     "request": {
@@ -5503,7 +5484,49 @@
             "required": true,
             "schema": {
               "type": "object",
-              "description": "One of multiple possible types"
+              "required": [
+                "finality",
+                "changes_type",
+                "account_ids"
+              ],
+              "properties": [
+                {
+                  "name": "finality",
+                  "required": true,
+                  "schema": {
+                    "type": "string",
+                    "description": "Block finality",
+                    "enum": [
+                      "final",
+                      "near-final",
+                      "optimistic"
+                    ]
+                  }
+                },
+                {
+                  "name": "changes_type",
+                  "required": true,
+                  "schema": {
+                    "type": "string",
+                    "description": "State change selector used by this example",
+                    "enum": [
+                      "account_changes"
+                    ]
+                  }
+                },
+                {
+                  "name": "account_ids",
+                  "required": true,
+                  "schema": {
+                    "type": "array",
+                    "description": "Accounts whose state changes should be returned",
+                    "items": {
+                      "type": "string",
+                      "description": "NEAR account ID"
+                    }
+                  }
+                }
+              ]
             }
           }
         ]
@@ -5518,7 +5541,13 @@
               "jsonrpc": "2.0",
               "id": "fastnear",
               "method": "changes",
-              "params": {}
+              "params": {
+                "finality": "final",
+                "changes_type": "account_changes",
+                "account_ids": [
+                  "root.near"
+                ]
+              }
             },
             "headers": {},
             "path": {},
@@ -5534,7 +5563,13 @@
               "jsonrpc": "2.0",
               "id": "fastnear",
               "method": "changes",
-              "params": {}
+              "params": {
+                "finality": "final",
+                "changes_type": "account_changes",
+                "account_ids": [
+                  "root.testnet"
+                ]
+              }
             },
             "headers": {},
             "path": {},
@@ -5687,7 +5722,6 @@
   },
   {
     "canonicalPath": "/rpcs/protocol/chunk_by_block_shard",
-    "generatedAt": "2026-04-13T14:51:41.781Z",
     "info": {
       "description": "Retrieves chunk details using block ID and shard ID coordinates",
       "operationId": "chunk_by_block_shard",
@@ -5735,8 +5769,8 @@
       "networks": [
         {
           "defaultFields": {
-            "block_id": "CU1KcVSuYAZUiehn7TnCxSdpb3RGoHxK1hABC5AKKo2Q",
-            "shard_id": 0
+            "block_id": "6sddgq8nkENAz4f8qR72qxRPM25QWNBVMrkYr63DgC2E",
+            "shard_id": 10
           },
           "key": "mainnet",
           "label": "Mainnet",
@@ -5744,8 +5778,8 @@
         },
         {
           "defaultFields": {
-            "block_id": "CoPszhGFqcx9L1HQYM62g3UjxMpuZD8RiZL6QdpBZXA4",
-            "shard_id": 0
+            "block_id": "Ayfw9wu3T3zEqCbrvq9CuKmGmuyiJiETvwCApXZHmCho",
+            "shard_id": 10
           },
           "key": "testnet",
           "label": "Testnet",
@@ -5756,7 +5790,6 @@
       "supportsFinality": false,
       "transport": "json-rpc"
     },
-    "outputModel": "standalone/generated/rpc-chunk-by-block-shard-page-model.json",
     "pageModelId": "rpc-chunk-by-block-shard",
     "replaceOperationPage": true,
     "request": {
@@ -5848,8 +5881,8 @@
               "id": "fastnear",
               "method": "chunk",
               "params": {
-                "block_id": "CU1KcVSuYAZUiehn7TnCxSdpb3RGoHxK1hABC5AKKo2Q",
-                "shard_id": 0
+                "block_id": "6sddgq8nkENAz4f8qR72qxRPM25QWNBVMrkYr63DgC2E",
+                "shard_id": 10
               }
             },
             "headers": {},
@@ -5867,8 +5900,8 @@
               "id": "fastnear",
               "method": "chunk",
               "params": {
-                "block_id": "CoPszhGFqcx9L1HQYM62g3UjxMpuZD8RiZL6QdpBZXA4",
-                "shard_id": 0
+                "block_id": "Ayfw9wu3T3zEqCbrvq9CuKmGmuyiJiETvwCApXZHmCho",
+                "shard_id": 10
               }
             },
             "headers": {},
@@ -6215,7 +6248,6 @@
   },
   {
     "canonicalPath": "/rpcs/protocol/chunk_by_hash",
-    "generatedAt": "2026-04-13T14:51:41.799Z",
     "info": {
       "description": "Retrieves chunk details using a specific chunk hash",
       "operationId": "chunk_by_hash",
@@ -6243,7 +6275,7 @@
       "networks": [
         {
           "defaultFields": {
-            "chunk_id": "CEbzfTz6uCATg4QR4QEdBcdNHbg82fQyCCwgu9xzdTbK"
+            "chunk_id": "H6zcZFttQB82dDKUgZUcB3D7kU2TKCToujEu4dAmNtey"
           },
           "key": "mainnet",
           "label": "Mainnet",
@@ -6251,7 +6283,7 @@
         },
         {
           "defaultFields": {
-            "chunk_id": "Daxu43oPTjptRYAPPsPUbhvQ4Tad5B2kKCemsBo497Qc"
+            "chunk_id": "CfrjkrKCDm2Hpq5SXKMcNg6B1MENbNW4SVvMr7PYwrNs"
           },
           "key": "testnet",
           "label": "Testnet",
@@ -6262,7 +6294,6 @@
       "supportsFinality": false,
       "transport": "json-rpc"
     },
-    "outputModel": "standalone/generated/rpc-chunk-by-hash-page-model.json",
     "pageModelId": "rpc-chunk-by-hash",
     "replaceOperationPage": true,
     "request": {
@@ -6336,7 +6367,7 @@
               "id": "fastnear",
               "method": "chunk",
               "params": {
-                "chunk_id": "CEbzfTz6uCATg4QR4QEdBcdNHbg82fQyCCwgu9xzdTbK"
+                "chunk_id": "H6zcZFttQB82dDKUgZUcB3D7kU2TKCToujEu4dAmNtey"
               }
             },
             "headers": {},
@@ -6354,7 +6385,7 @@
               "id": "fastnear",
               "method": "chunk",
               "params": {
-                "chunk_id": "Daxu43oPTjptRYAPPsPUbhvQ4Tad5B2kKCemsBo497Qc"
+                "chunk_id": "CfrjkrKCDm2Hpq5SXKMcNg6B1MENbNW4SVvMr7PYwrNs"
               }
             },
             "headers": {},
@@ -6701,7 +6732,6 @@
   },
   {
     "canonicalPath": "/rpcs/protocol/client_config",
-    "generatedAt": "2026-04-13T14:51:41.805Z",
     "info": {
       "description": "Queries client node configuration",
       "operationId": "client_config",
@@ -6732,7 +6762,6 @@
       "supportsFinality": false,
       "transport": "json-rpc"
     },
-    "outputModel": "standalone/generated/rpc-client-config-page-model.json",
     "pageModelId": "rpc-client-config",
     "replaceOperationPage": true,
     "request": {
@@ -7780,7 +7809,6 @@
   },
   {
     "canonicalPath": "/rpcs/protocol/gas_price",
-    "generatedAt": "2026-04-13T14:51:41.808Z",
     "info": {
       "description": "Retrieves information about the current gas price",
       "operationId": "gas_price",
@@ -7811,7 +7839,6 @@
       "supportsFinality": false,
       "transport": "json-rpc"
     },
-    "outputModel": "standalone/generated/rpc-gas-price-page-model.json",
     "pageModelId": "rpc-gas-price",
     "replaceOperationPage": true,
     "request": {
@@ -8026,7 +8053,6 @@
   },
   {
     "canonicalPath": "/rpcs/protocol/gas_price_by_block",
-    "generatedAt": "2026-04-13T14:51:41.809Z",
     "info": {
       "description": "Retrieves gas price information for a specific block",
       "operationId": "gas_price_by_block",
@@ -8063,7 +8089,7 @@
       "networks": [
         {
           "defaultFields": {
-            "block_id": "CU1KcVSuYAZUiehn7TnCxSdpb3RGoHxK1hABC5AKKo2Q"
+            "block_id": "6sddgq8nkENAz4f8qR72qxRPM25QWNBVMrkYr63DgC2E"
           },
           "key": "mainnet",
           "label": "Mainnet",
@@ -8071,7 +8097,7 @@
         },
         {
           "defaultFields": {
-            "block_id": "CoPszhGFqcx9L1HQYM62g3UjxMpuZD8RiZL6QdpBZXA4"
+            "block_id": "Ayfw9wu3T3zEqCbrvq9CuKmGmuyiJiETvwCApXZHmCho"
           },
           "key": "testnet",
           "label": "Testnet",
@@ -8082,7 +8108,6 @@
       "supportsFinality": false,
       "transport": "json-rpc"
     },
-    "outputModel": "standalone/generated/rpc-gas-price-by-block-page-model.json",
     "pageModelId": "rpc-gas-price-by-block",
     "replaceOperationPage": true,
     "request": {
@@ -8165,7 +8190,7 @@
               "id": "fastnear",
               "method": "gas_price",
               "params": {
-                "block_id": "CU1KcVSuYAZUiehn7TnCxSdpb3RGoHxK1hABC5AKKo2Q"
+                "block_id": "6sddgq8nkENAz4f8qR72qxRPM25QWNBVMrkYr63DgC2E"
               }
             },
             "headers": {},
@@ -8183,7 +8208,7 @@
               "id": "fastnear",
               "method": "gas_price",
               "params": {
-                "block_id": "CoPszhGFqcx9L1HQYM62g3UjxMpuZD8RiZL6QdpBZXA4"
+                "block_id": "Ayfw9wu3T3zEqCbrvq9CuKmGmuyiJiETvwCApXZHmCho"
               }
             },
             "headers": {},
@@ -8313,7 +8338,6 @@
   },
   {
     "canonicalPath": "/rpcs/protocol/genesis_config",
-    "generatedAt": "2026-04-13T14:51:41.816Z",
     "info": {
       "description": "Get initial state and parameters for the genesis block",
       "operationId": "genesis_config",
@@ -8344,7 +8368,6 @@
       "supportsFinality": false,
       "transport": "json-rpc"
     },
-    "outputModel": "standalone/generated/rpc-genesis-config-page-model.json",
     "pageModelId": "rpc-genesis-config",
     "replaceOperationPage": true,
     "request": {
@@ -8960,7 +8983,6 @@
   },
   {
     "canonicalPath": "/rpcs/protocol/health",
-    "generatedAt": "2026-04-13T14:51:41.821Z",
     "info": {
       "description": "Performs a health check on the node to determine if it's operating correctly",
       "operationId": "health",
@@ -8991,7 +9013,6 @@
       "supportsFinality": false,
       "transport": "json-rpc"
     },
-    "outputModel": "standalone/generated/rpc-health-page-model.json",
     "pageModelId": "rpc-health",
     "replaceOperationPage": true,
     "request": {
@@ -9186,7 +9207,6 @@
   },
   {
     "canonicalPath": "/rpcs/protocol/latest_block",
-    "generatedAt": "2026-04-13T14:51:41.823Z",
     "info": {
       "description": "Retrieves the most recent block from the blockchain",
       "operationId": "latest_block",
@@ -9197,62 +9217,38 @@
     "interaction": {
       "authTransport": "bearer",
       "defaultId": "fastnear",
-      "fields": [
-        {
-          "description": "Special identifier for the latest block",
-          "label": "Block ID",
-          "location": "body",
-          "name": "block_id",
-          "required": true,
-          "schema": {
-            "type": "string",
-            "description": "Special identifier for the latest block",
-            "enum": [
-              "latest"
-            ]
-          }
-        }
-      ],
+      "fields": [],
       "kind": "rpc-latest-block",
       "networks": [
         {
-          "defaultFields": {
-            "block_id": "latest"
-          },
+          "defaultFields": {},
           "key": "mainnet",
           "label": "Mainnet RPC",
           "url": "https://rpc.mainnet.fastnear.com"
         },
         {
-          "defaultFields": {
-            "block_id": "latest"
-          },
+          "defaultFields": {},
           "key": "testnet",
           "label": "Testnet RPC",
           "url": "https://rpc.testnet.fastnear.com"
         },
         {
-          "defaultFields": {
-            "block_id": "latest"
-          },
+          "defaultFields": {},
           "key": "mainnet",
           "label": "Mainnet Archival RPC",
           "url": "https://archival-rpc.mainnet.fastnear.com"
         },
         {
-          "defaultFields": {
-            "block_id": "latest"
-          },
+          "defaultFields": {},
           "key": "testnet",
           "label": "Testnet Archival RPC",
           "url": "https://archival-rpc.testnet.fastnear.com"
         }
       ],
       "requestMethod": "block",
-      "supportsFinality": false,
+      "supportsFinality": true,
       "transport": "json-rpc"
     },
-    "outputModel": "standalone/generated/rpc-latest-block-page-model.json",
     "pageModelId": "rpc-latest-block",
     "replaceOperationPage": true,
     "request": {
@@ -9299,17 +9295,19 @@
             "schema": {
               "type": "object",
               "required": [
-                "block_id"
+                "finality"
               ],
               "properties": [
                 {
-                  "name": "block_id",
+                  "name": "finality",
                   "required": true,
                   "schema": {
                     "type": "string",
-                    "description": "Special identifier for the latest block",
+                    "description": "Finality selector for the latest visible block",
                     "enum": [
-                      "latest"
+                      "final",
+                      "near-final",
+                      "optimistic"
                     ]
                   }
                 }
@@ -9329,7 +9327,7 @@
               "id": "fastnear",
               "method": "block",
               "params": {
-                "block_id": "latest"
+                "finality": "optimistic"
               }
             },
             "headers": {},
@@ -9347,7 +9345,7 @@
               "id": "fastnear",
               "method": "block",
               "params": {
-                "block_id": "latest"
+                "finality": "optimistic"
               }
             },
             "headers": {},
@@ -9464,7 +9462,6 @@
   },
   {
     "canonicalPath": "/rpcs/protocol/light_client_proof",
-    "generatedAt": "2026-04-13T14:51:41.826Z",
     "info": {
       "description": "Retrieves verification proof data for light clients",
       "operationId": "light_client_proof",
@@ -9517,30 +9514,8 @@
           "schema": {
             "type": "string",
             "enum": [
-              "receipt"
+              "transaction"
             ]
-          }
-        },
-        {
-          "description": "Base58-encoded hash",
-          "label": "Receipt Id",
-          "location": "body",
-          "name": "receipt_id",
-          "required": false,
-          "schema": {
-            "type": "string",
-            "description": "Base58-encoded hash"
-          }
-        },
-        {
-          "description": "NEAR account ID",
-          "label": "Receiver Id",
-          "location": "body",
-          "name": "receiver_id",
-          "required": false,
-          "schema": {
-            "type": "string",
-            "description": "NEAR account ID"
           }
         }
       ],
@@ -9548,10 +9523,10 @@
       "networks": [
         {
           "defaultFields": {
-            "light_client_head": "CU1KcVSuYAZUiehn7TnCxSdpb3RGoHxK1hABC5AKKo2Q",
-            "sender_id": "5764995617.tg",
-            "transaction_hash": "HrRxPdtUGRGqubmHzmuyhhh2RCQ8hytFGwbXfmqdXBAj",
-            "type": "receipt"
+            "light_client_head": "6sddgq8nkENAz4f8qR72qxRPM25QWNBVMrkYr63DgC2E",
+            "sender_id": "intents.near",
+            "transaction_hash": "4EQZ5qoEJUbz8SRNkNwrAPtsn2VFhg9Ci1weaNNpiuR7",
+            "type": "transaction"
           },
           "key": "mainnet",
           "label": "Mainnet",
@@ -9559,10 +9534,10 @@
         },
         {
           "defaultFields": {
-            "light_client_head": "CoPszhGFqcx9L1HQYM62g3UjxMpuZD8RiZL6QdpBZXA4",
-            "sender_id": "zerochltest.testnet",
-            "transaction_hash": "d68i4vS3cwSyqk2oVYkWwDbnhSYYbLBfCzSkciJ2X3Y",
-            "type": "receipt"
+            "light_client_head": "Ayfw9wu3T3zEqCbrvq9CuKmGmuyiJiETvwCApXZHmCho",
+            "sender_id": "relay.aurora",
+            "transaction_hash": "2HVQfqHKu78VEW1aRidvR5Auqu1bw1V12TJywoqw1aup",
+            "type": "transaction"
           },
           "key": "testnet",
           "label": "Testnet",
@@ -9573,7 +9548,6 @@
       "supportsFinality": false,
       "transport": "json-rpc"
     },
-    "outputModel": "standalone/generated/rpc-light-client-proof-page-model.json",
     "pageModelId": "rpc-light-client-proof",
     "replaceOperationPage": true,
     "request": {
@@ -9653,24 +9627,8 @@
                   "schema": {
                     "type": "string",
                     "enum": [
-                      "receipt"
+                      "transaction"
                     ]
-                  }
-                },
-                {
-                  "name": "receipt_id",
-                  "required": false,
-                  "schema": {
-                    "type": "string",
-                    "description": "Base58-encoded hash"
-                  }
-                },
-                {
-                  "name": "receiver_id",
-                  "required": false,
-                  "schema": {
-                    "type": "string",
-                    "description": "NEAR account ID"
                   }
                 }
               ]
@@ -9689,10 +9647,10 @@
               "id": "fastnear",
               "method": "light_client_proof",
               "params": {
-                "type": "receipt",
-                "transaction_hash": "HrRxPdtUGRGqubmHzmuyhhh2RCQ8hytFGwbXfmqdXBAj",
-                "sender_id": "5764995617.tg",
-                "light_client_head": "CU1KcVSuYAZUiehn7TnCxSdpb3RGoHxK1hABC5AKKo2Q"
+                "type": "transaction",
+                "transaction_hash": "4EQZ5qoEJUbz8SRNkNwrAPtsn2VFhg9Ci1weaNNpiuR7",
+                "sender_id": "intents.near",
+                "light_client_head": "6sddgq8nkENAz4f8qR72qxRPM25QWNBVMrkYr63DgC2E"
               }
             },
             "headers": {},
@@ -9710,10 +9668,10 @@
               "id": "fastnear",
               "method": "light_client_proof",
               "params": {
-                "type": "receipt",
-                "transaction_hash": "d68i4vS3cwSyqk2oVYkWwDbnhSYYbLBfCzSkciJ2X3Y",
-                "sender_id": "zerochltest.testnet",
-                "light_client_head": "CoPszhGFqcx9L1HQYM62g3UjxMpuZD8RiZL6QdpBZXA4"
+                "type": "transaction",
+                "transaction_hash": "2HVQfqHKu78VEW1aRidvR5Auqu1bw1V12TJywoqw1aup",
+                "sender_id": "relay.aurora",
+                "light_client_head": "Ayfw9wu3T3zEqCbrvq9CuKmGmuyiJiETvwCApXZHmCho"
               }
             },
             "headers": {},
@@ -9944,7 +9902,6 @@
   },
   {
     "canonicalPath": "/rpcs/protocol/maintenance_windows",
-    "generatedAt": "2026-04-13T14:51:41.828Z",
     "info": {
       "description": "Returns the future windows for maintenance in current epoch for the specified account",
       "operationId": "maintenance_windows",
@@ -9972,7 +9929,7 @@
       "networks": [
         {
           "defaultFields": {
-            "account_id": "example.near"
+            "account_id": "root.near"
           },
           "key": "mainnet",
           "label": "Mainnet",
@@ -9980,7 +9937,7 @@
         },
         {
           "defaultFields": {
-            "account_id": "example.near"
+            "account_id": "root.testnet"
           },
           "key": "testnet",
           "label": "Testnet",
@@ -9991,7 +9948,6 @@
       "supportsFinality": false,
       "transport": "json-rpc"
     },
-    "outputModel": "standalone/generated/rpc-maintenance-windows-page-model.json",
     "pageModelId": "rpc-maintenance-windows",
     "replaceOperationPage": true,
     "request": {
@@ -10065,7 +10021,7 @@
               "id": "fastnear",
               "method": "maintenance_windows",
               "params": {
-                "account_id": "example.near"
+                "account_id": "root.near"
               }
             },
             "headers": {},
@@ -10083,7 +10039,7 @@
               "id": "fastnear",
               "method": "maintenance_windows",
               "params": {
-                "account_id": "example.near"
+                "account_id": "root.testnet"
               }
             },
             "headers": {},
@@ -10225,9 +10181,8 @@
   },
   {
     "canonicalPath": "/rpcs/protocol/metrics",
-    "generatedAt": "2026-04-13T14:51:41.829Z",
     "info": {
-      "description": "Retrieves performance metrics and operational statistics from the node",
+      "description": "Retrieves Prometheus-format node metrics from the HTTP `/metrics` endpoint. Requires an API key.",
       "operationId": "metrics",
       "summary": "Get node metrics",
       "title": "NEAR Protocol RPC: Node Metrics",
@@ -10256,181 +10211,43 @@
       "supportsFinality": false,
       "transport": "json-rpc"
     },
-    "outputModel": "standalone/generated/rpc-metrics-page-model.json",
     "pageModelId": "rpc-metrics",
     "replaceOperationPage": true,
     "request": {
-      "bodySchema": {
-        "type": "object",
-        "required": [
-          "jsonrpc",
-          "id",
-          "method",
-          "params"
-        ],
-        "properties": [
-          {
-            "name": "jsonrpc",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "enum": [
-                "2.0"
-              ]
-            }
-          },
-          {
-            "name": "id",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "fastnear"
-            }
-          },
-          {
-            "name": "method",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "enum": [
-                "metrics"
-              ]
-            }
-          },
-          {
-            "name": "params",
-            "required": true,
-            "schema": {
-              "type": "array",
-              "description": "Empty array as this method takes no parameters"
-            }
-          }
-        ]
-      },
-      "examples": [
-        {
-          "id": "mainnet",
-          "label": "Mainnet Node Metrics",
-          "network": "mainnet",
-          "request": {
-            "body": {
-              "jsonrpc": "2.0",
-              "id": "fastnear",
-              "method": "metrics",
-              "params": []
-            },
-            "headers": {},
-            "path": {},
-            "query": {}
-          }
-        },
-        {
-          "id": "testnet",
-          "label": "Testnet Node Metrics",
-          "network": "testnet",
-          "request": {
-            "body": {
-              "jsonrpc": "2.0",
-              "id": "fastnear",
-              "method": "metrics",
-              "params": []
-            },
-            "headers": {},
-            "path": {},
-            "query": {}
-          }
-        }
-      ],
+      "bodySchema": null,
+      "examples": [],
       "mediaType": "application/json",
       "parameters": {
         "header": [],
         "path": [],
         "query": []
       },
-      "required": true
+      "required": false
     },
     "responses": [
       {
         "description": "Successful response",
-        "mediaType": "application/json",
+        "mediaType": "text/plain",
         "schema": {
-          "type": "object",
-          "required": [
-            "jsonrpc",
-            "id"
-          ],
-          "properties": [
-            {
-              "name": "jsonrpc",
-              "required": true,
-              "schema": {
-                "type": "string",
-                "enum": [
-                  "2.0"
-                ]
-              }
-            },
-            {
-              "name": "id",
-              "required": true,
-              "schema": {
-                "oneOf": [
-                  {
-                    "type": "string"
-                  },
-                  {
-                    "type": "number"
-                  }
-                ]
-              }
-            },
-            {
-              "name": "result",
-              "required": false,
-              "schema": {
-                "type": "object",
-                "description": "Detailed metrics on node performance, resource usage, and operational statistics"
-              }
-            },
-            {
-              "name": "error",
-              "required": false,
-              "schema": {
-                "type": "object",
-                "properties": [
-                  {
-                    "name": "code",
-                    "required": false,
-                    "schema": {
-                      "type": "integer"
-                    }
-                  },
-                  {
-                    "name": "message",
-                    "required": false,
-                    "schema": {
-                      "type": "string"
-                    }
-                  },
-                  {
-                    "name": "data",
-                    "required": false,
-                    "schema": {
-                      "type": "object"
-                    }
-                  }
-                ]
-              }
-            }
-          ],
-          "refName": "JsonRpcResponse"
+          "type": "string",
+          "description": "Prometheus exposition text",
+          "example": "# HELP process_cpu_seconds_total Total user and system CPU time spent in seconds.\n# TYPE process_cpu_seconds_total counter\nprocess_cpu_seconds_total 12.34"
         },
         "status": "200"
+      },
+      {
+        "description": "Missing or invalid API key",
+        "mediaType": "text/plain",
+        "schema": {
+          "type": "string",
+          "example": "Forbidden"
+        },
+        "status": "403"
       }
     ],
     "route": {
-      "method": "POST",
-      "path": "/",
+      "method": "GET",
+      "path": "/metrics",
       "transport": "json-rpc"
     },
     "routeAliases": [
@@ -10450,7 +10267,6 @@
   },
   {
     "canonicalPath": "/rpcs/protocol/network_info",
-    "generatedAt": "2026-04-13T14:51:41.831Z",
     "info": {
       "description": "Retrieves information about the network and connected peers including active connections, peer addresses, and network configuration",
       "operationId": "network_info",
@@ -10481,7 +10297,6 @@
       "supportsFinality": false,
       "transport": "json-rpc"
     },
-    "outputModel": "standalone/generated/rpc-network-info-page-model.json",
     "pageModelId": "rpc-network-info",
     "replaceOperationPage": true,
     "request": {
@@ -10738,7 +10553,6 @@
   },
   {
     "canonicalPath": "/rpcs/protocol/next_light_client_block",
-    "generatedAt": "2026-04-13T14:51:41.832Z",
     "info": {
       "description": "Returns the next light client block",
       "operationId": "next_light_client_block",
@@ -10766,7 +10580,7 @@
       "networks": [
         {
           "defaultFields": {
-            "last_block_hash": "CU1KcVSuYAZUiehn7TnCxSdpb3RGoHxK1hABC5AKKo2Q"
+            "last_block_hash": "6sddgq8nkENAz4f8qR72qxRPM25QWNBVMrkYr63DgC2E"
           },
           "key": "mainnet",
           "label": "Mainnet",
@@ -10774,7 +10588,7 @@
         },
         {
           "defaultFields": {
-            "last_block_hash": "CoPszhGFqcx9L1HQYM62g3UjxMpuZD8RiZL6QdpBZXA4"
+            "last_block_hash": "Ayfw9wu3T3zEqCbrvq9CuKmGmuyiJiETvwCApXZHmCho"
           },
           "key": "testnet",
           "label": "Testnet",
@@ -10785,7 +10599,6 @@
       "supportsFinality": false,
       "transport": "json-rpc"
     },
-    "outputModel": "standalone/generated/rpc-next-light-client-block-page-model.json",
     "pageModelId": "rpc-next-light-client-block",
     "replaceOperationPage": true,
     "request": {
@@ -10859,7 +10672,7 @@
               "id": "fastnear",
               "method": "next_light_client_block",
               "params": {
-                "last_block_hash": "CU1KcVSuYAZUiehn7TnCxSdpb3RGoHxK1hABC5AKKo2Q"
+                "last_block_hash": "6sddgq8nkENAz4f8qR72qxRPM25QWNBVMrkYr63DgC2E"
               }
             },
             "headers": {},
@@ -10877,7 +10690,7 @@
               "id": "fastnear",
               "method": "next_light_client_block",
               "params": {
-                "last_block_hash": "CoPszhGFqcx9L1HQYM62g3UjxMpuZD8RiZL6QdpBZXA4"
+                "last_block_hash": "Ayfw9wu3T3zEqCbrvq9CuKmGmuyiJiETvwCApXZHmCho"
               }
             },
             "headers": {},
@@ -11137,7 +10950,6 @@
   },
   {
     "canonicalPath": "/rpcs/protocol/status",
-    "generatedAt": "2026-04-13T14:51:41.836Z",
     "info": {
       "description": "Retrieves current status of the node including sync info, validator status and build information",
       "operationId": "status",
@@ -11168,7 +10980,6 @@
       "supportsFinality": false,
       "transport": "json-rpc"
     },
-    "outputModel": "standalone/generated/rpc-status-page-model.json",
     "pageModelId": "rpc-status",
     "replaceOperationPage": true,
     "request": {
@@ -11682,7 +11493,6 @@
   },
   {
     "canonicalPath": "/rpcs/transaction/EXPERIMENTAL_receipt",
-    "generatedAt": "2026-04-13T14:51:41.838Z",
     "info": {
       "description": "Fetches a receipt by its ID (as is, without a status or execution outcome)",
       "operationId": "EXPERIMENTAL_receipt",
@@ -11710,7 +11520,7 @@
       "networks": [
         {
           "defaultFields": {
-            "receipt_id": "HuwE9YUBuxA87eZrwbHxEN47FgujwyDhn2nena1ypdH3"
+            "receipt_id": "5QtWzoy2VpKZEvUbe9aUjpwnXTqHzv4gehuox8g3DA4y"
           },
           "key": "mainnet",
           "label": "Mainnet",
@@ -11718,7 +11528,7 @@
         },
         {
           "defaultFields": {
-            "receipt_id": "5cJM47ytx5JH4JUqxTPFihnnb9hWpoDU4ZqgR8fAXdJQ"
+            "receipt_id": "CKajpdRe5MnwjySR6MKKbp6Dr5oEiM5XFcYmu77mvnne"
           },
           "key": "testnet",
           "label": "Testnet",
@@ -11729,7 +11539,6 @@
       "supportsFinality": false,
       "transport": "json-rpc"
     },
-    "outputModel": "standalone/generated/rpc-EXPERIMENTAL-receipt-page-model.json",
     "pageModelId": "rpc-EXPERIMENTAL-receipt",
     "replaceOperationPage": true,
     "request": {
@@ -11803,7 +11612,7 @@
               "id": "fastnear",
               "method": "EXPERIMENTAL_receipt",
               "params": {
-                "receipt_id": "HuwE9YUBuxA87eZrwbHxEN47FgujwyDhn2nena1ypdH3"
+                "receipt_id": "5QtWzoy2VpKZEvUbe9aUjpwnXTqHzv4gehuox8g3DA4y"
               }
             },
             "headers": {},
@@ -11821,7 +11630,7 @@
               "id": "fastnear",
               "method": "EXPERIMENTAL_receipt",
               "params": {
-                "receipt_id": "5cJM47ytx5JH4JUqxTPFihnnb9hWpoDU4ZqgR8fAXdJQ"
+                "receipt_id": "CKajpdRe5MnwjySR6MKKbp6Dr5oEiM5XFcYmu77mvnne"
               }
             },
             "headers": {},
@@ -11988,7 +11797,6 @@
   },
   {
     "canonicalPath": "/rpcs/transaction/EXPERIMENTAL_tx_status",
-    "generatedAt": "2026-04-13T14:51:41.840Z",
     "info": {
       "description": "Queries status of a transaction by hash, returning the final transaction result and details of all receipts",
       "operationId": "EXPERIMENTAL_tx_status",
@@ -12059,9 +11867,8 @@
         {
           "defaultFields": {
             "wait_until": "EXECUTED_OPTIMISTIC",
-            "signed_tx_base64": "ExampleBase64EncodedTransaction",
-            "sender_account_id": "5764995617.tg",
-            "tx_hash": "HrRxPdtUGRGqubmHzmuyhhh2RCQ8hytFGwbXfmqdXBAj"
+            "sender_account_id": "intents.near",
+            "tx_hash": "4EQZ5qoEJUbz8SRNkNwrAPtsn2VFhg9Ci1weaNNpiuR7"
           },
           "key": "mainnet",
           "label": "Mainnet",
@@ -12070,9 +11877,8 @@
         {
           "defaultFields": {
             "wait_until": "EXECUTED_OPTIMISTIC",
-            "signed_tx_base64": "ExampleBase64EncodedTransaction",
-            "sender_account_id": "zerochltest.testnet",
-            "tx_hash": "d68i4vS3cwSyqk2oVYkWwDbnhSYYbLBfCzSkciJ2X3Y"
+            "sender_account_id": "relay.aurora",
+            "tx_hash": "2HVQfqHKu78VEW1aRidvR5Auqu1bw1V12TJywoqw1aup"
           },
           "key": "testnet",
           "label": "Testnet",
@@ -12083,7 +11889,6 @@
       "supportsFinality": false,
       "transport": "json-rpc"
     },
-    "outputModel": "standalone/generated/rpc-EXPERIMENTAL-tx-status-page-model.json",
     "pageModelId": "rpc-EXPERIMENTAL-tx-status",
     "replaceOperationPage": true,
     "request": {
@@ -12188,9 +11993,8 @@
               "method": "EXPERIMENTAL_tx_status",
               "params": {
                 "wait_until": "EXECUTED_OPTIMISTIC",
-                "signed_tx_base64": "ExampleBase64EncodedTransaction",
-                "sender_account_id": "5764995617.tg",
-                "tx_hash": "HrRxPdtUGRGqubmHzmuyhhh2RCQ8hytFGwbXfmqdXBAj"
+                "sender_account_id": "intents.near",
+                "tx_hash": "4EQZ5qoEJUbz8SRNkNwrAPtsn2VFhg9Ci1weaNNpiuR7"
               }
             },
             "headers": {},
@@ -12209,9 +12013,8 @@
               "method": "EXPERIMENTAL_tx_status",
               "params": {
                 "wait_until": "EXECUTED_OPTIMISTIC",
-                "signed_tx_base64": "ExampleBase64EncodedTransaction",
-                "sender_account_id": "zerochltest.testnet",
-                "tx_hash": "d68i4vS3cwSyqk2oVYkWwDbnhSYYbLBfCzSkciJ2X3Y"
+                "sender_account_id": "relay.aurora",
+                "tx_hash": "2HVQfqHKu78VEW1aRidvR5Auqu1bw1V12TJywoqw1aup"
               }
             },
             "headers": {},
@@ -12395,9 +12198,8 @@
   },
   {
     "canonicalPath": "/rpcs/transaction/broadcast_tx_async",
-    "generatedAt": "2026-04-13T14:51:41.842Z",
     "info": {
-      "description": "Submits a transaction to the network without waiting for its execution",
+      "description": "Submits a transaction to the network without waiting for its execution. Requires a freshly signed transaction; the default example is illustrative and is not part of the live audit.",
       "operationId": "broadcast_tx_async",
       "summary": "Send transaction asynchronously",
       "title": "NEAR Protocol RPC: Broadcast Transaction Async",
@@ -12408,14 +12210,14 @@
       "defaultId": "fastnear",
       "fields": [
         {
-          "description": "Base64-encoded signed transaction",
+          "description": "Base64-encoded signed transaction. This must be generated for the signing account just before submission.",
           "label": "Signed Tx Base64",
           "location": "body",
           "name": "signed_tx_base64",
           "required": true,
           "schema": {
             "type": "string",
-            "description": "Base64-encoded signed transaction"
+            "description": "Base64-encoded signed transaction. This must be generated for the signing account just before submission."
           }
         },
         {
@@ -12462,7 +12264,6 @@
       "supportsFinality": false,
       "transport": "json-rpc"
     },
-    "outputModel": "standalone/generated/rpc-broadcast-tx-async-page-model.json",
     "pageModelId": "rpc-broadcast-tx-async",
     "replaceOperationPage": true,
     "request": {
@@ -12517,7 +12318,7 @@
                   "required": true,
                   "schema": {
                     "type": "string",
-                    "description": "Base64-encoded signed transaction"
+                    "description": "Base64-encoded signed transaction. This must be generated for the signing account just before submission."
                   }
                 },
                 {
@@ -12689,9 +12490,8 @@
   },
   {
     "canonicalPath": "/rpcs/transaction/broadcast_tx_commit",
-    "generatedAt": "2026-04-13T14:51:41.844Z",
     "info": {
-      "description": "Submits a transaction and waits until it's fully committed to the blockchain",
+      "description": "Submits a transaction and waits until it's fully committed to the blockchain. Requires a freshly signed transaction; the default example is illustrative and is not part of the live audit.",
       "operationId": "broadcast_tx_commit",
       "summary": "Send transaction and wait for commit",
       "title": "NEAR Protocol RPC: Broadcast Transaction Commit",
@@ -12702,14 +12502,14 @@
       "defaultId": "fastnear",
       "fields": [
         {
-          "description": "Base64-encoded signed transaction",
+          "description": "Base64-encoded signed transaction. This must be generated for the signing account just before submission.",
           "label": "Signed Tx Base64",
           "location": "body",
           "name": "signed_tx_base64",
           "required": true,
           "schema": {
             "type": "string",
-            "description": "Base64-encoded signed transaction"
+            "description": "Base64-encoded signed transaction. This must be generated for the signing account just before submission."
           }
         },
         {
@@ -12756,7 +12556,6 @@
       "supportsFinality": false,
       "transport": "json-rpc"
     },
-    "outputModel": "standalone/generated/rpc-broadcast-tx-commit-page-model.json",
     "pageModelId": "rpc-broadcast-tx-commit",
     "replaceOperationPage": true,
     "request": {
@@ -12811,7 +12610,7 @@
                   "required": true,
                   "schema": {
                     "type": "string",
-                    "description": "Base64-encoded signed transaction"
+                    "description": "Base64-encoded signed transaction. This must be generated for the signing account just before submission."
                   }
                 },
                 {
@@ -13049,9 +12848,8 @@
   },
   {
     "canonicalPath": "/rpcs/transaction/send_tx",
-    "generatedAt": "2026-04-13T14:51:41.845Z",
     "info": {
-      "description": "Sends transaction and returns the guaranteed execution status and results",
+      "description": "Sends transaction and returns the guaranteed execution status and results. Requires a freshly signed transaction; the default example is illustrative and is not part of the live audit.",
       "operationId": "send_tx",
       "summary": "Send transaction",
       "title": "NEAR Protocol RPC: Send transaction",
@@ -13062,14 +12860,14 @@
       "defaultId": "fastnear",
       "fields": [
         {
-          "description": "Base64-encoded signed transaction",
+          "description": "Base64-encoded signed transaction. This must be generated for the signing account just before submission.",
           "label": "Signed Tx Base64",
           "location": "body",
           "name": "signed_tx_base64",
           "required": true,
           "schema": {
             "type": "string",
-            "description": "Base64-encoded signed transaction"
+            "description": "Base64-encoded signed transaction. This must be generated for the signing account just before submission."
           }
         },
         {
@@ -13118,7 +12916,6 @@
       "supportsFinality": false,
       "transport": "json-rpc"
     },
-    "outputModel": "standalone/generated/rpc-send-tx-page-model.json",
     "pageModelId": "rpc-send-tx",
     "replaceOperationPage": true,
     "request": {
@@ -13173,7 +12970,7 @@
                   "required": true,
                   "schema": {
                     "type": "string",
-                    "description": "Base64-encoded signed transaction"
+                    "description": "Base64-encoded signed transaction. This must be generated for the signing account just before submission."
                   }
                 },
                 {
@@ -13413,7 +13210,6 @@
   },
   {
     "canonicalPath": "/rpcs/transaction/tx_status",
-    "generatedAt": "2026-04-13T14:51:41.849Z",
     "info": {
       "description": "Get the status and details of a transaction",
       "operationId": "tx_status",
@@ -13483,8 +13279,8 @@
       "networks": [
         {
           "defaultFields": {
-            "sender_account_id": "5764995617.tg",
-            "tx_hash": "HrRxPdtUGRGqubmHzmuyhhh2RCQ8hytFGwbXfmqdXBAj"
+            "sender_account_id": "intents.near",
+            "tx_hash": "4EQZ5qoEJUbz8SRNkNwrAPtsn2VFhg9Ci1weaNNpiuR7"
           },
           "key": "mainnet",
           "label": "Mainnet",
@@ -13492,8 +13288,8 @@
         },
         {
           "defaultFields": {
-            "sender_account_id": "zerochltest.testnet",
-            "tx_hash": "d68i4vS3cwSyqk2oVYkWwDbnhSYYbLBfCzSkciJ2X3Y"
+            "sender_account_id": "relay.aurora",
+            "tx_hash": "2HVQfqHKu78VEW1aRidvR5Auqu1bw1V12TJywoqw1aup"
           },
           "key": "testnet",
           "label": "Testnet",
@@ -13504,7 +13300,6 @@
       "supportsFinality": false,
       "transport": "json-rpc"
     },
-    "outputModel": "standalone/generated/rpc-tx-status-page-model.json",
     "pageModelId": "rpc-tx-status",
     "replaceOperationPage": true,
     "request": {
@@ -13608,8 +13403,8 @@
               "id": "fastnear",
               "method": "tx",
               "params": {
-                "tx_hash": "HrRxPdtUGRGqubmHzmuyhhh2RCQ8hytFGwbXfmqdXBAj",
-                "sender_account_id": "5764995617.tg"
+                "tx_hash": "4EQZ5qoEJUbz8SRNkNwrAPtsn2VFhg9Ci1weaNNpiuR7",
+                "sender_account_id": "intents.near"
               }
             },
             "headers": {},
@@ -13627,8 +13422,8 @@
               "id": "fastnear",
               "method": "tx",
               "params": {
-                "tx_hash": "d68i4vS3cwSyqk2oVYkWwDbnhSYYbLBfCzSkciJ2X3Y",
-                "sender_account_id": "zerochltest.testnet"
+                "tx_hash": "2HVQfqHKu78VEW1aRidvR5Auqu1bw1V12TJywoqw1aup",
+                "sender_account_id": "relay.aurora"
               }
             },
             "headers": {},
@@ -13812,7 +13607,6 @@
   },
   {
     "canonicalPath": "/rpcs/validators/EXPERIMENTAL_validators_ordered",
-    "generatedAt": "2026-04-13T14:51:41.852Z",
     "info": {
       "description": "Returns the current epoch validators ordered in the block producer order with repetition",
       "operationId": "EXPERIMENTAL_validators_ordered",
@@ -13852,7 +13646,7 @@
       "networks": [
         {
           "defaultFields": {
-            "block_id": 12345
+            "block_id": 193909529
           },
           "key": "mainnet",
           "label": "Mainnet",
@@ -13860,7 +13654,7 @@
         },
         {
           "defaultFields": {
-            "block_id": 12345
+            "block_id": 245639469
           },
           "key": "testnet",
           "label": "Testnet",
@@ -13871,7 +13665,6 @@
       "supportsFinality": false,
       "transport": "json-rpc"
     },
-    "outputModel": "standalone/generated/rpc-EXPERIMENTAL-validators-ordered-page-model.json",
     "pageModelId": "rpc-EXPERIMENTAL-validators-ordered",
     "replaceOperationPage": true,
     "request": {
@@ -13954,7 +13747,7 @@
               "id": "fastnear",
               "method": "EXPERIMENTAL_validators_ordered",
               "params": {
-                "block_id": 12345
+                "block_id": 193909529
               }
             },
             "headers": {},
@@ -13972,7 +13765,7 @@
               "id": "fastnear",
               "method": "EXPERIMENTAL_validators_ordered",
               "params": {
-                "block_id": 12345
+                "block_id": 245639469
               }
             },
             "headers": {},
@@ -14093,7 +13886,6 @@
   },
   {
     "canonicalPath": "/rpcs/validators/validators_by_epoch",
-    "generatedAt": "2026-04-13T14:51:41.854Z",
     "info": {
       "description": "Retrieves the list of validators and their details for a specific epoch",
       "operationId": "validators_by_epoch",
@@ -14121,7 +13913,7 @@
       "networks": [
         {
           "defaultFields": {
-            "epoch_id": "GZP8ApSTYZGrn8WnKTuYvJixMvK2MtQBB7eCGZZHQaS6"
+            "epoch_id": "9p3TzDhp6B5sRCaMi36TXqKWHfjEt4oyqaGoftHHaa8E"
           },
           "key": "mainnet",
           "label": "Mainnet",
@@ -14129,7 +13921,7 @@
         },
         {
           "defaultFields": {
-            "epoch_id": "GZP8ApSTYZGrn8WnKTuYvJixMvK2MtQBB7eCGZZHQaS6"
+            "epoch_id": "GUv8AkE6VjpBTqCAkZ3qZi1q1G2Y3XBrDbQjfre9t3KP"
           },
           "key": "testnet",
           "label": "Testnet",
@@ -14140,7 +13932,6 @@
       "supportsFinality": false,
       "transport": "json-rpc"
     },
-    "outputModel": "standalone/generated/rpc-validators-by-epoch-page-model.json",
     "pageModelId": "rpc-validators-by-epoch",
     "replaceOperationPage": true,
     "request": {
@@ -14214,7 +14005,7 @@
               "id": "fastnear",
               "method": "validators",
               "params": {
-                "epoch_id": "GZP8ApSTYZGrn8WnKTuYvJixMvK2MtQBB7eCGZZHQaS6"
+                "epoch_id": "9p3TzDhp6B5sRCaMi36TXqKWHfjEt4oyqaGoftHHaa8E"
               }
             },
             "headers": {},
@@ -14232,7 +14023,7 @@
               "id": "fastnear",
               "method": "validators",
               "params": {
-                "epoch_id": "GZP8ApSTYZGrn8WnKTuYvJixMvK2MtQBB7eCGZZHQaS6"
+                "epoch_id": "GUv8AkE6VjpBTqCAkZ3qZi1q1G2Y3XBrDbQjfre9t3KP"
               }
             },
             "headers": {},
@@ -14450,7 +14241,6 @@
   },
   {
     "canonicalPath": "/rpcs/validators/validators_current",
-    "generatedAt": "2026-04-13T14:51:41.856Z",
     "info": {
       "description": "Retrieves the list of current validators and their details",
       "operationId": "validators_current",
@@ -14481,7 +14271,6 @@
       "supportsFinality": false,
       "transport": "json-rpc"
     },
-    "outputModel": "standalone/generated/rpc-validators-current-page-model.json",
     "pageModelId": "rpc-validators-current",
     "replaceOperationPage": true,
     "request": {
@@ -14784,7 +14573,6 @@
   },
   {
     "canonicalPath": "/apis/fastnear/system/health",
-    "generatedAt": "2026-04-13T14:51:41.861Z",
     "info": {
       "description": "Returns `ok` when the service is healthy. When FastNEAR is degraded, the same `status` field carries a diagnostic string instead.",
       "operationId": "get_health",
@@ -14814,7 +14602,6 @@
       "supportsFinality": false,
       "transport": "http"
     },
-    "outputModel": "standalone/generated/fastnear-system-health-page-model.json",
     "pageModelId": "fastnear-system-health",
     "replaceOperationPage": true,
     "request": {
@@ -14914,7 +14701,6 @@
   },
   {
     "canonicalPath": "/apis/fastnear/system/status",
-    "generatedAt": "2026-04-13T14:51:41.876Z",
     "info": {
       "description": "Returns the latest indexed sync heights, the indexed block timestamp, the measured sync latency, and the deployed FastNEAR API version.",
       "operationId": "get_status",
@@ -14944,7 +14730,6 @@
       "supportsFinality": false,
       "transport": "http"
     },
-    "outputModel": "standalone/generated/fastnear-system-status-page-model.json",
     "pageModelId": "fastnear-system-status",
     "replaceOperationPage": true,
     "request": {
@@ -15079,7 +14864,6 @@
   },
   {
     "canonicalPath": "/apis/fastnear/v0/account_staking",
-    "generatedAt": "2026-04-13T14:51:41.885Z",
     "info": {
       "description": "Returns staking pool account IDs that FastNEAR has indexed for the requested account. Unlike the v1 route, this response does not include `last_update_block_height` metadata.",
       "operationId": "account_staking_v0",
@@ -15106,7 +14890,7 @@
       "networks": [
         {
           "defaultFields": {
-            "account_id": "foundation.near"
+            "account_id": "root.near"
           },
           "key": "mainnet",
           "label": "Mainnet",
@@ -15114,7 +14898,7 @@
         },
         {
           "defaultFields": {
-            "account_id": "foundation.near"
+            "account_id": "root.testnet"
           },
           "key": "testnet",
           "label": "Testnet",
@@ -15125,7 +14909,6 @@
       "supportsFinality": false,
       "transport": "http"
     },
-    "outputModel": "standalone/generated/fastnear-v0-account-staking-page-model.json",
     "pageModelId": "fastnear-v0-account-staking",
     "replaceOperationPage": true,
     "request": {
@@ -15139,7 +14922,7 @@
             "body": null,
             "headers": {},
             "path": {
-              "account_id": "foundation.near"
+              "account_id": "root.near"
             },
             "query": {}
           }
@@ -15152,7 +14935,7 @@
             "body": null,
             "headers": {},
             "path": {
-              "account_id": "foundation.near"
+              "account_id": "root.testnet"
             },
             "query": {}
           }
@@ -15259,7 +15042,6 @@
   },
   {
     "canonicalPath": "/apis/fastnear/v0/account_ft",
-    "generatedAt": "2026-04-13T14:51:41.887Z",
     "info": {
       "description": "Returns only fungible token contract account IDs that FastNEAR has indexed for the requested account. Unlike the v1 route, this response does not include balances or block-height metadata.",
       "operationId": "account_ft_v0",
@@ -15286,7 +15068,7 @@
       "networks": [
         {
           "defaultFields": {
-            "account_id": "foundation.near"
+            "account_id": "root.near"
           },
           "key": "mainnet",
           "label": "Mainnet",
@@ -15294,7 +15076,7 @@
         },
         {
           "defaultFields": {
-            "account_id": "foundation.near"
+            "account_id": "root.testnet"
           },
           "key": "testnet",
           "label": "Testnet",
@@ -15305,7 +15087,6 @@
       "supportsFinality": false,
       "transport": "http"
     },
-    "outputModel": "standalone/generated/fastnear-v0-account-ft-page-model.json",
     "pageModelId": "fastnear-v0-account-ft",
     "replaceOperationPage": true,
     "request": {
@@ -15319,7 +15100,7 @@
             "body": null,
             "headers": {},
             "path": {
-              "account_id": "foundation.near"
+              "account_id": "root.near"
             },
             "query": {}
           }
@@ -15332,7 +15113,7 @@
             "body": null,
             "headers": {},
             "path": {
-              "account_id": "foundation.near"
+              "account_id": "root.testnet"
             },
             "query": {}
           }
@@ -15439,7 +15220,6 @@
   },
   {
     "canonicalPath": "/apis/fastnear/v0/account_nft",
-    "generatedAt": "2026-04-13T14:51:41.889Z",
     "info": {
       "description": "Returns only NFT contract account IDs that FastNEAR has indexed for the requested account. Unlike the v1 route, this response does not include `last_update_block_height` metadata.",
       "operationId": "account_nft_v0",
@@ -15466,7 +15246,7 @@
       "networks": [
         {
           "defaultFields": {
-            "account_id": "foundation.near"
+            "account_id": "root.near"
           },
           "key": "mainnet",
           "label": "Mainnet",
@@ -15474,7 +15254,7 @@
         },
         {
           "defaultFields": {
-            "account_id": "foundation.near"
+            "account_id": "root.testnet"
           },
           "key": "testnet",
           "label": "Testnet",
@@ -15485,7 +15265,6 @@
       "supportsFinality": false,
       "transport": "http"
     },
-    "outputModel": "standalone/generated/fastnear-v0-account-nft-page-model.json",
     "pageModelId": "fastnear-v0-account-nft",
     "replaceOperationPage": true,
     "request": {
@@ -15499,7 +15278,7 @@
             "body": null,
             "headers": {},
             "path": {
-              "account_id": "foundation.near"
+              "account_id": "root.near"
             },
             "query": {}
           }
@@ -15512,7 +15291,7 @@
             "body": null,
             "headers": {},
             "path": {
-              "account_id": "foundation.near"
+              "account_id": "root.testnet"
             },
             "query": {}
           }
@@ -15619,7 +15398,6 @@
   },
   {
     "canonicalPath": "/apis/fastnear/v0/public_key_lookup",
-    "generatedAt": "2026-04-13T14:51:41.891Z",
     "info": {
       "description": "Returns account IDs currently associated with the provided full-access public key. The response includes account IDs only.",
       "operationId": "lookup_by_public_key_v0",
@@ -15632,7 +15410,7 @@
       "fields": [
         {
           "description": "NEAR public key in `ed25519:...` or `secp256k1:...` form.",
-          "example": "ed25519:FekbqN74kXhVPRd8ysAqJwLydFvTPYh7ZXHmhqCETcR3",
+          "example": "ed25519:CCaThr3uokqnUs6Z5vVnaDcJdrfuTpYJHJWcAGubDjT",
           "label": "Public Key",
           "location": "path",
           "name": "public_key",
@@ -15646,7 +15424,7 @@
       "networks": [
         {
           "defaultFields": {
-            "public_key": "ed25519:FekbqN74kXhVPRd8ysAqJwLydFvTPYh7ZXHmhqCETcR3"
+            "public_key": "ed25519:CCaThr3uokqnUs6Z5vVnaDcJdrfuTpYJHJWcAGubDjT"
           },
           "key": "mainnet",
           "label": "Mainnet",
@@ -15654,7 +15432,7 @@
         },
         {
           "defaultFields": {
-            "public_key": "ed25519:FekbqN74kXhVPRd8ysAqJwLydFvTPYh7ZXHmhqCETcR3"
+            "public_key": "ed25519:5FiU4tWnA2QmivpLTdHJhLeSfeZ7KuW4KKNaDqoBKue2"
           },
           "key": "testnet",
           "label": "Testnet",
@@ -15665,7 +15443,6 @@
       "supportsFinality": false,
       "transport": "http"
     },
-    "outputModel": "standalone/generated/fastnear-v0-public-key-lookup-page-model.json",
     "pageModelId": "fastnear-v0-public-key-lookup",
     "replaceOperationPage": true,
     "request": {
@@ -15679,7 +15456,7 @@
             "body": null,
             "headers": {},
             "path": {
-              "public_key": "ed25519:FekbqN74kXhVPRd8ysAqJwLydFvTPYh7ZXHmhqCETcR3"
+              "public_key": "ed25519:CCaThr3uokqnUs6Z5vVnaDcJdrfuTpYJHJWcAGubDjT"
             },
             "query": {}
           }
@@ -15692,7 +15469,7 @@
             "body": null,
             "headers": {},
             "path": {
-              "public_key": "ed25519:FekbqN74kXhVPRd8ysAqJwLydFvTPYh7ZXHmhqCETcR3"
+              "public_key": "ed25519:5FiU4tWnA2QmivpLTdHJhLeSfeZ7KuW4KKNaDqoBKue2"
             },
             "query": {}
           }
@@ -15703,7 +15480,7 @@
         "path": [
           {
             "description": "NEAR public key in `ed25519:...` or `secp256k1:...` form.",
-            "example": "ed25519:FekbqN74kXhVPRd8ysAqJwLydFvTPYh7ZXHmhqCETcR3",
+            "example": "ed25519:CCaThr3uokqnUs6Z5vVnaDcJdrfuTpYJHJWcAGubDjT",
             "location": "path",
             "name": "public_key",
             "required": true,
@@ -15799,7 +15576,6 @@
   },
   {
     "canonicalPath": "/apis/fastnear/v0/public_key_lookup_all",
-    "generatedAt": "2026-04-13T14:51:41.895Z",
     "info": {
       "description": "Returns account IDs currently associated with the supplied public key, including limited-access keys when they are present in the FastNEAR index.",
       "operationId": "lookup_by_public_key_all_v0",
@@ -15812,7 +15588,7 @@
       "fields": [
         {
           "description": "NEAR public key in `ed25519:...` or `secp256k1:...` form.",
-          "example": "ed25519:HLcgpHWRn3ij97JfpPNYDScMXVguWSFH1mR58RB7qPpd",
+          "example": "ed25519:CCaThr3uokqnUs6Z5vVnaDcJdrfuTpYJHJWcAGubDjT",
           "label": "Public Key",
           "location": "path",
           "name": "public_key",
@@ -15826,7 +15602,7 @@
       "networks": [
         {
           "defaultFields": {
-            "public_key": "ed25519:HLcgpHWRn3ij97JfpPNYDScMXVguWSFH1mR58RB7qPpd"
+            "public_key": "ed25519:CCaThr3uokqnUs6Z5vVnaDcJdrfuTpYJHJWcAGubDjT"
           },
           "key": "mainnet",
           "label": "Mainnet",
@@ -15834,7 +15610,7 @@
         },
         {
           "defaultFields": {
-            "public_key": "ed25519:HLcgpHWRn3ij97JfpPNYDScMXVguWSFH1mR58RB7qPpd"
+            "public_key": "ed25519:5FiU4tWnA2QmivpLTdHJhLeSfeZ7KuW4KKNaDqoBKue2"
           },
           "key": "testnet",
           "label": "Testnet",
@@ -15845,7 +15621,6 @@
       "supportsFinality": false,
       "transport": "http"
     },
-    "outputModel": "standalone/generated/fastnear-v0-public-key-lookup-all-page-model.json",
     "pageModelId": "fastnear-v0-public-key-lookup-all",
     "replaceOperationPage": true,
     "request": {
@@ -15859,7 +15634,7 @@
             "body": null,
             "headers": {},
             "path": {
-              "public_key": "ed25519:HLcgpHWRn3ij97JfpPNYDScMXVguWSFH1mR58RB7qPpd"
+              "public_key": "ed25519:CCaThr3uokqnUs6Z5vVnaDcJdrfuTpYJHJWcAGubDjT"
             },
             "query": {}
           }
@@ -15872,7 +15647,7 @@
             "body": null,
             "headers": {},
             "path": {
-              "public_key": "ed25519:HLcgpHWRn3ij97JfpPNYDScMXVguWSFH1mR58RB7qPpd"
+              "public_key": "ed25519:5FiU4tWnA2QmivpLTdHJhLeSfeZ7KuW4KKNaDqoBKue2"
             },
             "query": {}
           }
@@ -15883,7 +15658,7 @@
         "path": [
           {
             "description": "NEAR public key in `ed25519:...` or `secp256k1:...` form.",
-            "example": "ed25519:HLcgpHWRn3ij97JfpPNYDScMXVguWSFH1mR58RB7qPpd",
+            "example": "ed25519:CCaThr3uokqnUs6Z5vVnaDcJdrfuTpYJHJWcAGubDjT",
             "location": "path",
             "name": "public_key",
             "required": true,
@@ -15979,7 +15754,6 @@
   },
   {
     "canonicalPath": "/apis/fastnear/v1/account_staking",
-    "generatedAt": "2026-04-13T14:51:41.898Z",
     "info": {
       "description": "Returns staking pool rows for the requested account. `last_update_block_height` is nullable when FastNEAR has not recorded a recent indexed update for that pool relationship.",
       "operationId": "account_staking_v1",
@@ -16006,7 +15780,7 @@
       "networks": [
         {
           "defaultFields": {
-            "account_id": "foundation.near"
+            "account_id": "root.near"
           },
           "key": "mainnet",
           "label": "Mainnet",
@@ -16014,7 +15788,7 @@
         },
         {
           "defaultFields": {
-            "account_id": "foundation.near"
+            "account_id": "root.testnet"
           },
           "key": "testnet",
           "label": "Testnet",
@@ -16025,7 +15799,6 @@
       "supportsFinality": false,
       "transport": "http"
     },
-    "outputModel": "standalone/generated/fastnear-v1-account-staking-page-model.json",
     "pageModelId": "fastnear-v1-account-staking",
     "replaceOperationPage": true,
     "request": {
@@ -16039,7 +15812,7 @@
             "body": null,
             "headers": {},
             "path": {
-              "account_id": "foundation.near"
+              "account_id": "root.near"
             },
             "query": {}
           }
@@ -16052,7 +15825,7 @@
             "body": null,
             "headers": {},
             "path": {
-              "account_id": "foundation.near"
+              "account_id": "root.testnet"
             },
             "query": {}
           }
@@ -16182,7 +15955,6 @@
   },
   {
     "canonicalPath": "/apis/fastnear/v1/account_ft",
-    "generatedAt": "2026-04-13T14:51:41.908Z",
     "info": {
       "description": "Returns fungible token rows for the requested account. Balances and `last_update_block_height` remain nullable when the index has not recorded them yet.",
       "operationId": "account_ft_v1",
@@ -16209,7 +15981,7 @@
       "networks": [
         {
           "defaultFields": {
-            "account_id": "foundation.near"
+            "account_id": "root.near"
           },
           "key": "mainnet",
           "label": "Mainnet",
@@ -16217,7 +15989,7 @@
         },
         {
           "defaultFields": {
-            "account_id": "foundation.near"
+            "account_id": "root.testnet"
           },
           "key": "testnet",
           "label": "Testnet",
@@ -16228,7 +16000,6 @@
       "supportsFinality": false,
       "transport": "http"
     },
-    "outputModel": "standalone/generated/fastnear-v1-account-ft-page-model.json",
     "pageModelId": "fastnear-v1-account-ft",
     "replaceOperationPage": true,
     "request": {
@@ -16242,7 +16013,7 @@
             "body": null,
             "headers": {},
             "path": {
-              "account_id": "foundation.near"
+              "account_id": "root.near"
             },
             "query": {}
           }
@@ -16255,7 +16026,7 @@
             "body": null,
             "headers": {},
             "path": {
-              "account_id": "foundation.near"
+              "account_id": "root.testnet"
             },
             "query": {}
           }
@@ -16393,7 +16164,6 @@
   },
   {
     "canonicalPath": "/apis/fastnear/v1/account_nft",
-    "generatedAt": "2026-04-13T14:51:41.911Z",
     "info": {
       "description": "Returns NFT contract rows for the requested account. `last_update_block_height` is nullable when FastNEAR has not recorded a recent indexed update for that contract relationship.",
       "operationId": "account_nft_v1",
@@ -16420,7 +16190,7 @@
       "networks": [
         {
           "defaultFields": {
-            "account_id": "foundation.near"
+            "account_id": "root.near"
           },
           "key": "mainnet",
           "label": "Mainnet",
@@ -16428,7 +16198,7 @@
         },
         {
           "defaultFields": {
-            "account_id": "foundation.near"
+            "account_id": "root.testnet"
           },
           "key": "testnet",
           "label": "Testnet",
@@ -16439,7 +16209,6 @@
       "supportsFinality": false,
       "transport": "http"
     },
-    "outputModel": "standalone/generated/fastnear-v1-account-nft-page-model.json",
     "pageModelId": "fastnear-v1-account-nft",
     "replaceOperationPage": true,
     "request": {
@@ -16453,7 +16222,7 @@
             "body": null,
             "headers": {},
             "path": {
-              "account_id": "foundation.near"
+              "account_id": "root.near"
             },
             "query": {}
           }
@@ -16466,7 +16235,7 @@
             "body": null,
             "headers": {},
             "path": {
-              "account_id": "foundation.near"
+              "account_id": "root.testnet"
             },
             "query": {}
           }
@@ -16596,7 +16365,6 @@
   },
   {
     "canonicalPath": "/apis/fastnear/v1/account_full",
-    "generatedAt": "2026-04-13T14:51:41.913Z",
     "info": {
       "description": "Returns staking, fungible token, NFT, and account-state information for the requested account. `state` remains nullable when the account state has not been recorded.",
       "operationId": "account_full_v1",
@@ -16623,7 +16391,7 @@
       "networks": [
         {
           "defaultFields": {
-            "account_id": "foundation.near"
+            "account_id": "root.near"
           },
           "key": "mainnet",
           "label": "Mainnet",
@@ -16631,7 +16399,7 @@
         },
         {
           "defaultFields": {
-            "account_id": "foundation.near"
+            "account_id": "root.testnet"
           },
           "key": "testnet",
           "label": "Testnet",
@@ -16642,7 +16410,6 @@
       "supportsFinality": false,
       "transport": "http"
     },
-    "outputModel": "standalone/generated/fastnear-v1-account-full-page-model.json",
     "pageModelId": "fastnear-v1-account-full",
     "replaceOperationPage": true,
     "request": {
@@ -16656,7 +16423,7 @@
             "body": null,
             "headers": {},
             "path": {
-              "account_id": "foundation.near"
+              "account_id": "root.near"
             },
             "query": {}
           }
@@ -16669,7 +16436,7 @@
             "body": null,
             "headers": {},
             "path": {
-              "account_id": "foundation.near"
+              "account_id": "root.testnet"
             },
             "query": {}
           }
@@ -16883,7 +16650,6 @@
   },
   {
     "canonicalPath": "/apis/fastnear/v1/public_key_lookup",
-    "generatedAt": "2026-04-13T14:51:41.916Z",
     "info": {
       "description": "Returns account IDs currently associated with the supplied full-access public key. This v1 route currently uses the same `{ public_key, account_ids }` response shape as the v0 route.",
       "operationId": "lookup_by_public_key_v1",
@@ -16896,7 +16662,7 @@
       "fields": [
         {
           "description": "NEAR public key in `ed25519:...` or `secp256k1:...` form.",
-          "example": "ed25519:FekbqN74kXhVPRd8ysAqJwLydFvTPYh7ZXHmhqCETcR3",
+          "example": "ed25519:CCaThr3uokqnUs6Z5vVnaDcJdrfuTpYJHJWcAGubDjT",
           "label": "Public Key",
           "location": "path",
           "name": "public_key",
@@ -16910,7 +16676,7 @@
       "networks": [
         {
           "defaultFields": {
-            "public_key": "ed25519:FekbqN74kXhVPRd8ysAqJwLydFvTPYh7ZXHmhqCETcR3"
+            "public_key": "ed25519:CCaThr3uokqnUs6Z5vVnaDcJdrfuTpYJHJWcAGubDjT"
           },
           "key": "mainnet",
           "label": "Mainnet",
@@ -16918,7 +16684,7 @@
         },
         {
           "defaultFields": {
-            "public_key": "ed25519:FekbqN74kXhVPRd8ysAqJwLydFvTPYh7ZXHmhqCETcR3"
+            "public_key": "ed25519:5FiU4tWnA2QmivpLTdHJhLeSfeZ7KuW4KKNaDqoBKue2"
           },
           "key": "testnet",
           "label": "Testnet",
@@ -16929,7 +16695,6 @@
       "supportsFinality": false,
       "transport": "http"
     },
-    "outputModel": "standalone/generated/fastnear-v1-public-key-lookup-page-model.json",
     "pageModelId": "fastnear-v1-public-key-lookup",
     "replaceOperationPage": true,
     "request": {
@@ -16943,7 +16708,7 @@
             "body": null,
             "headers": {},
             "path": {
-              "public_key": "ed25519:FekbqN74kXhVPRd8ysAqJwLydFvTPYh7ZXHmhqCETcR3"
+              "public_key": "ed25519:CCaThr3uokqnUs6Z5vVnaDcJdrfuTpYJHJWcAGubDjT"
             },
             "query": {}
           }
@@ -16956,7 +16721,7 @@
             "body": null,
             "headers": {},
             "path": {
-              "public_key": "ed25519:FekbqN74kXhVPRd8ysAqJwLydFvTPYh7ZXHmhqCETcR3"
+              "public_key": "ed25519:5FiU4tWnA2QmivpLTdHJhLeSfeZ7KuW4KKNaDqoBKue2"
             },
             "query": {}
           }
@@ -16967,7 +16732,7 @@
         "path": [
           {
             "description": "NEAR public key in `ed25519:...` or `secp256k1:...` form.",
-            "example": "ed25519:FekbqN74kXhVPRd8ysAqJwLydFvTPYh7ZXHmhqCETcR3",
+            "example": "ed25519:CCaThr3uokqnUs6Z5vVnaDcJdrfuTpYJHJWcAGubDjT",
             "location": "path",
             "name": "public_key",
             "required": true,
@@ -17063,7 +16828,6 @@
   },
   {
     "canonicalPath": "/apis/fastnear/v1/ft_top",
-    "generatedAt": "2026-04-13T14:51:41.919Z",
     "info": {
       "description": "Returns the top indexed accounts by balance for the requested fungible token.",
       "operationId": "ft_top_v1",
@@ -17098,7 +16862,7 @@
         },
         {
           "defaultFields": {
-            "token_id": "wrap.near"
+            "token_id": "wrap.testnet"
           },
           "key": "testnet",
           "label": "Testnet",
@@ -17109,7 +16873,6 @@
       "supportsFinality": false,
       "transport": "http"
     },
-    "outputModel": "standalone/generated/fastnear-v1-ft-top-page-model.json",
     "pageModelId": "fastnear-v1-ft-top",
     "replaceOperationPage": true,
     "request": {
@@ -17136,7 +16899,7 @@
             "body": null,
             "headers": {},
             "path": {
-              "token_id": "wrap.near"
+              "token_id": "wrap.testnet"
             },
             "query": {}
           }
@@ -17265,7 +17028,6 @@
   },
   {
     "canonicalPath": "/apis/fastnear/v1/public_key_lookup_all",
-    "generatedAt": "2026-04-13T14:51:41.921Z",
     "info": {
       "description": "Returns account IDs currently associated with the supplied public key, including limited-access keys when they are present in the FastNEAR index. This v1 route currently uses the same `{ public_key, account_ids }` response shape as the v0 route.",
       "operationId": "lookup_by_public_key_all_v1",
@@ -17278,7 +17040,7 @@
       "fields": [
         {
           "description": "NEAR public key in `ed25519:...` or `secp256k1:...` form.",
-          "example": "ed25519:HLcgpHWRn3ij97JfpPNYDScMXVguWSFH1mR58RB7qPpd",
+          "example": "ed25519:CCaThr3uokqnUs6Z5vVnaDcJdrfuTpYJHJWcAGubDjT",
           "label": "Public Key",
           "location": "path",
           "name": "public_key",
@@ -17292,7 +17054,7 @@
       "networks": [
         {
           "defaultFields": {
-            "public_key": "ed25519:HLcgpHWRn3ij97JfpPNYDScMXVguWSFH1mR58RB7qPpd"
+            "public_key": "ed25519:CCaThr3uokqnUs6Z5vVnaDcJdrfuTpYJHJWcAGubDjT"
           },
           "key": "mainnet",
           "label": "Mainnet",
@@ -17300,7 +17062,7 @@
         },
         {
           "defaultFields": {
-            "public_key": "ed25519:HLcgpHWRn3ij97JfpPNYDScMXVguWSFH1mR58RB7qPpd"
+            "public_key": "ed25519:5FiU4tWnA2QmivpLTdHJhLeSfeZ7KuW4KKNaDqoBKue2"
           },
           "key": "testnet",
           "label": "Testnet",
@@ -17311,7 +17073,6 @@
       "supportsFinality": false,
       "transport": "http"
     },
-    "outputModel": "standalone/generated/fastnear-v1-public-key-lookup-all-page-model.json",
     "pageModelId": "fastnear-v1-public-key-lookup-all",
     "replaceOperationPage": true,
     "request": {
@@ -17325,7 +17086,7 @@
             "body": null,
             "headers": {},
             "path": {
-              "public_key": "ed25519:HLcgpHWRn3ij97JfpPNYDScMXVguWSFH1mR58RB7qPpd"
+              "public_key": "ed25519:CCaThr3uokqnUs6Z5vVnaDcJdrfuTpYJHJWcAGubDjT"
             },
             "query": {}
           }
@@ -17338,7 +17099,7 @@
             "body": null,
             "headers": {},
             "path": {
-              "public_key": "ed25519:HLcgpHWRn3ij97JfpPNYDScMXVguWSFH1mR58RB7qPpd"
+              "public_key": "ed25519:5FiU4tWnA2QmivpLTdHJhLeSfeZ7KuW4KKNaDqoBKue2"
             },
             "query": {}
           }
@@ -17349,7 +17110,7 @@
         "path": [
           {
             "description": "NEAR public key in `ed25519:...` or `secp256k1:...` form.",
-            "example": "ed25519:HLcgpHWRn3ij97JfpPNYDScMXVguWSFH1mR58RB7qPpd",
+            "example": "ed25519:CCaThr3uokqnUs6Z5vVnaDcJdrfuTpYJHJWcAGubDjT",
             "location": "path",
             "name": "public_key",
             "required": true,
@@ -17445,7 +17206,6 @@
   },
   {
     "canonicalPath": "/apis/kv-fastdata/v0/all_by_predecessor",
-    "generatedAt": "2026-04-13T14:51:41.925Z",
     "info": {
       "description": "Returns the latest row for each `(current_account_id, key)` pair written by the selected predecessor. `page_token` values are opaque and scoped to this endpoint and predecessor.",
       "operationId": "all_by_predecessor",
@@ -17458,7 +17218,7 @@
       "fields": [
         {
           "description": "Calling account that wrote the FastData keys.",
-          "example": "alice.near",
+          "example": "james.near",
           "label": "Predecessor Id",
           "location": "path",
           "name": "predecessor_id",
@@ -17506,7 +17266,7 @@
       "networks": [
         {
           "defaultFields": {
-            "predecessor_id": "alice.near",
+            "predecessor_id": "james.near",
             "include_metadata": true,
             "limit": 50,
             "page_token": ""
@@ -17517,7 +17277,7 @@
         },
         {
           "defaultFields": {
-            "predecessor_id": "alice.testnet",
+            "predecessor_id": "kv.gork-agent.testnet",
             "include_metadata": true,
             "limit": 50,
             "page_token": ""
@@ -17531,7 +17291,6 @@
       "supportsFinality": false,
       "transport": "http"
     },
-    "outputModel": "standalone/generated/kv-fastdata-v0-all-by-predecessor-page-model.json",
     "pageModelId": "kv-fastdata-v0-all-by-predecessor",
     "replaceOperationPage": true,
     "request": {
@@ -17579,7 +17338,7 @@
             },
             "headers": {},
             "path": {
-              "predecessor_id": "alice.near"
+              "predecessor_id": "james.near"
             },
             "query": {}
           }
@@ -17595,7 +17354,7 @@
             },
             "headers": {},
             "path": {
-              "predecessor_id": "alice.testnet"
+              "predecessor_id": "kv.gork-agent.testnet"
             },
             "query": {}
           }
@@ -17607,7 +17366,7 @@
         "path": [
           {
             "description": "Calling account that wrote the FastData keys.",
-            "example": "alice.near",
+            "example": "james.near",
             "location": "path",
             "name": "predecessor_id",
             "required": true,
@@ -17798,7 +17557,6 @@
   },
   {
     "canonicalPath": "/apis/kv-fastdata/v0/history_by_key",
-    "generatedAt": "2026-04-13T14:51:41.928Z",
     "info": {
       "description": "Returns historical FastData rows for one exact key across every indexed contract and predecessor. `page_token` values are opaque and only valid when reused with the same endpoint and filters.",
       "operationId": "history_by_key",
@@ -17873,8 +17631,8 @@
         {
           "defaultFields": {
             "asc": false,
-            "include_metadata": true,
-            "key": "settings/theme",
+            "include_metadata": false,
+            "key": "graph/follow/sleet.near",
             "limit": 50,
             "page_token": ""
           },
@@ -17885,8 +17643,8 @@
         {
           "defaultFields": {
             "asc": false,
-            "include_metadata": true,
-            "key": "settings/theme",
+            "include_metadata": false,
+            "key": "value",
             "limit": 50,
             "page_token": ""
           },
@@ -17899,7 +17657,6 @@
       "supportsFinality": false,
       "transport": "http"
     },
-    "outputModel": "standalone/generated/kv-fastdata-v0-history-by-key-page-model.json",
     "pageModelId": "kv-fastdata-v0-history-by-key",
     "replaceOperationPage": true,
     "request": {
@@ -17963,8 +17720,8 @@
           "request": {
             "body": {
               "asc": false,
-              "include_metadata": true,
-              "key": "settings/theme",
+              "include_metadata": false,
+              "key": "graph/follow/sleet.near",
               "limit": 50
             },
             "headers": {},
@@ -17979,8 +17736,8 @@
           "request": {
             "body": {
               "asc": false,
-              "include_metadata": true,
-              "key": "settings/theme",
+              "include_metadata": false,
+              "key": "value",
               "limit": 50
             },
             "headers": {},
@@ -18175,7 +17932,6 @@
   },
   {
     "canonicalPath": "/apis/kv-fastdata/v0/history_by_account",
-    "generatedAt": "2026-04-13T14:51:41.931Z",
     "info": {
       "description": "Returns historical rows for the requested contract account across all predecessors. `page_token` values are opaque and only valid when reused with the same endpoint and filters.",
       "operationId": "history_by_account",
@@ -18188,7 +17944,7 @@
       "fields": [
         {
           "description": "Contract account whose FastData keys were written.",
-          "example": "app.near",
+          "example": "social.near",
           "label": "Current Account Id",
           "location": "path",
           "name": "current_account_id",
@@ -18271,11 +18027,11 @@
       "networks": [
         {
           "defaultFields": {
-            "current_account_id": "app.near",
+            "current_account_id": "social.near",
             "asc": false,
             "include_metadata": true,
             "key": "",
-            "key_prefix": "settings/",
+            "key_prefix": "graph/follow/",
             "limit": 50,
             "page_token": ""
           },
@@ -18285,11 +18041,11 @@
         },
         {
           "defaultFields": {
-            "current_account_id": "guest-book.testnet",
+            "current_account_id": "kv.gork-agent.testnet",
             "asc": false,
             "include_metadata": true,
             "key": "",
-            "key_prefix": "settings/",
+            "key_prefix": "value",
             "limit": 50,
             "page_token": ""
           },
@@ -18302,7 +18058,6 @@
       "supportsFinality": false,
       "transport": "http"
     },
-    "outputModel": "standalone/generated/kv-fastdata-v0-history-by-account-page-model.json",
     "pageModelId": "kv-fastdata-v0-history-by-account",
     "replaceOperationPage": true,
     "request": {
@@ -18372,12 +18127,12 @@
             "body": {
               "asc": false,
               "include_metadata": true,
-              "key_prefix": "settings/",
+              "key_prefix": "graph/follow/",
               "limit": 50
             },
             "headers": {},
             "path": {
-              "current_account_id": "app.near"
+              "current_account_id": "social.near"
             },
             "query": {}
           }
@@ -18390,12 +18145,12 @@
             "body": {
               "asc": false,
               "include_metadata": true,
-              "key_prefix": "settings/",
+              "key_prefix": "value",
               "limit": 50
             },
             "headers": {},
             "path": {
-              "current_account_id": "guest-book.testnet"
+              "current_account_id": "kv.gork-agent.testnet"
             },
             "query": {}
           }
@@ -18407,7 +18162,7 @@
         "path": [
           {
             "description": "Contract account whose FastData keys were written.",
-            "example": "app.near",
+            "example": "social.near",
             "location": "path",
             "name": "current_account_id",
             "required": true,
@@ -18598,7 +18353,6 @@
   },
   {
     "canonicalPath": "/apis/kv-fastdata/v0/history_by_predecessor",
-    "generatedAt": "2026-04-13T14:51:41.936Z",
     "info": {
       "description": "Returns historical rows for one `predecessor_id` + `current_account_id` pair. Use `key` or `key_prefix` to narrow the search. `page_token` values are opaque and only valid when reused with the same endpoint and filters.",
       "operationId": "history_by_predecessor",
@@ -18611,7 +18365,7 @@
       "fields": [
         {
           "description": "Contract account whose FastData keys were written.",
-          "example": "app.near",
+          "example": "social.near",
           "label": "Current Account Id",
           "location": "path",
           "name": "current_account_id",
@@ -18622,7 +18376,7 @@
         },
         {
           "description": "Calling account that wrote the FastData keys.",
-          "example": "alice.near",
+          "example": "james.near",
           "label": "Predecessor Id",
           "location": "path",
           "name": "predecessor_id",
@@ -18705,12 +18459,12 @@
       "networks": [
         {
           "defaultFields": {
-            "current_account_id": "app.near",
-            "predecessor_id": "alice.near",
+            "current_account_id": "social.near",
+            "predecessor_id": "james.near",
             "asc": false,
             "include_metadata": true,
             "key": "",
-            "key_prefix": "settings/",
+            "key_prefix": "graph/follow/",
             "limit": 50,
             "page_token": ""
           },
@@ -18720,12 +18474,12 @@
         },
         {
           "defaultFields": {
-            "current_account_id": "guest-book.testnet",
-            "predecessor_id": "alice.testnet",
+            "current_account_id": "kv.gork-agent.testnet",
+            "predecessor_id": "kv.gork-agent.testnet",
             "asc": false,
             "include_metadata": true,
             "key": "",
-            "key_prefix": "settings/",
+            "key_prefix": "value",
             "limit": 50,
             "page_token": ""
           },
@@ -18738,7 +18492,6 @@
       "supportsFinality": false,
       "transport": "http"
     },
-    "outputModel": "standalone/generated/kv-fastdata-v0-history-by-predecessor-page-model.json",
     "pageModelId": "kv-fastdata-v0-history-by-predecessor",
     "replaceOperationPage": true,
     "request": {
@@ -18808,13 +18561,13 @@
             "body": {
               "asc": false,
               "include_metadata": true,
-              "key_prefix": "settings/",
+              "key_prefix": "graph/follow/",
               "limit": 50
             },
             "headers": {},
             "path": {
-              "current_account_id": "app.near",
-              "predecessor_id": "alice.near"
+              "current_account_id": "social.near",
+              "predecessor_id": "james.near"
             },
             "query": {}
           }
@@ -18827,13 +18580,13 @@
             "body": {
               "asc": false,
               "include_metadata": true,
-              "key_prefix": "settings/",
+              "key_prefix": "value",
               "limit": 50
             },
             "headers": {},
             "path": {
-              "current_account_id": "guest-book.testnet",
-              "predecessor_id": "alice.testnet"
+              "current_account_id": "kv.gork-agent.testnet",
+              "predecessor_id": "kv.gork-agent.testnet"
             },
             "query": {}
           }
@@ -18845,7 +18598,7 @@
         "path": [
           {
             "description": "Contract account whose FastData keys were written.",
-            "example": "app.near",
+            "example": "social.near",
             "location": "path",
             "name": "current_account_id",
             "required": true,
@@ -18855,7 +18608,7 @@
           },
           {
             "description": "Calling account that wrote the FastData keys.",
-            "example": "alice.near",
+            "example": "james.near",
             "location": "path",
             "name": "predecessor_id",
             "required": true,
@@ -19046,7 +18799,6 @@
   },
   {
     "canonicalPath": "/apis/kv-fastdata/v0/get_history_key",
-    "generatedAt": "2026-04-13T14:51:41.942Z",
     "info": {
       "description": "Returns historical rows for one exact key written by the selected predecessor to the selected contract.",
       "operationId": "get_history_key",
@@ -19059,7 +18811,7 @@
       "fields": [
         {
           "description": "Contract account whose FastData keys were written.",
-          "example": "app.near",
+          "example": "social.near",
           "label": "Current Account Id",
           "location": "path",
           "name": "current_account_id",
@@ -19070,7 +18822,7 @@
         },
         {
           "description": "Calling account that wrote the FastData keys.",
-          "example": "alice.near",
+          "example": "james.near",
           "label": "Predecessor Id",
           "location": "path",
           "name": "predecessor_id",
@@ -19081,7 +18833,7 @@
         },
         {
           "description": "Exact FastData key to return.",
-          "example": "settings/theme",
+          "example": "graph/follow/sleet.near",
           "label": "Key",
           "location": "path",
           "name": "key",
@@ -19095,9 +18847,9 @@
       "networks": [
         {
           "defaultFields": {
-            "current_account_id": "app.near",
-            "predecessor_id": "alice.near",
-            "key": "settings/theme"
+            "current_account_id": "social.near",
+            "predecessor_id": "james.near",
+            "key": "graph/follow/sleet.near"
           },
           "key": "mainnet",
           "label": "Mainnet",
@@ -19105,9 +18857,9 @@
         },
         {
           "defaultFields": {
-            "current_account_id": "guest-book.testnet",
-            "predecessor_id": "alice.testnet",
-            "key": "settings/theme"
+            "current_account_id": "kv.gork-agent.testnet",
+            "predecessor_id": "kv.gork-agent.testnet",
+            "key": "value"
           },
           "key": "testnet",
           "label": "Testnet",
@@ -19118,7 +18870,6 @@
       "supportsFinality": false,
       "transport": "http"
     },
-    "outputModel": "standalone/generated/kv-fastdata-v0-get-history-key-page-model.json",
     "pageModelId": "kv-fastdata-v0-get-history-key",
     "replaceOperationPage": true,
     "request": {
@@ -19132,9 +18883,9 @@
             "body": null,
             "headers": {},
             "path": {
-              "current_account_id": "app.near",
-              "predecessor_id": "alice.near",
-              "key": "settings/theme"
+              "current_account_id": "social.near",
+              "predecessor_id": "james.near",
+              "key": "graph/follow/sleet.near"
             },
             "query": {}
           }
@@ -19147,9 +18898,9 @@
             "body": null,
             "headers": {},
             "path": {
-              "current_account_id": "guest-book.testnet",
-              "predecessor_id": "alice.testnet",
-              "key": "settings/theme"
+              "current_account_id": "kv.gork-agent.testnet",
+              "predecessor_id": "kv.gork-agent.testnet",
+              "key": "value"
             },
             "query": {}
           }
@@ -19160,7 +18911,7 @@
         "path": [
           {
             "description": "Contract account whose FastData keys were written.",
-            "example": "app.near",
+            "example": "social.near",
             "location": "path",
             "name": "current_account_id",
             "required": true,
@@ -19170,7 +18921,7 @@
           },
           {
             "description": "Calling account that wrote the FastData keys.",
-            "example": "alice.near",
+            "example": "james.near",
             "location": "path",
             "name": "predecessor_id",
             "required": true,
@@ -19180,7 +18931,7 @@
           },
           {
             "description": "Exact FastData key to return.",
-            "example": "settings/theme",
+            "example": "graph/follow/sleet.near",
             "location": "path",
             "name": "key",
             "required": true,
@@ -19349,7 +19100,6 @@
   },
   {
     "canonicalPath": "/apis/kv-fastdata/v0/latest_by_account",
-    "generatedAt": "2026-04-13T14:51:41.950Z",
     "info": {
       "description": "Returns the latest row for each `(predecessor_id, key)` pair written to the contract. `page_token` values are opaque and scoped to this endpoint, the contract account, and the active filters.",
       "operationId": "latest_by_account",
@@ -19362,7 +19112,7 @@
       "fields": [
         {
           "description": "Contract account whose FastData keys were written.",
-          "example": "app.near",
+          "example": "social.near",
           "label": "Current Account Id",
           "location": "path",
           "name": "current_account_id",
@@ -19432,10 +19182,10 @@
       "networks": [
         {
           "defaultFields": {
-            "current_account_id": "app.near",
+            "current_account_id": "social.near",
             "include_metadata": true,
             "key": "",
-            "key_prefix": "settings/",
+            "key_prefix": "graph/follow/",
             "limit": 50,
             "page_token": ""
           },
@@ -19445,10 +19195,10 @@
         },
         {
           "defaultFields": {
-            "current_account_id": "guest-book.testnet",
+            "current_account_id": "kv.gork-agent.testnet",
             "include_metadata": true,
             "key": "",
-            "key_prefix": "settings/",
+            "key_prefix": "value",
             "limit": 50,
             "page_token": ""
           },
@@ -19461,7 +19211,6 @@
       "supportsFinality": false,
       "transport": "http"
     },
-    "outputModel": "standalone/generated/kv-fastdata-v0-latest-by-account-page-model.json",
     "pageModelId": "kv-fastdata-v0-latest-by-account",
     "replaceOperationPage": true,
     "request": {
@@ -19521,12 +19270,12 @@
           "request": {
             "body": {
               "include_metadata": true,
-              "key_prefix": "settings/",
+              "key_prefix": "graph/follow/",
               "limit": 50
             },
             "headers": {},
             "path": {
-              "current_account_id": "app.near"
+              "current_account_id": "social.near"
             },
             "query": {}
           }
@@ -19538,12 +19287,12 @@
           "request": {
             "body": {
               "include_metadata": true,
-              "key_prefix": "settings/",
+              "key_prefix": "value",
               "limit": 50
             },
             "headers": {},
             "path": {
-              "current_account_id": "guest-book.testnet"
+              "current_account_id": "kv.gork-agent.testnet"
             },
             "query": {}
           }
@@ -19555,7 +19304,7 @@
         "path": [
           {
             "description": "Contract account whose FastData keys were written.",
-            "example": "app.near",
+            "example": "social.near",
             "location": "path",
             "name": "current_account_id",
             "required": true,
@@ -19746,7 +19495,6 @@
   },
   {
     "canonicalPath": "/apis/kv-fastdata/v0/latest_by_predecessor",
-    "generatedAt": "2026-04-13T14:51:41.955Z",
     "info": {
       "description": "Returns the latest row for each key written by the selected predecessor to the requested contract. `page_token` values are opaque and scoped to this endpoint and filter set.",
       "operationId": "latest_by_predecessor",
@@ -19759,7 +19507,7 @@
       "fields": [
         {
           "description": "Contract account whose FastData keys were written.",
-          "example": "app.near",
+          "example": "social.near",
           "label": "Current Account Id",
           "location": "path",
           "name": "current_account_id",
@@ -19770,7 +19518,7 @@
         },
         {
           "description": "Calling account that wrote the FastData keys.",
-          "example": "alice.near",
+          "example": "james.near",
           "label": "Predecessor Id",
           "location": "path",
           "name": "predecessor_id",
@@ -19840,11 +19588,11 @@
       "networks": [
         {
           "defaultFields": {
-            "current_account_id": "app.near",
-            "predecessor_id": "alice.near",
+            "current_account_id": "social.near",
+            "predecessor_id": "james.near",
             "include_metadata": true,
             "key": "",
-            "key_prefix": "settings/",
+            "key_prefix": "graph/follow/",
             "limit": 50,
             "page_token": ""
           },
@@ -19854,11 +19602,11 @@
         },
         {
           "defaultFields": {
-            "current_account_id": "guest-book.testnet",
-            "predecessor_id": "alice.testnet",
+            "current_account_id": "kv.gork-agent.testnet",
+            "predecessor_id": "kv.gork-agent.testnet",
             "include_metadata": true,
             "key": "",
-            "key_prefix": "settings/",
+            "key_prefix": "value",
             "limit": 50,
             "page_token": ""
           },
@@ -19871,7 +19619,6 @@
       "supportsFinality": false,
       "transport": "http"
     },
-    "outputModel": "standalone/generated/kv-fastdata-v0-latest-by-predecessor-page-model.json",
     "pageModelId": "kv-fastdata-v0-latest-by-predecessor",
     "replaceOperationPage": true,
     "request": {
@@ -19931,13 +19678,13 @@
           "request": {
             "body": {
               "include_metadata": true,
-              "key_prefix": "settings/",
+              "key_prefix": "graph/follow/",
               "limit": 50
             },
             "headers": {},
             "path": {
-              "current_account_id": "app.near",
-              "predecessor_id": "alice.near"
+              "current_account_id": "social.near",
+              "predecessor_id": "james.near"
             },
             "query": {}
           }
@@ -19949,13 +19696,13 @@
           "request": {
             "body": {
               "include_metadata": true,
-              "key_prefix": "settings/",
+              "key_prefix": "value",
               "limit": 50
             },
             "headers": {},
             "path": {
-              "current_account_id": "guest-book.testnet",
-              "predecessor_id": "alice.testnet"
+              "current_account_id": "kv.gork-agent.testnet",
+              "predecessor_id": "kv.gork-agent.testnet"
             },
             "query": {}
           }
@@ -19967,7 +19714,7 @@
         "path": [
           {
             "description": "Contract account whose FastData keys were written.",
-            "example": "app.near",
+            "example": "social.near",
             "location": "path",
             "name": "current_account_id",
             "required": true,
@@ -19977,7 +19724,7 @@
           },
           {
             "description": "Calling account that wrote the FastData keys.",
-            "example": "alice.near",
+            "example": "james.near",
             "location": "path",
             "name": "predecessor_id",
             "required": true,
@@ -20168,7 +19915,6 @@
   },
   {
     "canonicalPath": "/apis/kv-fastdata/v0/get_latest_key",
-    "generatedAt": "2026-04-13T14:51:41.965Z",
     "info": {
       "description": "Returns the latest row for one exact key written by the selected predecessor to the selected contract.",
       "operationId": "get_latest_key",
@@ -20181,7 +19927,7 @@
       "fields": [
         {
           "description": "Contract account whose FastData keys were written.",
-          "example": "app.near",
+          "example": "social.near",
           "label": "Current Account Id",
           "location": "path",
           "name": "current_account_id",
@@ -20192,7 +19938,7 @@
         },
         {
           "description": "Calling account that wrote the FastData keys.",
-          "example": "alice.near",
+          "example": "james.near",
           "label": "Predecessor Id",
           "location": "path",
           "name": "predecessor_id",
@@ -20203,7 +19949,7 @@
         },
         {
           "description": "Exact FastData key to return.",
-          "example": "settings/theme",
+          "example": "graph/follow/sleet.near",
           "label": "Key",
           "location": "path",
           "name": "key",
@@ -20217,9 +19963,9 @@
       "networks": [
         {
           "defaultFields": {
-            "current_account_id": "app.near",
-            "predecessor_id": "alice.near",
-            "key": "settings/theme"
+            "current_account_id": "social.near",
+            "predecessor_id": "james.near",
+            "key": "graph/follow/sleet.near"
           },
           "key": "mainnet",
           "label": "Mainnet",
@@ -20227,9 +19973,9 @@
         },
         {
           "defaultFields": {
-            "current_account_id": "guest-book.testnet",
-            "predecessor_id": "alice.testnet",
-            "key": "settings/theme"
+            "current_account_id": "kv.gork-agent.testnet",
+            "predecessor_id": "kv.gork-agent.testnet",
+            "key": "value"
           },
           "key": "testnet",
           "label": "Testnet",
@@ -20240,7 +19986,6 @@
       "supportsFinality": false,
       "transport": "http"
     },
-    "outputModel": "standalone/generated/kv-fastdata-v0-get-latest-key-page-model.json",
     "pageModelId": "kv-fastdata-v0-get-latest-key",
     "replaceOperationPage": true,
     "request": {
@@ -20254,9 +19999,9 @@
             "body": null,
             "headers": {},
             "path": {
-              "current_account_id": "app.near",
-              "predecessor_id": "alice.near",
-              "key": "settings/theme"
+              "current_account_id": "social.near",
+              "predecessor_id": "james.near",
+              "key": "graph/follow/sleet.near"
             },
             "query": {}
           }
@@ -20269,9 +20014,9 @@
             "body": null,
             "headers": {},
             "path": {
-              "current_account_id": "guest-book.testnet",
-              "predecessor_id": "alice.testnet",
-              "key": "settings/theme"
+              "current_account_id": "kv.gork-agent.testnet",
+              "predecessor_id": "kv.gork-agent.testnet",
+              "key": "value"
             },
             "query": {}
           }
@@ -20282,7 +20027,7 @@
         "path": [
           {
             "description": "Contract account whose FastData keys were written.",
-            "example": "app.near",
+            "example": "social.near",
             "location": "path",
             "name": "current_account_id",
             "required": true,
@@ -20292,7 +20037,7 @@
           },
           {
             "description": "Calling account that wrote the FastData keys.",
-            "example": "alice.near",
+            "example": "james.near",
             "location": "path",
             "name": "predecessor_id",
             "required": true,
@@ -20302,7 +20047,7 @@
           },
           {
             "description": "Exact FastData key to return.",
-            "example": "settings/theme",
+            "example": "graph/follow/sleet.near",
             "location": "path",
             "name": "key",
             "required": true,
@@ -20471,7 +20216,6 @@
   },
   {
     "canonicalPath": "/apis/kv-fastdata/v0/multi",
-    "generatedAt": "2026-04-13T14:51:41.983Z",
     "info": {
       "description": "Returns the latest entry for each requested fully qualified key. Missing keys are represented as `null` entries in the response array.",
       "operationId": "multi",
@@ -20516,8 +20260,8 @@
           "defaultFields": {
             "include_metadata": true,
             "keys": [
-              "app.near/alice.near/settings/theme",
-              "app.near/alice.near/settings/missing"
+              "social.near/james.near/graph/follow/sleet.near",
+              "social.near/james.near/graph/follow/missing"
             ]
           },
           "key": "mainnet",
@@ -20528,8 +20272,8 @@
           "defaultFields": {
             "include_metadata": true,
             "keys": [
-              "guest-book.testnet/alice.testnet/settings/theme",
-              "guest-book.testnet/alice.testnet/settings/missing"
+              "kv.gork-agent.testnet/kv.gork-agent.testnet/value",
+              "kv.gork-agent.testnet/kv.gork-agent.testnet/missing"
             ]
           },
           "key": "testnet",
@@ -20541,7 +20285,6 @@
       "supportsFinality": false,
       "transport": "http"
     },
-    "outputModel": "standalone/generated/kv-fastdata-v0-multi-page-model.json",
     "pageModelId": "kv-fastdata-v0-multi",
     "replaceOperationPage": true,
     "request": {
@@ -20584,8 +20327,8 @@
             "body": {
               "include_metadata": true,
               "keys": [
-                "app.near/alice.near/settings/theme",
-                "app.near/alice.near/settings/missing"
+                "social.near/james.near/graph/follow/sleet.near",
+                "social.near/james.near/graph/follow/missing"
               ]
             },
             "headers": {},
@@ -20601,8 +20344,8 @@
             "body": {
               "include_metadata": true,
               "keys": [
-                "guest-book.testnet/alice.testnet/settings/theme",
-                "guest-book.testnet/alice.testnet/settings/missing"
+                "kv.gork-agent.testnet/kv.gork-agent.testnet/value",
+                "kv.gork-agent.testnet/kv.gork-agent.testnet/missing"
               ]
             },
             "headers": {},
@@ -20797,7 +20540,6 @@
   },
   {
     "canonicalPath": "/apis/neardata/system/health",
-    "generatedAt": "2026-04-13T14:51:41.986Z",
     "info": {
       "description": "Returns `ok` when the current deployment is healthy and `unhealthy` when the latest indexed block is too stale. Invalid API keys can be rejected upstream before the request reaches the app.",
       "operationId": "get_health",
@@ -20827,7 +20569,6 @@
       "supportsFinality": false,
       "transport": "http"
     },
-    "outputModel": "standalone/generated/neardata-system-health-page-model.json",
     "pageModelId": "neardata-system-health",
     "replaceOperationPage": true,
     "request": {
@@ -20935,7 +20676,6 @@
   },
   {
     "canonicalPath": "/apis/neardata/v0/first_block",
-    "generatedAt": "2026-04-13T14:51:41.987Z",
     "info": {
       "description": "Returns a redirect to the canonical first block URL for the selected deployment. Clients that automatically follow redirects will receive the full block document instead.",
       "operationId": "get_first_block",
@@ -20965,7 +20705,6 @@
       "supportsFinality": false,
       "transport": "http"
     },
-    "outputModel": "standalone/generated/neardata-v0-first-block-page-model.json",
     "pageModelId": "neardata-v0-first-block",
     "replaceOperationPage": true,
     "request": {
@@ -21058,7 +20797,6 @@
   },
   {
     "canonicalPath": "/apis/neardata/v0/block",
-    "generatedAt": "2026-04-13T14:51:41.988Z",
     "info": {
       "description": "Returns the finalized block document for the requested height, or `null` when the block does not exist within the requested archive segment. Depending on deployment topology, the request may redirect to another host that owns the canonical archive range.",
       "operationId": "get_block",
@@ -21104,7 +20842,6 @@
       "supportsFinality": false,
       "transport": "http"
     },
-    "outputModel": "standalone/generated/neardata-v0-block-page-model.json",
     "pageModelId": "neardata-v0-block",
     "replaceOperationPage": true,
     "request": {
@@ -21256,7 +20993,6 @@
   },
   {
     "canonicalPath": "/apis/neardata/v0/block_headers",
-    "generatedAt": "2026-04-13T14:51:41.990Z",
     "info": {
       "description": "Returns the `block` object extracted from the full block response, not just the nested `header` sub-object. Depending on deployment topology, the request may redirect to another host that owns the canonical archive range.",
       "operationId": "get_block_headers",
@@ -21302,7 +21038,6 @@
       "supportsFinality": false,
       "transport": "http"
     },
-    "outputModel": "standalone/generated/neardata-v0-block-headers-page-model.json",
     "pageModelId": "neardata-v0-block-headers",
     "replaceOperationPage": true,
     "request": {
@@ -21454,7 +21189,6 @@
   },
   {
     "canonicalPath": "/apis/neardata/v0/block_chunk",
-    "generatedAt": "2026-04-13T14:51:41.991Z",
     "info": {
       "description": "Returns the chunk object for the requested shard ID, or `null` when that chunk is absent. Depending on deployment topology, the request may redirect to another host that owns the canonical archive range.",
       "operationId": "get_chunk",
@@ -21513,7 +21247,6 @@
       "supportsFinality": false,
       "transport": "http"
     },
-    "outputModel": "standalone/generated/neardata-v0-block-chunk-page-model.json",
     "pageModelId": "neardata-v0-block-chunk",
     "replaceOperationPage": true,
     "request": {
@@ -21677,7 +21410,6 @@
   },
   {
     "canonicalPath": "/apis/neardata/v0/block_shard",
-    "generatedAt": "2026-04-13T14:51:41.994Z",
     "info": {
       "description": "Returns the shard object for the requested shard ID, or `null` when that shard is absent. Depending on deployment topology, the request may redirect to another host that owns the canonical archive range.",
       "operationId": "get_shard",
@@ -21736,7 +21468,6 @@
       "supportsFinality": false,
       "transport": "http"
     },
-    "outputModel": "standalone/generated/neardata-v0-block-shard-page-model.json",
     "pageModelId": "neardata-v0-block-shard",
     "replaceOperationPage": true,
     "request": {
@@ -21900,7 +21631,6 @@
   },
   {
     "canonicalPath": "/apis/neardata/v0/block_optimistic",
-    "generatedAt": "2026-04-13T14:51:41.995Z",
     "info": {
       "description": "Returns an optimistic block document when the deployment can serve it directly. Older or archive-only heights may redirect to a canonical finalized or archive URL instead.",
       "operationId": "get_block_optimistic",
@@ -21946,7 +21676,6 @@
       "supportsFinality": false,
       "transport": "http"
     },
-    "outputModel": "standalone/generated/neardata-v0-block-optimistic-page-model.json",
     "pageModelId": "neardata-v0-block-optimistic",
     "replaceOperationPage": true,
     "request": {
@@ -22098,7 +21827,6 @@
   },
   {
     "canonicalPath": "/apis/neardata/v0/last_block_final",
-    "generatedAt": "2026-04-13T14:51:41.996Z",
     "info": {
       "description": "Returns a redirect to the canonical latest finalized block URL for the current deployment. Clients that automatically follow redirects will receive the full block document instead.",
       "operationId": "get_last_block_final",
@@ -22128,7 +21856,6 @@
       "supportsFinality": false,
       "transport": "http"
     },
-    "outputModel": "standalone/generated/neardata-v0-last-block-final-page-model.json",
     "pageModelId": "neardata-v0-last-block-final",
     "replaceOperationPage": true,
     "request": {
@@ -22229,7 +21956,6 @@
   },
   {
     "canonicalPath": "/apis/neardata/v0/last_block_optimistic",
-    "generatedAt": "2026-04-13T14:51:41.997Z",
     "info": {
       "description": "Returns a redirect to the canonical latest optimistic block URL for the current deployment. Clients that automatically follow redirects will receive the resulting block document instead.",
       "operationId": "get_last_block_optimistic",
@@ -22259,7 +21985,6 @@
       "supportsFinality": false,
       "transport": "http"
     },
-    "outputModel": "standalone/generated/neardata-v0-last-block-optimistic-page-model.json",
     "pageModelId": "neardata-v0-last-block-optimistic",
     "replaceOperationPage": true,
     "request": {
@@ -22360,7 +22085,6 @@
   },
   {
     "canonicalPath": "/apis/transactions/v0/account",
-    "generatedAt": "2026-04-13T14:51:42.004Z",
     "info": {
       "description": "Returns account transaction rows, an optional total count on the first page, and an optional resume token.",
       "operationId": "get_account",
@@ -22565,13 +22289,37 @@
           "key": "mainnet",
           "label": "Mainnet",
           "url": "https://tx.main.fastnear.com"
+        },
+        {
+          "defaultFields": {
+            "account_id": "root.testnet",
+            "desc": true,
+            "from_tx_block_height": "",
+            "is_action_arg": "",
+            "is_any_signer": "",
+            "is_delegated_signer": "",
+            "is_event_log": "",
+            "is_explicit_refund_to": "",
+            "is_function_call": "",
+            "is_predecessor": "",
+            "is_real_receiver": "",
+            "is_real_signer": true,
+            "is_receiver": "",
+            "is_signer": "",
+            "is_success": true,
+            "limit": 50,
+            "resume_token": "",
+            "to_tx_block_height": ""
+          },
+          "key": "testnet",
+          "label": "Testnet",
+          "url": "https://tx.test.fastnear.com"
         }
       ],
       "requestMethod": "get_account",
       "supportsFinality": false,
       "transport": "http"
     },
-    "outputModel": "standalone/generated/transactions-v0-account-page-model.json",
     "pageModelId": "transactions-v0-account",
     "replaceOperationPage": true,
     "request": {
@@ -22723,6 +22471,23 @@
           "request": {
             "body": {
               "account_id": "intents.near",
+              "desc": true,
+              "is_real_signer": true,
+              "is_success": true,
+              "limit": 50
+            },
+            "headers": {},
+            "path": {},
+            "query": {}
+          }
+        },
+        {
+          "id": "testnet",
+          "label": "Testnet",
+          "network": "testnet",
+          "request": {
+            "body": {
+              "account_id": "root.testnet",
               "desc": true,
               "is_real_signer": true,
               "is_success": true,
@@ -22982,7 +22747,6 @@
   },
   {
     "canonicalPath": "/apis/transactions/v0/block",
-    "generatedAt": "2026-04-13T14:51:42.011Z",
     "info": {
       "description": "Returns a block row and optionally its transactions and receipts.",
       "operationId": "get_block",
@@ -23032,20 +22796,29 @@
       "networks": [
         {
           "defaultFields": {
-            "block_id": 130000000,
+            "block_id": 193916411,
             "with_receipts": true,
             "with_transactions": true
           },
           "key": "mainnet",
           "label": "Mainnet",
           "url": "https://tx.main.fastnear.com"
+        },
+        {
+          "defaultFields": {
+            "block_id": 46562457,
+            "with_receipts": true,
+            "with_transactions": true
+          },
+          "key": "testnet",
+          "label": "Testnet",
+          "url": "https://tx.test.fastnear.com"
         }
       ],
       "requestMethod": "get_block",
       "supportsFinality": false,
       "transport": "http"
     },
-    "outputModel": "standalone/generated/transactions-v0-block-page-model.json",
     "pageModelId": "transactions-v0-block",
     "replaceOperationPage": true,
     "request": {
@@ -23094,7 +22867,22 @@
           "network": "mainnet",
           "request": {
             "body": {
-              "block_id": 130000000,
+              "block_id": 193916411,
+              "with_receipts": true,
+              "with_transactions": true
+            },
+            "headers": {},
+            "path": {},
+            "query": {}
+          }
+        },
+        {
+          "id": "testnet",
+          "label": "Testnet",
+          "network": "testnet",
+          "request": {
+            "body": {
+              "block_id": 46562457,
               "with_receipts": true,
               "with_transactions": true
             },
@@ -23663,7 +23451,6 @@
   },
   {
     "canonicalPath": "/apis/transactions/v0/blocks",
-    "generatedAt": "2026-04-13T14:51:42.015Z",
     "info": {
       "description": "Returns up to 100 block rows for the requested height window.",
       "operationId": "get_blocks",
@@ -23719,20 +23506,30 @@
         {
           "defaultFields": {
             "desc": false,
-            "from_block_height": 130000000,
+            "from_block_height": 193916402,
             "limit": 10,
-            "to_block_height": 130000100
+            "to_block_height": 193916411
           },
           "key": "mainnet",
           "label": "Mainnet",
           "url": "https://tx.main.fastnear.com"
+        },
+        {
+          "defaultFields": {
+            "desc": false,
+            "from_block_height": 46562448,
+            "limit": 10,
+            "to_block_height": 46562457
+          },
+          "key": "testnet",
+          "label": "Testnet",
+          "url": "https://tx.test.fastnear.com"
         }
       ],
       "requestMethod": "get_blocks",
       "supportsFinality": false,
       "transport": "http"
     },
-    "outputModel": "standalone/generated/transactions-v0-blocks-page-model.json",
     "pageModelId": "transactions-v0-blocks",
     "replaceOperationPage": true,
     "request": {
@@ -23782,9 +23579,25 @@
           "request": {
             "body": {
               "desc": false,
-              "from_block_height": 130000000,
+              "from_block_height": 193916402,
               "limit": 10,
-              "to_block_height": 130000100
+              "to_block_height": 193916411
+            },
+            "headers": {},
+            "path": {},
+            "query": {}
+          }
+        },
+        {
+          "id": "testnet",
+          "label": "Testnet",
+          "network": "testnet",
+          "request": {
+            "body": {
+              "desc": false,
+              "from_block_height": 46562448,
+              "limit": 10,
+              "to_block_height": 46562457
             },
             "headers": {},
             "path": {},
@@ -24026,7 +23839,6 @@
   },
   {
     "canonicalPath": "/apis/transactions/v0/receipt",
-    "generatedAt": "2026-04-13T14:51:42.038Z",
     "info": {
       "description": "Returns a receipt row and, when present, the associated raw transaction payload.",
       "operationId": "get_receipt",
@@ -24051,18 +23863,25 @@
       "networks": [
         {
           "defaultFields": {
-            "receipt_id": "H6Roj3A2SNn7HJXdigLPDHiz2kcob4MHwLg3nnDEH2VZ"
+            "receipt_id": "gzqDSvd3ZMcVUWzBMP7j9KMWz89iZMkkEvW9g8QZjUP"
           },
           "key": "mainnet",
           "label": "Mainnet",
           "url": "https://tx.main.fastnear.com"
+        },
+        {
+          "defaultFields": {
+            "receipt_id": "8D3YiLcKYLAeNYmshj9cVwCTX6mgeWNXux4sJQ7FUTvV"
+          },
+          "key": "testnet",
+          "label": "Testnet",
+          "url": "https://tx.test.fastnear.com"
         }
       ],
       "requestMethod": "get_receipt",
       "supportsFinality": false,
       "transport": "http"
     },
-    "outputModel": "standalone/generated/transactions-v0-receipt-page-model.json",
     "pageModelId": "transactions-v0-receipt",
     "replaceOperationPage": true,
     "request": {
@@ -24090,7 +23909,20 @@
           "network": "mainnet",
           "request": {
             "body": {
-              "receipt_id": "H6Roj3A2SNn7HJXdigLPDHiz2kcob4MHwLg3nnDEH2VZ"
+              "receipt_id": "gzqDSvd3ZMcVUWzBMP7j9KMWz89iZMkkEvW9g8QZjUP"
+            },
+            "headers": {},
+            "path": {},
+            "query": {}
+          }
+        },
+        {
+          "id": "testnet",
+          "label": "Testnet",
+          "network": "testnet",
+          "request": {
+            "body": {
+              "receipt_id": "8D3YiLcKYLAeNYmshj9cVwCTX6mgeWNXux4sJQ7FUTvV"
             },
             "headers": {},
             "path": {},
@@ -24332,7 +24164,6 @@
   },
   {
     "canonicalPath": "/apis/transactions/v0/transactions",
-    "generatedAt": "2026-04-13T14:51:42.056Z",
     "info": {
       "description": "Returns up to 20 raw transaction payloads for the supplied transaction hashes.",
       "operationId": "get_transactions",
@@ -24361,20 +24192,30 @@
         {
           "defaultFields": {
             "tx_hashes": [
-              "HV42hanyDVK3MYoW8c17Ufxw83htNEQGk93bzyQRocvS",
-              "D2pt9ceGUyiGdJeeZLDd3uBGHF11DmPe4aJFMaoWMmDd"
+              "FDrh13CdfGPXsmwUpZLfkZCoXWfpQmaFGj4zYWc1qfh",
+              "Eq1a46bynaBAjoSxd2XGWdCxkZdrMvN9jMZVdZfPSjM5"
             ]
           },
           "key": "mainnet",
           "label": "Mainnet",
           "url": "https://tx.main.fastnear.com"
+        },
+        {
+          "defaultFields": {
+            "tx_hashes": [
+              "Cb9GXbQVodeJsVLiK2YnBR28vkiD7y4pEFGhxMGuP33q",
+              "9ufyhaEEzmerQz1Fvt2N91ZwXCcNZVhJXhq3QzRJZgfW"
+            ]
+          },
+          "key": "testnet",
+          "label": "Testnet",
+          "url": "https://tx.test.fastnear.com"
         }
       ],
       "requestMethod": "get_transactions",
       "supportsFinality": false,
       "transport": "http"
     },
-    "outputModel": "standalone/generated/transactions-v0-transactions-page-model.json",
     "pageModelId": "transactions-v0-transactions",
     "replaceOperationPage": true,
     "request": {
@@ -24406,8 +24247,24 @@
           "request": {
             "body": {
               "tx_hashes": [
-                "HV42hanyDVK3MYoW8c17Ufxw83htNEQGk93bzyQRocvS",
-                "D2pt9ceGUyiGdJeeZLDd3uBGHF11DmPe4aJFMaoWMmDd"
+                "FDrh13CdfGPXsmwUpZLfkZCoXWfpQmaFGj4zYWc1qfh",
+                "Eq1a46bynaBAjoSxd2XGWdCxkZdrMvN9jMZVdZfPSjM5"
+              ]
+            },
+            "headers": {},
+            "path": {},
+            "query": {}
+          }
+        },
+        {
+          "id": "testnet",
+          "label": "Testnet",
+          "network": "testnet",
+          "request": {
+            "body": {
+              "tx_hashes": [
+                "Cb9GXbQVodeJsVLiK2YnBR28vkiD7y4pEFGhxMGuP33q",
+                "9ufyhaEEzmerQz1Fvt2N91ZwXCcNZVhJXhq3QzRJZgfW"
               ]
             },
             "headers": {},
@@ -24504,7 +24361,6 @@
   },
   {
     "canonicalPath": "/apis/transfers/v0/transfers",
-    "generatedAt": "2026-04-13T14:51:42.064Z",
     "info": {
       "description": "Returns transfer rows plus an opaque resume token for pagination.",
       "operationId": "get_transfers_by_account",
@@ -24641,14 +24497,14 @@
       "networks": [
         {
           "defaultFields": {
-            "account_id": "intents.near",
-            "asset_id": "near",
+            "account_id": "root.near",
+            "asset_id": "",
             "desc": true,
-            "direction": "receiver",
+            "direction": "",
             "from_timestamp_ms": "",
             "ignore_system": "",
             "limit": 10,
-            "min_amount": "1000000000000000000000000",
+            "min_amount": "",
             "min_human_amount": "",
             "min_usd_amount": "",
             "resume_token": "",
@@ -24663,7 +24519,6 @@
       "supportsFinality": false,
       "transport": "http"
     },
-    "outputModel": "standalone/generated/transfers-v0-transfers-page-model.json",
     "pageModelId": "transfers-v0-transfers",
     "replaceOperationPage": true,
     "request": {
