@@ -124,14 +124,14 @@ Treat the clean root-mounted public docs as the public search surface.
 - Add `category`, `method_type`, `surface`, `family`, `audience`, and `page_type` to `attributesForFaceting`
 - Use [algolia/crawler/shared.js](/Users/mikepurvis/near/fn/builder-docs/algolia/crawler/shared.js) as the shared crawler definition for repo-managed sync
 - Use [algolia/docsearch-crawler.config.js](/Users/mikepurvis/near/fn/builder-docs/algolia/docsearch-crawler.config.js) as the generated pasteable crawler editor artifact
-- Use [algolia/index-settings.json](/Users/mikepurvis/near/fn/builder-docs/algolia/index-settings.json), [algolia/rules.json](/Users/mikepurvis/near/fn/builder-docs/algolia/rules.json), and [algolia/synonyms.json](/Users/mikepurvis/near/fn/builder-docs/algolia/synonyms.json) as the repo-owned live search artifacts
+- Use [algolia/index-settings.json](/Users/mikepurvis/near/fn/builder-docs/algolia/index-settings.json) as the repo-owned search settings artifact embedded into the crawler's `initialIndexSettings`
+- Keep [algolia/rules.json](/Users/mikepurvis/near/fn/builder-docs/algolia/rules.json) and [algolia/synonyms.json](/Users/mikepurvis/near/fn/builder-docs/algolia/synonyms.json) as optional dashboard-curation baselines rather than script-managed sync inputs
 - Use [.env.example](/Users/mikepurvis/near/fn/builder-docs/.env.example) as the deploy-time env template
 - `DOCSEARCH_INDEX_NAME` should match the crawler action's `indexName`, not the crawler display name
 - Algolia search analytics and DocSearch Insights events use the public search-only key already configured in `DOCSEARCH_API_KEY`
 - This is search analytics, not a general pageview snippet; for sitewide traffic analytics you would still add a separate product such as Plausible or GA
 - Runtime docs search only needs `DOCSEARCH_APP_ID`, `DOCSEARCH_API_KEY`, and `DOCSEARCH_INDEX_NAME`
-- The repo-managed control layer additionally uses `ALGOLIA_ADMIN_API_KEY`, `ALGOLIA_CRAWLER_USER_ID`, `ALGOLIA_CRAWLER_API_KEY`, and `ALGOLIA_CRAWLER_NAME`
-- Removing `ALGOLIA_ADMIN_API_KEY` does not break the docs runtime, but it does disable repo-managed settings, Rules, and synonyms sync
+- The repo-managed crawler control layer uses `ALGOLIA_CRAWLER_USER_ID`, `ALGOLIA_CRAWLER_API_KEY`, and `ALGOLIA_CRAWLER_NAME`
 
 The docs runtime now emits `docsearch:category`, `docsearch:method_type`, `docsearch:surface`, `docsearch:family`, `docsearch:audience`, and `docsearch:page_type` meta tags centrally, so the crawler can facet and group pages without hand-authored `<head>` blocks in MDX.
 
@@ -144,6 +144,7 @@ The search modal itself is swizzled in [src/theme/SearchBar/index.js](/Users/mik
 Operation-backed results also carry endpoint metadata through Algolia, so the modal can show a lightweight endpoint card for RPC and API pages:
 
 - `RPC` or `API` badge
+- stable operation identifier such as `call_function` or `account_full_v1`
 - canonical call target such as `query · request_type=call_function` or `GET /v1/account/{account_id}/full`
 - the existing docs path as low-emphasis location text
 
@@ -173,9 +174,9 @@ yarn audit:i18n:all
 yarn submit:indexnow:dry-run
 ```
 
-`yarn algolia:status` compares the live Algolia index settings, repo-owned Rules, repo-owned synonyms, and crawler configuration against the repo.
+`yarn algolia:status` compares the live crawler configuration, including the crawler's `initialIndexSettings`, against the repo.
 
-`yarn algolia:sync` applies the repo-owned search settings plus crawler configuration, without starting a crawl.
+`yarn algolia:sync` applies the repo-owned crawler configuration, including `index-settings.json` via `initialIndexSettings`, without starting a crawl.
 
 `yarn algolia:crawler:start` starts a crawl and prints the returned crawler task ID. Follow it with `yarn algolia:crawler:wait --task <taskId>` to wait for completion and print the latest crawl summary.
 

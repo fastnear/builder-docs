@@ -630,7 +630,6 @@ function auditConfigSurface() {
     "DOCSEARCH_APP_ID",
     "DOCSEARCH_API_KEY",
     "DOCSEARCH_INDEX_NAME",
-    "ALGOLIA_ADMIN_API_KEY",
     "ALGOLIA_CRAWLER_USER_ID",
     "ALGOLIA_CRAWLER_API_KEY",
     "ALGOLIA_CRAWLER_NAME",
@@ -641,6 +640,7 @@ function auditConfigSurface() {
     );
   });
   [
+    "ALGOLIA_ADMIN_API_KEY",
     "ALGOLIA_CRAWLER_ID",
     "ALGOLIA_CRAWLER_BASIC_AUTH",
   ].forEach((needle) => {

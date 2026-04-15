@@ -293,6 +293,13 @@ html[data-theme='dark'] .DocSearch {
   min-width: 0;
 }
 
+.fastnear-search-hit__endpoint-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.28rem;
+  min-width: 0;
+}
+
 .fastnear-search-hit__badge {
   background: color-mix(
     in srgb,
@@ -327,6 +334,17 @@ html[data-theme='dark'] .DocSearch {
   padding: 0;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.fastnear-search-hit__target--primary {
+  color: var(--docsearch-text-color);
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.fastnear-search-hit__target--secondary {
+  color: var(--docsearch-secondary-text-color);
+  font-size: 0.73rem;
 }
 
 .fastnear-search-hit__location {
@@ -368,5 +386,9 @@ html[data-theme='dark'] .DocSearch {
   .fastnear-search-hit__target,
   .fastnear-search-hit__location {
     white-space: normal;
+  }
+
+  .fastnear-search-hit__endpoint-meta {
+    align-items: flex-start;
   }
 }
