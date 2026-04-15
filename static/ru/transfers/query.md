@@ -49,14 +49,14 @@
 - `asset_id` (body, string): Необязательный идентификатор актива, например `near` или ID FT-контракта.
 - `desc` (body, boolean): Если `true`, сначала возвращаются более новые переводы.
 - `direction` (body, обязательный, string): Какие переводы вернуть: исходящие (`sender`) или входящие (`receiver`).
-- `from_timestamp_ms` (body, integer): Нижняя граница времени в миллисекундах Unix.
+- `from_timestamp_ms` (body, integer): Нижняя граница времени в миллисекундах UNIX.
 - `ignore_system` (body, boolean): Если `true`, исключает системные переводы.
 - `limit` (body, integer): Максимальное количество строк в ответе.
 - `min_amount` (body, string): Минимальная сумма в базовых единицах актива.
 - `min_human_amount` (body, number): Минимальная сумма в человекочитаемом виде.
 - `min_usd_amount` (body, number): Минимальная сумма в долларах США.
 - `resume_token` (body, string): Непрозрачный курсор пагинации из предыдущего ответа.
-- `to_timestamp_ms` (body, integer): Верхняя граница времени в миллисекундах Unix.
+- `to_timestamp_ms` (body, integer): Верхняя граница времени в миллисекундах UNIX.
 ### Схема запроса
 ```json
 {

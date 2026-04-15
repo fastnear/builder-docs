@@ -249,6 +249,43 @@ async function waitForCrawlerTask(env, crawlerId, taskId, { intervalMs = 2000, t
   throw new Error(`Crawler task ${taskId} did not finish before timeout`);
 }
 
+function isCrawlerRunPending(run) {
+  const status = String(run?.status || "").toLowerCase();
+  return ["pending", "running", "started", "created"].includes(status);
+}
+
+async function waitForCrawlerReindexCompletion(env, crawlerId, { startedAfterMs, intervalMs = 5000, timeoutMs = 45 * 60 * 1000 } = {}) {
+  const deadline = Date.now() + timeoutMs;
+  let sawMatchingRun = false;
+
+  while (Date.now() < deadline) {
+    const state = await getCrawlerState();
+    const latestRunStartedAt = state.latestRun?.crawlStartedAt
+      ? new Date(state.latestRun.crawlStartedAt).getTime()
+      : 0;
+    const latestRunMatches = latestRunStartedAt >= (startedAfterMs || 0);
+
+    if (latestRunMatches) {
+      sawMatchingRun = true;
+    }
+
+    if (
+      sawMatchingRun &&
+      !state.details.reindexing &&
+      !isCrawlerRunPending(state.latestRun)
+    ) {
+      return {
+        crawlerId,
+        latestRun: state.latestRun,
+      };
+    }
+
+    await sleep(intervalMs);
+  }
+
+  throw new Error(`Crawler ${crawlerId} did not finish reindexing before timeout`);
+}
+
 async function syncCrawlerConfig() {
   const state = await getCrawlerState();
   const desiredConfig = createCrawlerConfig({
@@ -309,21 +346,15 @@ async function startCrawler() {
 async function waitForCrawlerTaskByArgs(taskId) {
   const env = getCrawlerEnv();
   const crawlerId = await resolveCrawlerId(env);
+  const startedAfterMs = Date.now();
   await waitForCrawlerTask(env, crawlerId, taskId);
-  const latestRunResponse = await crawlerApiRequest(env, `/crawlers/${crawlerId}/crawl_runs`, {
-    query: {
-      limit: 20,
-      order: "DESC",
-    },
+  const completedRun = await waitForCrawlerReindexCompletion(env, crawlerId, {
+    startedAfterMs,
   });
-  const latestRun = [...(latestRunResponse.logs || [])]
-    .sort((left, right) => {
-      return new Date(right.crawlStartedAt || 0).getTime() - new Date(left.crawlStartedAt || 0).getTime();
-    })[0] || null;
 
   return {
     crawlerId,
-    latestRun,
+    latestRun: completedRun.latestRun,
     taskId,
   };
 }
@@ -335,7 +366,7 @@ function printCrawlerStart(startResult) {
 }
 
 function printCrawlerWait(waitResult) {
-  logSection("Completed Algolia Crawl Task");
+  logSection("Completed Algolia Crawl");
   console.log(`- Crawler ID: ${waitResult.crawlerId}`);
   console.log(`- Task ID: ${waitResult.taskId}`);
   if (waitResult.latestRun) {
