@@ -103,7 +103,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "description": "Base58-encoded блока hash"
+              "description": "Хеш блока в кодировке Base58"
             }
           }
         ]

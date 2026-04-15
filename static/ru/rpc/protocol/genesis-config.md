@@ -169,7 +169,7 @@
             "required": true,
             "schema": {
               "type": "array",
-              "description": "Expected number of hidden валидаторы per шард.",
+              "description": "Ожидаемое количество скрытых валидаторов на шард.",
               "items": {
                 "type": "integer",
                 "format": "uint64"
@@ -181,7 +181,7 @@
             "required": true,
             "schema": {
               "type": "integer",
-              "description": "Threshold for kicking out блока producers, between 0 and 100.",
+              "description": "Порог исключения производителей блоков, значение от 0 до 100.",
               "format": "uint8"
             }
           },
@@ -190,7 +190,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "description": "ID of the блокчейн. This must be unique for every блокчейн.\nIf your testnet blockchains do not have unique chain IDs, you will have a bad time."
+              "description": "ID блокчейна. Должен быть уникальным для каждого блокчейна.\nЕсли у ваших testnet-блокчейнов chain ID не уникальны, вас ждут проблемы."
             }
           },
           {
@@ -217,7 +217,7 @@
             "required": false,
             "schema": {
               "type": "integer",
-              "description": "Threshold for kicking out nodes which are only chunk валидаторы, between 0 and 100.",
+              "description": "Порог исключения нод, которые являются только валидаторами чанков, значение от 0 до 100.",
               "format": "uint8",
               "default": 80
             }
@@ -235,7 +235,7 @@
             "required": true,
             "schema": {
               "type": "integer",
-              "description": "Epoch length counted in блока heights.",
+              "description": "Длина эпохи, измеряемая в высотах блоков.",
               "format": "uint64"
             }
           },
@@ -252,7 +252,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "description": "Газ amount"
+              "description": "Количество газа"
             }
           },
           {
@@ -260,7 +260,7 @@
             "required": true,
             "schema": {
               "type": "array",
-              "description": "Газ price adjustment rate",
+              "description": "Коэффициент корректировки цены газа",
               "items": {
                 "type": "integer",
                 "format": "int32"
@@ -272,7 +272,7 @@
             "required": true,
             "schema": {
               "type": "integer",
-              "description": "Height of genesis блока.",
+              "description": "Высота генезис-блока.",
               "format": "uint64"
             }
           },
@@ -281,7 +281,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "description": "Official time of блокчейн start.",
+              "description": "Официальное время запуска блокчейна.",
               "format": "date-time"
             }
           },
@@ -310,7 +310,7 @@
             "required": false,
             "schema": {
               "type": "integer",
-              "description": "Max stake percentage of the валидаторы we will kick out.",
+              "description": "Максимальный процент стейка валидаторов, которых будем исключать.",
               "format": "uint8",
               "default": 100
             }
@@ -328,7 +328,7 @@
             "required": false,
             "schema": {
               "type": "integer",
-              "description": "The minimum stake required for стейкинг is last seat price divided by this number.",
+              "description": "Минимальный стейк, необходимый для стейкинга, — это последняя цена места, делённая на это число.",
               "format": "uint64",
               "default": 10
             }
@@ -338,7 +338,7 @@
             "required": false,
             "schema": {
               "type": "array",
-              "description": "The lowest ratio s/s_total any блока producer can have.\nSee <https://github.com/near/NEPs/pull/167> for details",
+              "description": "Минимальное отношение s/s_total, которое может быть у производителя блоков.\nПодробнее см. <https://github.com/near/NEPs/pull/167>",
               "items": {
                 "type": "integer",
                 "format": "int32"
@@ -350,7 +350,7 @@
             "required": false,
             "schema": {
               "type": "integer",
-              "description": "The minimum number of валидаторы each шард must have",
+              "description": "Минимальное количество валидаторов, которое должно быть в каждом шарде",
               "format": "uint64",
               "default": 1
             }
@@ -360,7 +360,7 @@
             "required": true,
             "schema": {
               "type": "integer",
-              "description": "Number of блока producer seats at genesis.",
+              "description": "Количество мест для производителей блоков в генезисе.",
               "format": "uint64"
             }
           },
@@ -381,7 +381,7 @@
             "required": true,
             "schema": {
               "type": "integer",
-              "description": "Expected number of блоки per year",
+              "description": "Ожидаемое количество блоков в год",
               "format": "uint64"
             }
           },
@@ -419,7 +419,7 @@
             "required": false,
             "schema": {
               "type": "array",
-              "description": "Online maximum threshold above which валидатора gets full reward.",
+              "description": "Максимальный порог онлайна, выше которого валидатор получает полную награду.",
               "items": {
                 "type": "integer",
                 "format": "int32"
@@ -431,7 +431,7 @@
             "required": false,
             "schema": {
               "type": "array",
-              "description": "Online minimum threshold below which валидатора doesn't receive reward.",
+              "description": "Минимальный порог онлайна, ниже которого валидатор не получает награду.",
               "items": {
                 "type": "integer",
                 "format": "int32"
@@ -443,7 +443,7 @@
             "required": true,
             "schema": {
               "type": "array",
-              "description": "Протокол treasury rate",
+              "description": "Ставка казны протокола",
               "items": {
                 "type": "integer",
                 "format": "int32"
@@ -455,7 +455,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "description": "NEAR аккаунта ID"
+              "description": "ID аккаунта NEAR"
             }
           },
           {
@@ -507,7 +507,7 @@
             "required": false,
             "schema": {
               "type": "boolean",
-              "description": "If true, shuffle the chunk producers across shards. In other words, if\nthe шард assignments were `[S_0, S_1, S_2, S_3]` where `S_i` represents\nthe set of chunk producers for шард `i`, if this flag were true, the\nшард assignments might become, for example, `[S_2, S_0, S_3, S_1]`.",
+              "description": "Если значение `true`, производители чанков перемешиваются между шардами. Иными словами, если\nраспределение шардов было `[S_0, S_1, S_2, S_3]`, где `S_i` — множество\nпроизводителей чанков для шарда `i`, то при включённом флаге\nраспределение может стать, например, `[S_2, S_0, S_3, S_1]`.",
               "default": false
             }
           },
@@ -516,7 +516,7 @@
             "required": false,
             "schema": {
               "type": "integer",
-              "description": "Number of target chunk валидатора mandates for each shard.",
+              "description": "Целевое количество мандатов валидаторов чанков для каждого шарда.",
               "format": "uint64",
               "default": 68
             }
@@ -534,7 +534,7 @@
             "required": true,
             "schema": {
               "type": "integer",
-              "description": "Number of блоки for which a given транзакции is valid",
+              "description": "Количество блоков, в течение которых заданная транзакция действительна",
               "format": "uint64"
             }
           },

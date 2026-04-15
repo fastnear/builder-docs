@@ -114,7 +114,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "description": "Блок финальность",
+              "description": "Финальность блока",
               "enum": [
                 "final",
                 "near-final",
@@ -141,7 +141,7 @@
               "description": "Аккаунты, для которых нужно вернуть изменения состояния",
               "items": {
                 "type": "string",
-                "description": "NEAR аккаунта ID"
+                "description": "ID аккаунта NEAR"
               }
             }
           }

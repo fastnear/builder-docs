@@ -109,7 +109,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "description": "NEAR аккаунта ID"
+              "description": "ID аккаунта NEAR"
             }
           },
           {
@@ -127,7 +127,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "description": "Блок финальность",
+              "description": "Финальность блока",
               "enum": [
                 "final",
                 "near-final",
@@ -183,7 +183,7 @@
       "required": false,
       "schema": {
         "type": "object",
-        "description": "A просмотр of the аккаунта",
+        "description": "Представление аккаунта",
         "required": [
           "amount",
           "locked",
@@ -213,7 +213,7 @@
             "schema": {
               "type": "string",
               "nullable": true,
-              "description": "NEAR аккаунта ID"
+              "description": "ID аккаунта NEAR"
             }
           },
           {

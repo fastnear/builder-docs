@@ -166,7 +166,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "description": "NEAR аккаунта ID"
+              "description": "ID аккаунта NEAR"
             }
           },
           {
@@ -200,7 +200,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "description": "NEAR аккаунта ID"
+              "description": "ID аккаунта NEAR"
             }
           }
         ]

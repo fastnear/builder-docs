@@ -131,7 +131,7 @@
             "required": false,
             "schema": {
               "type": "string",
-              "description": "NEAR аккаунта ID"
+              "description": "ID аккаунта NEAR"
             }
           },
           {

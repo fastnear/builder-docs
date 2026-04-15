@@ -107,15 +107,15 @@
             "name": "block_id",
             "required": true,
             "schema": {
-              "description": "Блок height (integer) or блока hash (string)",
+              "description": "Высота блока (целое число) или хеш блока (строка)",
               "oneOf": [
                 {
                   "type": "integer",
-                  "description": "Блок height"
+                  "description": "Высота блока"
                 },
                 {
                   "type": "string",
-                  "description": "Base58-encoded блока hash"
+                  "description": "Хеш блока в кодировке Base58"
                 }
               ]
             }

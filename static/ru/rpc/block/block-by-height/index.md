@@ -104,7 +104,7 @@
             "required": true,
             "schema": {
               "type": "integer",
-              "description": "Блок height to запроса"
+              "description": "Высота блока для запроса"
             }
           }
         ]

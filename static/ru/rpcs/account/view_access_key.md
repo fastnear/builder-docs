@@ -113,7 +113,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "description": "NEAR аккаунта ID"
+              "description": "ID аккаунта NEAR"
             }
           },
           {
@@ -121,7 +121,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "description": "ed25519: or secp256k1: prefixed public ключ"
+              "description": "Публичный ключ с префиксом ed25519: или secp256k1:"
             }
           },
           {
@@ -139,7 +139,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "description": "Блок финальность",
+              "description": "Финальность блока",
               "enum": [
                 "final",
                 "near-final",
@@ -195,7 +195,7 @@
       "required": false,
       "schema": {
         "type": "object",
-        "description": "Describes доступа ключ permission scope and nonce.",
+        "description": "Описывает область действия ключа доступа и nonce.",
         "required": [
           "nonce",
           "permission"

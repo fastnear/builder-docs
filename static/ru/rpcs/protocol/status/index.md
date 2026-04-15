@@ -246,7 +246,7 @@
             "schema": {
               "type": "string",
               "nullable": true,
-              "description": "ed25519: or secp256k1: prefixed public ключ"
+              "description": "Публичный ключ с префиксом ed25519: или secp256k1:"
             }
           },
           {
@@ -254,7 +254,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "description": "ed25519: or secp256k1: prefixed public ключ"
+              "description": "Публичный ключ с префиксом ed25519: или secp256k1:"
             }
           },
           {
@@ -389,7 +389,7 @@
             "schema": {
               "type": "string",
               "nullable": true,
-              "description": "NEAR аккаунта ID"
+              "description": "ID аккаунта NEAR"
             }
           },
           {
@@ -398,7 +398,7 @@
             "schema": {
               "type": "string",
               "nullable": true,
-              "description": "ed25519: or secp256k1: prefixed public ключ"
+              "description": "Публичный ключ с префиксом ed25519: или secp256k1:"
             }
           },
           {

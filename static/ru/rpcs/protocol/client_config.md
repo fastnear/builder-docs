@@ -545,7 +545,7 @@
             "schema": {
               "type": "string",
               "nullable": true,
-              "description": "Газ amount"
+              "description": "Количество газа"
             }
           },
           {
