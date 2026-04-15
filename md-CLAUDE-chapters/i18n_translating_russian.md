@@ -148,7 +148,7 @@ The Russian blockchain community strongly favors transliteration over translatio
 | block height | **высота блока** | Translated | Waves: «Порядковый номер блока в блокчейне» |
 | block hash | **хеш блока** | Transliterated + translated | Both «хеш» and «хэш» spellings exist |
 | finality | **финальность** | Transliterated | ForkLog NEAR coverage: «финальность 1,2 секунды» |
-| receipt (NEAR-specific) | **рецепт** | Transliterated | Distinct from «квитанция» (general receipt); NEAR internal concept |
+| receipt (NEAR-specific) | **квитанция** | Native Russian | Established convention: defined in `i18n/ru/glossary.yml` as `receipt → квитанция`, applied across 50+ corpus occurrences (index pages, sidebar labels, `/tx/receipt` route, translation pool). In Russian, «квитанция» (receipt as a transaction unit) reads more naturally than «рецепт» (recipe / medical prescription) for NEAR's internal message concept. |
 | gas | **газ** | Cognate | Russian word «газ» matches naturally |
 | nonce | **нонс** | Transliterated | Often left as `nonce` in code contexts |
 | account ID | **идентификатор аккаунта** | Translated + transliterated | «Аккаунт» is standard transliteration |
