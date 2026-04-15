@@ -60,6 +60,13 @@ new Crawler({
           return value ? [String(value).trim()] : [];
         };
 
+        const getKeywordValues = (value) => {
+          return String(value || "")
+            .split(",")
+            .map((entry) => entry.trim())
+            .filter(Boolean);
+        };
+
         const removeCrawlerNoise = () => {
           [
             "[data-fastnear-crawler-skip]",
@@ -175,6 +182,7 @@ new Crawler({
         const transport = getMetaContent("docsearch:transport");
         const operationId = getMetaContent("docsearch:operation_id");
         const canonicalTarget = getMetaContent("docsearch:canonical_target");
+        const keywords = getMetaContent("keywords");
         const pageRank = getPageRank(pathname, surface, pageType);
 
         return helpers.docsearch({
@@ -216,6 +224,9 @@ new Crawler({
             },
             canonical_target: {
               defaultValue: getRecordValue(canonicalTarget),
+            },
+            keywords: {
+              defaultValue: getKeywordValues(keywords),
             },
             pageRank,
           },
@@ -262,7 +273,8 @@ new Crawler({
         "page_type",
         "transport",
         "operation_id",
-        "canonical_target"
+        "canonical_target",
+        "keywords"
       ],
       attributesToHighlight: [
         "hierarchy",
@@ -283,6 +295,7 @@ new Crawler({
         "unordered(hierarchy.lvl5)",
         "unordered(hierarchy.lvl6)",
         "unordered(hierarchy.lvl0)",
+        "unordered(keywords)",
         "unordered(operation_id)",
         "unordered(canonical_target)",
         "content"

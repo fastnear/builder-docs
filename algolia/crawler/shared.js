@@ -103,6 +103,13 @@ const RECORD_EXTRACTOR_SOURCE = dedent(`
       return value ? [String(value).trim()] : [];
     };
 
+    const getKeywordValues = (value) => {
+      return String(value || "")
+        .split(",")
+        .map((entry) => entry.trim())
+        .filter(Boolean);
+    };
+
     const removeCrawlerNoise = () => {
       [
         "[data-fastnear-crawler-skip]",
@@ -218,6 +225,7 @@ const RECORD_EXTRACTOR_SOURCE = dedent(`
     const transport = getMetaContent("docsearch:transport");
     const operationId = getMetaContent("docsearch:operation_id");
     const canonicalTarget = getMetaContent("docsearch:canonical_target");
+    const keywords = getMetaContent("keywords");
     const pageRank = getPageRank(pathname, surface, pageType);
 
     return helpers.docsearch({
@@ -259,6 +267,9 @@ const RECORD_EXTRACTOR_SOURCE = dedent(`
         },
         canonical_target: {
           defaultValue: getRecordValue(canonicalTarget),
+        },
+        keywords: {
+          defaultValue: getKeywordValues(keywords),
         },
         pageRank,
       },

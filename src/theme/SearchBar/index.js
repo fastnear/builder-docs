@@ -347,8 +347,17 @@ function Hit({ hit, children }) {
 }
 
 function useSearchParameters({ contextualSearch, ...props }) {
+  const { i18n } = useDocusaurusContext();
+  const currentLocale = i18n.currentLocale || 'en';
   const contextualSearchFacetFilters = useAlgoliaContextualFacetFilters();
-  const configFacetFilters = props.searchParameters?.facetFilters ?? [];
+  const localeFacetFilters = useMemo(
+    () => [`language:${currentLocale}`],
+    [currentLocale]
+  );
+  const configFacetFilters = mergeFacetFilters(
+    localeFacetFilters,
+    props.searchParameters?.facetFilters ?? []
+  );
 
   const facetFilters = contextualSearch
     ? mergeFacetFilters(contextualSearchFacetFilters, configFacetFilters)
