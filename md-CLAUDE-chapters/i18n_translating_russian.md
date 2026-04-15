@@ -4,6 +4,16 @@
 
 ---
 
+## Authoritative references for Russian API documentation
+
+This guide is validated against three production Russian-language API documentation corpora. When a term is contested, the order of precedence is Yandex → Tinkoff → Waves → Ethereum.org RU glossary → Habr practice. Rows marked ✓ in the tables below are confirmed against the cited source; unmarked rows are internal conventions.
+
+- **Yandex Cloud API Design Guide** (https://cloud.yandex.ru/docs/api-design-guide) — the most rigorous Russian-language reference for REST and gRPC API design patterns, standard methods, pagination, and error handling. Source for: конечная точка / эндпоинт, запрос, ответ, параметр, HTTP-метод patterns, sentence-case headings, «токен страницы» for `page_token`.
+- **Tinkoff Invest API** (https://tinkoff.github.io/investAPI/) — a production gRPC API documented entirely in Russian. Source for: песочница (sandbox), стрим-соединение, access/readonly/full-access токены, `Authorization: Bearer [токен]` usage, imperative voice.
+- **Waves Enterprise glossary** (https://docs.wavesenterprise.com/ru/1.6.2/glossary.html) — Russian blockchain terminology. Source for: аккаунт, транзакция, блок, подпись, консенсус, майнинг, нода, комиссия, смарт-контракт, стейт (informal) vs состояние (formal).
+
+---
+
 ## The three-tier translation framework
 
 Every English API term falls into one of three categories, and the choice is rarely ambiguous once the conventions are understood.
@@ -32,7 +42,7 @@ The table below consolidates findings from Yandex Cloud, VK, Tinkoff, Sber, Russ
 | header | **заголовок** | Native | «заголовок Authorization», «HTTP-заголовок» |
 | body | **тело** | Native | «тело запроса» (request body), «тело ответа» (response body) |
 | callback | **обратный вызов** (formal) / **коллбэк** (informal) | Mixed | VK uses English "Callback API" as a product name |
-| webhook | **вебхук** | Transliterated | Tinkoff: «У нас есть вебхуки» |
+| webhook | **вебхук** | Transliterated | Tinkoff ✓ — «У нас есть вебхуки» |
 | middleware | **мидлвар** / **промежуточное ПО** | Transliterated/Translated | Less standardized; often left in English |
 | rate limit | **ограничение частоты запросов** | Translated | VK: «частотное ограничение — 3 запроса в секунду» |
 | throttling | **троттлинг** or **ограничение частоты** | Mixed | Transliteration common in developer contexts |
@@ -45,8 +55,13 @@ The table below consolidates findings from Yandex Cloud, VK, Tinkoff, Sber, Russ
 | session | **сессия** | Transliterated | Tinkoff: «платёжную сессию» |
 | remote procedure call | **удалённый вызов процедур** | Translated | Wikipedia title; abbreviation RPC stays in Latin |
 | idempotent | **идемпотентный** | Russified Latin root | Habr: «Должен быть идемпотентным» |
-| pagination | **пагинация** | Transliterated | Yandex Cloud uses this as section heading |
-| sandbox | **песочница** | Native Russian | Tinkoff: «контур песочницы» |
+| pagination | **пагинация** | Transliterated | Yandex ✓ — used as section heading |
+| page token | **токен страницы** (prose) / `page_token` (code) | Translated / Latin | Yandex ✓ — keeps `page_token` as the parameter name |
+| sandbox | **песочница** | Native Russian | Tinkoff ✓ — «контур песочницы», sandbox-only токены |
+| production (environment) | **боевой** / **боевая среда** | Native | Russian idiom for "production use"; avoid calque `продакшен` |
+| streaming | **потоковая передача** (prose) / **стрим** (compounds like `стрим-соединение`) | Translated / Transliterated | Yandex: `потоковая передача`; Tinkoff ✓ — `стрим-соединение` |
+| timeout | **тайм-аут** | Transliterated | Internal convention; not cited by Yandex/Tinkoff/Waves |
+| node | **узел** (formal, our default) / **нода** (informal/operator) | Native / Transliterated | Waves: `нода`; Wikipedia: `узел`; our register → `узел` |
 | resource | **ресурс** | Russified Latin root | Habr: «ключевая концепция REST — ресурсы» |
 | caching | **кэширование** | Transliterated root | «HTTP-кэширование» |
 
@@ -167,6 +182,23 @@ The Russian blockchain community strongly favors transliteration over translatio
 | `include_deleted` | `boolean` | Нет | Включать ли удалённые записи |
 
 **Capitalization** in Russian differs fundamentally from English: headings and section titles use **sentence case only** (first word capitalized, rest lowercase). «Руководство по началу работы», not «Руководство По Началу Работы». Technical terms remain lowercase in running text: «используйте токен доступа». UI element references use guillemet quotes: «Нажмите **«Сохранить»**».
+
+---
+
+## Voice and register
+
+Russian technical documentation overwhelmingly prefers **imperative mood** or **indirect/passive constructions** to direct «Вы»-address. All three authoritative sources follow this pattern:
+
+- Yandex: «Передайте параметр `folder_id`» (imperative), «Метод возвращает представление ресурса» (passive).
+- Tinkoff: «Для использования API требуется токен» (indirect), «Ознакомьтесь с доступными SDK» (imperative).
+- Waves: «Ознакомьтесь с разделом», «Узнайте больше».
+
+Rules for this repo:
+
+1. **Default to imperative** for instructions: «Используйте токен доступа», «Передайте заголовок `Authorization`».
+2. **Avoid «Вы»-address.** Never capitalize «Вы». If the sentence reads awkwardly in imperative, rephrase into a passive or indirect form.
+3. **Use passive for conceptual explanations**: «Параметр `page_size` определяет количество записей на странице».
+4. **No calques of English "You can…".** Replace «Вы можете отправить запрос» with «Можно отправить запрос» or, better, «Отправьте запрос».
 
 ---
 
