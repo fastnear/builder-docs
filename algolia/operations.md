@@ -45,6 +45,8 @@ The crawler's internal indexing `apiKey` is intentionally preserved from the liv
 5. Run `yarn algolia:crawler:wait --task <taskId>`.
 6. Run `yarn audit:algolia-relevance`.
 
+Use `yarn algolia:inspect --query "view_account"` when you want to see the grouped live hits and inspect retrievable fields such as `surface`, `family`, `page_type`, `transport`, `operation_id`, and `canonical_target`.
+
 ## Safety model
 
 - `yarn algolia:status` compares the live crawler config against the repo's generated crawler config.

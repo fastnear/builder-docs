@@ -167,6 +167,7 @@ Structured data is emitted centrally too:
 yarn algolia:status
 yarn algolia:sync
 yarn algolia:crawler:start
+yarn algolia:inspect --query "view_account"
 yarn audit:algolia-highlights
 yarn audit:indexing
 yarn audit:algolia-relevance
@@ -179,6 +180,8 @@ yarn submit:indexnow:dry-run
 `yarn algolia:sync` applies the repo-owned crawler configuration, including `index-settings.json` via `initialIndexSettings`, without starting a crawl.
 
 `yarn algolia:crawler:start` starts a crawl and prints the returned crawler task ID. Follow it with `yarn algolia:crawler:wait --task <taskId>` to wait for completion and print the latest crawl summary.
+
+`yarn algolia:inspect --query "view_account"` prints grouped live hits and the retrievable metadata fields so you can inspect candidates like `surface`, `family`, `page_type`, `transport`, `operation_id`, and `canonical_target`.
 
 `yarn audit:indexing` rebuilds the site, verifies sitemap/robots/structured-data coverage, confirms hosted `/rpcs/**` and `/apis/**` stay `noindex`, checks the generated Markdown mirrors, and validates the root IndexNow key file.
 
