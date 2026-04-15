@@ -1,0 +1,46 @@
+---
+sidebar_position: 2
+slug: /snapshots
+title: "Снапшоты для валидаторов"
+description: "Обычные и архивные снапшоты доступны для валидаторов и помогают быстрее догонять цепочку или поднимать историческую инфраструктуру."
+sidebar_label: "Обзор снапшотов"
+displayed_sidebar: snapshotsSidebars
+keywords:
+  - blockchain
+  - validator
+  - snapshots
+  - archival
+---
+
+import React from 'react';
+import Link from '@docusaurus/Link';
+import SimpleButton from '@site/src/components/SimpleButton';
+
+# Снапшоты блокчейна
+
+:::warning[Бесплатные снапшоты устарели]
+Бесплатные снапшоты данных nearcore больше не поддерживаются.
+
+Infrastructure Committee и Near One рекомендуют использовать Epoch Sync и децентрализованную синхронизацию состояния. Подробности есть на <Link to="https://near-nodes.io">NEAR Nodes</Link>.
+:::
+
+Скачайте состояние блокчейна, чтобы развернуть узел валидатора или RPC. Подробнее о требованиях к узлам и запуску смотрите в <Link to="https://github.com/near/nearcore?tab=readme-ov-file#about-near">nearcore</Link>.
+
+:::info[Установка rclone]
+Для этих крупных загрузок используется `rclone`, который можно установить так:
+
+```bash
+sudo -v ; curl https://rclone.org/install.sh | sudo bash
+```
+:::
+
+Валидаторы найдут больше информации по настройке на <Link to="https://near-nodes.io">NEAR Nodes</Link>.
+
+Эти руководства используют логику из <Link to="https://github.com/fastnear/static">репозитория FastNear static</Link>.
+
+## Выберите сеть
+
+<div style={{display: 'flex', margin: '2rem 0'}}>
+  <SimpleButton to="/snapshots/mainnet">Снапшоты mainnet</SimpleButton>
+  <SimpleButton to="/snapshots/testnet">Снапшоты testnet</SimpleButton>
+</div>

@@ -10,7 +10,9 @@ page_actions:
 
 # FastNear API
 
-FastNear API is the indexed REST family for builder-facing account views. It is the fastest way to answer questions like "what does this account own?" or "which accounts map to this public key?" without stitching together raw RPC calls.
+FastNear API is the indexed REST family for builder-facing account views. It is the fastest
+way to answer questions like "what does this account own?" or "which accounts map to this
+public key?" without stitching together raw RPC calls.
 
 ## Best fit
 

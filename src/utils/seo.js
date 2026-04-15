@@ -52,6 +52,7 @@ const DOCSEARCH_CATEGORY_RULES = [
   { prefix: '/fastdata', value: 'api-reference' },
   { prefix: '/auth', value: 'guide' },
   { prefix: '/agents', value: 'guide' },
+  { prefix: '/internationalization', value: 'guide' },
   { prefix: '/snapshots', value: 'guide' },
   { prefix: '/transaction-flow', value: 'guide' },
   { prefix: '/redocly-config', value: 'guide' },
@@ -73,22 +74,69 @@ const DOCSEARCH_METHOD_TYPE_RULES = [
   { prefix: '/fastdata', value: 'kv-fastdata' },
 ];
 
+const DOCSEARCH_SURFACE_RULES = [
+  { prefix: '/rpc', value: 'rpc' },
+  { prefix: '/api', value: 'api' },
+  { prefix: '/tx', value: 'tx' },
+  { prefix: '/transfers', value: 'transfers' },
+  { prefix: '/neardata', value: 'neardata' },
+  { prefix: '/fastdata', value: 'fastdata' },
+  { prefix: '/auth', value: 'auth' },
+  { prefix: '/agents', value: 'agents' },
+  { prefix: '/internationalization', value: 'guide' },
+  { prefix: '/snapshots', value: 'snapshots' },
+  { prefix: '/transaction-flow', value: 'transaction-flow' },
+  { prefix: '/redocly-config', value: 'guide' },
+  { prefix: '/', value: 'guide' },
+];
+
+const DOCSEARCH_FAMILY_RULES = [
+  { prefix: '/rpc/account', value: 'account' },
+  { prefix: '/rpc/block', value: 'block' },
+  { prefix: '/rpc/contract', value: 'contract' },
+  { prefix: '/rpc/protocol', value: 'protocol' },
+  { prefix: '/rpc/transaction', value: 'transaction' },
+  { prefix: '/rpc/validators', value: 'validators' },
+  { prefix: '/api', value: 'fastnear' },
+  { prefix: '/tx', value: 'transactions' },
+  { prefix: '/transfers', value: 'transfers' },
+  { prefix: '/neardata', value: 'neardata' },
+  { prefix: '/fastdata/kv', value: 'kv-fastdata' },
+];
+
+const REFERENCE_COLLECTION_ROUTES = new Set([
+  '/api',
+  '/fastdata/kv',
+  '/neardata',
+  '/rpc',
+  '/transfers',
+  '/tx',
+]);
+
+const OPERATION_CANONICAL_RULES = [
+  { prefix: '/rpcs/account', family: 'account', methodType: 'account', surface: 'rpc' },
+  { prefix: '/rpcs/block', family: 'block', methodType: 'block', surface: 'rpc' },
+  { prefix: '/rpcs/contract', family: 'contract', methodType: 'contract', surface: 'rpc' },
+  { prefix: '/rpcs/protocol', family: 'protocol', methodType: 'protocol', surface: 'rpc' },
+  { prefix: '/rpcs/transaction', family: 'transaction', methodType: 'transaction', surface: 'rpc' },
+  { prefix: '/rpcs/validators', family: 'validators', methodType: 'validators', surface: 'rpc' },
+  { prefix: '/apis/fastnear', family: 'fastnear', methodType: 'fastnear', surface: 'api' },
+  { prefix: '/apis/transactions', family: 'transactions', methodType: 'transactions', surface: 'tx' },
+  { prefix: '/apis/transfers', family: 'transfers', methodType: 'transfers', surface: 'transfers' },
+  { prefix: '/apis/neardata', family: 'neardata', methodType: 'neardata', surface: 'neardata' },
+  { prefix: '/apis/kv-fastdata', family: 'kv-fastdata', methodType: 'kv-fastdata', surface: 'fastdata' },
+];
+
 function normalizeRoute(route) {
-  const normalized = String(route || '').trim();
+  const normalized = stripLocalePrefix(route);
   if (!normalized) {
     return null;
   }
-
-  if (normalized === '/') {
-    return '/';
-  }
-
-  const prefixed = normalized.startsWith('/') ? normalized : `/${normalized}`;
-  return prefixed.replace(/\/+$/, '') || '/';
+  return normalized;
 }
 
 function matchesRoutePrefix(route, prefix) {
-  return route === prefix || route.startsWith(`${prefix}/`);
+  return Boolean(route) && (route === prefix || route.startsWith(`${prefix}/`));
 }
 
 function resolveDocsearchValue(route, rules) {
@@ -204,3 +252,101 @@ export function getDocsearchCategory(permalink) {
 export function getDocsearchMethodType(permalink) {
   return resolveDocsearchValue(permalink, DOCSEARCH_METHOD_TYPE_RULES);
 }
+
+export function getDocsearchSurface(permalink) {
+  return resolveDocsearchValue(permalink, DOCSEARCH_SURFACE_RULES);
+}
+
+export function getDocsearchFamily(permalink) {
+  return resolveDocsearchValue(permalink, DOCSEARCH_FAMILY_RULES);
+}
+
+export function getDocsearchAudience(permalink) {
+  const normalizedRoute = normalizeRoute(permalink);
+  if (!normalizedRoute) {
+    return null;
+  }
+
+  if (matchesRoutePrefix(normalizedRoute, '/agents')) {
+    return 'agent';
+  }
+
+  if (matchesRoutePrefix(normalizedRoute, '/snapshots')) {
+    return 'operator';
+  }
+
+  return 'builder';
+}
+
+function isReferenceLeafRoute(route, prefix) {
+  return matchesRoutePrefix(route, prefix) && route !== prefix;
+}
+
+export function getDocsearchPageType(permalink) {
+  const normalizedRoute = normalizeRoute(permalink);
+  if (!normalizedRoute) {
+    return null;
+  }
+
+  if (normalizedRoute === '/api/reference') {
+    return 'guide';
+  }
+
+  if (REFERENCE_COLLECTION_ROUTES.has(normalizedRoute)) {
+    return 'collection';
+  }
+
+  if (
+    isReferenceLeafRoute(normalizedRoute, '/api') ||
+    isReferenceLeafRoute(normalizedRoute, '/tx') ||
+    isReferenceLeafRoute(normalizedRoute, '/transfers') ||
+    isReferenceLeafRoute(normalizedRoute, '/neardata') ||
+    isReferenceLeafRoute(normalizedRoute, '/fastdata/kv')
+  ) {
+    return 'reference';
+  }
+
+  const routeParts = normalizedRoute.split('/').filter(Boolean);
+  if (matchesRoutePrefix(normalizedRoute, '/rpc') && routeParts.length >= 3) {
+    return 'reference';
+  }
+
+  return 'guide';
+}
+
+export function getDocsearchSemanticMeta(permalink) {
+  const normalizedRoute = normalizeRoute(permalink);
+  if (!normalizedRoute) {
+    return null;
+  }
+
+  return {
+    audience: getDocsearchAudience(normalizedRoute),
+    category: getDocsearchCategory(normalizedRoute),
+    family: getDocsearchFamily(normalizedRoute),
+    methodType: getDocsearchMethodType(normalizedRoute),
+    pageType: getDocsearchPageType(normalizedRoute),
+    surface: getDocsearchSurface(normalizedRoute),
+  };
+}
+
+export function getOperationSemanticMeta(pageModel) {
+  const normalizedCanonicalPath = normalizeRoute(pageModel?.canonicalPath);
+  const matchedRule = OPERATION_CANONICAL_RULES.find((rule) =>
+    matchesRoutePrefix(normalizedCanonicalPath, rule.prefix)
+  );
+
+  if (!matchedRule) {
+    return null;
+  }
+
+  return {
+    audience: 'builder',
+    category: matchedRule.surface === 'rpc' ? 'rpc-reference' : 'api-reference',
+    family: matchedRule.family,
+    methodType: matchedRule.methodType,
+    pageType: 'reference',
+    surface: matchedRule.surface,
+  };
+}
+import { stripLocalePrefix } from './localizedRoutes';

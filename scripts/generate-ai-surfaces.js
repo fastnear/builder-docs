@@ -3,6 +3,22 @@
 const fs = require("fs");
 const path = require("path");
 
+const {
+  DEFAULT_LOCALE,
+  SUPPORTED_LOCALES,
+  localizeRoute,
+  stripLocalePrefix,
+} = require("./lib/localized-routes");
+const {
+  NON_DEFAULT_LOCALES,
+  getLocaleDocsRoot,
+} = require("./lib/locale-framework");
+const {
+  localizePageModel,
+  localizeStructuredFamily,
+  localizeStructuredOperation,
+} = require("./lib/fastnear-localization");
+
 const ROOT = path.resolve(__dirname, "..");
 const DOCS_ROOT = path.resolve(ROOT, "docs");
 const PAGE_MODELS_PATH = path.resolve(ROOT, "src/data/generatedFastnearPageModels.json");
@@ -51,21 +67,40 @@ const HIDDEN_DOC_PREFIXES = [
 const HIDDEN_CANONICAL_PREFIXES = ["/apis/transfers", "/apis/kv-fastdata"];
 const SECRET_QUERY_PARAM_PATTERNS = [/^apiKey$/i, /^token$/i, /^header\./i];
 
-const RPC_CATEGORY_LABELS = {
-  account: "Account RPC",
-  block: "Block RPC",
-  contract: "Contract RPC",
-  protocol: "Protocol RPC",
-  transaction: "Transaction RPC",
-  validators: "Validators RPC",
+const API_SERVICE_LABELS = {
+  en: {
+    fastnear: "FastNear API",
+    "kv-fastdata": "KV FastData API",
+    neardata: "NEAR Data API",
+    transactions: "Transactions API",
+    transfers: "Transfers API",
+  },
+  ru: {
+    fastnear: "FastNear API",
+    "kv-fastdata": "KV FastData API",
+    neardata: "NEAR Data API",
+    transactions: "Transactions API",
+    transfers: "Transfers API",
+  },
 };
 
-const API_SERVICE_LABELS = {
-  fastnear: "FastNear API",
-  "kv-fastdata": "KV FastData API",
-  neardata: "NEAR Data API",
-  transactions: "Transactions API",
-  transfers: "Transfers API",
+const RPC_CATEGORY_LABELS = {
+  en: {
+    account: "Account RPC",
+    block: "Block RPC",
+    contract: "Contract RPC",
+    protocol: "Protocol RPC",
+    transaction: "Transaction RPC",
+    validators: "Validators RPC",
+  },
+  ru: {
+    account: "RPC аккаунта",
+    block: "RPC блоков",
+    contract: "RPC контрактов",
+    protocol: "RPC протокола",
+    transaction: "RPC транзакций",
+    validators: "RPC валидаторов",
+  },
 };
 
 const COLLECTION_ROUTE_SET = new Set([
@@ -81,6 +116,170 @@ const COLLECTION_ROUTE_SET = new Set([
   "/transfers",
   "/tx",
 ]);
+
+const AUTHORED_MARKDOWN_LABELS = {
+  en: {
+    aiAndAgents: "AI & Agents",
+    apiMirrorNotice: [
+      "> The interactive browser key manager is omitted from this static Markdown mirror.",
+      "> Use the live docs page for the browser demo flow, or see",
+      "> [Production Backend Auth](/auth/backend)",
+      "> for secure backend usage.",
+    ].join(" "),
+    bestFor: "Best for:",
+    guidesArchiveTitle: "FastNear Builder Docs Full Documentation Archive",
+    guidesArchiveIntro:
+      "AI-readable Markdown mirrors for authored docs plus canonical `/rpcs/**` and `/apis/**` routes.",
+    htmlPath: "HTML path",
+    indexes: "Indexes",
+    llmsFull: "Full archive",
+    llmsGuidesIndex: "Guides index",
+    llmsGuidesIntro: "Author-written guides and overview pages in AI-readable Markdown form.",
+    llmsGuidesTitle: "FastNear Builder Docs Guides",
+    llmsIntro:
+      "AI-readable indexes for FastNear guides, RPC reference, and REST API reference.",
+    llmsRootTitle: "FastNear Builder Docs",
+    llmsTopLevelIndex: "Top-level index",
+    markdownPath: "Markdown path",
+    open: "Open",
+    otherGuides: "Other Guides",
+    rpcApiGuides: "RPC / API Guides",
+    rpcReferenceIndex: "RPC reference index",
+    rpcReferenceIntro: "Canonical RPC reference pages in AI-readable Markdown form.",
+    rpcReferenceTitle: "FastNear RPC Reference",
+    restApiReferenceIndex: "REST API reference index",
+    restApiReferenceIntro: "Canonical REST API reference pages in AI-readable Markdown form.",
+    restApiReferenceTitle: "FastNear REST API Reference",
+    snapshots: "Snapshots",
+    source: "Source",
+    topLevelIndex: "Top-level index",
+    transactionFlow: "Transaction Flow",
+  },
+  ru: {
+    aiAndAgents: "AI и агенты",
+    apiMirrorNotice: [
+      "> Интерактивный менеджер ключей браузера опущен в этой статической Markdown-копии.",
+      "> Используйте живую страницу документации для браузерного демо-сценария или откройте",
+      "> [Авторизация для продакшен-бэкенда](/auth/backend)",
+      "> для безопасного серверного использования.",
+    ].join(" "),
+    bestFor: "Лучше всего подходит для:",
+    guidesArchiveTitle: "Полный архив документации FastNear Builder Docs",
+    guidesArchiveIntro:
+      "AI-читабельные Markdown-копии авторских гайдов и канонических маршрутов `/rpcs/**` и `/apis/**`.",
+    htmlPath: "HTML-маршрут",
+    indexes: "Индексы",
+    llmsFull: "Полный архив",
+    llmsGuidesIndex: "Индекс гайдов",
+    llmsGuidesIntro: "Авторские гайды и обзорные страницы в AI-читабельном Markdown-формате.",
+    llmsGuidesTitle: "Гайды FastNear Builder Docs",
+    llmsIntro:
+      "AI-читабельные индексы для гайдов FastNear, RPC-справочника и справочника REST API.",
+    llmsRootTitle: "FastNear Builder Docs",
+    llmsTopLevelIndex: "Верхний индекс",
+    markdownPath: "Markdown-маршрут",
+    open: "Открыть",
+    otherGuides: "Другие гайды",
+    rpcApiGuides: "Гайды по RPC / API",
+    rpcReferenceIndex: "Индекс RPC-справочника",
+    rpcReferenceIntro: "Канонические страницы RPC-справочника в AI-читабельном Markdown-формате.",
+    rpcReferenceTitle: "RPC-справочник FastNear",
+    restApiReferenceIndex: "Индекс REST API",
+    restApiReferenceIntro:
+      "Канонические страницы справочника REST API в AI-читабельном Markdown-формате.",
+    restApiReferenceTitle: "Справочник REST API FastNear",
+    snapshots: "Снапшоты",
+    source: "Источник",
+    topLevelIndex: "Верхний индекс",
+    transactionFlow: "Поток транзакции",
+  },
+};
+
+const OPERATION_MARKDOWN_LABELS = {
+  en: {
+    activeExample: "Active example",
+    apiKeyVia: "API key via",
+    array: "array",
+    auth: "Auth",
+    bearerTokenViaHeader: "Bearer token via `Authorization: Bearer <token>` header",
+    body: "body",
+    currentRequest: "Current request",
+    endpoint: "Endpoint",
+    finality: "Finality",
+    headerParameters: "Header parameters",
+    inputs: "Inputs",
+    mediaType: "Media type",
+    method: "Method",
+    network: "Network",
+    networks: "Networks",
+    noAuthRequired: "No auth required",
+    notSpecified: "Not specified",
+    object: "object",
+    operation: "Operation",
+    path: "Path",
+    pathField: "path",
+    pathParameters: "Path parameters",
+    queryField: "query",
+    queryParameters: "Query parameters",
+    requestBody: "Request body",
+    requestBodyField: "body",
+    requestReference: "Request reference",
+    requestSchema: "Request schema",
+    required: "required",
+    responseReference: "Response reference",
+    responseSchema: "Response schema",
+    sourceLinks: "Source links",
+    sourceSpec: "Source spec",
+    status: "Status",
+    summary: "Summary",
+    transport: "Transport",
+    url: "URL",
+    value: "value",
+    withoutSavedCredentials: "This export intentionally omits any locally saved credentials",
+  },
+  ru: {
+    activeExample: "Активный пример",
+    apiKeyVia: "API-ключ через",
+    array: "массив",
+    auth: "Авторизация",
+    bearerTokenViaHeader: "Bearer-токен через заголовок `Authorization: Bearer <token>`",
+    body: "тело",
+    currentRequest: "Текущий запрос",
+    endpoint: "Эндпоинт",
+    finality: "Финальность",
+    headerParameters: "Параметры заголовков",
+    inputs: "Входные данные",
+    mediaType: "Тип данных",
+    method: "Метод",
+    network: "Сеть",
+    networks: "Сети",
+    noAuthRequired: "Авторизация не требуется",
+    notSpecified: "Не указано",
+    object: "объект",
+    operation: "Операция",
+    path: "Путь",
+    pathField: "путь",
+    pathParameters: "Параметры пути",
+    queryField: "query",
+    queryParameters: "Параметры запроса",
+    requestBody: "Тело запроса",
+    requestBodyField: "тело",
+    requestReference: "Справка по запросу",
+    requestSchema: "Схема запроса",
+    required: "обязательный",
+    responseReference: "Справка по ответу",
+    responseSchema: "Схема ответа",
+    sourceLinks: "Ссылки на источник",
+    sourceSpec: "Исходная спецификация",
+    status: "Статус",
+    summary: "Краткое описание",
+    transport: "Транспорт",
+    url: "URL",
+    value: "значение",
+    withoutSavedCredentials:
+      "Этот экспорт намеренно не включает локально сохранённые учётные данные",
+  },
+};
 
 const pageModels = JSON.parse(fs.readFileSync(PAGE_MODELS_PATH, "utf8"));
 const structuredGraph = JSON.parse(fs.readFileSync(STRUCTURED_GRAPH_PATH, "utf8"));
@@ -98,6 +297,9 @@ function removeGeneratedStaticRoots() {
   for (const root of GENERATED_STATIC_ROOTS) {
     fs.rmSync(root, { recursive: true, force: true });
   }
+  NON_DEFAULT_LOCALES.forEach((locale) => {
+    fs.rmSync(path.join(STATIC_ROOT, locale), { recursive: true, force: true });
+  });
 
   if (fs.existsSync(STATIC_ROOT)) {
     for (const entry of fs.readdirSync(STATIC_ROOT, { withFileTypes: true })) {
@@ -154,6 +356,11 @@ function buildMarkdownMirrorPath(route) {
     return "/index.md";
   }
 
+  const segments = normalizedRoute.split("/").filter(Boolean);
+  if (segments.length === 1 && SUPPORTED_LOCALES.includes(segments[0])) {
+    return `${normalizedRoute}/index.md`;
+  }
+
   return `${normalizedRoute}.md`;
 }
 
@@ -165,6 +372,39 @@ function buildMarkdownMirrorAliases(route) {
 
 function buildAbsoluteUrl(route) {
   return new URL(normalizeRoute(route).replace(/^\//, ""), `${SITE_ORIGIN}/`).toString();
+}
+
+function getAuthoredMarkdownLabels(locale = DEFAULT_LOCALE) {
+  return AUTHORED_MARKDOWN_LABELS[locale] || AUTHORED_MARKDOWN_LABELS[DEFAULT_LOCALE];
+}
+
+function getOperationMarkdownLabels(locale = DEFAULT_LOCALE) {
+  return OPERATION_MARKDOWN_LABELS[locale] || OPERATION_MARKDOWN_LABELS[DEFAULT_LOCALE];
+}
+
+function getDocsRoot(locale = DEFAULT_LOCALE) {
+  const docsRoot = locale === DEFAULT_LOCALE ? DOCS_ROOT : getLocaleDocsRoot(locale);
+
+  if (!fs.existsSync(docsRoot)) {
+    throw new Error(
+      `Missing translated docs root for locale "${locale}". Run "yarn bootstrap:i18n --locale ${locale}" first.`
+    );
+  }
+
+  return docsRoot;
+}
+
+function buildLocalizedAbsoluteUrl(route, locale = DEFAULT_LOCALE) {
+  return buildAbsoluteUrl(localizeRoute(route, locale));
+}
+
+function localizeInternalHref(href, locale = DEFAULT_LOCALE) {
+  const normalizedHref = String(href || "").trim();
+  if (!normalizedHref.startsWith("/")) {
+    return normalizedHref;
+  }
+
+  return localizeRoute(normalizedHref, locale);
 }
 
 function buildPageEntityId(url) {
@@ -188,18 +428,18 @@ function getDocsPageSchemaType(entry) {
     return "WebPage";
   }
 
-  return isCollectionRoute(entry.route) ? "CollectionPage" : "TechArticle";
+  return isCollectionRoute(stripLocalePrefix(entry.route)) ? "CollectionPage" : "TechArticle";
 }
 
 function normalizeMarkdown(markdown) {
   return markdown.replace(/[ \t]+\n/g, "\n").replace(/\n{3,}/g, "\n\n").trim();
 }
 
-function rewriteRootRelativeMarkdownLinks(markdown) {
+function rewriteRootRelativeMarkdownLinks(markdown, locale = DEFAULT_LOCALE) {
   return markdown.replace(
     /(!?\[[^\]]*]\()((?:<)?\/[^)\s>]+(?:>)?)(\))/g,
     (_match, prefix, href, suffix) =>
-      `${prefix}${sanitizePublicUrl(href.replace(/^<|>$/g, ""), SITE_ORIGIN)}${suffix}`
+      `${prefix}${sanitizePublicUrl(localizeRoute(href.replace(/^<|>$/g, ""), locale), SITE_ORIGIN)}${suffix}`
   );
 }
 
@@ -328,45 +568,67 @@ function stripInlineTags(value) {
     .trim();
 }
 
-function buildRpcApiServiceLinks() {
+function buildRpcApiServiceLinks(locale = DEFAULT_LOCALE) {
+  const labelSets = {
+    en: {
+      fastnearDescription:
+        "Indexed account views for balances, NFTs, staking, and public-key lookups.",
+      fastdataDescription:
+        "Indexed key-value history and latest-state lookups for contract storage analysis.",
+      neardataDescription:
+        "Recent finalized and optimistic block-family reads for low-latency polling workflows.",
+      transactionsDescription:
+        "Account, block, receipt, and transaction history from indexed execution data.",
+      transfersDescription:
+        "Purpose-built transfer history for account activity and pagination-heavy UIs.",
+    },
+    ru: {
+      fastnearDescription:
+        "Индексированные представления аккаунтов для балансов, NFT, стейкинга и поиска по публичным ключам.",
+      fastdataDescription:
+        "Индексированная история key-value и выборки последнего состояния для анализа хранилища контрактов.",
+      neardataDescription:
+        "Недавние финализированные и optimistic-чтения семейств блоков для низколатентного опроса.",
+      transactionsDescription:
+        "История аккаунтов, блоков, receipt и транзакций из индексированных данных исполнения.",
+      transfersDescription:
+        "Специализированная история переводов для активности аккаунтов и интерфейсов с тяжёлой пагинацией.",
+    },
+  };
+  const labels = labelSets[locale] || labelSets[DEFAULT_LOCALE];
   const links = [
     {
-      href: "/api",
+      href: localizeRoute("/api", locale),
       label: "FastNear API",
-      description:
-        "Indexed account views for balances, NFTs, staking, and public-key lookups.",
+      description: labels.fastnearDescription,
     },
     {
-      href: "/tx",
+      href: localizeRoute("/tx", locale),
       label: "Transactions API",
-      description:
-        "Account, block, receipt, and transaction history from indexed execution data.",
+      description: labels.transactionsDescription,
     },
     ...(!hideEarlyApiFamilies
       ? [
           {
-            href: "/transfers",
+            href: localizeRoute("/transfers", locale),
             label: "Transfers API",
-            description:
-              "Purpose-built transfer history for account activity and pagination-heavy UIs.",
+            description: labels.transfersDescription,
           },
         ]
       : []),
     ...(!hideEarlyApiFamilies
       ? [
           {
-            href: "/fastdata/kv",
+            href: localizeRoute("/fastdata/kv", locale),
             label: "KV FastData API",
-            description:
-              "Indexed key-value history and latest-state lookups for contract storage analysis.",
+            description: labels.fastdataDescription,
           },
         ]
       : []),
     {
-      href: "/neardata",
+      href: localizeRoute("/neardata", locale),
       label: "NEAR Data API",
-      description:
-        "Recent finalized and optimistic block-family reads for low-latency polling workflows.",
+      description: labels.neardataDescription,
     },
   ];
 
@@ -375,9 +637,10 @@ function buildRpcApiServiceLinks() {
     .join("\n");
 }
 
-function transformCardGrid(markdown) {
+function transformCardGrid(markdown, locale = DEFAULT_LOCALE) {
+  const labels = getAuthoredMarkdownLabels(locale);
   return markdown.replace(
-    /<div className="fastnear-doc-card-grid">([\s\S]*?)<\/div>/g,
+    /<div className="fastnear-doc-card-grid(?: [^"]*)?">([\s\S]*?)<\/div>/g,
     (_match, inner) => {
       const cardMatches = [
         ...inner.matchAll(
@@ -427,7 +690,13 @@ function transformCardGrid(markdown) {
 
           const lines = [];
           lines.push(
-            `### ${titleHref ? `[${title}](${titleHref})` : ctaHref ? `[${title}](${ctaHref})` : title}`
+            `### ${
+              titleHref
+                ? `[${title}](${localizeInternalHref(titleHref, locale)})`
+                : ctaHref
+                  ? `[${title}](${localizeInternalHref(ctaHref, locale)})`
+                  : title
+            }`
           );
 
           if (eyebrow) {
@@ -439,19 +708,19 @@ function transformCardGrid(markdown) {
           }
 
           if (bestForMatches.length) {
-            lines.push("Best for:");
+            lines.push(labels.bestFor);
             lines.push(
               bestForMatches
                 .map(
                   (bestForMatch) =>
-                    `- [${stripInlineTags(bestForMatch[2])}](${bestForMatch[1].trim()})`
+                    `- [${stripInlineTags(bestForMatch[2])}](${localizeInternalHref(bestForMatch[1].trim(), locale)})`
                 )
                 .join("\n")
             );
           }
 
           if (ctaHref && ctaHref !== titleHref) {
-            lines.push(`Open: [${ctaLabel}](${ctaHref})`);
+            lines.push(`${labels.open}: [${ctaLabel}](${localizeInternalHref(ctaHref, locale)})`);
           }
 
           return lines.filter(Boolean).join("\n\n");
@@ -461,34 +730,39 @@ function transformCardGrid(markdown) {
   );
 }
 
-function transformInlineLinks(markdown) {
+function transformInlineLinks(markdown, locale = DEFAULT_LOCALE) {
   return markdown
     .replace(
       /<SimpleButton\b[^>]*to="([^"]+)"[^>]*>([\s\S]*?)<\/SimpleButton>/g,
-      (_match, href, inner) => `- [${stripInlineTags(inner)}](${href.trim()})`
+      (_match, href, inner) => `- [${stripInlineTags(inner)}](${localizeInternalHref(href.trim(), locale)})`
     )
     .replace(
       /<Link\b[^>]*to="([^"]+)"[^>]*>([\s\S]*?)<\/Link>/g,
-      (_match, href, inner) => `[${stripInlineTags(inner)}](${href.trim()})`
+      (_match, href, inner) => `[${stripInlineTags(inner)}](${localizeInternalHref(href.trim(), locale)})`
     );
 }
 
-function transformSimpleJsx(markdown) {
-  return markdown
-    .replace(/<RpcApiServiceLinks\s*\/>/g, buildRpcApiServiceLinks())
+function transformSimpleJsx(markdown, locale = DEFAULT_LOCALE) {
+  const labels = getAuthoredMarkdownLabels(locale);
+  let transformed = markdown
+    .replace(/<RpcApiServiceLinks\s*\/>/g, buildRpcApiServiceLinks(locale))
     .replace(
       /<ApiKeyManager\s*\/>/g,
-      [
-        "> The interactive browser key manager is omitted from this static Markdown mirror.",
-        "> Use the live docs page for the browser demo flow, or see",
-        "> [Production Backend Auth](/auth/backend)",
-        "> for secure backend usage.",
-      ].join(" ")
+      labels.apiMirrorNotice
     )
     .replace(/<\/?React\.Fragment[^>]*>/g, "")
-    .replace(/<strong>([\s\S]*?)<\/strong>/g, "**$1**")
-    .replace(/<span[^>]*>([\s\S]*?)<\/span>/g, "$1")
-    .replace(/<div[^>]*>([\s\S]*?)<\/div>/g, "$1");
+    .replace(/<strong>([\s\S]*?)<\/strong>/g, "**$1**");
+
+  let previous;
+  do {
+    previous = transformed;
+    transformed = transformed
+      .replace(/<span[^>]*>([\s\S]*?)<\/span>/g, "$1")
+      .replace(/<p[^>]*>([\s\S]*?)<\/p>/g, "$1")
+      .replace(/<div[^>]*>([\s\S]*?)<\/div>/g, "$1");
+  } while (transformed !== previous);
+
+  return transformed;
 }
 
 function removeImports(markdown) {
@@ -511,30 +785,32 @@ function assertNoUnsupportedJsx(markdown, filePath) {
   }
 }
 
-function renderAuthoredMarkdown(content, route, filePath) {
+function renderAuthoredMarkdown(content, route, filePath, locale = DEFAULT_LOCALE) {
+  const labels = getAuthoredMarkdownLabels(locale);
   let markdown = removeImports(content);
-  markdown = transformCardGrid(markdown);
-  markdown = transformInlineLinks(markdown);
-  markdown = transformSimpleJsx(markdown);
-  markdown = rewriteRootRelativeMarkdownLinks(markdown);
+  markdown = transformCardGrid(markdown, locale);
+  markdown = transformInlineLinks(markdown, locale);
+  markdown = transformSimpleJsx(markdown, locale);
+  markdown = rewriteRootRelativeMarkdownLinks(markdown, locale);
   assertNoUnsupportedJsx(markdown, filePath);
 
   return `${normalizeMarkdown(
-    `**Source:** [${buildAbsoluteUrl(route)}](${buildAbsoluteUrl(route)})\n\n${markdown}`
+    `**${labels.source}:** [${buildAbsoluteUrl(route)}](${buildAbsoluteUrl(route)})\n\n${markdown}`
   )}\n`;
 }
 
-function getDocSectionLabel(route) {
+function getDocSectionLabel(route, locale = DEFAULT_LOCALE) {
+  const labels = getAuthoredMarkdownLabels(locale);
   if (route.startsWith("/agents")) {
-    return "AI & Agents";
+    return labels.aiAndAgents;
   }
 
   if (route.startsWith("/transaction-flow")) {
-    return "Transaction Flow";
+    return labels.transactionFlow;
   }
 
   if (route.startsWith("/snapshots")) {
-    return "Snapshots";
+    return labels.snapshots;
   }
 
   if (
@@ -549,10 +825,10 @@ function getDocSectionLabel(route) {
     route === "/auth" ||
     route.startsWith("/fastdata")
   ) {
-    return "RPC / API Guides";
+    return labels.rpcApiGuides;
   }
 
-  return "Other Guides";
+  return labels.otherGuides;
 }
 
 function getFirstMeaningfulParagraph(markdown) {
@@ -852,9 +1128,9 @@ function formatJsonCodeBlock(value) {
   return formatCodeBlock("json", JSON.stringify(value, null, 2));
 }
 
-function formatNetworkLines(networks) {
+function formatNetworkLines(networks, labels) {
   if (!Array.isArray(networks) || !networks.length) {
-    return "- Not specified";
+    return `- ${labels.notSpecified}`;
   }
 
   return networks
@@ -862,7 +1138,7 @@ function formatNetworkLines(networks) {
     .join("\n");
 }
 
-function formatSchemaType(schema = {}) {
+function formatSchemaType(schema = {}, labels = OPERATION_MARKDOWN_LABELS.en) {
   if (Array.isArray(schema.type)) {
     return schema.type.join(" | ");
   }
@@ -879,24 +1155,34 @@ function formatSchemaType(schema = {}) {
   }
 
   if (schema.properties) {
-    return "object";
+    return labels.object;
   }
 
   if (schema.items) {
-    return "array";
+    return labels.array;
   }
 
-  return "value";
+  return labels.value;
 }
 
-function formatFieldDescription(field) {
-  const parts = [];
-  parts.push(field.location || "body");
-  if (field.required) {
-    parts.push("required");
+function formatFieldDescription(field, labels) {
+  if (!field) {
+    return "";
   }
 
-  const type = formatSchemaType(field.schema);
+  const parts = [];
+  if (field.location === "path") {
+    parts.push(labels.pathField);
+  } else if (field.location === "query") {
+    parts.push(labels.queryField);
+  } else {
+    parts.push(field.location || labels.requestBodyField || labels.body);
+  }
+  if (field.required) {
+    parts.push(labels.required);
+  }
+
+  const type = formatSchemaType(field.schema, labels);
   if (type) {
     parts.push(type);
   }
@@ -907,34 +1193,37 @@ function formatFieldDescription(field) {
   return `- \`${field.name}\` (${parts.join(", ")})${suffix}`;
 }
 
-function formatParameterGroup(title, parameters) {
+function formatParameterGroup(title, parameters, labels) {
   if (!parameters?.length) {
     return "";
   }
 
-  return [`### ${title}`, "", ...parameters.map((parameter) => formatFieldDescription(parameter)), ""].join(
-    "\n"
-  );
+  return [
+    `### ${title}`,
+    "",
+    ...parameters.map((parameter) => formatFieldDescription(parameter, labels)).filter(Boolean),
+    "",
+  ].join("\n");
 }
 
-function formatSecuritySummary(securitySchemes) {
+function formatSecuritySummary(securitySchemes, labels) {
   if (!Array.isArray(securitySchemes) || !securitySchemes.length) {
-    return "- No auth required";
+    return `- ${labels.noAuthRequired}`;
   }
 
   const lines = securitySchemes.map((scheme) => {
     if (scheme.type === "apiKey") {
-      return `- API key via ${scheme.in} \`${scheme.name}\`${scheme.description ? `: ${scheme.description}` : ""}`;
+      return `- ${labels.apiKeyVia} ${scheme.in} \`${scheme.name}\`${scheme.description ? `: ${scheme.description}` : ""}`;
     }
 
     if (scheme.type === "http" && scheme.scheme === "bearer") {
-      return "- Bearer token via `Authorization: Bearer <token>` header";
+      return `- ${labels.bearerTokenViaHeader}`;
     }
 
     return `- ${scheme.id || "Auth"} (${scheme.type || "custom"})${scheme.description ? `: ${scheme.description}` : ""}`;
   });
 
-  lines.push("- This export intentionally omits any locally saved credentials");
+  lines.push(`- ${labels.withoutSavedCredentials}`);
   return lines.join("\n");
 }
 
@@ -965,6 +1254,7 @@ function sanitizeExampleRequest(example) {
 }
 
 function formatCurrentRequestSection({
+  locale = DEFAULT_LOCALE,
   pageModel,
   requestUrl,
   httpRequestBody,
@@ -973,30 +1263,31 @@ function formatCurrentRequestSection({
   selectedFinality,
   selectedNetworkDetails,
 }) {
-  const lines = ["## Current request", ""];
+  const labels = getOperationMarkdownLabels(locale);
+  const lines = [`## ${labels.currentRequest}`, ""];
 
   if (selectedNetworkDetails?.label || selectedNetworkDetails?.key) {
-    lines.push(`- Network: ${selectedNetworkDetails.label || selectedNetworkDetails.key}`);
+    lines.push(`- ${labels.network}: ${selectedNetworkDetails.label || selectedNetworkDetails.key}`);
   }
 
   if (pageModel.route.transport === "json-rpc") {
     if (selectedFinality) {
-      lines.push(`- Finality: ${selectedFinality}`);
+      lines.push(`- ${labels.finality}: ${selectedFinality}`);
     }
-    lines.push(`- Endpoint: ${sanitizePublicUrl(selectedNetworkDetails?.url)}`);
+    lines.push(`- ${labels.endpoint}: ${sanitizePublicUrl(selectedNetworkDetails?.url)}`);
     lines.push("");
-    lines.push("### Request body");
+    lines.push(`### ${labels.requestBody}`);
     lines.push("");
     lines.push(formatJsonCodeBlock(rpcPayload));
   } else {
-    lines.push(`- Method: ${pageModel.route.method}`);
-    lines.push(`- URL: ${sanitizePublicUrl(requestUrl?.toString())}`);
+    lines.push(`- ${labels.method}: ${pageModel.route.method}`);
+    lines.push(`- ${labels.url}: ${sanitizePublicUrl(requestUrl?.toString())}`);
     if (selectedExample?.label) {
-      lines.push(`- Active example: ${selectedExample.label}`);
+      lines.push(`- ${labels.activeExample}: ${selectedExample.label}`);
     }
     lines.push("");
     if (httpRequestBody) {
-      lines.push("### Request body");
+      lines.push(`### ${labels.requestBody}`);
       lines.push("");
       lines.push(formatJsonCodeBlock(httpRequestBody));
     }
@@ -1005,26 +1296,27 @@ function formatCurrentRequestSection({
   return lines.filter(Boolean).join("\n");
 }
 
-function formatRequestReference(pageModel, selectedExample) {
-  const sections = ["## Request reference", ""];
+function formatRequestReference(pageModel, selectedExample, locale = DEFAULT_LOCALE) {
+  const labels = getOperationMarkdownLabels(locale);
+  const sections = [`## ${labels.requestReference}`, ""];
   const exampleRequest = sanitizeExampleRequest(selectedExample);
 
   if (exampleRequest) {
-    sections.push("### Active example");
+    sections.push(`### ${labels.activeExample}`);
     sections.push("");
     sections.push(formatJsonCodeBlock(exampleRequest));
     sections.push("");
   }
 
   if (pageModel.interaction?.fields?.length) {
-    sections.push("### Inputs");
+    sections.push(`### ${labels.inputs}`);
     sections.push("");
-    sections.push(...pageModel.interaction.fields.map((field) => formatFieldDescription(field)));
+    sections.push(...pageModel.interaction.fields.map((field) => formatFieldDescription(field, labels)));
     sections.push("");
   }
 
   if (pageModel.request?.bodySchema) {
-    sections.push("### Request schema");
+    sections.push(`### ${labels.requestSchema}`);
     sections.push("");
     sections.push(formatJsonCodeBlock(pageModel.request.bodySchema));
     sections.push("");
@@ -1032,30 +1324,31 @@ function formatRequestReference(pageModel, selectedExample) {
 
   if (pageModel.request?.parameters) {
     const { path = [], query = [], header = [] } = pageModel.request.parameters;
-    sections.push(formatParameterGroup("Path parameters", path));
-    sections.push(formatParameterGroup("Query parameters", query));
-    sections.push(formatParameterGroup("Header parameters", header));
+    sections.push(formatParameterGroup(labels.pathParameters, path, labels));
+    sections.push(formatParameterGroup(labels.queryParameters, query, labels));
+    sections.push(formatParameterGroup(labels.headerParameters, header, labels));
   }
 
   return sections.filter(Boolean).join("\n");
 }
 
-function formatResponseReference(response) {
+function formatResponseReference(response, locale = DEFAULT_LOCALE) {
   if (!response) {
     return "";
   }
 
-  const lines = ["## Response reference", ""];
-  lines.push(`- Status: ${response.status || "200"}`);
+  const labels = getOperationMarkdownLabels(locale);
+  const lines = [`## ${labels.responseReference}`, ""];
+  lines.push(`- ${labels.status}: ${response.status || "200"}`);
   if (response.mediaType) {
-    lines.push(`- Media type: ${response.mediaType}`);
+    lines.push(`- ${labels.mediaType}: ${response.mediaType}`);
   }
   if (response.description) {
-    lines.push(`- Summary: ${response.description}`);
+    lines.push(`- ${labels.summary}: ${response.description}`);
   }
   lines.push("");
   if (response.schema) {
-    lines.push("### Response schema");
+    lines.push(`### ${labels.responseSchema}`);
     lines.push("");
     lines.push(formatJsonCodeBlock(response.schema));
   }
@@ -1066,6 +1359,7 @@ function formatResponseReference(response) {
 function buildOperationMarkdown({
   currentUrl,
   httpRequestBody,
+  locale = DEFAULT_LOCALE,
   pageModel,
   requestUrl,
   rpcPayload,
@@ -1073,6 +1367,7 @@ function buildOperationMarkdown({
   selectedFinality,
   selectedNetworkDetails,
 }) {
+  const labels = getOperationMarkdownLabels(locale);
   const sourceLinks = new Set();
 
   [currentUrl, pageModel.canonicalPath, ...(pageModel.routeAliases || [])]
@@ -1089,25 +1384,26 @@ function buildOperationMarkdown({
     sections.push(pageModel.info.description, "");
   }
 
-  sections.push("## Source links", "");
+  sections.push(`## ${labels.sourceLinks}`, "");
   sections.push(...[...sourceLinks].map((link) => `- ${link}`));
   sections.push("");
-  sections.push("## Operation", "");
-  sections.push(`- Transport: ${pageModel.route.transport}`);
-  sections.push(`- Method: ${pageModel.route.method}`);
-  sections.push(`- Path: \`${pageModel.route.path}\``);
+  sections.push(`## ${labels.operation}`, "");
+  sections.push(`- ${labels.transport}: ${pageModel.route.transport}`);
+  sections.push(`- ${labels.method}: ${pageModel.route.method}`);
+  sections.push(`- ${labels.path}: \`${pageModel.route.path}\``);
   if (pageModel.sourceSpec) {
-    sections.push(`- Source spec: \`${pageModel.sourceSpec}\``);
+    sections.push(`- ${labels.sourceSpec}: \`${pageModel.sourceSpec}\``);
   }
   sections.push("");
-  sections.push("## Networks", "");
-  sections.push(formatNetworkLines(pageModel.interaction?.networks));
+  sections.push(`## ${labels.networks}`, "");
+  sections.push(formatNetworkLines(pageModel.interaction?.networks, labels));
   sections.push("");
-  sections.push("## Auth", "");
-  sections.push(formatSecuritySummary(pageModel.securitySchemes));
+  sections.push(`## ${labels.auth}`, "");
+  sections.push(formatSecuritySummary(pageModel.securitySchemes, labels));
   sections.push("");
   sections.push(
     formatCurrentRequestSection({
+      locale,
       pageModel,
       requestUrl,
       httpRequestBody,
@@ -1118,14 +1414,14 @@ function buildOperationMarkdown({
     })
   );
   sections.push("");
-  sections.push(formatRequestReference(pageModel, selectedExample));
+  sections.push(formatRequestReference(pageModel, selectedExample, locale));
   sections.push("");
-  sections.push(formatResponseReference(pageModel.responses?.[0]));
+  sections.push(formatResponseReference(pageModel.responses?.[0], locale));
 
   return `${normalizeMarkdown(sections.filter(Boolean).join("\n"))}\n`;
 }
 
-function buildOperationMarkdownForRoute(pageModel, route) {
+function buildOperationMarkdownForRoute(pageModel, route, locale = DEFAULT_LOCALE) {
   const selectedNetworkKey = pageModel.interaction.networks[0]?.key || "mainnet";
   const selectedNetworkDetails =
     pageModel.interaction.networks.find((network) => network.key === selectedNetworkKey) ||
@@ -1156,10 +1452,19 @@ function buildOperationMarkdownForRoute(pageModel, route) {
         )
       : undefined;
 
+  const exportPageModel = {
+    ...pageModel,
+    canonicalPath: localizeRoute(pageModel.canonicalPath, locale),
+    routeAliases: (pageModel.routeAliases || []).map((candidateRoute) =>
+      localizeRoute(candidateRoute, locale)
+    ),
+  };
+
   return buildOperationMarkdown({
     currentUrl: route,
     httpRequestBody,
-    pageModel,
+    locale,
+    pageModel: exportPageModel,
     requestUrl,
     rpcPayload,
     selectedExample,
@@ -1168,21 +1473,24 @@ function buildOperationMarkdownForRoute(pageModel, route) {
   });
 }
 
-function createAuthoredDocEntries() {
-  return walkDocsFiles(DOCS_ROOT)
+function createAuthoredDocEntries(locale = DEFAULT_LOCALE) {
+  const docsRoot = getDocsRoot(locale);
+
+  return walkDocsFiles(docsRoot)
     .map((filePath) => {
-      const relativePath = path.relative(DOCS_ROOT, filePath);
+      const relativePath = path.relative(docsRoot, filePath);
       const rawContent = fs.readFileSync(filePath, "utf8");
       const { content, data } = parseFrontmatter(rawContent);
-      const route = computeDocRoute(relativePath, data);
+      const baseRoute = computeDocRoute(relativePath, data);
+      const route = localizeRoute(baseRoute, locale);
 
-      if (isHiddenRoute(route)) {
+      if (isHiddenRoute(baseRoute)) {
         return null;
       }
 
       const pageModelId = extractPageModelId(content);
       if (pageModelId) {
-        const pageModel = pageModelsById[pageModelId];
+        const pageModel = localizePageModel(pageModelsById[pageModelId], locale);
         if (!pageModel || isHiddenCanonicalRoute(pageModel.canonicalPath)) {
           return null;
         }
@@ -1190,9 +1498,9 @@ function createAuthoredDocEntries() {
         return {
           description: pageModel.info.summary || pageModel.info.description || "",
           htmlPath: route,
-          group: getDocSectionLabel(route),
+          group: getDocSectionLabel(baseRoute, locale),
           kind: "wrapper",
-          markdown: buildOperationMarkdownForRoute(pageModel, route),
+          markdown: buildOperationMarkdownForRoute(pageModel, route, locale),
           markdownPath: buildMarkdownMirrorPath(route),
           markdownPaths: buildMarkdownMirrorAliases(route),
           route,
@@ -1200,12 +1508,12 @@ function createAuthoredDocEntries() {
         };
       }
 
-      const markdown = renderAuthoredMarkdown(content, route, relativePath);
+      const markdown = renderAuthoredMarkdown(content, route, relativePath, locale);
       return {
         description:
           data.description || getFirstMeaningfulParagraph(markdown).replace(/^\*\*Source:\*\*.+$/m, "").trim(),
         htmlPath: route,
-        group: getDocSectionLabel(route),
+        group: getDocSectionLabel(baseRoute, locale),
         kind: "authored",
         markdown,
         markdownPath: buildMarkdownMirrorPath(route),
@@ -1218,39 +1526,41 @@ function createAuthoredDocEntries() {
     .sort((left, right) => left.route.localeCompare(right.route));
 }
 
-function createCanonicalEntries() {
+function createCanonicalEntries(locale = DEFAULT_LOCALE) {
   return pageModels
     .filter((pageModel) => !isHiddenCanonicalRoute(pageModel.canonicalPath))
     .map((pageModel) => {
-      const route = normalizeRoute(pageModel.canonicalPath);
-      const topLevel = route.split("/")[1];
-      const groupKey = route.split("/")[2];
+      const localizedPageModel = localizePageModel(pageModel, locale);
+      const baseRoute = normalizeRoute(pageModel.canonicalPath);
+      const route = localizeRoute(baseRoute, locale);
+      const topLevel = baseRoute.split("/")[1];
+      const groupKey = baseRoute.split("/")[2];
 
       return {
-        description: pageModel.info.summary || pageModel.info.description || "",
+        description: localizedPageModel.info.summary || localizedPageModel.info.description || "",
         group:
           topLevel === "rpcs"
-            ? RPC_CATEGORY_LABELS[groupKey] || groupKey
-            : API_SERVICE_LABELS[groupKey] || groupKey,
+            ? RPC_CATEGORY_LABELS[locale]?.[groupKey] || RPC_CATEGORY_LABELS[DEFAULT_LOCALE]?.[groupKey] || groupKey
+            : API_SERVICE_LABELS[locale]?.[groupKey] || API_SERVICE_LABELS[DEFAULT_LOCALE]?.[groupKey] || groupKey,
         htmlPath: route,
         kind: topLevel === "rpcs" ? "rpc" : "api",
-        markdown: buildOperationMarkdownForRoute(pageModel, route),
+        markdown: buildOperationMarkdownForRoute(localizedPageModel, route, locale),
         markdownPath: buildMarkdownMirrorPath(route),
         markdownPaths: buildMarkdownMirrorAliases(route),
         route,
-        title: pageModel.info.title,
+        title: localizedPageModel.info.title,
       };
     })
     .sort((left, right) => left.route.localeCompare(right.route));
 }
 
-function buildWebsiteEntity() {
+function buildWebsiteEntity(locale = DEFAULT_LOCALE) {
   return {
     "@id": WEBSITE_ID,
     "@type": "WebSite",
     description:
       "API and RPC documentation for FastNear, high-performance infrastructure for the NEAR Protocol.",
-    inLanguage: "en",
+    inLanguage: locale,
     name: "FastNear Docs",
     publisher: {
       "@id": ORGANIZATION_ID,
@@ -1272,39 +1582,51 @@ function buildOrganizationEntity() {
   };
 }
 
-function buildSiteGraphFamilyRecord(family) {
-  const docsUrl = buildAbsoluteUrl(family.docsPath);
+function buildSiteGraphFamilyRecord(family, locale = DEFAULT_LOCALE) {
+  const localizedFamily = localizeStructuredFamily(family, locale);
+  const docsPath = localizeRoute(family.docsPath, locale);
+  const hostedPathPrefix = localizeRoute(family.hostedPathPrefix, locale);
+  const docsUrl = buildAbsoluteUrl(docsPath);
   return {
-    ...family,
+    ...localizedFamily,
     "@id": buildFamilyEntityId(family.id),
     docsPageId: buildPageEntityId(docsUrl),
+    docsPath,
     docsUrl,
     documentationUrl: docsUrl,
-    hostedPathPrefixUrl: buildAbsoluteUrl(family.hostedPathPrefix),
+    hostedPathPrefix,
+    hostedPathPrefixUrl: buildAbsoluteUrl(hostedPathPrefix),
     providerId: ORGANIZATION_ID,
     serviceType: family.kind === "rpc" ? "JSON-RPC API" : "REST API",
   };
 }
 
-function buildSiteGraphOperationRecord(operation) {
-  const docsUrl = buildAbsoluteUrl(operation.docsPath);
-  const canonicalUrl = buildAbsoluteUrl(operation.canonicalPath);
+function buildSiteGraphOperationRecord(operation, locale = DEFAULT_LOCALE) {
+  const localizedOperation = localizeStructuredOperation(operation, locale);
+  const docsPath = localizeRoute(operation.docsPath, locale);
+  const canonicalPath = localizeRoute(operation.canonicalPath, locale);
+  const routeAliases = (operation.routeAliases || []).map((route) => localizeRoute(route, locale));
+  const docsUrl = buildAbsoluteUrl(docsPath);
+  const canonicalUrl = buildAbsoluteUrl(canonicalPath);
   return {
-    ...operation,
+    ...localizedOperation,
     "@id": buildOperationEntityId(operation.pageModelId),
-    abstract: operation.summary || operation.name,
+    abstract: localizedOperation.summary || localizedOperation.name,
     canonicalPageId: buildPageEntityId(canonicalUrl),
+    canonicalPath,
     canonicalUrl,
     docsPageId: buildPageEntityId(docsUrl),
+    docsPath,
     docsUrl,
     familyEntityId: buildFamilyEntityId(operation.familyId),
-    inLanguage: "en",
+    inLanguage: locale,
     mainEntityOfPageId: buildPageEntityId(docsUrl),
     publisherId: ORGANIZATION_ID,
+    routeAliases,
     sameAs: [
       docsUrl,
       canonicalUrl,
-      ...(operation.routeAliases || []).map((route) => buildAbsoluteUrl(route)),
+      ...routeAliases.map((route) => buildAbsoluteUrl(route)),
     ].filter((value, index, values) => values.indexOf(value) === index),
     subjectOfPageIds: [
       buildPageEntityId(docsUrl),
@@ -1313,19 +1635,19 @@ function buildSiteGraphOperationRecord(operation) {
   };
 }
 
-function buildSiteGraphArtifact({ authoredDocEntries, canonicalEntries, docEntries }) {
+function buildSiteGraphArtifact({ authoredDocEntries, canonicalEntries, docEntries, locale = DEFAULT_LOCALE }) {
   const visibleCanonicalRoutes = new Set(canonicalEntries.map((entry) => normalizeRoute(entry.route)));
   const visibleOperations = (structuredGraph.operations || []).filter((operation) =>
-    visibleCanonicalRoutes.has(normalizeRoute(operation.canonicalPath))
+    visibleCanonicalRoutes.has(localizeRoute(normalizeRoute(operation.canonicalPath), locale))
   );
   const usedFamilyIds = [...new Set(visibleOperations.map((operation) => operation.familyId))];
   const families = usedFamilyIds
     .map((familyId) => structuredFamiliesById[familyId])
     .filter(Boolean)
-    .map((family) => buildSiteGraphFamilyRecord(family))
+    .map((family) => buildSiteGraphFamilyRecord(family, locale))
     .sort((left, right) => left.id.localeCompare(right.id));
   const operations = visibleOperations
-    .map((operation) => buildSiteGraphOperationRecord(operation))
+    .map((operation) => buildSiteGraphOperationRecord(operation, locale))
     .sort((left, right) => left.canonicalPath.localeCompare(right.canonicalPath));
   const pages = [
     ...docEntries.map((entry) => {
@@ -1334,7 +1656,9 @@ function buildSiteGraphArtifact({ authoredDocEntries, canonicalEntries, docEntri
       const markdownMirrorUrl = buildAbsoluteUrl(entry.markdownPath);
       const linkedOperation =
         entry.kind === "wrapper"
-          ? visibleOperations.find((operation) => normalizeRoute(operation.docsPath) === route)
+          ? visibleOperations.find(
+              (operation) => localizeRoute(normalizeRoute(operation.docsPath), locale) === route
+            )
           : null;
       const linkedFamilies =
         entry.kind === "wrapper"
@@ -1362,7 +1686,7 @@ function buildSiteGraphArtifact({ authoredDocEntries, canonicalEntries, docEntri
     ...canonicalEntries.map((entry) => {
       const route = normalizeRoute(entry.route);
       const operation = visibleOperations.find(
-        (candidate) => normalizeRoute(candidate.canonicalPath) === route
+        (candidate) => localizeRoute(normalizeRoute(candidate.canonicalPath), locale) === route
       );
       if (!operation) {
         throw new Error(`Missing structured operation for hosted route ${route}`);
@@ -1387,19 +1711,19 @@ function buildSiteGraphArtifact({ authoredDocEntries, canonicalEntries, docEntri
 
   return {
     discovery: {
-      apiLlmsIndexUrl: buildAbsoluteUrl("/apis/llms.txt"),
-      docsLlmsIndexUrl: buildAbsoluteUrl("/guides/llms.txt"),
-      llmsFullUrl: buildAbsoluteUrl("/llms-full.txt"),
-      llmsIndexUrl: buildAbsoluteUrl("/llms.txt"),
-      markdownMirrorRootUrl: buildAbsoluteUrl("/index.md"),
-      rpcLlmsIndexUrl: buildAbsoluteUrl("/rpcs/llms.txt"),
+      apiLlmsIndexUrl: buildLocalizedAbsoluteUrl("/apis/llms.txt", locale),
+      docsLlmsIndexUrl: buildLocalizedAbsoluteUrl("/guides/llms.txt", locale),
+      llmsFullUrl: buildLocalizedAbsoluteUrl("/llms-full.txt", locale),
+      llmsIndexUrl: buildLocalizedAbsoluteUrl("/llms.txt", locale),
+      markdownMirrorRootUrl: buildLocalizedAbsoluteUrl("/index.md", locale),
+      rpcLlmsIndexUrl: buildLocalizedAbsoluteUrl("/rpcs/llms.txt", locale),
     },
     families,
     operations,
     organization: buildOrganizationEntity(),
     pages,
     version: 1,
-    website: buildWebsiteEntity(),
+    website: buildWebsiteEntity(locale),
   };
 }
 
@@ -1431,11 +1755,12 @@ function formatLlmsEntry(entry) {
   return `- [${entry.title}](${buildAbsoluteUrl(entry.markdownPath)})${description}`;
 }
 
-function buildGroupedIndex(title, intro, sectionIndexes, entries) {
+function buildGroupedIndex(title, intro, sectionIndexes, entries, locale = DEFAULT_LOCALE) {
+  const labels = getAuthoredMarkdownLabels(locale);
   const lines = [`# ${title}`, "", intro, ""];
 
   if (sectionIndexes?.length) {
-    lines.push("## Indexes", "");
+    lines.push(`## ${labels.indexes}`, "");
     lines.push(...sectionIndexes.map((entry) => `- [${entry.label}](${buildAbsoluteUrl(entry.href)})`));
     lines.push("");
   }
@@ -1449,11 +1774,12 @@ function buildGroupedIndex(title, intro, sectionIndexes, entries) {
   return `${normalizeMarkdown(lines.join("\n"))}\n`;
 }
 
-function buildFullArchive(entries) {
+function buildFullArchive(entries, locale = DEFAULT_LOCALE) {
+  const labels = getAuthoredMarkdownLabels(locale);
   const sections = [
-    "# FastNear Builder Docs Full Documentation Archive",
+    `# ${labels.guidesArchiveTitle}`,
     "",
-    "AI-readable Markdown mirrors for authored docs plus canonical `/rpcs/**` and `/apis/**` routes.",
+    labels.guidesArchiveIntro,
     "",
   ];
 
@@ -1463,8 +1789,8 @@ function buildFullArchive(entries) {
       "",
       `## ${entry.title}`,
       "",
-      `- HTML path: ${buildAbsoluteUrl(entry.htmlPath)}`,
-      `- Markdown path: ${buildAbsoluteUrl(entry.markdownPath)}`,
+      `- ${labels.htmlPath}: ${buildAbsoluteUrl(entry.htmlPath)}`,
+      `- ${labels.markdownPath}: ${buildAbsoluteUrl(entry.markdownPath)}`,
       ""
     );
     sections.push(entry.markdown.trim(), "");
@@ -1476,80 +1802,88 @@ function buildFullArchive(entries) {
 function main() {
   removeGeneratedStaticRoots();
 
-  const docEntries = createAuthoredDocEntries();
-  const authoredDocEntries = docEntries.filter((entry) => entry.kind === "authored");
-  const wrapperDocEntries = docEntries.filter((entry) => entry.kind === "wrapper");
-  const canonicalEntries = createCanonicalEntries();
-  const rpcEntries = canonicalEntries.filter((entry) => entry.kind === "rpc");
-  const apiEntries = canonicalEntries.filter((entry) => entry.kind === "api");
+  for (const locale of SUPPORTED_LOCALES) {
+    const labels = getAuthoredMarkdownLabels(locale);
+    const docEntries = createAuthoredDocEntries(locale);
+    const authoredDocEntries = docEntries.filter((entry) => entry.kind === "authored");
+    const wrapperDocEntries = docEntries.filter((entry) => entry.kind === "wrapper");
+    const canonicalEntries = createCanonicalEntries(locale);
+    const rpcEntries = canonicalEntries.filter((entry) => entry.kind === "rpc");
+    const apiEntries = canonicalEntries.filter((entry) => entry.kind === "api");
 
-  writeMirrorEntries([...docEntries, ...canonicalEntries]);
+    writeMirrorEntries([...docEntries, ...canonicalEntries]);
 
-  writeTextFile(
-    path.join(STATIC_ROOT, "guides/llms.txt"),
-    buildGroupedIndex(
-      "FastNear Builder Docs Guides",
-      "Author-written guides and overview pages in AI-readable Markdown form.",
-      [{ href: "/llms.txt", label: "Top-level index" }],
-      authoredDocEntries
-    )
-  );
-
-  writeTextFile(
-    path.join(STATIC_ROOT, "rpcs/llms.txt"),
-    buildGroupedIndex(
-      "FastNear RPC Reference",
-      "Canonical RPC reference pages in AI-readable Markdown form.",
-      [{ href: "/llms.txt", label: "Top-level index" }],
-      rpcEntries
-    )
-  );
-
-  writeTextFile(
-    path.join(STATIC_ROOT, "apis/llms.txt"),
-    buildGroupedIndex(
-      "FastNear REST API Reference",
-      "Canonical REST API reference pages in AI-readable Markdown form.",
-      [{ href: "/llms.txt", label: "Top-level index" }],
-      apiEntries
-    )
-  );
-
-  writeTextFile(
-    path.join(STATIC_ROOT, "llms.txt"),
-    buildGroupedIndex(
-      "FastNear Builder Docs",
-      "AI-readable indexes for FastNear guides, RPC reference, and REST API reference.",
-      [
-        { href: "/guides/llms.txt", label: "Guides index" },
-        { href: "/rpcs/llms.txt", label: "RPC reference index" },
-        { href: "/apis/llms.txt", label: "REST API reference index" },
-        { href: "/llms-full.txt", label: "Full archive" },
-      ],
-      [...authoredDocEntries, ...rpcEntries, ...apiEntries]
-    )
-  );
-
-  writeTextFile(
-    path.join(STATIC_ROOT, "llms-full.txt"),
-    buildFullArchive([...authoredDocEntries, ...rpcEntries, ...apiEntries])
-  );
-
-  writeTextFile(
-    path.join(STATIC_ROOT, "structured-data/site-graph.json"),
-    `${JSON.stringify(
-      buildSiteGraphArtifact({
+    writeTextFile(
+      path.join(STATIC_ROOT, localizeRoute("/guides/llms.txt", locale)),
+      buildGroupedIndex(
+        labels.llmsGuidesTitle,
+        labels.llmsGuidesIntro,
+        [{ href: localizeRoute("/llms.txt", locale), label: labels.topLevelIndex }],
         authoredDocEntries,
-        canonicalEntries,
-        docEntries,
-      }),
-      null,
-      2
-    )}\n`
-  );
+        locale
+      )
+    );
 
-  if (wrapperDocEntries.length === 0) {
-    throw new Error("Expected docs operation wrapper pages to generate Markdown mirrors.");
+    writeTextFile(
+      path.join(STATIC_ROOT, localizeRoute("/rpcs/llms.txt", locale)),
+      buildGroupedIndex(
+        labels.rpcReferenceTitle,
+        labels.rpcReferenceIntro,
+        [{ href: localizeRoute("/llms.txt", locale), label: labels.topLevelIndex }],
+        rpcEntries,
+        locale
+      )
+    );
+
+    writeTextFile(
+      path.join(STATIC_ROOT, localizeRoute("/apis/llms.txt", locale)),
+      buildGroupedIndex(
+        labels.restApiReferenceTitle,
+        labels.restApiReferenceIntro,
+        [{ href: localizeRoute("/llms.txt", locale), label: labels.topLevelIndex }],
+        apiEntries,
+        locale
+      )
+    );
+
+    writeTextFile(
+      path.join(STATIC_ROOT, localizeRoute("/llms.txt", locale)),
+      buildGroupedIndex(
+        labels.llmsRootTitle,
+        labels.llmsIntro,
+        [
+          { href: localizeRoute("/guides/llms.txt", locale), label: labels.llmsGuidesIndex },
+          { href: localizeRoute("/rpcs/llms.txt", locale), label: labels.rpcReferenceIndex },
+          { href: localizeRoute("/apis/llms.txt", locale), label: labels.restApiReferenceIndex },
+          { href: localizeRoute("/llms-full.txt", locale), label: labels.llmsFull },
+        ],
+        [...authoredDocEntries, ...rpcEntries, ...apiEntries],
+        locale
+      )
+    );
+
+    writeTextFile(
+      path.join(STATIC_ROOT, localizeRoute("/llms-full.txt", locale)),
+      buildFullArchive([...authoredDocEntries, ...rpcEntries, ...apiEntries], locale)
+    );
+
+    writeTextFile(
+      path.join(STATIC_ROOT, localizeRoute("/structured-data/site-graph.json", locale)),
+      `${JSON.stringify(
+        buildSiteGraphArtifact({
+          authoredDocEntries,
+          canonicalEntries,
+          docEntries,
+          locale,
+        }),
+        null,
+        2
+      )}\n`
+    );
+
+    if (wrapperDocEntries.length === 0) {
+      throw new Error("Expected docs operation wrapper pages to generate Markdown mirrors.");
+    }
   }
 }
 

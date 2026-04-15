@@ -1,0 +1,38 @@
+{
+  "link.title.FastNear": {
+    "message": "FastNear",
+    "description": "The title of the footer links column with title=FastNear in the footer"
+  },
+  "link.title.Additional Resources": {
+    "message": "Дополнительные материалы",
+    "description": "The title of the footer links column with title=Additional Resources in the footer"
+  },
+  "link.title.More": {
+    "message": "Ещё",
+    "description": "The title of the footer links column with title=More in the footer"
+  },
+  "link.item.label.Company": {
+    "message": "Компания",
+    "description": "The label of footer link with label=Company linking to https://fastnear.com"
+  },
+  "link.item.label.NEAR.org Docs": {
+    "message": "Документация NEAR.org",
+    "description": "The label of footer link with label=NEAR.org Docs linking to https://docs.near.org"
+  },
+  "link.item.label.Nomicon Spec": {
+    "message": "Спецификация Nomicon",
+    "description": "The label of footer link with label=Nomicon Spec linking to https://nomicon.io"
+  },
+  "link.item.label.NEAR Whitepaper": {
+    "message": "Белая книга NEAR",
+    "description": "The label of footer link with label=NEAR Whitepaper linking to https://pages.near.org/papers/the-official-near-white-paper"
+  },
+  "link.item.label.JS API (alpha version)": {
+    "message": "JS API (альфа-версия)",
+    "description": "The label of footer link with label=JS API (alpha version) linking to https://js.fastnear.com"
+  },
+  "copyright": {
+    "message": "Авторские права © 2026 FastNear",
+    "description": "The footer copyright"
+  }
+}

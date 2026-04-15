@@ -1,0 +1,13 @@
+{
+  "defaultLocale": "en",
+  "locales": {
+    "en": {
+      "htmlLang": "en",
+      "label": "English"
+    },
+    "ru": {
+      "htmlLang": "ru",
+      "label": "Русский"
+    }
+  }
+}

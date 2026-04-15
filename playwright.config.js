@@ -27,7 +27,7 @@ module.exports = defineConfig({
     },
   ],
   webServer: {
-    command: `yarn start --host 127.0.0.1 --port ${PORT}`,
+    command: `yarn build && yarn serve --host 127.0.0.1 --port ${PORT}`,
     env: webServerEnv,
     url: baseURL,
     reuseExistingServer: !process.env.CI,

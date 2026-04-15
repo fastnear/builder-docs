@@ -10,7 +10,8 @@ page_actions:
 
 # Transactions API
 
-Transactions API is the history surface. Use it when you want indexed transaction or receipt views without repeatedly polling raw RPC methods and joining the results yourself.
+Transactions API is the history surface. Use it when you want indexed transaction or receipt
+views without repeatedly polling raw RPC methods and joining the results yourself.
 
 ## Best fit
 
@@ -51,6 +52,6 @@ This family is for indexed history queries, not for sending signed transactions.
 
 `/v0/account` uses an opaque `resume_token`, while `/v0/blocks` is range and limit based. Reuse opaque tokens exactly as returned.
 
-### I only need one canonical RPC transaction status result
+### Need one canonical transaction status result?
 
 Use raw RPC instead of the indexed history family.

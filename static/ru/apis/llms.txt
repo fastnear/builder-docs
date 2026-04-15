@@ -1,0 +1,60 @@
+# Справочник REST API FastNear
+
+Канонические страницы справочника REST API в AI-читабельном Markdown-формате.
+
+## Индексы
+
+- [Верхний индекс](https://docs.fastnear.com/ru/llms.txt)
+
+## FastNear API
+
+- [FastNear API - Состояние](https://docs.fastnear.com/ru/apis/fastnear/system/health.md): Проверить состояние сервиса
+- [FastNear API - Статус](https://docs.fastnear.com/ru/apis/fastnear/system/status.md): Получить статус синхронизации сервиса
+- [FastNear API - V0 FT аккаунта](https://docs.fastnear.com/ru/apis/fastnear/v0/account_ft.md): Получить ID FT-контрактов аккаунта
+- [FastNear API - V0 NFT аккаунта](https://docs.fastnear.com/ru/apis/fastnear/v0/account_nft.md): Получить ID NFT-контрактов аккаунта
+- [FastNear API - V0 стейкинг аккаунта](https://docs.fastnear.com/ru/apis/fastnear/v0/account_staking.md): Получить ID стейкинг-пулов аккаунта
+- [FastNear API - V0 Поиск по публичному ключу](https://docs.fastnear.com/ru/apis/fastnear/v0/public_key_lookup.md): Найти аккаунты полного доступа по публичному ключу
+- [FastNear API - V0 Поиск по публичному ключу (все)](https://docs.fastnear.com/ru/apis/fastnear/v0/public_key_lookup_all.md): Найти все аккаунты по публичному ключу
+- [FastNear API - V1 FT аккаунта](https://docs.fastnear.com/ru/apis/fastnear/v1/account_ft.md): Получить индексированные строки FT-токенов аккаунта
+- [FastNear API - V1 Полный снимок аккаунта](https://docs.fastnear.com/ru/apis/fastnear/v1/account_full.md): Получить полный индексированный снимок аккаунта
+- [FastNear API - V1 NFT аккаунта](https://docs.fastnear.com/ru/apis/fastnear/v1/account_nft.md): Получить индексированные строки NFT аккаунта
+- [FastNEAR API - V1 Аккаунт Staking](https://docs.fastnear.com/ru/apis/fastnear/v1/account_staking.md): Поиск indexed staking pools for an аккаунта
+- [FastNEAR API - V1 FT Top Holders](https://docs.fastnear.com/ru/apis/fastnear/v1/ft_top.md): Поиск top indexed holders for a fungible token
+- [FastNear API - V1 Поиск по публичному ключу](https://docs.fastnear.com/ru/apis/fastnear/v1/public_key_lookup.md): Найти аккаунты полного доступа по публичному ключу
+- [FastNear API - V1 Поиск по публичному ключу (все)](https://docs.fastnear.com/ru/apis/fastnear/v1/public_key_lookup_all.md): Найти все индексированные аккаунты по публичному ключу
+
+## KV FastData API
+
+- [KV FastData API - Последние ключи по вызывающему аккаунту](https://docs.fastnear.com/ru/apis/kv-fastdata/v0/all_by_predecessor.md): Получить последние строки «ключ-значение» для одного вызывающего аккаунта по всем контрактам
+- [KV FastData API - История по точному ключу](https://docs.fastnear.com/ru/apis/kv-fastdata/v0/get_history_key.md): Получить исторические строки для одного точного ключа в рамках одного вызывающего аккаунта и контракта
+- [KV FastData API - Последнее значение по точному ключу](https://docs.fastnear.com/ru/apis/kv-fastdata/v0/get_latest_key.md): Получить последнюю строку для одного точного ключа в рамках одного вызывающего аккаунта и контракта
+- [KV FastData API - История по аккаунту](https://docs.fastnear.com/ru/apis/kv-fastdata/v0/history_by_account.md): Получить историю записей «ключ-значение» для одного контракта по всем вызывающим аккаунтам
+- [KV FastData API - История по глобальному ключу](https://docs.fastnear.com/ru/apis/kv-fastdata/v0/history_by_key.md): Получить историю по точному ключу во всех индексированных контрактах
+- [KV FastData API - История по вызывающему аккаунту](https://docs.fastnear.com/ru/apis/kv-fastdata/v0/history_by_predecessor.md): Получить историю записей «ключ-значение» для одного вызывающего аккаунта и контракта
+- [KV FastData API - Последние значения по аккаунту](https://docs.fastnear.com/ru/apis/kv-fastdata/v0/latest_by_account.md): Получить последние строки «ключ-значение» для одного контракта по всем вызывающим аккаунтам
+- [KV FastData API - Последние значения по вызывающему аккаунту](https://docs.fastnear.com/ru/apis/kv-fastdata/v0/latest_by_predecessor.md): Получить последние строки «ключ-значение» для одного вызывающего аккаунта и контракта
+- [KV FastData API - Пакетный поиск по ключам](https://docs.fastnear.com/ru/apis/kv-fastdata/v0/multi.md): Получить последние строки для нескольких полностью квалифицированных ключей
+
+## NEAR Data API
+
+- [NEAR Data API - Состояние](https://docs.fastnear.com/ru/apis/neardata/system/health.md): Проверить состояние сервиса
+- [NEAR Data API - Финализированный блок](https://docs.fastnear.com/ru/apis/neardata/v0/block.md): Получить финализированный блок по высоте
+- [NEAR Data API - Чанк блока](https://docs.fastnear.com/ru/apis/neardata/v0/block_chunk.md): Получить чанк из финализированного блока
+- [NEAR Data API - Заголовки блока](https://docs.fastnear.com/ru/apis/neardata/v0/block_headers.md): Получить объект блока для финализированного блока
+- [NEAR Data API - Оптимистичный блок](https://docs.fastnear.com/ru/apis/neardata/v0/block_optimistic.md): Получить оптимистичный блок по высоте
+- [NEAR Data API - Шард блока](https://docs.fastnear.com/ru/apis/neardata/v0/block_shard.md): Получить шард из финализированного блока
+- [NEAR Data API - Первый блок](https://docs.fastnear.com/ru/apis/neardata/v0/first_block.md): Перенаправление на первый блок после генезиса
+- [NEAR Data API - Последний финализированный блок](https://docs.fastnear.com/ru/apis/neardata/v0/last_block_final.md): Перенаправление на последний финализированный блок
+- [NEAR Data API - Последний оптимистичный блок](https://docs.fastnear.com/ru/apis/neardata/v0/last_block_optimistic.md): Перенаправление на последний оптимистичный блок
+
+## Transactions API
+
+- [Транзакции API - История аккаунта](https://docs.fastnear.com/ru/apis/transactions/v0/account.md): Получить историю транзакций аккаунта
+- [Транзакции API - Поиск блока](https://docs.fastnear.com/ru/apis/transactions/v0/block.md): Получить блок по высоте или хешу
+- [Транзакции API - Диапазон блоков](https://docs.fastnear.com/ru/apis/transactions/v0/blocks.md): Получить список блоков
+- [Транзакции API - Поиск квитанции](https://docs.fastnear.com/ru/apis/transactions/v0/receipt.md): Получить квитанцию по ID
+- [Транзакции API - Транзакции по хешу](https://docs.fastnear.com/ru/apis/transactions/v0/transactions.md): Получить транзакции по хешу
+
+## Transfers API
+
+- [Transfers API - Запрос переводов](https://docs.fastnear.com/ru/apis/transfers/v0/transfers.md): Запросить переводы для аккаунта

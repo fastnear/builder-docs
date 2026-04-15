@@ -1,5 +1,7 @@
 import React, { startTransition, useDeferredValue, useEffect, useId, useMemo, useState } from "react";
 import Head from "@docusaurus/Head";
+import { translate } from "@docusaurus/Translate";
+import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 
 import PageActions from "@site/src/components/PageActions";
 import { copyTextToClipboard } from "@site/src/utils/clipboard";
@@ -7,7 +9,7 @@ import {
   buildOperationMarkdown,
   sanitizePublicUrl,
 } from "@site/src/utils/markdownExport";
-import { buildOperationKeywords } from "@site/src/utils/seo";
+import { buildOperationKeywords, getOperationSemanticMeta } from "@site/src/utils/seo";
 import { FINALITY_OPTIONS } from "./finalityOptions";
 import { getFastnearPageModelById } from "./pageModels";
 import {
@@ -15,6 +17,16 @@ import {
   setPortalApiKey,
   usePortalAuth,
 } from "./portalAuth";
+import {
+  getFastnearApiKeyStatusText,
+  getFastnearAuthSummaryText,
+  getFastnearFieldLocationLabel,
+  getFastnearMissingFieldError,
+  getFastnearOperationUiText,
+  getFastnearRequestSummary,
+  getFastnearSchemaOptionLabel,
+  getFastnearSchemaShapeLabel,
+} from "./uiText";
 
 function CopyGlyph(props) {
   return (
@@ -177,19 +189,7 @@ function waitForNextPaint() {
 }
 
 function getFieldLocationLabel(field) {
-  if (field.location === "path") {
-    return "Path parameter";
-  }
-
-  if (field.location === "query") {
-    return "Query parameter";
-  }
-
-  if (field.location === "body") {
-    return "Request body field";
-  }
-
-  return undefined;
+  return getFastnearFieldLocationLabel(field);
 }
 
 function getFieldTypeValues(field) {
@@ -435,44 +435,24 @@ function buildHttpRequestBody(pageModel, fieldValues) {
 }
 
 function getApiKeyStatus(auth) {
-  if (auth.apiKeySource === "url") {
-    return "From URL override";
-  }
-
-  if (auth.storedApiKey) {
-    return "Saved in browser";
-  }
-
-  return "No saved key";
+  return getFastnearApiKeyStatusText(auth);
 }
 
 function getAuthSummary(pageModel, auth) {
-  if (!auth.apiKey) {
-    return "none detected";
-  }
-
-  if (pageModel.interaction.authTransport === "bearer") {
-    return auth.apiKeySource === "url"
-      ? "API key from URL via Bearer auth"
-      : "saved browser API key via Bearer auth";
-  }
-
-  return auth.apiKeySource === "url"
-    ? "API key from URL via query param"
-    : "saved browser API key via query param";
+  return getFastnearAuthSummaryText(pageModel, auth);
 }
 
-function getSchemaTypeLabel(schema) {
+function getSchemaTypeLabel(schema, uiText = getFastnearOperationUiText()) {
   if (!schema) {
-    return "unknown";
+    return uiText.unknown;
   }
 
   if (schema.oneOf?.length) {
-    return "one of";
+    return uiText.oneOf;
   }
 
   if (schema.anyOf?.length) {
-    return "any of";
+    return uiText.anyOf;
   }
 
   if (Array.isArray(schema.type)) {
@@ -484,14 +464,14 @@ function getSchemaTypeLabel(schema) {
   }
 
   if (schema.properties?.length) {
-    return "object";
+    return uiText.object;
   }
 
   if (schema.items) {
-    return "array";
+    return uiText.array;
   }
 
-  return "value";
+  return uiText.value;
 }
 
 function buildExamplePath(pathTemplate, pathValues) {
@@ -572,7 +552,7 @@ function isInlineSchemaVariant(schema) {
     schema.example === undefined;
 }
 
-function getSchemaVariantLabel(schema, fallbackLabel) {
+function getSchemaVariantLabel(schema, fallbackLabel, uiText = getFastnearOperationUiText()) {
   if (!schema) {
     return fallbackLabel;
   }
@@ -585,7 +565,7 @@ function getSchemaVariantLabel(schema, fallbackLabel) {
     return String(schema.enum[0]);
   }
 
-  const typeLabel = getSchemaTypeLabel(schema);
+  const typeLabel = getSchemaTypeLabel(schema, uiText);
   if (schema.nullable && typeLabel && !String(typeLabel).includes("null")) {
     return `${typeLabel} | null`;
   }
@@ -602,7 +582,8 @@ function SchemaNode({ schema, name, depth = 0 }) {
     return null;
   }
 
-  const typeLabel = getSchemaTypeLabel(schema);
+  const uiText = getFastnearOperationUiText();
+  const typeLabel = getSchemaTypeLabel(schema, uiText);
   const enumValues = Array.isArray(schema.enum) ? schema.enum : [];
   const inlineOneOf = shouldInlineSchemaVariants(schema.oneOf);
   const inlineAnyOf = shouldInlineSchemaVariants(schema.anyOf);
@@ -614,7 +595,9 @@ function SchemaNode({ schema, name, depth = 0 }) {
           {name ? <code className="fastnear-reference-schema__name">{name}</code> : null}
           <span className="fastnear-reference-schema__type">{typeLabel}</span>
           {schema.nullable ? (
-            <span className="fastnear-reference-schema__flag">nullable</span>
+            <span className="fastnear-reference-schema__flag">
+              {uiText.nullable}
+            </span>
           ) : null}
           {schema.refName ? (
             <span className="fastnear-reference-schema__flag">{schema.refName}</span>
@@ -622,13 +605,13 @@ function SchemaNode({ schema, name, depth = 0 }) {
         </div>
         {schema.required?.length ? (
           <span className="fastnear-reference-schema__hint">
-            requires {schema.required.join(", ")}
+            {uiText.fieldRequirements} {schema.required.join(", ")}
           </span>
         ) : null}
       </div>
 
       {schema.description ? (
-        <p className="fastnear-reference-schema__description">
+        <p className="fastnear-reference-schema__description" data-fastnear-content="schema-description">
           {renderInlineCodeText(schema.description)}
         </p>
       ) : null}
@@ -643,13 +626,13 @@ function SchemaNode({ schema, name, depth = 0 }) {
 
       {schema.default !== undefined ? (
         <p className="fastnear-reference-schema__meta">
-          Default: <code>{String(schema.default)}</code>
+          {uiText.default}: <code>{String(schema.default)}</code>
         </p>
       ) : null}
 
       {schema.example !== undefined ? (
         <p className="fastnear-reference-schema__meta">
-          Example: <code>{String(schema.example)}</code>
+          {uiText.example}: <code>{String(schema.example)}</code>
         </p>
       ) : null}
 
@@ -660,7 +643,7 @@ function SchemaNode({ schema, name, depth = 0 }) {
               className="fastnear-reference-schema__inline-variant"
               key={`${name || "variant"}-oneof-inline-${index}`}
             >
-              {getSchemaVariantLabel(variant, `Option ${index + 1}`)}
+              {getSchemaVariantLabel(variant, getFastnearSchemaOptionLabel(index + 1), uiText)}
             </span>
           ))}
         </div>
@@ -674,7 +657,7 @@ function SchemaNode({ schema, name, depth = 0 }) {
               key={`${name || "variant"}-oneof-${index}`}
             >
               <span className="fastnear-reference-schema__variant-label">
-                {getSchemaVariantLabel(variant, `Option ${index + 1}`)}
+                {getSchemaVariantLabel(variant, getFastnearSchemaOptionLabel(index + 1), uiText)}
               </span>
               <SchemaNode schema={variant} depth={depth + 1} />
             </div>
@@ -689,7 +672,7 @@ function SchemaNode({ schema, name, depth = 0 }) {
               className="fastnear-reference-schema__inline-variant"
               key={`${name || "variant"}-anyof-inline-${index}`}
             >
-              {getSchemaVariantLabel(variant, `Shape ${index + 1}`)}
+              {getSchemaVariantLabel(variant, getFastnearSchemaShapeLabel(index + 1), uiText)}
             </span>
           ))}
         </div>
@@ -703,7 +686,7 @@ function SchemaNode({ schema, name, depth = 0 }) {
               key={`${name || "variant"}-anyof-${index}`}
             >
               <span className="fastnear-reference-schema__variant-label">
-                {getSchemaVariantLabel(variant, `Shape ${index + 1}`)}
+                {getSchemaVariantLabel(variant, getFastnearSchemaShapeLabel(index + 1), uiText)}
               </span>
               <SchemaNode schema={variant} depth={depth + 1} />
             </div>
@@ -770,6 +753,7 @@ function FastnearOperationReference({
   pageModel,
   selectedExampleId,
 }) {
+  const uiText = getFastnearOperationUiText();
   const requestExamples = pageModel.request.examples;
   const response = pageModel.responses[0];
   const firstExampleId = requestExamples[0]?.id || "";
@@ -782,16 +766,8 @@ function FastnearOperationReference({
   const httpHasBody = hasHttpRequestBody(pageModel);
   const usesNetworkTabLabels = shouldUseNetworkTabLabels(requestExamples);
   const requestSummary = useMemo(() => {
-    if (pageModel.route.transport === "json-rpc") {
-      return `This operation accepts a JSON-RPC body over ${pageModel.route.method} to ${pageModel.route.path}.`;
-    }
-
-    if (httpHasBody) {
-      return `This operation performs ${pageModel.route.method} ${pageModel.route.path} with an ${pageModel.request.mediaType || "HTTP"} request body.`;
-    }
-
-    return `This operation performs ${pageModel.route.method} ${pageModel.route.path}.`;
-  }, [httpHasBody, pageModel.request.mediaType, pageModel.route.method, pageModel.route.path, pageModel.route.transport]);
+    return getFastnearRequestSummary(pageModel, httpHasBody);
+  }, [httpHasBody, pageModel]);
 
   const handleExampleSelect = (exampleId) => {
     if (selectedExampleId === undefined) {
@@ -802,11 +778,15 @@ function FastnearOperationReference({
   };
 
   return (
-    <section className="fastnear-reference" aria-labelledby={headingId}>
+    <section
+      className="fastnear-reference"
+      aria-labelledby={headingId}
+      data-fastnear-reference-root
+    >
       <div className="fastnear-reference__grid">
         <div className="fastnear-reference__panel">
           <div className="fastnear-reference__heading-row">
-            <HeadingTag id={headingId}>Request reference</HeadingTag>
+            <HeadingTag id={headingId}>{uiText.requestReference}</HeadingTag>
             <span className="fastnear-reference__badge">
               {pageModel.request.mediaType || pageModel.route.method}
             </span>
@@ -820,8 +800,9 @@ function FastnearOperationReference({
               ]
                 .filter(Boolean)
                 .join(" ")}
+              data-fastnear-crawler-skip
               role="tablist"
-              aria-label="Request examples"
+              aria-label={uiText.requestExamplesAriaLabel}
             >
               {requestExamples.map((example) => (
                 <button
@@ -836,10 +817,11 @@ function FastnearOperationReference({
             </div>
           ) : null}
 
-          <div className="fastnear-reference__summary">
+          <div className="fastnear-reference__summary" data-fastnear-content="request-summary">
             <p>{requestSummary}</p>
             <p>
-              Required request inputs: <strong>{pageModel.request.required ? "yes" : "no"}</strong>
+              {uiText.requiredRequestInputs}{' '}
+              <strong>{pageModel.request.required ? uiText.yes : uiText.no}</strong>
             </p>
           </div>
 
@@ -850,7 +832,7 @@ function FastnearOperationReference({
               </pre>
 
               <div className="fastnear-reference__schema-block">
-                <h3>Request schema</h3>
+                <h3>{uiText.requestSchema}</h3>
                 <SchemaNode schema={pageModel.request.bodySchema} />
               </div>
             </>
@@ -867,20 +849,23 @@ function FastnearOperationReference({
                   </pre>
 
                   <div className="fastnear-reference__schema-block">
-                    <h3>Request body schema</h3>
+                    <h3>{uiText.requestBodySchema}</h3>
                     <SchemaNode schema={pageModel.request.bodySchema} />
                   </div>
                 </>
               ) : null}
 
-              <ParameterGroup parameters={pageModel.request.parameters.path} title="Path parameters" />
+              <ParameterGroup
+                parameters={pageModel.request.parameters.path}
+                title={uiText.pathParameters}
+              />
               <ParameterGroup
                 parameters={pageModel.request.parameters.query}
-                title="Query parameters"
+                title={uiText.queryParameters}
               />
               <ParameterGroup
                 parameters={pageModel.request.parameters.header}
-                title="Header parameters"
+                title={uiText.headerParameters}
               />
             </>
           )}
@@ -888,18 +873,21 @@ function FastnearOperationReference({
 
         <div className="fastnear-reference__panel">
           <div className="fastnear-reference__heading-row">
-            <HeadingTag>Response reference</HeadingTag>
+            <HeadingTag>{uiText.responseReference}</HeadingTag>
             <span className="fastnear-reference__badge">
               {response?.status} {response?.mediaType}
             </span>
           </div>
 
-          <p className="fastnear-reference__response-description">
+          <p
+            className="fastnear-reference__response-description"
+            data-fastnear-content="response-summary"
+          >
             {renderInlineCodeText(response?.description)}
           </p>
 
           <div className="fastnear-reference__schema-block">
-            <h3>Response schema</h3>
+            <h3>{uiText.responseSchema}</h3>
             <SchemaNode schema={response?.schema} />
           </div>
         </div>
@@ -909,6 +897,9 @@ function FastnearOperationReference({
 }
 
 function FastnearOperationPage({ pageModel }) {
+  const { i18n } = useDocusaurusContext();
+  const currentLocale = i18n.currentLocale || "en";
+  const uiText = getFastnearOperationUiText();
   const auth = usePortalAuth();
   const [selectedNetwork, setSelectedNetwork] = useState(() => getInitialNetwork(pageModel));
   const [selectedExampleId, setSelectedExampleId] = useState(
@@ -1089,6 +1080,7 @@ function FastnearOperationPage({ pageModel }) {
       buildOperationMarkdown({
         currentUrl,
         httpRequestBody,
+        locale: currentLocale,
         pageModel,
         requestUrl,
         rpcPayload,
@@ -1097,6 +1089,7 @@ function FastnearOperationPage({ pageModel }) {
         selectedNetworkDetails,
       }),
     [
+      currentLocale,
       currentUrl,
       httpRequestBody,
       pageModel,
@@ -1111,15 +1104,15 @@ function FastnearOperationPage({ pageModel }) {
     () => [
       {
         id: "copy-markdown",
-        label: "Copy Markdown",
-        pendingLabel: "Copying...",
-        completedLabel: "Copied",
+        label: uiText.copyMarkdown,
+        pendingLabel: uiText.copyingMarkdown,
+        completedLabel: uiText.copiedMarkdown,
         onSelect: async () => {
           await copyTextToClipboard(operationMarkdown);
         },
       },
     ],
-    [operationMarkdown]
+    [operationMarkdown, uiText.copiedMarkdown, uiText.copyMarkdown, uiText.copyingMarkdown]
   );
 
   const handleNetworkChange = (networkKey) => {
@@ -1186,7 +1179,7 @@ function FastnearOperationPage({ pageModel }) {
 
   const handleRun = async () => {
     if (missingField) {
-      setRunError(`Enter ${missingField.label.toLowerCase()} before running the request.`);
+      setRunError(getFastnearMissingFieldError(missingField.label));
       return;
     }
 
@@ -1199,7 +1192,7 @@ function FastnearOperationPage({ pageModel }) {
 
       if (pageModel.route.transport === "json-rpc") {
         if (!selectedNetworkDetails?.url || !rpcPayload) {
-          throw new Error("No RPC server is configured for the selected network.");
+          throw new Error(uiText.noRpcServer);
         }
 
         const headers = {
@@ -1241,7 +1234,7 @@ function FastnearOperationPage({ pageModel }) {
       }
 
       if (!requestUrl) {
-        throw new Error("No API server is configured for the selected network.");
+        throw new Error(uiText.noApiServer);
       }
 
       const headers = {
@@ -1282,7 +1275,7 @@ function FastnearOperationPage({ pageModel }) {
         setRunResult(nextRunResult);
       });
     } catch (error) {
-      setRunError(error instanceof Error ? error.message : "Request failed.");
+      setRunError(error instanceof Error ? error.message : uiText.requestFailed);
       setRunResult(null);
     } finally {
       setIsRunning(false);
@@ -1290,21 +1283,21 @@ function FastnearOperationPage({ pageModel }) {
   };
 
   return (
-    <div className="fastnear-operation-page">
-      <div className="fastnear-operation-page__toolbar">
+    <div className="fastnear-operation-page" data-fastnear-operation-root data-fastnear-page-model-id={pageModel.pageModelId}>
+      <div className="fastnear-operation-page__toolbar" data-fastnear-crawler-skip>
         <PageActions actions={pageActions} />
       </div>
 
-      <div className="fastnear-interaction">
+      <div className="fastnear-interaction" data-fastnear-crawler-skip>
         <div className="fastnear-interaction__layout">
           <div className="fastnear-interaction__sidebar">
             <div className="fastnear-interaction__controls">
               <div className="fastnear-interaction__field fastnear-interaction__field--network">
-                <span className="fastnear-interaction__label">Network</span>
+                <span className="fastnear-interaction__label">{uiText.network}</span>
                 <div
                   className="fastnear-segmented fastnear-segmented--network"
                   role="tablist"
-                  aria-label="Select network"
+                  aria-label={uiText.selectNetworkAriaLabel}
                 >
                   {pageModel.interaction.networks.map((network) => (
                     <button
@@ -1330,13 +1323,13 @@ function FastnearOperationPage({ pageModel }) {
                 if (isBoolean) {
                   const options = field.required
                     ? [
-                        { label: "True", value: "true" },
-                        { label: "False", value: "false" },
+                        { label: uiText.true, value: "true" },
+                        { label: uiText.false, value: "false" },
                       ]
                     : [
-                        { label: "Unset", value: "" },
-                        { label: "True", value: "true" },
-                        { label: "False", value: "false" },
+                        { label: uiText.unset, value: "" },
+                        { label: uiText.true, value: "true" },
+                        { label: uiText.false, value: "false" },
                       ];
 
                   return (
@@ -1353,7 +1346,13 @@ function FastnearOperationPage({ pageModel }) {
                       <div
                         className="fastnear-segmented fastnear-segmented--boolean"
                         role="tablist"
-                        aria-label={`Select ${field.label}`}
+                        aria-label={translate(
+                          {
+                            id: "fastnear.operationUi.selectFieldLabel",
+                            message: "Select {fieldLabel}",
+                          },
+                          { fieldLabel: field.label }
+                        )}
                       >
                         {options.map((option) => (
                           <button
@@ -1377,7 +1376,7 @@ function FastnearOperationPage({ pageModel }) {
                         label: formatChoiceLabel(option),
                         value: option,
                       }))
-                    : [{ label: "Any", value: "" }].concat(
+                    : [{ label: uiText.any, value: "" }].concat(
                         enumOptions.map((option) => ({
                           label: formatChoiceLabel(option),
                           value: option,
@@ -1395,7 +1394,17 @@ function FastnearOperationPage({ pageModel }) {
                           {getFieldLocationLabel(field)}
                         </span>
                       ) : null}
-                      <div className="fastnear-segmented" role="tablist" aria-label={`Select ${field.label}`}>
+                      <div
+                        className="fastnear-segmented"
+                        role="tablist"
+                        aria-label={translate(
+                          {
+                            id: "fastnear.operationUi.selectFieldEnumLabel",
+                            message: "Select {fieldLabel}",
+                          },
+                          { fieldLabel: field.label }
+                        )}
+                      >
                         {options.map((option) => (
                           <button
                             key={`${field.name}-${option.value || "any"}`}
@@ -1467,7 +1476,7 @@ function FastnearOperationPage({ pageModel }) {
 
             <div className="fastnear-interaction__auth">
               <div className="fastnear-interaction__auth-heading">
-                <span className="fastnear-interaction__label">FastNear API key</span>
+                <span className="fastnear-interaction__label">{uiText.fastnearApiKey}</span>
                 <span
                   className={`fastnear-interaction__auth-status ${
                     isUrlApiKeyOverride
@@ -1485,7 +1494,7 @@ function FastnearOperationPage({ pageModel }) {
                 className="fastnear-interaction__input fastnear-interaction__input--code"
                 value={apiKeyInputValue}
                 onChange={(event) => setApiKeyDraft(event.target.value)}
-                placeholder="Paste FastNear API key"
+                placeholder={uiText.pasteFastnearApiKey}
                 autoComplete="off"
                 spellCheck={false}
                 readOnly={isUrlApiKeyOverride}
@@ -1498,7 +1507,7 @@ function FastnearOperationPage({ pageModel }) {
                 target="_blank"
                 rel="noreferrer"
               >
-                <span>Get API key</span>
+                <span>{uiText.getApiKey}</span>
                 <ExternalLinkGlyph className="fastnear-interaction__helper-link-icon" />
               </a>
 
@@ -1510,7 +1519,7 @@ function FastnearOperationPage({ pageModel }) {
                       className="fastnear-button fastnear-button--secondary"
                       onClick={() => setPortalApiKey(apiKeyDraft)}
                     >
-                      Save API key
+                      {uiText.saveApiKey}
                     </button>
                   ) : null}
                   {canClearStoredApiKey ? (
@@ -1522,7 +1531,7 @@ function FastnearOperationPage({ pageModel }) {
                         setApiKeyDraft("");
                       }}
                     >
-                      Remove saved key
+                      {uiText.removeSavedKey}
                     </button>
                   ) : null}
                 </div>
@@ -1536,7 +1545,7 @@ function FastnearOperationPage({ pageModel }) {
                 onClick={handleRun}
                 disabled={isRunning || !!missingField}
               >
-                {isRunning ? "Sending..." : "Send request"}
+                {isRunning ? uiText.sending : uiText.sendRequest}
               </button>
               <button
                 type="button"
@@ -1551,13 +1560,13 @@ function FastnearOperationPage({ pageModel }) {
                 }}
                 disabled={!curlCommand}
               >
-                {copiedCurl ? "Copied curl command" : "Copy curl command"}
+                {copiedCurl ? uiText.copiedCurlCommand : uiText.copyCurlCommand}
               </button>
             </div>
 
             <div className="fastnear-interaction__meta">
               <div className="fastnear-interaction__meta-item">
-                <span className="fastnear-interaction__meta-label">Endpoint</span>
+                <span className="fastnear-interaction__meta-label">{uiText.endpoint}</span>
                 <code>
                   {pageModel.route.transport === "json-rpc"
                     ? selectedNetworkDetails?.url
@@ -1566,11 +1575,11 @@ function FastnearOperationPage({ pageModel }) {
               </div>
               {pageModel.interaction.supportsFinality ? (
                 <div className="fastnear-interaction__meta-item fastnear-interaction__meta-item--finality">
-                  <span className="fastnear-interaction__meta-label">Finality</span>
+                  <span className="fastnear-interaction__meta-label">{uiText.finality}</span>
                   <div
                     className="fastnear-segmented fastnear-segmented--finality"
                     role="tablist"
-                    aria-label="Select finality"
+                    aria-label={uiText.selectFinalityAriaLabel}
                   >
                     {FINALITY_OPTIONS.map((option) => (
                       <button
@@ -1590,7 +1599,7 @@ function FastnearOperationPage({ pageModel }) {
                 </div>
               ) : null}
               <div className="fastnear-interaction__meta-item">
-                <span className="fastnear-interaction__meta-label">Auth</span>
+                <span className="fastnear-interaction__meta-label">{uiText.auth}</span>
                 <span className="fastnear-interaction__meta-value">{effectiveAuthSummary}</span>
               </div>
             </div>
@@ -1599,9 +1608,9 @@ function FastnearOperationPage({ pageModel }) {
           <div className="fastnear-interaction__response">
             <div className="fastnear-interaction__response-header">
               <div className="fastnear-interaction__response-heading">
-                <span className="fastnear-interaction__label">Live Response</span>
+                <span className="fastnear-interaction__label">{uiText.liveResponse}</span>
                 <p className="fastnear-interaction__response-copy">
-                  Responses from the selected endpoint appear here after you run a request.
+                  {uiText.liveResponseIntro}
                 </p>
               </div>
             </div>
@@ -1619,9 +1628,9 @@ function FastnearOperationPage({ pageModel }) {
                           : "fastnear-interaction__status--error"
                       }`}
                     >
-                      {runResult.ok && !hasRpcError ? "Success" : "Error"}
+                      {runResult.ok && !hasRpcError ? uiText.success : uiText.error}
                     </span>
-                    <span>HTTP {runResult.status}</span>
+                    <span>{uiText.httpStatus} {runResult.status}</span>
                     <code className="fastnear-interaction__result-url">{runResult.url}</code>
                   </div>
 
@@ -1643,8 +1652,8 @@ function FastnearOperationPage({ pageModel }) {
                         setCopiedResponse(true);
                       }}
                       disabled={!runResultText || isRunResultTextPending}
-                      aria-label={copiedResponse ? "Response copied" : "Copy response"}
-                      title={copiedResponse ? "Response copied" : "Copy response"}
+                      aria-label={copiedResponse ? uiText.responseCopied : uiText.copyResponse}
+                      title={copiedResponse ? uiText.responseCopied : uiText.copyResponse}
                     >
                       {copiedResponse ? (
                         <CheckGlyph className="fastnear-interaction__copy-icon" />
@@ -1654,7 +1663,7 @@ function FastnearOperationPage({ pageModel }) {
                     </button>
                     {isRunResultTextPending ? (
                       <p className="fastnear-interaction__placeholder fastnear-interaction__placeholder--panel fastnear-interaction__placeholder--pending">
-                        Formatting response output...
+                        {uiText.responseFormattingPending}
                       </p>
                     ) : (
                       <pre className="fastnear-interaction__text-response">
@@ -1665,11 +1674,11 @@ function FastnearOperationPage({ pageModel }) {
                 </>
               ) : isRunning ? (
                 <p className="fastnear-interaction__placeholder fastnear-interaction__placeholder--panel fastnear-interaction__placeholder--pending">
-                  Sending request to the selected endpoint...
+                  {uiText.sendingRequestPending}
                 </p>
               ) : (
                 <p className="fastnear-interaction__placeholder fastnear-interaction__placeholder--panel">
-                  Live response output will appear here after you run a request.
+                  {uiText.liveResponsePlaceholder}
                 </p>
               )}
             </div>
@@ -1687,21 +1696,33 @@ function FastnearOperationPage({ pageModel }) {
 }
 
 export default function FastnearDirectOperation({ pageModelId }) {
-  const pageModel = getFastnearPageModelById(pageModelId);
+  const { i18n } = useDocusaurusContext();
+  const currentLocale = i18n.currentLocale || "en";
+  const pageModel = getFastnearPageModelById(pageModelId, currentLocale);
   const seoKeywords = useMemo(() => buildOperationKeywords(pageModel), [pageModel]);
+  const semanticMeta = useMemo(() => getOperationSemanticMeta(pageModel), [pageModel]);
 
   if (!pageModel) {
     return (
       <div className="builder-fastnear-direct">
         <p className="fastnear-interaction__error">
-          No generated page model is available for <code>{pageModelId}</code>.
+          {getFastnearOperationUiText().missingPageModel} <code>{pageModelId}</code>.
         </p>
       </div>
     );
   }
 
   return (
-    <div className="builder-fastnear-direct">
+    <div
+      className="builder-fastnear-direct"
+      data-fastnear-crawler-root="operation"
+      data-fastnear-audience={semanticMeta?.audience || undefined}
+      data-fastnear-category={semanticMeta?.category || undefined}
+      data-fastnear-family={semanticMeta?.family || undefined}
+      data-fastnear-method-type={semanticMeta?.methodType || undefined}
+      data-fastnear-page-type={semanticMeta?.pageType || undefined}
+      data-fastnear-surface={semanticMeta?.surface || undefined}
+    >
       {seoKeywords.length ? (
         <Head>
           <meta name="keywords" content={seoKeywords.join(', ')} />

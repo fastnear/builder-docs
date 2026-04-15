@@ -1,0 +1,332 @@
+preserve:
+  - API
+  - RPC
+  - REST
+  - HTTP
+  - HTTPS
+  - JSON
+  - JSON-RPC
+  - gRPC
+  - OAuth
+  - JWT
+  - Bearer
+  - GET
+  - POST
+  - PUT
+  - PATCH
+  - DELETE
+  - HEAD
+  - OPTIONS
+  - OpenAPI
+  - NEAR Data
+  - NEAR Data API
+  - Transfers API
+  - Markdown
+  - GitHub
+  - DocSearch
+  - Algolia
+  - Docusaurus
+  - FastNear
+  - FastNEAR
+  - NEAR
+  - mainnet
+  - testnet
+  - Mainnet
+  - Testnet
+  - curl
+  - HTML
+  - CSS
+  - JS
+  - MDX
+  - URL
+  - URI
+  - P2P
+  - AI
+  - NFT
+  - FT
+  - KV
+  - WebSocket
+  - webhook
+  - Webhook
+  - Status
+  - Dashboard
+  - Nomicon
+  - Epoch
+  - Epoch Sync
+  - Sync
+  - Nodes
+  - NEAR Nodes
+  - Infrastructure Committee
+  - Near One
+  - nearcore
+  - Wasm
+  - Scylla
+  - doomslug
+  - Enter
+  - Escape
+  - Next
+  - NEAR.org
+  - view
+  - ed25519
+  - secp256k1
+  - ActionReceipt
+  - DataReceipt
+  - DelegateAction
+  - Promise
+  - Yield
+  - Resume
+  - Link
+  - V0
+  - V1
+translate:
+  exact:
+    - from: "Choose Your FastNear Surface"
+      to: "Выберите подходящую поверхность FastNear"
+    - from: "Auth & Access"
+      to: "Аутентификация и доступ"
+    - from: "Browser Demo Auth"
+      to: "Авторизация в браузерном демо"
+    - from: "Production Backend Auth"
+      to: "Авторизация для production-бэкенда"
+    - from: "Choosing the Right Surface"
+      to: "Как выбрать подходящую поверхность"
+    - from: "Agent Playbooks"
+      to: "Плейбуки для агентов"
+    - from: "RPC / API Reference"
+      to: "Справочник RPC / API"
+    - from: "Current request"
+      to: "Текущий запрос"
+    - from: "Request reference"
+      to: "Справка по запросу"
+    - from: "Response reference"
+      to: "Справка по ответу"
+    - from: "Request schema"
+      to: "Схема запроса"
+    - from: "Response schema"
+      to: "Схема ответа"
+    - from: "Request body schema"
+      to: "Схема тела запроса"
+    - from: "Path parameters"
+      to: "Параметры пути"
+    - from: "Query parameters"
+      to: "Параметры запроса"
+    - from: "Header parameters"
+      to: "Параметры заголовков"
+    - from: "Required request inputs"
+      to: "Обязательные входные данные запроса"
+    - from: "Source links"
+      to: "Ссылки на источник"
+    - from: "Other API families"
+      to: "Другие семейства API"
+    - from: "Before you integrate"
+      to: "Перед интеграцией"
+    - from: "Practical routing guidance"
+      to: "Практические рекомендации по выбору поверхности"
+  words:
+    - from: "Choose"
+      to: "Выберите"
+    - from: "right"
+      to: "подходящую"
+    - from: "surface"
+      to: "поверхность"
+    - from: "surfaces"
+      to: "поверхности"
+    - from: "guide"
+      to: "руководство"
+    - from: "guides"
+      to: "руководства"
+    - from: "reference"
+      to: "справочник"
+    - from: "account"
+      to: "аккаунта"
+    - from: "Account"
+      to: "Аккаунт"
+    - from: "accounts"
+      to: "аккаунтов"
+    - from: "access"
+      to: "доступа"
+    - from: "Access"
+      to: "Доступ"
+    - from: "key"
+      to: "ключ"
+    - from: "keys"
+      to: "ключи"
+    - from: "transaction"
+      to: "транзакции"
+    - from: "Transaction"
+      to: "Транзакция"
+    - from: "transactions"
+      to: "транзакции"
+    - from: "Transactions"
+      to: "Транзакции"
+    - from: "block"
+      to: "блока"
+    - from: "Block"
+      to: "Блок"
+    - from: "blocks"
+      to: "блоки"
+    - from: "contract"
+      to: "контракта"
+    - from: "Contract"
+      to: "Контракт"
+    - from: "contracts"
+      to: "контракты"
+    - from: "protocol"
+      to: "протокола"
+    - from: "Protocol"
+      to: "Протокол"
+    - from: "query"
+      to: "запроса"
+    - from: "Query"
+      to: "Запрос"
+    - from: "request"
+      to: "запрос"
+    - from: "Request"
+      to: "Запрос"
+    - from: "response"
+      to: "ответ"
+    - from: "Response"
+      to: "Ответ"
+    - from: "network"
+      to: "сеть"
+    - from: "Network"
+      to: "Сеть"
+    - from: "networks"
+      to: "сети"
+    - from: "status"
+      to: "статус"
+    - from: "Status"
+      to: "Статус"
+    - from: "health"
+      to: "состояние"
+    - from: "finality"
+      to: "финальность"
+    - from: "Finality"
+      to: "Финальность"
+    - from: "current"
+      to: "текущий"
+    - from: "Current"
+      to: "Текущий"
+    - from: "latest"
+      to: "последний"
+    - from: "Latest"
+      to: "Последний"
+    - from: "public key"
+      to: "публичный ключ"
+    - from: "Public Key"
+      to: "Публичный ключ"
+    - from: "lookup"
+      to: "поиск"
+    - from: "Lookup"
+      to: "Поиск"
+    - from: "history"
+      to: "история"
+    - from: "History"
+      to: "История"
+    - from: "state"
+      to: "состояние"
+    - from: "State"
+      to: "Состояние"
+    - from: "browser"
+      to: "браузер"
+    - from: "Browser"
+      to: "Браузер"
+    - from: "backend"
+      to: "бэкенд"
+    - from: "Backend"
+      to: "Бэкенд"
+    - from: "demo"
+      to: "демо"
+    - from: "Demo"
+      to: "Демо"
+    - from: "setup"
+      to: "настройка"
+    - from: "Overview"
+      to: "Обзор"
+    - from: "Foundations"
+      to: "Основы"
+    - from: "Infrastructure"
+      to: "Инфраструктура"
+    - from: "Reference"
+      to: "Справочник"
+    - from: "Async"
+      to: "Асинхронная"
+    - from: "Advanced"
+      to: "Продвинутые"
+    - from: "Features"
+      to: "Возможности"
+    - from: "gas"
+      to: "газ"
+    - from: "Gas"
+      to: "Газ"
+    - from: "Economics"
+      to: "Экономика"
+    - from: "receipt"
+      to: "квитанция"
+    - from: "Receipt"
+      to: "Квитанция"
+    - from: "receipts"
+      to: "квитанции"
+    - from: "view"
+      to: "просмотр"
+    - from: "View"
+      to: "Просмотр"
+    - from: "call"
+      to: "вызов"
+    - from: "Call"
+      to: "Вызов"
+    - from: "code"
+      to: "код"
+    - from: "Code"
+      to: "Код"
+    - from: "send"
+      to: "отправка"
+    - from: "Send"
+      to: "Отправка"
+    - from: "client"
+      to: "клиент"
+    - from: "Client"
+      to: "Клиент"
+    - from: "maintenance"
+      to: "обслуживание"
+    - from: "windows"
+      to: "окна"
+    - from: "proof"
+      to: "доказательство"
+    - from: "Proof"
+      to: "Доказательство"
+    - from: "config"
+      to: "конфигурация"
+    - from: "Config"
+      to: "Конфигурация"
+    - from: "experimental"
+      to: "экспериментальный"
+    - from: "Experimental"
+      to: "Экспериментальный"
+transliterate:
+  words:
+    - from: "blockchain"
+      to: "блокчейн"
+    - from: "endpoint"
+      to: "эндпоинт"
+    - from: "webhook"
+      to: "вебхук"
+    - from: "token"
+      to: "токен"
+    - from: "tokens"
+      to: "токены"
+    - from: "staking"
+      to: "стейкинг"
+    - from: "validator"
+      to: "валидатора"
+    - from: "validators"
+      to: "валидаторы"
+    - from: "shard"
+      to: "шард"
+    - from: "snapshot"
+      to: "снапшот"
+    - from: "snapshots"
+      to: "снапшоты"
+notes:
+  - "Сохраняйте в Latin script названия протоколов, HTTP-методы, идентификаторы кода и значения внутри code blocks."
+  - "Используйте native Russian для устоявшихся терминов, а transliterate только для интегрированного технического жаргона."

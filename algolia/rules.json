@@ -1,0 +1,338 @@
+[
+  {
+    "objectID": "fastnear-promote-view-account",
+    "description": "Promote the canonical RPC account-state page for exact 'view account' intent.",
+    "conditions": [
+      {
+        "pattern": "view account",
+        "anchoring": "is",
+        "alternatives": false
+      }
+    ],
+    "consequence": {
+      "promote": [
+        {
+          "objectIDs": [
+            "1-https://docs.fastnear.com/rpc/account/view-account"
+          ],
+          "position": 0
+        }
+      ]
+    }
+  },
+  {
+    "objectID": "fastnear-promote-view-account-hyphen",
+    "description": "Promote the canonical RPC account-state page for exact 'view-account' intent.",
+    "conditions": [
+      {
+        "pattern": "view-account",
+        "anchoring": "is",
+        "alternatives": false
+      }
+    ],
+    "consequence": {
+      "promote": [
+        {
+          "objectIDs": [
+            "1-https://docs.fastnear.com/rpc/account/view-account"
+          ],
+          "position": 0
+        }
+      ]
+    }
+  },
+  {
+    "objectID": "fastnear-promote-view-account-underscore",
+    "description": "Promote the canonical RPC account-state page for exact 'view_account' intent.",
+    "conditions": [
+      {
+        "pattern": "view_account",
+        "anchoring": "is",
+        "alternatives": false
+      }
+    ],
+    "consequence": {
+      "promote": [
+        {
+          "objectIDs": [
+            "1-https://docs.fastnear.com/rpc/account/view-account"
+          ],
+          "position": 0
+        }
+      ]
+    }
+  },
+  {
+    "objectID": "fastnear-promote-send-tx",
+    "description": "Promote the canonical RPC transaction submission page for exact 'send tx' intent.",
+    "conditions": [
+      {
+        "pattern": "send tx",
+        "anchoring": "is",
+        "alternatives": false
+      }
+    ],
+    "consequence": {
+      "promote": [
+        {
+          "objectIDs": [
+            "2-https://docs.fastnear.com/rpc/transaction/send-tx"
+          ],
+          "position": 0
+        }
+      ]
+    }
+  },
+  {
+    "objectID": "fastnear-promote-send-tx-hyphen",
+    "description": "Promote the canonical RPC transaction submission page for exact 'send-tx' intent.",
+    "conditions": [
+      {
+        "pattern": "send-tx",
+        "anchoring": "is",
+        "alternatives": false
+      }
+    ],
+    "consequence": {
+      "promote": [
+        {
+          "objectIDs": [
+            "2-https://docs.fastnear.com/rpc/transaction/send-tx"
+          ],
+          "position": 0
+        }
+      ]
+    }
+  },
+  {
+    "objectID": "fastnear-promote-send-tx-underscore",
+    "description": "Promote the canonical RPC transaction submission page for exact 'send_tx' intent.",
+    "conditions": [
+      {
+        "pattern": "send_tx",
+        "anchoring": "is",
+        "alternatives": false
+      }
+    ],
+    "consequence": {
+      "promote": [
+        {
+          "objectIDs": [
+            "2-https://docs.fastnear.com/rpc/transaction/send-tx"
+          ],
+          "position": 0
+        }
+      ]
+    }
+  },
+  {
+    "objectID": "fastnear-promote-account-history",
+    "description": "Promote the Transactions API account-history leaf for exact history intent.",
+    "conditions": [
+      {
+        "pattern": "account history",
+        "anchoring": "is",
+        "alternatives": false
+      }
+    ],
+    "consequence": {
+      "promote": [
+        {
+          "objectIDs": [
+            "1-https://docs.fastnear.com/tx/account"
+          ],
+          "position": 0
+        }
+      ]
+    }
+  },
+  {
+    "objectID": "fastnear-promote-public-key",
+    "description": "Promote the broader public-key lookup surface for exact 'public key' intent.",
+    "conditions": [
+      {
+        "pattern": "public key",
+        "anchoring": "is",
+        "alternatives": false
+      }
+    ],
+    "consequence": {
+      "promote": [
+        {
+          "objectIDs": [
+            "1-https://docs.fastnear.com/api/v1/public-key-all"
+          ],
+          "position": 0
+        }
+      ]
+    }
+  },
+  {
+    "objectID": "fastnear-promote-block-headers",
+    "description": "Promote the NEAR Data block-headers page for exact block-header intent.",
+    "conditions": [
+      {
+        "pattern": "block headers",
+        "anchoring": "is",
+        "alternatives": false
+      }
+    ],
+    "consequence": {
+      "promote": [
+        {
+          "objectIDs": [
+            "1-https://docs.fastnear.com/neardata/block-headers"
+          ],
+          "position": 0
+        }
+      ]
+    }
+  },
+  {
+    "objectID": "fastnear-promote-authentication",
+    "description": "Route generic authentication intent to the auth landing page.",
+    "conditions": [
+      {
+        "pattern": "authentication",
+        "anchoring": "is",
+        "alternatives": false
+      }
+    ],
+    "consequence": {
+      "promote": [
+        {
+          "objectIDs": [
+            "0-https://docs.fastnear.com/auth"
+          ],
+          "position": 0
+        }
+      ]
+    }
+  },
+  {
+    "objectID": "fastnear-promote-api-key",
+    "description": "Route API-key searches to the production backend auth page.",
+    "conditions": [
+      {
+        "pattern": "api key",
+        "anchoring": "is",
+        "alternatives": false
+      }
+    ],
+    "consequence": {
+      "promote": [
+        {
+          "objectIDs": [
+            "1-https://docs.fastnear.com/auth/backend"
+          ],
+          "position": 0
+        }
+      ]
+    }
+  },
+  {
+    "objectID": "fastnear-promote-x-api-key",
+    "description": "Route x-api-key searches to the production backend auth page.",
+    "conditions": [
+      {
+        "pattern": "x-api-key",
+        "anchoring": "is",
+        "alternatives": false
+      }
+    ],
+    "consequence": {
+      "promote": [
+        {
+          "objectIDs": [
+            "1-https://docs.fastnear.com/auth/backend"
+          ],
+          "position": 0
+        }
+      ]
+    }
+  },
+  {
+    "objectID": "fastnear-promote-x-api-key-spaced",
+    "description": "Route x api key searches to the production backend auth page.",
+    "conditions": [
+      {
+        "pattern": "x api key",
+        "anchoring": "is",
+        "alternatives": false
+      }
+    ],
+    "consequence": {
+      "promote": [
+        {
+          "objectIDs": [
+            "1-https://docs.fastnear.com/auth/backend"
+          ],
+          "position": 0
+        }
+      ]
+    }
+  },
+  {
+    "objectID": "fastnear-promote-bearer-token",
+    "description": "Route bearer-token searches to the production backend auth page.",
+    "conditions": [
+      {
+        "pattern": "bearer token",
+        "anchoring": "is",
+        "alternatives": false
+      }
+    ],
+    "consequence": {
+      "promote": [
+        {
+          "objectIDs": [
+            "1-https://docs.fastnear.com/auth/backend"
+          ],
+          "position": 0
+        }
+      ]
+    }
+  },
+  {
+    "objectID": "fastnear-promote-access-token",
+    "description": "Route access-token searches to the production backend auth page.",
+    "conditions": [
+      {
+        "pattern": "access token",
+        "anchoring": "is",
+        "alternatives": false
+      }
+    ],
+    "consequence": {
+      "promote": [
+        {
+          "objectIDs": [
+            "1-https://docs.fastnear.com/auth/backend"
+          ],
+          "position": 0
+        }
+      ]
+    }
+  },
+  {
+    "objectID": "fastnear-promote-authorization-header",
+    "description": "Route authorization-header searches to the production backend auth page.",
+    "conditions": [
+      {
+        "pattern": "authorization header",
+        "anchoring": "is",
+        "alternatives": false
+      }
+    ],
+    "consequence": {
+      "promote": [
+        {
+          "objectIDs": [
+            "1-https://docs.fastnear.com/auth/backend"
+          ],
+          "position": 0
+        }
+      ]
+    }
+  }
+]

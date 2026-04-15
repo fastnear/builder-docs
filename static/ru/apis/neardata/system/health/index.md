@@ -1,0 +1,60 @@
+# NEAR Data API - Состояние
+Проверить состояние сервиса
+Возвращает `ok`, когда текущий деплой исправен, и `unhealthy`, когда последний индексированный блок слишком устарел. Неверные API-ключи могут быть отклонены ещё до того, как запрос дойдёт до приложения.
+## Ссылки на источник
+- https://docs.fastnear.com/ru/apis/neardata/system/health
+- https://docs.fastnear.com/ru/apis/neardata/openapi/system/get_health
+## Операция
+- Транспорт: http
+- Метод: GET
+- Путь: `/health`
+- Исходная спецификация: `apis/neardata/system/health.yaml`
+## Сети
+- Mainnet: https://mainnet.neardata.xyz/
+- Testnet: https://testnet.neardata.xyz/
+## Авторизация
+- API-ключ через query `apiKey`: Необязательный API-ключ подписки FastNear. Неверные значения могут вернуть `401` до обработки перенаправления.
+- Этот экспорт намеренно не включает локально сохранённые учётные данные
+## Текущий запрос
+- Сеть: Mainnet
+- Метод: GET
+- URL: https://mainnet.neardata.xyz/health
+- Активный пример: Mainnet
+## Справка по запросу
+### Активный пример
+```json
+{
+  "body": null,
+  "headers": {},
+  "path": {},
+  "query": {}
+}
+```
+### Параметры запроса
+
+- `apiKey` (query, string): Необязательный API-ключ подписки FastNear. Неверные значения могут вернуть `401` до обработки перенаправления.
+
+## Справка по ответу
+- Статус: 200
+- Тип данных: application/json
+- Краткое описание: Поле состояния сервиса
+### Схема ответа
+```json
+{
+  "type": "object",
+  "required": [
+    "статус"
+  ],
+  "additionalProperties": false,
+  "properties": [
+    {
+      "name": "статус",
+      "required": true,
+      "schema": {
+        "type": "string"
+      }
+    }
+  ],
+  "refName": "HealthResponse"
+}
+```

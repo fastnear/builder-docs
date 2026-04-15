@@ -1,5 +1,17 @@
 import structuredGraph from '@site/src/data/generatedFastnearStructuredGraph.json';
 
+import {
+  DEFAULT_LOCALE,
+  getRouteLocale,
+  localizeRoute,
+  stripLocalePrefix,
+} from './localizedRoutes';
+import {
+  localizeBreadcrumbItems,
+  localizeStructuredFamily,
+  localizeStructuredOperation,
+} from './fastnearLocalization';
+
 const COLLECTION_ROUTE_SET = new Set([
   '/',
   '/api',
@@ -21,35 +33,28 @@ const ORGANIZATION_DESCRIPTION =
   'High-performance RPC and API infrastructure for the NEAR Protocol blockchain.';
 const ORGANIZATION_LOGO_PATH = '/img/fastnear_logo_black.png';
 const ORGANIZATION_SAME_AS = ['https://github.com/fastnear', 'https://x.com/fast_near'];
-const SITE_LANGUAGE = 'en';
 
 function normalizeRoute(route) {
-  const normalized = String(route || '').trim();
-  if (!normalized) {
-    return '/';
-  }
-
-  if (normalized === '/') {
-    return '/';
-  }
-
-  const prefixed = normalized.startsWith('/') ? normalized : `/${normalized}`;
-  return prefixed.replace(/\/+$/, '') || '/';
+  return stripLocalePrefix(route) || '/';
 }
 
 function getSiteOrigin(siteConfig) {
   return String(siteConfig?.url || 'https://docs.fastnear.com').replace(/\/+$/, '');
 }
 
-function buildAbsoluteUrl(pathname, siteConfig) {
+function buildAbsoluteUrl(
+  pathname,
+  siteConfig,
+  locale = DEFAULT_LOCALE,
+  { localized = true } = {}
+) {
   const normalizedPath = normalizeRoute(pathname);
   if (!normalizedPath) {
     return null;
   }
 
-  const baseUrl = String(siteConfig?.baseUrl || '/');
-  const siteBase = new URL(baseUrl, `${getSiteOrigin(siteConfig)}/`);
-  return new URL(normalizedPath.replace(/^\//, ''), siteBase).toString();
+  const publicPath = localized ? localizeRoute(normalizedPath, locale) : normalizedPath;
+  return new URL(publicPath.replace(/^\//, ''), `${getSiteOrigin(siteConfig)}/`).toString();
 }
 
 function buildWebsiteId(siteConfig) {
@@ -64,8 +69,8 @@ function buildPageId(url) {
   return `${url}#page`;
 }
 
-function buildPageEntityRef(pathname, siteConfig) {
-  const pageUrl = buildAbsoluteUrl(pathname, siteConfig);
+function buildPageEntityRef(pathname, siteConfig, locale = DEFAULT_LOCALE) {
+  const pageUrl = buildAbsoluteUrl(pathname, siteConfig, locale);
   if (!pageUrl) {
     return null;
   }
@@ -134,19 +139,20 @@ function isFamilyVisibleForSite(family, siteConfig) {
 }
 
 function getAssociatedFamiliesForDocsRoute(route, siteConfig) {
-  const directFamilies = (structuredFamiliesByDocsPath[route] || []).filter((family) =>
+  const normalizedRoute = normalizeRoute(route);
+  const directFamilies = (structuredFamiliesByDocsPath[normalizedRoute] || []).filter((family) =>
     isFamilyVisibleForSite(family, siteConfig)
   );
   if (directFamilies.length) {
     return directFamilies;
   }
 
-  if (route === '/api/reference') {
+  if (normalizedRoute === '/api/reference') {
     const family = structuredFamiliesById['api-fastnear'];
     return family && isFamilyVisibleForSite(family, siteConfig) ? [family] : [];
   }
 
-  if (route === '/') {
+  if (normalizedRoute === '/') {
     return structuredFamilies.filter((family) => isFamilyVisibleForSite(family, siteConfig));
   }
 
@@ -158,7 +164,6 @@ function buildWebsiteEntity(siteConfig) {
     '@id': buildWebsiteId(siteConfig),
     '@type': 'WebSite',
     description: WEBSITE_DESCRIPTION,
-    inLanguage: SITE_LANGUAGE,
     name: WEBSITE_NAME,
     publisher: { '@id': buildOrganizationId(siteConfig) },
     url: getSiteOrigin(siteConfig),
@@ -170,22 +175,25 @@ function buildOrganizationEntity(siteConfig) {
     '@id': buildOrganizationId(siteConfig),
     '@type': 'Organization',
     description: ORGANIZATION_DESCRIPTION,
-    logo: buildAbsoluteUrl(ORGANIZATION_LOGO_PATH, siteConfig),
+    logo: buildAbsoluteUrl(ORGANIZATION_LOGO_PATH, siteConfig, DEFAULT_LOCALE, {
+      localized: false,
+    }),
     name: 'FastNear',
     sameAs: ORGANIZATION_SAME_AS,
     url: 'https://fastnear.com',
   };
 }
 
-function buildFamilyEntity(family, siteConfig) {
-  const docsUrl = buildAbsoluteUrl(family.docsPath, siteConfig);
+function buildFamilyEntity(family, siteConfig, locale = DEFAULT_LOCALE) {
+  const docsUrl = buildAbsoluteUrl(family.docsPath, siteConfig, locale);
   return {
     '@id': buildFamilyEntityId(siteConfig, family.id),
     '@type': family.schemaType || 'WebAPI',
     description: family.description,
     documentation: docsUrl,
     identifier: family.id,
-    mainEntityOfPage: buildPageEntityRef(family.docsPath, siteConfig) || undefined,
+    inLanguage: locale,
+    mainEntityOfPage: buildPageEntityRef(family.docsPath, siteConfig, locale) || undefined,
     name: family.name,
     provider: { '@id': buildOrganizationId(siteConfig) },
     serviceType: family.kind === 'rpc' ? 'JSON-RPC API' : 'REST API',
@@ -193,16 +201,20 @@ function buildFamilyEntity(family, siteConfig) {
   };
 }
 
-function buildOperationEntity(operation, siteConfig) {
-  const docsUrl = buildAbsoluteUrl(operation.docsPath || operation.canonicalPath, siteConfig);
-  const docsPageRef = buildPageEntityRef(operation.docsPath || operation.canonicalPath, siteConfig);
-  const canonicalPageRef = buildPageEntityRef(operation.canonicalPath, siteConfig);
+function buildOperationEntity(operation, siteConfig, locale = DEFAULT_LOCALE) {
+  const docsUrl = buildAbsoluteUrl(operation.docsPath || operation.canonicalPath, siteConfig, locale);
+  const docsPageRef = buildPageEntityRef(
+    operation.docsPath || operation.canonicalPath,
+    siteConfig,
+    locale
+  );
+  const canonicalPageRef = buildPageEntityRef(operation.canonicalPath, siteConfig, locale);
   const subjectOf = dedupeUrls(
     [docsPageRef?.['@id'], canonicalPageRef?.['@id']]
   ).map((id) => ({ '@id': id }));
   const sameAs = dedupeUrls(
     [operation.canonicalPath, operation.docsPath, ...(operation.routeAliases || [])].map((value) =>
-      buildAbsoluteUrl(value, siteConfig)
+      buildAbsoluteUrl(value, siteConfig, locale)
     )
   );
 
@@ -213,7 +225,7 @@ function buildOperationEntity(operation, siteConfig) {
     description: operation.description,
     headline: operation.headline || operation.name,
     identifier: operation.pageModelId,
-    inLanguage: SITE_LANGUAGE,
+    inLanguage: locale,
     isPartOf: { '@id': buildFamilyEntityId(siteConfig, operation.familyId) },
     mainEntityOfPage: docsPageRef || undefined,
     name: operation.name,
@@ -224,12 +236,12 @@ function buildOperationEntity(operation, siteConfig) {
   };
 }
 
-function buildBreadcrumbGraph(items, siteConfig) {
+function buildBreadcrumbGraph(items, siteConfig, locale = DEFAULT_LOCALE) {
   const itemListElement = (items || [])
     .filter((item) => item?.path)
     .map((item, index) => ({
       '@type': 'ListItem',
-      item: buildAbsoluteUrl(item.path, siteConfig),
+      item: buildAbsoluteUrl(item.path, siteConfig, locale),
       name: item.label,
       position: index + 1,
     }));
@@ -261,13 +273,20 @@ function formatLastUpdatedTimestamp(lastUpdatedAt) {
   }
 }
 
-function buildDocsPageEntity({ description, metadata, pageType, siteConfig, url }) {
+function buildDocsPageEntity({
+  currentLocale = DEFAULT_LOCALE,
+  description,
+  metadata,
+  pageType,
+  siteConfig,
+  url,
+}) {
   const dateModified = formatLastUpdatedTimestamp(metadata?.lastUpdatedAt);
   const baseEntity = {
     '@id': buildPageId(url),
     '@type': pageType,
     description,
-    inLanguage: SITE_LANGUAGE,
+    inLanguage: currentLocale,
     isPartOf: { '@id': buildWebsiteId(siteConfig) },
     name: metadata.title,
     publisher: { '@id': buildOrganizationId(siteConfig) },
@@ -286,12 +305,18 @@ function buildDocsPageEntity({ description, metadata, pageType, siteConfig, url 
   return baseEntity;
 }
 
-export function buildDocsStructuredData({ frontMatter, metadata, siteConfig }) {
-  const route = normalizeRoute(metadata?.permalink);
+export function buildDocsStructuredData({
+  currentLocale = getRouteLocale(metadata?.permalink),
+  frontMatter,
+  metadata,
+  siteConfig,
+}) {
+  const route = metadata?.permalink || '/';
+  const normalizedRoute = normalizeRoute(route);
   if (
-    !route ||
-    route.startsWith('/rpcs/') ||
-    route.startsWith('/apis/')
+    !normalizedRoute ||
+    normalizedRoute.startsWith('/rpcs/') ||
+    normalizedRoute.startsWith('/apis/')
   ) {
     return null;
   }
@@ -301,19 +326,25 @@ export function buildDocsStructuredData({ frontMatter, metadata, siteConfig }) {
     return null;
   }
 
-  const url = buildAbsoluteUrl(route, siteConfig);
+  const url = buildAbsoluteUrl(normalizedRoute, siteConfig, currentLocale);
   if (!url) {
     return null;
   }
 
-  const operation = structuredOperationsByDocsPath[route];
-  const families = getAssociatedFamiliesForDocsRoute(route, siteConfig);
+  const operation = localizeStructuredOperation(
+    structuredOperationsByDocsPath[normalizedRoute],
+    currentLocale
+  );
+  const families = getAssociatedFamiliesForDocsRoute(normalizedRoute, siteConfig).map((family) =>
+    localizeStructuredFamily(family, currentLocale)
+  );
   const pageType = operation
     ? 'WebPage'
-    : isCollectionDocsRoute(route)
+    : isCollectionDocsRoute(normalizedRoute)
       ? 'CollectionPage'
       : 'TechArticle';
   const pageEntity = buildDocsPageEntity({
+    currentLocale,
     description,
     metadata,
     pageType,
@@ -325,15 +356,19 @@ export function buildDocsStructuredData({ frontMatter, metadata, siteConfig }) {
   if (operation) {
     pageEntity.mainEntity = { '@id': buildOperationEntityId(siteConfig, operation.pageModelId) };
     graph.push(
-      buildFamilyEntity(structuredFamiliesById[operation.familyId], siteConfig),
-      buildOperationEntity(operation, siteConfig)
+      buildFamilyEntity(
+        localizeStructuredFamily(structuredFamiliesById[operation.familyId], currentLocale),
+        siteConfig,
+        currentLocale
+      ),
+      buildOperationEntity(operation, siteConfig, currentLocale)
     );
   } else if (families.length === 1) {
     pageEntity.mainEntity = { '@id': buildFamilyEntityId(siteConfig, families[0].id) };
-    graph.push(buildFamilyEntity(families[0], siteConfig));
+    graph.push(buildFamilyEntity(families[0], siteConfig, currentLocale));
   } else if (families.length > 1) {
     pageEntity.about = families.map((family) => ({ '@id': buildFamilyEntityId(siteConfig, family.id) }));
-    graph.push(...families.map((family) => buildFamilyEntity(family, siteConfig)));
+    graph.push(...families.map((family) => buildFamilyEntity(family, siteConfig, currentLocale)));
   }
 
   return {
@@ -345,24 +380,28 @@ export function buildDocsStructuredData({ frontMatter, metadata, siteConfig }) {
   };
 }
 
-export function buildHostedOperationStructuredData({ pageModelId, siteConfig }) {
-  const operation = structuredOperationsByPageModelId[pageModelId];
+export function buildHostedOperationStructuredData({
+  currentLocale = DEFAULT_LOCALE,
+  pageModelId,
+  siteConfig,
+}) {
+  const operation = localizeStructuredOperation(structuredOperationsByPageModelId[pageModelId], currentLocale);
   if (!operation) {
     return null;
   }
 
-  const family = structuredFamiliesById[operation.familyId];
+  const family = localizeStructuredFamily(structuredFamiliesById[operation.familyId], currentLocale);
   if (!family) {
     return null;
   }
 
-  const url = buildAbsoluteUrl(operation.canonicalPath, siteConfig);
+  const url = buildAbsoluteUrl(operation.canonicalPath, siteConfig, currentLocale);
   const pageEntity = {
     '@id': buildPageId(url),
     '@type': 'WebPage',
     about: [{ '@id': buildFamilyEntityId(siteConfig, operation.familyId) }],
     description: operation.description,
-    inLanguage: SITE_LANGUAGE,
+    inLanguage: currentLocale,
     isPartOf: { '@id': buildWebsiteId(siteConfig) },
     mainEntity: { '@id': buildOperationEntityId(siteConfig, operation.pageModelId) },
     name: operation.name,
@@ -373,14 +412,18 @@ export function buildHostedOperationStructuredData({ pageModelId, siteConfig }) 
   const breadcrumb = structuredBreadcrumbsByCanonicalPath[normalizeRoute(operation.canonicalPath)];
 
   return {
-    breadcrumbStructuredData: buildBreadcrumbGraph(breadcrumb?.items, siteConfig),
+    breadcrumbStructuredData: buildBreadcrumbGraph(
+      localizeBreadcrumbItems(breadcrumb?.items, currentLocale),
+      siteConfig,
+      currentLocale
+    ),
     pageSchemaType: 'WebPage',
     structuredData: {
       '@context': 'https://schema.org',
       '@graph': [
         pageEntity,
-        buildFamilyEntity(family, siteConfig),
-        buildOperationEntity(operation, siteConfig),
+        buildFamilyEntity(family, siteConfig, currentLocale),
+        buildOperationEntity(operation, siteConfig, currentLocale),
       ],
     },
   };
@@ -390,20 +433,25 @@ export function getStructuredGraphData() {
   return structuredGraph;
 }
 
-export function getStructuredOperationByDocsPath(route) {
-  return structuredOperationsByDocsPath[normalizeRoute(route)];
+export function getStructuredOperationByDocsPath(route, locale = DEFAULT_LOCALE) {
+  return localizeStructuredOperation(structuredOperationsByDocsPath[normalizeRoute(route)], locale);
 }
 
-export function getStructuredOperationByPageModelId(pageModelId) {
-  return structuredOperationsByPageModelId[pageModelId];
+export function getStructuredOperationByPageModelId(pageModelId, locale = DEFAULT_LOCALE) {
+  return localizeStructuredOperation(structuredOperationsByPageModelId[pageModelId], locale);
 }
 
-export function getStructuredOperationByCanonicalPath(route) {
-  return structuredOperationsByCanonicalPath[normalizeRoute(route)];
+export function getStructuredOperationByCanonicalPath(route, locale = DEFAULT_LOCALE) {
+  return localizeStructuredOperation(
+    structuredOperationsByCanonicalPath[normalizeRoute(route)],
+    locale
+  );
 }
 
-export function getStructuredFamiliesByDocsPath(route) {
-  return structuredFamiliesByDocsPath[normalizeRoute(route)] || [];
+export function getStructuredFamiliesByDocsPath(route, locale = DEFAULT_LOCALE) {
+  return (structuredFamiliesByDocsPath[normalizeRoute(route)] || []).map((family) =>
+    localizeStructuredFamily(family, locale)
+  );
 }
 
 export function getGlobalStructuredDataEntities(siteConfig) {

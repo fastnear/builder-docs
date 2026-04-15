@@ -1,0 +1,65 @@
+# RPC-справочник FastNear
+
+Канонические страницы RPC-справочника в AI-читабельном Markdown-формате.
+
+## Индексы
+
+- [Верхний индекс](https://docs.fastnear.com/ru/llms.txt)
+
+## RPC аккаунта
+
+- [RPC протокола NEAR: Просмотр ключа доступа](https://docs.fastnear.com/ru/rpcs/account/view_access_key.md): Просмотр ключа доступа аккаунта
+- [RPC протокола NEAR: Список ключей доступа](https://docs.fastnear.com/ru/rpcs/account/view_access_key_list.md): Просмотр списка ключей доступа аккаунта
+- [RPC протокола NEAR: Просмотр аккаунта](https://docs.fastnear.com/ru/rpcs/account/view_account.md): Просмотр аккаунта
+
+## RPC блоков
+
+- [RPC протокола NEAR: Блок по высоте](https://docs.fastnear.com/ru/rpcs/block/block_by_height.md): Получить блок по высоте
+- [RPC протокола NEAR: Блок по хешу](https://docs.fastnear.com/ru/rpcs/block/block_by_id.md): Получить блок по хешу
+- [RPC протокола NEAR: Эффекты блока](https://docs.fastnear.com/ru/rpcs/block/block_effects.md): Получить эффекты блока
+
+## RPC контрактов
+
+- [RPC протокола NEAR: Вызов view-метода](https://docs.fastnear.com/ru/rpcs/contract/call.md): Вызвать view-метод контракта
+- [RPC протокола NEAR: Код контракта](https://docs.fastnear.com/ru/rpcs/contract/view_code.md): Получить код контракта
+- [RPC протокола NEAR: Глобальный код контракта](https://docs.fastnear.com/ru/rpcs/contract/view_global_contract_code.md): Получить глобальный код контракта
+- [RPC протокола NEAR: Глобальный код контракта по аккаунту](https://docs.fastnear.com/ru/rpcs/contract/view_global_contract_code_by_account_id.md): Получить глобальный код контракта по аккаунту
+- [RPC протокола NEAR: Состояние контракта](https://docs.fastnear.com/ru/rpcs/contract/view_state.md): Получить состояние контракта
+
+## RPC протокола
+
+- [RPC протокола NEAR: Изменения состояния](https://docs.fastnear.com/ru/rpcs/protocol/changes.md): Получить изменения состояния
+- [RPC протокола NEAR: Чанк по блоку и шарду](https://docs.fastnear.com/ru/rpcs/protocol/chunk_by_block_shard.md): Получить чанк по блоку и шарду
+- [RPC протокола NEAR: Чанк по хешу](https://docs.fastnear.com/ru/rpcs/protocol/chunk_by_hash.md): Получить чанк по хешу
+- [RPC протокола NEAR: Конфигурация клиента](https://docs.fastnear.com/ru/rpcs/protocol/client_config.md): Получить конфигурацию клиента
+- [RPC протокола NEAR: Уровень перегрузки](https://docs.fastnear.com/ru/rpcs/protocol/EXPERIMENTAL_congestion_level.md): Получить уровень перегрузки
+- [RPC протокола NEAR: Доказательство блока для лайт-клиента](https://docs.fastnear.com/ru/rpcs/protocol/EXPERIMENTAL_light_client_block_proof.md): Получить доказательство блока для лайт-клиента
+- [RPC протокола NEAR: Доказательство исполнения для лайт-клиента](https://docs.fastnear.com/ru/rpcs/protocol/EXPERIMENTAL_light_client_proof.md): Получить доказательство исполнения для лайт-клиента
+- [RPC протокола NEAR: Конфигурация протокола](https://docs.fastnear.com/ru/rpcs/protocol/EXPERIMENTAL_protocol_config.md): Получить конфигурацию протокола
+- [RPC протокола NEAR: Информация о разделённом хранилище](https://docs.fastnear.com/ru/rpcs/protocol/EXPERIMENTAL_split_storage_info.md): Получить сведения о разделённом хранилище
+- [RPC протокола NEAR: Цена газа](https://docs.fastnear.com/ru/rpcs/protocol/gas_price.md): Получить текущую цену газа
+- [RPC протокола NEAR: Цена газа по блоку](https://docs.fastnear.com/ru/rpcs/protocol/gas_price_by_block.md): Получить цену газа по блоку
+- [RPC протокола NEAR: Конфигурация генезиса](https://docs.fastnear.com/ru/rpcs/protocol/genesis_config.md): Получить конфигурацию генезиса
+- [RPC протокола NEAR: Состояние узла](https://docs.fastnear.com/ru/rpcs/protocol/health.md): Проверить состояние узла
+- [RPC протокола NEAR: Последний блок](https://docs.fastnear.com/ru/rpcs/protocol/latest_block.md): Получить последний блок
+- [RPC протокола NEAR: Доказательство для лайт-клиента](https://docs.fastnear.com/ru/rpcs/protocol/light_client_proof.md): Получить доказательство для лайт-клиента
+- [RPC протокола NEAR: Окна обслуживания](https://docs.fastnear.com/ru/rpcs/protocol/maintenance_windows.md): Получить окна обслуживания
+- [RPC протокола NEAR: Метрики узла](https://docs.fastnear.com/ru/rpcs/protocol/metrics.md): Получить метрики узла
+- [RPC протокола NEAR: Сведения о сети](https://docs.fastnear.com/ru/rpcs/protocol/network_info.md): Получить сведения о сети
+- [RPC протокола NEAR: Следующий блок для лайт-клиента](https://docs.fastnear.com/ru/rpcs/protocol/next_light_client_block.md): Получить следующий блок для лайт-клиента
+- [RPC протокола NEAR: Статус узла](https://docs.fastnear.com/ru/rpcs/protocol/status.md): Получить статус узла
+
+## RPC транзакций
+
+- [RPC протокола NEAR: Отправка транзакции (асинхронно)](https://docs.fastnear.com/ru/rpcs/transaction/broadcast_tx_async.md): Отправить транзакцию асинхронно
+- [RPC протокола NEAR: Отправка транзакции (с подтверждением)](https://docs.fastnear.com/ru/rpcs/transaction/broadcast_tx_commit.md): Отправить транзакцию и дождаться подтверждения
+- [RPC протокола NEAR: Квитанция по ID](https://docs.fastnear.com/ru/rpcs/transaction/EXPERIMENTAL_receipt.md): Получить квитанцию по ID
+- [RPC протокола NEAR: Подробный статус транзакции](https://docs.fastnear.com/ru/rpcs/transaction/EXPERIMENTAL_tx_status.md): Получить подробный статус транзакции
+- [RPC протокола NEAR: Отправить транзакцию](https://docs.fastnear.com/ru/rpcs/transaction/send_tx.md): Отправить транзакцию
+- [RPC протокола NEAR: Статус транзакции](https://docs.fastnear.com/ru/rpcs/transaction/tx_status.md): Проверить статус транзакции
+
+## RPC валидаторов
+
+- [RPC протокола NEAR: Упорядоченные валидаторы](https://docs.fastnear.com/ru/rpcs/validators/EXPERIMENTAL_validators_ordered.md): Получить упорядоченных валидаторов
+- [RPC протокола NEAR: Валидаторы по эпохе](https://docs.fastnear.com/ru/rpcs/validators/validators_by_epoch.md): Получить валидаторов по эпохе
+- [RPC протокола NEAR: Текущие валидаторы](https://docs.fastnear.com/ru/rpcs/validators/validators_current.md): Получить текущих валидаторов

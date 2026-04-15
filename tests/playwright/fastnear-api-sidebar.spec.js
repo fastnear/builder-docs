@@ -46,3 +46,20 @@ test('FastNear API sidebar groups utility pages under System below versioned end
   expect(sidebarText.indexOf('Full Account View')).toBeLessThan(sidebarText.indexOf('System'));
   expect(sidebarText.indexOf('System')).toBeLessThan(sidebarText.indexOf('FastNear Status'));
 });
+
+test('Russian FastNear API sidebar keeps locale during version switching', async ({ page }) => {
+  await page.goto('/ru/api/v1/public-key');
+
+  await expect(page.locator('html')).toHaveAttribute('lang', 'ru');
+
+  const sidebar = page.getByRole('navigation', { name: 'Боковая панель документации' });
+  await expect(sidebar).toBeVisible();
+  await expect(sidebar.getByText('Система', { exact: true })).toBeVisible();
+  await expect(page.getByText('Версия', { exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'V1 Поиск по публичному ключу' })).toBeVisible();
+  await expect(page.getByText('Используйте эндпоинт v1 для нового пространства имён.', { exact: false })).toBeVisible();
+  await expect(page.getByText('Use the v1 endpoint for the newer namespace.')).toHaveCount(0);
+
+  await page.locator('#fastnear-api-version-select').selectOption('v0');
+  await expect(page).toHaveURL(/\/ru\/api\/v0\/public-key\/?$/);
+});

@@ -106,9 +106,14 @@ function useColorSchemaParam() {
 }
 
 export default function FastnearHostedOperationPage({ pageModelId }) {
-  const pageModel = getFastnearPageModelById(pageModelId);
-  const { siteConfig } = useDocusaurusContext();
-  const structuredData = buildHostedOperationStructuredData({ pageModelId, siteConfig });
+  const { i18n, siteConfig } = useDocusaurusContext();
+  const currentLocale = i18n.currentLocale || 'en';
+  const pageModel = getFastnearPageModelById(pageModelId, currentLocale);
+  const structuredData = buildHostedOperationStructuredData({
+    currentLocale,
+    pageModelId,
+    siteConfig,
+  });
 
   useEmbedAutoHeight();
   useColorSchemaParam();

@@ -40,9 +40,70 @@ yarn install
 yarn start
 ```
 
-`yarn start` regenerates the hosted canonical route files before starting Docusaurus.
+`yarn start` regenerates the hosted canonical route files, builds the site, and serves the production-style output. It is the lean default preview and does not regenerate the AI-surface artifacts on every run.
+Local development now reads DocSearch env vars from `.env` or `.env.local` automatically so Algolia can work without shell-exporting those values first. Shell-exported env vars still win if both are present.
 
 For most UI/content work in this repo, that is enough. The docs pages render directly from the vendored page-model registry and make live network requests themselves.
+
+If you want the preview to also refresh the production discovery surfaces, use:
+
+```bash
+yarn start:full
+```
+
+That additionally regenerates:
+
+- Markdown mirrors
+- `llms.txt` and `llms-full.txt`
+- per-family `guides/llms.txt`, `rpcs/llms.txt`, and `apis/llms.txt`
+- `/structured-data/site-graph.json`
+
+If you want hot reload instead of a production-like preview, use the single-locale Docusaurus dev server explicitly:
+
+```bash
+yarn start:dev
+# or preview the Russian locale only
+yarn start:dev:ru
+```
+
+That is a Docusaurus limitation rather than a FastNear routing bug: `docusaurus start` serves one locale at a time, so the locale dropdown will not cross-switch correctly between locales on that dev server.
+
+### Locale workflow
+
+The locale framework is now generic. Use these commands for any non-default locale:
+
+```bash
+yarn bootstrap:i18n --locale <code>
+yarn bootstrap:i18n:reseed --locale <code>
+yarn audit:i18n --locale <code> --wave <1|2|all>
+yarn audit:i18n:all
+```
+
+The safe bootstrap command preserves curated locale files by default. It only scaffolds missing docs, message-catalog entries, and generated overlay keys.
+
+Each locale owns:
+
+- `i18n/<locale>/glossary.yml`
+- `i18n/<locale>/translation-policy.yml`
+- `i18n/<locale>/docusaurus-plugin-content-docs/current/**`
+- `i18n/<locale>/code.json` and related message catalogs
+- `src/data/fastnearTranslations.<locale>.json`
+
+Russian compatibility aliases remain available:
+
+```bash
+yarn bootstrap:i18n:ru
+yarn bootstrap:i18n:ru:reseed
+yarn audit:i18n:ru
+```
+
+Wave policy is intentionally lightweight:
+
+- `wave 1` is the ship bar and the only locale scope enforced in CI
+- `wave 2` is the broader public-surface pass
+- `long-tail` cleanup stays non-blocking
+
+Hidden sections, such as `/transaction-flow`, are tracked in each locale's `translation-policy.yml`. They are excluded from required editorial coverage until they become public, and the live docs render a visible banner so the scope is explicit.
 
 ### Playwright smoke tests
 
@@ -60,9 +121,23 @@ Treat the clean root-mounted public docs as the public search surface.
 - Crawl: `/`, `/rpc/**`, `/api/**`, `/tx/**`, `/transfers/**`, `/neardata/**`, `/fastdata/**`, `/auth/**`, `/agents/**`, `/snapshots/**`, `/transaction-flow/**`
 - Exclude: `/rpcs/**`, `/apis/**`, `/**/*.md`, `/llms.txt`, `/llms-full.txt`, `/guides/llms.txt`, `/rpcs/llms.txt`, `/apis/llms.txt`, `/structured-data/**`
 - Exclude low-value utility pages already kept out of the sitemap: `/api/reference`, `/redocly-config`
-- Add `category` and `method_type` to `attributesForFaceting`
+- Add `category`, `method_type`, `surface`, `family`, `audience`, and `page_type` to `attributesForFaceting`
+- Use [algolia/crawler/shared.js](/Users/mikepurvis/near/fn/builder-docs/algolia/crawler/shared.js) as the shared crawler definition for repo-managed sync
+- Use [algolia/docsearch-crawler.config.js](/Users/mikepurvis/near/fn/builder-docs/algolia/docsearch-crawler.config.js) as the generated pasteable crawler editor artifact
+- Use [algolia/index-settings.json](/Users/mikepurvis/near/fn/builder-docs/algolia/index-settings.json), [algolia/rules.json](/Users/mikepurvis/near/fn/builder-docs/algolia/rules.json), and [algolia/synonyms.json](/Users/mikepurvis/near/fn/builder-docs/algolia/synonyms.json) as the repo-owned live search artifacts
+- Use [.env.example](/Users/mikepurvis/near/fn/builder-docs/.env.example) as the deploy-time env template
+- `DOCSEARCH_INDEX_NAME` should match the crawler action's `indexName`, not the crawler display name
+- Algolia search analytics and DocSearch Insights events use the public search-only key already configured in `DOCSEARCH_API_KEY`
+- This is search analytics, not a general pageview snippet; for sitewide traffic analytics you would still add a separate product such as Plausible or GA
+- The repo-managed control layer additionally uses `ALGOLIA_ADMIN_API_KEY`, `ALGOLIA_CRAWLER_USER_ID`, `ALGOLIA_CRAWLER_API_KEY`, and `ALGOLIA_CRAWLER_NAME`
 
-The docs runtime now emits `docsearch:category` and `docsearch:method_type` meta tags centrally, so the crawler can facet reference pages without hand-authored `<head>` blocks in MDX.
+The docs runtime now emits `docsearch:category`, `docsearch:method_type`, `docsearch:surface`, `docsearch:family`, `docsearch:audience`, and `docsearch:page_type` meta tags centrally, so the crawler can facet and group pages without hand-authored `<head>` blocks in MDX.
+
+It also emits stable `data-fastnear-*` attributes on the docs wrapper and direct operation runtime so selector choices do not have to depend on incidental CSS classes.
+
+The interactive API playground is marked with `data-fastnear-crawler-skip` so the crawler can strip request controls, copy helpers, and placeholder runtime text before extraction while keeping the actual reference prose indexable.
+
+The search modal itself is swizzled in [src/theme/SearchBar/index.js](/Users/mikepurvis/near/fn/builder-docs/src/theme/SearchBar/index.js) so DocSearch results are grouped by page, deduplicated across anchors, and rendered with FastNear-specific result cards and snippets.
 
 Generated discovery surfaces are emitted centrally too:
 
@@ -80,11 +155,35 @@ Structured data is emitted centrally too:
 ### Discovery verification
 
 ```bash
+yarn algolia:status
+yarn algolia:sync
+yarn algolia:crawler:start
+yarn audit:algolia-highlights
 yarn audit:indexing
+yarn audit:algolia-relevance
+yarn audit:i18n:all
 yarn submit:indexnow:dry-run
 ```
 
+`yarn algolia:status` compares the live Algolia index settings, repo-owned Rules, repo-owned synonyms, and crawler configuration against the repo.
+
+`yarn algolia:sync` applies the repo-owned search settings plus crawler configuration, without starting a crawl.
+
+`yarn algolia:crawler:start` starts a crawl and prints the returned crawler task ID. Follow it with `yarn algolia:crawler:wait --task <taskId>` to wait for completion and print the latest crawl summary.
+
 `yarn audit:indexing` rebuilds the site, verifies sitemap/robots/structured-data coverage, confirms hosted `/rpcs/**` and `/apis/**` stay `noindex`, checks the generated Markdown mirrors, and validates the root IndexNow key file.
+
+The lean locale CI gate is also available locally:
+
+```bash
+yarn ci:locale-quality
+```
+
+That runs the required locale audit, the production build, and the discovery/indexing audit without adding heavier browser or relevance checks.
+
+`yarn audit:algolia-relevance` runs a small set of high-intent queries against the configured live Algolia index and checks that canonical public docs pages win over noisy or duplicate matches. It reads the cases from [algolia/relevance-cases.json](/Users/mikepurvis/near/fn/builder-docs/algolia/relevance-cases.json) and requires the DocSearch env vars from `.env` or your shell.
+
+Use [algolia/operations.md](/Users/mikepurvis/near/fn/builder-docs/algolia/operations.md) as the operator checklist for repo-managed Algolia sync and crawl control.
 
 `yarn deploy` now publishes the site and then submits the canonical route set to IndexNow automatically.
 
@@ -191,5 +290,6 @@ Legacy `/docs/...` routes now exist only as permanent redirects to the matching 
 ## Further Reading
 
 - [CLAUDE.md](CLAUDE.md) for repo-specific coding guidance
+- [docs/internationalization.md](/Users/mikepurvis/near/fn/builder-docs/docs/internationalization.md) for the locale rollout template and maintainer playbook
 - [/Users/mikepurvis/near/mike-docs/README.md](/Users/mikepurvis/near/mike-docs/README.md) for the generation pipeline
 - [/Users/mikepurvis/near/mike-docs/INTEGRATION_GUIDE.md](/Users/mikepurvis/near/mike-docs/INTEGRATION_GUIDE.md) for the current cross-repo contract

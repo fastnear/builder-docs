@@ -1,3 +1,12 @@
+import { translate } from '@docusaurus/Translate';
+
+import {
+  getRouteLocale,
+  isLocalizedRoute,
+  localizeRoute,
+  stripLocalePrefix,
+} from './localizedRoutes';
+
 const HIDDEN_VISIBLE_BREADCRUMB_ROUTES = new Set([
   '/',
   '/rpc',
@@ -9,77 +18,117 @@ const HIDDEN_VISIBLE_BREADCRUMB_ROUTES = new Set([
   '/neardata',
   '/fastdata/kv',
   '/auth',
+  '/internationalization',
   '/snapshots',
   '/transaction-flow',
   '/redocly-config',
 ]);
 
-function normalizeRoute(route) {
-  const normalized = String(route || '').trim();
-  if (!normalized) {
-    return '/';
-  }
-
-  if (normalized === '/') {
-    return '/';
-  }
-
-  const prefixed = normalized.startsWith('/') ? normalized : `/${normalized}`;
-  return prefixed.replace(/\/+$/, '') || '/';
-}
+const ROUTE_LABELS = {
+  agents: translate({
+    id: 'fastnear.docsRoutes.agents',
+    message: 'Agents',
+  }),
+  auth: translate({
+    id: 'fastnear.docsRoutes.auth',
+    message: 'Auth & Access',
+  }),
+  snapshots: translate({
+    id: 'fastnear.docsRoutes.snapshots',
+    message: 'Snapshots',
+  }),
+  transactionFlow: translate({
+    id: 'fastnear.docsRoutes.transactionFlow',
+    message: 'Transaction Flow',
+  }),
+  rpc: translate({
+    id: 'fastnear.docsRoutes.rpc',
+    message: 'RPC',
+  }),
+  api: translate({
+    id: 'fastnear.docsRoutes.api',
+    message: 'FastNear API',
+  }),
+  tx: translate({
+    id: 'fastnear.docsRoutes.tx',
+    message: 'Transactions API',
+  }),
+  transfers: translate({
+    id: 'fastnear.docsRoutes.transfers',
+    message: 'Transfers API',
+  }),
+  neardata: translate({
+    id: 'fastnear.docsRoutes.neardata',
+    message: 'NEAR Data API',
+  }),
+  fastdata: translate({
+    id: 'fastnear.docsRoutes.fastdata',
+    message: 'KV FastData API',
+  }),
+};
 
 function getSectionBreadcrumb(route) {
-  const normalizedRoute = normalizeRoute(route);
+  const locale = getRouteLocale(route);
+  const normalizedRoute = stripLocalePrefix(route);
 
   if (normalizedRoute.startsWith('/agents/')) {
-    return { href: '/agents/choosing-surfaces', label: 'Agents' };
+    return {
+      href: localizeRoute('/agents/choosing-surfaces', locale),
+      label: ROUTE_LABELS.agents,
+    };
   }
 
   if (normalizedRoute.startsWith('/auth/')) {
-    return { href: '/auth', label: 'Auth & Access' };
+    return { href: localizeRoute('/auth', locale), label: ROUTE_LABELS.auth };
   }
 
   if (normalizedRoute.startsWith('/snapshots/')) {
-    return { href: '/snapshots', label: 'Snapshots' };
+    return { href: localizeRoute('/snapshots', locale), label: ROUTE_LABELS.snapshots };
   }
 
   if (normalizedRoute.startsWith('/transaction-flow/')) {
-    return { href: '/transaction-flow', label: 'Transaction Flow' };
+    return {
+      href: localizeRoute('/transaction-flow', locale),
+      label: ROUTE_LABELS.transactionFlow,
+    };
   }
 
   if (normalizedRoute.startsWith('/rpc/')) {
-    return { href: '/rpc', label: 'RPC' };
+    return { href: localizeRoute('/rpc', locale), label: ROUTE_LABELS.rpc };
   }
 
   if (normalizedRoute.startsWith('/api/')) {
-    return { href: '/api', label: 'FastNear API' };
+    return { href: localizeRoute('/api', locale), label: ROUTE_LABELS.api };
   }
 
   if (normalizedRoute.startsWith('/tx/')) {
-    return { href: '/tx', label: 'Transactions API' };
+    return { href: localizeRoute('/tx', locale), label: ROUTE_LABELS.tx };
   }
 
   if (normalizedRoute.startsWith('/transfers/')) {
-    return { href: '/transfers', label: 'Transfers API' };
+    return {
+      href: localizeRoute('/transfers', locale),
+      label: ROUTE_LABELS.transfers,
+    };
   }
 
   if (normalizedRoute.startsWith('/neardata/')) {
-    return { href: '/neardata', label: 'NEAR Data API' };
+    return { href: localizeRoute('/neardata', locale), label: ROUTE_LABELS.neardata };
   }
 
   if (normalizedRoute.startsWith('/fastdata/kv/')) {
-    return { href: '/fastdata/kv', label: 'KV FastData API' };
+    return { href: localizeRoute('/fastdata/kv', locale), label: ROUTE_LABELS.fastdata };
   }
 
   return null;
 }
 
 export function shouldHideVisibleBreadcrumbs(route) {
-  return HIDDEN_VISIBLE_BREADCRUMB_ROUTES.has(normalizeRoute(route));
+  return HIDDEN_VISIBLE_BREADCRUMB_ROUTES.has(stripLocalePrefix(route));
 }
 
 export function buildFallbackBreadcrumbs(metadata, options = {}) {
-  const route = normalizeRoute(metadata?.permalink);
+  const route = metadata?.permalink || '/';
   const title = metadata?.title;
   const includeHidden = Boolean(options.includeHidden);
 
@@ -113,7 +162,7 @@ export function trimVisibleBreadcrumbs(breadcrumbs) {
     return [];
   }
 
-  if (items[0]?.href === '/' || items[0]?.label === 'RPC / API Reference') {
+  if (isLocalizedRoute(items[0]?.href, '/')) {
     return items.slice(1);
   }
 

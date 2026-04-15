@@ -1,0 +1,38 @@
+{
+  "logo.alt": {
+    "message": "Документация FastNear",
+    "description": "The alt text of navbar logo"
+  },
+  "item.label.RPC": {
+    "message": "RPC",
+    "description": "Navbar item with label RPC"
+  },
+  "item.label.API": {
+    "message": "API",
+    "description": "Navbar item with label API"
+  },
+  "item.label.Transactions": {
+    "message": "Транзакции",
+    "description": "Navbar item with label Transactions"
+  },
+  "item.label.Transfers": {
+    "message": "Переводы",
+    "description": "Navbar item with label Transfers"
+  },
+  "item.label.FastData": {
+    "message": "FastData API",
+    "description": "Navbar item with label FastData"
+  },
+  "item.label.Snapshots": {
+    "message": "Снапшоты",
+    "description": "Navbar item with label Snapshots"
+  },
+  "item.label.Status": {
+    "message": "Статус",
+    "description": "Navbar item with label Status"
+  },
+  "item.label.NEAR Data": {
+    "message": "NEAR Data",
+    "description": "Navbar item with label NEAR Data"
+  }
+}

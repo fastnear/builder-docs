@@ -1,0 +1,531 @@
+**Источник:** [https://docs.fastnear.com/ru/transaction-flow/reference](https://docs.fastnear.com/ru/transaction-flow/reference)
+
+# Справочник
+
+This page provides a comprehensive mental model for understanding NEAR's async execution, practical debugging руководства, and quick справочник materials.
+
+## The Five-Level Асинхронная Model
+
+This mental model crystallizes everything about NEAR's asynchronous execution.
+
+### Level 1: Контракт VM (Promise Creation)
+
+When your контракта runs, you create **promises** - declarations of future work:
+
+```rust
+// This doesn't call now - it declares intent
+let promise = env::promise_create("other.near", "method", args, 0, gas);
+// promise is just an index (0, 1, 2...)
+```
+
+**Promises are declarative, not imperative.** You're not calling - you're scheduling.
+
+### Level 2: Conversion (Promise → Квитанция)
+
+When your function returns, the runtime converts promises to **квитанции**:
+
+```rust
+// Your code ends, runtime takes over:
+for promise in promises {
+    let receipt = ReceiptManager::convert(promise);
+    outgoing_receipts.push(receipt);
+}
+```
+
+**ReceiptManager** handles:
+- Assigning unique receipt_ids
+- Setting up data dependencies
+- Distributing газ based on weights
+
+### Level 3: Сеть Routing (Квитанция Distribution)
+
+Receipts route to their receiver's shard:
+
+```
+Receipt { receiver_id: "alice.near" }
+→ Lookup: account_id_to_shard_id("alice.near")
+→ Route to shard 2
+```
+
+**Routing is deterministic** - every node computes the same destination.
+
+### Level 4: Execution (Квитанция Processing)
+
+On the receiving shard, квитанции execute when ready:
+
+```rust
+fn process_receipt(receipt: ActionReceipt) {
+    // Wait for all dependencies
+    for data_id in receipt.input_data_ids {
+        if !data_exists(data_id) {
+            store_as_delayed(receipt);
+            return;
+        }
+    }
+
+    // All ready - execute!
+    let results = execute_actions(receipt.actions);
+
+    // Send results to dependents
+    for receiver in receipt.output_data_receivers {
+        create_data_receipt(receiver, results);
+    }
+}
+```
+
+### Level 5: Data Flow (Callbacks)
+
+Results flow back as **DataReceipts**:
+
+```
+ActionReceipt A executes
+    ↓ produces result
+DataReceipt D (data_id: X, data: "hello")
+    ↓ routes to callback location
+ActionReceipt B (input_data_ids: [X])
+    ↓ now has its dependency
+B executes with PromiseResult::Successful("hello")
+```
+
+## Why NEAR is Асинхронная
+
+**Sharding makes sync impossible.**
+
+Consider a sync вызов:
+```
+Shard 0: Contract A calls Contract B
+Shard 0: WAIT for result...
+Shard 1: B hasn't heard of this call yet (different block!)
+```
+
+You can't wait for another shard - it's not processing your запрос yet!
+
+**The solution:** Отправка a message, continue with your work, process the reply later.
+
+## Асинхронная vs Sync: Mental Comparison
+
+### Ethereum (Sync)
+
+```javascript
+A.call() {
+    let result = B.call();  // Blocks until B returns
+    process(result);
+}
+```
+
+| Property | Description |
+|----------|-------------|
+| Execution | Single thread |
+| Вызов model | Stack-based |
+| Results | Immediate |
+| Scalability | Limited |
+
+### NEAR (Асинхронная)
+
+```rust
+A.call() {
+    let promise = B.promise_call();  // Schedules, doesn't wait
+    promise.then(A.callback);         // Callback for later
+}
+
+A.callback() {
+    let result = get_promise_result();  // Result available now
+    process(result);
+}
+```
+
+| Property | Description |
+|----------|-------------|
+| Execution | Multiple concurrent |
+| Вызов model | Квитанция-based messages |
+| Results | Delayed |
+| Scalability | Horizontal |
+
+## The Mail System Analogy
+
+Think of NEAR as a **distributed mail system**:
+
+| NEAR Concept | Mail Analogy |
+|--------------|--------------|
+| **Транзакции** | Dropping a letter at the post office |
+| **Receipts** | Mail being routed through sorting centers |
+| **Shards** | Different postal districts |
+| **DataReceipts** | Reply letters |
+| **Callbacks** | "Please reply to this address" |
+| **Delayed квитанции** | Mail waiting for a related package |
+
+You never "вызов" another контракта. You отправка them a letter and ask them to отправка one back. Everything is asynchronous because the mail system doesn't teleport.
+
+---
+
+## Practical Справочник
+
+### curl Examples
+
+#### Submit Транзакция (Асинхронная)
+
+```bash
+# Submit and get hash immediately
+curl -X POST https://rpc.mainnet.fastnear.com \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": "1",
+    "method": "broadcast_tx_async",
+    "params": ["BASE64_ENCODED_SIGNED_TX"]
+  }'
+
+# Response:
+# {"jsonrpc":"2.0","id":"1","result":"6zgh2u9DqHHiXzdy9ouTP7oGky2T4nugqzqt9wJZwNFm"}
+```
+
+#### Submit Транзакция (Wait for Final)
+
+```bash
+curl -X POST https://rpc.mainnet.fastnear.com \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": "1",
+    "method": "broadcast_tx_commit",
+    "params": ["BASE64_ENCODED_TX"]
+  }'
+```
+
+#### Check Транзакция Статус
+
+```bash
+curl -X POST https://rpc.mainnet.fastnear.com \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": "1",
+    "method": "tx",
+    "params": {
+      "tx_hash": "6zgh2u9DqHHiXzdy9ouTP7oGky2T4nugqzqt9wJZwNFm",
+      "sender_account_id": "sender.testnet",
+      "wait_until": "FINAL"
+    }
+  }'
+```
+
+#### Просмотр доступ Key (for nonce)
+
+```bash
+curl -X POST https://rpc.mainnet.fastnear.com \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": "1",
+    "method": "query",
+    "params": {
+      "request_type": "view_access_key",
+      "finality": "final",
+      "account_id": "sender.testnet",
+      "public_key": "ed25519:DcA2MzgpJbrUATQLLceocVckhhAqrkingax4oJ9kZ847"
+    }
+  }'
+
+# Response includes:
+# "nonce": 12345,  <- Use nonce + 1 for next transaction
+```
+
+#### Get Recent Блок Hash
+
+```bash
+curl -X POST https://rpc.mainnet.fastnear.com \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": "1",
+    "method": "block",
+    "params": {
+      "finality": "final"
+    }
+  }'
+
+# Use result.header.hash as block_hash in transaction
+```
+
+---
+
+## Debugging Guide
+
+### Транзакция Debugging Flowchart
+
+```
+1. Did the RPC accept it?
+   │
+   ├─► NO: Immediate error returned
+   │       → Check: Invalid JSON, decode failure, validation error
+   │
+   └─► YES: Continue to step 2
+
+2. Did it reach the mempool?
+   │   (broadcast_tx_async returns hash)
+   │
+   ├─► NO: Forwarding failed
+   │       → Check: No route to validators, network issues
+   │
+   └─► YES: Continue to step 3
+
+3. Did it get included in a chunk?
+   │   (tx status shows INCLUDED or beyond)
+   │
+   ├─► NO: Dropped from mempool
+   │       → Check: Expired, superseded by higher nonce, insufficient balance
+   │
+   └─► YES: Continue to step 4
+
+4. Did the initial receipt succeed?
+   │   (Check transaction_outcome.status)
+   │
+   ├─► NO: First action(s) failed
+   │       → Check: status.Failure for error type
+   │
+   └─► YES (SuccessReceiptId): Continue to step 5
+
+5. Did all receipts complete successfully?
+   │   (Walk receipts_outcome array)
+   │
+   ├─► NO: Some receipt failed
+   │       → Find the failing receipt_id, check its status
+   │
+   └─► YES: Transaction fully succeeded
+```
+
+### Common Error Messages
+
+#### Invalid Nonce
+
+```json
+{
+  "error": {
+    "InvalidTransaction": {
+      "InvalidNonce": {
+        "tx_nonce": 5,
+        "ak_nonce": 10
+      }
+    }
+  }
+}
+```
+
+**Cause:** Транзакция nonce (5) is not greater than доступа ключ nonce (10)
+
+**Fix:** Запрос `view_access_key` and use `nonce + 1`
+
+#### Expired Транзакция
+
+```json
+{
+  "error": {
+    "InvalidTransaction": {
+      "Expired": null
+    }
+  }
+}
+```
+
+**Cause:** The `block_hash` references a блока that's too old (~24 hours)
+
+**Fix:** Get a fresh блока hash and re-sign the транзакции
+
+#### Not Enough Balance
+
+```json
+{
+  "error": {
+    "InvalidTransaction": {
+      "NotEnoughBalance": {
+        "signer_id": "alice.near",
+        "balance": "1000000000000000000000000",
+        "cost": "5000000000000000000000000"
+      }
+    }
+  }
+}
+```
+
+**Cause:** Аккаунт doesn't have enough NEAR for газ + deposits
+
+**Fix:** Add more NEAR to the аккаунта or reduce транзакции size
+
+#### Invalid Signature
+
+```json
+{
+  "error": {
+    "InvalidTransaction": {
+      "InvalidSignature": null
+    }
+  }
+}
+```
+
+**Cause:** Signature doesn't match the транзакции and public ключ
+
+**Fix:**
+- Verify signing ключ matches the public ключ in транзакции
+- Ensure транзакции is serialized with Borsh before signing
+- Check you're signing the SHA-256 hash of the Borsh bytes
+
+#### доступ Key Not Found
+
+```json
+{
+  "error": {
+    "InvalidTransaction": {
+      "InvalidAccessKeyError": {
+        "AccessKeyNotFound": {
+          "account_id": "alice.near",
+          "public_key": "ed25519:..."
+        }
+      }
+    }
+  }
+}
+```
+
+**Cause:** The public ключ isn't registered on the аккаунта
+
+**Fix:** Use a ключ that exists on the аккаунта
+
+### Debugging Tips
+
+#### 1. Check Транзакция Статус
+
+Always check full статус after submission:
+
+```javascript
+const result = await provider.txStatus(txHash, accountId);
+console.log(JSON.stringify(result, null, 2));
+```
+
+#### 2. Examine Receipts
+
+If the транзакции succeeded but the action failed, check квитанция outcomes:
+
+```javascript
+for (const outcome of result.receipts_outcome) {
+    console.log('Receipt:', outcome.id);
+    console.log('Status:', outcome.outcome.status);
+    console.log('Logs:', outcome.outcome.logs);
+}
+```
+
+#### 3. Use Explorer
+
+NEAR Explorer provides detailed транзакции visualization:
+- Mainnet: https://nearblocks.io/txns/{TX_HASH}
+- Testnet: https://testnet.nearblocks.io/txns/{TX_HASH}
+
+#### 4. Common Gotchas
+
+| Gotcha | Description |
+|--------|-------------|
+| **Nonce race conditions** | When sending multiple транзакции quickly, ensure nonces are sequential |
+| **Газ estimation** | Function calls may need more газ than expected for complex operations |
+| **Cross-shard delays** | Транзакции to аккаунтов on other shards take an extra блока |
+| **Финальность** | "Included" doesn't mean "final" - wait for финальность for important operations |
+| **Callback failures** | Even if main вызов succeeds, callback might fail - check all квитанция outcomes |
+
+---
+
+## Data Structure Справочник
+
+### Core Types
+
+```rust
+// 32-byte hash
+pub struct CryptoHash(pub [u8; 32]);
+
+// Variable-length account name (2-64 bytes)
+pub struct AccountId(String);
+
+// Wrapper type around u128 for balances (in yoctoNEAR)
+pub type Balance = near_token::NearToken;  // internally u128
+
+// 64-bit unsigned integer for gas
+pub type Gas = u64;
+
+// 64-bit unsigned integer for nonces
+pub type Nonce = u64;
+
+// Block height
+pub type BlockHeight = u64;
+
+// Shard identifier
+pub type ShardId = u64;
+```
+
+### Key Types
+
+```rust
+pub enum PublicKey {
+    ED25519(ED25519PublicKey),     // 32 bytes
+    SECP256K1(Secp256K1PublicKey), // 64 bytes
+}
+
+pub enum Signature {
+    ED25519(ed25519_dalek::Signature),  // 64 bytes
+    SECP256K1(Secp256K1Signature),      // 65 bytes
+}
+```
+
+### Транзакция Types
+
+```rust
+pub struct SignedTransaction {
+    pub transaction: Transaction,
+    pub signature: Signature,
+    hash: CryptoHash,      // Computed
+    size: u64,             // Computed
+}
+
+pub enum Transaction {
+    V0(TransactionV0),
+    V1(TransactionV1),
+}
+```
+
+### Encoding Справочник
+
+| Encoding | Use Case | Efficient For |
+|----------|----------|---------------|
+| **Base58** | Human-readable identifiers (hashes, ключи) | Short data |
+| **Base64** | Транзакция payloads (binary data) | Large data |
+| **Borsh** | Canonical serialization (signing, storage) | All structured data |
+
+---
+
+## Glossary
+
+| Term | Definition |
+|------|------------|
+| **доступ Key** | A public ключ registered on an аккаунта with specific permissions (full доступа or function вызов only) |
+| **Action** | A primitive operation within a транзакции (transfer, function вызов, etc.) |
+| **Блок** | A collection of chunks at a specific height |
+| **Borsh** | Binary Object Representation Serializer for Hashing - NEAR's canonical serialization format |
+| **Chunk** | A unit of состояние transition for a single shard |
+| **Epoch** | A period of ~12 hours during which the валидатора set is fixed |
+| **Финальность** | The guarantee that a блока will not be reverted. NEAR has ~2 second финальность |
+| **Газ** | The unit of computation cost. Газ price varies with сеть demand |
+| **Mempool** | Where valid транзакции wait for inclusion in a блока |
+| **Nonce** | A number that must increase with each транзакции from an доступа ключ |
+| **Квитанция** | An internal message created during транзакции execution, used for cross-shard communication |
+| **Shard** | A partition of the состояние. Each аккаунта belongs to exactly one shard |
+| **Validator** | A node that participates in consensus and блока production |
+| **yoctoNEAR** | The smallest unit of NEAR (10^-24 NEAR) |
+
+---
+
+## Key Principles to Remember
+
+1. **Promises are declarative**: You schedule work, not execute it
+2. **Receipts are the unit of execution**: Not транзакции
+3. **Callbacks are mandatory**: For any cross-контракта result
+4. **Dependencies are explicit**: `input_data_ids` and `output_data_receivers`
+5. **Order is causal, not global**: A→B guaranteed, A vs C across shards is not
+6. **Газ prepaid, refunds later**: Not immediate balance changes
+7. **Финальность takes time**: Multiple блоки for complex flows

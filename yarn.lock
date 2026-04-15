@@ -5902,6 +5902,7 @@ __metadata:
     "@types/react-dom": "npm:^19.2.3"
     algoliasearch: "npm:5.49.0"
     clsx: "npm:^2.1.1"
+    js-yaml: "npm:^4.1.1"
     prism-react-renderer: "npm:^2.4.1"
     react: "npm:^19.2.3"
     react-dom: "npm:^19.2.3"
@@ -9559,7 +9560,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"js-yaml@npm:^4.1.0":
+"js-yaml@npm:^4.1.0, js-yaml@npm:^4.1.1":
   version: 4.1.1
   resolution: "js-yaml@npm:4.1.1"
   dependencies:

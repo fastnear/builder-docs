@@ -1,0 +1,111 @@
+[
+  {
+    "objectID": "fastnear-view-account-query-variants",
+    "type": "synonym",
+    "synonyms": [
+      "view account",
+      "view-account",
+      "view_account"
+    ]
+  },
+  {
+    "objectID": "fastnear-send-tx-query-variants",
+    "type": "synonym",
+    "synonyms": [
+      "send tx",
+      "send-tx",
+      "send_tx"
+    ]
+  },
+  {
+    "objectID": "fastnear-account-history-query-variants",
+    "type": "synonym",
+    "synonyms": [
+      "account history",
+      "account-history",
+      "account_history"
+    ]
+  },
+  {
+    "objectID": "fastnear-public-key-query-variants",
+    "type": "synonym",
+    "synonyms": [
+      "public key",
+      "public-key",
+      "public_key",
+      "pk"
+    ]
+  },
+  {
+    "objectID": "fastnear-block-header-query-variants",
+    "type": "synonym",
+    "synonyms": [
+      "block header",
+      "block headers",
+      "block-header",
+      "block_headers"
+    ]
+  },
+  {
+    "objectID": "fastnear-auth-query-variants",
+    "type": "synonym",
+    "synonyms": [
+      "auth",
+      "authentication"
+    ]
+  },
+  {
+    "objectID": "fastnear-api-key-query-variants",
+    "type": "synonym",
+    "synonyms": [
+      "api key",
+      "api keys",
+      "api-key",
+      "apikey",
+      "x api key",
+      "x-api-key"
+    ]
+  },
+  {
+    "objectID": "fastnear-bearer-token-query-variants",
+    "type": "synonym",
+    "synonyms": [
+      "bearer token",
+      "bearer-token",
+      "access token",
+      "access-token",
+      "access tokens",
+      "auth token",
+      "authorization header",
+      "authorization-header"
+    ]
+  },
+  {
+    "objectID": "fastnear-transaction-shorthand",
+    "type": "synonym",
+    "synonyms": [
+      "tx",
+      "txn",
+      "transaction",
+      "transactions"
+    ]
+  },
+  {
+    "objectID": "fastnear-token-standards",
+    "type": "synonym",
+    "synonyms": [
+      "ft",
+      "fungible token",
+      "fungible tokens"
+    ]
+  },
+  {
+    "objectID": "fastnear-nft-shorthand",
+    "type": "synonym",
+    "synonyms": [
+      "nft",
+      "non fungible token",
+      "non fungible tokens"
+    ]
+  }
+]

@@ -2,15 +2,32 @@
 
 const fs = require("node:fs");
 const path = require("node:path");
+const {
+  DEFAULT_LOCALE,
+  SUPPORTED_LOCALES,
+  localizeRoute,
+  stripLocalePrefix,
+} = require("./lib/localized-routes");
+const { renderCrawlerConfigSource } = require("../algolia/crawler/shared");
 
 const ROOT = path.resolve(__dirname, "..");
 const DOCS_ROOT = path.join(ROOT, "docs");
 const BUILD_ROOT = path.join(ROOT, "build");
 const CONFIG_PATH = path.join(ROOT, "docusaurus.config.js");
+const LOCALE_REGISTRY_PATH = path.join(ROOT, "src/data/localeRegistry.json");
+const ENV_EXAMPLE_PATH = path.join(ROOT, ".env.example");
+const ALGOLIA_CRAWLER_SHARED_PATH = path.join(ROOT, "algolia/crawler/shared.js");
+const ALGOLIA_CRAWLER_CONFIG_PATH = path.join(ROOT, "algolia/docsearch-crawler.config.js");
+const ALGOLIA_INDEX_SETTINGS_PATH = path.join(ROOT, "algolia/index-settings.json");
+const ALGOLIA_RULES_PATH = path.join(ROOT, "algolia/rules.json");
+const ALGOLIA_SYNONYMS_PATH = path.join(ROOT, "algolia/synonyms.json");
+const ALGOLIA_RELEVANCE_CASES_PATH = path.join(ROOT, "algolia/relevance-cases.json");
+const ALGOLIA_OPERATIONS_PATH = path.join(ROOT, "algolia/operations.md");
+const ALGOLIA_RELEVANCE_AUDIT_PATH = path.join(ROOT, "scripts/audit-algolia-relevance.js");
+const SEARCH_BAR_PATH = path.join(ROOT, "src/theme/SearchBar/index.js");
+const SEARCH_BAR_STYLES_PATH = path.join(ROOT, "src/theme/SearchBar/styles.css");
 const REDIRECTS_PATH = path.join(BUILD_ROOT, "_redirects");
 const ROBOTS_PATH = path.join(BUILD_ROOT, "robots.txt");
-const SITEMAP_PATH = path.join(BUILD_ROOT, "sitemap.xml");
-const SITE_GRAPH_PATH = path.join(BUILD_ROOT, "structured-data/site-graph.json");
 const STRUCTURED_GRAPH_PATH = path.join(ROOT, "src/data/generatedFastnearStructuredGraph.json");
 const PRODUCTION_SITE_URL = "https://docs.fastnear.com";
 const WEBSITE_ID = `${PRODUCTION_SITE_URL}/#website`;
@@ -78,6 +95,7 @@ const DOCSEARCH_CATEGORY_RULES = [
   { prefix: "/fastdata", value: "api-reference" },
   { prefix: "/auth", value: "guide" },
   { prefix: "/agents", value: "guide" },
+  { prefix: "/internationalization", value: "guide" },
   { prefix: "/snapshots", value: "guide" },
   { prefix: "/transaction-flow", value: "guide" },
   { prefix: "/redocly-config", value: "guide" },
@@ -98,6 +116,45 @@ const DOCSEARCH_METHOD_TYPE_RULES = [
   { prefix: "/neardata", value: "neardata" },
   { prefix: "/fastdata", value: "kv-fastdata" },
 ];
+
+const DOCSEARCH_SURFACE_RULES = [
+  { prefix: "/rpc", value: "rpc" },
+  { prefix: "/api", value: "api" },
+  { prefix: "/tx", value: "tx" },
+  { prefix: "/transfers", value: "transfers" },
+  { prefix: "/neardata", value: "neardata" },
+  { prefix: "/fastdata", value: "fastdata" },
+  { prefix: "/auth", value: "auth" },
+  { prefix: "/agents", value: "agents" },
+  { prefix: "/internationalization", value: "guide" },
+  { prefix: "/snapshots", value: "snapshots" },
+  { prefix: "/transaction-flow", value: "transaction-flow" },
+  { prefix: "/redocly-config", value: "guide" },
+  { prefix: "/", value: "guide" },
+];
+
+const DOCSEARCH_FAMILY_RULES = [
+  { prefix: "/rpc/account", value: "account" },
+  { prefix: "/rpc/block", value: "block" },
+  { prefix: "/rpc/contract", value: "contract" },
+  { prefix: "/rpc/protocol", value: "protocol" },
+  { prefix: "/rpc/transaction", value: "transaction" },
+  { prefix: "/rpc/validators", value: "validators" },
+  { prefix: "/api", value: "fastnear" },
+  { prefix: "/tx", value: "transactions" },
+  { prefix: "/transfers", value: "transfers" },
+  { prefix: "/neardata", value: "neardata" },
+  { prefix: "/fastdata/kv", value: "kv-fastdata" },
+];
+
+const REFERENCE_COLLECTION_ROUTES = new Set([
+  "/api",
+  "/fastdata/kv",
+  "/neardata",
+  "/rpc",
+  "/transfers",
+  "/tx",
+]);
 
 const REQUIRED_ROBOTS_USER_AGENTS = [
   "GPTBot",
@@ -178,7 +235,7 @@ function parseFrontmatter(rawContent) {
 }
 
 function matchesRoutePrefix(route, prefix) {
-  return route === prefix || route.startsWith(`${prefix}/`);
+  return Boolean(route) && (route === prefix || route.startsWith(`${prefix}/`));
 }
 
 function resolveDocsearchValue(route, rules) {
@@ -203,12 +260,37 @@ function normalizeAbsoluteUrl(value) {
   return new URL(String(value), `${PRODUCTION_SITE_URL}/`).toString();
 }
 
+function normalizeComparableUrl(value) {
+  const url = new URL(String(value), `${PRODUCTION_SITE_URL}/`);
+  if (url.pathname !== "/") {
+    url.pathname = url.pathname.replace(/\/+$/, "");
+  }
+  return url.toString();
+}
+
+function buildLocalizedProductionUrl(route, locale = DEFAULT_LOCALE) {
+  return normalizeAbsoluteUrl(localizeRoute(route, locale));
+}
+
+function getSiteGraphPath(locale = DEFAULT_LOCALE) {
+  return path.join(BUILD_ROOT, localizeRoute("/structured-data/site-graph.json", locale));
+}
+
 function getExpectedMarkdownMirrorUrl(route) {
   return normalizeAbsoluteUrl(getExpectedMarkdownMirrorPath(route));
 }
 
 function getExpectedMarkdownMirrorPath(route) {
-  return route === "/" ? "/index.md" : `${route}.md`;
+  if (route === "/") {
+    return "/index.md";
+  }
+
+  const segments = String(route || "").split("/").filter(Boolean);
+  if (segments.length === 1 && SUPPORTED_LOCALES.includes(segments[0])) {
+    return `${route}/index.md`;
+  }
+
+  return `${route}.md`;
 }
 
 function getLegacyMarkdownMirrorPath(route) {
@@ -238,6 +320,10 @@ function routeToBuildHtmlPath(route) {
   if (!withoutTrailingSlash) {
     return path.join(BUILD_ROOT, "index.html");
   }
+  const segments = withoutTrailingSlash.split("/").filter(Boolean);
+  if (segments.length === 1 && SUPPORTED_LOCALES.includes(segments[0])) {
+    return path.join(BUILD_ROOT, segments[0], "index.html");
+  }
   return path.join(BUILD_ROOT, `${withoutTrailingSlash}.html`);
 }
 
@@ -251,6 +337,53 @@ function getExpectedDocsearchCategory(route) {
 
 function getExpectedDocsearchMethodType(route) {
   return resolveDocsearchValue(route, DOCSEARCH_METHOD_TYPE_RULES);
+}
+
+function getExpectedDocsearchSurface(route) {
+  return resolveDocsearchValue(route, DOCSEARCH_SURFACE_RULES);
+}
+
+function getExpectedDocsearchFamily(route) {
+  return resolveDocsearchValue(route, DOCSEARCH_FAMILY_RULES);
+}
+
+function getExpectedDocsearchAudience(route) {
+  if (matchesRoutePrefix(route, "/agents")) {
+    return "agent";
+  }
+
+  if (matchesRoutePrefix(route, "/snapshots")) {
+    return "operator";
+  }
+
+  return "builder";
+}
+
+function getExpectedDocsearchPageType(route) {
+  if (route === "/api/reference") {
+    return "guide";
+  }
+
+  if (REFERENCE_COLLECTION_ROUTES.has(route)) {
+    return "collection";
+  }
+
+  if (
+    (matchesRoutePrefix(route, "/api") && route !== "/api") ||
+    (matchesRoutePrefix(route, "/tx") && route !== "/tx") ||
+    (matchesRoutePrefix(route, "/transfers") && route !== "/transfers") ||
+    (matchesRoutePrefix(route, "/neardata") && route !== "/neardata") ||
+    (matchesRoutePrefix(route, "/fastdata/kv") && route !== "/fastdata/kv")
+  ) {
+    return "reference";
+  }
+
+  const routeParts = route.split("/").filter(Boolean);
+  if (matchesRoutePrefix(route, "/rpc") && routeParts.length >= 3) {
+    return "reference";
+  }
+
+  return "guide";
 }
 
 function getExpectedDocsPageSchemaType({ hasFastnearOperation, route }) {
@@ -350,6 +483,49 @@ function auditConfigSurface() {
     `Missing Docusaurus config: ${path.relative(ROOT, CONFIG_PATH)}`
   );
   const configText = fs.readFileSync(CONFIG_PATH, "utf8");
+  assert(
+    fs.existsSync(LOCALE_REGISTRY_PATH),
+    `Missing locale registry: ${path.relative(ROOT, LOCALE_REGISTRY_PATH)}`
+  );
+  const localeRegistry = loadJson(LOCALE_REGISTRY_PATH, "locale registry");
+  assert(
+    fs.existsSync(ENV_EXAMPLE_PATH),
+    `Missing env example: ${path.relative(ROOT, ENV_EXAMPLE_PATH)}`
+  );
+  const envExampleText = fs.readFileSync(ENV_EXAMPLE_PATH, "utf8");
+  assert(
+    fs.existsSync(ALGOLIA_CRAWLER_SHARED_PATH),
+    `Missing shared Algolia crawler definition: ${path.relative(ROOT, ALGOLIA_CRAWLER_SHARED_PATH)}`
+  );
+  const crawlerSharedText = fs.readFileSync(ALGOLIA_CRAWLER_SHARED_PATH, "utf8");
+  assert(
+    fs.existsSync(ALGOLIA_CRAWLER_CONFIG_PATH),
+    `Missing Algolia crawler config: ${path.relative(ROOT, ALGOLIA_CRAWLER_CONFIG_PATH)}`
+  );
+  const crawlerConfigText = fs.readFileSync(ALGOLIA_CRAWLER_CONFIG_PATH, "utf8");
+  const indexSettings = loadJson(ALGOLIA_INDEX_SETTINGS_PATH, "Algolia index settings");
+  const rules = loadJson(ALGOLIA_RULES_PATH, "Algolia rules");
+  const synonyms = loadJson(ALGOLIA_SYNONYMS_PATH, "Algolia synonyms");
+  assert(
+    fs.existsSync(ALGOLIA_RELEVANCE_CASES_PATH),
+    `Missing Algolia relevance cases: ${path.relative(ROOT, ALGOLIA_RELEVANCE_CASES_PATH)}`
+  );
+  assert(
+    fs.existsSync(ALGOLIA_OPERATIONS_PATH),
+    `Missing Algolia operations guide: ${path.relative(ROOT, ALGOLIA_OPERATIONS_PATH)}`
+  );
+  assert(
+    fs.existsSync(ALGOLIA_RELEVANCE_AUDIT_PATH),
+    `Missing Algolia relevance audit: ${path.relative(ROOT, ALGOLIA_RELEVANCE_AUDIT_PATH)}`
+  );
+  assert(
+    fs.existsSync(SEARCH_BAR_PATH),
+    `Missing swizzled SearchBar: ${path.relative(ROOT, SEARCH_BAR_PATH)}`
+  );
+  assert(
+    fs.existsSync(SEARCH_BAR_STYLES_PATH),
+    `Missing SearchBar styles: ${path.relative(ROOT, SEARCH_BAR_STYLES_PATH)}`
+  );
 
   assert(
     !configText.includes("DOCSEARCH_ASSISTANT_ID"),
@@ -368,6 +544,100 @@ function auditConfigSurface() {
   assert(
     configText.includes("showLastUpdateAuthor: false"),
     "docusaurus.config.js should hide last-updated author names"
+  );
+  assert(
+    /locales:\s*(?:DOCS_LOCALES|\['en', 'ru'\]|\["en", "ru"\])/.test(configText),
+    "docusaurus.config.js should enable English and Russian locales"
+  );
+  assert(
+    configText.includes("localeDropdown"),
+    "docusaurus.config.js should expose a locale dropdown in the navbar"
+  );
+  assert(
+    configText.includes("language: ['en', 'ru']") || configText.includes('language: ["en", "ru"]'),
+    "docusaurus.config.js should configure local search for English and Russian"
+  );
+  assert(
+    localeRegistry.locales?.ru?.htmlLang === "ru",
+    "localeRegistry.json should set htmlLang=ru for the Russian locale"
+  );
+  [
+    "NODE_ENV=production",
+    "DOCS_SEARCH_PROVIDER=algolia",
+    "DOCSEARCH_APP_ID",
+    "DOCSEARCH_API_KEY",
+    "DOCSEARCH_INDEX_NAME",
+    "ALGOLIA_ADMIN_API_KEY",
+    "ALGOLIA_CRAWLER_USER_ID",
+    "ALGOLIA_CRAWLER_API_KEY",
+    "ALGOLIA_CRAWLER_NAME",
+  ].forEach((needle) => {
+    assert(
+      envExampleText.includes(needle),
+      `.env.example should document ${needle}`
+    );
+  });
+  [
+    "ALGOLIA_CRAWLER_ID",
+    "ALGOLIA_CRAWLER_BASIC_AUTH",
+  ].forEach((needle) => {
+    assert(
+      !envExampleText.includes(needle),
+      `.env.example should not document ${needle}`
+    );
+  });
+  assert(
+    !envExampleText.includes("DOCSEARCH_ANALYTICS_API_KEY"),
+    ".env.example should not document DOCSEARCH_ANALYTICS_API_KEY"
+  );
+  [
+    'indexName: "YOUR_DOCSEARCH_INDEX_NAME"',
+    "pathsToMatch",
+    '"category"',
+    '"method_type"',
+    '"surface"',
+    '"family"',
+    '"audience"',
+    '"page_type"',
+    "data-fastnear-crawler-skip",
+    "removeCrawlerNoise",
+    "getMetaContent",
+    'attributeForDistinct: "url_without_anchor"',
+  ].forEach((needle) => {
+    assert(
+      crawlerConfigText.includes(needle),
+      `algolia/docsearch-crawler.config.js should include ${needle}`
+    );
+  });
+  [
+    "createCrawlerConfig",
+    "renderCrawlerConfigSource",
+    "RECORD_EXTRACTOR_SOURCE",
+  ].forEach((needle) => {
+    assert(
+      crawlerSharedText.includes(needle),
+      `algolia/crawler/shared.js should include ${needle}`
+    );
+  });
+  assert(
+    indexSettings.attributeForDistinct === "url_without_anchor",
+    "algolia/index-settings.json should set attributeForDistinct=url_without_anchor"
+  );
+  assert(
+    JSON.stringify(indexSettings.attributesToSnippet) === JSON.stringify(["content:14"]),
+    "algolia/index-settings.json should set attributesToSnippet=[\"content:14\"]"
+  );
+  assert(
+    rules.every((rule) => String(rule.objectID || "").startsWith("fastnear-")),
+    "algolia/rules.json should only contain fastnear-* object IDs"
+  );
+  assert(
+    synonyms.every((synonym) => String(synonym.objectID || "").startsWith("fastnear-")),
+    "algolia/synonyms.json should only contain fastnear-* object IDs"
+  );
+  assert(
+    crawlerConfigText.trim() === renderCrawlerConfigSource().trim(),
+    "algolia/docsearch-crawler.config.js should be generated from algolia/crawler/shared.js"
   );
 }
 
@@ -412,12 +682,16 @@ function auditDocsSource() {
 
     const hasFastnearOperation = rawContent.includes("<FastnearDirectOperation");
     routeEntries.push({
+      expectedAudience: getExpectedDocsearchAudience(route),
       expectedCategory,
+      expectedFamily: getExpectedDocsearchFamily(route),
       expectedMethodType: getExpectedDocsearchMethodType(route),
+      expectedPageType: getExpectedDocsearchPageType(route),
       expectedPageSchemaType: getExpectedDocsPageSchemaType({
         hasFastnearOperation,
         route,
       }),
+      expectedSurface: getExpectedDocsearchSurface(route),
       hasFastnearOperation,
       relativePath,
       route,
@@ -427,11 +701,20 @@ function auditDocsSource() {
   return { routeEntries, routes: [...seenRoutes.keys()] };
 }
 
-function parseSitemapUrls() {
-  assert(fs.existsSync(SITEMAP_PATH), `Missing sitemap: ${path.relative(ROOT, SITEMAP_PATH)}`);
-  const sitemapText = fs.readFileSync(SITEMAP_PATH, "utf8");
+function getSitemapPath(locale = DEFAULT_LOCALE) {
+  return locale === DEFAULT_LOCALE
+    ? path.join(BUILD_ROOT, "sitemap.xml")
+    : path.join(BUILD_ROOT, locale, "sitemap.xml");
+}
 
-  return [...sitemapText.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);
+function parseSitemapUrls(locale = DEFAULT_LOCALE) {
+  const sitemapPath = getSitemapPath(locale);
+  assert(fs.existsSync(sitemapPath), `Missing sitemap: ${path.relative(ROOT, sitemapPath)}`);
+  const sitemapText = fs.readFileSync(sitemapPath, "utf8");
+
+  return [...sitemapText.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) =>
+    normalizeComparableUrl(match[1])
+  );
 }
 
 function auditDocsBuildOutput(routeEntries, structuredGraph) {
@@ -442,6 +725,12 @@ function auditDocsBuildOutput(routeEntries, structuredGraph) {
     robotsText.includes(`Sitemap: ${PRODUCTION_SITE_URL}/sitemap.xml`),
     "robots.txt must advertise the production sitemap URL"
   );
+  SUPPORTED_LOCALES.filter((locale) => locale !== DEFAULT_LOCALE).forEach((locale) => {
+    assert(
+      robotsText.includes(`Sitemap: ${PRODUCTION_SITE_URL}/${locale}/sitemap.xml`),
+      `robots.txt must advertise the localized sitemap URL for ${locale}`
+    );
+  });
   REQUIRED_ROBOTS_USER_AGENTS.forEach((userAgent) => {
     assert(
       robotsText.includes(`User-agent: ${userAgent}`),
@@ -465,198 +754,283 @@ function auditDocsBuildOutput(routeEntries, structuredGraph) {
     "IndexNow key file contents must match the filename"
   );
 
-  const sitemapUrls = parseSitemapUrls();
+  SUPPORTED_LOCALES.forEach((locale) => {
+    const sitemapPath = getSitemapPath(locale);
+    const sitemapUrls = parseSitemapUrls(locale);
 
-  REQUIRED_SITEMAP_ROUTES.forEach((route) => {
-    if (isHiddenDocsRoute(route)) {
-      return;
+    REQUIRED_SITEMAP_ROUTES.forEach((route) => {
+      if (isHiddenDocsRoute(route)) {
+        return;
+      }
+
+      const localizedUrl = buildLocalizedProductionUrl(route, locale);
+      assert(
+        sitemapUrls.includes(localizedUrl),
+        `${path.relative(ROOT, sitemapPath)} is missing required canonical route ${localizeRoute(route, locale)}`
+      );
+    });
+
+    EXCLUDED_SITEMAP_ROUTES.forEach((route) => {
+      const localizedUrl = buildLocalizedProductionUrl(route, locale);
+      assert(
+        !sitemapUrls.includes(localizedUrl),
+        `${path.relative(ROOT, sitemapPath)} should exclude low-value route ${localizeRoute(route, locale)}`
+      );
+    });
+
+    assert(
+      !sitemapUrls.some((url) => url.includes("/blog/")),
+      `${path.relative(ROOT, sitemapPath)} should not include blog routes for builder-docs`
+    );
+    assert(
+      !sitemapUrls.some((url) => url.includes("/rpcs/") || url.includes("/apis/")),
+      `${path.relative(ROOT, sitemapPath)} should prefer root-mounted public docs routes over hosted /rpcs or /apis routes`
+    );
+
+    const sitemapText = fs.readFileSync(sitemapPath, "utf8");
+    if (locale === DEFAULT_LOCALE) {
+      assert(
+        sitemapText.includes("<lastmod>"),
+        `${path.relative(ROOT, sitemapPath)} should include lastmod metadata`
+      );
     }
-
     assert(
-      sitemapUrls.includes(`${PRODUCTION_SITE_URL}${route}`),
-      `sitemap.xml is missing required canonical route ${route}`
+      !sitemapText.includes("<changefreq>"),
+      `${path.relative(ROOT, sitemapPath)} should omit changefreq noise`
+    );
+    assert(
+      !sitemapText.includes("<priority>"),
+      `${path.relative(ROOT, sitemapPath)} should omit priority noise`
     );
   });
-
-  EXCLUDED_SITEMAP_ROUTES.forEach((route) => {
-    assert(
-      !sitemapUrls.includes(`${PRODUCTION_SITE_URL}${route}`),
-      `sitemap.xml should exclude low-value route ${route}`
-    );
-  });
-
-  assert(
-    !sitemapUrls.some((url) => url.includes("/blog/")),
-    "sitemap.xml should not include blog routes for builder-docs"
-  );
-  assert(
-    !sitemapUrls.some((url) => url.includes("/rpcs/") || url.includes("/apis/")),
-    "sitemap.xml should prefer root-mounted public docs routes over hosted /rpcs or /apis routes"
-  );
-
-  const sitemapText = fs.readFileSync(SITEMAP_PATH, "utf8");
-  assert(sitemapText.includes("<lastmod>"), "sitemap.xml should include lastmod metadata");
-  assert(!sitemapText.includes("<changefreq>"), "sitemap.xml should omit changefreq noise");
-  assert(!sitemapText.includes("<priority>"), "sitemap.xml should omit priority noise");
 
   const operationsByDocsPath = Object.fromEntries(
     structuredGraph.operations.map((operation) => [normalizeRoute(operation.docsPath), operation])
   );
 
   routeEntries.forEach((entry) => {
-    const htmlPath = routeToBuildHtmlPath(entry.route);
-    assert(
-      fs.existsSync(htmlPath),
-      `Built HTML missing for docs route ${entry.route} (${entry.relativePath})`
-    );
+    SUPPORTED_LOCALES.forEach((locale) => {
+      const localizedRoute = localizeRoute(entry.route, locale);
+      const htmlPath = routeToBuildHtmlPath(localizedRoute);
+      assert(
+        fs.existsSync(htmlPath),
+        `Built HTML missing for docs route ${localizedRoute} (${entry.relativePath})`
+      );
 
-    const html = fs.readFileSync(htmlPath, "utf8");
-    const jsonLdNodes = flattenJsonLdNodes(parseJsonLdScripts(html, entry.route));
-    const categoryPattern = new RegExp(
-      `<meta[^>]+name="docsearch:category"[^>]+content="${entry.expectedCategory}"[^>]*>`,
-      "i"
-    );
-    assert(
-      categoryPattern.test(html),
-      `Docs page is missing docsearch:category=${entry.expectedCategory}: ${entry.route} (${entry.relativePath})`
-    );
-
-    if (entry.expectedMethodType) {
-      const methodPattern = new RegExp(
-        `<meta[^>]+name="docsearch:method_type"[^>]+content="${entry.expectedMethodType}"[^>]*>`,
+      const html = fs.readFileSync(htmlPath, "utf8");
+      const jsonLdNodes = flattenJsonLdNodes(parseJsonLdScripts(html, localizedRoute));
+      const categoryPattern = new RegExp(
+        `<meta[^>]+name="docsearch:category"[^>]+content="${entry.expectedCategory}"[^>]*>`,
         "i"
       );
       assert(
-        methodPattern.test(html),
-        `Docs page is missing docsearch:method_type=${entry.expectedMethodType}: ${entry.route} (${entry.relativePath})`
+        categoryPattern.test(html),
+        `Docs page is missing docsearch:category=${entry.expectedCategory}: ${localizedRoute} (${entry.relativePath})`
       );
-    } else {
-      assert(
-        !html.includes('name="docsearch:method_type"'),
-        `Guide page should not emit docsearch:method_type: ${entry.route} (${entry.relativePath})`
-      );
-    }
-
-    assert(
-      html.includes(`"@type":"${entry.expectedPageSchemaType}"`),
-      `Docs page is missing ${entry.expectedPageSchemaType} JSON-LD: ${entry.route} (${entry.relativePath})`
-    );
-    assert(
-      html.includes(`"url":"${PRODUCTION_SITE_URL}${entry.route}"`),
-      `Docs page JSON-LD is missing its canonical URL: ${entry.route} (${entry.relativePath})`
-    );
-    assert(
-      countOccurrences(html, /"@type":"BreadcrumbList"/g) === 1,
-      `Docs page should emit exactly one BreadcrumbList JSON-LD block: ${entry.route} (${entry.relativePath})`
-    );
-    assert(
-      html.includes('itemprop="dateModified"') || html.includes('itemProp="dateModified"'),
-      `Docs page should show a visible last-updated date: ${entry.route} (${entry.relativePath})`
-    );
-
-    assertGlobalStructuredDataNodes(jsonLdNodes, `${entry.route} (${entry.relativePath})`);
-
-    const pageNodeId = `${PRODUCTION_SITE_URL}${entry.route}#page`;
-    const pageNode = findNodeById(jsonLdNodes, pageNodeId);
-    assert(pageNode, `Docs page is missing its page entity node: ${entry.route} (${entry.relativePath})`);
-    assert(
-      pageNode["@type"] === entry.expectedPageSchemaType,
-      `Docs page page entity has the wrong type: ${entry.route} (${entry.relativePath})`
-    );
-    assert(
-      pageNode.url === `${PRODUCTION_SITE_URL}${entry.route}`,
-      `Docs page entity has the wrong canonical URL: ${entry.route} (${entry.relativePath})`
-    );
-    assert(
-      getNodeRefId(pageNode.isPartOf) === WEBSITE_ID,
-      `Docs page entity should point isPartOf to the global WebSite node: ${entry.route} (${entry.relativePath})`
-    );
-    assert(
-      getNodeRefId(pageNode.publisher) === ORGANIZATION_ID,
-      `Docs page entity should point publisher to the global Organization node: ${entry.route} (${entry.relativePath})`
-    );
-    assert(
-      pageNode.inLanguage === "en",
-      `Docs page entity should emit inLanguage=en: ${entry.route} (${entry.relativePath})`
-    );
-
-    if (entry.hasFastnearOperation) {
-      const operation = operationsByDocsPath[entry.route];
-      assert(operation, `Missing structured operation registry entry for docs route ${entry.route}`);
-      const operationEntityId = `${PRODUCTION_SITE_URL}/structured-data/operations/${operation.pageModelId}`;
-      const familyEntityId = `${PRODUCTION_SITE_URL}/structured-data/families/${operation.familyId}`;
-
-      assert(
-        html.includes('name="keywords"'),
-        `Operation docs page is missing keyword metadata: ${entry.route} (${entry.relativePath})`
+      const surfacePattern = new RegExp(
+        `<meta[^>]+name="docsearch:surface"[^>]+content="${entry.expectedSurface}"[^>]*>`,
+        "i"
       );
       assert(
-        html.includes('"@type":"APIReference"'),
-        `Operation docs page is missing APIReference JSON-LD: ${entry.route} (${entry.relativePath})`
+        surfacePattern.test(html),
+        `Docs page is missing docsearch:surface=${entry.expectedSurface}: ${localizedRoute} (${entry.relativePath})`
+      );
+      const audiencePattern = new RegExp(
+        `<meta[^>]+name="docsearch:audience"[^>]+content="${entry.expectedAudience}"[^>]*>`,
+        "i"
       );
       assert(
-        html.includes('"@type":"WebAPI"'),
-        `Operation docs page is missing WebAPI JSON-LD: ${entry.route} (${entry.relativePath})`
+        audiencePattern.test(html),
+        `Docs page is missing docsearch:audience=${entry.expectedAudience}: ${localizedRoute} (${entry.relativePath})`
+      );
+      const pageTypePattern = new RegExp(
+        `<meta[^>]+name="docsearch:page_type"[^>]+content="${entry.expectedPageType}"[^>]*>`,
+        "i"
+      );
+      assert(
+        pageTypePattern.test(html),
+        `Docs page is missing docsearch:page_type=${entry.expectedPageType}: ${localizedRoute} (${entry.relativePath})`
       );
 
+      if (entry.expectedMethodType) {
+        const methodPattern = new RegExp(
+          `<meta[^>]+name="docsearch:method_type"[^>]+content="${entry.expectedMethodType}"[^>]*>`,
+          "i"
+        );
+        assert(
+          methodPattern.test(html),
+          `Docs page is missing docsearch:method_type=${entry.expectedMethodType}: ${localizedRoute} (${entry.relativePath})`
+        );
+      } else {
+        assert(
+          !html.includes('name="docsearch:method_type"'),
+          `Guide page should not emit docsearch:method_type: ${localizedRoute} (${entry.relativePath})`
+        );
+      }
+
+      if (entry.expectedFamily) {
+        const familyPattern = new RegExp(
+          `<meta[^>]+name="docsearch:family"[^>]+content="${entry.expectedFamily}"[^>]*>`,
+          "i"
+        );
+        assert(
+          familyPattern.test(html),
+          `Docs page is missing docsearch:family=${entry.expectedFamily}: ${localizedRoute} (${entry.relativePath})`
+        );
+      } else {
+        assert(
+          !html.includes('name="docsearch:family"'),
+          `Guide page should not emit docsearch:family: ${localizedRoute} (${entry.relativePath})`
+        );
+      }
+
       assert(
-        getNodeRefId(pageNode.mainEntity) === operationEntityId,
-        `Operation docs page should point mainEntity to ${operationEntityId}: ${entry.route} (${entry.relativePath})`
+        html.includes('data-fastnear-crawler-root="docs"'),
+        `Docs page is missing the stable crawler root attribute: ${localizedRoute} (${entry.relativePath})`
+      );
+      assert(
+        html.includes(`data-fastnear-surface="${entry.expectedSurface}"`),
+        `Docs page is missing data-fastnear-surface=${entry.expectedSurface}: ${localizedRoute} (${entry.relativePath})`
+      );
+      assert(
+        html.includes(`data-fastnear-audience="${entry.expectedAudience}"`),
+        `Docs page is missing data-fastnear-audience=${entry.expectedAudience}: ${localizedRoute} (${entry.relativePath})`
+      );
+      assert(
+        html.includes(`data-fastnear-page-type="${entry.expectedPageType}"`),
+        `Docs page is missing data-fastnear-page-type=${entry.expectedPageType}: ${localizedRoute} (${entry.relativePath})`
       );
 
-      const operationNode = findNodeById(jsonLdNodes, operationEntityId);
-      assert(operationNode, `Operation docs page is missing APIReference node ${operationEntityId}`);
       assert(
-        getNodeRefId(operationNode.isPartOf) === familyEntityId,
-        `APIReference node should point isPartOf to ${familyEntityId}: ${entry.route} (${entry.relativePath})`
+        html.includes(`"@type":"${entry.expectedPageSchemaType}"`),
+        `Docs page is missing ${entry.expectedPageSchemaType} JSON-LD: ${localizedRoute} (${entry.relativePath})`
       );
       assert(
-        getNodeRefId(operationNode.mainEntityOfPage) === pageNodeId,
-        `APIReference node should point mainEntityOfPage to ${pageNodeId}: ${entry.route} (${entry.relativePath})`
+        html.includes(`"url":"${buildLocalizedProductionUrl(entry.route, locale)}"`),
+        `Docs page JSON-LD is missing its canonical URL: ${localizedRoute} (${entry.relativePath})`
       );
       assert(
-        getNodeRefIds(operationNode.subjectOf).includes(pageNodeId),
-        `APIReference node should include the docs page in subjectOf: ${entry.route} (${entry.relativePath})`
+        countOccurrences(html, /"@type":"BreadcrumbList"/g) === 1,
+        `Docs page should emit exactly one BreadcrumbList JSON-LD block: ${localizedRoute} (${entry.relativePath})`
       );
-      assert(
-        getNodeRefIds(operationNode.subjectOf).includes(
-          `${PRODUCTION_SITE_URL}${operation.canonicalPath}#page`
-        ),
-        `APIReference node should include the hosted page in subjectOf: ${entry.route} (${entry.relativePath})`
-      );
-      assert(
-        operationNode.inLanguage === "en",
-        `APIReference node should emit inLanguage=en: ${entry.route} (${entry.relativePath})`
-      );
+      assertGlobalStructuredDataNodes(jsonLdNodes, `${localizedRoute} (${entry.relativePath})`);
 
-      const familyNode = findNodeById(jsonLdNodes, familyEntityId);
-      assert(familyNode, `Operation docs page is missing WebAPI node ${familyEntityId}`);
+      const pageNodeId = `${buildLocalizedProductionUrl(entry.route, locale)}#page`;
+      const pageNode = findNodeById(jsonLdNodes, pageNodeId);
+      assert(pageNode, `Docs page is missing its page entity node: ${localizedRoute} (${entry.relativePath})`);
       assert(
-        getNodeRefId(familyNode.provider) === ORGANIZATION_ID,
-        `WebAPI node should point provider to the global Organization node: ${entry.route} (${entry.relativePath})`
+        pageNode["@type"] === entry.expectedPageSchemaType,
+        `Docs page page entity has the wrong type: ${localizedRoute} (${entry.relativePath})`
       );
       assert(
-        familyNode.documentation === `${PRODUCTION_SITE_URL}${structuredGraph.families.find((family) => family.id === operation.familyId).docsPath}`,
-        `WebAPI node should point documentation to the family docs page: ${entry.route} (${entry.relativePath})`
+        pageNode.url === buildLocalizedProductionUrl(entry.route, locale),
+        `Docs page entity has the wrong canonical URL: ${localizedRoute} (${entry.relativePath})`
       );
-    }
+      assert(
+        getNodeRefId(pageNode.isPartOf) === WEBSITE_ID,
+        `Docs page entity should point isPartOf to the global WebSite node: ${localizedRoute} (${entry.relativePath})`
+      );
+      assert(
+        getNodeRefId(pageNode.publisher) === ORGANIZATION_ID,
+        `Docs page entity should point publisher to the global Organization node: ${localizedRoute} (${entry.relativePath})`
+      );
+      assert(
+        pageNode.inLanguage === locale,
+        `Docs page entity should emit inLanguage=${locale}: ${localizedRoute} (${entry.relativePath})`
+      );
+      if (locale === DEFAULT_LOCALE && pageNode.dateModified) {
+        assert(
+          html.includes('itemprop="dateModified"') || html.includes('itemProp="dateModified"'),
+          `Docs page should show a visible last-updated date: ${localizedRoute} (${entry.relativePath})`
+        );
+      }
+
+      if (entry.hasFastnearOperation) {
+        const operation = operationsByDocsPath[entry.route];
+        assert(operation, `Missing structured operation registry entry for docs route ${entry.route}`);
+        const operationEntityId = `${PRODUCTION_SITE_URL}/structured-data/operations/${operation.pageModelId}`;
+        const familyEntityId = `${PRODUCTION_SITE_URL}/structured-data/families/${operation.familyId}`;
+
+        assert(
+          html.includes('name="keywords"'),
+          `Operation docs page is missing keyword metadata: ${localizedRoute} (${entry.relativePath})`
+        );
+        assert(
+          html.includes('"@type":"APIReference"'),
+          `Operation docs page is missing APIReference JSON-LD: ${localizedRoute} (${entry.relativePath})`
+        );
+        assert(
+          html.includes('"@type":"WebAPI"'),
+          `Operation docs page is missing WebAPI JSON-LD: ${localizedRoute} (${entry.relativePath})`
+        );
+
+        assert(
+          getNodeRefId(pageNode.mainEntity) === operationEntityId,
+          `Operation docs page should point mainEntity to ${operationEntityId}: ${localizedRoute} (${entry.relativePath})`
+        );
+
+        const operationNode = findNodeById(jsonLdNodes, operationEntityId);
+        assert(operationNode, `Operation docs page is missing APIReference node ${operationEntityId}`);
+        assert(
+          getNodeRefId(operationNode.isPartOf) === familyEntityId,
+          `APIReference node should point isPartOf to ${familyEntityId}: ${localizedRoute} (${entry.relativePath})`
+        );
+        assert(
+          getNodeRefId(operationNode.mainEntityOfPage) === pageNodeId,
+          `APIReference node should point mainEntityOfPage to ${pageNodeId}: ${localizedRoute} (${entry.relativePath})`
+        );
+        assert(
+          getNodeRefIds(operationNode.subjectOf).includes(pageNodeId),
+          `APIReference node should include the docs page in subjectOf: ${localizedRoute} (${entry.relativePath})`
+        );
+        assert(
+          getNodeRefIds(operationNode.subjectOf).includes(
+            `${buildLocalizedProductionUrl(operation.canonicalPath, locale)}#page`
+          ),
+          `APIReference node should include the hosted page in subjectOf: ${localizedRoute} (${entry.relativePath})`
+        );
+        assert(
+          operationNode.inLanguage === locale,
+          `APIReference node should emit inLanguage=${locale}: ${localizedRoute} (${entry.relativePath})`
+        );
+
+        const familyNode = findNodeById(jsonLdNodes, familyEntityId);
+        assert(familyNode, `Operation docs page is missing WebAPI node ${familyEntityId}`);
+        assert(
+          getNodeRefId(familyNode.provider) === ORGANIZATION_ID,
+          `WebAPI node should point provider to the global Organization node: ${localizedRoute} (${entry.relativePath})`
+        );
+        assert(
+          familyNode.documentation === buildLocalizedProductionUrl(
+            structuredGraph.families.find((family) => family.id === operation.familyId).docsPath,
+            locale
+          ),
+          `WebAPI node should point documentation to the family docs page: ${localizedRoute} (${entry.relativePath})`
+        );
+      }
+    });
   });
 
-  const representativeDocsHtml = fs.readFileSync(routeToBuildHtmlPath("/rpc"), "utf8");
-  assert(
-    representativeDocsHtml.includes('"@type":"WebSite"'),
-    "Built docs HTML should include the global WebSite JSON-LD block"
-  );
-  assert(
-    representativeDocsHtml.includes('"@type":"Organization"'),
-    "Built docs HTML should include the global Organization JSON-LD block"
-  );
-  assert(
-    representativeDocsHtml.includes(
-      `"logo":"${PRODUCTION_SITE_URL}/img/fastnear_logo_black.png"`
-    ),
-    "Built docs HTML should include the stable docs-hosted Organization logo"
-  );
+  SUPPORTED_LOCALES.forEach((locale) => {
+    const representativeDocsHtml = fs.readFileSync(
+      routeToBuildHtmlPath(localizeRoute("/rpc", locale)),
+      "utf8"
+    );
+    assert(
+      representativeDocsHtml.includes('"@type":"WebSite"'),
+      `Built docs HTML should include the global WebSite JSON-LD block for ${locale}`
+    );
+    assert(
+      representativeDocsHtml.includes('"@type":"Organization"'),
+      `Built docs HTML should include the global Organization JSON-LD block for ${locale}`
+    );
+    assert(
+      representativeDocsHtml.includes(
+        `"logo":"${PRODUCTION_SITE_URL}/img/fastnear_logo_black.png"`
+      ),
+      `Built docs HTML should include the stable docs-hosted Organization logo for ${locale}`
+    );
+  });
 }
 
 function auditHostedBuildOutput(structuredGraph) {
@@ -665,87 +1039,106 @@ function auditHostedBuildOutput(structuredGraph) {
   );
 
   visibleOperations.forEach((operation) => {
-    const htmlPath = routeToBuildHtmlPath(operation.canonicalPath);
-    assert(
-      fs.existsSync(htmlPath),
-      `Built HTML missing for hosted route ${operation.canonicalPath}`
-    );
+    SUPPORTED_LOCALES.forEach((locale) => {
+      const localizedCanonicalPath = localizeRoute(operation.canonicalPath, locale);
+      const htmlPath = routeToBuildHtmlPath(localizedCanonicalPath);
+      assert(
+        fs.existsSync(htmlPath),
+        `Built HTML missing for hosted route ${localizedCanonicalPath}`
+      );
 
-    const html = fs.readFileSync(htmlPath, "utf8");
-    const jsonLdNodes = flattenJsonLdNodes(parseJsonLdScripts(html, operation.canonicalPath));
-    assert(
-      html.includes('name="robots" content="noindex"'),
-      `Hosted route must remain noindex: ${operation.canonicalPath}`
-    );
-    assert(
-      html.includes('"@type":"WebPage"'),
-      `Hosted route is missing WebPage JSON-LD: ${operation.canonicalPath}`
-    );
-    assert(
-      html.includes('"@type":"APIReference"'),
-      `Hosted route is missing APIReference JSON-LD: ${operation.canonicalPath}`
-    );
-    assert(
-      html.includes('"@type":"WebAPI"'),
-      `Hosted route is missing WebAPI JSON-LD: ${operation.canonicalPath}`
-    );
-    assert(
-      countOccurrences(html, /"@type":"BreadcrumbList"/g) === 1,
-      `Hosted route should emit exactly one BreadcrumbList JSON-LD block: ${operation.canonicalPath}`
-    );
+      const html = fs.readFileSync(htmlPath, "utf8");
+      const jsonLdNodes = flattenJsonLdNodes(parseJsonLdScripts(html, localizedCanonicalPath));
+      assert(
+        html.includes('name="robots" content="noindex"'),
+        `Hosted route must remain noindex: ${localizedCanonicalPath}`
+      );
+      assert(
+        html.includes('"@type":"WebPage"'),
+        `Hosted route is missing WebPage JSON-LD: ${localizedCanonicalPath}`
+      );
+      assert(
+        html.includes('"@type":"APIReference"'),
+        `Hosted route is missing APIReference JSON-LD: ${localizedCanonicalPath}`
+      );
+      assert(
+        html.includes('"@type":"WebAPI"'),
+        `Hosted route is missing WebAPI JSON-LD: ${localizedCanonicalPath}`
+      );
+      assert(
+        countOccurrences(html, /"@type":"BreadcrumbList"/g) === 1,
+        `Hosted route should emit exactly one BreadcrumbList JSON-LD block: ${localizedCanonicalPath}`
+      );
 
-    assertGlobalStructuredDataNodes(jsonLdNodes, operation.canonicalPath);
+      assertGlobalStructuredDataNodes(jsonLdNodes, localizedCanonicalPath);
 
-    const pageNodeId = `${PRODUCTION_SITE_URL}${operation.canonicalPath}#page`;
-    const operationEntityId = `${PRODUCTION_SITE_URL}/structured-data/operations/${operation.pageModelId}`;
-    const familyEntityId = `${PRODUCTION_SITE_URL}/structured-data/families/${operation.familyId}`;
-    const pageNode = findNodeById(jsonLdNodes, pageNodeId);
-    assert(pageNode, `Hosted route is missing its page entity node: ${operation.canonicalPath}`);
-    assert(
-      getNodeRefId(pageNode.mainEntity) === operationEntityId,
-      `Hosted route should point mainEntity to ${operationEntityId}: ${operation.canonicalPath}`
-    );
-    assert(
-      getNodeRefIds(pageNode.about).includes(familyEntityId),
-      `Hosted route should point about to ${familyEntityId}: ${operation.canonicalPath}`
-    );
-    assert(
-      pageNode.inLanguage === "en",
-      `Hosted route page entity should emit inLanguage=en: ${operation.canonicalPath}`
-    );
+      const pageNodeId = `${buildLocalizedProductionUrl(operation.canonicalPath, locale)}#page`;
+      const operationEntityId = `${PRODUCTION_SITE_URL}/structured-data/operations/${operation.pageModelId}`;
+      const familyEntityId = `${PRODUCTION_SITE_URL}/structured-data/families/${operation.familyId}`;
+      const pageNode = findNodeById(jsonLdNodes, pageNodeId);
+      assert(pageNode, `Hosted route is missing its page entity node: ${localizedCanonicalPath}`);
+      assert(
+        getNodeRefId(pageNode.mainEntity) === operationEntityId,
+        `Hosted route should point mainEntity to ${operationEntityId}: ${localizedCanonicalPath}`
+      );
+      assert(
+        getNodeRefIds(pageNode.about).includes(familyEntityId),
+        `Hosted route should point about to ${familyEntityId}: ${localizedCanonicalPath}`
+      );
+      assert(
+        pageNode.inLanguage === locale,
+        `Hosted route page entity should emit inLanguage=${locale}: ${localizedCanonicalPath}`
+      );
 
-    const operationNode = findNodeById(jsonLdNodes, operationEntityId);
-    assert(operationNode, `Hosted route is missing APIReference node ${operationEntityId}`);
-    assert(
-      getNodeRefId(operationNode.mainEntityOfPage) === `${PRODUCTION_SITE_URL}${operation.docsPath}#page`,
-      `Hosted route APIReference should point mainEntityOfPage to the docs page: ${operation.canonicalPath}`
-    );
-    assert(
-      getNodeRefIds(operationNode.subjectOf).includes(pageNodeId),
-      `Hosted route APIReference should include the hosted page in subjectOf: ${operation.canonicalPath}`
-    );
+      const operationNode = findNodeById(jsonLdNodes, operationEntityId);
+      assert(operationNode, `Hosted route is missing APIReference node ${operationEntityId}`);
+      assert(
+        getNodeRefId(operationNode.mainEntityOfPage) === `${buildLocalizedProductionUrl(operation.docsPath, locale)}#page`,
+        `Hosted route APIReference should point mainEntityOfPage to the docs page: ${localizedCanonicalPath}`
+      );
+      assert(
+        getNodeRefIds(operationNode.subjectOf).includes(pageNodeId),
+        `Hosted route APIReference should include the hosted page in subjectOf: ${localizedCanonicalPath}`
+      );
+    });
   });
 }
 
 function auditGeneratedTextArtifacts({ routeEntries, structuredGraph }) {
-  const textArtifactPaths = [
-    path.join(BUILD_ROOT, "llms.txt"),
-    path.join(BUILD_ROOT, "llms-full.txt"),
-    path.join(BUILD_ROOT, "guides/llms.txt"),
-    path.join(BUILD_ROOT, "rpcs/llms.txt"),
-    path.join(BUILD_ROOT, "apis/llms.txt"),
-  ];
+  SUPPORTED_LOCALES.forEach((locale) => {
+    const textArtifactPaths = [
+      path.join(BUILD_ROOT, localizeRoute("/llms.txt", locale)),
+      path.join(BUILD_ROOT, localizeRoute("/llms-full.txt", locale)),
+      path.join(BUILD_ROOT, localizeRoute("/guides/llms.txt", locale)),
+      path.join(BUILD_ROOT, localizeRoute("/rpcs/llms.txt", locale)),
+      path.join(BUILD_ROOT, localizeRoute("/apis/llms.txt", locale)),
+    ];
 
-  textArtifactPaths.forEach((filePath) => {
-    assert(fs.existsSync(filePath), `Missing generated text artifact: ${path.relative(ROOT, filePath)}`);
-    const content = fs.readFileSync(filePath, "utf8");
+    textArtifactPaths.forEach((filePath) => {
+      assert(fs.existsSync(filePath), `Missing generated text artifact: ${path.relative(ROOT, filePath)}`);
+      const content = fs.readFileSync(filePath, "utf8");
+      assert(
+        content.includes(PRODUCTION_SITE_URL),
+        `${path.basename(filePath)} should use production absolute URLs`
+      );
+      assert(
+        !/\]\(\/[^)]+\)/.test(content),
+        `${path.basename(filePath)} should not contain root-relative markdown links`
+      );
+      if (locale !== DEFAULT_LOCALE) {
+        assert(
+          content.includes(`${PRODUCTION_SITE_URL}/${locale}/`),
+          `${path.basename(filePath)} should point at localized ${locale} URLs`
+        );
+      }
+    });
+  });
+
+  SUPPORTED_LOCALES.filter((locale) => locale !== DEFAULT_LOCALE).forEach((locale) => {
+    const nestedLocaleRoot = path.join(BUILD_ROOT, locale, locale);
     assert(
-      content.includes(PRODUCTION_SITE_URL),
-      `${path.basename(filePath)} should use production absolute URLs`
-    );
-    assert(
-      !/\]\(\/[^)]+\)/.test(content),
-      `${path.basename(filePath)} should not contain root-relative markdown links`
+      !fs.existsSync(nestedLocaleRoot),
+      `Localized build output should not keep a nested locale artifact root: ${path.relative(ROOT, nestedLocaleRoot)}`
     );
   });
 
@@ -753,171 +1146,178 @@ function auditGeneratedTextArtifacts({ routeEntries, structuredGraph }) {
     (operation) => !isHiddenCanonicalRoute(operation.canonicalPath)
   );
 
-  [...routeEntries.map((entry) => entry.route), ...visibleOperations.map((operation) => operation.canonicalPath)].forEach(
-    (route) => {
-      const preferredPath = routeToBuildAssetPath(getExpectedMarkdownMirrorPath(route));
-      const legacyPath = routeToBuildAssetPath(getLegacyMarkdownMirrorPath(route));
+  SUPPORTED_LOCALES.forEach((locale) => {
+    [...routeEntries.map((entry) => localizeRoute(entry.route, locale)), ...visibleOperations.map((operation) => localizeRoute(operation.canonicalPath, locale))].forEach(
+      (route) => {
+        const preferredPath = routeToBuildAssetPath(getExpectedMarkdownMirrorPath(route));
+        const legacyPath = routeToBuildAssetPath(getLegacyMarkdownMirrorPath(route));
 
-      assert(
-        fs.existsSync(preferredPath),
-        `Missing preferred markdown mirror for ${route}: ${path.relative(ROOT, preferredPath)}`
-      );
-      assert(
-        fs.existsSync(legacyPath),
-        `Missing legacy markdown mirror for ${route}: ${path.relative(ROOT, legacyPath)}`
-      );
-    }
-  );
+        assert(
+          fs.existsSync(preferredPath),
+          `Missing preferred markdown mirror for ${route}: ${path.relative(ROOT, preferredPath)}`
+        );
+        assert(
+          fs.existsSync(legacyPath),
+          `Missing legacy markdown mirror for ${route}: ${path.relative(ROOT, legacyPath)}`
+        );
+      }
+    );
+  });
 }
 
 function auditSiteGraphArtifact({ routeEntries, structuredGraph }) {
-  const siteGraph = loadJson(SITE_GRAPH_PATH, "site graph artifact");
   const visibleOperations = structuredGraph.operations.filter(
     (operation) => !isHiddenCanonicalRoute(operation.canonicalPath)
   );
   const visibleFamilyIds = [...new Set(visibleOperations.map((operation) => operation.familyId))].sort();
 
-  assert(siteGraph.version === 1, "site-graph.json should use version 1");
-  assert(siteGraph.website?.["@type"] === "WebSite", "site-graph.json is missing the WebSite entity");
-  assert(siteGraph.website?.["@id"] === WEBSITE_ID, "site-graph.json has the wrong WebSite @id");
-  assert(
-    siteGraph.website?.url === PRODUCTION_SITE_URL,
-    "site-graph.json has the wrong WebSite URL"
-  );
-  assert(
-    siteGraph.website?.publisher?.["@id"] === ORGANIZATION_ID,
-    "site-graph.json should link the WebSite publisher to the Organization node"
-  );
-  assert(siteGraph.website?.inLanguage === "en", "site-graph.json should emit website inLanguage=en");
-  assert(
-    siteGraph.organization?.["@type"] === "Organization",
-    "site-graph.json is missing the Organization entity"
-  );
-  assert(
-    siteGraph.organization?.["@id"] === ORGANIZATION_ID,
-    "site-graph.json has the wrong Organization @id"
-  );
-  assert(
-    siteGraph.organization?.logo === `${PRODUCTION_SITE_URL}/img/fastnear_logo_black.png`,
-    "site-graph.json should use the stable docs-hosted logo URL"
-  );
+  SUPPORTED_LOCALES.forEach((locale) => {
+    const siteGraph = loadJson(getSiteGraphPath(locale), `site graph artifact (${locale})`);
 
-  assert(Array.isArray(siteGraph.families), "site-graph.json families must be an array");
-  assert(Array.isArray(siteGraph.operations), "site-graph.json operations must be an array");
-  assert(Array.isArray(siteGraph.pages), "site-graph.json pages must be an array");
-
-  const familyIds = siteGraph.families.map((family) => family.id).sort();
-  assert(
-    JSON.stringify(familyIds) === JSON.stringify(visibleFamilyIds),
-    `site-graph.json family set is out of sync. Expected ${visibleFamilyIds.join(", ")}, got ${familyIds.join(", ")}`
-  );
-  assert(
-    siteGraph.operations.length === visibleOperations.length,
-    `site-graph.json should contain ${visibleOperations.length} operations, got ${siteGraph.operations.length}`
-  );
-  assert(
-    siteGraph.pages.length === routeEntries.length + visibleOperations.length,
-    `site-graph.json should contain ${routeEntries.length + visibleOperations.length} pages, got ${siteGraph.pages.length}`
-  );
-
-  const pagesByRoute = Object.fromEntries(siteGraph.pages.map((page) => [page.route, page]));
-
-  routeEntries.forEach((entry) => {
-    const page = pagesByRoute[entry.route];
-    assert(page, `site-graph.json is missing docs page ${entry.route}`);
-    assert(page.routeType === "docs", `Docs page has wrong routeType in site-graph.json: ${entry.route}`);
-    assert(page.indexable === true, `Docs page should be indexable in site-graph.json: ${entry.route}`);
+    assert(siteGraph.version === 1, `site-graph.json should use version 1 for ${locale}`);
+    assert(siteGraph.website?.["@type"] === "WebSite", `site-graph.json is missing the WebSite entity for ${locale}`);
+    assert(siteGraph.website?.["@id"] === WEBSITE_ID, `site-graph.json has the wrong WebSite @id for ${locale}`);
     assert(
-      page.pageSchemaType === entry.expectedPageSchemaType,
-      `Docs page has wrong pageSchemaType in site-graph.json: ${entry.route}`
+      siteGraph.website?.url === PRODUCTION_SITE_URL,
+      `site-graph.json has the wrong WebSite URL for ${locale}`
     );
     assert(
-      page.markdownMirrorUrl === getExpectedMarkdownMirrorUrl(entry.route),
-      `Docs page has wrong markdownMirrorUrl in site-graph.json: ${entry.route}`
+      siteGraph.website?.publisher?.["@id"] === ORGANIZATION_ID,
+      `site-graph.json should link the WebSite publisher to the Organization node for ${locale}`
+    );
+    assert(siteGraph.website?.inLanguage === locale, `site-graph.json should emit website inLanguage=${locale}`);
+    assert(
+      siteGraph.organization?.["@type"] === "Organization",
+      `site-graph.json is missing the Organization entity for ${locale}`
+    );
+    assert(
+      siteGraph.organization?.["@id"] === ORGANIZATION_ID,
+      `site-graph.json has the wrong Organization @id for ${locale}`
+    );
+    assert(
+      siteGraph.organization?.logo === `${PRODUCTION_SITE_URL}/img/fastnear_logo_black.png`,
+      `site-graph.json should use the stable docs-hosted logo URL for ${locale}`
+    );
+
+    assert(Array.isArray(siteGraph.families), `site-graph.json families must be an array for ${locale}`);
+    assert(Array.isArray(siteGraph.operations), `site-graph.json operations must be an array for ${locale}`);
+    assert(Array.isArray(siteGraph.pages), `site-graph.json pages must be an array for ${locale}`);
+
+    const familyIds = siteGraph.families.map((family) => family.id).sort();
+    assert(
+      JSON.stringify(familyIds) === JSON.stringify(visibleFamilyIds),
+      `site-graph.json family set is out of sync for ${locale}. Expected ${visibleFamilyIds.join(", ")}, got ${familyIds.join(", ")}`
+    );
+    assert(
+      siteGraph.operations.length === visibleOperations.length,
+      `site-graph.json should contain ${visibleOperations.length} operations for ${locale}, got ${siteGraph.operations.length}`
+    );
+    assert(
+      siteGraph.pages.length === routeEntries.length + visibleOperations.length,
+      `site-graph.json should contain ${routeEntries.length + visibleOperations.length} pages for ${locale}, got ${siteGraph.pages.length}`
+    );
+
+    const pagesByRoute = Object.fromEntries(siteGraph.pages.map((page) => [page.route, page]));
+
+    routeEntries.forEach((entry) => {
+      const localizedRoute = localizeRoute(entry.route, locale);
+      const page = pagesByRoute[localizedRoute];
+      assert(page, `site-graph.json is missing docs page ${localizedRoute}`);
+      assert(page.routeType === "docs", `Docs page has wrong routeType in site-graph.json: ${localizedRoute}`);
+      assert(page.indexable === true, `Docs page should be indexable in site-graph.json: ${localizedRoute}`);
+      assert(
+        page.pageSchemaType === entry.expectedPageSchemaType,
+        `Docs page has wrong pageSchemaType in site-graph.json: ${localizedRoute}`
+      );
+      assert(
+        page.markdownMirrorUrl === getExpectedMarkdownMirrorUrl(localizedRoute),
+        `Docs page has wrong markdownMirrorUrl in site-graph.json: ${localizedRoute}`
+      );
+    });
+
+    visibleOperations.forEach((operation) => {
+      const localizedCanonicalPath = localizeRoute(operation.canonicalPath, locale);
+      const page = pagesByRoute[localizedCanonicalPath];
+      assert(page, `site-graph.json is missing hosted page ${localizedCanonicalPath}`);
+      assert(
+        page.routeType === (operation.canonicalPath.startsWith("/rpcs/") ? "hosted-rpc" : "hosted-api"),
+        `Hosted page has wrong routeType in site-graph.json: ${localizedCanonicalPath}`
+      );
+      assert(
+        page.indexable === false,
+        `Hosted page should be non-indexable in site-graph.json: ${localizedCanonicalPath}`
+      );
+      assert(
+        page.pageSchemaType === "WebPage",
+        `Hosted page should use WebPage in site-graph.json: ${localizedCanonicalPath}`
+      );
+      assert(
+        page.markdownMirrorUrl === getExpectedMarkdownMirrorUrl(localizedCanonicalPath),
+        `Hosted page has wrong markdownMirrorUrl in site-graph.json: ${localizedCanonicalPath}`
+      );
+      assert(
+        page.entityIds?.mainEntityId === `${PRODUCTION_SITE_URL}/structured-data/operations/${operation.pageModelId}`,
+        `Hosted page has wrong mainEntityId in site-graph.json: ${localizedCanonicalPath}`
+      );
+    });
+
+    siteGraph.families.forEach((family) => {
+      assert(
+        family.providerId === ORGANIZATION_ID,
+        `site-graph.json family ${family.id} should point providerId to the Organization node`
+      );
+      assert(
+        family.docsPageId === `${PRODUCTION_SITE_URL}${family.docsPath}#page`,
+        `site-graph.json family ${family.id} should expose docsPageId for its collection page`
+      );
+      assert(
+        family.documentationUrl === `${PRODUCTION_SITE_URL}${family.docsPath}`,
+        `site-graph.json family ${family.id} should expose documentationUrl for its docs page`
+      );
+    });
+
+    siteGraph.operations.forEach((operation) => {
+      assert(
+        operation.publisherId === ORGANIZATION_ID,
+        `site-graph.json operation ${operation.pageModelId} should point publisherId to the Organization node`
+      );
+      assert(
+        operation.mainEntityOfPageId === `${PRODUCTION_SITE_URL}${operation.docsPath}#page`,
+        `site-graph.json operation ${operation.pageModelId} should expose mainEntityOfPageId for the docs page`
+      );
+      assert(
+        operation.docsPageId === `${PRODUCTION_SITE_URL}${operation.docsPath}#page`,
+        `site-graph.json operation ${operation.pageModelId} should expose docsPageId for the docs page`
+      );
+      assert(
+        operation.canonicalPageId === `${PRODUCTION_SITE_URL}${operation.canonicalPath}#page`,
+        `site-graph.json operation ${operation.pageModelId} should expose canonicalPageId for the hosted page`
+      );
+      assert(
+        Array.isArray(operation.subjectOfPageIds) &&
+          operation.subjectOfPageIds.includes(`${PRODUCTION_SITE_URL}${operation.docsPath}#page`) &&
+          operation.subjectOfPageIds.includes(`${PRODUCTION_SITE_URL}${operation.canonicalPath}#page`),
+        `site-graph.json operation ${operation.pageModelId} should expose both docs and hosted subjectOfPageIds`
+      );
+      assert(
+        operation.inLanguage === locale,
+        `site-graph.json operation ${operation.pageModelId} should emit inLanguage=${locale}`
+      );
+    });
+
+    assert(
+      siteGraph.discovery?.llmsIndexUrl === buildLocalizedProductionUrl("/llms.txt", locale),
+      `site-graph.json should advertise ${localizeRoute("/llms.txt", locale)}`
+    );
+    assert(
+      siteGraph.discovery?.llmsFullUrl === buildLocalizedProductionUrl("/llms-full.txt", locale),
+      `site-graph.json should advertise ${localizeRoute("/llms-full.txt", locale)}`
+    );
+    assert(
+      siteGraph.discovery?.docsLlmsIndexUrl === buildLocalizedProductionUrl("/guides/llms.txt", locale),
+      `site-graph.json should advertise ${localizeRoute("/guides/llms.txt", locale)}`
     );
   });
-
-  visibleOperations.forEach((operation) => {
-    const page = pagesByRoute[operation.canonicalPath];
-    assert(page, `site-graph.json is missing hosted page ${operation.canonicalPath}`);
-    assert(
-      page.routeType === (operation.canonicalPath.startsWith("/rpcs/") ? "hosted-rpc" : "hosted-api"),
-      `Hosted page has wrong routeType in site-graph.json: ${operation.canonicalPath}`
-    );
-    assert(
-      page.indexable === false,
-      `Hosted page should be non-indexable in site-graph.json: ${operation.canonicalPath}`
-    );
-    assert(
-      page.pageSchemaType === "WebPage",
-      `Hosted page should use WebPage in site-graph.json: ${operation.canonicalPath}`
-    );
-    assert(
-      page.markdownMirrorUrl === getExpectedMarkdownMirrorUrl(operation.canonicalPath),
-      `Hosted page has wrong markdownMirrorUrl in site-graph.json: ${operation.canonicalPath}`
-    );
-    assert(
-      page.entityIds?.mainEntityId === `${PRODUCTION_SITE_URL}/structured-data/operations/${operation.pageModelId}`,
-      `Hosted page has wrong mainEntityId in site-graph.json: ${operation.canonicalPath}`
-    );
-  });
-
-  siteGraph.families.forEach((family) => {
-    assert(
-      family.providerId === ORGANIZATION_ID,
-      `site-graph.json family ${family.id} should point providerId to the Organization node`
-    );
-    assert(
-      family.docsPageId === `${PRODUCTION_SITE_URL}${family.docsPath}#page`,
-      `site-graph.json family ${family.id} should expose docsPageId for its collection page`
-    );
-    assert(
-      family.documentationUrl === `${PRODUCTION_SITE_URL}${family.docsPath}`,
-      `site-graph.json family ${family.id} should expose documentationUrl for its docs page`
-    );
-  });
-
-  siteGraph.operations.forEach((operation) => {
-    assert(
-      operation.publisherId === ORGANIZATION_ID,
-      `site-graph.json operation ${operation.pageModelId} should point publisherId to the Organization node`
-    );
-    assert(
-      operation.mainEntityOfPageId === `${PRODUCTION_SITE_URL}${operation.docsPath}#page`,
-      `site-graph.json operation ${operation.pageModelId} should expose mainEntityOfPageId for the docs page`
-    );
-    assert(
-      operation.docsPageId === `${PRODUCTION_SITE_URL}${operation.docsPath}#page`,
-      `site-graph.json operation ${operation.pageModelId} should expose docsPageId for the docs page`
-    );
-    assert(
-      operation.canonicalPageId === `${PRODUCTION_SITE_URL}${operation.canonicalPath}#page`,
-      `site-graph.json operation ${operation.pageModelId} should expose canonicalPageId for the hosted page`
-    );
-    assert(
-      Array.isArray(operation.subjectOfPageIds) &&
-        operation.subjectOfPageIds.includes(`${PRODUCTION_SITE_URL}${operation.docsPath}#page`) &&
-        operation.subjectOfPageIds.includes(`${PRODUCTION_SITE_URL}${operation.canonicalPath}#page`),
-      `site-graph.json operation ${operation.pageModelId} should expose both docs and hosted subjectOfPageIds`
-    );
-    assert(
-      operation.inLanguage === "en",
-      `site-graph.json operation ${operation.pageModelId} should emit inLanguage=en`
-    );
-  });
-
-  assert(
-    siteGraph.discovery?.llmsIndexUrl === `${PRODUCTION_SITE_URL}/llms.txt`,
-    "site-graph.json should advertise /llms.txt"
-  );
-  assert(
-    siteGraph.discovery?.llmsFullUrl === `${PRODUCTION_SITE_URL}/llms-full.txt`,
-    "site-graph.json should advertise /llms-full.txt"
-  );
-  assert(
-    siteGraph.discovery?.docsLlmsIndexUrl === `${PRODUCTION_SITE_URL}/guides/llms.txt`,
-    "site-graph.json should advertise /guides/llms.txt"
-  );
 }
 
 function main() {

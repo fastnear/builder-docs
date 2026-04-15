@@ -1,0 +1,459 @@
+---
+title: "Основы"
+description: "Транзакция structure, actions, and serialization formats in NEAR"
+slug: /transaction-flow/foundations
+sidebar_position: 1
+keywords:
+  - NEAR
+  - transaction
+  - SignedTransaction
+  - actions
+  - borsh
+---
+
+# Основы
+
+This section covers the fundamental building блоки of NEAR транзакции: data structures, action types, аккаунта models, and serialization formats.
+
+## What is a Транзакция?
+
+In NEAR Протокол, a **транзакции** is a signed message from an аккаунта that requests one or more состояние changes on the blockchain. Unlike some other blockchains where транзакции are simple value transfers, NEAR транзакции are containers for **actions** - discrete operations that can create аккаунтов, deploy контракты, вызов functions, transfer tokens, and more.
+
+Every транзакции in NEAR has these fundamental properties:
+
+1. **Atomicity**: All actions in a транзакции either succeed together or fail together (within the same shard)
+2. **Авторизацияorization**: Транзакции are signed by an доступа ключ that proves the signer has permission
+3. **Bounded Validity**: Транзакции справочник a recent блока and expire if not included quickly
+4. **Deterministic Execution**: Given the same состояние and транзакции, execution always produces the same result
+
+:::warning Cross-Shard Atomicity
+The atomicity guarantee applies only within a single shard. Cross-shard operations (function calls to контракты on different shards) are executed asynchronously and do **not** have atomic semantics. See [Асинхронная Model](./async-model) for details.
+:::
+
+### The Транзакция Lifecycle
+
+```mermaid
+flowchart LR
+    subgraph Creation
+        A[Client Signs Tx]
+    end
+    subgraph Submission
+        B[RPC Layer]
+    end
+    subgraph Validation
+        C[Handler Actor]
+    end
+    subgraph Network
+        D[P2P Forward]
+    end
+    subgraph Block Production
+        E[Chunk Producer]
+    end
+    subgraph Execution
+        F[Runtime Applies Actions]
+    end
+    A -->|base64/borsh| B
+    B -->|struct| C
+    C -->|struct| D
+    D -->|borsh| E
+    E -->|struct| F
+```
+
+## The SignedTransaction Data Structure
+
+The `SignedTransaction` is the fundamental unit that travels through the system.
+
+**Source:** `core/primitives/src/transaction.rs`
+
+```rust
+#[derive(BorshSerialize, BorshDeserialize, Eq, Debug, Clone, ProtocolSchema)]
+#[borsh(init=init)]
+pub struct SignedTransaction {
+    pub transaction: Transaction,
+    pub signature: Signature,
+    #[borsh(skip)]
+    hash: CryptoHash,
+    #[borsh(skip)]
+    size: u64,
+}
+```
+
+The `SignedTransaction` wraps a `Transaction` with its cryptographic signature. The `#[borsh(skip)]` attributes on `hash` and `size` mean these are computed fields that are not serialized but are cached for performance.
+
+### Транзакция Versions
+
+NEAR supports multiple транзакции versions for протокола evolution:
+
+```rust
+pub enum Transaction {
+    V0(TransactionV0),
+    V1(TransactionV1),
+}
+```
+
+### TransactionV0: The Standard Транзакция
+
+```rust
+pub struct TransactionV0 {
+    /// An account on which behalf transaction is signed
+    pub signer_id: AccountId,
+
+    /// A public key of the access key which was used to sign an account.
+    pub public_key: PublicKey,
+
+    /// Nonce is used to determine order of transaction in the pool.
+    /// It increments for a combination of `signer_id` and `public_key`
+    pub nonce: Nonce,
+
+    /// Receiver account for this transaction
+    pub receiver_id: AccountId,
+
+    /// The hash of the block in the blockchain on top of which the given
+    /// transaction is valid
+    pub block_hash: CryptoHash,
+
+    /// A list of actions to be applied
+    pub actions: Vec<Action>,
+}
+```
+
+#### Field Details
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `signer_id` | `AccountId` | The аккаунта signing and authorizing this транзакции. Pays for газ. |
+| `public_key` | `PublicKey` | The public ключ of the доступа ключ used to sign. Supports ED25519 and SECP256K1. |
+| `nonce` | `u64` | Must be strictly greater than the previous nonce for this доступа ключ. Prevents replay attacks. |
+| `receiver_id` | `AccountId` | The аккаунта that will receive this транзакции. For `FunctionCall`, the контракта being called. |
+| `block_hash` | `CryptoHash` | Справочник to a recent блока. Provides fork protection and expiration (86,400 блоки / ~24 hours). |
+| `actions` | `Vec<Action>` | The list of operations to perform. Multiple actions are batched atomically. |
+
+### TransactionV1: Газ Key Nonces
+
+TransactionV1 uses the same fields as V0 but replaces the nonce type with `TransactionNonce`, which supports газ ключ nonces:
+
+```rust
+pub struct TransactionV1 {
+    pub signer_id: AccountId,
+    pub public_key: PublicKey,
+    /// Nonce with support for gas key indexing
+    pub nonce: TransactionNonce,
+    pub receiver_id: AccountId,
+    pub block_hash: CryptoHash,
+    pub actions: Vec<Action>,
+}
+
+pub enum TransactionNonce {
+    /// Simple nonce without index, used by ordinary access keys
+    Nonce { nonce: Nonce },
+    /// Nonce with index, used by gas keys
+    GasKeyNonce { nonce: Nonce, nonce_index: NonceIndex },
+}
+```
+
+:::note
+V1 транзакции add support for газ ключи via the `TransactionNonce` type, which allows a nonce index alongside the standard nonce.
+:::
+
+## Action Types
+
+Actions are the primitive operations that транзакции can perform. Each action type has specific semantics, газ costs, and validation rules.
+
+**Source:** `core/primitives/src/action/mod.rs`
+
+```rust
+pub enum Action {
+    CreateAccount(CreateAccountAction) = 0,
+    DeployContract(DeployContractAction) = 1,
+    FunctionCall(Box<FunctionCallAction>) = 2,
+    Transfer(TransferAction) = 3,
+    Stake(Box<StakeAction>) = 4,
+    AddKey(Box<AddKeyAction>) = 5,
+    DeleteKey(Box<DeleteKeyAction>) = 6,
+    DeleteAccount(DeleteAccountAction) = 7,
+    Delegate(Box<SignedDelegateAction>) = 8,
+    DeployGlobalContract(DeployGlobalContractAction) = 9,
+    UseGlobalContract(Box<UseGlobalContractAction>) = 10,
+    DeterministicStateInit(Box<DeterministicStateInitAction>) = 11,
+    TransferToGasKey(Box<TransferToGasKeyAction>) = 12,
+    WithdrawFromGasKey(Box<WithdrawFromGasKeyAction>) = 13,
+}
+```
+
+### CreateAccountAction
+
+```rust
+pub struct CreateAccountAction {}
+```
+
+Creates a new аккаунта with the `receiver_id` as its name. The new аккаунта starts with no balance, no ключи, and no код. Typically combined with `Transfer` and `AddKey` actions.
+
+**Constraints:**
+- The `receiver_id` must not already exist
+- Sub-аккаунтов can only be created by their parent (e.g., `alice.near` can create `bob.alice.near`)
+- Top-level аккаунтов require the registrar
+
+### DeployContractAction
+
+```rust
+pub struct DeployContractAction {
+    /// WebAssembly binary
+    pub code: Vec<u8>,
+}
+```
+
+Deploys WASM код to the `receiver_id` аккаунта.
+
+**Constraints:**
+- Maximum контракта size: 4MB (configurable via протокола parameters)
+- The WASM must be valid and pass validation
+- Replaces any existing код on the аккаунта
+- Signer must have full доступа to the receiver аккаунта
+
+### FunctionCallAction
+
+```rust
+pub struct FunctionCallAction {
+    /// The name of the method to call
+    pub method_name: String,
+
+    /// Arguments to pass to the method (serialized, typically JSON)
+    pub args: Vec<u8>,
+
+    /// Maximum gas to use for this call
+    pub gas: Gas,
+
+    /// NEAR tokens to attach to the call (accessible via `attached_deposit`)
+    pub deposit: Balance,
+}
+```
+
+Calls a function on the контракта deployed at `receiver_id`.
+
+**Constraints:**
+- Method name maximum length: 256 bytes
+- Arguments maximum size: 4MB
+- Газ must be greater than 0
+- If the method is not payable, deposit must be 0
+
+### TransferAction
+
+```rust
+pub struct TransferAction {
+    /// Amount of NEAR to transfer (in yoctoNEAR, 10^-24 NEAR)
+    pub deposit: Balance,
+}
+```
+
+Transfers NEAR tokens from `signer_id` to `receiver_id`.
+
+### StakeAction
+
+```rust
+pub struct StakeAction {
+    /// Amount to stake (in yoctoNEAR)
+    pub stake: Balance,
+
+    /// Public key for the validator
+    pub public_key: PublicKey,
+}
+```
+
+Stakes NEAR for participation in validation. Only meaningful for валидатора аккаунтов.
+
+### AddKeyAction
+
+```rust
+pub struct AddKeyAction {
+    pub public_key: PublicKey,
+    pub access_key: AccessKey,
+}
+
+pub struct AccessKey {
+    pub nonce: Nonce,
+    pub permission: AccessKeyPermission,
+}
+
+pub enum AccessKeyPermission {
+    FullAccess,
+    FunctionCall(FunctionCallPermission),
+}
+
+pub struct FunctionCallPermission {
+    /// Remaining allowance (None = unlimited)
+    pub allowance: Option<Balance>,
+    /// Only calls to this receiver are allowed
+    pub receiver_id: AccountId,
+    /// If non-empty, only these methods can be called
+    pub method_names: Vec<String>,
+}
+```
+
+Adds a new доступа ключ to the аккаунта. Keys can be full-доступа or limited to specific контракта methods.
+
+### DeleteKeyAction
+
+```rust
+pub struct DeleteKeyAction {
+    pub public_key: PublicKey,
+}
+```
+
+Removes an доступа ключ from the аккаунта. Cannot delete the last full-доступа ключ.
+
+### DeleteAccountAction
+
+```rust
+pub struct DeleteAccountAction {
+    /// Account to receive remaining balance
+    pub beneficiary_id: AccountId,
+}
+```
+
+Deletes the `receiver_id` аккаунта, transferring any remaining balance to the beneficiary.
+
+**Constraints:**
+- Must be signed with full доступа
+- Аккаунт must have no locked balance (unstaking)
+- Must be the last action in the транзакции
+
+### DelegateAction (Meta-Транзакции)
+
+See [Продвинутые Features](./advanced-features) for details on meta-транзакции.
+
+### Global Контракт Actions
+
+`DeployGlobalContract` and `UseGlobalContract` enable сеть-wide контракта sharing. See [Инфраструктура](./infrastructure) for details.
+
+## Аккаунт Types
+
+NEAR supports multiple аккаунта formats, each with different creation mechanisms.
+
+**Source:** `core/primitives-core/src/account/id.rs`
+
+```rust
+pub enum AccountType {
+    /// Regular named accounts like "alice.near"
+    NamedAccount,
+    /// 64-character hex string derived from ED25519 public key
+    NearImplicitAccount,
+    /// "0x" + 40 hex chars derived from Secp256K1 (Ethereum-style)
+    EthImplicitAccount,
+    /// "0s" + 40 hex chars derived from state hash (NEP-616)
+    NearDeterministicAccount,
+}
+```
+
+### Named Accounts
+
+Regular аккаунтов like `alice.near` with human-readable names.
+
+**Rules:**
+- Minimum 2 characters, maximum 64 characters
+- Can contain lowercase letters, digits, `-`, `_`, `.`
+- Cannot start or end with `-` or `_`
+- Sub-аккаунтов require parent аккаунта authorization
+
+### NEAR-Implicit Accounts (ED25519)
+
+A 64-character lowercase hex string that IS the public ключ.
+
+```rust
+pub fn derive_near_implicit_account_id(public_key: &ED25519PublicKey) -> AccountId {
+    hex::encode(public_key).parse().unwrap()
+}
+```
+
+**Example:** `98793cd91a3f870fb126f66285808c7e094afcfc4eda8a970f6648cdf0dbd6de`
+
+**How creation works:**
+1. Generate an ED25519 keypair
+2. The public ключ (32 bytes) hex-encoded IS your аккаунта ID (64 chars)
+3. Отправка a transfer to that аккаунта ID (even before it exists)
+4. The протокола automatically creates the аккаунта with a full-доступа ключ
+
+:::warning Security Constraint
+The transfer must be the **only action** in the транзакции. This prevents аккаунта hijacking - you can't отправка a transfer + add your own ключ in one транзакции.
+:::
+
+### ETH-Implicit Accounts (Secp256K1)
+
+For Ethereum compatibility: `0x` prefix + 40 hex characters.
+
+**Derivation:** Keccak256 hash of Secp256K1 public ключ, take last 20 bytes (same as Ethereum).
+
+**Key difference from NEAR-implicit:**
+- **No доступа ключ created** on transfer
+- Uses a "Wallet Контракт" instead of traditional доступа ключи
+- Cannot be deleted or have full доступа ключи added
+
+### Comparison Table
+
+| Type | Format | Length | Example | доступ on Creation |
+|------|--------|--------|---------|-------------------|
+| Named | alphanumeric + `.` `-` `_` | 2-64 | `alice.near` | None (explicit AddKey) |
+| NEAR-Implicit | hex | 64 | `98793cd...0dbd6de` | Full доступа ключ |
+| ETH-Implicit | `0x` + hex | 42 | `0x71c7656...` | Wallet Контракт |
+| Deterministic | `0s` + hex | 42 | `0s7a3f8c...` | None (from state_init) |
+
+## Serialization Formats
+
+NEAR uses multiple serialization formats at different layers of the stack.
+
+### Borsh (Binary Object Representation Serializer for Hashing)
+
+**Purpose:** Canonical binary serialization for consensus-critical data
+
+Borsh is NEAR's primary serialization format for:
+- Транзакция signing (the bytes being signed)
+- Сеть протокола messages
+- Состояние storage
+- Блок/chunk data
+
+**Properties:**
+- Deterministic: Same input always produces same output
+- Compact: No field names, no padding
+- Schema-based: Requires knowing the type to deserialize
+
+### Base64
+
+**Purpose:** Encoding binary data in JSON-RPC requests
+
+When submitting транзакции via JSON-RPC, the entire borsh-serialized `SignedTransaction` is base64-encoded into a string.
+
+**Source:** `core/primitives/src/transaction.rs`
+
+```rust
+impl serde::Serialize for SignedTransaction {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error> {
+        let signed_tx_borsh = borsh::to_vec(self)?;
+        let signed_tx_base64 = to_base64(&signed_tx_borsh);
+        serializer.serialize_str(&signed_tx_base64)
+    }
+}
+```
+
+### Base58
+
+**Purpose:** Human-readable encoding of hashes and ключи
+
+Base58 (Bitcoin's alphabet) is used for:
+- `CryptoHash` (блока hashes, транзакции hashes)
+- `PublicKey` (the data portion after the type prefix)
+- `Signature`
+
+**Why Base58 instead of Base64?**
+- Avoids visually ambiguous characters (0/O, l/I)
+- No special characters (+, /, =)
+- URL-safe without encoding
+
+### Format Summary Table
+
+| Context | Format | Example |
+|---------|--------|---------|
+| Транзакция submission | Base64(Borsh) | `"AgAAAA..."` |
+| Блок/tx hash in queries | Base58 | `"11111111111111111111111111111111"` |
+| Public ключ display | `type:Base58` | `"ed25519:DcA2Mzg..."` |
+| Function вызов args | Usually JSON in `Vec<u8>` | `{"msg": "hello"}` |
+| Сеть P2P | Raw Borsh | Binary TCP stream |
+| Состояние storage | Borsh | Binary ключ-value |

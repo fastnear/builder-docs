@@ -1,5 +1,6 @@
 import React from 'react';
 import Head from '@docusaurus/Head';
+import { translate } from '@docusaurus/Translate';
 import Link from '@docusaurus/Link';
 import {
   useBreadcrumbsStructuredData,
@@ -43,7 +44,13 @@ export default function DocBreadcrumbs() {
         </Head>
       ) : null}
       {visibleBreadcrumbs.length ? (
-        <nav className="theme-doc-breadcrumbs" aria-label="Breadcrumbs">
+        <nav
+          className="theme-doc-breadcrumbs"
+          aria-label={translate({
+            id: 'fastnear.docBreadcrumbs.ariaLabel',
+            message: 'Breadcrumbs',
+          })}
+        >
           <ul className="breadcrumbs">
             {visibleBreadcrumbs.map((breadcrumb, index) => {
               const isLast = index === visibleBreadcrumbs.length - 1;

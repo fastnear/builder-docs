@@ -17,16 +17,17 @@ keywords:
 - JSON-RPC
 ---
 
-import Link from '@docusaurus/Link';
+import Link from '@site/src/components/LocalizedLink';
 import RpcApiServiceLinks from '@site/src/components/RpcApiServiceLinks';
 
-# Choose Your FastNear Surface
+# FastNear RPC / APIs
 
 <!-- FASTNEAR_AI_DISCOVERY: Agent builders should start with /agents/choosing-surfaces, then use /agents/auth for secure credentials, and /agents/playbooks for common workflows. -->
 
-FastNear ships multiple docs surfaces because builders need different tradeoffs. Start from the job you need done, then drop into the detailed reference from there.
+FastNear ships multiple docs surfaces because builders need different tradeoffs.
+Start from the job you need done, then drop into the detailed reference from there.
 
-<div className="fastnear-doc-card-grid">
+<div className="fastnear-doc-card-grid fastnear-doc-card-grid--surface">
   <article className="fastnear-doc-card">
     <span className="fastnear-doc-card__eyebrow">Canonical JSON-RPC</span>
     <Link className="fastnear-doc-card__title" to="/rpc"><strong>RPC</strong></Link>
@@ -107,20 +108,17 @@ These are the operational details technical teams usually want up front:
 - [Status](https://status.fastnear.com): check incidents or degraded service before debugging application behavior.
 - [RPC Reference](/rpc): choose regular versus archival RPC depending on how much chain history you need.
 - [Snapshots](/snapshots/): bootstrap infra faster when you are standing up RPC or archival nodes.
-
 ## Practical routing guidance
 
 - Start with [RPC Reference](/rpc) when you need canonical JSON-RPC requests, transaction submission, or protocol-native responses.
 - Start with [FastNear API](/api) when you are building wallet, explorer, or portfolio features and want indexed account views.
 - Start with [Transactions API](/tx) when you care about account-scoped activity, receipts, and execution history.
 - Start with [NEAR Data API](/neardata) when you are polling recent block-family data and do not need to present it as streaming infrastructure.
-
 ## Other API families
 
 These complementary APIs stay useful once you know the core surfaces above:
 
 <RpcApiServiceLinks />
-
 ## If you are building for AI or agents
 
 - Start with [Choosing the Right Surface](/agents/choosing-surfaces) to map the job to the right FastNear surface.
