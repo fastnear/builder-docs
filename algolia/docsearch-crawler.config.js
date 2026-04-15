@@ -13,6 +13,16 @@ new Crawler({
         "https://docs.fastnear.com/auth/**",
         "https://docs.fastnear.com/agents/**",
         "https://docs.fastnear.com/snapshots/**",
+        "https://docs.fastnear.com/ru/",
+        "https://docs.fastnear.com/ru/rpc/**",
+        "https://docs.fastnear.com/ru/api/**",
+        "https://docs.fastnear.com/ru/tx/**",
+        "https://docs.fastnear.com/ru/transfers/**",
+        "https://docs.fastnear.com/ru/neardata/**",
+        "https://docs.fastnear.com/ru/fastdata/**",
+        "https://docs.fastnear.com/ru/auth/**",
+        "https://docs.fastnear.com/ru/agents/**",
+        "https://docs.fastnear.com/ru/snapshots/**",
         "!https://docs.fastnear.com/transaction-flow",
         "!https://docs.fastnear.com/transaction-flow/**",
         "!https://docs.fastnear.com/rpcs/**",
@@ -25,7 +35,20 @@ new Crawler({
         "!https://docs.fastnear.com/apis/llms.txt",
         "!https://docs.fastnear.com/structured-data/**",
         "!https://docs.fastnear.com/api/reference",
-        "!https://docs.fastnear.com/redocly-config"
+        "!https://docs.fastnear.com/redocly-config",
+        "!https://docs.fastnear.com/ru/transaction-flow",
+        "!https://docs.fastnear.com/ru/transaction-flow/**",
+        "!https://docs.fastnear.com/ru/rpcs/**",
+        "!https://docs.fastnear.com/ru/apis/**",
+        "!https://docs.fastnear.com/ru/**/*.md",
+        "!https://docs.fastnear.com/ru/llms.txt",
+        "!https://docs.fastnear.com/ru/llms-full.txt",
+        "!https://docs.fastnear.com/ru/guides/llms.txt",
+        "!https://docs.fastnear.com/ru/rpcs/llms.txt",
+        "!https://docs.fastnear.com/ru/apis/llms.txt",
+        "!https://docs.fastnear.com/ru/structured-data/**",
+        "!https://docs.fastnear.com/ru/api/reference",
+        "!https://docs.fastnear.com/ru/redocly-config"
       ],
       recordExtractor: ({ url, $, helpers }) => {
         const getMetaContent = (name, fallback = null) => {
@@ -277,9 +300,11 @@ new Crawler({
   rateLimit: 8,
   renderJavaScript: false,
   sitemaps: [
-    "https://docs.fastnear.com/sitemap.xml"
+    "https://docs.fastnear.com/sitemap.xml",
+    "https://docs.fastnear.com/ru/sitemap.xml"
   ],
   startUrls: [
-    "https://docs.fastnear.com/"
+    "https://docs.fastnear.com/",
+    "https://docs.fastnear.com/ru/"
   ]
 });

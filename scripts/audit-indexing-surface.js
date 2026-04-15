@@ -8,7 +8,10 @@ const {
   localizeRoute,
   stripLocalePrefix,
 } = require("./lib/localized-routes");
-const { renderCrawlerConfigSource } = require("../algolia/crawler/shared");
+const {
+  createCrawlerConfig,
+  renderCrawlerConfigSource,
+} = require("../algolia/crawler/shared");
 
 const ROOT = path.resolve(__dirname, "..");
 const DOCS_ROOT = path.join(ROOT, "docs");
@@ -276,6 +279,16 @@ function buildLocalizedProductionUrl(route, locale = DEFAULT_LOCALE) {
   return normalizeAbsoluteUrl(localizeRoute(route, locale));
 }
 
+function buildCrawlerUrl(route, locale = DEFAULT_LOCALE) {
+  if (route === "/") {
+    return locale === DEFAULT_LOCALE
+      ? `${PRODUCTION_SITE_URL}/`
+      : `${PRODUCTION_SITE_URL}/${locale}/`;
+  }
+
+  return `${PRODUCTION_SITE_URL}${localizeRoute(route, locale)}`;
+}
+
 function getSiteGraphPath(locale = DEFAULT_LOCALE) {
   return path.join(BUILD_ROOT, localizeRoute("/structured-data/site-graph.json", locale));
 }
@@ -512,6 +525,10 @@ function auditConfigSurface() {
     `Missing Algolia crawler config: ${path.relative(ROOT, ALGOLIA_CRAWLER_CONFIG_PATH)}`
   );
   const crawlerConfigText = fs.readFileSync(ALGOLIA_CRAWLER_CONFIG_PATH, "utf8");
+  const crawlerConfig = createCrawlerConfig();
+  const crawlerPathsToMatch = crawlerConfig.actions?.[0]?.pathsToMatch || [];
+  const crawlerSitemaps = crawlerConfig.sitemaps || [];
+  const crawlerStartUrls = crawlerConfig.startUrls || [];
   const indexSettings = loadJson(ALGOLIA_INDEX_SETTINGS_PATH, "Algolia index settings");
   const rules = loadJson(ALGOLIA_RULES_PATH, "Algolia rules");
   const synonyms = loadJson(ALGOLIA_SYNONYMS_PATH, "Algolia synonyms");
@@ -648,6 +665,54 @@ function auditConfigSurface() {
     crawlerConfigText.trim() === renderCrawlerConfigSource().trim(),
     "algolia/docsearch-crawler.config.js should be generated from algolia/crawler/shared.js"
   );
+  [
+    "/",
+    "/rpc/**",
+    "/api/**",
+    "/tx/**",
+    "/transfers/**",
+    "/neardata/**",
+    "/fastdata/**",
+    "/auth/**",
+    "/agents/**",
+    "/snapshots/**",
+  ].forEach((routePattern) => {
+    SUPPORTED_LOCALES.forEach((locale) => {
+      const expectedUrl = buildCrawlerUrl(routePattern, locale);
+      assert(
+        crawlerPathsToMatch.includes(expectedUrl),
+        `Crawler config should include ${expectedUrl} in pathsToMatch`
+      );
+    });
+  });
+  [
+    "/transaction-flow",
+    "/transaction-flow/**",
+    "/rpcs/**",
+    "/apis/**",
+    "/**/*.md",
+    "/structured-data/**",
+  ].forEach((routePattern) => {
+    SUPPORTED_LOCALES.forEach((locale) => {
+      const expectedUrl = `!${buildCrawlerUrl(routePattern, locale)}`;
+      assert(
+        crawlerPathsToMatch.includes(expectedUrl),
+        `Crawler config should exclude ${expectedUrl} from pathsToMatch`
+      );
+    });
+  });
+  SUPPORTED_LOCALES.forEach((locale) => {
+    const expectedRootUrl = buildCrawlerUrl("/", locale);
+    const expectedSitemapUrl = buildCrawlerUrl("/sitemap.xml", locale);
+    assert(
+      crawlerStartUrls.includes(expectedRootUrl),
+      `Crawler config should include ${expectedRootUrl} in startUrls`
+    );
+    assert(
+      crawlerSitemaps.includes(expectedSitemapUrl),
+      `Crawler config should include ${expectedSitemapUrl} in sitemaps`
+    );
+  });
 }
 
 function auditDocsSource() {
@@ -837,6 +902,22 @@ function auditDocsBuildOutput(routeEntries, structuredGraph) {
 
       const html = fs.readFileSync(htmlPath, "utf8");
       const jsonLdNodes = flattenJsonLdNodes(parseJsonLdScripts(html, localizedRoute));
+      const localePattern = new RegExp(
+        `<meta[^>]+name="docusaurus_locale"[^>]+content="${locale}"[^>]*>`,
+        "i"
+      );
+      assert(
+        localePattern.test(html),
+        `Docs page is missing docusaurus_locale=${locale}: ${localizedRoute} (${entry.relativePath})`
+      );
+      const languagePattern = new RegExp(
+        `<meta[^>]+name="docsearch:language"[^>]+content="${locale}"[^>]*>`,
+        "i"
+      );
+      assert(
+        languagePattern.test(html),
+        `Docs page is missing docsearch:language=${locale}: ${localizedRoute} (${entry.relativePath})`
+      );
       const categoryPattern = new RegExp(
         `<meta[^>]+name="docsearch:category"[^>]+content="${entry.expectedCategory}"[^>]*>`,
         "i"

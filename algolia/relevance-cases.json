@@ -53,5 +53,20 @@
   {
     "query": "block headers",
     "expectedPath": "/neardata/block-headers"
+  },
+  {
+    "locale": "ru",
+    "query": "история аккаунта",
+    "expectedPath": "/ru/tx/account"
+  },
+  {
+    "locale": "ru",
+    "query": "запрос переводов",
+    "expectedPath": "/ru/transfers/query"
+  },
+  {
+    "locale": "ru",
+    "query": "снапшоты",
+    "expectedPath": "/ru/snapshots"
   }
 ]
