@@ -13,7 +13,7 @@ page_actions:
 FastNear RPC gives you direct JSON-RPC access to NEAR nodes for state queries,
 block and chunk inspection, transaction submission, validator data, and protocol introspection.
 
-## Endpoints
+## Base URLs
 
 Regular RPCs keep the most recent epochs of state and are the default choice for most application traffic:
 
@@ -61,9 +61,8 @@ In those cases, move to the indexed REST families such as [FastNear API](/api), 
 
 ## Auth and limits
 
-- FastNear API keys are optional for the docs experience and higher-limit access patterns.
-- Browser-based docs demos can use the in-page API key flow, but production traffic should move to a backend-controlled key strategy.
-- Start with [Auth & Access](/auth) if you need paid access or production guidance.
+- FastNear API keys are optional; the public endpoints work without one.
+- Higher-limit or paid access goes through [Auth & Access](/auth), where the same key works as either an `Authorization: Bearer` header or an `?apiKey=` URL parameter.
 
 ## Troubleshooting
 

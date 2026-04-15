@@ -1,0 +1,25 @@
+---
+title: Agents on FastNear
+description: Start here if you are building agents, automations, or AI-backed tooling against FastNear.
+slug: /agents
+sidebar_position: 0
+displayed_sidebar: null
+page_actions:
+  - markdown
+---
+
+# Agents on FastNear
+
+FastNear's surfaces work well for AI agents, automation runtimes, and backend tooling, but the right entry point depends on the job. Use the three guides below to route an agent to the right surface and keep its credentials safe.
+
+## Choosing the right surface
+
+Map the agent's question (account state, history, balances, near-realtime) to one FastNear surface before exposing endpoints. See [Choosing the Right Surface](/agents/choosing-surfaces) for the routing table.
+
+## Credentials for agents
+
+Agent runtimes should follow the same posture as production backends: keys in env vars or secret managers, never browser `localStorage`. See [Auth for Agents](/agents/auth) for the full checklist.
+
+## Playbook patterns
+
+Three common workflows — account research, transaction investigation, and near-realtime monitoring — map to specific surface combinations. See [Agent Playbooks](/agents/playbooks).

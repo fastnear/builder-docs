@@ -14,6 +14,11 @@ FastNear API is the indexed REST family for builder-facing account views. It is 
 way to answer questions like "what does this account own?" or "which accounts map to this
 public key?" without stitching together raw RPC calls.
 
+## Base URLs
+
+- `https://api.fastnear.com`
+- `https://test.api.fastnear.com`
+
 ## Best fit
 
 - Wallet balances and asset overviews.
@@ -26,11 +31,6 @@ public key?" without stitching together raw RPC calls.
 - Use [RPC Reference](/rpc) when you need protocol-native JSON-RPC methods.
 - Use [Transactions API](/tx) when the primary job is transaction or receipt history.
 - Use [NEAR Data API](/neardata) when the job is block-family polling and freshness checks.
-
-## Base URLs
-
-- `https://api.fastnear.com`
-- `https://test.api.fastnear.com`
 
 ## Auth and network availability
 

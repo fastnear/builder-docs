@@ -12,6 +12,11 @@ page_actions:
 
 KV FastData API is the read-only key-value family. It works best when you already know the account, predecessor, or key patterns you want to inspect and you want those rows without building your own storage indexing layer.
 
+## Base URLs
+
+- `https://kv.main.fastnear.com`
+- `https://kv.test.fastnear.com`
+
 ## Best fit
 
 - Predecessor-centric key-value history.
@@ -23,11 +28,6 @@ KV FastData API is the read-only key-value family. It works best when you alread
 
 - Use [FastNear API](/api) for higher-level account, token, and NFT views.
 - Use [NEAR Data API](/neardata) for block-family reads instead of key-value history.
-
-## Base URLs
-
-- `https://kv.main.fastnear.com`
-- `https://kv.test.fastnear.com`
 
 ## Auth and availability
 

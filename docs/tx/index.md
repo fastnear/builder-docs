@@ -13,6 +13,11 @@ page_actions:
 Transactions API is the history surface. Use it when you want indexed transaction or receipt
 views without repeatedly polling raw RPC methods and joining the results yourself.
 
+## Base URLs
+
+- `https://tx.main.fastnear.com`
+- `https://tx.test.fastnear.com`
+
 ## Best fit
 
 - Account activity feeds.
@@ -24,11 +29,6 @@ views without repeatedly polling raw RPC methods and joining the results yoursel
 
 - Use [FastNear API](/api) when you need balances, NFTs, staking, or public-key lookups.
 - Use [RPC Reference](/rpc) when you need canonical node behavior or transaction submission.
-
-## Base URLs
-
-- `https://tx.main.fastnear.com`
-- `https://tx.test.fastnear.com`
 
 ## Auth and availability
 
