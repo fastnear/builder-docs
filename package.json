@@ -24,6 +24,7 @@
     "audit:indexing": "yarn audit:page-models && yarn build && node scripts/audit-indexing-surface.js",
     "audit:algolia-highlights": "node scripts/audit-algolia-highlights.js",
     "audit:algolia-relevance": "node scripts/audit-algolia-relevance.js",
+    "algolia:inspect": "node scripts/algolia-inspect.js",
     "algolia:status": "node scripts/algolia-status.js",
     "algolia:sync": "node scripts/algolia-sync.js",
     "algolia:crawler:status": "node scripts/algolia-crawler-status.js",

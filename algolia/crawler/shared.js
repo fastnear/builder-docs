@@ -1,37 +1,86 @@
 const indexSettings = require("../index-settings.json");
+const {
+  DEFAULT_LOCALE,
+  SUPPORTED_LOCALES,
+  localizeRoute,
+} = require("../../scripts/lib/localized-routes");
 
 const SITE_ROOT = "https://docs.fastnear.com";
 const APP_ID_PLACEHOLDER = "YOUR_ALGOLIA_APP_ID";
 const INDEX_NAME_PLACEHOLDER = "YOUR_DOCSEARCH_INDEX_NAME";
 
-const CRAWL_PATHS = [
-  `${SITE_ROOT}/`,
-  `${SITE_ROOT}/rpc/**`,
-  `${SITE_ROOT}/api/**`,
-  `${SITE_ROOT}/tx/**`,
-  `${SITE_ROOT}/transfers/**`,
-  `${SITE_ROOT}/neardata/**`,
-  `${SITE_ROOT}/fastdata/**`,
-  `${SITE_ROOT}/auth/**`,
-  `${SITE_ROOT}/agents/**`,
-  `${SITE_ROOT}/snapshots/**`,
+const PUBLIC_DOC_ROUTE_PATTERNS = [
+  "/",
+  "/rpc/**",
+  "/api/**",
+  "/tx/**",
+  "/transfers/**",
+  "/neardata/**",
+  "/fastdata/**",
+  "/auth/**",
+  "/agents/**",
+  "/snapshots/**",
 ];
 
-const CRAWL_EXCLUDES = [
-  `!${SITE_ROOT}/transaction-flow`,
-  `!${SITE_ROOT}/transaction-flow/**`,
-  `!${SITE_ROOT}/rpcs/**`,
-  `!${SITE_ROOT}/apis/**`,
-  `!${SITE_ROOT}/**/*.md`,
-  `!${SITE_ROOT}/llms.txt`,
-  `!${SITE_ROOT}/llms-full.txt`,
-  `!${SITE_ROOT}/guides/llms.txt`,
-  `!${SITE_ROOT}/rpcs/llms.txt`,
-  `!${SITE_ROOT}/apis/llms.txt`,
-  `!${SITE_ROOT}/structured-data/**`,
-  `!${SITE_ROOT}/api/reference`,
-  `!${SITE_ROOT}/redocly-config`,
+const EXCLUDED_ROUTE_PATTERNS = [
+  "/transaction-flow",
+  "/transaction-flow/**",
+  "/rpcs/**",
+  "/apis/**",
+  "/**/*.md",
+  "/llms.txt",
+  "/llms-full.txt",
+  "/guides/llms.txt",
+  "/rpcs/llms.txt",
+  "/apis/llms.txt",
+  "/structured-data/**",
+  "/api/reference",
+  "/redocly-config",
 ];
+
+function buildSiteUrl(route) {
+  if (route === "/") {
+    return `${SITE_ROOT}/`;
+  }
+
+  return `${SITE_ROOT}${route}`;
+}
+
+function buildLocalizedSiteUrl(route, locale = DEFAULT_LOCALE) {
+  if (route === "/") {
+    return locale === DEFAULT_LOCALE ? `${SITE_ROOT}/` : `${SITE_ROOT}/${locale}/`;
+  }
+
+  return buildSiteUrl(localizeRoute(route, locale));
+}
+
+function buildLocalizedPaths(routePatterns, { negate = false } = {}) {
+  return SUPPORTED_LOCALES.flatMap((locale) =>
+    routePatterns.map((route) => {
+      const localizedRoute = buildLocalizedSiteUrl(route, locale);
+      return negate ? `!${localizedRoute}` : localizedRoute;
+    })
+  );
+}
+
+function buildCrawlerPaths() {
+  return buildLocalizedPaths(PUBLIC_DOC_ROUTE_PATTERNS);
+}
+
+function buildCrawlerExcludes() {
+  return buildLocalizedPaths(EXCLUDED_ROUTE_PATTERNS, { negate: true });
+}
+
+function buildCrawlerSitemaps() {
+  return SUPPORTED_LOCALES.map((locale) => buildLocalizedSiteUrl("/sitemap.xml", locale));
+}
+
+function buildCrawlerStartUrls() {
+  return SUPPORTED_LOCALES.map((locale) => buildLocalizedSiteUrl("/", locale));
+}
+
+const CRAWL_PATHS = buildCrawlerPaths();
+const CRAWL_EXCLUDES = buildCrawlerExcludes();
 
 function dedent(source) {
   const lines = String(source).replace(/^\n/, "").replace(/\s+$/, "").split("\n");
@@ -166,6 +215,9 @@ const RECORD_EXTRACTOR_SOURCE = dedent(`
     const family = getMetaContent("docsearch:family");
     const audience = getMetaContent("docsearch:audience", "builder");
     const pageType = getMetaContent("docsearch:page_type", "guide");
+    const transport = getMetaContent("docsearch:transport");
+    const operationId = getMetaContent("docsearch:operation_id");
+    const canonicalTarget = getMetaContent("docsearch:canonical_target");
     const pageRank = getPageRank(pathname, surface, pageType);
 
     return helpers.docsearch({
@@ -198,6 +250,15 @@ const RECORD_EXTRACTOR_SOURCE = dedent(`
         },
         page_type: {
           defaultValue: getRecordValue(pageType),
+        },
+        transport: {
+          defaultValue: getRecordValue(transport),
+        },
+        operation_id: {
+          defaultValue: getRecordValue(operationId),
+        },
+        canonical_target: {
+          defaultValue: getRecordValue(canonicalTarget),
         },
         pageRank,
       },
@@ -232,8 +293,8 @@ function createCrawlerConfig({
     maxDepth: 10,
     rateLimit: 8,
     renderJavaScript: false,
-    sitemaps: [`${SITE_ROOT}/sitemap.xml`],
-    startUrls: [`${SITE_ROOT}/`],
+    sitemaps: buildCrawlerSitemaps(),
+    startUrls: buildCrawlerStartUrls(),
   };
 }
 
@@ -288,9 +349,18 @@ module.exports = {
   APP_ID_PLACEHOLDER,
   CRAWL_EXCLUDES,
   CRAWL_PATHS,
+  DEFAULT_LOCALE,
+  EXCLUDED_ROUTE_PATTERNS,
   INDEX_NAME_PLACEHOLDER,
+  PUBLIC_DOC_ROUTE_PATTERNS,
   RECORD_EXTRACTOR_SOURCE,
   SITE_ROOT,
+  SUPPORTED_LOCALES,
+  buildCrawlerExcludes,
+  buildCrawlerPaths,
+  buildCrawlerSitemaps,
+  buildCrawlerStartUrls,
+  buildLocalizedSiteUrl,
   createCrawlerConfig,
   renderCrawlerConfigSource,
 };

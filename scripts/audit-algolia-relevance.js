@@ -3,6 +3,10 @@
 const fs = require("node:fs");
 const path = require("node:path");
 const { algoliasearch } = require("algoliasearch");
+const {
+  DEFAULT_LOCALE,
+  SUPPORTED_LOCALES,
+} = require("./lib/localized-routes");
 
 const ROOT = path.resolve(__dirname, "..");
 const ENV_PATH = path.join(ROOT, ".env");
@@ -120,13 +124,60 @@ function isDisallowedPath(pathname) {
   return DISALLOWED_PATHS.has(pathname) || DISALLOWED_PREFIXES.some((prefix) => pathname.startsWith(prefix));
 }
 
+function getCaseLocale(relevanceCase) {
+  return relevanceCase.locale || DEFAULT_LOCALE;
+}
+
+function buildFacetFilters(relevanceCase) {
+  const localeFilter = `language:${getCaseLocale(relevanceCase)}`;
+  const additionalFacetFilters = relevanceCase.facetFilters;
+
+  if (!additionalFacetFilters) {
+    return [localeFilter];
+  }
+
+  if (Array.isArray(additionalFacetFilters)) {
+    return [localeFilter, ...additionalFacetFilters];
+  }
+
+  return [localeFilter, additionalFacetFilters];
+}
+
+async function getLocaleCoverage(client, indexName) {
+  const response = await client.searchSingleIndex({
+    indexName,
+    searchParams: {
+      facets: ["language"],
+      hitsPerPage: 0,
+      maxValuesPerFacet: Math.max(SUPPORTED_LOCALES.length + 4, 10),
+      query: "",
+    },
+  });
+
+  const languageFacetCounts = response.facets?.language || {};
+  return Object.fromEntries(
+    SUPPORTED_LOCALES.map((locale) => [locale, Number(languageFacetCounts[locale] || 0)])
+  );
+}
+
 async function run() {
   const { appId, apiKey, indexName } = getRequiredEnv();
   const relevanceCases = readCases();
   const client = algoliasearch(appId, apiKey);
   const failures = [];
+  const localeCoverage = await getLocaleCoverage(client, indexName);
+  const uncoveredLocales = Object.entries(localeCoverage)
+    .filter(([, count]) => count <= 0)
+    .map(([locale]) => locale);
+
+  if (uncoveredLocales.length) {
+    throw new Error(
+      `Algolia locale coverage is missing for: ${uncoveredLocales.join(", ")}. Current language facet counts: ${JSON.stringify(localeCoverage)}`
+    );
+  }
 
   for (const relevanceCase of relevanceCases) {
+    const caseLocale = getCaseLocale(relevanceCase);
     const response = await client.searchSingleIndex({
       indexName,
       searchParams: {
@@ -142,9 +193,12 @@ async function run() {
           "family",
           "audience",
           "page_type",
+          "language",
+          "lang",
         ],
         attributesToSnippet: ["content:14"],
         clickAnalytics: true,
+        facetFilters: buildFacetFilters(relevanceCase),
         hitsPerPage: 12,
         query: relevanceCase.query,
       },
@@ -158,24 +212,24 @@ async function run() {
 
     if (disallowedHit) {
       failures.push(
-        `${relevanceCase.query}: disallowed result surfaced at ${disallowedHit.path}`
+        `[${caseLocale}] ${relevanceCase.query}: disallowed result surfaced at ${disallowedHit.path}`
       );
       continue;
     }
 
     if (!topPath) {
-      failures.push(`${relevanceCase.query}: no results returned`);
+      failures.push(`[${caseLocale}] ${relevanceCase.query}: no results returned`);
       continue;
     }
 
     if (!expectedPaths.includes(topPath)) {
       failures.push(
-        `${relevanceCase.query}: expected ${expectedPaths.join(" or ")} first, got ${topPath} (top 5: ${topPaths.join(", ")})`
+        `[${caseLocale}] ${relevanceCase.query}: expected ${expectedPaths.join(" or ")} first, got ${topPath} (top 5: ${topPaths.join(", ")})`
       );
       continue;
     }
 
-    console.log(`✓ ${relevanceCase.query} -> ${topPath}`);
+    console.log(`✓ [${caseLocale}] ${relevanceCase.query} -> ${topPath}`);
   }
 
   if (failures.length) {

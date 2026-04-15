@@ -40,6 +40,9 @@ const FASTNEAR_DEFAULT_SEARCH_PARAMETERS = {
     'family',
     'audience',
     'page_type',
+    'transport',
+    'operation_id',
+    'canonical_target',
   ],
   attributesToSnippet: ['content:14'],
   clickAnalytics: true,
@@ -143,11 +146,27 @@ function getSnippetText(hit) {
 }
 
 function buildResultCardData(hit) {
+  const operationId = firstValue(hit?.operation_id);
+  const canonicalTarget = firstValue(hit?.canonical_target);
+  const surface = firstValue(hit?.surface);
+  const isEndpoint = Boolean(
+    canonicalTarget || operationId || firstValue(hit?.transport)
+  );
+  const endpointPrimary = operationId || canonicalTarget || '';
+  const endpointSecondary = canonicalTarget && canonicalTarget !== endpointPrimary
+    ? canonicalTarget
+    : '';
   const titleHtml = normalizeAlgoliaHighlightHtml(getTitleHtml(hit));
   const snippetValue = getSnippetText(hit);
   const snippetHtml = normalizeAlgoliaHighlightHtml(snippetValue);
 
   return {
+    canonicalTarget,
+    endpointBadge: isEndpoint ? (surface === 'rpc' ? 'RPC' : 'API') : '',
+    endpointPrimary,
+    endpointSecondary,
+    isEndpoint,
+    locationLabel: getPathLabel(hit?.url),
     pathLabel: getPathLabel(hit?.url),
     snippetHtml,
     snippetText: snippetHtml ? getAlgoliaHighlightPlainText(snippetHtml) : getAlgoliaHighlightPlainText(snippetValue) || snippetValue,
@@ -259,15 +278,50 @@ function Hit({ hit, children }) {
   return (
     <Link to={hit.url} className="fastnear-search-hit">
       <div className="fastnear-search-hit__shell">
-        <div className="fastnear-search-hit__header">
-          <span
-            className="fastnear-search-hit__title"
-            {...(card.titleHtml ? { dangerouslySetInnerHTML: { __html: card.titleHtml } } : {})}
-          >
-            {!card.titleHtml ? card.titleText : null}
-          </span>
-          <span className="fastnear-search-hit__path">{card.pathLabel}</span>
-        </div>
+        {card.isEndpoint ? (
+          <>
+            <div className="fastnear-search-hit__header">
+              <span
+                className="fastnear-search-hit__title"
+                {...(card.titleHtml ? { dangerouslySetInnerHTML: { __html: card.titleHtml } } : {})}
+              >
+                {!card.titleHtml ? card.titleText : null}
+              </span>
+            </div>
+
+            {card.endpointBadge || card.endpointPrimary || card.endpointSecondary ? (
+              <div className="fastnear-search-hit__endpoint-stack">
+                {card.endpointBadge || card.endpointPrimary ? (
+                  <div className="fastnear-search-hit__endpoint-meta">
+                    {card.endpointBadge ? (
+                      <span className="fastnear-search-hit__badge">{card.endpointBadge}</span>
+                    ) : null}
+                    {card.endpointPrimary ? (
+                      <code className="fastnear-search-hit__target fastnear-search-hit__target--primary">
+                        {card.endpointPrimary}
+                      </code>
+                    ) : null}
+                  </div>
+                ) : null}
+                {card.endpointSecondary ? (
+                  <code className="fastnear-search-hit__target fastnear-search-hit__target--secondary">
+                    {card.endpointSecondary}
+                  </code>
+                ) : null}
+              </div>
+            ) : null}
+          </>
+        ) : (
+          <div className="fastnear-search-hit__header">
+            <span
+              className="fastnear-search-hit__title"
+              {...(card.titleHtml ? { dangerouslySetInnerHTML: { __html: card.titleHtml } } : {})}
+            >
+              {!card.titleHtml ? card.titleText : null}
+            </span>
+            <span className="fastnear-search-hit__path">{card.pathLabel}</span>
+          </div>
+        )}
 
         {card.snippetText ? (
           <p
@@ -278,6 +332,10 @@ function Hit({ hit, children }) {
           >
             {!card.snippetHtml ? card.snippetText : null}
           </p>
+        ) : null}
+
+        {card.isEndpoint ? (
+          <span className="fastnear-search-hit__location">{card.locationLabel}</span>
         ) : null}
 
         <span className="fastnear-search-hit__legacy-children" hidden>

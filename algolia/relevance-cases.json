@@ -39,6 +39,26 @@
     "expectedPath": "/rpc/transaction/send-tx"
   },
   {
+    "query": "call_function",
+    "expectedPath": "/rpc/contract/call-function"
+  },
+  {
+    "query": "query call_function",
+    "expectedPath": "/rpc/contract/call-function"
+  },
+  {
+    "query": "account_full_v1",
+    "expectedPath": "/api/v1/account-full"
+  },
+  {
+    "query": "/v1/account/{account_id}/full",
+    "expectedPath": "/api/v1/account-full"
+  },
+  {
+    "query": "full account api",
+    "expectedPath": "/api/v1/account-full"
+  },
+  {
     "query": "authentication",
     "expectedPath": "/auth"
   },
@@ -53,5 +73,20 @@
   {
     "query": "block headers",
     "expectedPath": "/neardata/block-headers"
+  },
+  {
+    "locale": "ru",
+    "query": "история аккаунта",
+    "expectedPath": "/ru/tx/account"
+  },
+  {
+    "locale": "ru",
+    "query": "запрос переводов",
+    "expectedPath": "/ru/transfers/query"
+  },
+  {
+    "locale": "ru",
+    "query": "снапшоты",
+    "expectedPath": "/ru/snapshots"
   }
 ]

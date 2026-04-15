@@ -8,7 +8,10 @@ const {
   localizeRoute,
   stripLocalePrefix,
 } = require("./lib/localized-routes");
-const { renderCrawlerConfigSource } = require("../algolia/crawler/shared");
+const {
+  createCrawlerConfig,
+  renderCrawlerConfigSource,
+} = require("../algolia/crawler/shared");
 
 const ROOT = path.resolve(__dirname, "..");
 const DOCS_ROOT = path.join(ROOT, "docs");
@@ -28,6 +31,7 @@ const SEARCH_BAR_PATH = path.join(ROOT, "src/theme/SearchBar/index.js");
 const SEARCH_BAR_STYLES_PATH = path.join(ROOT, "src/theme/SearchBar/styles.css");
 const REDIRECTS_PATH = path.join(BUILD_ROOT, "_redirects");
 const ROBOTS_PATH = path.join(BUILD_ROOT, "robots.txt");
+const PAGE_MODELS_PATH = path.join(ROOT, "src/data/generatedFastnearPageModels.json");
 const STRUCTURED_GRAPH_PATH = path.join(ROOT, "src/data/generatedFastnearStructuredGraph.json");
 const PRODUCTION_SITE_URL = "https://docs.fastnear.com";
 const WEBSITE_ID = `${PRODUCTION_SITE_URL}/#website`;
@@ -276,6 +280,16 @@ function buildLocalizedProductionUrl(route, locale = DEFAULT_LOCALE) {
   return normalizeAbsoluteUrl(localizeRoute(route, locale));
 }
 
+function buildCrawlerUrl(route, locale = DEFAULT_LOCALE) {
+  if (route === "/") {
+    return locale === DEFAULT_LOCALE
+      ? `${PRODUCTION_SITE_URL}/`
+      : `${PRODUCTION_SITE_URL}/${locale}/`;
+  }
+
+  return `${PRODUCTION_SITE_URL}${localizeRoute(route, locale)}`;
+}
+
 function getSiteGraphPath(locale = DEFAULT_LOCALE) {
   return path.join(BUILD_ROOT, localizeRoute("/structured-data/site-graph.json", locale));
 }
@@ -407,6 +421,42 @@ function countOccurrences(value, pattern) {
   return (value.match(pattern) || []).length;
 }
 
+function escapeRegExp(value) {
+  return String(value || "").replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function getExpectedOperationDocsearchCanonicalTarget(pageModel) {
+  if (!pageModel) {
+    return null;
+  }
+
+  const operationId = pageModel.info?.operationId || null;
+  if (pageModel.route?.transport === "json-rpc") {
+    const requestMethod = pageModel.interaction?.requestMethod || null;
+    const requestType = pageModel.interaction?.requestType || null;
+    if (requestMethod && requestType) {
+      return `${requestMethod} · request_type=${requestType}`;
+    }
+
+    return operationId;
+  }
+
+  const routeMethod = pageModel.route?.method || null;
+  const routePath = pageModel.route?.path || null;
+  if (routeMethod && routePath) {
+    return `${routeMethod} ${routePath}`;
+  }
+
+  return operationId;
+}
+
+function buildMetaPattern(name, value) {
+  return new RegExp(
+    `<meta[^>]+name="${escapeRegExp(name)}"[^>]+content="${escapeRegExp(value)}"[^>]*>`,
+    "i"
+  );
+}
+
 function parseJsonLdScripts(html, label) {
   return [...html.matchAll(/<script(?: data-rh="true")? type="application\/ld\+json">([\s\S]*?)<\/script>/g)]
     .map((match, index) => {
@@ -512,6 +562,10 @@ function auditConfigSurface() {
     `Missing Algolia crawler config: ${path.relative(ROOT, ALGOLIA_CRAWLER_CONFIG_PATH)}`
   );
   const crawlerConfigText = fs.readFileSync(ALGOLIA_CRAWLER_CONFIG_PATH, "utf8");
+  const crawlerConfig = createCrawlerConfig();
+  const crawlerPathsToMatch = crawlerConfig.actions?.[0]?.pathsToMatch || [];
+  const crawlerSitemaps = crawlerConfig.sitemaps || [];
+  const crawlerStartUrls = crawlerConfig.startUrls || [];
   const indexSettings = loadJson(ALGOLIA_INDEX_SETTINGS_PATH, "Algolia index settings");
   const rules = loadJson(ALGOLIA_RULES_PATH, "Algolia rules");
   const synonyms = loadJson(ALGOLIA_SYNONYMS_PATH, "Algolia synonyms");
@@ -576,7 +630,6 @@ function auditConfigSurface() {
     "DOCSEARCH_APP_ID",
     "DOCSEARCH_API_KEY",
     "DOCSEARCH_INDEX_NAME",
-    "ALGOLIA_ADMIN_API_KEY",
     "ALGOLIA_CRAWLER_USER_ID",
     "ALGOLIA_CRAWLER_API_KEY",
     "ALGOLIA_CRAWLER_NAME",
@@ -587,6 +640,7 @@ function auditConfigSurface() {
     );
   });
   [
+    "ALGOLIA_ADMIN_API_KEY",
     "ALGOLIA_CRAWLER_ID",
     "ALGOLIA_CRAWLER_BASIC_AUTH",
   ].forEach((needle) => {
@@ -608,6 +662,9 @@ function auditConfigSurface() {
     '"family"',
     '"audience"',
     '"page_type"',
+    '"transport"',
+    '"operation_id"',
+    '"canonical_target"',
     "data-fastnear-crawler-skip",
     "removeCrawlerNoise",
     "getMetaContent",
@@ -636,6 +693,22 @@ function auditConfigSurface() {
     JSON.stringify(indexSettings.attributesToSnippet) === JSON.stringify(["content:14"]),
     "algolia/index-settings.json should set attributesToSnippet=[\"content:14\"]"
   );
+  ["transport", "operation_id", "canonical_target"].forEach((attribute) => {
+    assert(
+      indexSettings.attributesToRetrieve.includes(attribute),
+      `algolia/index-settings.json should retrieve ${attribute}`
+    );
+  });
+  const contentIndex = indexSettings.searchableAttributes.indexOf("content");
+  assert(contentIndex >= 2, "algolia/index-settings.json should keep content in searchableAttributes");
+  assert(
+    indexSettings.searchableAttributes[contentIndex - 2] === "unordered(operation_id)",
+    "algolia/index-settings.json should search operation_id immediately before content"
+  );
+  assert(
+    indexSettings.searchableAttributes[contentIndex - 1] === "unordered(canonical_target)",
+    "algolia/index-settings.json should search canonical_target immediately before content"
+  );
   assert(
     rules.every((rule) => String(rule.objectID || "").startsWith("fastnear-")),
     "algolia/rules.json should only contain fastnear-* object IDs"
@@ -648,6 +721,54 @@ function auditConfigSurface() {
     crawlerConfigText.trim() === renderCrawlerConfigSource().trim(),
     "algolia/docsearch-crawler.config.js should be generated from algolia/crawler/shared.js"
   );
+  [
+    "/",
+    "/rpc/**",
+    "/api/**",
+    "/tx/**",
+    "/transfers/**",
+    "/neardata/**",
+    "/fastdata/**",
+    "/auth/**",
+    "/agents/**",
+    "/snapshots/**",
+  ].forEach((routePattern) => {
+    SUPPORTED_LOCALES.forEach((locale) => {
+      const expectedUrl = buildCrawlerUrl(routePattern, locale);
+      assert(
+        crawlerPathsToMatch.includes(expectedUrl),
+        `Crawler config should include ${expectedUrl} in pathsToMatch`
+      );
+    });
+  });
+  [
+    "/transaction-flow",
+    "/transaction-flow/**",
+    "/rpcs/**",
+    "/apis/**",
+    "/**/*.md",
+    "/structured-data/**",
+  ].forEach((routePattern) => {
+    SUPPORTED_LOCALES.forEach((locale) => {
+      const expectedUrl = `!${buildCrawlerUrl(routePattern, locale)}`;
+      assert(
+        crawlerPathsToMatch.includes(expectedUrl),
+        `Crawler config should exclude ${expectedUrl} from pathsToMatch`
+      );
+    });
+  });
+  SUPPORTED_LOCALES.forEach((locale) => {
+    const expectedRootUrl = buildCrawlerUrl("/", locale);
+    const expectedSitemapUrl = buildCrawlerUrl("/sitemap.xml", locale);
+    assert(
+      crawlerStartUrls.includes(expectedRootUrl),
+      `Crawler config should include ${expectedRootUrl} in startUrls`
+    );
+    assert(
+      crawlerSitemaps.includes(expectedSitemapUrl),
+      `Crawler config should include ${expectedSitemapUrl} in sitemaps`
+    );
+  });
 }
 
 function auditDocsSource() {
@@ -689,7 +810,10 @@ function auditDocsSource() {
     const expectedCategory = getExpectedDocsearchCategory(route);
     assert(expectedCategory, `No docsearch:category mapping exists for ${relativePath}: ${route}`);
 
-    const hasFastnearOperation = rawContent.includes("<FastnearDirectOperation");
+    const fastnearOperationMatch = rawContent.match(
+      /<FastnearDirectOperation[^>]+pageModelId=["']([^"']+)["']/
+    );
+    const hasFastnearOperation = Boolean(fastnearOperationMatch);
     routeEntries.push({
       expectedAudience: getExpectedDocsearchAudience(route),
       expectedCategory,
@@ -702,6 +826,7 @@ function auditDocsSource() {
       }),
       expectedSurface: getExpectedDocsearchSurface(route),
       hasFastnearOperation,
+      operationPageModelId: fastnearOperationMatch?.[1] || null,
       relativePath,
       route,
     });
@@ -727,6 +852,11 @@ function parseSitemapUrls(locale = DEFAULT_LOCALE) {
 }
 
 function auditDocsBuildOutput(routeEntries, structuredGraph) {
+  const pageModels = loadJson(PAGE_MODELS_PATH, "generated FastNear page models");
+  const pageModelsById = Object.fromEntries(
+    pageModels.map((pageModel) => [pageModel.pageModelId, pageModel])
+  );
+
   assert(fs.existsSync(ROBOTS_PATH), `Missing robots.txt: ${path.relative(ROOT, ROBOTS_PATH)}`);
   const robotsText = fs.readFileSync(ROBOTS_PATH, "utf8");
 
@@ -837,6 +967,22 @@ function auditDocsBuildOutput(routeEntries, structuredGraph) {
 
       const html = fs.readFileSync(htmlPath, "utf8");
       const jsonLdNodes = flattenJsonLdNodes(parseJsonLdScripts(html, localizedRoute));
+      const localePattern = new RegExp(
+        `<meta[^>]+name="docusaurus_locale"[^>]+content="${locale}"[^>]*>`,
+        "i"
+      );
+      assert(
+        localePattern.test(html),
+        `Docs page is missing docusaurus_locale=${locale}: ${localizedRoute} (${entry.relativePath})`
+      );
+      const languagePattern = new RegExp(
+        `<meta[^>]+name="docsearch:language"[^>]+content="${locale}"[^>]*>`,
+        "i"
+      );
+      assert(
+        languagePattern.test(html),
+        `Docs page is missing docsearch:language=${locale}: ${localizedRoute} (${entry.relativePath})`
+      );
       const categoryPattern = new RegExp(
         `<meta[^>]+name="docsearch:category"[^>]+content="${entry.expectedCategory}"[^>]*>`,
         "i"
@@ -965,13 +1111,35 @@ function auditDocsBuildOutput(routeEntries, structuredGraph) {
 
       if (entry.hasFastnearOperation) {
         const operation = operationsByDocsPath[entry.route];
+        const pageModel = pageModelsById[entry.operationPageModelId];
         assert(operation, `Missing structured operation registry entry for docs route ${entry.route}`);
+        assert(
+          pageModel,
+          `Missing page model ${entry.operationPageModelId} for docs route ${entry.route}`
+        );
         const operationEntityId = `${PRODUCTION_SITE_URL}/structured-data/operations/${operation.pageModelId}`;
         const familyEntityId = `${PRODUCTION_SITE_URL}/structured-data/families/${operation.familyId}`;
+        const expectedTransport = pageModel.route?.transport || null;
+        const expectedOperationId = pageModel.info?.operationId || null;
+        const expectedCanonicalTarget = getExpectedOperationDocsearchCanonicalTarget(pageModel);
 
         assert(
           html.includes('name="keywords"'),
           `Operation docs page is missing keyword metadata: ${localizedRoute} (${entry.relativePath})`
+        );
+        assert(
+          expectedTransport && buildMetaPattern("docsearch:transport", expectedTransport).test(html),
+          `Operation docs page is missing docsearch:transport=${expectedTransport}: ${localizedRoute} (${entry.relativePath})`
+        );
+        assert(
+          expectedOperationId &&
+            buildMetaPattern("docsearch:operation_id", expectedOperationId).test(html),
+          `Operation docs page is missing docsearch:operation_id=${expectedOperationId}: ${localizedRoute} (${entry.relativePath})`
+        );
+        assert(
+          expectedCanonicalTarget &&
+            buildMetaPattern("docsearch:canonical_target", expectedCanonicalTarget).test(html),
+          `Operation docs page is missing docsearch:canonical_target=${expectedCanonicalTarget}: ${localizedRoute} (${entry.relativePath})`
         );
         assert(
           html.includes('"@type":"APIReference"'),
