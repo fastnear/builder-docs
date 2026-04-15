@@ -145,17 +145,27 @@ function getSnippetText(hit) {
   );
 }
 
+function getEndpointDetail({ canonicalTarget, operationId, surface }) {
+  if (surface === 'rpc') {
+    return operationId || canonicalTarget || '';
+  }
+
+  return canonicalTarget || operationId || '';
+}
+
 function buildResultCardData(hit) {
   const operationId = firstValue(hit?.operation_id);
   const canonicalTarget = firstValue(hit?.canonical_target);
   const surface = firstValue(hit?.surface);
+  const endpointFamily = firstValue(hit?.family) || firstValue(hit?.method_type);
   const isEndpoint = Boolean(
     canonicalTarget || operationId || firstValue(hit?.transport)
   );
-  const endpointPrimary = operationId || canonicalTarget || '';
-  const endpointSecondary = canonicalTarget && canonicalTarget !== endpointPrimary
-    ? canonicalTarget
-    : '';
+  const endpointDetail = getEndpointDetail({
+    canonicalTarget,
+    operationId,
+    surface,
+  });
   const titleHtml = normalizeAlgoliaHighlightHtml(getTitleHtml(hit));
   const snippetValue = getSnippetText(hit);
   const snippetHtml = normalizeAlgoliaHighlightHtml(snippetValue);
@@ -163,13 +173,14 @@ function buildResultCardData(hit) {
   return {
     canonicalTarget,
     endpointBadge: isEndpoint ? (surface === 'rpc' ? 'RPC' : 'API') : '',
-    endpointPrimary,
-    endpointSecondary,
+    endpointDetail,
+    endpointFamily,
     isEndpoint,
-    locationLabel: getPathLabel(hit?.url),
     pathLabel: getPathLabel(hit?.url),
     snippetHtml,
-    snippetText: snippetHtml ? getAlgoliaHighlightPlainText(snippetHtml) : getAlgoliaHighlightPlainText(snippetValue) || snippetValue,
+    snippetText: snippetHtml
+      ? getAlgoliaHighlightPlainText(snippetHtml)
+      : getAlgoliaHighlightPlainText(snippetValue) || snippetValue,
     titleHtml,
     titleText: getTitleText(hit),
   };
@@ -281,33 +292,36 @@ function Hit({ hit, children }) {
         {card.isEndpoint ? (
           <>
             <div className="fastnear-search-hit__header">
-              <span
-                className="fastnear-search-hit__title"
-                {...(card.titleHtml ? { dangerouslySetInnerHTML: { __html: card.titleHtml } } : {})}
-              >
-                {!card.titleHtml ? card.titleText : null}
-              </span>
+              <div className="fastnear-search-hit__title-row">
+                {card.endpointBadge ? (
+                  <span className="fastnear-search-hit__badge">{card.endpointBadge}</span>
+                ) : null}
+                <span
+                  className="fastnear-search-hit__title"
+                  {...(card.titleHtml ? { dangerouslySetInnerHTML: { __html: card.titleHtml } } : {})}
+                >
+                  {!card.titleHtml ? card.titleText : null}
+                </span>
+              </div>
+              {card.endpointFamily || card.pathLabel ? (
+                <div className="fastnear-search-hit__header-meta">
+                  {card.endpointFamily ? (
+                    <span className="fastnear-search-hit__badge fastnear-search-hit__badge--family">
+                      {card.endpointFamily}
+                    </span>
+                  ) : null}
+                  <span className="fastnear-search-hit__path fastnear-search-hit__path--endpoint">
+                    {card.pathLabel}
+                  </span>
+                </div>
+              ) : null}
             </div>
 
-            {card.endpointBadge || card.endpointPrimary || card.endpointSecondary ? (
+            {card.endpointDetail ? (
               <div className="fastnear-search-hit__endpoint-stack">
-                {card.endpointBadge || card.endpointPrimary ? (
-                  <div className="fastnear-search-hit__endpoint-meta">
-                    {card.endpointBadge ? (
-                      <span className="fastnear-search-hit__badge">{card.endpointBadge}</span>
-                    ) : null}
-                    {card.endpointPrimary ? (
-                      <code className="fastnear-search-hit__target fastnear-search-hit__target--primary">
-                        {card.endpointPrimary}
-                      </code>
-                    ) : null}
-                  </div>
-                ) : null}
-                {card.endpointSecondary ? (
-                  <code className="fastnear-search-hit__target fastnear-search-hit__target--secondary">
-                    {card.endpointSecondary}
-                  </code>
-                ) : null}
+                <code className="fastnear-search-hit__target fastnear-search-hit__target--primary">
+                  {card.endpointDetail}
+                </code>
               </div>
             ) : null}
           </>
@@ -333,11 +347,6 @@ function Hit({ hit, children }) {
             {!card.snippetHtml ? card.snippetText : null}
           </p>
         ) : null}
-
-        {card.isEndpoint ? (
-          <span className="fastnear-search-hit__location">{card.locationLabel}</span>
-        ) : null}
-
         <span className="fastnear-search-hit__legacy-children" hidden>
           {children}
         </span>
