@@ -1,6 +1,6 @@
-# Transfers API - Запрос переводов
-Запросить переводы для аккаунта
-Возвращает строки переводов и непрозрачный токен продолжения для пагинации.
+# API переводов: запрос переводов
+Запросить переводы аккаунта
+Возвращает строки переводов для аккаунта и непрозрачный `resume_token` для пагинации.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/transfers/query
 - https://docs.fastnear.com/ru/apis/transfers/v0/transfers
@@ -45,18 +45,18 @@
 }
 ```
 ### Входные данные
-- `account_id` (body, обязательный, string)
-- `asset_id` (body, string)
-- `desc` (body, boolean)
-- `direction` (body, обязательный, string)
-- `from_timestamp_ms` (body, integer)
-- `ignore_system` (body, boolean)
-- `limit` (body, integer)
-- `min_amount` (body, string)
-- `min_human_amount` (body, number)
-- `min_usd_amount` (body, number)
-- `resume_token` (body, string)
-- `to_timestamp_ms` (body, integer)
+- `account_id` (body, обязательный, string): Идентификатор аккаунта NEAR, для которого нужно получить переводы.
+- `asset_id` (body, string): Необязательный идентификатор актива, например `near` или ID FT-контракта.
+- `desc` (body, boolean): Если `true`, сначала возвращаются более новые переводы.
+- `direction` (body, обязательный, string): Какие переводы вернуть: исходящие (`sender`) или входящие (`receiver`).
+- `from_timestamp_ms` (body, integer): Нижняя граница времени в миллисекундах Unix.
+- `ignore_system` (body, boolean): Если `true`, исключает системные переводы.
+- `limit` (body, integer): Максимальное количество строк в ответе.
+- `min_amount` (body, string): Минимальная сумма в базовых единицах актива.
+- `min_human_amount` (body, number): Минимальная сумма в человекочитаемом виде.
+- `min_usd_amount` (body, number): Минимальная сумма в долларах США.
+- `resume_token` (body, string): Непрозрачный курсор пагинации из предыдущего ответа.
+- `to_timestamp_ms` (body, integer): Верхняя граница времени в миллисекундах Unix.
 ### Схема запроса
 ```json
 {
@@ -169,7 +169,7 @@
 ## Справка по ответу
 - Статус: 200
 - Тип данных: application/json
-- Краткое описание: Строки переводов для запрошенного аккаунта
+- Краткое описание: Строки переводов для указанного аккаунта.
 ### Схема ответа
 ```json
 {

@@ -1,35 +1,35 @@
 **Источник:** [https://docs.fastnear.com/ru/transfers](https://docs.fastnear.com/ru/transfers)
 
-# Transfers API
+# API переводов
 
-Transfers API focuses on аккаунта-centric transfer история. It is the simplest starting point when the question is specifically about movement of NEAR or fungible tokens.
+API переводов — это индексированная поверхность истории переводов. Используйте её, когда вопрос сводится именно к движению NEAR или FT-токенов и вам не нужен более широкий контекст транзакции.
 
-## Best fit
+## Лучше всего подходит для
 
-- Transfer feeds.
-- Wallet история views.
-- Compliance or support tooling focused on sends and receives.
+- лент переводов;
+- представлений истории кошелька;
+- инструментов комплаенса, поддержки и расследований, которые отслеживают входящие и исходящие переводы.
 
-## When not to use it
+## Когда его не стоит использовать
 
-- Use [Транзакции API](https://docs.fastnear.com/ru/tx) when you need broader транзакции or квитанция история.
-- Use [FastNear API](https://docs.fastnear.com/ru/api) when you need balances or holdings rather than transfer events.
+- Используйте [Транзакции API](https://docs.fastnear.com/ru/tx), когда вам нужна более широкая история транзакций или квитанций.
+- Используйте [FastNear API](https://docs.fastnear.com/ru/api), когда вам нужны балансы, активы или представления аккаунта, а не события перевода.
 
-## Base URL
+## Базовый URL
 
 - `https://transfers.main.fastnear.com`
 
-## Авторизация and availability
+## Аутентификация и доступность
 
-- These pages do not use API ключи or bearer tokens.
-- Responses include an opaque `resume_token` for pagination.
+- Эти страницы сейчас не используют API-ключи или токены Bearer.
+- Ответы включают непрозрачный `resume_token` для пагинации.
 
-## Troubleshooting
+## Устранение неполадок
 
 ### Мне нужны полные метаданные транзакции
 
-Переходите к [Transactions API](https://docs.fastnear.com/ru/tx), если одной истории переводов вам недостаточно.
+Переходите к [Транзакции API](https://docs.fastnear.com/ru/tx), если одной истории переводов вам недостаточно.
 
 ### Я ожидал переключение на testnet
 
-Сейчас эта поверхность ориентирована на mainnet, поэтому `?network=` не переключает здесь бэкенд.
+Эта поверхность сейчас ориентирована на mainnet, поэтому `?network=` не переключает здесь бэкенд.

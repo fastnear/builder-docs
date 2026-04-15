@@ -80,8 +80,8 @@ const API_SERVICE_LABELS = {
     fastnear: "FastNear API",
     "kv-fastdata": "KV FastData API",
     neardata: "NEAR Data API",
-    transactions: "Transactions API",
-    transfers: "Transfers API",
+    transactions: "Транзакции API",
+    transfers: "API переводов",
   },
 };
 
@@ -592,11 +592,11 @@ function buildRpcApiServiceLinks(locale = DEFAULT_LOCALE) {
       fastnearDescription:
         "Индексированные представления аккаунтов для балансов, NFT, стейкинга и поиска по публичным ключам.",
       fastdataDescription:
-        "Индексированная история key-value и выборки последнего состояния для анализа хранилища контрактов.",
+        "Индексированная история данных «ключ-значение» и выборки последнего состояния для анализа хранилища контрактов.",
       neardataDescription:
-        "Недавние финализированные и optimistic-чтения семейств блоков для низколатентного опроса.",
+        "Недавние финализированные и оптимистичные чтения семейств блоков для низколатентного опроса.",
       transactionsDescription:
-        "История аккаунтов, блоков, receipt и транзакций из индексированных данных исполнения.",
+        "История аккаунтов, блоков, квитанций и транзакций из индексированных данных исполнения.",
       transfersDescription:
         "Специализированная история переводов для активности аккаунтов и интерфейсов с тяжёлой пагинацией.",
     },
@@ -610,14 +610,14 @@ function buildRpcApiServiceLinks(locale = DEFAULT_LOCALE) {
     },
     {
       href: localizeRoute("/tx", locale),
-      label: "Transactions API",
+      label: locale === "ru" ? "Транзакции API" : "Transactions API",
       description: labels.transactionsDescription,
     },
     ...(!hideEarlyApiFamilies
       ? [
           {
             href: localizeRoute("/transfers", locale),
-            label: "Transfers API",
+            label: locale === "ru" ? "API переводов" : "Transfers API",
             description: labels.transfersDescription,
           },
         ]

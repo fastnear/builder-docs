@@ -1,6 +1,6 @@
 ---
-title: "Transfers API"
-description: "Аккаунт-centric NEAR and fungible-token transfer история for product feeds and investigative tooling."
+title: "API переводов"
+description: "Индексированная история переводов NEAR и FT-токенов по аккаунтам для продуктовых лент, расследований и интерфейсов с пагинацией."
 sidebar_position: 1
 displayed_sidebar: transfersApiSidebar
 slug: /transfers
@@ -8,36 +8,36 @@ page_actions:
   - markdown
 ---
 
-# Transfers API
+# API переводов
 
-Transfers API focuses on аккаунта-centric transfer история. It is the simplest starting point when the question is specifically about movement of NEAR or fungible tokens.
+API переводов — это индексированная поверхность истории переводов. Используйте её, когда вопрос сводится именно к движению NEAR или FT-токенов и вам не нужен более широкий контекст транзакции.
 
-## Best fit
+## Лучше всего подходит для
 
-- Transfer feeds.
-- Wallet история views.
-- Compliance or support tooling focused on sends and receives.
+- лент переводов;
+- представлений истории кошелька;
+- инструментов комплаенса, поддержки и расследований, которые отслеживают входящие и исходящие переводы.
 
-## When not to use it
+## Когда его не стоит использовать
 
-- Use [Транзакции API](/tx) when you need broader транзакции or квитанция история.
-- Use [FastNear API](/api) when you need balances or holdings rather than transfer events.
+- Используйте [Транзакции API](/tx), когда вам нужна более широкая история транзакций или квитанций.
+- Используйте [FastNear API](/api), когда вам нужны балансы, активы или представления аккаунта, а не события перевода.
 
-## Base URL
+## Базовый URL
 
 - `https://transfers.main.fastnear.com`
 
-## Авторизация and availability
+## Аутентификация и доступность
 
-- These pages do not use API ключи or bearer tokens.
-- Responses include an opaque `resume_token` for pagination.
+- Эти страницы сейчас не используют API-ключи или токены Bearer.
+- Ответы включают непрозрачный `resume_token` для пагинации.
 
-## Troubleshooting
+## Устранение неполадок
 
 ### Мне нужны полные метаданные транзакции
 
-Переходите к [Transactions API](/tx), если одной истории переводов вам недостаточно.
+Переходите к [Транзакции API](/tx), если одной истории переводов вам недостаточно.
 
 ### Я ожидал переключение на testnet
 
-Сейчас эта поверхность ориентирована на mainnet, поэтому `?network=` не переключает здесь бэкенд.
+Эта поверхность сейчас ориентирована на mainnet, поэтому `?network=` не переключает здесь бэкенд.

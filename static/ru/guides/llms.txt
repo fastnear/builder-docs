@@ -15,7 +15,7 @@
 - [KV FastData API](https://docs.fastnear.com/ru/fastdata/kv.md): Запросы только для чтения к данным «ключ-значение» поверх FastData для сценариев с вызывающим аккаунтом, аккаунтом контракта, ключом и пакетным чтением.
 - [NEAR Data API](https://docs.fastnear.com/ru/neardata.md): Кэшированные и архивные чтения по блокам для оптимистичных, финализированных и сценариев с перенаправлением.
 - [Справочник RPC](https://docs.fastnear.com/ru/rpc.md): Прямой доступ по JSON-RPC к узлам NEAR от FastNear для запросов состояния, блоков, вызовов контрактов и отправки транзакций.
-- [Transfers API](https://docs.fastnear.com/ru/transfers.md): Аккаунт-centric NEAR and fungible-token transfer история for product feeds and investigative tooling.
+- [API переводов](https://docs.fastnear.com/ru/transfers.md): Индексированная история переводов NEAR и FT-токенов по аккаунтам для продуктовых лент, расследований и интерфейсов с пагинацией.
 - [Транзакции API](https://docs.fastnear.com/ru/tx.md): Индексированные запросы по транзакциям, квитанциям, истории аккаунтов и истории блоков для FastNear.
 
 ## AI и агенты
@@ -33,6 +33,6 @@
 
 ## Снапшоты
 
-- [Снапшоты для валидаторов](https://docs.fastnear.com/ru/snapshots.md): Обычные и архивные снапшоты доступны для валидаторов и помогают быстрее догонять цепочку или поднимать историческую инфраструктуру.
+- [Снапшоты для валидаторов](https://docs.fastnear.com/ru/snapshots.md): Обычные и архивные снапшоты помогают валидаторам и RPC-операторам быстрее догонять цепочку и поднимать историческую инфраструктуру.
 - [mainnet](https://docs.fastnear.com/ru/snapshots/mainnet.md): Скачайте RPC- и архивные снапшоты mainnet для быстрого развёртывания NEAR-инфраструктуры на базе FastNear.
 - [testnet](https://docs.fastnear.com/ru/snapshots/testnet.md): Скачайте RPC- и архивные снапшоты testnet для быстрого развёртывания NEAR-инфраструктуры на базе FastNear.

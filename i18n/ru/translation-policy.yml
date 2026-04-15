@@ -182,7 +182,7 @@ bootstrap:
     "/rpc": "RPC"
     "/snapshots": "Снапшоты"
     "/transaction-flow": "Поток транзакций"
-    "/transfers": "Transfers API"
+    "/transfers": "API переводов"
     "/tx": "Transactions API"
   translationJsonOverrides:
     code.json:

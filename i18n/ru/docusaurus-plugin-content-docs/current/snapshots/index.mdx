@@ -2,14 +2,14 @@
 sidebar_position: 2
 slug: /snapshots
 title: "Снапшоты для валидаторов"
-description: "Обычные и архивные снапшоты доступны для валидаторов и помогают быстрее догонять цепочку или поднимать историческую инфраструктуру."
+description: "Обычные и архивные снапшоты помогают валидаторам и RPC-операторам быстрее догонять цепочку и поднимать историческую инфраструктуру."
 sidebar_label: "Обзор снапшотов"
 displayed_sidebar: snapshotsSidebars
 keywords:
-  - blockchain
-  - validator
-  - snapshots
-  - archival
+  - блокчейн
+  - валидатор
+  - снапшоты
+  - архивный узел
 ---
 
 import React from 'react';
@@ -19,12 +19,12 @@ import SimpleButton from '@site/src/components/SimpleButton';
 # Снапшоты блокчейна
 
 :::warning[Бесплатные снапшоты устарели]
-Бесплатные снапшоты данных nearcore больше не поддерживаются.
+Бесплатные снапшоты данных nearcore больше не выпускаются.
 
 Infrastructure Committee и Near One рекомендуют использовать Epoch Sync и децентрализованную синхронизацию состояния. Подробности есть на <Link to="https://near-nodes.io">NEAR Nodes</Link>.
 :::
 
-Скачайте состояние блокчейна, чтобы развернуть узел валидатора или RPC. Подробнее о требованиях к узлам и запуску смотрите в <Link to="https://github.com/near/nearcore?tab=readme-ov-file#about-near">nearcore</Link>.
+Скачайте состояние блокчейна, если хотите быстрее поднять валидаторский или RPC-узел. Подробнее о требованиях к узлам и запуску смотрите в <Link to="https://github.com/near/nearcore?tab=readme-ov-file#about-near">nearcore</Link>.
 
 :::info[Установка rclone]
 Для этих крупных загрузок используется `rclone`, который можно установить так:
@@ -34,9 +34,9 @@ sudo -v ; curl https://rclone.org/install.sh | sudo bash
 ```
 :::
 
-Валидаторы найдут больше информации по настройке на <Link to="https://near-nodes.io">NEAR Nodes</Link>.
+Более подробные рекомендации по настройке валидаторов доступны на <Link to="https://near-nodes.io">NEAR Nodes</Link>.
 
-Эти руководства используют логику из <Link to="https://github.com/fastnear/static">репозитория FastNear static</Link>.
+Эти руководства используют ту же логику, что и <Link to="https://github.com/fastnear/static">репозиторий FastNear static</Link>.
 
 ## Выберите сеть
 

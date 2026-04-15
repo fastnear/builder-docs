@@ -47,7 +47,7 @@
 - [NEAR Data API - Последний финализированный блок](https://docs.fastnear.com/ru/apis/neardata/v0/last_block_final.md): Перенаправление на последний финализированный блок
 - [NEAR Data API - Последний оптимистичный блок](https://docs.fastnear.com/ru/apis/neardata/v0/last_block_optimistic.md): Перенаправление на последний оптимистичный блок
 
-## Transactions API
+## Транзакции API
 
 - [Транзакции API - История аккаунта](https://docs.fastnear.com/ru/apis/transactions/v0/account.md): Получить историю транзакций аккаунта
 - [Транзакции API - Поиск блока](https://docs.fastnear.com/ru/apis/transactions/v0/block.md): Получить блок по высоте или хешу
@@ -55,6 +55,6 @@
 - [Транзакции API - Поиск квитанции](https://docs.fastnear.com/ru/apis/transactions/v0/receipt.md): Получить квитанцию по ID
 - [Транзакции API - Транзакции по хешу](https://docs.fastnear.com/ru/apis/transactions/v0/transactions.md): Получить транзакции по хешу
 
-## Transfers API
+## API переводов
 
-- [Transfers API - Запрос переводов](https://docs.fastnear.com/ru/apis/transfers/v0/transfers.md): Запросить переводы для аккаунта
+- [API переводов: запрос переводов](https://docs.fastnear.com/ru/apis/transfers/v0/transfers.md): Запросить переводы аккаунта

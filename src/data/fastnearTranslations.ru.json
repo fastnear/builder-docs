@@ -4454,59 +4454,59 @@
         }
       },
       "info": {
-        "description": "Возвращает строки переводов и непрозрачный токен продолжения для пагинации.",
-        "summary": "Запросить переводы для аккаунта",
-        "title": "Transfers API - Запрос переводов"
+        "description": "Возвращает строки переводов для аккаунта и непрозрачный `resume_token` для пагинации.",
+        "summary": "Запросить переводы аккаунта",
+        "title": "API переводов: запрос переводов"
       },
       "interaction": {
         "fields": {
           "account_id": {
-            "description": "",
-            "label": "Аккаунт ID"
+            "description": "Идентификатор аккаунта NEAR, для которого нужно получить переводы.",
+            "label": "ID аккаунта"
           },
           "asset_id": {
-            "description": "",
+            "description": "Необязательный идентификатор актива, например `near` или ID FT-контракта.",
             "label": "ID актива"
           },
           "desc": {
-            "description": "",
-            "label": "По убыванию"
+            "description": "Если `true`, сначала возвращаются более новые переводы.",
+            "label": "Сначала новые"
           },
           "direction": {
-            "description": "",
+            "description": "Какие переводы вернуть: исходящие (`sender`) или входящие (`receiver`).",
             "label": "Направление"
           },
           "from_timestamp_ms": {
-            "description": "",
-            "label": "От времени, мс"
+            "description": "Нижняя граница времени в миллисекундах Unix.",
+            "label": "От метки времени, мс"
           },
           "ignore_system": {
-            "description": "",
-            "label": "Игнорировать системные"
+            "description": "Если `true`, исключает системные переводы.",
+            "label": "Исключить системные"
           },
           "limit": {
-            "description": "",
+            "description": "Максимальное количество строк в ответе.",
             "label": "Лимит"
           },
           "min_amount": {
-            "description": "",
+            "description": "Минимальная сумма в базовых единицах актива.",
             "label": "Минимальная сумма"
           },
           "min_human_amount": {
-            "description": "",
-            "label": "Минимальная сумма в человекочитаемом виде"
+            "description": "Минимальная сумма в человекочитаемом виде.",
+            "label": "Минимальная сумма в обычном виде"
           },
           "min_usd_amount": {
-            "description": "",
-            "label": "Минимальная сумма в долларах"
+            "description": "Минимальная сумма в долларах США.",
+            "label": "Минимальная сумма в долларах США"
           },
           "resume_token": {
-            "description": "",
+            "description": "Непрозрачный курсор пагинации из предыдущего ответа.",
             "label": "Токен продолжения"
           },
           "to_timestamp_ms": {
-            "description": "",
-            "label": "До времени, мс"
+            "description": "Верхняя граница времени в миллисекундах Unix.",
+            "label": "До метки времени, мс"
           }
         },
         "networks": {
@@ -4524,13 +4524,13 @@
       },
       "responses": {
         "200": {
-          "description": "Строки переводов для запрошенного аккаунта"
+          "description": "Строки переводов для указанного аккаунта."
         },
         "400": {
-          "description": "Некорректное тело запроса"
+          "description": "Некорректное тело запроса."
         },
         "500": {
-          "description": "Ошибка запроса ClickHouse"
+          "description": "Ошибка запроса к ClickHouse."
         }
       },
       "securitySchemes": {}
@@ -4565,7 +4565,7 @@
       "label": "Поток транзакций"
     },
     "/transfers": {
-      "label": "Transfers API"
+      "label": "API переводов"
     },
     "/tx": {
       "label": "Transactions API"
@@ -4577,7 +4577,7 @@
     "REST endpoints for finalized and optimistic block data, headers, shards, and block streams.": "REST endpoints for finalized and optimistic блока data, headers, shards, and блока streams.",
     "REST endpoints for transaction, block, account-history, and receipt lookups backed by indexed data.": "REST endpoints for транзакции, блока, аккаунта-история, and квитанция lookups backed by indexed data.",
     "Transactions API": "Транзакции API",
-    "REST endpoints for indexed transfer history and pagination over account transfer activity.": "REST endpoints for indexed transfer история and pagination over аккаунта transfer activity.",
+    "REST endpoints for indexed transfer history and pagination over account transfer activity.": "REST-эндпоинты для индексированной истории переводов и пагинации по активности аккаунта.",
     "JSON-RPC methods for account state, balances, and access-key lookups on NEAR.": "JSON-RPC methods for аккаунта состояние, balances, and доступа-ключ lookups on NEAR.",
     "Account RPC": "Аккаунт RPC",
     "JSON-RPC methods for block lookup, block effects, and block-oriented reads on NEAR.": "JSON-RPC methods for блока поиск, блока effects, and блока-oriented reads on NEAR.",
@@ -4593,7 +4593,7 @@
     "View account access key": "Просмотр аккаунта доступа ключ",
     "NEAR Protocol RPC: View Access Key": "NEAR Протокол RPC: Просмотр доступ Key",
     "NEAR account ID": "NEAR аккаунта ID",
-    "Account ID": "Аккаунт ID",
+    "Account ID": "ID аккаунта",
     "ed25519: or secp256k1: prefixed public key": "ed25519: or secp256k1: prefixed public ключ",
     "Public Key": "Публичный ключ",
     "finality": "финальность",
@@ -5086,11 +5086,24 @@
     "Fetch transactions by hash": "Fetch транзакции by hash",
     "Transactions API - Transactions by Hash": "Транзакции API - Транзакции by Hash",
     "Matching transactions": "Matching транзакции",
-    "Returns transfer rows plus an opaque resume token for pagination.": "Returns transfer rows plus an opaque resume токен for pagination.",
-    "Query transfers for an account": "Запрос transfers for an аккаунта",
-    "Transfers API - Query Transfers": "Transfers API - Запрос Transfers",
-    "Transfer rows for the requested account": "Transfer rows for the requested аккаунта",
-    "Invalid request body": "Invalid запрос body",
+    "Asset Id": "ID актива",
+    "ClickHouse query failure": "Ошибка запроса к ClickHouse.",
+    "Desc": "Сначала новые",
+    "Direction": "Направление",
+    "From Timestamp Ms": "От метки времени, мс",
+    "Ignore System": "Исключить системные",
+    "Invalid request body": "Некорректное тело запроса.",
+    "Limit": "Лимит",
+    "Min Amount": "Минимальная сумма",
+    "Min Human Amount": "Минимальная сумма в обычном виде",
+    "Min Usd Amount": "Минимальная сумма в долларах США",
+    "Recent incoming NEAR transfers": "Недавние входящие переводы NEAR",
+    "Resume Token": "Токен продолжения",
+    "Returns transfer rows plus an opaque resume token for pagination.": "Возвращает строки переводов для аккаунта и непрозрачный `resume_token` для пагинации.",
+    "To Timestamp Ms": "До метки времени, мс",
+    "Query transfers for an account": "Запросить переводы аккаунта",
+    "Transfer rows for the requested account": "Строки переводов для указанного аккаунта.",
+    "Transfers API - Query Transfers": "API переводов: запрос переводов",
     "Validators RPC": "Валидаторы RPC",
     "Number of threads for ViewClientActor pool.": "Number of threads for ПросмотрClientActor pool.",
     "Validators for the next epoch": "Валидаторы for the next epoch"
