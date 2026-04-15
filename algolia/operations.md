@@ -13,15 +13,30 @@ Treat this directory as the executable source of truth for FastNear search quali
 
 ## Required env vars
 
+### Runtime docs search
+
+These power the public docs search UI at runtime and only need the search-only DocSearch key.
+
 ```bash
 DOCSEARCH_APP_ID=...
 DOCSEARCH_INDEX_NAME=...
 DOCSEARCH_API_KEY=...
+```
+
+### Operator sync and crawler control
+
+These are only needed for repo-managed Algolia maintenance commands such as `yarn algolia:status`,
+`yarn algolia:sync`, and the crawler control scripts.
+
+```bash
 ALGOLIA_ADMIN_API_KEY=...
 ALGOLIA_CRAWLER_USER_ID=...
 ALGOLIA_CRAWLER_API_KEY=...
 ALGOLIA_CRAWLER_NAME=...
 ```
+
+If `ALGOLIA_ADMIN_API_KEY` is removed, the docs site can still use runtime DocSearch, but this repo
+loses repo-managed settings, Rules, and synonyms sync.
 
 The crawler's internal indexing `apiKey` is intentionally preserved from the live crawler and is not managed by this repo.
 

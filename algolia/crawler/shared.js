@@ -215,6 +215,9 @@ const RECORD_EXTRACTOR_SOURCE = dedent(`
     const family = getMetaContent("docsearch:family");
     const audience = getMetaContent("docsearch:audience", "builder");
     const pageType = getMetaContent("docsearch:page_type", "guide");
+    const transport = getMetaContent("docsearch:transport");
+    const operationId = getMetaContent("docsearch:operation_id");
+    const canonicalTarget = getMetaContent("docsearch:canonical_target");
     const pageRank = getPageRank(pathname, surface, pageType);
 
     return helpers.docsearch({
@@ -247,6 +250,15 @@ const RECORD_EXTRACTOR_SOURCE = dedent(`
         },
         page_type: {
           defaultValue: getRecordValue(pageType),
+        },
+        transport: {
+          defaultValue: getRecordValue(transport),
+        },
+        operation_id: {
+          defaultValue: getRecordValue(operationId),
+        },
+        canonical_target: {
+          defaultValue: getRecordValue(canonicalTarget),
         },
         pageRank,
       },

@@ -529,6 +529,47 @@ function getExampleTabLabel(requestExamples, example) {
   return example.label;
 }
 
+function getOperationCanonicalTarget(pageModel) {
+  if (!pageModel) {
+    return "";
+  }
+
+  const operationId = pageModel.info?.operationId || "";
+  if (pageModel.route?.transport === "json-rpc") {
+    const requestMethod = pageModel.interaction?.requestMethod || "";
+    const requestType = pageModel.interaction?.requestType || "";
+    if (requestMethod && requestType) {
+      return `${requestMethod} · request_type=${requestType}`;
+    }
+
+    return operationId;
+  }
+
+  const routeMethod = pageModel.route?.method || "";
+  const routePath = pageModel.route?.path || "";
+  if (routeMethod && routePath) {
+    return `${routeMethod} ${routePath}`;
+  }
+
+  return operationId;
+}
+
+function getOperationDocsearchMeta(pageModel) {
+  if (!pageModel) {
+    return {
+      canonicalTarget: "",
+      operationId: "",
+      transport: "",
+    };
+  }
+
+  return {
+    canonicalTarget: getOperationCanonicalTarget(pageModel),
+    operationId: pageModel.info?.operationId || "",
+    transport: pageModel.route?.transport || "",
+  };
+}
+
 function getRunResultText(runResult) {
   if (!runResult) {
     return "";
@@ -1699,6 +1740,11 @@ export default function FastnearDirectOperation({ pageModelId }) {
   const { i18n } = useDocusaurusContext();
   const currentLocale = i18n.currentLocale || "en";
   const pageModel = getFastnearPageModelById(pageModelId, currentLocale);
+  const canonicalPageModel = getFastnearPageModelById(pageModelId, "en");
+  const operationMeta = useMemo(
+    () => getOperationDocsearchMeta(canonicalPageModel),
+    [canonicalPageModel]
+  );
   const seoKeywords = useMemo(() => buildOperationKeywords(pageModel), [pageModel]);
   const semanticMeta = useMemo(() => getOperationSemanticMeta(pageModel), [pageModel]);
 
@@ -1723,9 +1769,20 @@ export default function FastnearDirectOperation({ pageModelId }) {
       data-fastnear-page-type={semanticMeta?.pageType || undefined}
       data-fastnear-surface={semanticMeta?.surface || undefined}
     >
-      {seoKeywords.length ? (
+      {seoKeywords.length || operationMeta.transport || operationMeta.operationId || operationMeta.canonicalTarget ? (
         <Head>
-          <meta name="keywords" content={seoKeywords.join(', ')} />
+          {seoKeywords.length ? (
+            <meta name="keywords" content={seoKeywords.join(', ')} />
+          ) : null}
+          {operationMeta.transport ? (
+            <meta name="docsearch:transport" content={operationMeta.transport} />
+          ) : null}
+          {operationMeta.operationId ? (
+            <meta name="docsearch:operation_id" content={operationMeta.operationId} />
+          ) : null}
+          {operationMeta.canonicalTarget ? (
+            <meta name="docsearch:canonical_target" content={operationMeta.canonicalTarget} />
+          ) : null}
         </Head>
       ) : null}
       <FastnearOperationPage pageModel={pageModel} />

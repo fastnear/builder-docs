@@ -129,7 +129,9 @@ Treat the clean root-mounted public docs as the public search surface.
 - `DOCSEARCH_INDEX_NAME` should match the crawler action's `indexName`, not the crawler display name
 - Algolia search analytics and DocSearch Insights events use the public search-only key already configured in `DOCSEARCH_API_KEY`
 - This is search analytics, not a general pageview snippet; for sitewide traffic analytics you would still add a separate product such as Plausible or GA
+- Runtime docs search only needs `DOCSEARCH_APP_ID`, `DOCSEARCH_API_KEY`, and `DOCSEARCH_INDEX_NAME`
 - The repo-managed control layer additionally uses `ALGOLIA_ADMIN_API_KEY`, `ALGOLIA_CRAWLER_USER_ID`, `ALGOLIA_CRAWLER_API_KEY`, and `ALGOLIA_CRAWLER_NAME`
+- Removing `ALGOLIA_ADMIN_API_KEY` does not break the docs runtime, but it does disable repo-managed settings, Rules, and synonyms sync
 
 The docs runtime now emits `docsearch:category`, `docsearch:method_type`, `docsearch:surface`, `docsearch:family`, `docsearch:audience`, and `docsearch:page_type` meta tags centrally, so the crawler can facet and group pages without hand-authored `<head>` blocks in MDX.
 
@@ -138,6 +140,12 @@ It also emits stable `data-fastnear-*` attributes on the docs wrapper and direct
 The interactive API playground is marked with `data-fastnear-crawler-skip` so the crawler can strip request controls, copy helpers, and placeholder runtime text before extraction while keeping the actual reference prose indexable.
 
 The search modal itself is swizzled in [src/theme/SearchBar/index.js](/Users/mikepurvis/near/fn/builder-docs/src/theme/SearchBar/index.js) so DocSearch results are grouped by page, deduplicated across anchors, and rendered with FastNear-specific result cards and snippets.
+
+Operation-backed results also carry endpoint metadata through Algolia, so the modal can show a lightweight endpoint card for RPC and API pages:
+
+- `RPC` or `API` badge
+- canonical call target such as `query · request_type=call_function` or `GET /v1/account/{account_id}/full`
+- the existing docs path as low-emphasis location text
 
 Generated discovery surfaces are emitted centrally too:
 

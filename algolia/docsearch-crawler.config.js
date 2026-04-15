@@ -172,6 +172,9 @@ new Crawler({
         const family = getMetaContent("docsearch:family");
         const audience = getMetaContent("docsearch:audience", "builder");
         const pageType = getMetaContent("docsearch:page_type", "guide");
+        const transport = getMetaContent("docsearch:transport");
+        const operationId = getMetaContent("docsearch:operation_id");
+        const canonicalTarget = getMetaContent("docsearch:canonical_target");
         const pageRank = getPageRank(pathname, surface, pageType);
 
         return helpers.docsearch({
@@ -205,6 +208,15 @@ new Crawler({
             page_type: {
               defaultValue: getRecordValue(pageType),
             },
+            transport: {
+              defaultValue: getRecordValue(transport),
+            },
+            operation_id: {
+              defaultValue: getRecordValue(operationId),
+            },
+            canonical_target: {
+              defaultValue: getRecordValue(canonicalTarget),
+            },
             pageRank,
           },
           indexHeadings: true,
@@ -230,7 +242,10 @@ new Crawler({
         "surface",
         "family",
         "audience",
-        "page_type"
+        "page_type",
+        "transport",
+        "operation_id",
+        "canonical_target"
       ],
       attributesToRetrieve: [
         "hierarchy",
@@ -244,7 +259,10 @@ new Crawler({
         "surface",
         "family",
         "audience",
-        "page_type"
+        "page_type",
+        "transport",
+        "operation_id",
+        "canonical_target"
       ],
       attributesToHighlight: [
         "hierarchy",
@@ -265,6 +283,8 @@ new Crawler({
         "unordered(hierarchy.lvl5)",
         "unordered(hierarchy.lvl6)",
         "unordered(hierarchy.lvl0)",
+        "unordered(operation_id)",
+        "unordered(canonical_target)",
         "content"
       ],
       distinct: true,

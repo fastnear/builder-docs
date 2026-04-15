@@ -285,6 +285,60 @@ html[data-theme='dark'] .DocSearch {
   -webkit-line-clamp: 2;
 }
 
+.fastnear-search-hit__endpoint-meta {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  min-width: 0;
+}
+
+.fastnear-search-hit__badge {
+  background: color-mix(
+    in srgb,
+    var(--docsearch-primary-color) 12%,
+    var(--docsearch-hit-background) 88%
+  );
+  border: 1px solid color-mix(
+    in srgb,
+    var(--docsearch-primary-color) 20%,
+    transparent
+  );
+  border-radius: 999px;
+  color: var(--docsearch-primary-color);
+  display: inline-flex;
+  flex-shrink: 0;
+  font-size: 0.67rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  padding: 0.22rem 0.42rem;
+  text-transform: uppercase;
+}
+
+.fastnear-search-hit__target {
+  background: none;
+  border: 0;
+  color: var(--docsearch-secondary-text-color);
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 0.76rem;
+  min-width: 0;
+  overflow: hidden;
+  padding: 0;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fastnear-search-hit__location {
+  color: var(--docsearch-muted-color);
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 0.72rem;
+  line-height: 1.4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .fastnear-search-hit__highlight {
   background: none;
   color: var(--docsearch-primary-color);
@@ -309,5 +363,10 @@ html[data-theme='dark'] .DocSearch {
 
   .fastnear-search-hit__path {
     max-width: 100%;
+  }
+
+  .fastnear-search-hit__target,
+  .fastnear-search-hit__location {
+    white-space: normal;
   }
 }

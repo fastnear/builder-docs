@@ -31,6 +31,7 @@ const SEARCH_BAR_PATH = path.join(ROOT, "src/theme/SearchBar/index.js");
 const SEARCH_BAR_STYLES_PATH = path.join(ROOT, "src/theme/SearchBar/styles.css");
 const REDIRECTS_PATH = path.join(BUILD_ROOT, "_redirects");
 const ROBOTS_PATH = path.join(BUILD_ROOT, "robots.txt");
+const PAGE_MODELS_PATH = path.join(ROOT, "src/data/generatedFastnearPageModels.json");
 const STRUCTURED_GRAPH_PATH = path.join(ROOT, "src/data/generatedFastnearStructuredGraph.json");
 const PRODUCTION_SITE_URL = "https://docs.fastnear.com";
 const WEBSITE_ID = `${PRODUCTION_SITE_URL}/#website`;
@@ -420,6 +421,42 @@ function countOccurrences(value, pattern) {
   return (value.match(pattern) || []).length;
 }
 
+function escapeRegExp(value) {
+  return String(value || "").replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function getExpectedOperationDocsearchCanonicalTarget(pageModel) {
+  if (!pageModel) {
+    return null;
+  }
+
+  const operationId = pageModel.info?.operationId || null;
+  if (pageModel.route?.transport === "json-rpc") {
+    const requestMethod = pageModel.interaction?.requestMethod || null;
+    const requestType = pageModel.interaction?.requestType || null;
+    if (requestMethod && requestType) {
+      return `${requestMethod} · request_type=${requestType}`;
+    }
+
+    return operationId;
+  }
+
+  const routeMethod = pageModel.route?.method || null;
+  const routePath = pageModel.route?.path || null;
+  if (routeMethod && routePath) {
+    return `${routeMethod} ${routePath}`;
+  }
+
+  return operationId;
+}
+
+function buildMetaPattern(name, value) {
+  return new RegExp(
+    `<meta[^>]+name="${escapeRegExp(name)}"[^>]+content="${escapeRegExp(value)}"[^>]*>`,
+    "i"
+  );
+}
+
 function parseJsonLdScripts(html, label) {
   return [...html.matchAll(/<script(?: data-rh="true")? type="application\/ld\+json">([\s\S]*?)<\/script>/g)]
     .map((match, index) => {
@@ -625,6 +662,9 @@ function auditConfigSurface() {
     '"family"',
     '"audience"',
     '"page_type"',
+    '"transport"',
+    '"operation_id"',
+    '"canonical_target"',
     "data-fastnear-crawler-skip",
     "removeCrawlerNoise",
     "getMetaContent",
@@ -652,6 +692,22 @@ function auditConfigSurface() {
   assert(
     JSON.stringify(indexSettings.attributesToSnippet) === JSON.stringify(["content:14"]),
     "algolia/index-settings.json should set attributesToSnippet=[\"content:14\"]"
+  );
+  ["transport", "operation_id", "canonical_target"].forEach((attribute) => {
+    assert(
+      indexSettings.attributesToRetrieve.includes(attribute),
+      `algolia/index-settings.json should retrieve ${attribute}`
+    );
+  });
+  const contentIndex = indexSettings.searchableAttributes.indexOf("content");
+  assert(contentIndex >= 2, "algolia/index-settings.json should keep content in searchableAttributes");
+  assert(
+    indexSettings.searchableAttributes[contentIndex - 2] === "unordered(operation_id)",
+    "algolia/index-settings.json should search operation_id immediately before content"
+  );
+  assert(
+    indexSettings.searchableAttributes[contentIndex - 1] === "unordered(canonical_target)",
+    "algolia/index-settings.json should search canonical_target immediately before content"
   );
   assert(
     rules.every((rule) => String(rule.objectID || "").startsWith("fastnear-")),
@@ -754,7 +810,10 @@ function auditDocsSource() {
     const expectedCategory = getExpectedDocsearchCategory(route);
     assert(expectedCategory, `No docsearch:category mapping exists for ${relativePath}: ${route}`);
 
-    const hasFastnearOperation = rawContent.includes("<FastnearDirectOperation");
+    const fastnearOperationMatch = rawContent.match(
+      /<FastnearDirectOperation[^>]+pageModelId=["']([^"']+)["']/
+    );
+    const hasFastnearOperation = Boolean(fastnearOperationMatch);
     routeEntries.push({
       expectedAudience: getExpectedDocsearchAudience(route),
       expectedCategory,
@@ -767,6 +826,7 @@ function auditDocsSource() {
       }),
       expectedSurface: getExpectedDocsearchSurface(route),
       hasFastnearOperation,
+      operationPageModelId: fastnearOperationMatch?.[1] || null,
       relativePath,
       route,
     });
@@ -792,6 +852,11 @@ function parseSitemapUrls(locale = DEFAULT_LOCALE) {
 }
 
 function auditDocsBuildOutput(routeEntries, structuredGraph) {
+  const pageModels = loadJson(PAGE_MODELS_PATH, "generated FastNear page models");
+  const pageModelsById = Object.fromEntries(
+    pageModels.map((pageModel) => [pageModel.pageModelId, pageModel])
+  );
+
   assert(fs.existsSync(ROBOTS_PATH), `Missing robots.txt: ${path.relative(ROOT, ROBOTS_PATH)}`);
   const robotsText = fs.readFileSync(ROBOTS_PATH, "utf8");
 
@@ -1046,13 +1111,35 @@ function auditDocsBuildOutput(routeEntries, structuredGraph) {
 
       if (entry.hasFastnearOperation) {
         const operation = operationsByDocsPath[entry.route];
+        const pageModel = pageModelsById[entry.operationPageModelId];
         assert(operation, `Missing structured operation registry entry for docs route ${entry.route}`);
+        assert(
+          pageModel,
+          `Missing page model ${entry.operationPageModelId} for docs route ${entry.route}`
+        );
         const operationEntityId = `${PRODUCTION_SITE_URL}/structured-data/operations/${operation.pageModelId}`;
         const familyEntityId = `${PRODUCTION_SITE_URL}/structured-data/families/${operation.familyId}`;
+        const expectedTransport = pageModel.route?.transport || null;
+        const expectedOperationId = pageModel.info?.operationId || null;
+        const expectedCanonicalTarget = getExpectedOperationDocsearchCanonicalTarget(pageModel);
 
         assert(
           html.includes('name="keywords"'),
           `Operation docs page is missing keyword metadata: ${localizedRoute} (${entry.relativePath})`
+        );
+        assert(
+          expectedTransport && buildMetaPattern("docsearch:transport", expectedTransport).test(html),
+          `Operation docs page is missing docsearch:transport=${expectedTransport}: ${localizedRoute} (${entry.relativePath})`
+        );
+        assert(
+          expectedOperationId &&
+            buildMetaPattern("docsearch:operation_id", expectedOperationId).test(html),
+          `Operation docs page is missing docsearch:operation_id=${expectedOperationId}: ${localizedRoute} (${entry.relativePath})`
+        );
+        assert(
+          expectedCanonicalTarget &&
+            buildMetaPattern("docsearch:canonical_target", expectedCanonicalTarget).test(html),
+          `Operation docs page is missing docsearch:canonical_target=${expectedCanonicalTarget}: ${localizedRoute} (${entry.relativePath})`
         );
         assert(
           html.includes('"@type":"APIReference"'),
