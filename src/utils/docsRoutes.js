@@ -12,6 +12,7 @@ const HIDDEN_VISIBLE_BREADCRUMB_ROUTES = new Set([
   '/rpc',
   '/api',
   '/api/reference',
+  '/agents',
   '/agents/choosing-surfaces',
   '/tx',
   '/transfers',

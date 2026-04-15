@@ -80,6 +80,8 @@ function normalizeForAudit(rawText, allowedLiteralPatterns) {
   text = text.replace(/\b\/[A-Za-z0-9_./:-]+\b/g, " ");
   text = text.replace(/\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b/g, " ");
   text = text.replace(/\b[A-Za-z]+:[A-Za-z0-9+/=_-]+\b/g, " ");
+  // Hostnames (e.g. `dashboard.fastnear.com`) as link display text.
+  text = text.replace(/\b[a-z][a-z0-9-]*(?:\.[a-z][a-z0-9-]*)+\.[a-z]{2,}\b/gi, " ");
 
   allowedLiteralPatterns.forEach((pattern) => {
     text = text.replace(pattern, " ");

@@ -10,6 +10,10 @@ preserve:
   - OAuth
   - JWT
   - Bearer
+  - Authorization
+  - Content-Type
+  - Accept
+  - User-Agent
   - GET
   - POST
   - PUT
