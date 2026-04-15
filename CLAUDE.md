@@ -200,6 +200,22 @@ curl "https://rpc.mainnet.fastnear.com?apiKey=${apiKey}" \
   --data '{"method":"block","params":{"finality":"final"},"id":1,"jsonrpc":"2.0"}'
 ```
 
+## Localization (Russian)
+
+The Russian locale is the first non-default locale in this repo and is set up to be the template for future locale work (ES, ZH, JA, etc.). All technical-continuity docs live under [`md-CLAUDE-chapters/`](md-CLAUDE-chapters/) alongside the style guides.
+
+- **Framework chapter**: [`md-CLAUDE-chapters/i18n_locale_framework_and_russian_rollout.md`](md-CLAUDE-chapters/i18n_locale_framework_and_russian_rollout.md) — architecture and why the system is shaped this way.
+- **Style guide**: [`md-CLAUDE-chapters/i18n_translating_russian.md`](md-CLAUDE-chapters/i18n_translating_russian.md) — three-tier model (Native / Transliterated / Latin), cited against Yandex Cloud API Design Guide, Tinkoff Invest API, and Waves Enterprise.
+- **Glossary**: [`md-CLAUDE-chapters/i18n_ru_glossary.md`](md-CLAUDE-chapters/i18n_ru_glossary.md) — authoritative term list with source citations.
+- **Quick-reference card**: [`md-CLAUDE-chapters/i18n_ru_quick_reference.md`](md-CLAUDE-chapters/i18n_ru_quick_reference.md) — one-page card for translators at work.
+- **Runtime glossary** (controls the existing `audit:i18n` checks): [`i18n/ru/glossary.yml`](i18n/ru/glossary.yml) — preserves Latin tokens and codifies English→Russian mappings.
+- **Runnable audits**:
+  - `yarn audit:ru-terminology` — calques, capitalized Вы, hyphenation, Cyrillicized protocol names, bare `predecessor` in Russian prose, mixed-language glue. Wired into `ci:locale-quality`.
+  - `yarn audit:i18n:all` — unexpected Latin tokens in Russian content (flag for missed translations).
+- **Adding a new locale**: see [`md-CLAUDE-chapters/i18n_adding_locales.md`](md-CLAUDE-chapters/i18n_adding_locales.md) for the three-pass sequence used for Russian.
+
+When editing Russian content, run `yarn audit:ru-terminology` before committing. The CI gate (`.github/workflows/locale-quality.yml`) runs `yarn ci:locale-quality`, which includes the terminology audit.
+
 ## Development Notes
 
 - Deployed to https://docs.fastnear.com
