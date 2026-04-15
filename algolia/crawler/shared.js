@@ -143,10 +143,6 @@ const RECORD_EXTRACTOR_SOURCE = dedent(`
     };
 
     const getPageRank = (pathname, surface, pageType) => {
-      if (pathname === "/auth/backend") {
-        return 91;
-      }
-
       if (pathname === "/agents/choosing-surfaces") {
         return 44;
       }

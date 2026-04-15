@@ -31,7 +31,7 @@ Use this file as the first-pass review sheet after the initial Algolia push. The
 ## Content gaps to assess
 
 - Add a dedicated rate-limits page if `rate limits` is a real user query you expect.
-- Decide whether `/auth` or `/auth/backend` should be the canonical destination for `api key` and `bearer token` intent.
+- ~~Decide whether `/auth` or `/auth/backend` should be the canonical destination for `api key` and `bearer token` intent.~~ Resolved: `/auth` is the single canonical page.
 - Add explicit playground wording if users are likely to search for `rpc playground`, `try it`, or `interactive`.
 - Add stronger auth wording to the auth landing page if `authentication` is common in analytics.
 

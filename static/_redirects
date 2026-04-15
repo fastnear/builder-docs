@@ -14,9 +14,9 @@
 /docs/rpc-api/fastdata/* /fastdata/:splat 301
 /docs/rpc-api/api-key /auth 301
 /docs/rpc-api/auth /auth 301
-/docs/rpc-api/auth/* /auth/:splat 301
-/docs/rpc-api/auth-browser-demo /auth/browser-demo 301
-/docs/rpc-api/auth-production-backend /auth/backend 301
+/docs/rpc-api/auth/* /auth 301
+/docs/rpc-api/auth-browser-demo /auth 301
+/docs/rpc-api/auth-production-backend /auth 301
 /docs/rpc-api/agents /agents 301
 /docs/rpc-api/agents/* /agents/:splat 301
 /docs/rpc-api/account/* /rpc/account/:splat 301

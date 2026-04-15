@@ -121,12 +121,6 @@ const COLLECTION_ROUTE_SET = new Set([
 const AUTHORED_MARKDOWN_LABELS = {
   en: {
     aiAndAgents: "AI & Agents",
-    apiMirrorNotice: [
-      "> The interactive browser key manager is omitted from this static Markdown mirror.",
-      "> Use the live docs page for the browser demo flow, or see",
-      "> [Production Backend Auth](/auth/backend)",
-      "> for secure backend usage.",
-    ].join(" "),
     bestFor: "Best for:",
     guidesArchiveTitle: "FastNear Builder Docs Full Documentation Archive",
     guidesArchiveIntro:
@@ -158,12 +152,6 @@ const AUTHORED_MARKDOWN_LABELS = {
   },
   ru: {
     aiAndAgents: "AI и агенты",
-    apiMirrorNotice: [
-      "> Интерактивный менеджер ключей браузера опущен в этой статической Markdown-копии.",
-      "> Используйте живую страницу документации для браузерного демо-сценария или откройте",
-      "> [Авторизация для продакшен-бэкенда](/auth/backend)",
-      "> для безопасного серверного использования.",
-    ].join(" "),
     bestFor: "Лучше всего подходит для:",
     guidesArchiveTitle: "Полный архив документации FastNear Builder Docs",
     guidesArchiveIntro:
@@ -749,13 +737,8 @@ function transformInlineLinks(markdown, locale = DEFAULT_LOCALE) {
 }
 
 function transformSimpleJsx(markdown, locale = DEFAULT_LOCALE) {
-  const labels = getAuthoredMarkdownLabels(locale);
   let transformed = markdown
     .replace(/<RpcApiServiceLinks\s*\/>/g, buildRpcApiServiceLinks(locale))
-    .replace(
-      /<ApiKeyManager\s*\/>/g,
-      labels.apiMirrorNotice
-    )
     .replace(/<\/?React\.Fragment[^>]*>/g, "")
     .replace(/<strong>([\s\S]*?)<\/strong>/g, "**$1**");
 

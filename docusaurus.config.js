@@ -211,15 +211,7 @@ function buildLegacyRedirects() {
 
     if (slug === '/auth') {
       addRedirect('/docs/rpc-api/api-key', slug);
-      return;
-    }
-
-    if (slug === '/auth/browser-demo') {
       addRedirect('/docs/rpc-api/auth-browser-demo', slug);
-      return;
-    }
-
-    if (slug === '/auth/backend') {
       addRedirect('/docs/rpc-api/auth-production-backend', slug);
       return;
     }

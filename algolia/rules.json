@@ -211,7 +211,7 @@
   },
   {
     "objectID": "fastnear-promote-api-key",
-    "description": "Route API-key searches to the production backend auth page.",
+    "description": "Route API-key searches to the auth landing page.",
     "conditions": [
       {
         "pattern": "api key",
@@ -223,7 +223,7 @@
       "promote": [
         {
           "objectIDs": [
-            "1-https://docs.fastnear.com/auth/backend"
+            "0-https://docs.fastnear.com/auth"
           ],
           "position": 0
         }
@@ -232,7 +232,7 @@
   },
   {
     "objectID": "fastnear-promote-x-api-key",
-    "description": "Route x-api-key searches to the production backend auth page.",
+    "description": "Route x-api-key searches to the auth landing page.",
     "conditions": [
       {
         "pattern": "x-api-key",
@@ -244,7 +244,7 @@
       "promote": [
         {
           "objectIDs": [
-            "1-https://docs.fastnear.com/auth/backend"
+            "0-https://docs.fastnear.com/auth"
           ],
           "position": 0
         }
@@ -253,7 +253,7 @@
   },
   {
     "objectID": "fastnear-promote-x-api-key-spaced",
-    "description": "Route x api key searches to the production backend auth page.",
+    "description": "Route x api key searches to the auth landing page.",
     "conditions": [
       {
         "pattern": "x api key",
@@ -265,7 +265,7 @@
       "promote": [
         {
           "objectIDs": [
-            "1-https://docs.fastnear.com/auth/backend"
+            "0-https://docs.fastnear.com/auth"
           ],
           "position": 0
         }
@@ -274,7 +274,7 @@
   },
   {
     "objectID": "fastnear-promote-bearer-token",
-    "description": "Route bearer-token searches to the production backend auth page.",
+    "description": "Route bearer-token searches to the auth landing page.",
     "conditions": [
       {
         "pattern": "bearer token",
@@ -286,7 +286,7 @@
       "promote": [
         {
           "objectIDs": [
-            "1-https://docs.fastnear.com/auth/backend"
+            "0-https://docs.fastnear.com/auth"
           ],
           "position": 0
         }
@@ -295,7 +295,7 @@
   },
   {
     "objectID": "fastnear-promote-access-token",
-    "description": "Route access-token searches to the production backend auth page.",
+    "description": "Route access-token searches to the auth landing page.",
     "conditions": [
       {
         "pattern": "access token",
@@ -307,7 +307,7 @@
       "promote": [
         {
           "objectIDs": [
-            "1-https://docs.fastnear.com/auth/backend"
+            "0-https://docs.fastnear.com/auth"
           ],
           "position": 0
         }
@@ -316,7 +316,7 @@
   },
   {
     "objectID": "fastnear-promote-authorization-header",
-    "description": "Route authorization-header searches to the production backend auth page.",
+    "description": "Route authorization-header searches to the auth landing page.",
     "conditions": [
       {
         "pattern": "authorization header",
@@ -328,7 +328,7 @@
       "promote": [
         {
           "objectIDs": [
-            "1-https://docs.fastnear.com/auth/backend"
+            "0-https://docs.fastnear.com/auth"
           ],
           "position": 0
         }
