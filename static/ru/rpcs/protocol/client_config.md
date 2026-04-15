@@ -152,7 +152,7 @@
             "required": false,
             "schema": {
               "type": "integer",
-              "description": "Horizon at which instead of fetching блока, fetch full состояние.",
+              "description": "Горизонт, после которого вместо получения блока извлекается полное состояние.",
               "format": "uint64"
             }
           },
@@ -170,7 +170,7 @@
             "required": false,
             "schema": {
               "type": "array",
-              "description": "Duration to check for producing / skipping блока.",
+              "description": "Интервал проверки необходимости выпустить или пропустить блок.",
               "items": {
                 "type": "integer",
                 "format": "uint64"
@@ -194,7 +194,7 @@
             "required": false,
             "schema": {
               "type": "string",
-              "description": "Chain id for статус."
+              "description": "ID цепочки для статуса."
             }
           },
           {
@@ -217,7 +217,7 @@
                   "required": false,
                   "schema": {
                     "type": "object",
-                    "description": "URIs for the Chunk Distribution Сеть feature."
+                    "description": "URI для функции Chunk Distribution Network."
                   }
                 }
               ]
@@ -228,7 +228,7 @@
             "required": false,
             "schema": {
               "type": "array",
-              "description": "Time between checking to re-запрос chunks.",
+              "description": "Время между проверками на повторный запрос чанков.",
               "items": {
                 "type": "integer",
                 "format": "uint64"
@@ -270,7 +270,7 @@
             "required": false,
             "schema": {
               "type": "integer",
-              "description": "Number of threads to execute background migration work in клиент.",
+              "description": "Количество потоков, выполняющих фоновые миграционные работы в клиенте.",
               "format": "uint"
             }
           },
@@ -287,7 +287,7 @@
                   "required": false,
                   "schema": {
                     "type": "boolean",
-                    "description": "Determines whether блока-related data should be written to cloud storage.",
+                    "description": "Определяет, должны ли данные, связанные с блоками, записываться в облачное хранилище.",
                     "default": false
                   }
                 },
@@ -296,7 +296,7 @@
                   "required": false,
                   "schema": {
                     "type": "object",
-                    "description": "Interval at which the system checks for new блоки or chunks to archive.",
+                    "description": "Интервал, с которым система проверяет новые блоки или чанки для архивации.",
                     "default": {
                       "nanos": 0,
                       "secs": 1
@@ -370,7 +370,7 @@
                   "required": false,
                   "schema": {
                     "type": "integer",
-                    "description": "Number of epochs behind the сеть head beyond which the node will use\nepoch sync instead of header sync. At the consumption site, this is\nmultiplied by epoch_length to get the horizon in блоки.",
+                    "description": "Количество эпох от головы сети, за пределами которого нода переключится с header-синхронизации\nна epoch-синхронизацию. На стороне потребителя это значение\nумножается на epoch_length, чтобы получить горизонт в блоках.",
                     "format": "uint64",
                     "default": 2
                   }
@@ -391,7 +391,7 @@
             "required": false,
             "schema": {
               "type": "string",
-              "description": "Graceful shutdown at expected блока height."
+              "description": "Корректное завершение работы на ожидаемой высоте блока."
             }
           },
           {
@@ -406,7 +406,7 @@
                   "required": false,
                   "schema": {
                     "type": "integer",
-                    "description": "Maximum number of блоки to garbage collect at every garbage collection\nвызов.",
+                    "description": "Максимальное количество блоков, собираемых сборщиком мусора\nза один вызов.",
                     "format": "uint64",
                     "default": 2
                   }
@@ -520,7 +520,7 @@
             "required": false,
             "schema": {
               "type": "array",
-              "description": "Maximum wait for approvals before producing блока.",
+              "description": "Максимальное время ожидания подтверждений перед выпуском блока.",
               "items": {
                 "type": "integer",
                 "format": "uint64"
@@ -545,7 +545,7 @@
             "schema": {
               "type": "string",
               "nullable": true,
-              "description": "Газ amount"
+              "description": "Количество газа"
             }
           },
           {
@@ -553,7 +553,7 @@
             "required": false,
             "schema": {
               "type": "array",
-              "description": "Minimum duration before producing блока.",
+              "description": "Минимальная длительность перед выпуском блока.",
               "items": {
                 "type": "integer",
                 "format": "uint64"
@@ -574,7 +574,7 @@
             "required": false,
             "schema": {
               "type": "integer",
-              "description": "Number of блока producer seats",
+              "description": "Количество мест для производителей блоков",
               "format": "uint64"
             }
           },
@@ -609,7 +609,7 @@
             "required": false,
             "schema": {
               "type": "boolean",
-              "description": "Produce empty блоки, use `false` for testing."
+              "description": "Выпускать пустые блоки; значение `false` используется для тестирования."
             }
           },
           {
@@ -617,7 +617,7 @@
             "required": false,
             "schema": {
               "type": "string",
-              "description": "Configures whether the node checks the next or the next next epoch for сеть version compatibility.",
+              "description": "Определяет, проверяет ли нода совместимость версии сети для следующей или через одну эпохи.",
               "enum": [
                 "Next",
                 "NextNext"
@@ -637,7 +637,7 @@
             "schema": {
               "type": "string",
               "nullable": true,
-              "description": "Listening rpc port for статус."
+              "description": "Порт RPC для статуса, на котором слушает узел."
             }
           },
           {
@@ -661,7 +661,7 @@
             "required": false,
             "schema": {
               "type": "boolean",
-              "description": "Whether to persist состояние changes on disk or not."
+              "description": "Нужно ли сохранять изменения состояния на диск."
             }
           },
           {
@@ -677,7 +677,7 @@
             "required": false,
             "schema": {
               "type": "boolean",
-              "description": "Whether to persist транзакции outcomes to disk or not."
+              "description": "Нужно ли сохранять результаты транзакций на диск."
             }
           },
           {
@@ -710,7 +710,7 @@
             "required": false,
             "schema": {
               "type": "array",
-              "description": "Number of seconds between состояние requests for просмотр клиент.\nThrottling window for состояние requests (headers and parts).",
+              "description": "Количество секунд между запросами состояния для view-клиента.\nОкно троттлинга для запросов состояния (заголовки и части).",
               "items": {
                 "type": "integer",
                 "format": "uint64"
@@ -722,7 +722,7 @@
             "required": false,
             "schema": {
               "type": "integer",
-              "description": "Maximum number of состояние requests served per throttle period",
+              "description": "Максимальное количество запросов состояния, обслуживаемых за период троттлинга",
               "format": "uint"
             }
           },
@@ -731,7 +731,7 @@
             "required": false,
             "schema": {
               "type": "object",
-              "description": "Options for syncing состояние.",
+              "description": "Параметры синхронизации состояния.",
               "properties": [
                 {
                   "name": "concurrency",
@@ -746,7 +746,7 @@
                   "schema": {
                     "type": "object",
                     "nullable": true,
-                    "description": "Configures how to dump состояние to external storage."
+                    "description": "Настраивает способ выгрузки состояния во внешнее хранилище."
                   }
                 },
                 {
@@ -754,7 +754,7 @@
                   "required": false,
                   "schema": {
                     "type": "integer",
-                    "description": "Zstd compression level for состояние parts.",
+                    "description": "Уровень сжатия Zstd для частей состояния.",
                     "format": "int32",
                     "default": 1
                   }
@@ -765,7 +765,7 @@
                   "schema": {
                     "type": "string",
                     "nullable": true,
-                    "description": "Syncs состояние from the peers without reading anything from external storage.",
+                    "description": "Синхронизирует состояние от пиров, не читая ничего из внешнего хранилища.",
                     "enum": [
                       "Peers"
                     ]
@@ -779,7 +779,7 @@
             "required": false,
             "schema": {
               "type": "boolean",
-              "description": "Whether to use the Состояние Sync mechanism.\nIf disabled, the node will do Блок Sync instead of Состояние Sync."
+              "description": "Использовать ли механизм State Sync.\nЕсли отключён, нода будет выполнять Block Sync вместо State Sync."
             }
           },
           {
@@ -787,7 +787,7 @@
             "required": false,
             "schema": {
               "type": "array",
-              "description": "Additional waiting period after a failed запрос to external storage",
+              "description": "Дополнительное время ожидания после неудачного запроса к внешнему хранилищу",
               "items": {
                 "type": "integer",
                 "format": "uint64"
@@ -799,7 +799,7 @@
             "required": false,
             "schema": {
               "type": "array",
-              "description": "How long to wait for a ответ from centralized состояние sync",
+              "description": "Как долго ждать ответа от централизованной синхронизации состояния",
               "items": {
                 "type": "integer",
                 "format": "uint64"
@@ -811,7 +811,7 @@
             "required": false,
             "schema": {
               "type": "array",
-              "description": "How long to wait for a ответ from p2p состояние sync",
+              "description": "Как долго ждать ответа от p2p-синхронизации состояния",
               "items": {
                 "type": "integer",
                 "format": "uint64"
@@ -823,7 +823,7 @@
             "required": false,
             "schema": {
               "type": "array",
-              "description": "How long to wait after a failed состояние sync запрос",
+              "description": "Как долго ждать после неудачного запроса синхронизации состояния",
               "items": {
                 "type": "integer",
                 "format": "uint64"
@@ -856,7 +856,7 @@
             "required": false,
             "schema": {
               "type": "integer",
-              "description": "Maximum number of блока requests to отправка to peers to sync",
+              "description": "Максимальное количество запросов блоков, отправляемых пирам для синхронизации",
               "format": "uint"
             }
           },
@@ -886,7 +886,7 @@
             "schema": {
               "type": "integer",
               "nullable": true,
-              "description": "Limit of the size of per-shard транзакции pool measured in bytes. If not set, the size\nwill be unbounded.",
+              "description": "Ограничение размера пула транзакций одного шарда в байтах. Если не задано,\nразмер не ограничен.",
               "format": "uint64"
             }
           },
@@ -904,7 +904,7 @@
             "schema": {
               "type": "integer",
               "nullable": true,
-              "description": "Upper bound of the byte size of контракта состояние that is still viewable. None is no limit",
+              "description": "Верхняя граница размера состояния контракта в байтах, при котором оно ещё доступно для просмотра. None — без ограничения",
               "format": "uint64"
             }
           },
@@ -925,7 +925,7 @@
             "required": false,
             "schema": {
               "type": "integer",
-              "description": "If the node is not a chunk producer within that many блоки, then route\nto upcoming chunk producers.",
+              "description": "Если нода не является производителем чанков в пределах этого числа блоков,\nмаршрутизировать запросы к будущим производителям чанков.",
               "format": "uint64"
             }
           },
@@ -978,7 +978,7 @@
             "required": false,
             "schema": {
               "type": "integer",
-              "description": "Number of threads for ПросмотрClientActor pool.",
+              "description": "Количество потоков для пула ViewClientActor.",
               "format": "uint"
             }
           },

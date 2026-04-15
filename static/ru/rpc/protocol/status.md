@@ -196,7 +196,7 @@
                   "required": true,
                   "schema": {
                     "type": "object",
-                    "description": "Height and hash of a блока"
+                    "description": "Высота и хеш блока"
                   }
                 },
                 {
@@ -204,7 +204,7 @@
                   "required": true,
                   "schema": {
                     "type": "object",
-                    "description": "Height and hash of a блока"
+                    "description": "Высота и хеш блока"
                   }
                 },
                 {
@@ -237,7 +237,7 @@
             "required": true,
             "schema": {
               "type": "integer",
-              "description": "Последний протокола version that this клиент supports.",
+              "description": "Последняя версия протокола, поддерживаемая этим клиентом.",
               "format": "uint32"
             }
           },
@@ -247,7 +247,7 @@
             "schema": {
               "type": "string",
               "nullable": true,
-              "description": "ed25519: or secp256k1: prefixed public ключ"
+              "description": "Публичный ключ с префиксом ed25519: или secp256k1:"
             }
           },
           {
@@ -255,7 +255,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "description": "ed25519: or secp256k1: prefixed public ключ"
+              "description": "Публичный ключ с префиксом ed25519: или secp256k1:"
             }
           },
           {
@@ -263,7 +263,7 @@
             "required": true,
             "schema": {
               "type": "integer",
-              "description": "Currently active протокола version.",
+              "description": "Текущая активная версия протокола.",
               "format": "uint32"
             }
           },
@@ -273,7 +273,7 @@
             "schema": {
               "type": "string",
               "nullable": true,
-              "description": "Address for RPC server. None if node doesn't have RPC endpoint enabled."
+              "description": "Адрес RPC-сервера. None, если у ноды не включён RPC-эндпоинт."
             }
           },
           {
@@ -281,7 +281,7 @@
             "required": true,
             "schema": {
               "type": "object",
-              "description": "Sync статус of the node.",
+              "description": "Статус синхронизации ноды.",
               "required": [
                 "latest_block_hash",
                 "latest_block_height",
@@ -390,7 +390,7 @@
             "schema": {
               "type": "string",
               "nullable": true,
-              "description": "NEAR аккаунта ID"
+              "description": "ID аккаунта NEAR"
             }
           },
           {
@@ -399,7 +399,7 @@
             "schema": {
               "type": "string",
               "nullable": true,
-              "description": "ed25519: or secp256k1: prefixed public ключ"
+              "description": "Публичный ключ с префиксом ed25519: или secp256k1:"
             }
           },
           {

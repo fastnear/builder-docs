@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "generate:ai-surfaces": "node scripts/generate-ai-surfaces.js",
+    "generate:algolia-synonyms": "node scripts/generate-algolia-synonyms.js",
     "generate:bespoke-host-pages": "node scripts/generate-bespoke-host-pages.js",
     "bootstrap:i18n": "node scripts/bootstrap-i18n.js",
     "bootstrap:i18n:reseed": "node scripts/bootstrap-i18n.js --reseed",

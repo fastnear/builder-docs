@@ -154,7 +154,7 @@
       "required": false,
       "schema": {
         "type": "object",
-        "description": "Information about this epoch валидаторы and next epoch валидаторы",
+        "description": "Информация о валидаторах текущей и следующей эпохи",
         "required": [
           "current_validators",
           "next_validators",
@@ -171,7 +171,7 @@
             "required": true,
             "schema": {
               "type": "array",
-              "description": "Fishermen for the текущий epoch",
+              "description": "Fishermen текущей эпохи",
               "items": {
                 "type": "object",
                 "description": "One of multiple possible types"
@@ -183,7 +183,7 @@
             "required": true,
             "schema": {
               "type": "array",
-              "description": "Proposals in the текущий epoch",
+              "description": "Заявки (proposals) в текущей эпохе",
               "items": {
                 "type": "object",
                 "description": "One of multiple possible types"
@@ -195,10 +195,10 @@
             "required": true,
             "schema": {
               "type": "array",
-              "description": "Валидаторы for the текущий epoch",
+              "description": "Валидаторы текущей эпохи",
               "items": {
                 "type": "object",
-                "description": "Describes information about the текущий epoch валидатора"
+                "description": "Описывает сведения о валидаторе текущей эпохи"
               }
             }
           },
@@ -216,7 +216,7 @@
             "required": true,
             "schema": {
               "type": "integer",
-              "description": "Epoch start блока height",
+              "description": "Высота блока начала эпохи",
               "format": "uint64"
             }
           },
@@ -237,7 +237,7 @@
             "required": true,
             "schema": {
               "type": "array",
-              "description": "Валидаторы for the next epoch",
+              "description": "Валидаторы следующей эпохи",
               "items": {
                 "type": "object"
               }

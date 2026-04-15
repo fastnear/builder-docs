@@ -110,7 +110,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "description": "NEAR аккаунта ID"
+              "description": "ID аккаунта NEAR"
             }
           },
           {
@@ -128,7 +128,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "description": "Блок финальность",
+              "description": "Финальность блока",
               "enum": [
                 "final",
                 "near-final",
@@ -184,7 +184,7 @@
       "required": false,
       "schema": {
         "type": "object",
-        "description": "A просмотр of the контракта код.",
+        "description": "Представление кода контракта.",
         "required": [
           "code_base64",
           "hash"

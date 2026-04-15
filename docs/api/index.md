@@ -14,6 +14,16 @@ FastNear API is the indexed REST family for builder-facing account views. It is 
 way to answer questions like "what does this account own?" or "which accounts map to this
 public key?" without stitching together raw RPC calls.
 
+## Base URLs
+
+```bash title="FastNear API Mainnet"
+https://api.fastnear.com
+```
+
+```bash title="FastNear API Testnet"
+https://test.api.fastnear.com
+```
+
 ## Best fit
 
 - Wallet balances and asset overviews.
@@ -27,11 +37,6 @@ public key?" without stitching together raw RPC calls.
 - Use [Transactions API](/tx) when the primary job is transaction or receipt history.
 - Use [NEAR Data API](/neardata) when the job is block-family polling and freshness checks.
 
-## Base URLs
-
-- `https://api.fastnear.com`
-- `https://test.api.fastnear.com`
-
 ## Auth and network availability
 
 - FastNear public REST endpoints do not require an API key.
@@ -40,10 +45,10 @@ public key?" without stitching together raw RPC calls.
 
 ## Common starting points
 
-- `V1 full account view` for a combined account snapshot.
-- `V1 account FT` and `V1 account NFT` for product-facing asset views.
-- `V1 public key` when you need account resolution from a key.
-- `V1 FT top holders` for token-distribution views.
+- [V1 full account view](/api/v1/account-full) for a combined account snapshot.
+- [V1 account FT](/api/v1/account-ft) and [V1 account NFT](/api/v1/account-nft) for product-facing asset views.
+- [V1 public key](/api/v1/public-key) when you need account resolution from a key.
+- [V1 FT top holders](/api/v1/ft-top) for token-distribution views.
 
 ## Troubleshooting
 

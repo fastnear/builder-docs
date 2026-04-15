@@ -167,7 +167,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "description": "NEAR аккаунта ID"
+              "description": "ID аккаунта NEAR"
             }
           },
           {
@@ -226,7 +226,7 @@
                   "schema": {
                     "type": "object",
                     "nullable": true,
-                    "description": "Stores the congestion level of a шард. More info about congestion [here](https://near.github.io/nearcore/architecture/how/receipt-congestion.html?highlight=congestion#receipt-congestion)"
+                    "description": "Хранит уровень перегрузки шарда. Подробнее о перегрузке [здесь](https://near.github.io/nearcore/architecture/how/receipt-congestion.html?highlight=congestion#receipt-congestion)"
                   }
                 },
                 {
@@ -250,7 +250,7 @@
                   "required": true,
                   "schema": {
                     "type": "string",
-                    "description": "Газ amount"
+                    "description": "Количество газа"
                   }
                 },
                 {
@@ -258,7 +258,7 @@
                   "required": true,
                   "schema": {
                     "type": "string",
-                    "description": "Газ amount"
+                    "description": "Количество газа"
                   }
                 },
                 {

@@ -12,6 +12,14 @@ page_actions:
 
 Transfers API focuses on account-centric transfer history. It is the simplest starting point when the question is specifically about movement of NEAR or fungible tokens.
 
+## Base URL
+
+```bash title="Transfers API Mainnet"
+https://transfers.main.fastnear.com
+```
+
+This surface is mainnet-only today; `?network=testnet` does not switch the backend.
+
 ## Best fit
 
 - Transfer feeds.
@@ -23,14 +31,15 @@ Transfers API focuses on account-centric transfer history. It is the simplest st
 - Use [Transactions API](/tx) when you need broader transaction or receipt history.
 - Use [FastNear API](/api) when you need balances or holdings rather than transfer events.
 
-## Base URL
-
-- `https://transfers.main.fastnear.com`
-
 ## Auth and availability
 
 - These pages do not use API keys or bearer tokens.
 - Responses include an opaque `resume_token` for pagination.
+
+## Common starting points
+
+- [Query Transfers](/transfers/query) when you want the account-centric feed with direction, asset, amount, and time filters.
+- Reuse the opaque `resume_token` exactly as returned when paging further into history.
 
 ## Troubleshooting
 
@@ -38,6 +47,6 @@ Transfers API focuses on account-centric transfer history. It is the simplest st
 
 Move to [Transactions API](/tx) if transfer history alone is too narrow.
 
-### I expected testnet switching
+### My `resume_token` stopped working
 
-This surface is currently mainnet-focused, so `?network=` does not change the backend here.
+Treat the token as opaque and reuse it only with the same endpoint and filters that produced it.

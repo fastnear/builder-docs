@@ -13,7 +13,7 @@ page_actions:
 FastNear RPC gives you direct JSON-RPC access to NEAR nodes for state queries,
 block and chunk inspection, transaction submission, validator data, and protocol introspection.
 
-## Endpoints
+## Base URLs
 
 Regular RPCs keep the most recent epochs of state and are the default choice for most application traffic:
 
@@ -37,12 +37,12 @@ https://archival-rpc.testnet.fastnear.com
 
 ## Common starting points
 
-- `Account`: account, access key, and key-list queries.
-- `Block`: finalized or height/hash-based block lookup.
-- `Contract`: view calls, code lookup, and state inspection.
-- `Protocol`: status, health, gas price, config, network, and experimental protocol methods.
-- `Transaction`: submission and execution status methods.
-- `Validators`: current and epoch-scoped validator views.
+- [`view_account`](/rpc/account/view-account), [`view_access_key`](/rpc/account/view-access-key), [`view_access_key_list`](/rpc/account/view-access-key-list) for account and key-list queries.
+- [`block`](/rpc/block/block-by-id) for height or hash lookup; [`block_effects`](/rpc/block/block-effects) for changes within a block.
+- [`call_function`](/rpc/contract/call-function), [`view_code`](/rpc/contract/view-code), [`view_state`](/rpc/contract/view-state) for contract introspection.
+- [`status`](/rpc/protocol/status), [`health`](/rpc/protocol/health), [`gas_price`](/rpc/protocol/gas-price) for node and protocol diagnostics.
+- [`send_tx`](/rpc/transaction/send-tx) for transaction submission; [`tx`](/rpc/transaction/tx-status) for execution status.
+- [`validators`](/rpc/validators/validators-current) for the current epoch's validator set.
 
 ## Use RPC when
 
@@ -61,9 +61,8 @@ In those cases, move to the indexed REST families such as [FastNear API](/api), 
 
 ## Auth and limits
 
-- FastNear API keys are optional for the docs experience and higher-limit access patterns.
-- Browser-based docs demos can use the in-page API key flow, but production traffic should move to a backend-controlled key strategy.
-- Start with [Auth & Access](/auth) if you need paid access or production guidance.
+- FastNear API keys are optional; the public endpoints work without one.
+- Higher-limit or paid access goes through [Auth & Access](/auth), where the same key works as either an `Authorization: Bearer` header or an `?apiKey=` URL parameter.
 
 ## Troubleshooting
 

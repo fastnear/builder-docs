@@ -31,7 +31,7 @@
     "light_client_head": "6sddgq8nkENAz4f8qR72qxRPM25QWNBVMrkYr63DgC2E",
     "sender_id": "intents.near",
     "transaction_hash": "4EQZ5qoEJUbz8SRNkNwrAPtsn2VFhg9Ci1weaNNpiuR7",
-    "type": "транзакции"
+    "type": "транзакция"
   }
 }
 ```
@@ -47,7 +47,7 @@
       "light_client_head": "6sddgq8nkENAz4f8qR72qxRPM25QWNBVMrkYr63DgC2E",
       "sender_id": "intents.near",
       "transaction_hash": "4EQZ5qoEJUbz8SRNkNwrAPtsn2VFhg9Ci1weaNNpiuR7",
-      "type": "транзакции"
+      "type": "транзакция"
     }
   },
   "headers": {},
@@ -121,7 +121,7 @@
             "required": false,
             "schema": {
               "type": "string",
-              "description": "NEAR аккаунта ID"
+              "description": "ID аккаунта NEAR"
             }
           },
           {
@@ -138,7 +138,7 @@
             "schema": {
               "type": "string",
               "enum": [
-                "транзакции"
+                "транзакция"
               ]
             }
           }
@@ -213,7 +213,7 @@
                   "required": true,
                   "schema": {
                     "type": "object",
-                    "description": "A part of a состояние for the текущий head of a light клиент. More info [here](https://nomicon.io/ChainSpec/LightClient)."
+                    "description": "Часть состояния для текущей головы лёгкого клиента. Подробнее [здесь](https://nomicon.io/ChainSpec/LightClient)."
                   }
                 },
                 {

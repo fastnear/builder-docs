@@ -162,7 +162,7 @@
             "required": true,
             "schema": {
               "type": "array",
-              "description": "Accounts of known блока and chunk producers from routing table.",
+              "description": "Аккаунты известных производителей блоков и чанков из таблицы маршрутизации.",
               "items": {
                 "type": "object"
               }

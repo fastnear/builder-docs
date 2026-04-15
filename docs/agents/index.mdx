@@ -1,0 +1,87 @@
+---
+title: Agents on FastNear
+description: Orientation for AI agents and automation runtimes using the FastNear docs site and its RPC and REST APIs.
+slug: /agents
+sidebar_position: 0
+displayed_sidebar: null
+page_actions:
+  - markdown
+---
+
+# Agents on FastNear
+
+{/* FASTNEAR_AI_DISCOVERY: This is the entry point for AI agents, crawlers, and automation runtimes. It lists every surface with its base URLs, the single auth model, and where to pull clean docs context into a prompt. */}
+
+This page is for AI agents, crawlers, and automation runtimes that need to use the FastNear APIs or ingest the FastNear docs. It lists the surfaces, their base URLs, how to authenticate, and where to get clean docs into a prompt.
+
+## The site at a glance
+
+FastNear serves one canonical RPC plus a family of indexed REST APIs over NEAR Protocol. Each surface below is a separate host with its own shape; a single FastNear API key works across all of them.
+
+| Surface | Base URLs | What lives here |
+|---|---|---|
+| [RPC Reference](/rpc) | `rpc.mainnet.fastnear.com`, `rpc.testnet.fastnear.com`, archival variants | Canonical JSON-RPC: account state, blocks and chunks, contract view calls, transaction submission, validator and protocol data. |
+| [FastNear API](/api) | `api.fastnear.com`, `test.api.fastnear.com` | Indexed REST views of balances, NFTs, fungible tokens, staking positions, public-key lookups, combined account snapshots. |
+| [Transactions API](/tx) | `tx.main.fastnear.com`, `tx.test.fastnear.com` | Indexed transaction, receipt, account-history, and block-history queries. |
+| [Transfers API](/transfers) | `transfers.main.fastnear.com` | Account-centric NEAR and FT transfer history. Mainnet only today. |
+| [NEAR Data API](/neardata) | `mainnet.neardata.xyz`, `testnet.neardata.xyz` | Cached and archived block-family reads, optimistic and finalized block polling, redirect helpers. |
+| [KV FastData API](/fastdata/kv) | `kv.main.fastnear.com`, `kv.test.fastnear.com` | Read-only key–value lookups over indexed FastData. |
+| [Snapshots](/snapshots/) | See child pages | Curated snapshot flows for operators standing up RPC or archival nodes. Not an application-level query path. |
+
+Each surface has its own index page with a full list of operations, request and response shapes, and live examples.
+
+## Route the agent's question to one surface
+
+- **"What is this account's on-chain state right now?"** → [RPC Reference](/rpc) (`view_account`, `view_access_key`).
+- **"What does this account own — balances, NFTs, staking?"** → [FastNear API](/api).
+- **"What is this account's recent activity or transaction history?"** → [Transactions API](/tx).
+- **"Only transfer events?"** → [Transfers API](/transfers).
+- **"What changed in the most recent blocks?"** → [NEAR Data API](/neardata).
+- **"Key–value write history for a contract?"** → [KV FastData API](/fastdata/kv).
+- **"Stand up infrastructure, not query data."** → [Snapshots](/snapshots/).
+
+Full decision table with side-by-side tradeoffs: [Choosing the Right Surface](/agents/choosing-surfaces).
+
+## Authenticate once, reuse everywhere
+
+Public endpoints work without a key. Add a key for higher limits or paid access patterns. The same key works across every surface above; send it either as an HTTP header or a URL parameter:
+
+```bash title="Authorization header"
+curl "https://rpc.mainnet.fastnear.com" \
+  -H "Authorization: Bearer ${API_KEY}" \
+  -H "Content-Type: application/json" \
+  --data '{"method":"block","params":{"finality":"final"},"id":1,"jsonrpc":"2.0"}'
+```
+
+```bash title="URL parameter"
+curl "https://rpc.mainnet.fastnear.com?apiKey=${API_KEY}"
+```
+
+Get a key from [dashboard.fastnear.com](https://dashboard.fastnear.com). Operational posture for non-interactive runtimes: [Auth for Agents](/agents/auth) — keys go in env vars or a secret manager, never in browser storage, chat logs, or prompts. Full flow and header details: [Auth & Access](/auth).
+
+## Pull clean docs into a prompt
+
+- Every page has a **Copy Markdown** button in the top-right toolbar. It emits a navigation-chrome-free Markdown version of the page, ready to paste into a prompt or RAG store.
+- The `llms.txt` convention is mirrored here:
+  - [`/llms.txt`](/llms.txt) — index of pages and short descriptions.
+  - [`/llms-full.txt`](/llms-full.txt) — the full docs corpus concatenated into one file.
+  - Russian-locale equivalents live at [`/ru/llms.txt`](/ru/llms.txt) and [`/ru/llms-full.txt`](/ru/llms-full.txt).
+- Machine-readable site structure for graph-aware ingestion: [`/structured-data/site-graph.json`](/structured-data/site-graph.json) (mirrored in `/ru/`).
+- Per-page Markdown mirrors live under the same slug with a `.md` suffix (e.g. `/rpc.md`, `/api.md`, `/agents.md`) if you prefer direct fetches over the Copy Markdown button.
+
+## Per-call hints an agent should know
+
+- Parameter names, response fields, and example payloads are rendered live on each endpoint page. The underlying registry lives at `src/data/generatedFastnearPageModels.json` — use it if you are mirroring the schema into another system.
+- `?network=testnet` is supported on specific pages only. Each page calls out its network support in the **Auth and availability** section; do not assume it works globally.
+- Pagination tokens (`resume_token`, `page_token`) are opaque. Reuse them verbatim and only with the same endpoint plus filters that produced them.
+- Status routes: every REST family ships a `/status` and `/health` path for liveness and sync-latency inspection.
+
+## Playbooks and deeper guides
+
+- [Agent Playbooks](/agents/playbooks) — surface combinations for account research, transaction investigation, near-realtime monitoring, and operator bootstrap.
+- [Choosing the Right Surface](/agents/choosing-surfaces) — decision table with per-question routing.
+- [Auth for Agents](/agents/auth) — the credential-handling checklist.
+
+## When the agent's caller is a human developer
+
+The [root chooser](/) is tuned for humans picking a first surface. Send human collaborators there and keep this page for programmatic consumption.

@@ -12,6 +12,16 @@ page_actions:
 
 NEAR Data API is the near-realtime and block-family surface. Use it when you want fresh block slices, redirect helpers, or recent finalized and optimistic block reads without presenting it as a streaming product.
 
+## Base URLs
+
+```bash title="NEAR Data API Mainnet"
+https://mainnet.neardata.xyz
+```
+
+```bash title="NEAR Data API Testnet"
+https://testnet.neardata.xyz
+```
+
 ## Best fit
 
 - Polling for recent finalized or optimistic blocks.
@@ -23,22 +33,17 @@ NEAR Data API is the near-realtime and block-family surface. Use it when you wan
 - Use [RPC Reference](/rpc) for canonical JSON-RPC methods and transaction submission.
 - Use [Snapshots](/snapshots/) for infrastructure bootstrap rather than live reads.
 
-## Base URLs
-
-- `https://mainnet.neardata.xyz`
-- `https://testnet.neardata.xyz`
-
 ## Auth and availability
 
 - FastNear subscriptions can use an optional `apiKey` query parameter on supported traffic.
-- Invalid API keys may return `401` before the NEAR Data application handles redirects.
+- An invalid API key returns `401` before the redirect helpers run, so invalid-key debugging will not surface the canonical target URL.
 - Add `?network=testnet` to switch compatible pages to testnet defaults.
 
 ## Common starting points
 
-- `Optimistic block` for freshest block polling.
-- `Final block by height` and `Block headers` for finalized block-family queries.
-- `Last final block redirect` and `Last optimistic block redirect` when you want helper redirects.
+- [Optimistic block](/neardata/block-optimistic) for freshest block polling.
+- [Final block by height](/neardata/block) and [Block headers](/neardata/block-headers) for finalized block-family queries.
+- [Last final block redirect](/neardata/last-block-final) and [Last optimistic block redirect](/neardata/last-block-optimistic) when you want helper redirects.
 
 ## Troubleshooting
 

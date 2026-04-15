@@ -115,7 +115,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "description": "NEAR аккаунта ID"
+              "description": "ID аккаунта NEAR"
             }
           },
           {
@@ -130,7 +130,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "description": "Base64-encoded storage ключ"
+              "description": "Ключ хранилища в кодировке Base64"
             }
           },
           {
@@ -148,7 +148,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "description": "Блок финальность",
+              "description": "Финальность блока",
               "enum": [
                 "final",
                 "near-final",
@@ -204,7 +204,7 @@
       "required": false,
       "schema": {
         "type": "object",
-        "description": "Resulting состояние values for a просмотр состояние запроса запрос",
+        "description": "Итоговые значения состояния для запроса просмотра состояния",
         "required": [
           "values"
         ],
@@ -226,7 +226,7 @@
               "type": "array",
               "items": {
                 "type": "object",
-                "description": "Item of the состояние, ключ and value are serialized in base64 and доказательство for inclusion of given состояние item."
+                "description": "Элемент состояния: ключ и значение сериализованы в Base64, а также приложено доказательство включения этого элемента состояния."
               }
             }
           }

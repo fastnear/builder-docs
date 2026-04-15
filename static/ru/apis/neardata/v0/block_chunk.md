@@ -53,7 +53,7 @@
 ```json
 {
   "type": "object",
-  "description": "Chunk object for the requested шард ID.",
+  "description": "Объект чанка для указанного ID шарда.",
   "additionalProperties": true
 }
 ```

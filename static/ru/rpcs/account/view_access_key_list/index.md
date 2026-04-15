@@ -109,7 +109,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "description": "NEAR аккаунта ID"
+              "description": "ID аккаунта NEAR"
             }
           },
           {
@@ -127,7 +127,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "description": "Блок финальность",
+              "description": "Финальность блока",
               "enum": [
                 "final",
                 "near-final",
@@ -183,7 +183,7 @@
       "required": false,
       "schema": {
         "type": "object",
-        "description": "Lists доступа ключи",
+        "description": "Список ключей доступа",
         "required": [
           "ключи"
         ],
@@ -195,7 +195,7 @@
               "type": "array",
               "items": {
                 "type": "object",
-                "description": "Describes information about an доступа ключ including the public ключ."
+                "description": "Описывает информацию о ключе доступа, включая публичный ключ."
               }
             }
           }

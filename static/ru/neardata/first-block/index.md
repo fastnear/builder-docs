@@ -43,7 +43,7 @@
 ```json
 {
   "type": "object",
-  "description": "Full блока document as served by neardata, including `block` and `shards`.",
+  "description": "Полный документ блока, который отдаёт neardata, включая `block` и `shards`.",
   "additionalProperties": true
 }
 ```

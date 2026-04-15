@@ -187,7 +187,7 @@
                   "required": true,
                   "schema": {
                     "type": "object",
-                    "description": "A part of a состояние for the текущий head of a light клиент. More info [here](https://nomicon.io/ChainSpec/LightClient)."
+                    "description": "Часть состояния для текущей головы лёгкого клиента. Подробнее [здесь](https://nomicon.io/ChainSpec/LightClient)."
                   }
                 },
                 {

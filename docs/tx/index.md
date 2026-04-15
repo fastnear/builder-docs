@@ -13,6 +13,16 @@ page_actions:
 Transactions API is the history surface. Use it when you want indexed transaction or receipt
 views without repeatedly polling raw RPC methods and joining the results yourself.
 
+## Base URLs
+
+```bash title="Transactions API Mainnet"
+https://tx.main.fastnear.com
+```
+
+```bash title="Transactions API Testnet"
+https://tx.test.fastnear.com
+```
+
 ## Best fit
 
 - Account activity feeds.
@@ -25,11 +35,6 @@ views without repeatedly polling raw RPC methods and joining the results yoursel
 - Use [FastNear API](/api) when you need balances, NFTs, staking, or public-key lookups.
 - Use [RPC Reference](/rpc) when you need canonical node behavior or transaction submission.
 
-## Base URLs
-
-- `https://tx.main.fastnear.com`
-- `https://tx.test.fastnear.com`
-
 ## Auth and availability
 
 - These pages do not currently use API keys or bearer tokens.
@@ -37,10 +42,10 @@ views without repeatedly polling raw RPC methods and joining the results yoursel
 
 ## Common starting points
 
-- `Transactions by hash` when you already know the transaction ID.
-- `Account history` for activity feeds and account debugging.
-- `Receipt lookup` for execution-flow investigation.
-- `Block range` when you want a bounded history scan.
+- [Transactions by hash](/tx/transactions) when you already know the transaction ID.
+- [Account history](/tx/account) for activity feeds and account debugging.
+- [Receipt lookup](/tx/receipt) for execution-flow investigation.
+- [Block range](/tx/blocks) when you want a bounded history scan.
 
 ## Troubleshooting
 

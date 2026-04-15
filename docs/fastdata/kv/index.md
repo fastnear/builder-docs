@@ -12,6 +12,16 @@ page_actions:
 
 KV FastData API is the read-only key-value family. It works best when you already know the account, predecessor, or key patterns you want to inspect and you want those rows without building your own storage indexing layer.
 
+## Base URLs
+
+```bash title="KV FastData API Mainnet"
+https://kv.main.fastnear.com
+```
+
+```bash title="KV FastData API Testnet"
+https://kv.test.fastnear.com
+```
+
 ## Best fit
 
 - Predecessor-centric key-value history.
@@ -24,11 +34,6 @@ KV FastData API is the read-only key-value family. It works best when you alread
 - Use [FastNear API](/api) for higher-level account, token, and NFT views.
 - Use [NEAR Data API](/neardata) for block-family reads instead of key-value history.
 
-## Base URLs
-
-- `https://kv.main.fastnear.com`
-- `https://kv.test.fastnear.com`
-
 ## Auth and availability
 
 - These embeds do not forward API keys or bearer tokens.
@@ -37,10 +42,10 @@ KV FastData API is the read-only key-value family. It works best when you alread
 
 ## Common starting points
 
-- `All by predecessor` for a broad predecessor scan.
-- `History by predecessor` when you need a filtered history stream.
-- `History by account` or `History by key` for narrower retrieval.
-- `Multi lookup` when you already know the exact keys.
+- [All by predecessor](/fastdata/kv/all-by-predecessor) for a broad predecessor scan.
+- [History by predecessor](/fastdata/kv/history-by-predecessor) when you need a filtered history stream.
+- [History by account](/fastdata/kv/history-by-account) or [History by key](/fastdata/kv/history-by-key) for narrower retrieval.
+- [Multi lookup](/fastdata/kv/multi) when you already know the exact keys.
 
 ## Troubleshooting
 

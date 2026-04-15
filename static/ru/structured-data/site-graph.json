@@ -115,7 +115,7 @@
       "docsPath": "/ru/rpc",
       "hostedPathPrefix": "/ru/rpcs/block",
       "id": "rpc-block",
-      "key": "блока",
+      "key": "блок",
       "kind": "rpc",
       "name": "RPC блоков",
       "schemaType": "WebAPI",
@@ -166,7 +166,7 @@
       "docsPath": "/ru/rpc",
       "hostedPathPrefix": "/ru/rpcs/transaction",
       "id": "rpc-transaction",
-      "key": "транзакции",
+      "key": "транзакция",
       "kind": "rpc",
       "name": "RPC транзакций",
       "schemaType": "WebAPI",
@@ -650,7 +650,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/ru/apis/fastnear/v1/account_staking",
-      "description": "Returns staking pool rows for the requested аккаунта. `last_update_block_height` is nullable when FastNEAR has not recorded a recent indexed update for that pool relationship.",
+      "description": "Возвращает записи стейкинг-пулов для указанного аккаунта. Поле `last_update_block_height` может быть null, если FastNEAR не записал недавнее индексированное обновление для этой связи с пулом.",
       "docsPath": "/ru/api/v1/account-staking",
       "familyId": "api-fastnear",
       "headline": "FastNEAR API - V1 Аккаунт Staking",
@@ -670,10 +670,10 @@
       ],
       "schemaType": "APIReference",
       "sourceSpec": "apis/fastnear/v1/account_staking.yaml",
-      "summary": "Поиск indexed staking pools for an аккаунта",
+      "summary": "Поиск индексированных стейкинг-пулов аккаунта",
       "transport": "http",
       "@id": "https://docs.fastnear.com/structured-data/operations/fastnear-v1-account-staking",
-      "abstract": "Поиск indexed staking pools for an аккаунта",
+      "abstract": "Поиск индексированных стейкинг-пулов аккаунта",
       "canonicalPageId": "https://docs.fastnear.com/ru/apis/fastnear/v1/account_staking#page",
       "canonicalUrl": "https://docs.fastnear.com/ru/apis/fastnear/v1/account_staking",
       "docsPageId": "https://docs.fastnear.com/ru/api/v1/account-staking#page",
@@ -695,7 +695,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/ru/apis/fastnear/v1/ft_top",
-      "description": "Returns the top indexed аккаунтов by balance for the requested fungible token.",
+      "description": "Возвращает проиндексированные аккаунты с наибольшим балансом указанного FT-токена.",
       "docsPath": "/ru/api/v1/ft-top",
       "familyId": "api-fastnear",
       "headline": "FastNEAR API - V1 FT Top Holders",
@@ -715,10 +715,10 @@
       ],
       "schemaType": "APIReference",
       "sourceSpec": "apis/fastnear/v1/ft_top.yaml",
-      "summary": "Поиск top indexed holders for a fungible token",
+      "summary": "Поиск индексированных топ-держателей FT-токена",
       "transport": "http",
       "@id": "https://docs.fastnear.com/structured-data/operations/fastnear-v1-ft-top",
-      "abstract": "Поиск top indexed holders for a fungible token",
+      "abstract": "Поиск индексированных топ-держателей FT-токена",
       "canonicalPageId": "https://docs.fastnear.com/ru/apis/fastnear/v1/ft_top#page",
       "canonicalUrl": "https://docs.fastnear.com/ru/apis/fastnear/v1/ft_top",
       "docsPageId": "https://docs.fastnear.com/ru/api/v1/ft-top#page",
@@ -1598,10 +1598,10 @@
       "description": "Возвращает перенаправление на канонический URL последнего оптимистичного блока для текущего деплоя. Клиенты, которые автоматически следуют перенаправлению, вместо этого получат итоговый документ блока.",
       "docsPath": "/ru/neardata/last-block-optimistic",
       "familyId": "api-neardata",
-      "headline": "NEAR Data API - Last Optimistic Блок",
+      "headline": "NEAR Data API — последний оптимистичный блок",
       "httpMethod": "GET",
       "id": "neardata-v0-last-block-optimistic",
-      "name": "NEAR Data API - Last Optimistic Блок",
+      "name": "NEAR Data API — последний оптимистичный блок",
       "networkKeys": [
         "mainnet",
         "testnet"
@@ -1643,10 +1643,10 @@
       "description": "Возвращает строки транзакций аккаунта, необязательное общее количество на первой странице и необязательный `resume_token`.",
       "docsPath": "/ru/tx/account",
       "familyId": "api-transactions",
-      "headline": "Транзакции API - Аккаунт История",
+      "headline": "Транзакции API — история аккаунта",
       "httpMethod": "POST",
       "id": "transactions-v0-account",
-      "name": "Транзакции API - Аккаунт История",
+      "name": "Транзакции API — история аккаунта",
       "networkKeys": [
         "mainnet",
         "testnet"
@@ -1688,10 +1688,10 @@
       "description": "Возвращает строку блока и, при необходимости, связанные транзакции и квитанции.",
       "docsPath": "/ru/tx/block",
       "familyId": "api-transactions",
-      "headline": "Транзакции API - Блок Поиск",
+      "headline": "Транзакции API — поиск блока",
       "httpMethod": "POST",
       "id": "transactions-v0-block",
-      "name": "Транзакции API - Блок Поиск",
+      "name": "Транзакции API — поиск блока",
       "networkKeys": [
         "mainnet",
         "testnet"
@@ -1733,10 +1733,10 @@
       "description": "Возвращает до 100 строк блоков для запрошенного диапазона высот.",
       "docsPath": "/ru/tx/blocks",
       "familyId": "api-transactions",
-      "headline": "Транзакции API - Блок Range",
+      "headline": "Транзакции API — диапазон блоков",
       "httpMethod": "POST",
       "id": "transactions-v0-blocks",
-      "name": "Транзакции API - Блок Range",
+      "name": "Транзакции API — диапазон блоков",
       "networkKeys": [
         "mainnet",
         "testnet"
@@ -1778,10 +1778,10 @@
       "description": "Возвращает строку квитанции и, если она есть, связанные сырые данные транзакции.",
       "docsPath": "/ru/tx/receipt",
       "familyId": "api-transactions",
-      "headline": "Транзакции API - Квитанция Поиск",
+      "headline": "Транзакции API — поиск квитанции",
       "httpMethod": "POST",
       "id": "transactions-v0-receipt",
-      "name": "Транзакции API - Квитанция Поиск",
+      "name": "Транзакции API — поиск квитанции",
       "networkKeys": [
         "mainnet",
         "testnet"
@@ -1823,10 +1823,10 @@
       "description": "Возвращает до 20 наборов сырых данных транзакций для переданных хешей транзакций.",
       "docsPath": "/ru/tx/transactions",
       "familyId": "api-transactions",
-      "headline": "Транзакции API - Транзакции by Hash",
+      "headline": "Транзакции API — транзакции по хешу",
       "httpMethod": "POST",
       "id": "transactions-v0-transactions",
-      "name": "Транзакции API - Транзакции by Hash",
+      "name": "Транзакции API — транзакции по хешу",
       "networkKeys": [
         "mainnet",
         "testnet"
@@ -1912,10 +1912,10 @@
       "description": "Возвращает информацию о конкретном ключе доступа аккаунта NEAR.",
       "docsPath": "/ru/rpc/account/view-access-key",
       "familyId": "rpc-account",
-      "headline": "NEAR Протокол RPC: Просмотр доступ Key",
+      "headline": "NEAR Protocol RPC: просмотр ключа доступа",
       "httpMethod": "POST",
       "id": "rpc-view-access-key",
-      "name": "NEAR Протокол RPC: Просмотр доступ Key",
+      "name": "NEAR Protocol RPC: просмотр ключа доступа",
       "networkKeys": [
         "mainnet",
         "testnet"
@@ -1959,10 +1959,10 @@
       "description": "Возвращает список всех ключей доступа аккаунта NEAR.",
       "docsPath": "/ru/rpc/account/view-access-key-list",
       "familyId": "rpc-account",
-      "headline": "NEAR Протокол RPC: Просмотр доступ Key List",
+      "headline": "NEAR Protocol RPC: просмотр списка ключей доступа",
       "httpMethod": "POST",
       "id": "rpc-view-access-key-list",
-      "name": "NEAR Протокол RPC: Просмотр доступ Key List",
+      "name": "NEAR Protocol RPC: просмотр списка ключей доступа",
       "networkKeys": [
         "mainnet",
         "testnet"
@@ -2006,10 +2006,10 @@
       "description": "Возвращает подробную информацию об аккаунте NEAR, включая баланс и использование хранилища.",
       "docsPath": "/ru/rpc/account/view-account",
       "familyId": "rpc-account",
-      "headline": "NEAR Протокол RPC: Просмотр аккаунта",
+      "headline": "NEAR Protocol RPC: просмотр аккаунта",
       "httpMethod": "POST",
       "id": "rpc-view-account",
-      "name": "NEAR Протокол RPC: Просмотр аккаунта",
+      "name": "NEAR Protocol RPC: просмотр аккаунта",
       "networkKeys": [
         "mainnet",
         "testnet"
@@ -2053,10 +2053,10 @@
       "description": "Возвращает данные блока по указанной высоте.",
       "docsPath": "/ru/rpc/block/block-by-height",
       "familyId": "rpc-block",
-      "headline": "NEAR Протокол RPC: Блок by Height",
+      "headline": "NEAR Protocol RPC: блок по высоте",
       "httpMethod": "POST",
       "id": "rpc-block-by-height",
-      "name": "NEAR Протокол RPC: Блок by Height",
+      "name": "NEAR Protocol RPC: блок по высоте",
       "networkKeys": [
         "mainnet",
         "testnet"
@@ -2100,10 +2100,10 @@
       "description": "Возвращает данные блока по указанному хешу.",
       "docsPath": "/ru/rpc/block/block-by-id",
       "familyId": "rpc-block",
-      "headline": "NEAR Протокол RPC: Блок by ID",
+      "headline": "NEAR Protocol RPC: блок по ID",
       "httpMethod": "POST",
       "id": "rpc-block-by-id",
-      "name": "NEAR Протокол RPC: Блок by ID",
+      "name": "NEAR Protocol RPC: блок по ID",
       "networkKeys": [
         "mainnet",
         "testnet"
@@ -2147,10 +2147,10 @@
       "description": "Возвращает изменения, вызванные блоком, для заданной высоты блока или хеша по всем типам транзакций.",
       "docsPath": "/ru/rpc/block/block-effects",
       "familyId": "rpc-block",
-      "headline": "NEAR Протокол RPC: Get блока effects",
+      "headline": "NEAR Protocol RPC: эффекты блока",
       "httpMethod": "POST",
       "id": "rpc-block-effects",
-      "name": "NEAR Протокол RPC: Get блока effects",
+      "name": "NEAR Protocol RPC: эффекты блока",
       "networkKeys": [
         "mainnet",
         "testnet"
@@ -2194,10 +2194,10 @@
       "description": "Выполняет view-метод смарт-контракта без изменения состояния.",
       "docsPath": "/ru/rpc/contract/call-function",
       "familyId": "rpc-contract",
-      "headline": "NEAR Протокол RPC: Вызов Function",
+      "headline": "NEAR Protocol RPC: вызов функции",
       "httpMethod": "POST",
       "id": "rpc-call-function",
-      "name": "NEAR Протокол RPC: Вызов Function",
+      "name": "NEAR Protocol RPC: вызов функции",
       "networkKeys": [
         "mainnet",
         "testnet"
@@ -2241,10 +2241,10 @@
       "description": "Возвращает код контракта (Wasm), опубликованный в аккаунте.",
       "docsPath": "/ru/rpc/contract/view-code",
       "familyId": "rpc-contract",
-      "headline": "NEAR Протокол RPC: Просмотр контракта код",
+      "headline": "NEAR Protocol RPC: просмотр кода контракта",
       "httpMethod": "POST",
       "id": "rpc-view-code",
-      "name": "NEAR Протокол RPC: Просмотр контракта код",
+      "name": "NEAR Protocol RPC: просмотр кода контракта",
       "networkKeys": [
         "mainnet",
         "testnet"
@@ -2288,10 +2288,10 @@
       "description": "Возвращает глобально развёрнутый код контракта по его хешу.",
       "docsPath": "/ru/rpc/contract/view-global-contract-code",
       "familyId": "rpc-contract",
-      "headline": "NEAR Протокол RPC: Просмотр global контракта код",
+      "headline": "NEAR Protocol RPC: просмотр глобального кода контракта",
       "httpMethod": "POST",
       "id": "rpc-view-global-contract-code",
-      "name": "NEAR Протокол RPC: Просмотр global контракта код",
+      "name": "NEAR Protocol RPC: просмотр глобального кода контракта",
       "networkKeys": [
         "mainnet",
         "testnet"
@@ -2335,10 +2335,10 @@
       "description": "Возвращает глобально развёрнутый код контракта, который использует указанный аккаунт.",
       "docsPath": "/ru/rpc/contract/view-global-contract-code-by-account-id",
       "familyId": "rpc-contract",
-      "headline": "NEAR Протокол RPC: Просмотр global контракта код by аккаунта",
+      "headline": "NEAR Protocol RPC: просмотр глобального кода контракта по аккаунту",
       "httpMethod": "POST",
       "id": "rpc-view-global-contract-code-by-account-id",
-      "name": "NEAR Протокол RPC: Просмотр global контракта код by аккаунта",
+      "name": "NEAR Protocol RPC: просмотр глобального кода контракта по аккаунту",
       "networkKeys": [
         "mainnet",
         "testnet"
@@ -2382,10 +2382,10 @@
       "description": "Возвращает состояние (пары ключ-значение), сохранённое для аккаунта контракта.",
       "docsPath": "/ru/rpc/contract/view-state",
       "familyId": "rpc-contract",
-      "headline": "NEAR Протокол RPC: Просмотр Контракт Состояние",
+      "headline": "NEAR Protocol RPC: просмотр состояния контракта",
       "httpMethod": "POST",
       "id": "rpc-view-state",
-      "name": "NEAR Протокол RPC: Просмотр Контракт Состояние",
+      "name": "NEAR Protocol RPC: просмотр состояния контракта",
       "networkKeys": [
         "mainnet",
         "testnet"
@@ -2617,10 +2617,10 @@
       "description": "Запрашивает уровень перегрузки выбранного шарда.",
       "docsPath": "/ru/rpc/protocol/experimental-congestion-level",
       "familyId": "rpc-protocol",
-      "headline": "NEAR Протокол RPC: Get congestion level",
+      "headline": "NEAR Protocol RPC: уровень перегрузки",
       "httpMethod": "POST",
       "id": "rpc-EXPERIMENTAL-congestion-level",
-      "name": "NEAR Протокол RPC: Get congestion level",
+      "name": "NEAR Protocol RPC: уровень перегрузки",
       "networkKeys": [
         "mainnet",
         "testnet"
@@ -2664,10 +2664,10 @@
       "description": "Возвращает доказательство блока для лайт-клиента.",
       "docsPath": "/ru/rpc/protocol/experimental-light-client-block-proof",
       "familyId": "rpc-protocol",
-      "headline": "NEAR Протокол RPC: Get light клиент блока доказательство",
+      "headline": "NEAR Protocol RPC: доказательство блока для лёгкого клиента",
       "httpMethod": "POST",
       "id": "rpc-EXPERIMENTAL-light-client-block-proof",
-      "name": "NEAR Протокол RPC: Get light клиент блока доказательство",
+      "name": "NEAR Protocol RPC: доказательство блока для лёгкого клиента",
       "networkKeys": [
         "mainnet",
         "testnet"
@@ -2711,10 +2711,10 @@
       "description": "Возвращает доказательство исполнения транзакции для лайт-клиента.",
       "docsPath": "/ru/rpc/protocol/experimental-light-client-proof",
       "familyId": "rpc-protocol",
-      "headline": "NEAR Протокол RPC: Get light клиент execution доказательство",
+      "headline": "NEAR Protocol RPC: доказательство исполнения для лёгкого клиента",
       "httpMethod": "POST",
       "id": "rpc-EXPERIMENTAL-light-client-proof",
-      "name": "NEAR Протокол RPC: Get light клиент execution доказательство",
+      "name": "NEAR Protocol RPC: доказательство исполнения для лёгкого клиента",
       "networkKeys": [
         "mainnet",
         "testnet"
@@ -2758,10 +2758,10 @@
       "description": "Возвращает конфигурацию на уровне протокола: стоимость газа и хранения, лимиты, флаги возможностей и другие параметры.",
       "docsPath": "/ru/rpc/protocol/experimental-protocol-config",
       "familyId": "rpc-protocol",
-      "headline": "NEAR Протокол RPC: Get протокола конфигурация",
+      "headline": "NEAR Protocol RPC: конфигурация протокола",
       "httpMethod": "POST",
       "id": "rpc-EXPERIMENTAL-protocol-config",
-      "name": "NEAR Протокол RPC: Get протокола конфигурация",
+      "name": "NEAR Protocol RPC: конфигурация протокола",
       "networkKeys": [
         "mainnet",
         "testnet"
@@ -3089,10 +3089,10 @@
       "description": "Возвращает данные доказательства для проверки лайт-клиентом.",
       "docsPath": "/ru/rpc/protocol/light-client-proof",
       "familyId": "rpc-protocol",
-      "headline": "NEAR Protocol RPC: доказательство для light client",
+      "headline": "NEAR Protocol RPC: доказательство для лёгкого клиента",
       "httpMethod": "POST",
       "id": "rpc-light-client-proof",
-      "name": "NEAR Protocol RPC: доказательство для light client",
+      "name": "NEAR Protocol RPC: доказательство для лёгкого клиента",
       "networkKeys": [
         "mainnet",
         "testnet"
@@ -3277,10 +3277,10 @@
       "description": "Возвращает следующий блок для лайт-клиента.",
       "docsPath": "/ru/rpc/protocol/next-light-client-block",
       "familyId": "rpc-protocol",
-      "headline": "NEAR Protocol RPC: следующий блок light client",
+      "headline": "NEAR Protocol RPC: следующий блок для лёгкого клиента",
       "httpMethod": "POST",
       "id": "rpc-next-light-client-block",
-      "name": "NEAR Protocol RPC: следующий блок light client",
+      "name": "NEAR Protocol RPC: следующий блок для лёгкого клиента",
       "networkKeys": [
         "mainnet",
         "testnet"
@@ -3465,10 +3465,10 @@
       "description": "Возвращает квитанцию по её ID как есть, без статуса и итогового результата исполнения.",
       "docsPath": "/ru/rpc/transaction/experimental-receipt",
       "familyId": "rpc-transaction",
-      "headline": "NEAR Protocol RPC: receipt по ID",
+      "headline": "NEAR Protocol RPC: квитанция по ID",
       "httpMethod": "POST",
       "id": "rpc-EXPERIMENTAL-receipt",
-      "name": "NEAR Protocol RPC: receipt по ID",
+      "name": "NEAR Protocol RPC: квитанция по ID",
       "networkKeys": [
         "mainnet",
         "testnet"
@@ -3653,10 +3653,10 @@
       "description": "Возвращает валидаторов текущей эпохи в порядке продюсеров блоков с повторениями.",
       "docsPath": "/ru/rpc/validators/experimental-validators-ordered",
       "familyId": "rpc-validators",
-      "headline": "NEAR Protocol RPC: валидаторы в порядке producers",
+      "headline": "NEAR Protocol RPC: упорядоченный список валидаторов",
       "httpMethod": "POST",
       "id": "rpc-EXPERIMENTAL-validators-ordered",
-      "name": "NEAR Protocol RPC: валидаторы в порядке producers",
+      "name": "NEAR Protocol RPC: упорядоченный список валидаторов",
       "networkKeys": [
         "mainnet",
         "testnet"
@@ -3814,6 +3814,19 @@
       "route": "/ru",
       "routeType": "docs",
       "url": "https://docs.fastnear.com/ru"
+    },
+    {
+      "entityIds": {
+        "familyIds": [],
+        "mainEntityId": null,
+        "pageId": "https://docs.fastnear.com/ru/agents#page"
+      },
+      "indexable": true,
+      "markdownMirrorUrl": "https://docs.fastnear.com/ru/agents.md",
+      "pageSchemaType": "TechArticle",
+      "route": "/ru/agents",
+      "routeType": "docs",
+      "url": "https://docs.fastnear.com/ru/agents"
     },
     {
       "entityIds": {

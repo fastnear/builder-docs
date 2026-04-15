@@ -57,7 +57,7 @@
       "required": false,
       "schema": {
         "type": "boolean",
-        "description": "Include квитанция and signer metadata in each entry.",
+        "description": "Включать в каждую запись метаданные квитанции и подписанта.",
         "default": false
       }
     },
@@ -74,7 +74,7 @@
       "required": false,
       "schema": {
         "type": "string",
-        "description": "Opaque pagination cursor from a previous `/v0/all/{predecessor_id}` ответ."
+        "description": "Непрозрачный курсор пагинации из предыдущего ответа `/v0/all/{predecessor_id}`."
       }
     }
   ],

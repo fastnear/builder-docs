@@ -51,7 +51,7 @@
 - `predecessor_id` (путь, обязательный, string): Вызывающий аккаунт, который записал ключи FastData.
 - `asc` (body, boolean): Сортировать результаты истории по возрастанию. По умолчанию сначала идут новые записи.
 - `include_metadata` (body, boolean): Добавить в каждую запись метаданные квитанции и подписанта.
-- `ключ` (body, string): Exact ключ filter. Mutually exclusive with `key_prefix`.
+- `ключ` (body, string): Фильтр по точному ключу. Взаимно исключающий с `key_prefix`.
 - `key_prefix` (body, string): Фильтр по префиксу для совпадения пространств имён ключей.
 - `limit` (body, integer)
 - `page_token` (body, string): Непрозрачный курсор пагинации из предыдущего ответа с тем же эндпоинтом и набором фильтров.
@@ -66,7 +66,7 @@
       "required": false,
       "schema": {
         "type": "boolean",
-        "description": "Sort ascending for история endpoints. Defaults to newest-first.",
+        "description": "Сортировать по возрастанию для эндпоинтов истории. По умолчанию — от новых к старым.",
         "default": false
       }
     },
@@ -75,7 +75,7 @@
       "required": false,
       "schema": {
         "type": "boolean",
-        "description": "Include квитанция and signer metadata in each entry.",
+        "description": "Включать в каждую запись метаданные квитанции и подписанта.",
         "default": false
       }
     },
@@ -84,7 +84,7 @@
       "required": false,
       "schema": {
         "type": "string",
-        "description": "Exact ключ filter. Mutually exclusive with `key_prefix`."
+        "description": "Фильтр по точному ключу. Взаимно исключающий с `key_prefix`."
       }
     },
     {
@@ -92,7 +92,7 @@
       "required": false,
       "schema": {
         "type": "string",
-        "description": "Prefix filter for matching ключ namespaces."
+        "description": "Фильтр по префиксу для сопоставления пространств имён ключей."
       }
     },
     {
@@ -108,7 +108,7 @@
       "required": false,
       "schema": {
         "type": "string",
-        "description": "Opaque pagination cursor from a previous ответ for the same endpoint and filter set."
+        "description": "Непрозрачный курсор пагинации из предыдущего ответа того же эндпоинта и набора фильтров."
       }
     }
   ],

@@ -1,6 +1,6 @@
-# FastNEAR API - V1 Аккаунт Staking
-Поиск indexed staking pools for an аккаунта
-Returns staking pool rows for the requested аккаунта. `last_update_block_height` is nullable when FastNEAR has not recorded a recent indexed update for that pool relationship.
+# FastNEAR API — V1 стейкинг аккаунта
+Поиск индексированных стейкинг-пулов аккаунта
+Возвращает записи стейкинг-пулов для указанного аккаунта. Поле `last_update_block_height` может быть null, если FastNEAR не записал недавнее индексированное обновление для этой связи с пулом.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/apis/fastnear/v1/account_staking
 - https://docs.fastnear.com/ru/apis/fastnear/openapi/staking/account_staking_v1
@@ -13,7 +13,7 @@ Returns staking pool rows for the requested аккаунта. `last_update_block
 - Mainnet: https://api.fastnear.com/
 - Testnet: https://test.api.fastnear.com/
 ## Авторизация
-- API-ключ через query `apiKey`: Optional API ключ forwarded by embedded portal clients. The public FastNEAR API does not require it.
+- API-ключ через query `apiKey`: Необязательный API-ключ, передаваемый встраиваемыми клиентами портала. Публичный FastNEAR API его не требует.
 - Этот экспорт намеренно не включает локально сохранённые учётные данные
 ## Текущий запрос
 - Сеть: Mainnet
@@ -33,19 +33,19 @@ Returns staking pool rows for the requested аккаунта. `last_update_block
 }
 ```
 ### Входные данные
-- `account_id` (путь, обязательный, string): NEAR аккаунта ID to inspect.
+- `account_id` (путь, обязательный, string): ID аккаунта NEAR для проверки.
 ### Параметры пути
 
-- `account_id` (путь, обязательный, string): NEAR аккаунта ID to inspect.
+- `account_id` (путь, обязательный, string): ID аккаунта NEAR для проверки.
 
 ### Параметры запроса
 
-- `apiKey` (query, string): Optional API ключ forwarded by embedded portal clients. The public FastNEAR API does not require it.
+- `apiKey` (query, string): Необязательный API-ключ, передаваемый встраиваемыми клиентами портала. Публичный FastNEAR API его не требует.
 
 ## Справка по ответу
 - Статус: 200
 - Тип данных: application/json
-- Краткое описание: Indexed staking pool rows for the requested аккаунта
+- Краткое описание: Индексированные записи стейкинг-пулов для указанного аккаунта
 ### Схема ответа
 ```json
 {

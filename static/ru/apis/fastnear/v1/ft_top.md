@@ -1,6 +1,6 @@
-# FastNEAR API - V1 FT Top Holders
-Поиск top indexed holders for a fungible token
-Returns the top indexed аккаунтов by balance for the requested fungible token.
+# FastNEAR API — V1 топ держателей FT
+Поиск индексированных топ-держателей FT-токена
+Возвращает проиндексированные аккаунты с наибольшим балансом указанного FT-токена.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/apis/fastnear/v1/ft_top
 - https://docs.fastnear.com/ru/apis/fastnear/openapi/fungible-tokens/ft_top_v1
@@ -13,7 +13,7 @@ Returns the top indexed аккаунтов by balance for the requested fungible
 - Mainnet: https://api.fastnear.com/
 - Testnet: https://test.api.fastnear.com/
 ## Авторизация
-- API-ключ через query `apiKey`: Optional API ключ forwarded by embedded portal clients. The public FastNEAR API does not require it.
+- API-ключ через query `apiKey`: Необязательный API-ключ, передаваемый встраиваемыми клиентами портала. Публичный FastNEAR API его не требует.
 - Этот экспорт намеренно не включает локально сохранённые учётные данные
 ## Текущий запрос
 - Сеть: Mainnet
@@ -33,19 +33,19 @@ Returns the top indexed аккаунтов by balance for the requested fungible
 }
 ```
 ### Входные данные
-- `token_id` (путь, обязательный, string): Fungible token контракта аккаунта ID.
+- `token_id` (путь, обязательный, string): ID аккаунта контракта FT-токена.
 ### Параметры пути
 
-- `token_id` (путь, обязательный, string): Fungible token контракта аккаунта ID.
+- `token_id` (путь, обязательный, string): ID аккаунта контракта FT-токена.
 
 ### Параметры запроса
 
-- `apiKey` (query, string): Optional API ключ forwarded by embedded portal clients. The public FastNEAR API does not require it.
+- `apiKey` (query, string): Необязательный API-ключ, передаваемый встраиваемыми клиентами портала. Публичный FastNEAR API его не требует.
 
 ## Справка по ответу
 - Статус: 200
 - Тип данных: application/json
-- Краткое описание: Indexed top holders for the requested fungible token
+- Краткое описание: Индексированные топ-держатели указанного FT-токена
 ### Схема ответа
 ```json
 {

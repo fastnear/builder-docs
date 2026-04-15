@@ -105,7 +105,7 @@
             "required": false,
             "schema": {
               "type": "string",
-              "description": "Desired level of execution статус guarantee",
+              "description": "Желаемый уровень гарантии статуса исполнения",
               "default": "EXECUTED_OPTIMISTIC",
               "enum": [
                 "NONE",
@@ -130,7 +130,7 @@
             "required": false,
             "schema": {
               "type": "string",
-              "description": "NEAR аккаунта ID"
+              "description": "ID аккаунта NEAR"
             }
           },
           {
@@ -198,7 +198,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "description": "Desired level of execution статус guarantee",
+              "description": "Желаемый уровень гарантии статуса исполнения",
               "enum": [
                 "NONE",
                 "INCLUDED",
@@ -214,7 +214,7 @@
             "required": false,
             "schema": {
               "type": "array",
-              "description": "Receipts generated from the транзакции",
+              "description": "Квитанции, порождённые транзакцией",
               "items": {
                 "type": "object"
               }
@@ -225,7 +225,7 @@
             "required": false,
             "schema": {
               "type": "array",
-              "description": "The execution outcome of квитанции.",
+              "description": "Результаты исполнения квитанций.",
               "items": {
                 "type": "object"
               }
@@ -240,11 +240,11 @@
             }
           },
           {
-            "name": "транзакции",
+            "name": "транзакция",
             "required": false,
             "schema": {
               "type": "object",
-              "description": "Signed Транзакция"
+              "description": "Подписанная транзакция"
             }
           },
           {
@@ -252,7 +252,7 @@
             "required": false,
             "schema": {
               "type": "object",
-              "description": "The execution outcome of the signed транзакции."
+              "description": "Результат исполнения подписанной транзакции."
             }
           }
         ]

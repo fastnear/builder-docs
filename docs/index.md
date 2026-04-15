@@ -120,7 +120,8 @@ These complementary APIs stay useful once you know the core surfaces above:
 <RpcApiServiceLinks />
 ## If you are building for AI or agents
 
-- Start with [Choosing the Right Surface](/agents/choosing-surfaces) to map the job to the right FastNear surface.
+- Start at the [Agents hub](/agents) for an overview of routing, credentials, and playbook patterns.
+- Use [Choosing the Right Surface](/agents/choosing-surfaces) to map the agent's job to one FastNear surface.
 - Use [Auth for Agents](/agents/auth) when the caller is an automation, worker, or agent runtime.
 - Borrow from [Agent Playbooks](/agents/playbooks) when you want a concrete workflow pattern.
 - Use page-level `Copy as Markdown` actions to move clean docs context into prompts, notes, and agent runtimes.

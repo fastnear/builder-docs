@@ -53,7 +53,7 @@
 ```json
 {
   "type": "object",
-  "description": "Shard object for the requested шард ID.",
+  "description": "Объект шарда для указанного ID шарда.",
   "additionalProperties": true
 }
 ```
