@@ -334,7 +334,7 @@
     "description": "The draft content banner title"
   },
   "theme.contentVisibility.draftBanner.message": {
-    "message": "Эта страница является черновиком. Она видна только в режиме разработки и не попадает в боевую сборку.",
+    "message": "Эта страница является черновиком. Она видна только в режиме разработки и не попадает в продовую сборку.",
     "description": "The draft content banner message"
   },
   "theme.docs.DocCard.categoryDescription.plurals": {

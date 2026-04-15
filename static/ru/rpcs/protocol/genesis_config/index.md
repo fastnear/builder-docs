@@ -474,7 +474,7 @@
             "required": true,
             "schema": {
               "type": "integer",
-              "description": "Протокол version that this genesis works with.",
+              "description": "Версия протокола, для которой предназначен этот genesis.",
               "format": "uint32"
             }
           },
@@ -542,7 +542,7 @@
             "required": false,
             "schema": {
               "type": "boolean",
-              "description": "Используется только для тестов. Мы жёстко задаём часть конфигурации для mainnet и testnet\nв AllEpochConfig, и нам нужен способ протестировать этот путь в коде. Для этого и служит этот флаг.\nЕсли установить `true`, нода будет использовать тот же путь переопределения конфигурации, что и mainnet и testnet.",
+              "description": "Используется только для тестов. Мы жёстко задаём часть конфигурации для mainnet и testnet\nв AllEpochConfig, и нам нужен способ протестировать этот путь в коде. Для этого и служит этот флаг.\nЕсли установить `true`, узел будет использовать тот же путь переопределения конфигурации, что и mainnet и testnet.",
               "default": false
             }
           },
@@ -554,7 +554,7 @@
               "description": "Список начальных валидаторов.",
               "items": {
                 "type": "object",
-                "description": "Аккаунт info for validators"
+                "description": "Информация об аккаунтах валидаторов"
               }
             }
           }

@@ -15,6 +15,12 @@ This folder collects longer-form reference chapters that are useful while evolvi
 
 - [Translating API and RPC documentation into Russian](/Users/mikepurvis/near/fn/builder-docs/md-CLAUDE-chapters/i18n_translating_russian.md)
   - Russian translation style guide for technical API and RPC documentation.
+- [Russian translation glossary](/Users/mikepurvis/near/fn/builder-docs/md-CLAUDE-chapters/i18n_ru_glossary.md)
+  - Authoritative term list for the Russian locale with source citations (Yandex Cloud, Tinkoff, Waves Enterprise).
+- [Russian translation quick-reference card](/Users/mikepurvis/near/fn/builder-docs/md-CLAUDE-chapters/i18n_ru_quick_reference.md)
+  - One-page translator's card: three-tier rule, top 30 terms, top 5 rules.
+- [Adding a new locale](/Users/mikepurvis/near/fn/builder-docs/md-CLAUDE-chapters/i18n_adding_locales.md)
+  - Step-by-step recipe for rolling out a new locale using Russian as the template.
 - [API / RPC 中文术语翻译风格指南](/Users/mikepurvis/near/fn/builder-docs/md-CLAUDE-chapters/i18n_translating_chinese.md)
   - Chinese translation style guide for API and RPC terminology decisions.
 

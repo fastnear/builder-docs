@@ -273,7 +273,7 @@
             "schema": {
               "type": "string",
               "nullable": true,
-              "description": "Адрес RPC-сервера. None, если у ноды не включён RPC-эндпоинт."
+              "description": "Адрес RPC-сервера. None, если у узла не включён RPC-эндпоинт."
             }
           },
           {
@@ -281,7 +281,7 @@
             "required": true,
             "schema": {
               "type": "object",
-              "description": "Статус синхронизации ноды.",
+              "description": "Статус синхронизации узла.",
               "required": [
                 "latest_block_hash",
                 "latest_block_height",

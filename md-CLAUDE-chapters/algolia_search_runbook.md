@@ -53,17 +53,9 @@ DOCSEARCH_API_KEY=...
 DOCSEARCH_INDEX_NAME=...
 ```
 
-### Search-admin sync
-
-This is needed for `yarn algolia:status` and `yarn algolia:sync`:
-
-```bash
-ALGOLIA_ADMIN_API_KEY=...
-```
-
 ### Crawler control
 
-These are needed for crawler status, sync, start, and wait:
+These are needed for crawler status, sync, start, and wait — including `yarn algolia:status` and `yarn algolia:sync`, which both act on the crawler API only:
 
 ```bash
 ALGOLIA_CRAWLER_USER_ID=...
@@ -76,6 +68,7 @@ Important notes:
 - `DOCSEARCH_INDEX_NAME` is the index name, not the crawler display name.
 - `ALGOLIA_CRAWLER_NAME` is the crawler display name, for example `prod_fastnear_docs_crawler`.
 - The repo now constructs crawler Basic auth internally. You do not need to precompute it.
+- This repo does **not** use an Algolia admin key. Rules (`algolia/rules.json`) and synonyms (`algolia/synonyms.json`) are managed through the Algolia dashboard UI — the JSON files in `algolia/` are the intended-state reference, not a machine-synced artifact. See `algolia/operations.md` for the "dashboard curation baseline" framing. `scripts/audit-indexing-surface.js` enforces that `.env.example` never documents an admin key so this posture stays explicit.
 
 ---
 
@@ -106,19 +99,16 @@ Run:
 yarn algolia:status
 ```
 
-This compares live state against the repo-owned desired state for:
+This compares live crawler state against the repo-owned desired state:
 
-- search settings
-- repo-owned Rules
-- repo-owned synonyms
-- crawler config
+- crawler config (action list, `recordExtractor` source, `initialIndexSettings`, `sitemaps`, `startUrls`, etc.)
 
 What to expect:
 
-- exit code `0` if live state matches repo state and crawler is not blocked
+- exit code `0` if the crawler config matches repo state and the crawler is not blocked
 - exit code non-zero if there is drift or a blocked crawler
 
-If `ALGOLIA_ADMIN_API_KEY` is missing or invalid, this command will fail before giving you a useful diff.
+`algolia:status` does **not** inspect live search settings, Rules, or synonyms — those live in the Algolia dashboard and are not tracked by the crawler API this script uses. To compare dashboard Rules/synonyms against `algolia/rules.json` / `algolia/synonyms.json`, use the Algolia dashboard UI directly.
 
 ### 3. Sync live state
 
@@ -128,14 +118,13 @@ Run:
 yarn algolia:sync
 ```
 
-This does two things:
-
-- syncs live search settings, `fastnear-*` Rules, and `fastnear-*` synonyms
-- syncs crawler config
+This patches the crawler config on Algolia with the repo-owned `algolia/crawler/shared.js` + `algolia/index-settings.json`. The new config applies to all subsequent crawl runs.
 
 What it does **not** do:
 
 - it does not start a crawl
+- it does not push `algolia/rules.json` or `algolia/synonyms.json` — those are dashboard-managed (see `algolia/operations.md`)
+- it does not touch live search settings outside of what the crawler config's `initialIndexSettings` applies on next reindex
 
 ### 4. Start a reindex
 
@@ -313,15 +302,15 @@ This section is based on real failures encountered during the live integration w
 
 Usually means:
 
-- `ALGOLIA_ADMIN_API_KEY` is missing
-- `ALGOLIA_ADMIN_API_KEY` is not valid for the current app
 - `DOCSEARCH_APP_ID` is wrong for the index you are trying to inspect
+- `DOCSEARCH_API_KEY` is missing (the search-only key used by `yarn algolia:inspect`)
+- crawler auth is wrong — see the crawler API auth section below
 
 What to do:
 
 1. Confirm `DOCSEARCH_APP_ID`
 2. Confirm `DOCSEARCH_INDEX_NAME`
-3. Confirm `ALGOLIA_ADMIN_API_KEY`
+3. Confirm `DOCSEARCH_API_KEY` if running `yarn algolia:inspect`; otherwise confirm the crawler keys
 4. Retry:
 
 ```bash

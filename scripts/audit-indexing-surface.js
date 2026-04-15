@@ -185,7 +185,8 @@ const REQUIRED_REDIRECT_LINES = [
   "/docs/rpc-api/api/* /api/:splat 301",
   "/docs/rpc-api/tx/* /tx/:splat 301",
   "/docs/rpc-api/api-key /auth 301",
-  "/docs/rpc-api/auth/* /auth/:splat 301",
+  // /auth collapsed to a single page (commit 0a1c719); no sub-paths to preserve.
+  "/docs/rpc-api/auth/* /auth 301",
   "/docs/transaction-flow/* /transaction-flow/:splat 301",
 ];
 
@@ -645,7 +646,6 @@ function auditConfigSurface() {
     );
   });
   [
-    "ALGOLIA_ADMIN_API_KEY",
     "ALGOLIA_CRAWLER_ID",
     "ALGOLIA_CRAWLER_BASIC_AUTH",
   ].forEach((needle) => {
@@ -654,6 +654,10 @@ function auditConfigSurface() {
       `.env.example should not document ${needle}`
     );
   });
+  assert(
+    !/ALGOLIA_[A-Z_]*ADMIN[A-Z_]*API_KEY/.test(envExampleText),
+    ".env.example should not document an Algolia admin key"
+  );
   assert(
     !envExampleText.includes("DOCSEARCH_ANALYTICS_API_KEY"),
     ".env.example should not document DOCSEARCH_ANALYTICS_API_KEY"
@@ -705,19 +709,26 @@ function auditConfigSurface() {
       `algolia/index-settings.json should retrieve ${attribute}`
     );
   });
+  // Content must remain the last (lowest-priority) searchable attribute.
   const contentIndex = indexSettings.searchableAttributes.indexOf("content");
-  assert(contentIndex >= 3, "algolia/index-settings.json should keep content in searchableAttributes");
   assert(
-    indexSettings.searchableAttributes[contentIndex - 3] === "unordered(keywords)",
-    "algolia/index-settings.json should search keywords immediately before operation_id"
+    contentIndex === indexSettings.searchableAttributes.length - 1,
+    "algolia/index-settings.json should keep content last in searchableAttributes"
+  );
+  // Machine-name search is prioritized (see commit 0db6469): operation_id and
+  // canonical_target lead the searchable-attribute list so queries like
+  // `view_account` rank the canonical endpoint above incidental mentions.
+  assert(
+    indexSettings.searchableAttributes[0] === "unordered(operation_id)",
+    "algolia/index-settings.json should rank operation_id first for machine-name search priority"
   );
   assert(
-    indexSettings.searchableAttributes[contentIndex - 2] === "unordered(operation_id)",
-    "algolia/index-settings.json should search operation_id immediately before canonical_target"
+    indexSettings.searchableAttributes[1] === "unordered(canonical_target)",
+    "algolia/index-settings.json should rank canonical_target second"
   );
   assert(
-    indexSettings.searchableAttributes[contentIndex - 1] === "unordered(canonical_target)",
-    "algolia/index-settings.json should search canonical_target immediately before content"
+    indexSettings.searchableAttributes.includes("unordered(keywords)"),
+    "algolia/index-settings.json should include unordered(keywords) in searchableAttributes"
   );
   assert(
     rules.every((rule) => String(rule.objectID || "").startsWith("fastnear-")),

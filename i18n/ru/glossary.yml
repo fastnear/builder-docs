@@ -10,6 +10,10 @@ preserve:
   - OAuth
   - JWT
   - Bearer
+  - Authorization
+  - Content-Type
+  - Accept
+  - User-Agent
   - GET
   - POST
   - PUT
@@ -87,7 +91,7 @@ translate:
     - from: "Browser Demo Auth"
       to: "Авторизация в браузерном демо"
     - from: "Production Backend Auth"
-      to: "Авторизация для production-бэкенда"
+      to: "Авторизация для продового бэкенда"
     - from: "Choosing the Right Surface"
       to: "Как выбрать подходящую поверхность"
     - from: "Agent Playbooks"

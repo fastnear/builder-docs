@@ -45,7 +45,7 @@
 - `predecessor_id` (путь, обязательный, string): Вызывающий аккаунт, который записал ключи FastData.
 - `include_metadata` (body, boolean): Добавить в каждую запись метаданные квитанции и подписанта.
 - `limit` (body, integer)
-- `page_token` (body, string): Непрозрачный курсор пагинации из предыдущего ответа `/v0/all/{predecessor_id}`.
+- `page_token` (body, string): Непрозрачный токен страницы из предыдущего ответа `/v0/all/{predecessor_id}`.
 ### Схема запроса
 ```json
 {
@@ -74,7 +74,7 @@
       "required": false,
       "schema": {
         "type": "string",
-        "description": "Непрозрачный курсор пагинации из предыдущего ответа `/v0/all/{predecessor_id}`."
+        "description": "Непрозрачный токен страницы из предыдущего ответа `/v0/all/{predecessor_id}`."
       }
     }
   ],

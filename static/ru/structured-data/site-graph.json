@@ -293,10 +293,10 @@
       "description": "Возвращает только ID FT-контрактов, которые FastNear проиндексировал для запрошенного аккаунта. В отличие от маршрута v1, этот ответ не включает балансы и метаданные по высоте блока.",
       "docsPath": "/ru/api/v0/account-ft",
       "familyId": "api-fastnear",
-      "headline": "FastNEAR API - V0 Аккаунт FT",
+      "headline": "FastNEAR API - V0 FT аккаунта",
       "httpMethod": "GET",
       "id": "fastnear-v0-account-ft",
-      "name": "FastNEAR API - V0 Аккаунт FT",
+      "name": "FastNEAR API - V0 FT аккаунта",
       "networkKeys": [
         "mainnet",
         "testnet"
@@ -338,10 +338,10 @@
       "description": "Возвращает только ID NFT-контрактов, которые FastNear проиндексировал для запрошенного аккаунта. В отличие от маршрута v1, этот ответ не включает метаданные `last_update_block_height`.",
       "docsPath": "/ru/api/v0/account-nft",
       "familyId": "api-fastnear",
-      "headline": "FastNEAR API - V0 Аккаунт NFT",
+      "headline": "FastNEAR API - V0 NFT аккаунта",
       "httpMethod": "GET",
       "id": "fastnear-v0-account-nft",
-      "name": "FastNEAR API - V0 Аккаунт NFT",
+      "name": "FastNEAR API - V0 NFT аккаунта",
       "networkKeys": [
         "mainnet",
         "testnet"
@@ -383,10 +383,10 @@
       "description": "Возвращает ID стейкинг-пулов, которые FastNear проиндексировал для запрошенного аккаунта. В отличие от маршрута v1, этот ответ не включает метаданные `last_update_block_height`.",
       "docsPath": "/ru/api/v0/account-staking",
       "familyId": "api-fastnear",
-      "headline": "FastNEAR API - V0 Аккаунт Staking",
+      "headline": "FastNEAR API - V0 стейкинг аккаунта",
       "httpMethod": "GET",
       "id": "fastnear-v0-account-staking",
-      "name": "FastNEAR API - V0 Аккаунт Staking",
+      "name": "FastNEAR API - V0 стейкинг аккаунта",
       "networkKeys": [
         "mainnet",
         "testnet"
@@ -428,10 +428,10 @@
       "description": "Возвращает ID аккаунтов, которые сейчас связаны с переданным публичным ключом полного доступа.",
       "docsPath": "/ru/api/v0/public-key",
       "familyId": "api-fastnear",
-      "headline": "FastNEAR API - V0 Публичный ключ Поиск",
+      "headline": "FastNEAR API - V0 поиск по публичному ключу",
       "httpMethod": "GET",
       "id": "fastnear-v0-public-key-lookup",
-      "name": "FastNEAR API - V0 Публичный ключ Поиск",
+      "name": "FastNEAR API - V0 поиск по публичному ключу",
       "networkKeys": [
         "mainnet",
         "testnet"
@@ -473,10 +473,10 @@
       "description": "Возвращает ID аккаунтов, которые сейчас связаны с переданным публичным ключом, включая ключи ограниченного доступа.",
       "docsPath": "/ru/api/v0/public-key-all",
       "familyId": "api-fastnear",
-      "headline": "FastNEAR API - V0 Публичный ключ Поиск (All)",
+      "headline": "FastNEAR API - V0 поиск по публичному ключу (все)",
       "httpMethod": "GET",
       "id": "fastnear-v0-public-key-lookup-all",
-      "name": "FastNEAR API - V0 Публичный ключ Поиск (All)",
+      "name": "FastNEAR API - V0 поиск по публичному ключу (все)",
       "networkKeys": [
         "mainnet",
         "testnet"
@@ -518,10 +518,10 @@
       "description": "Возвращает индексированные строки FT-токенов для указанного аккаунта. Балансы и `last_update_block_height` могут быть `null`, если индекс ещё не записал эти данные.",
       "docsPath": "/ru/api/v1/account-ft",
       "familyId": "api-fastnear",
-      "headline": "FastNEAR API - V1 Аккаунт FT",
+      "headline": "FastNEAR API - V1 FT аккаунта",
       "httpMethod": "GET",
       "id": "fastnear-v1-account-ft",
-      "name": "FastNEAR API - V1 Аккаунт FT",
+      "name": "FastNEAR API - V1 FT аккаунта",
       "networkKeys": [
         "mainnet",
         "testnet"
@@ -563,10 +563,10 @@
       "description": "Возвращает данные по стейкингу, FT-токенам, NFT и состоянию аккаунта для указанного аккаунта. Поле `state` может быть `null`, если индекс ещё не зафиксировал состояние аккаунта.",
       "docsPath": "/ru/api/v1/account-full",
       "familyId": "api-fastnear",
-      "headline": "FastNEAR API - V1 Аккаунт Full",
+      "headline": "FastNEAR API - V1 полные данные аккаунта",
       "httpMethod": "GET",
       "id": "fastnear-v1-account-full",
-      "name": "FastNEAR API - V1 Аккаунт Full",
+      "name": "FastNEAR API - V1 полные данные аккаунта",
       "networkKeys": [
         "mainnet",
         "testnet"
@@ -608,10 +608,10 @@
       "description": "Возвращает индексированные строки NFT-контрактов для указанного аккаунта. `last_update_block_height` может быть `null`, если FastNear ещё не записал недавнее обновление по этой связи с контрактом.",
       "docsPath": "/ru/api/v1/account-nft",
       "familyId": "api-fastnear",
-      "headline": "FastNEAR API - V1 Аккаунт NFT",
+      "headline": "FastNEAR API - V1 NFT аккаунта",
       "httpMethod": "GET",
       "id": "fastnear-v1-account-nft",
-      "name": "FastNEAR API - V1 Аккаунт NFT",
+      "name": "FastNEAR API - V1 NFT аккаунта",
       "networkKeys": [
         "mainnet",
         "testnet"
@@ -653,10 +653,10 @@
       "description": "Возвращает записи стейкинг-пулов для указанного аккаунта. Поле `last_update_block_height` может быть null, если FastNEAR не записал недавнее индексированное обновление для этой связи с пулом.",
       "docsPath": "/ru/api/v1/account-staking",
       "familyId": "api-fastnear",
-      "headline": "FastNEAR API - V1 Аккаунт Staking",
+      "headline": "FastNEAR API - V1 стейкинг аккаунта",
       "httpMethod": "GET",
       "id": "fastnear-v1-account-staking",
-      "name": "FastNEAR API - V1 Аккаунт Staking",
+      "name": "FastNEAR API - V1 стейкинг аккаунта",
       "networkKeys": [
         "mainnet",
         "testnet"
@@ -743,10 +743,10 @@
       "description": "Возвращает ID аккаунтов, которые сейчас связаны с переданным публичным ключом полного доступа. Этот маршрут v1 пока использует ту же форму ответа `{ public_key, account_ids }`, что и маршрут v0.",
       "docsPath": "/ru/api/v1/public-key",
       "familyId": "api-fastnear",
-      "headline": "FastNEAR API - V1 Публичный ключ Поиск",
+      "headline": "FastNEAR API - V1 поиск по публичному ключу",
       "httpMethod": "GET",
       "id": "fastnear-v1-public-key-lookup",
-      "name": "FastNEAR API - V1 Публичный ключ Поиск",
+      "name": "FastNEAR API - V1 поиск по публичному ключу",
       "networkKeys": [
         "mainnet",
         "testnet"
@@ -788,10 +788,10 @@
       "description": "Возвращает ID аккаунтов, которые сейчас связаны с переданным публичным ключом, включая ключи ограниченного доступа, если они присутствуют в индексе FastNear. Этот маршрут v1 пока использует ту же форму ответа `{ public_key, account_ids }`, что и маршрут v0.",
       "docsPath": "/ru/api/v1/public-key-all",
       "familyId": "api-fastnear",
-      "headline": "FastNEAR API - V1 Публичный ключ Поиск (All)",
+      "headline": "FastNEAR API - V1 поиск по публичному ключу (все)",
       "httpMethod": "GET",
       "id": "fastnear-v1-public-key-lookup-all",
-      "name": "FastNEAR API - V1 Публичный ключ Поиск (All)",
+      "name": "FastNEAR API - V1 поиск по публичному ключу (все)",
       "networkKeys": [
         "mainnet",
         "testnet"
@@ -833,10 +833,10 @@
       "description": "Возвращает последнюю строку для каждой пары `(current_account_id, key)`, записанной выбранным вызывающим аккаунтом. Значения `page_token` непрозрачны и привязаны к этому эндпоинту и выбранному вызывающему аккаунту.",
       "docsPath": "/ru/fastdata/kv/all-by-predecessor",
       "familyId": "api-kv-fastdata",
-      "headline": "KV FastData API - All Последний Keys by Predecessor",
+      "headline": "KV FastData API - последние ключи по предшественнику",
       "httpMethod": "POST",
       "id": "kv-fastdata-v0-all-by-predecessor",
-      "name": "KV FastData API - All Последний Keys by Predecessor",
+      "name": "KV FastData API - последние ключи по предшественнику",
       "networkKeys": [
         "mainnet",
         "testnet"
@@ -878,10 +878,10 @@
       "description": "Возвращает исторические строки для одного точного ключа, который выбранный вызывающий аккаунт записал в выбранный контракт.",
       "docsPath": "/ru/fastdata/kv/get-history-key",
       "familyId": "api-kv-fastdata",
-      "headline": "KV FastData API - История by Exact Key",
+      "headline": "KV FastData API - история по конкретному ключу",
       "httpMethod": "GET",
       "id": "kv-fastdata-v0-get-history-key",
-      "name": "KV FastData API - История by Exact Key",
+      "name": "KV FastData API - история по конкретному ключу",
       "networkKeys": [
         "mainnet",
         "testnet"
@@ -923,10 +923,10 @@
       "description": "Возвращает последнюю строку для одного точного ключа, который выбранный вызывающий аккаунт записал в выбранный контракт.",
       "docsPath": "/ru/fastdata/kv/get-latest-key",
       "familyId": "api-kv-fastdata",
-      "headline": "KV FastData API - Последний by Exact Key",
+      "headline": "KV FastData API - последние записи по конкретному ключу",
       "httpMethod": "GET",
       "id": "kv-fastdata-v0-get-latest-key",
-      "name": "KV FastData API - Последний by Exact Key",
+      "name": "KV FastData API - последние записи по конкретному ключу",
       "networkKeys": [
         "mainnet",
         "testnet"
@@ -968,10 +968,10 @@
       "description": "Возвращает исторические строки для выбранного аккаунта контракта по всем вызывающим аккаунтам. Значения `page_token` непрозрачны и валидны только при повторном использовании с тем же эндпоинтом и фильтрами.",
       "docsPath": "/ru/fastdata/kv/history-by-account",
       "familyId": "api-kv-fastdata",
-      "headline": "KV FastData API - История by Аккаунт",
+      "headline": "KV FastData API - история по аккаунту",
       "httpMethod": "POST",
       "id": "kv-fastdata-v0-history-by-account",
-      "name": "KV FastData API - История by Аккаунт",
+      "name": "KV FastData API - история по аккаунту",
       "networkKeys": [
         "mainnet",
         "testnet"
@@ -1013,10 +1013,10 @@
       "description": "Возвращает исторические строки FastData для одного точного ключа по всем индексированным контрактам и вызывающим аккаунтам. Значения `page_token` непрозрачны и валидны только при повторном использовании с тем же эндпоинтом и фильтрами.",
       "docsPath": "/ru/fastdata/kv/history-by-key",
       "familyId": "api-kv-fastdata",
-      "headline": "KV FastData API - История by Global Key",
+      "headline": "KV FastData API - история по глобальному ключу",
       "httpMethod": "POST",
       "id": "kv-fastdata-v0-history-by-key",
-      "name": "KV FastData API - История by Global Key",
+      "name": "KV FastData API - история по глобальному ключу",
       "networkKeys": [
         "mainnet",
         "testnet"
@@ -1058,10 +1058,10 @@
       "description": "Возвращает исторические строки для пары `predecessor_id` + `current_account_id`. Используйте `key` или `key_prefix`, чтобы сузить поиск. Значения `page_token` непрозрачны и валидны только при повторном использовании с тем же эндпоинтом и теми же фильтрами.",
       "docsPath": "/ru/fastdata/kv/history-by-predecessor",
       "familyId": "api-kv-fastdata",
-      "headline": "KV FastData API - История by Predecessor",
+      "headline": "KV FastData API - история по предшественнику",
       "httpMethod": "POST",
       "id": "kv-fastdata-v0-history-by-predecessor",
-      "name": "KV FastData API - История by Predecessor",
+      "name": "KV FastData API - история по предшественнику",
       "networkKeys": [
         "mainnet",
         "testnet"
@@ -1103,10 +1103,10 @@
       "description": "Возвращает последнюю строку для каждой пары `(predecessor_id, key)`, записанной в контракт. Значения `page_token` непрозрачны и привязаны к этому эндпоинту, аккаунту контракта и активным фильтрам.",
       "docsPath": "/ru/fastdata/kv/latest-by-account",
       "familyId": "api-kv-fastdata",
-      "headline": "KV FastData API - Последний by Аккаунт",
+      "headline": "KV FastData API - последние записи по аккаунту",
       "httpMethod": "POST",
       "id": "kv-fastdata-v0-latest-by-account",
-      "name": "KV FastData API - Последний by Аккаунт",
+      "name": "KV FastData API - последние записи по аккаунту",
       "networkKeys": [
         "mainnet",
         "testnet"
@@ -1148,10 +1148,10 @@
       "description": "Возвращает последнюю строку для каждой пары `(current_account_id, key)`, записанной выбранным вызывающим аккаунтом в выбранный контракт. Значения `page_token` непрозрачны и валидны только при повторном использовании с тем же эндпоинтом и теми же фильтрами.",
       "docsPath": "/ru/fastdata/kv/latest-by-predecessor",
       "familyId": "api-kv-fastdata",
-      "headline": "KV FastData API - Последний by Predecessor",
+      "headline": "KV FastData API - последние записи по предшественнику",
       "httpMethod": "POST",
       "id": "kv-fastdata-v0-latest-by-predecessor",
-      "name": "KV FastData API - Последний by Predecessor",
+      "name": "KV FastData API - последние записи по предшественнику",
       "networkKeys": [
         "mainnet",
         "testnet"
@@ -1193,10 +1193,10 @@
       "description": "Возвращает последнюю запись для каждого запрошенного полностью квалифицированного ключа. Отсутствующие ключи представлены как элементы `null` в массиве ответа.",
       "docsPath": "/ru/fastdata/kv/multi",
       "familyId": "api-kv-fastdata",
-      "headline": "KV FastData API - Multi-Key Поиск",
+      "headline": "KV FastData API - поиск по нескольким ключам",
       "httpMethod": "POST",
       "id": "kv-fastdata-v0-multi",
-      "name": "KV FastData API - Multi-Key Поиск",
+      "name": "KV FastData API - поиск по нескольким ключам",
       "networkKeys": [
         "mainnet",
         "testnet"
@@ -1508,10 +1508,10 @@
       "description": "Возвращает перенаправление на канонический URL первого блока для выбранного деплоя. Клиенты, которые автоматически следуют перенаправлению, вместо этого получат полный документ блока.",
       "docsPath": "/ru/neardata/first-block",
       "familyId": "api-neardata",
-      "headline": "NEAR Data API - First Блок",
+      "headline": "NEAR Data API - первый блок",
       "httpMethod": "GET",
       "id": "neardata-v0-first-block",
-      "name": "NEAR Data API - First Блок",
+      "name": "NEAR Data API - первый блок",
       "networkKeys": [
         "mainnet",
         "testnet"
@@ -2523,10 +2523,10 @@
       "description": "Возвращает сведения о чанке по его хешу.",
       "docsPath": "/ru/rpc/protocol/chunk-by-hash",
       "familyId": "rpc-protocol",
-      "headline": "NEAR Протокол RPC: Chunk by Hash",
+      "headline": "NEAR Protocol RPC: чанк по хешу",
       "httpMethod": "POST",
       "id": "rpc-chunk-by-hash",
-      "name": "NEAR Протокол RPC: Chunk by Hash",
+      "name": "NEAR Protocol RPC: чанк по хешу",
       "networkKeys": [
         "mainnet",
         "testnet"
