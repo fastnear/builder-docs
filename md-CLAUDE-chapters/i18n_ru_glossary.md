@@ -58,7 +58,7 @@ Companion references:
 | credentials | учётные данные | Native | — | |
 | session | сессия | Transliterated | Yandex ✓ | |
 | sandbox | песочница | Native | Tinkoff ✓ | «контур песочницы»; sandbox-only токены |
-| production (environment) | боевой / боевая среда | Native | — | Never «продакшен» |
+| production (environment) | продовый контур / продовый сервис / продовый бэкенд | Transliterated | Tinkoff ✓ | Prefer operator-style `продовый`; never «продакшен». |
 | scope (auth) | область действия / разрешения | Native | — | |
 | permission | право доступа | Native | Yandex ✓ | |
 
@@ -181,7 +181,7 @@ See the full [style guide](i18n_translating_russian.md) for all rules and exampl
 
 The `yarn audit:ru-terminology` script flags these as errors:
 
-- ❌ «продакшен» / «продакшене» / «продакшен-бэкенды» → ✓ «боевой» / «боевая среда» / «боевые бэкенды»
+- ❌ «продакшен» / «продакшене» / «продакшен-бэкенды» → ✓ «продовый контур» / «продовый сервис» / «продовый бэкенд»
 - ❌ bare «стриминг» in prose → ✓ «потоковая передача» (or «стрим» in compound like `стрим-соединение`)
 - ❌ «API ключ», «JSON объект», «HTTP запрос» (space) → ✓ «API-ключ», «JSON-объект», «HTTP-запрос» (hyphen)
 - ❌ capitalized «Вы» / «Вам» / «Ваш» mid-sentence → ✓ lowercase «вы» or impersonal rephrase

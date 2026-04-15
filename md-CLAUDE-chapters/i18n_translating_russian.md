@@ -58,7 +58,7 @@ The table below consolidates findings from Yandex Cloud, VK, Tinkoff, Sber, Russ
 | pagination | **пагинация** | Transliterated | Yandex ✓ — used as section heading |
 | page token | **токен страницы** (prose) / `page_token` (code) | Translated / Latin | Yandex ✓ — keeps `page_token` as the parameter name |
 | sandbox | **песочница** | Native Russian | Tinkoff ✓ — «контур песочницы», sandbox-only токены |
-| production (environment) | **боевой** / **боевая среда** | Native | Russian idiom for "production use"; avoid calque `продакшен` |
+| production (environment) | **продовый контур** / **продовый сервис** / **продовый бэкенд** | Transliterated | Tinkoff ✓ — `продовый контур`; avoid calque `продакшен` |
 | streaming | **потоковая передача** (prose) / **стрим** (compounds like `стрим-соединение`) | Translated / Transliterated | Yandex: `потоковая передача`; Tinkoff ✓ — `стрим-соединение` |
 | timeout | **тайм-аут** | Transliterated | Internal convention; not cited by Yandex/Tinkoff/Waves |
 | node | **узел** (formal, our default) / **нода** (informal/operator) | Native / Transliterated | Waves: `нода`; Wikipedia: `узел`; our register → `узел` |
@@ -205,4 +205,3 @@ Rules for this repo:
 ## Conclusion
 
 Russian API documentation operates on a remarkably consistent set of conventions that have emerged organically across major tech companies and been reinforced by community practice on Habr. The core principle is pragmatic bilingualism: Russian handles the narrative and explanatory layer while English owns the code layer, with transliteration serving as the bridge for terms that need grammatical integration. Three decisions drive nearly every translation choice. First, does the term have a natural Russian equivalent with the same precision? If yes, use it (запрос, ответ, заголовок, массив). Second, does the term need to be declined, pluralized, or used as an adjective? If yes, transliterate it into Cyrillic (токен, эндпоинт, вебхук, валидатор). Third, is the term a protocol name, abbreviation, code identifier, or HTTP verb? If yes, leave it in Latin script (API, REST, GET, `user_id`). For blockchain terminology specifically, transliteration dominates because these concepts originated in English and the Russian developer community reads English fluently — but formal documentation (Ethereum.org, Waves) tends toward more fully translated equivalents, especially for non-developer audiences. The Microsoft Terminology Database and Ethereum.org Russian glossary remain the two most authoritative references for resolving edge cases.
-

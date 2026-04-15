@@ -436,7 +436,7 @@
             "required": false,
             "schema": {
               "type": "object",
-              "description": "Представление, сохраняющее JSON-формат runtime-конфигурации.",
+              "description": "Представление, сохраняющее JSON-формат конфигурации рантайма.",
               "properties": [
                 {
                   "name": "account_creation_config",

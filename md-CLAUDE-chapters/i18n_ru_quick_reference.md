@@ -32,7 +32,7 @@ Every English term fits one of three tiers. Pick the tier first; the choice is r
 | cursor | курсор |
 | rate limit | ограничение частоты запросов |
 | sandbox | песочница |
-| production (env) | боевая среда |
+| production (env) | продовый контур |
 | timeout | тайм-аут |
 | webhook | вебхук |
 | account | аккаунт |
@@ -58,7 +58,7 @@ Every English term fits one of three tiers. Pick the tier first; the choice is r
 
 ## Forbidden (audit-enforced)
 
-- ❌ продакшен → ✓ боевой / боевая среда
+- ❌ продакшен → ✓ продовый контур / продовый сервис
 - ❌ bare стриминг → ✓ потоковая передача (or стрим- in compound)
 - ❌ `API ключ` (space) → ✓ `API-ключ` (hyphen)
 - ❌ mid-sentence `Вы` / `Вам` / `Ваш` → ✓ lowercase or impersonal rephrase

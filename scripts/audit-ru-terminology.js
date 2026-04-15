@@ -9,12 +9,12 @@
     - non-hyphenated hybrid compounds (API ключ → API-ключ)
     - Cyrillicized protocol names (ЖСОН, АПИ)
     - bare Latin `predecessor` in Russian prose
+    - selected English leak words in Russian prose (`runtime`, `metadata`, etc.)
     - mixed-language glue words (English connective sitting between
       Cyrillic words — usually an auto-translate leftover)
 
   Sources inspected:
-    - i18n/ru/** (prose, .md and .mdx, minus transaction-flow which is
-      out of scope by directive)
+    - i18n/ru/** (prose, .md and .mdx, minus hidden `/transaction-flow/`)
     - src/data/fastnearTranslations.ru.json (translation pool)
 
   Exits 0 if clean, 1 if any errors are found. Optional `--json` emits
@@ -43,14 +43,14 @@ const ALWAYS_EXCLUDE = [
   // Chapter files: intentionally reference forbidden patterns as examples.
   /md-CLAUDE-chapters\//,
   /scripts\/audit-ru-terminology\.js$/,
-  // User directive: `/transaction-flow/` is hidden and not indexed.
+  // Hidden until publication; not part of the public RU terminology bar yet.
   /docusaurus-plugin-content-docs\/current\/transaction-flow\//,
 ];
 
 const CHECKS = [
   {
     id: "calque-production",
-    label: "Calque «продакшен» — use «боевой» / «боевая среда»",
+    label: "Calque «продакшен» — use «продовый контур» / «продовый сервис» / «продовый бэкенд»",
     pattern: /продакшен|продуктив/i,
   },
   {
@@ -91,9 +91,16 @@ const CHECKS = [
     pattern: /[а-яё]\s+predecessor(?![_.])\b/i,
   },
   {
+    id: "english-leak-terms",
+    label: "English terminology leak in Russian prose — translate bare terms like runtime / metadata / execution / ordering / flow",
+    markdownOnly: true,
+    pattern: /(?<![A-Za-z])(metadata|runtime|execution|ordering|flow)(?![A-Za-z-])/i,
+  },
+  {
     id: "mixed-language-glue",
     label: "Mixed-language: English glue word embedded in Russian prose",
     customCheck: true,
+    markdownOnly: true,
   },
 ];
 
@@ -102,11 +109,11 @@ const ENGLISH_GLUE =
 
 function stripNoise(text) {
   return text
-    .replace(/```[\s\S]*?```/g, " ")            // fenced code blocks
-    .replace(/`[^`\n]+`/g, " ")                  // inline code
-    .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")    // markdown links → display text
-    .replace(/https?:\/\/\S+/g, " ")            // URLs
-    .replace(/\{[^}\n]+\}/g, " ");              // template vars / URL params
+    .replace(/`[^`\n]+`/g, " ")               // inline code
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1") // markdown links → display text
+    .replace(/https?:\/\/\S+/g, " ")         // URLs
+    .replace(/\{[^}\n]+\}/g, " ")            // template vars / URL params
+    .replace(/<[^>\n]+>/g, " ");             // HTML / JSX tags
 }
 
 function shouldExcludeFile(relPath) {
@@ -146,44 +153,113 @@ function enumerateTargets() {
   return files.filter((abs) => !shouldExcludeFile(path.relative(ROOT, abs)));
 }
 
-function runChecks(absPath) {
+function applyChecks({ relPath, line, lineNumber, isMarkdown, findings }) {
+  const stripped = stripNoise(line);
+
+  for (const check of CHECKS) {
+    if (check.markdownOnly && !isMarkdown) {
+      continue;
+    }
+
+    if (check.customCheck) {
+      const match = stripped.match(ENGLISH_GLUE);
+      if (match) {
+        findings.push({
+          checkId: check.id,
+          label: check.label,
+          file: relPath,
+          line: lineNumber,
+          snippet: trimSnippet(line, match[0]),
+        });
+      }
+      continue;
+    }
+
+    const match = stripped.match(check.pattern);
+    if (match) {
+      findings.push({
+        checkId: check.id,
+        label: check.label,
+        file: relPath,
+        line: lineNumber,
+        snippet: trimSnippet(line, match[0]),
+      });
+    }
+  }
+}
+
+function runChecksInPlaintext(absPath) {
   const relPath = path.relative(ROOT, absPath);
   const source = fs.readFileSync(absPath, "utf8");
   const lines = source.split("\n");
   const findings = [];
 
   lines.forEach((line, idx) => {
-    const stripped = stripNoise(line);
-
-    for (const check of CHECKS) {
-      if (check.customCheck) {
-        const match = stripped.match(ENGLISH_GLUE);
-        if (match) {
-          findings.push({
-            checkId: check.id,
-            label: check.label,
-            file: relPath,
-            line: idx + 1,
-            snippet: trimSnippet(line, match[0]),
-          });
-        }
-        continue;
-      }
-
-      const match = stripped.match(check.pattern);
-      if (match) {
-        findings.push({
-          checkId: check.id,
-          label: check.label,
-          file: relPath,
-          line: idx + 1,
-          snippet: trimSnippet(line, match[0]),
-        });
-      }
-    }
+    applyChecks({
+      relPath,
+      line,
+      lineNumber: idx + 1,
+      isMarkdown: false,
+      findings,
+    });
   });
 
   return findings;
+}
+
+function runChecksInMarkdown(absPath) {
+  const relPath = path.relative(ROOT, absPath);
+  const source = fs.readFileSync(absPath, "utf8");
+  const lines = source.split("\n");
+  const findings = [];
+  let inFrontmatter = false;
+  let frontmatterFinished = false;
+  let inCodeFence = false;
+
+  lines.forEach((line, idx) => {
+    const trimmed = line.trim();
+
+    if (!frontmatterFinished && idx === 0 && trimmed === "---") {
+      inFrontmatter = true;
+      return;
+    }
+
+    if (inFrontmatter) {
+      if (trimmed === "---") {
+        inFrontmatter = false;
+        frontmatterFinished = true;
+      }
+      return;
+    }
+
+    if (trimmed.startsWith("```")) {
+      inCodeFence = !inCodeFence;
+      return;
+    }
+
+    if (inCodeFence) {
+      return;
+    }
+
+    applyChecks({
+      relPath,
+      line,
+      lineNumber: idx + 1,
+      isMarkdown: true,
+      findings,
+    });
+  });
+
+  return findings;
+}
+
+function runChecks(absPath) {
+  const ext = path.extname(absPath).toLowerCase();
+  if (ext === ".md" || ext === ".mdx") {
+    return runChecksInMarkdown(absPath);
+  }
+
+  return runChecksInPlaintext(absPath);
 }
 
 function trimSnippet(line, match) {
@@ -240,7 +316,7 @@ function main() {
     console.log("");
   }
 
-  console.log(`See i18n/ru/GLOSSARY.md and md-CLAUDE-chapters/i18n_translating_russian.md for guidance.`);
+  console.log(`See md-CLAUDE-chapters/i18n_ru_glossary.md and md-CLAUDE-chapters/i18n_translating_russian.md for guidance.`);
   process.exit(1);
 }
 

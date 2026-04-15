@@ -108,7 +108,7 @@ Use this list when planning a rollout. Each item is a concrete question with a c
 | What hyphenation rules apply to `Latin + NativeNoun`? | Always hyphenated: `API-ключ`, `HTTP-запрос`, `Bearer-токен` | — |
 | What protocol names stay Latin? | JSON, REST, HTTP, API, gRPC, JWT (never Cyrillicized) | — |
 | Which code identifiers stay Latin in prose? | `page_token`, `predecessor_id`, `user_id`, etc. | — |
-| What is the canonical term for "production (environment)"? | `боевой` / `боевая среда`; never `продакшен` | — |
+| What is the canonical term for "production (environment)"? | `продовый контур` / `продовый сервис`; never `продакшен` | — |
 | What is the canonical term for a NEAR receipt? | `квитанция` (corpus-driven; codified in `glossary.yml`) | — |
 | What is the canonical term for a blockchain node? | `узел` (formal, default) / `нода` (informal/operator) | — |
 
