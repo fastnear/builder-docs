@@ -20,4 +20,3 @@
 ## Связанные руководства
 
 - [Аутентификация и доступ](https://docs.fastnear.com/ru/auth)
-- [Продакшен-бэкенд](https://docs.fastnear.com/ru/auth/backend)

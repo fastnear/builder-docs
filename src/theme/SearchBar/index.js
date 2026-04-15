@@ -47,7 +47,7 @@ const FASTNEAR_DEFAULT_SEARCH_PARAMETERS = {
   attributesToSnippet: ['content:14'],
   clickAnalytics: true,
   distinct: true,
-  hitsPerPage: 10,
+  hitsPerPage: 20,
   removeWordsIfNoResults: 'allOptional',
   snippetEllipsisText: '…',
 };
@@ -294,7 +294,11 @@ function Hit({ hit, children }) {
             <div className="fastnear-search-hit__header">
               <div className="fastnear-search-hit__title-row">
                 {card.endpointBadge ? (
-                  <span className="fastnear-search-hit__badge">{card.endpointBadge}</span>
+                  <span
+                    className={`fastnear-search-hit__badge fastnear-search-hit__badge--${card.endpointBadge.toLowerCase()}`}
+                  >
+                    {card.endpointBadge}
+                  </span>
                 ) : null}
                 <span
                   className="fastnear-search-hit__title"
@@ -523,6 +527,7 @@ function DocSearch({ externalUrlRegex, ...props }) {
             <DocSearchModal
               initialScrollY={window.scrollY}
               initialQuery={initialQuery}
+              maxResultsPerGroup={6}
               navigator={navigator}
               transformItems={transformItems}
               hitComponent={Hit}

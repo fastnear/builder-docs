@@ -4677,32 +4677,6 @@
     },
     {
       "entityIds": {
-        "familyIds": [],
-        "mainEntityId": null,
-        "pageId": "https://docs.fastnear.com/ru/auth/backend#page"
-      },
-      "indexable": true,
-      "markdownMirrorUrl": "https://docs.fastnear.com/ru/auth/backend.md",
-      "pageSchemaType": "TechArticle",
-      "route": "/ru/auth/backend",
-      "routeType": "docs",
-      "url": "https://docs.fastnear.com/ru/auth/backend"
-    },
-    {
-      "entityIds": {
-        "familyIds": [],
-        "mainEntityId": null,
-        "pageId": "https://docs.fastnear.com/ru/auth/browser-demo#page"
-      },
-      "indexable": true,
-      "markdownMirrorUrl": "https://docs.fastnear.com/ru/auth/browser-demo.md",
-      "pageSchemaType": "TechArticle",
-      "route": "/ru/auth/browser-demo",
-      "routeType": "docs",
-      "url": "https://docs.fastnear.com/ru/auth/browser-demo"
-    },
-    {
-      "entityIds": {
         "familyIds": [
           "https://docs.fastnear.com/structured-data/families/api-kv-fastdata"
         ],

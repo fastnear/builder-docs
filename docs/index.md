@@ -78,12 +78,11 @@ Start from the job you need done, then drop into the detailed reference from the
   <article className="fastnear-doc-card">
     <span className="fastnear-doc-card__eyebrow">Higher limits</span>
     <Link className="fastnear-doc-card__title" to="/auth"><strong>Auth &amp; Access</strong></Link>
-    <span>See how FastNear API keys fit into the docs UI, and how to move from demo flows to secure backend usage.</span>
+    <span>One FastNear API key works across the RPC and REST APIs; send it as an Authorization Bearer header or as an apiKey URL parameter.</span>
     <span className="fastnear-doc-card__bestfor-label">Best for:</span>
     <ul className="fastnear-doc-card__bestfor-list">
       <li><Link to="/auth">auth overview</Link></li>
-      <li><Link to="/auth/browser-demo">browser demo auth</Link></li>
-      <li><Link to="/auth/backend">production backend auth</Link></li>
+      <li><a href="https://dashboard.fastnear.com">get an API key</a></li>
     </ul>
   </article>
   <article className="fastnear-doc-card">
@@ -103,7 +102,7 @@ Start from the job you need done, then drop into the detailed reference from the
 
 These are the operational details technical teams usually want up front:
 
-- [Auth & Access](/auth): understand the difference between the in-docs demo flow and backend production auth.
+- [Auth & Access](/auth): send a FastNear API key as an `Authorization: Bearer` header or `?apiKey=` URL parameter.
 - [Dashboard](https://dashboard.fastnear.com): manage API keys and move to higher-limit usage patterns.
 - [Status](https://status.fastnear.com): check incidents or degraded service before debugging application behavior.
 - [RPC Reference](/rpc): choose regular versus archival RPC depending on how much chain history you need.
@@ -124,5 +123,4 @@ These complementary APIs stay useful once you know the core surfaces above:
 - Start with [Choosing the Right Surface](/agents/choosing-surfaces) to map the job to the right FastNear surface.
 - Use [Auth for Agents](/agents/auth) when the caller is an automation, worker, or agent runtime.
 - Borrow from [Agent Playbooks](/agents/playbooks) when you want a concrete workflow pattern.
-- Use [Auth & Access](/auth) to keep agent credentials on the server side.
 - Use page-level `Copy as Markdown` actions to move clean docs context into prompts, notes, and agent runtimes.

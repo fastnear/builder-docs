@@ -1,6 +1,6 @@
 ---
 title: Auth & Access
-description: Choose the right FastNear auth pattern for browser demos, higher limits, and secure production backends.
+description: Use one FastNear API key across the RPC and REST APIs, sent as a Bearer header or URL parameter.
 slug: /auth
 sidebar_position: 0
 displayed_sidebar: rpcSidebar
@@ -8,49 +8,23 @@ page_actions:
   - markdown
 ---
 
-import ApiKeyManager from '@site/src/components/ApiKeyManager';
-
 # Auth & Access
 
-<!-- FASTNEAR_AI_DISCOVERY: Agents and automations should prefer /agents/auth and keep credentials out of browser-managed storage. -->
+One FastNear API key works across both the [RPC](/rpc) and the [REST APIs](/api). Log in at [dashboard.fastnear.com](https://dashboard.fastnear.com) to get a key, then send it on each request either way below.
 
-FastNear auth guidance helps you choose between quick browser-side demos and
-backend-managed production access, so you can try requests quickly without
-confusing that flow with a secure deployment model.
+## Using the Authorization header
 
-FastNear API keys solve two different problems:
+```bash
+curl "https://rpc.mainnet.fastnear.com" \
+  -H "Authorization: Bearer ${API_KEY}" \
+  -H "Content-Type: application/json" \
+  --data '{"method":"block","params":{"finality":"final"},"id":1,"jsonrpc":"2.0"}'
+```
 
-1. Quick docs-side demos where you want the embedded examples to run with your account limits.
-2. Production backend access where your service, agent runner, or proxy must own the credential lifecycle.
+## Using the `?apiKey=` URL parameter
 
-Treat those as separate tracks.
-
-## Choose your track
-
-- [Browser Demo](/auth/browser-demo): use the in-browser docs flow to try requests quickly. This is for demos, local development, and personal exploration.
-- [Production Backend](/auth/backend): keep keys on the server side, inject them from env vars or secret stores, and never expose them to browsers.
-
-## In-browser demo setup
-
-Use the built-in manager below when you want the docs examples to run with your FastNear account limits:
-
-<ApiKeyManager />
-
-## What this page is and is not
-
-- This page is the fastest way to exercise authenticated docs examples and understand the available auth tracks.
-- This page is not a recommendation to store production credentials in browser `localStorage`.
-- If your code runs in a browser, extension, or public client app, treat the credential as exposed.
-
-## Getting an API key
-
-1. Visit [FastNear Subscriptions](https://dashboard.fastnear.com/#pricing).
-2. Choose a plan that fits your workload.
-3. Generate your API key in the FastNear dashboard.
-4. Use the browser-demo track only for local docs exploration.
-5. Move production traffic to the backend track before shipping.
-
-## When you need more than a demo
-
-- Use [Production Backend](/auth/backend) for env vars, proxy patterns, redaction, and rotation.
-- Use [Auth for Agents](/agents/auth) when an agent runner or automation service needs FastNear access.
+```bash
+curl "https://rpc.mainnet.fastnear.com?apiKey=${API_KEY}" \
+  -H "Content-Type: application/json" \
+  --data '{"method":"block","params":{"finality":"final"},"id":1,"jsonrpc":"2.0"}'
+```

@@ -11,8 +11,6 @@ const hideEarlyApiFamilies = /^(1|true|yes|on)$/i.test(
 const rpcSidebar = [
   'rpc/index',
   'auth/index',
-  'auth/browser-demo',
-  'auth/backend',
   {
     type: 'category',
     label: 'Account',

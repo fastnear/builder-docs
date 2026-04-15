@@ -64,11 +64,11 @@
   },
   {
     "query": "api key",
-    "expectedPath": "/auth/backend"
+    "expectedPath": "/auth"
   },
   {
     "query": "bearer token",
-    "expectedPath": "/auth/backend"
+    "expectedPath": "/auth"
   },
   {
     "query": "block headers",
