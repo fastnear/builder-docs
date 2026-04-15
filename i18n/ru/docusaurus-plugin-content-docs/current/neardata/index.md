@@ -14,8 +14,13 @@ NEAR Data API — это поверхность для чтения данных
 
 ## Базовые URL
 
-- `https://mainnet.neardata.xyz`
-- `https://testnet.neardata.xyz`
+```bash title="NEAR Data API Mainnet"
+https://mainnet.neardata.xyz
+```
+
+```bash title="NEAR Data API Testnet"
+https://testnet.neardata.xyz
+```
 
 ## Лучше всего подходит для
 

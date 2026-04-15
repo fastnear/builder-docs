@@ -14,8 +14,13 @@ NEAR Data API is the near-realtime and block-family surface. Use it when you wan
 
 ## Base URLs
 
-- `https://mainnet.neardata.xyz`
-- `https://testnet.neardata.xyz`
+```bash title="NEAR Data API Mainnet"
+https://mainnet.neardata.xyz
+```
+
+```bash title="NEAR Data API Testnet"
+https://testnet.neardata.xyz
+```
 
 ## Best fit
 

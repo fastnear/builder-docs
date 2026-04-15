@@ -15,8 +15,13 @@ views without repeatedly polling raw RPC methods and joining the results yoursel
 
 ## Base URLs
 
-- `https://tx.main.fastnear.com`
-- `https://tx.test.fastnear.com`
+```bash title="Transactions API Mainnet"
+https://tx.main.fastnear.com
+```
+
+```bash title="Transactions API Testnet"
+https://tx.test.fastnear.com
+```
 
 ## Best fit
 

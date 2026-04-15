@@ -16,8 +16,13 @@ public key?" without stitching together raw RPC calls.
 
 ## Base URLs
 
-- `https://api.fastnear.com`
-- `https://test.api.fastnear.com`
+```bash title="FastNear API Mainnet"
+https://api.fastnear.com
+```
+
+```bash title="FastNear API Testnet"
+https://test.api.fastnear.com
+```
 
 ## Best fit
 

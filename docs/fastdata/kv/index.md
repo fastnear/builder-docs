@@ -14,8 +14,13 @@ KV FastData API is the read-only key-value family. It works best when you alread
 
 ## Base URLs
 
-- `https://kv.main.fastnear.com`
-- `https://kv.test.fastnear.com`
+```bash title="KV FastData API Mainnet"
+https://kv.main.fastnear.com
+```
+
+```bash title="KV FastData API Testnet"
+https://kv.test.fastnear.com
+```
 
 ## Best fit
 

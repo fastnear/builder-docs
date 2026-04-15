@@ -14,7 +14,9 @@ Transfers API focuses on account-centric transfer history. It is the simplest st
 
 ## Base URL
 
-- `https://transfers.main.fastnear.com`
+```bash title="Transfers API Mainnet"
+https://transfers.main.fastnear.com
+```
 
 This surface is mainnet-only today; `?network=testnet` does not switch the backend.
 
