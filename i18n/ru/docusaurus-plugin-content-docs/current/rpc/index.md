@@ -36,12 +36,12 @@ https://archival-rpc.testnet.fastnear.com
 
 ## С чего обычно начинают
 
-- `Аккаунт`: запросы по аккаунту, ключу доступа и списку ключей.
-- `Блоки`: поиск финализированных блоков или блоков по высоте и хешу.
-- `Контракты`: вызовы view-методов, получение кода и просмотр состояния контракта.
-- `Протокол`: статус, состояние узла, цена газа, конфигурация сети и экспериментальные методы протокола.
-- `Транзакции`: отправка транзакций и методы статуса исполнения.
-- `Валидаторы`: текущие валидаторы и данные по эпохам.
+- [`view_account`](/rpc/account/view-account), [`view_access_key`](/rpc/account/view-access-key), [`view_access_key_list`](/rpc/account/view-access-key-list) — запросы по аккаунту и ключам доступа.
+- [`block`](/rpc/block/block-by-id) — поиск по высоте или хешу; [`block_effects`](/rpc/block/block-effects) — изменения внутри блока.
+- [`call_function`](/rpc/contract/call-function), [`view_code`](/rpc/contract/view-code), [`view_state`](/rpc/contract/view-state) — работа с контрактами.
+- [`status`](/rpc/protocol/status), [`health`](/rpc/protocol/health), [`gas_price`](/rpc/protocol/gas-price) — диагностика узла и протокола.
+- [`send_tx`](/rpc/transaction/send-tx) — отправка транзакций; [`tx`](/rpc/transaction/tx-status) — статус исполнения.
+- [`validators`](/rpc/validators/validators-current) — валидаторы текущей эпохи.
 
 ## Используйте RPC, когда
 

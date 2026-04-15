@@ -37,12 +37,12 @@ https://archival-rpc.testnet.fastnear.com
 
 ## Common starting points
 
-- `Account`: account, access key, and key-list queries.
-- `Block`: finalized or height/hash-based block lookup.
-- `Contract`: view calls, code lookup, and state inspection.
-- `Protocol`: status, health, gas price, config, network, and experimental protocol methods.
-- `Transaction`: submission and execution status methods.
-- `Validators`: current and epoch-scoped validator views.
+- [`view_account`](/rpc/account/view-account), [`view_access_key`](/rpc/account/view-access-key), [`view_access_key_list`](/rpc/account/view-access-key-list) for account and key-list queries.
+- [`block`](/rpc/block/block-by-id) for height or hash lookup; [`block_effects`](/rpc/block/block-effects) for changes within a block.
+- [`call_function`](/rpc/contract/call-function), [`view_code`](/rpc/contract/view-code), [`view_state`](/rpc/contract/view-state) for contract introspection.
+- [`status`](/rpc/protocol/status), [`health`](/rpc/protocol/health), [`gas_price`](/rpc/protocol/gas-price) for node and protocol diagnostics.
+- [`send_tx`](/rpc/transaction/send-tx) for transaction submission; [`tx`](/rpc/transaction/tx-status) for execution status.
+- [`validators`](/rpc/validators/validators-current) for the current epoch's validator set.
 
 ## Use RPC when
 

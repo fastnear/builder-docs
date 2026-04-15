@@ -42,10 +42,10 @@ https://tx.test.fastnear.com
 
 ## Common starting points
 
-- `Transactions by hash` when you already know the transaction ID.
-- `Account history` for activity feeds and account debugging.
-- `Receipt lookup` for execution-flow investigation.
-- `Block range` when you want a bounded history scan.
+- [Transactions by hash](/tx/transactions) when you already know the transaction ID.
+- [Account history](/tx/account) for activity feeds and account debugging.
+- [Receipt lookup](/tx/receipt) for execution-flow investigation.
+- [Block range](/tx/blocks) when you want a bounded history scan.
 
 ## Troubleshooting
 

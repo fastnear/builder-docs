@@ -42,10 +42,10 @@ https://kv.test.fastnear.com
 
 ## Common starting points
 
-- `All by predecessor` for a broad predecessor scan.
-- `History by predecessor` when you need a filtered history stream.
-- `History by account` or `History by key` for narrower retrieval.
-- `Multi lookup` when you already know the exact keys.
+- [All by predecessor](/fastdata/kv/all-by-predecessor) for a broad predecessor scan.
+- [History by predecessor](/fastdata/kv/history-by-predecessor) when you need a filtered history stream.
+- [History by account](/fastdata/kv/history-by-account) or [History by key](/fastdata/kv/history-by-key) for narrower retrieval.
+- [Multi lookup](/fastdata/kv/multi) when you already know the exact keys.
 
 ## Troubleshooting
 

@@ -41,9 +41,9 @@ https://testnet.neardata.xyz
 
 ## Common starting points
 
-- `Optimistic block` for freshest block polling.
-- `Final block by height` and `Block headers` for finalized block-family queries.
-- `Last final block redirect` and `Last optimistic block redirect` when you want helper redirects.
+- [Optimistic block](/neardata/block-optimistic) for freshest block polling.
+- [Final block by height](/neardata/block) and [Block headers](/neardata/block-headers) for finalized block-family queries.
+- [Last final block redirect](/neardata/last-block-final) and [Last optimistic block redirect](/neardata/last-block-optimistic) when you want helper redirects.
 
 ## Troubleshooting
 
