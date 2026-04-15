@@ -178,8 +178,10 @@ export function useFastnearApiSidebarSelection(sidebarItems) {
     }
 
     const storedVersion = readStoredVersion(versionKeys);
-    if (storedVersion && storedVersion !== selectedVersion) {
-      setSelectedVersion(storedVersion);
+    if (storedVersion) {
+      if (storedVersion !== selectedVersion) {
+        setSelectedVersion(storedVersion);
+      }
       return;
     }
 
