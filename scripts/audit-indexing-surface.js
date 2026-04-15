@@ -646,7 +646,6 @@ function auditConfigSurface() {
     );
   });
   [
-    "ALGOLIA_ADMIN_API_KEY",
     "ALGOLIA_CRAWLER_ID",
     "ALGOLIA_CRAWLER_BASIC_AUTH",
   ].forEach((needle) => {
@@ -655,6 +654,10 @@ function auditConfigSurface() {
       `.env.example should not document ${needle}`
     );
   });
+  assert(
+    !/ALGOLIA_[A-Z_]*ADMIN[A-Z_]*API_KEY/.test(envExampleText),
+    ".env.example should not document an Algolia admin key"
+  );
   assert(
     !envExampleText.includes("DOCSEARCH_ANALYTICS_API_KEY"),
     ".env.example should not document DOCSEARCH_ANALYTICS_API_KEY"

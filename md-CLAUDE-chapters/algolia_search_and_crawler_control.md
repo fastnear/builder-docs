@@ -156,7 +156,7 @@ Important detail:
 
 That keeps the operator experience simpler and closer to what Algolia actually shows in the crawler UI.
 
-The repo also deliberately does **not** use `ALGOLIA_ADMIN_API_KEY`. `yarn algolia:status` and `yarn algolia:sync` act on the crawler API only. Rules (`algolia/rules.json`) and synonyms (`algolia/synonyms.json`) are managed through the Algolia dashboard UI — the JSON files are the intended-state reference, not a machine-synced artifact. `scripts/audit-indexing-surface.js` enforces that `.env.example` never documents the admin key so this posture stays explicit.
+The repo also deliberately does **not** use an Algolia admin key. `yarn algolia:status` and `yarn algolia:sync` act on the crawler API only. Rules (`algolia/rules.json`) and synonyms (`algolia/synonyms.json`) are managed through the Algolia dashboard UI — the JSON files are the intended-state reference, not a machine-synced artifact. `scripts/audit-indexing-surface.js` enforces that `.env.example` never documents an admin key so this posture stays explicit.
 
 ---
 

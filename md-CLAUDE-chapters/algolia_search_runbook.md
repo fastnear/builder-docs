@@ -68,7 +68,7 @@ Important notes:
 - `DOCSEARCH_INDEX_NAME` is the index name, not the crawler display name.
 - `ALGOLIA_CRAWLER_NAME` is the crawler display name, for example `prod_fastnear_docs_crawler`.
 - The repo now constructs crawler Basic auth internally. You do not need to precompute it.
-- This repo does **not** use `ALGOLIA_ADMIN_API_KEY`. Rules (`algolia/rules.json`) and synonyms (`algolia/synonyms.json`) are managed through the Algolia dashboard UI — the JSON files in `algolia/` are the intended-state reference, not a machine-synced artifact. See `algolia/operations.md` for the "dashboard curation baseline" framing. `scripts/audit-indexing-surface.js` enforces that `.env.example` never documents the admin key so this posture stays explicit.
+- This repo does **not** use an Algolia admin key. Rules (`algolia/rules.json`) and synonyms (`algolia/synonyms.json`) are managed through the Algolia dashboard UI — the JSON files in `algolia/` are the intended-state reference, not a machine-synced artifact. See `algolia/operations.md` for the "dashboard curation baseline" framing. `scripts/audit-indexing-surface.js` enforces that `.env.example` never documents an admin key so this posture stays explicit.
 
 ---
 

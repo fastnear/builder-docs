@@ -40,7 +40,7 @@ Important notes:
 
 - `ALGOLIA_CRAWLER_NAME` is the crawler display name, for example `prod_fastnear_docs_crawler`.
 - The repo constructs crawler Basic auth internally. Do not precompute it.
-- `ALGOLIA_ADMIN_API_KEY`, `ALGOLIA_CRAWLER_ID`, and `ALGOLIA_CRAWLER_BASIC_AUTH` are intentionally not part of the repo contract.
+- An Algolia admin key, `ALGOLIA_CRAWLER_ID`, and `ALGOLIA_CRAWLER_BASIC_AUTH` are intentionally not part of the repo contract.
 
 ## Optional UI flag
 
