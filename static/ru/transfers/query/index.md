@@ -55,7 +55,7 @@
 - `min_amount` (body, string): Минимальная сумма в базовых единицах актива.
 - `min_human_amount` (body, number): Минимальная сумма в человекочитаемом виде.
 - `min_usd_amount` (body, number): Минимальная сумма в долларах США.
-- `resume_token` (body, string): Непрозрачный курсор пагинации из предыдущего ответа.
+- `resume_token` (body, string): Непрозрачный токен продолжения из предыдущего ответа.
 - `to_timestamp_ms` (body, integer): Верхняя граница времени в миллисекундах UNIX.
 ### Схема запроса
 ```json

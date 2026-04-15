@@ -22,7 +22,7 @@
 
 - [Агенты на FastNear](https://docs.fastnear.com/ru/agents.md): Ориентир для ИИ-агентов и сред автоматизации, использующих документацию FastNear и её RPC- и REST-API.
 - [Аутентификация для агентов](https://docs.fastnear.com/ru/agents/auth.md): Безопасная работа с учётными данными FastNear для AI-агентов, сервисов автоматизации, воркеров и серверных сред выполнения.
-- [Как выбрать подходящую поверхность](https://docs.fastnear.com/ru/agents/choosing-surfaces.md): Определите, должен ли ваш агент использовать сырой RPC, индексированные API, NEAR Data API или снапшоты.
+- [Как выбрать подходящую поверхность](https://docs.fastnear.com/ru/agents/choosing-surfaces.md): Определите, должен ли агент использовать сырой RPC, индексированные API, NEAR Data API или снапшоты.
 - [Плейбуки для агентов](https://docs.fastnear.com/ru/agents/playbooks.md): Рекомендуемые комбинации поверхностей FastNear для типовых сценариев AI и автоматизации.
 
 ## Другие гайды

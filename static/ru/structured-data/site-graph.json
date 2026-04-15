@@ -833,10 +833,10 @@
       "description": "Возвращает последнюю строку для каждой пары `(current_account_id, key)`, записанной выбранным вызывающим аккаунтом. Значения `page_token` непрозрачны и привязаны к этому эндпоинту и выбранному вызывающему аккаунту.",
       "docsPath": "/ru/fastdata/kv/all-by-predecessor",
       "familyId": "api-kv-fastdata",
-      "headline": "KV FastData API - последние ключи по predecessor",
+      "headline": "KV FastData API - последние ключи по предшественнику",
       "httpMethod": "POST",
       "id": "kv-fastdata-v0-all-by-predecessor",
-      "name": "KV FastData API - последние ключи по predecessor",
+      "name": "KV FastData API - последние ключи по предшественнику",
       "networkKeys": [
         "mainnet",
         "testnet"
@@ -1058,10 +1058,10 @@
       "description": "Возвращает исторические строки для пары `predecessor_id` + `current_account_id`. Используйте `key` или `key_prefix`, чтобы сузить поиск. Значения `page_token` непрозрачны и валидны только при повторном использовании с тем же эндпоинтом и теми же фильтрами.",
       "docsPath": "/ru/fastdata/kv/history-by-predecessor",
       "familyId": "api-kv-fastdata",
-      "headline": "KV FastData API - история по predecessor",
+      "headline": "KV FastData API - история по предшественнику",
       "httpMethod": "POST",
       "id": "kv-fastdata-v0-history-by-predecessor",
-      "name": "KV FastData API - история по predecessor",
+      "name": "KV FastData API - история по предшественнику",
       "networkKeys": [
         "mainnet",
         "testnet"
@@ -1148,10 +1148,10 @@
       "description": "Возвращает последнюю строку для каждой пары `(current_account_id, key)`, записанной выбранным вызывающим аккаунтом в выбранный контракт. Значения `page_token` непрозрачны и валидны только при повторном использовании с тем же эндпоинтом и теми же фильтрами.",
       "docsPath": "/ru/fastdata/kv/latest-by-predecessor",
       "familyId": "api-kv-fastdata",
-      "headline": "KV FastData API - последние записи по predecessor",
+      "headline": "KV FastData API - последние записи по предшественнику",
       "httpMethod": "POST",
       "id": "kv-fastdata-v0-latest-by-predecessor",
-      "name": "KV FastData API - последние записи по predecessor",
+      "name": "KV FastData API - последние записи по предшественнику",
       "networkKeys": [
         "mainnet",
         "testnet"
