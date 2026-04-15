@@ -112,7 +112,7 @@
             "required": false,
             "schema": {
               "type": "string",
-              "description": "Desired level of execution статус guarantee",
+              "description": "Желаемый уровень гарантии статуса исполнения",
               "default": "EXECUTED_OPTIMISTIC",
               "enum": [
                 "NONE",

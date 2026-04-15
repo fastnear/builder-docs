@@ -195,7 +195,7 @@
                   "required": true,
                   "schema": {
                     "type": "object",
-                    "description": "Height and hash of a блока"
+                    "description": "Высота и хеш блока"
                   }
                 },
                 {
@@ -203,7 +203,7 @@
                   "required": true,
                   "schema": {
                     "type": "object",
-                    "description": "Height and hash of a блока"
+                    "description": "Высота и хеш блока"
                   }
                 },
                 {
@@ -236,7 +236,7 @@
             "required": true,
             "schema": {
               "type": "integer",
-              "description": "Последний протокола version that this клиент supports.",
+              "description": "Последняя версия протокола, поддерживаемая этим клиентом.",
               "format": "uint32"
             }
           },
@@ -262,7 +262,7 @@
             "required": true,
             "schema": {
               "type": "integer",
-              "description": "Currently active протокола version.",
+              "description": "Текущая активная версия протокола.",
               "format": "uint32"
             }
           },
@@ -272,7 +272,7 @@
             "schema": {
               "type": "string",
               "nullable": true,
-              "description": "Address for RPC server. None if node doesn't have RPC endpoint enabled."
+              "description": "Адрес RPC-сервера. None, если у ноды не включён RPC-эндпоинт."
             }
           },
           {
@@ -280,7 +280,7 @@
             "required": true,
             "schema": {
               "type": "object",
-              "description": "Sync статус of the node.",
+              "description": "Статус синхронизации ноды.",
               "required": [
                 "latest_block_hash",
                 "latest_block_height",

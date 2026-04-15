@@ -30,7 +30,7 @@
     "light_client_head": "6sddgq8nkENAz4f8qR72qxRPM25QWNBVMrkYr63DgC2E",
     "sender_id": "intents.near",
     "transaction_hash": "4EQZ5qoEJUbz8SRNkNwrAPtsn2VFhg9Ci1weaNNpiuR7",
-    "type": "транзакции"
+    "type": "транзакция"
   }
 }
 ```
@@ -46,7 +46,7 @@
       "light_client_head": "6sddgq8nkENAz4f8qR72qxRPM25QWNBVMrkYr63DgC2E",
       "sender_id": "intents.near",
       "transaction_hash": "4EQZ5qoEJUbz8SRNkNwrAPtsn2VFhg9Ci1weaNNpiuR7",
-      "type": "транзакции"
+      "type": "транзакция"
     }
   },
   "headers": {},
@@ -137,7 +137,7 @@
             "schema": {
               "type": "string",
               "enum": [
-                "транзакции"
+                "транзакция"
               ]
             }
           }

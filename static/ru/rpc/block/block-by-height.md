@@ -26,7 +26,7 @@
 {
   "jsonrpc": "2.0",
   "id": "fastnear",
-  "method": "блока",
+  "method": "блок",
   "params": {
     "block_id": 193909529
   }
@@ -39,7 +39,7 @@
   "body": {
     "jsonrpc": "2.0",
     "id": "fastnear",
-    "method": "блока",
+    "method": "блок",
     "params": {
       "block_id": 193909529
     }
@@ -86,7 +86,7 @@
       "schema": {
         "type": "string",
         "enum": [
-          "блока"
+          "блок"
         ]
       }
     },

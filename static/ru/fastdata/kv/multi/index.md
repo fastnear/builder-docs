@@ -44,7 +44,7 @@
 ```
 ### Входные данные
 - `include_metadata` (body, boolean): Добавить в каждую запись метаданные квитанции и подписанта.
-- `ключи` (body, обязательный, array): Fully qualified ключи in current_account_id/predecessor_id/ключ form.
+- `ключи` (body, обязательный, array): Полноквалифицированные ключи в форме current_account_id/predecessor_id/key.
 ### Схема запроса
 ```json
 {
@@ -59,7 +59,7 @@
       "required": false,
       "schema": {
         "type": "boolean",
-        "description": "Include квитанция and signer metadata in each entry.",
+        "description": "Включать в каждую запись метаданные квитанции и подписанта.",
         "default": false
       }
     },
@@ -68,7 +68,7 @@
       "required": true,
       "schema": {
         "type": "array",
-        "description": "Fully qualified ключи in current_account_id/predecessor_id/ключ form.",
+        "description": "Полноквалифицированные ключи в форме current_account_id/predecessor_id/key.",
         "items": {
           "type": "string"
         }

@@ -197,7 +197,7 @@
             "required": false,
             "schema": {
               "type": "integer",
-              "description": "Limits the number of шард changes in chunk producer assignments,\nif algorithm is able to choose assignment with better balance of\nnumber of chunk producers for shards.",
+              "description": "Ограничивает число изменений шардов в распределении производителей чанков,\nесли алгоритм способен выбрать распределение с лучшим балансом\nчисла производителей чанков по шардам.",
               "format": "uint64",
               "default": 5
             }
@@ -368,7 +368,7 @@
             "required": true,
             "schema": {
               "type": "array",
-              "description": "Defines number of shards and number of блока producer seats per each shard at genesis.\nNote: not used with protocol_feature_chunk_only_producers -- replaced by minimum_validators_per_shard\nNote: not used before as all блока producers produce chunks for all shards",
+              "description": "Задаёт количество шардов и количество мест для производителей блоков на каждый шард в генезисе.\nПрим.: не используется с protocol_feature_chunk_only_producers — заменено на minimum_validators_per_shard.\nПрим.: раньше не использовалось, так как все производители блоков выпускали чанки для всех шардов.",
               "items": {
                 "type": "integer",
                 "format": "uint64"
@@ -551,7 +551,7 @@
             "required": true,
             "schema": {
               "type": "array",
-              "description": "List of initial валидаторы.",
+              "description": "Список начальных валидаторов.",
               "items": {
                 "type": "object",
                 "description": "Аккаунт info for validators"

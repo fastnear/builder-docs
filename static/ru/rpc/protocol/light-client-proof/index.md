@@ -28,7 +28,7 @@
   "id": "fastnear",
   "method": "light_client_proof",
   "params": {
-    "type": "транзакции",
+    "type": "транзакция",
     "transaction_hash": "4EQZ5qoEJUbz8SRNkNwrAPtsn2VFhg9Ci1weaNNpiuR7",
     "sender_id": "intents.near",
     "light_client_head": "6sddgq8nkENAz4f8qR72qxRPM25QWNBVMrkYr63DgC2E"
@@ -44,7 +44,7 @@
     "id": "fastnear",
     "method": "light_client_proof",
     "params": {
-      "type": "транзакции",
+      "type": "транзакция",
       "transaction_hash": "4EQZ5qoEJUbz8SRNkNwrAPtsn2VFhg9Ci1weaNNpiuR7",
       "sender_id": "intents.near",
       "light_client_head": "6sddgq8nkENAz4f8qR72qxRPM25QWNBVMrkYr63DgC2E"
@@ -138,7 +138,7 @@
             "schema": {
               "type": "string",
               "enum": [
-                "транзакции"
+                "транзакция"
               ]
             }
           }

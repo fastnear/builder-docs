@@ -27,7 +27,7 @@
 {
   "jsonrpc": "2.0",
   "id": "fastnear",
-  "method": "блока",
+  "method": "блок",
   "params": {
     "finality": "final"
   }
@@ -40,7 +40,7 @@
   "body": {
     "jsonrpc": "2.0",
     "id": "fastnear",
-    "method": "блока",
+    "method": "блок",
     "params": {
       "finality": "optimistic"
     }
@@ -85,7 +85,7 @@
       "schema": {
         "type": "string",
         "enum": [
-          "блока"
+          "блок"
         ]
       }
     },
@@ -103,7 +103,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "description": "Финальность selector for the последний visible блока",
+              "description": "Селектор финальности для последнего видимого блока",
               "enum": [
                 "final",
                 "near-final",

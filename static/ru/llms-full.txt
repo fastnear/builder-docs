@@ -344,10 +344,10 @@ https://test.api.fastnear.com
 
 ## С чего обычно начинают
 
-- `V1 полный снимок аккаунта` — для объединённого снимка аккаунта.
-- `V1 FT-токены аккаунта` и `V1 NFT аккаунта` — для продуктовых представлений активов.
-- `V1 поиск по публичному ключу` — когда нужно определить аккаунт по ключу.
-- `V1 топ держателей FT` — для представлений распределения токенов.
+- [V1 полный снимок аккаунта](https://docs.fastnear.com/ru/api/v1/account-full) — для объединённого снимка аккаунта.
+- [V1 FT-токены аккаунта](https://docs.fastnear.com/ru/api/v1/account-ft) и [V1 NFT аккаунта](https://docs.fastnear.com/ru/api/v1/account-nft) — для продуктовых представлений активов.
+- [V1 поиск по публичному ключу](https://docs.fastnear.com/ru/api/v1/public-key) — когда нужно определить аккаунт по ключу.
+- [V1 топ держателей FT](https://docs.fastnear.com/ru/api/v1/ft-top) — для представлений распределения токенов.
 
 ## Устранение неполадок
 
@@ -465,10 +465,10 @@ https://kv.test.fastnear.com
 
 ## С чего обычно начинают
 
-- `Все по вызывающему аккаунту` — для широкого просмотра по вызывающему аккаунту.
-- `История по вызывающему аккаунту` — когда нужен отфильтрованный поток истории.
-- `История по аккаунту` или `История по ключу` — для более узкого чтения.
-- `Пакетный поиск по ключам` — когда вы уже знаете точные ключи.
+- [Все по вызывающему аккаунту](https://docs.fastnear.com/ru/fastdata/kv/all-by-predecessor) — для широкого просмотра по вызывающему аккаунту.
+- [История по вызывающему аккаунту](https://docs.fastnear.com/ru/fastdata/kv/history-by-predecessor) — когда нужен отфильтрованный поток истории.
+- [История по аккаунту](https://docs.fastnear.com/ru/fastdata/kv/history-by-account) или [История по ключу](https://docs.fastnear.com/ru/fastdata/kv/history-by-key) — для более узкого чтения.
+- [Пакетный поиск по ключам](https://docs.fastnear.com/ru/fastdata/kv/multi) — когда вы уже знаете точные ключи.
 
 ## Устранение неполадок
 
@@ -784,9 +784,9 @@ https://testnet.neardata.xyz
 
 ## С чего обычно начинают
 
-- `Оптимистичный блок` — для самого свежего опроса блоков.
-- `Финализированный блок по высоте` и `Заголовки блока` — для запросов по финализированным блокам.
-- `Перенаправление на последний финализированный блок` и `Перенаправление на последний оптимистичный блок` — когда вам нужны вспомогательные маршруты с перенаправлением.
+- [Оптимистичный блок](https://docs.fastnear.com/ru/neardata/block-optimistic) — для самого свежего опроса блоков.
+- [Финализированный блок по высоте](https://docs.fastnear.com/ru/neardata/block) и [Заголовки блока](https://docs.fastnear.com/ru/neardata/block-headers) — для запросов по финализированным блокам.
+- [Перенаправление на последний финализированный блок](https://docs.fastnear.com/ru/neardata/last-block-final) и [Перенаправление на последний оптимистичный блок](https://docs.fastnear.com/ru/neardata/last-block-optimistic) — когда нужны вспомогательные маршруты с перенаправлением.
 
 ## Устранение неполадок
 
@@ -897,12 +897,12 @@ https://archival-rpc.testnet.fastnear.com
 
 ## С чего обычно начинают
 
-- `Аккаунт`: запросы по аккаунту, ключу доступа и списку ключей.
-- `Блоки`: поиск финализированных блоков или блоков по высоте и хешу.
-- `Контракты`: вызовы view-методов, получение кода и просмотр состояния контракта.
-- `Протокол`: статус, состояние узла, цена газа, конфигурация сети и экспериментальные методы протокола.
-- `Транзакции`: отправка транзакций и методы статуса исполнения.
-- `Валидаторы`: текущие валидаторы и данные по эпохам.
+- [`view_account`](https://docs.fastnear.com/ru/rpc/account/view-account), [`view_access_key`](https://docs.fastnear.com/ru/rpc/account/view-access-key), [`view_access_key_list`](https://docs.fastnear.com/ru/rpc/account/view-access-key-list) — запросы по аккаунту и ключам доступа.
+- [`block`](https://docs.fastnear.com/ru/rpc/block/block-by-id) — поиск по высоте или хешу; [`block_effects`](https://docs.fastnear.com/ru/rpc/block/block-effects) — изменения внутри блока.
+- [`call_function`](https://docs.fastnear.com/ru/rpc/contract/call-function), [`view_code`](https://docs.fastnear.com/ru/rpc/contract/view-code), [`view_state`](https://docs.fastnear.com/ru/rpc/contract/view-state) — работа с контрактами.
+- [`status`](https://docs.fastnear.com/ru/rpc/protocol/status), [`health`](https://docs.fastnear.com/ru/rpc/protocol/health), [`gas_price`](https://docs.fastnear.com/ru/rpc/protocol/gas-price) — диагностика узла и протокола.
+- [`send_tx`](https://docs.fastnear.com/ru/rpc/transaction/send-tx) — отправка транзакций; [`tx`](https://docs.fastnear.com/ru/rpc/transaction/tx-status) — статус исполнения.
+- [`validators`](https://docs.fastnear.com/ru/rpc/validators/validators-current) — валидаторы текущей эпохи.
 
 ## Используйте RPC, когда
 
@@ -1293,10 +1293,10 @@ https://tx.test.fastnear.com
 
 ## С чего обычно начинают
 
-- `Транзакции по хешу` — когда вы уже знаете идентификатор транзакции.
-- `История аккаунта` — для лент активности и отладки аккаунта.
-- `Поиск квитанции` — для расследования цепочки исполнения.
-- `Диапазон блоков` — когда нужен ограниченный по диапазону просмотр истории.
+- [Транзакции по хешу](https://docs.fastnear.com/ru/tx/transactions) — когда вы уже знаете идентификатор транзакции.
+- [История аккаунта](https://docs.fastnear.com/ru/tx/account) — для лент активности и отладки аккаунта.
+- [Поиск квитанции](https://docs.fastnear.com/ru/tx/receipt) — для расследования цепочки исполнения.
+- [Диапазон блоков](https://docs.fastnear.com/ru/tx/blocks) — когда нужен ограниченный по диапазону просмотр истории.
 
 ## Устранение неполадок
 
@@ -2154,7 +2154,7 @@ https://tx.test.fastnear.com
 {
   "jsonrpc": "2.0",
   "id": "fastnear",
-  "method": "блока",
+  "method": "блок",
   "params": {
     "block_id": 193909529
   }
@@ -2167,7 +2167,7 @@ https://tx.test.fastnear.com
   "body": {
     "jsonrpc": "2.0",
     "id": "fastnear",
-    "method": "блока",
+    "method": "блок",
     "params": {
       "block_id": 193909529
     }
@@ -2214,7 +2214,7 @@ https://tx.test.fastnear.com
       "schema": {
         "type": "string",
         "enum": [
-          "блока"
+          "блок"
         ]
       }
     },
@@ -2354,7 +2354,7 @@ https://tx.test.fastnear.com
 {
   "jsonrpc": "2.0",
   "id": "fastnear",
-  "method": "блока",
+  "method": "блок",
   "params": {
     "block_id": "6sddgq8nkENAz4f8qR72qxRPM25QWNBVMrkYr63DgC2E"
   }
@@ -2367,7 +2367,7 @@ https://tx.test.fastnear.com
   "body": {
     "jsonrpc": "2.0",
     "id": "fastnear",
-    "method": "блока",
+    "method": "блок",
     "params": {
       "block_id": "6sddgq8nkENAz4f8qR72qxRPM25QWNBVMrkYr63DgC2E"
     }
@@ -2414,7 +2414,7 @@ https://tx.test.fastnear.com
       "schema": {
         "type": "string",
         "enum": [
-          "блока"
+          "блок"
         ]
       }
     },
@@ -4594,7 +4594,7 @@ https://tx.test.fastnear.com
                   "schema": {
                     "type": "object",
                     "nullable": true,
-                    "description": "Stores the congestion level of a шард. More info about congestion [here](https://near.github.io/nearcore/architecture/how/receipt-congestion.html?highlight=congestion#receipt-congestion)"
+                    "description": "Хранит уровень перегрузки шарда. Подробнее о перегрузке [здесь](https://near.github.io/nearcore/architecture/how/receipt-congestion.html?highlight=congestion#receipt-congestion)"
                   }
                 },
                 {
@@ -5024,7 +5024,7 @@ https://tx.test.fastnear.com
                   "schema": {
                     "type": "object",
                     "nullable": true,
-                    "description": "Stores the congestion level of a шард. More info about congestion [here](https://near.github.io/nearcore/architecture/how/receipt-congestion.html?highlight=congestion#receipt-congestion)"
+                    "description": "Хранит уровень перегрузки шарда. Подробнее о перегрузке [здесь](https://near.github.io/nearcore/architecture/how/receipt-congestion.html?highlight=congestion#receipt-congestion)"
                   }
                 },
                 {
@@ -5381,7 +5381,7 @@ https://tx.test.fastnear.com
             "required": false,
             "schema": {
               "type": "integer",
-              "description": "Horizon at which instead of fetching блока, fetch full состояние.",
+              "description": "Горизонт, после которого вместо получения блока извлекается полное состояние.",
               "format": "uint64"
             }
           },
@@ -5399,7 +5399,7 @@ https://tx.test.fastnear.com
             "required": false,
             "schema": {
               "type": "array",
-              "description": "Duration to check for producing / skipping блока.",
+              "description": "Интервал проверки необходимости выпустить или пропустить блок.",
               "items": {
                 "type": "integer",
                 "format": "uint64"
@@ -5423,7 +5423,7 @@ https://tx.test.fastnear.com
             "required": false,
             "schema": {
               "type": "string",
-              "description": "Chain id for статус."
+              "description": "ID цепочки для статуса."
             }
           },
           {
@@ -5446,7 +5446,7 @@ https://tx.test.fastnear.com
                   "required": false,
                   "schema": {
                     "type": "object",
-                    "description": "URIs for the Chunk Distribution Сеть feature."
+                    "description": "URI для функции Chunk Distribution Network."
                   }
                 }
               ]
@@ -5457,7 +5457,7 @@ https://tx.test.fastnear.com
             "required": false,
             "schema": {
               "type": "array",
-              "description": "Time between checking to re-запрос chunks.",
+              "description": "Время между проверками на повторный запрос чанков.",
               "items": {
                 "type": "integer",
                 "format": "uint64"
@@ -5499,7 +5499,7 @@ https://tx.test.fastnear.com
             "required": false,
             "schema": {
               "type": "integer",
-              "description": "Number of threads to execute background migration work in клиент.",
+              "description": "Количество потоков, выполняющих фоновые миграционные работы в клиенте.",
               "format": "uint"
             }
           },
@@ -5516,7 +5516,7 @@ https://tx.test.fastnear.com
                   "required": false,
                   "schema": {
                     "type": "boolean",
-                    "description": "Determines whether блока-related data should be written to cloud storage.",
+                    "description": "Определяет, должны ли данные, связанные с блоками, записываться в облачное хранилище.",
                     "default": false
                   }
                 },
@@ -5525,7 +5525,7 @@ https://tx.test.fastnear.com
                   "required": false,
                   "schema": {
                     "type": "object",
-                    "description": "Interval at which the system checks for new блоки or chunks to archive.",
+                    "description": "Интервал, с которым система проверяет новые блоки или чанки для архивации.",
                     "default": {
                       "nanos": 0,
                       "secs": 1
@@ -5599,7 +5599,7 @@ https://tx.test.fastnear.com
                   "required": false,
                   "schema": {
                     "type": "integer",
-                    "description": "Number of epochs behind the сеть head beyond which the node will use\nepoch sync instead of header sync. At the consumption site, this is\nmultiplied by epoch_length to get the horizon in блоки.",
+                    "description": "Количество эпох от головы сети, за пределами которого нода переключится с header-синхронизации\nна epoch-синхронизацию. На стороне потребителя это значение\nумножается на epoch_length, чтобы получить горизонт в блоках.",
                     "format": "uint64",
                     "default": 2
                   }
@@ -5620,7 +5620,7 @@ https://tx.test.fastnear.com
             "required": false,
             "schema": {
               "type": "string",
-              "description": "Graceful shutdown at expected блока height."
+              "description": "Корректное завершение работы на ожидаемой высоте блока."
             }
           },
           {
@@ -5635,7 +5635,7 @@ https://tx.test.fastnear.com
                   "required": false,
                   "schema": {
                     "type": "integer",
-                    "description": "Maximum number of блоки to garbage collect at every garbage collection\nвызов.",
+                    "description": "Максимальное количество блоков, собираемых сборщиком мусора\nза один вызов.",
                     "format": "uint64",
                     "default": 2
                   }
@@ -5749,7 +5749,7 @@ https://tx.test.fastnear.com
             "required": false,
             "schema": {
               "type": "array",
-              "description": "Maximum wait for approvals before producing блока.",
+              "description": "Максимальное время ожидания подтверждений перед выпуском блока.",
               "items": {
                 "type": "integer",
                 "format": "uint64"
@@ -5782,7 +5782,7 @@ https://tx.test.fastnear.com
             "required": false,
             "schema": {
               "type": "array",
-              "description": "Minimum duration before producing блока.",
+              "description": "Минимальная длительность перед выпуском блока.",
               "items": {
                 "type": "integer",
                 "format": "uint64"
@@ -5803,7 +5803,7 @@ https://tx.test.fastnear.com
             "required": false,
             "schema": {
               "type": "integer",
-              "description": "Number of блока producer seats",
+              "description": "Количество мест для производителей блоков",
               "format": "uint64"
             }
           },
@@ -5838,7 +5838,7 @@ https://tx.test.fastnear.com
             "required": false,
             "schema": {
               "type": "boolean",
-              "description": "Produce empty блоки, use `false` for testing."
+              "description": "Выпускать пустые блоки; значение `false` используется для тестирования."
             }
           },
           {
@@ -5846,7 +5846,7 @@ https://tx.test.fastnear.com
             "required": false,
             "schema": {
               "type": "string",
-              "description": "Configures whether the node checks the next or the next next epoch for сеть version compatibility.",
+              "description": "Определяет, проверяет ли нода совместимость версии сети для следующей или через одну эпохи.",
               "enum": [
                 "Next",
                 "NextNext"
@@ -5866,7 +5866,7 @@ https://tx.test.fastnear.com
             "schema": {
               "type": "string",
               "nullable": true,
-              "description": "Listening rpc port for статус."
+              "description": "Порт RPC для статуса, на котором слушает узел."
             }
           },
           {
@@ -5890,7 +5890,7 @@ https://tx.test.fastnear.com
             "required": false,
             "schema": {
               "type": "boolean",
-              "description": "Whether to persist состояние changes on disk or not."
+              "description": "Нужно ли сохранять изменения состояния на диск."
             }
           },
           {
@@ -5906,7 +5906,7 @@ https://tx.test.fastnear.com
             "required": false,
             "schema": {
               "type": "boolean",
-              "description": "Whether to persist транзакции outcomes to disk or not."
+              "description": "Нужно ли сохранять результаты транзакций на диск."
             }
           },
           {
@@ -5939,7 +5939,7 @@ https://tx.test.fastnear.com
             "required": false,
             "schema": {
               "type": "array",
-              "description": "Number of seconds between состояние requests for просмотр клиент.\nThrottling window for состояние requests (headers and parts).",
+              "description": "Количество секунд между запросами состояния для view-клиента.\nОкно троттлинга для запросов состояния (заголовки и части).",
               "items": {
                 "type": "integer",
                 "format": "uint64"
@@ -5951,7 +5951,7 @@ https://tx.test.fastnear.com
             "required": false,
             "schema": {
               "type": "integer",
-              "description": "Maximum number of состояние requests served per throttle period",
+              "description": "Максимальное количество запросов состояния, обслуживаемых за период троттлинга",
               "format": "uint"
             }
           },
@@ -5960,7 +5960,7 @@ https://tx.test.fastnear.com
             "required": false,
             "schema": {
               "type": "object",
-              "description": "Options for syncing состояние.",
+              "description": "Параметры синхронизации состояния.",
               "properties": [
                 {
                   "name": "concurrency",
@@ -5975,7 +5975,7 @@ https://tx.test.fastnear.com
                   "schema": {
                     "type": "object",
                     "nullable": true,
-                    "description": "Configures how to dump состояние to external storage."
+                    "description": "Настраивает способ выгрузки состояния во внешнее хранилище."
                   }
                 },
                 {
@@ -5983,7 +5983,7 @@ https://tx.test.fastnear.com
                   "required": false,
                   "schema": {
                     "type": "integer",
-                    "description": "Zstd compression level for состояние parts.",
+                    "description": "Уровень сжатия Zstd для частей состояния.",
                     "format": "int32",
                     "default": 1
                   }
@@ -5994,7 +5994,7 @@ https://tx.test.fastnear.com
                   "schema": {
                     "type": "string",
                     "nullable": true,
-                    "description": "Syncs состояние from the peers without reading anything from external storage.",
+                    "description": "Синхронизирует состояние от пиров, не читая ничего из внешнего хранилища.",
                     "enum": [
                       "Peers"
                     ]
@@ -6008,7 +6008,7 @@ https://tx.test.fastnear.com
             "required": false,
             "schema": {
               "type": "boolean",
-              "description": "Whether to use the Состояние Sync mechanism.\nIf disabled, the node will do Блок Sync instead of Состояние Sync."
+              "description": "Использовать ли механизм State Sync.\nЕсли отключён, нода будет выполнять Block Sync вместо State Sync."
             }
           },
           {
@@ -6016,7 +6016,7 @@ https://tx.test.fastnear.com
             "required": false,
             "schema": {
               "type": "array",
-              "description": "Additional waiting period after a failed запрос to external storage",
+              "description": "Дополнительное время ожидания после неудачного запроса к внешнему хранилищу",
               "items": {
                 "type": "integer",
                 "format": "uint64"
@@ -6028,7 +6028,7 @@ https://tx.test.fastnear.com
             "required": false,
             "schema": {
               "type": "array",
-              "description": "How long to wait for a ответ from centralized состояние sync",
+              "description": "Как долго ждать ответа от централизованной синхронизации состояния",
               "items": {
                 "type": "integer",
                 "format": "uint64"
@@ -6040,7 +6040,7 @@ https://tx.test.fastnear.com
             "required": false,
             "schema": {
               "type": "array",
-              "description": "How long to wait for a ответ from p2p состояние sync",
+              "description": "Как долго ждать ответа от p2p-синхронизации состояния",
               "items": {
                 "type": "integer",
                 "format": "uint64"
@@ -6052,7 +6052,7 @@ https://tx.test.fastnear.com
             "required": false,
             "schema": {
               "type": "array",
-              "description": "How long to wait after a failed состояние sync запрос",
+              "description": "Как долго ждать после неудачного запроса синхронизации состояния",
               "items": {
                 "type": "integer",
                 "format": "uint64"
@@ -6085,7 +6085,7 @@ https://tx.test.fastnear.com
             "required": false,
             "schema": {
               "type": "integer",
-              "description": "Maximum number of блока requests to отправка to peers to sync",
+              "description": "Максимальное количество запросов блоков, отправляемых пирам для синхронизации",
               "format": "uint"
             }
           },
@@ -6115,7 +6115,7 @@ https://tx.test.fastnear.com
             "schema": {
               "type": "integer",
               "nullable": true,
-              "description": "Limit of the size of per-shard транзакции pool measured in bytes. If not set, the size\nwill be unbounded.",
+              "description": "Ограничение размера пула транзакций одного шарда в байтах. Если не задано,\nразмер не ограничен.",
               "format": "uint64"
             }
           },
@@ -6133,7 +6133,7 @@ https://tx.test.fastnear.com
             "schema": {
               "type": "integer",
               "nullable": true,
-              "description": "Upper bound of the byte size of контракта состояние that is still viewable. None is no limit",
+              "description": "Верхняя граница размера состояния контракта в байтах, при котором оно ещё доступно для просмотра. None — без ограничения",
               "format": "uint64"
             }
           },
@@ -6154,7 +6154,7 @@ https://tx.test.fastnear.com
             "required": false,
             "schema": {
               "type": "integer",
-              "description": "If the node is not a chunk producer within that many блоки, then route\nto upcoming chunk producers.",
+              "description": "Если нода не является производителем чанков в пределах этого числа блоков,\nмаршрутизировать запросы к будущим производителям чанков.",
               "format": "uint64"
             }
           },
@@ -6207,7 +6207,7 @@ https://tx.test.fastnear.com
             "required": false,
             "schema": {
               "type": "integer",
-              "description": "Number of threads for ПросмотрClientActor pool.",
+              "description": "Количество потоков для пула ViewClientActor.",
               "format": "uint"
             }
           },
@@ -6797,7 +6797,7 @@ https://tx.test.fastnear.com
     "light_client_head": "6sddgq8nkENAz4f8qR72qxRPM25QWNBVMrkYr63DgC2E",
     "sender_id": "intents.near",
     "transaction_hash": "4EQZ5qoEJUbz8SRNkNwrAPtsn2VFhg9Ci1weaNNpiuR7",
-    "type": "транзакции"
+    "type": "транзакция"
   }
 }
 ```
@@ -6813,7 +6813,7 @@ https://tx.test.fastnear.com
       "light_client_head": "6sddgq8nkENAz4f8qR72qxRPM25QWNBVMrkYr63DgC2E",
       "sender_id": "intents.near",
       "transaction_hash": "4EQZ5qoEJUbz8SRNkNwrAPtsn2VFhg9Ci1weaNNpiuR7",
-      "type": "транзакции"
+      "type": "транзакция"
     }
   },
   "headers": {},
@@ -6904,7 +6904,7 @@ https://tx.test.fastnear.com
             "schema": {
               "type": "string",
               "enum": [
-                "транзакции"
+                "транзакция"
               ]
             }
           }
@@ -8529,7 +8529,7 @@ https://tx.test.fastnear.com
             "required": false,
             "schema": {
               "type": "integer",
-              "description": "Limits the number of шард changes in chunk producer assignments,\nif algorithm is able to choose assignment with better balance of\nnumber of chunk producers for shards.",
+              "description": "Ограничивает число изменений шардов в распределении производителей чанков,\nесли алгоритм способен выбрать распределение с лучшим балансом\nчисла производителей чанков по шардам.",
               "format": "uint64",
               "default": 5
             }
@@ -8700,7 +8700,7 @@ https://tx.test.fastnear.com
             "required": true,
             "schema": {
               "type": "array",
-              "description": "Defines number of shards and number of блока producer seats per each shard at genesis.\nNote: not used with protocol_feature_chunk_only_producers -- replaced by minimum_validators_per_shard\nNote: not used before as all блока producers produce chunks for all shards",
+              "description": "Задаёт количество шардов и количество мест для производителей блоков на каждый шард в генезисе.\nПрим.: не используется с protocol_feature_chunk_only_producers — заменено на minimum_validators_per_shard.\nПрим.: раньше не использовалось, так как все производители блоков выпускали чанки для всех шардов.",
               "items": {
                 "type": "integer",
                 "format": "uint64"
@@ -8883,7 +8883,7 @@ https://tx.test.fastnear.com
             "required": true,
             "schema": {
               "type": "array",
-              "description": "List of initial валидаторы.",
+              "description": "Список начальных валидаторов.",
               "items": {
                 "type": "object",
                 "description": "Аккаунт info for validators"
@@ -9148,7 +9148,7 @@ https://tx.test.fastnear.com
 {
   "jsonrpc": "2.0",
   "id": "fastnear",
-  "method": "блока",
+  "method": "блок",
   "params": {
     "finality": "final"
   }
@@ -9161,7 +9161,7 @@ https://tx.test.fastnear.com
   "body": {
     "jsonrpc": "2.0",
     "id": "fastnear",
-    "method": "блока",
+    "method": "блок",
     "params": {
       "finality": "optimistic"
     }
@@ -9206,7 +9206,7 @@ https://tx.test.fastnear.com
       "schema": {
         "type": "string",
         "enum": [
-          "блока"
+          "блок"
         ]
       }
     },
@@ -9224,7 +9224,7 @@ https://tx.test.fastnear.com
             "required": true,
             "schema": {
               "type": "string",
-              "description": "Финальность selector for the последний visible блока",
+              "description": "Селектор финальности для последнего видимого блока",
               "enum": [
                 "final",
                 "near-final",
@@ -9353,7 +9353,7 @@ https://tx.test.fastnear.com
   "id": "fastnear",
   "method": "light_client_proof",
   "params": {
-    "type": "транзакции",
+    "type": "транзакция",
     "transaction_hash": "4EQZ5qoEJUbz8SRNkNwrAPtsn2VFhg9Ci1weaNNpiuR7",
     "sender_id": "intents.near",
     "light_client_head": "6sddgq8nkENAz4f8qR72qxRPM25QWNBVMrkYr63DgC2E"
@@ -9369,7 +9369,7 @@ https://tx.test.fastnear.com
     "id": "fastnear",
     "method": "light_client_proof",
     "params": {
-      "type": "транзакции",
+      "type": "транзакция",
       "transaction_hash": "4EQZ5qoEJUbz8SRNkNwrAPtsn2VFhg9Ci1weaNNpiuR7",
       "sender_id": "intents.near",
       "light_client_head": "6sddgq8nkENAz4f8qR72qxRPM25QWNBVMrkYr63DgC2E"
@@ -9463,7 +9463,7 @@ https://tx.test.fastnear.com
             "schema": {
               "type": "string",
               "enum": [
-                "транзакции"
+                "транзакция"
               ]
             }
           }
@@ -10113,7 +10113,7 @@ https://tx.test.fastnear.com
             "required": true,
             "schema": {
               "type": "array",
-              "description": "Accounts of known блока and chunk producers from routing table.",
+              "description": "Аккаунты известных производителей блоков и чанков из таблицы маршрутизации.",
               "items": {
                 "type": "object"
               }
@@ -10352,7 +10352,7 @@ https://tx.test.fastnear.com
       "required": false,
       "schema": {
         "type": "object",
-        "description": "A состояние for the текущий head of a light клиент. More info [here](https://nomicon.io/ChainSpec/LightClient).",
+        "description": "Состояние для текущей головы лёгкого клиента. Подробнее [здесь](https://nomicon.io/ChainSpec/LightClient).",
         "properties": [
           {
             "name": "approvals_after_next",
@@ -10736,7 +10736,7 @@ https://tx.test.fastnear.com
                   "required": true,
                   "schema": {
                     "type": "object",
-                    "description": "Height and hash of a блока"
+                    "description": "Высота и хеш блока"
                   }
                 },
                 {
@@ -10744,7 +10744,7 @@ https://tx.test.fastnear.com
                   "required": true,
                   "schema": {
                     "type": "object",
-                    "description": "Height and hash of a блока"
+                    "description": "Высота и хеш блока"
                   }
                 },
                 {
@@ -10777,7 +10777,7 @@ https://tx.test.fastnear.com
             "required": true,
             "schema": {
               "type": "integer",
-              "description": "Последний протокола version that this клиент supports.",
+              "description": "Последняя версия протокола, поддерживаемая этим клиентом.",
               "format": "uint32"
             }
           },
@@ -10803,7 +10803,7 @@ https://tx.test.fastnear.com
             "required": true,
             "schema": {
               "type": "integer",
-              "description": "Currently active протокола version.",
+              "description": "Текущая активная версия протокола.",
               "format": "uint32"
             }
           },
@@ -10813,7 +10813,7 @@ https://tx.test.fastnear.com
             "schema": {
               "type": "string",
               "nullable": true,
-              "description": "Address for RPC server. None if node doesn't have RPC endpoint enabled."
+              "description": "Адрес RPC-сервера. None, если у ноды не включён RPC-эндпоинт."
             }
           },
           {
@@ -10821,7 +10821,7 @@ https://tx.test.fastnear.com
             "required": true,
             "schema": {
               "type": "object",
-              "description": "Sync статус of the node.",
+              "description": "Статус синхронизации ноды.",
               "required": [
                 "latest_block_hash",
                 "latest_block_height",
@@ -11156,7 +11156,7 @@ https://tx.test.fastnear.com
             "required": false,
             "schema": {
               "type": "string",
-              "description": "Desired level of execution статус guarantee",
+              "description": "Желаемый уровень гарантии статуса исполнения",
               "default": "EXECUTED_OPTIMISTIC",
               "enum": [
                 "NONE",
@@ -11375,7 +11375,7 @@ https://tx.test.fastnear.com
             "required": false,
             "schema": {
               "type": "string",
-              "description": "Desired level of execution статус guarantee",
+              "description": "Желаемый уровень гарантии статуса исполнения",
               "default": "EXECUTED_OPTIMISTIC",
               "enum": [
                 "NONE",
@@ -11444,7 +11444,7 @@ https://tx.test.fastnear.com
             "required": true,
             "schema": {
               "type": "string",
-              "description": "Desired level of execution статус guarantee",
+              "description": "Желаемый уровень гарантии статуса исполнения",
               "enum": [
                 "NONE",
                 "INCLUDED",
@@ -11460,7 +11460,7 @@ https://tx.test.fastnear.com
             "required": false,
             "schema": {
               "type": "array",
-              "description": "Receipts generated from the транзакции",
+              "description": "Квитанции, порождённые транзакцией",
               "items": {
                 "type": "object"
               }
@@ -11471,7 +11471,7 @@ https://tx.test.fastnear.com
             "required": false,
             "schema": {
               "type": "array",
-              "description": "The execution outcome of квитанции.",
+              "description": "Результаты исполнения квитанций.",
               "items": {
                 "type": "object"
               }
@@ -11486,11 +11486,11 @@ https://tx.test.fastnear.com
             }
           },
           {
-            "name": "транзакции",
+            "name": "транзакция",
             "required": false,
             "schema": {
               "type": "object",
-              "description": "Signed Транзакция"
+              "description": "Подписанная транзакция"
             }
           },
           {
@@ -11498,7 +11498,7 @@ https://tx.test.fastnear.com
             "required": false,
             "schema": {
               "type": "object",
-              "description": "The execution outcome of the signed транзакции."
+              "description": "Результат исполнения подписанной транзакции."
             }
           }
         ]
@@ -11905,7 +11905,7 @@ https://tx.test.fastnear.com
             "required": false,
             "schema": {
               "type": "string",
-              "description": "Desired level of execution статус guarantee",
+              "description": "Желаемый уровень гарантии статуса исполнения",
               "default": "EXECUTED_OPTIMISTIC",
               "enum": [
                 "NONE",
@@ -11998,7 +11998,7 @@ https://tx.test.fastnear.com
             "required": true,
             "schema": {
               "type": "string",
-              "description": "Desired level of execution статус guarantee",
+              "description": "Желаемый уровень гарантии статуса исполнения",
               "enum": [
                 "NONE",
                 "INCLUDED",
@@ -12014,7 +12014,7 @@ https://tx.test.fastnear.com
             "required": false,
             "schema": {
               "type": "array",
-              "description": "Receipts generated from the транзакции",
+              "description": "Квитанции, порождённые транзакцией",
               "items": {
                 "type": "object"
               }
@@ -12025,7 +12025,7 @@ https://tx.test.fastnear.com
             "required": false,
             "schema": {
               "type": "array",
-              "description": "The execution outcome of квитанции.",
+              "description": "Результаты исполнения квитанций.",
               "items": {
                 "type": "object"
               }
@@ -12040,11 +12040,11 @@ https://tx.test.fastnear.com
             }
           },
           {
-            "name": "транзакции",
+            "name": "транзакция",
             "required": false,
             "schema": {
               "type": "object",
-              "description": "Signed Транзакция"
+              "description": "Подписанная транзакция"
             }
           },
           {
@@ -12052,7 +12052,7 @@ https://tx.test.fastnear.com
             "required": false,
             "schema": {
               "type": "object",
-              "description": "The execution outcome of the signed транзакции."
+              "description": "Результат исполнения подписанной транзакции."
             }
           }
         ]
@@ -12216,7 +12216,7 @@ https://tx.test.fastnear.com
             "required": false,
             "schema": {
               "type": "string",
-              "description": "Desired level of execution статус guarantee",
+              "description": "Желаемый уровень гарантии статуса исполнения",
               "default": "EXECUTED_OPTIMISTIC",
               "enum": [
                 "NONE",
@@ -12285,7 +12285,7 @@ https://tx.test.fastnear.com
             "required": true,
             "schema": {
               "type": "string",
-              "description": "Desired level of execution статус guarantee",
+              "description": "Желаемый уровень гарантии статуса исполнения",
               "enum": [
                 "NONE",
                 "INCLUDED",
@@ -12301,7 +12301,7 @@ https://tx.test.fastnear.com
             "required": false,
             "schema": {
               "type": "array",
-              "description": "Receipts generated from the транзакции",
+              "description": "Квитанции, порождённые транзакцией",
               "items": {
                 "type": "object"
               }
@@ -12312,7 +12312,7 @@ https://tx.test.fastnear.com
             "required": false,
             "schema": {
               "type": "array",
-              "description": "The execution outcome of квитанции.",
+              "description": "Результаты исполнения квитанций.",
               "items": {
                 "type": "object"
               }
@@ -12327,11 +12327,11 @@ https://tx.test.fastnear.com
             }
           },
           {
-            "name": "транзакции",
+            "name": "транзакция",
             "required": false,
             "schema": {
               "type": "object",
-              "description": "Signed Транзакция"
+              "description": "Подписанная транзакция"
             }
           },
           {
@@ -12339,7 +12339,7 @@ https://tx.test.fastnear.com
             "required": false,
             "schema": {
               "type": "object",
-              "description": "The execution outcome of the signed транзакции."
+              "description": "Результат исполнения подписанной транзакции."
             }
           }
         ]
@@ -12494,7 +12494,7 @@ https://tx.test.fastnear.com
             "required": false,
             "schema": {
               "type": "string",
-              "description": "Desired level of execution статус guarantee",
+              "description": "Желаемый уровень гарантии статуса исполнения",
               "default": "EXECUTED_OPTIMISTIC",
               "enum": [
                 "NONE",
@@ -12587,7 +12587,7 @@ https://tx.test.fastnear.com
             "required": true,
             "schema": {
               "type": "string",
-              "description": "Desired level of execution статус guarantee",
+              "description": "Желаемый уровень гарантии статуса исполнения",
               "enum": [
                 "NONE",
                 "INCLUDED",
@@ -12603,7 +12603,7 @@ https://tx.test.fastnear.com
             "required": false,
             "schema": {
               "type": "array",
-              "description": "Receipts generated from the транзакции",
+              "description": "Квитанции, порождённые транзакцией",
               "items": {
                 "type": "object"
               }
@@ -12614,7 +12614,7 @@ https://tx.test.fastnear.com
             "required": false,
             "schema": {
               "type": "array",
-              "description": "The execution outcome of квитанции.",
+              "description": "Результаты исполнения квитанций.",
               "items": {
                 "type": "object"
               }
@@ -12629,11 +12629,11 @@ https://tx.test.fastnear.com
             }
           },
           {
-            "name": "транзакции",
+            "name": "транзакция",
             "required": false,
             "schema": {
               "type": "object",
-              "description": "Signed Транзакция"
+              "description": "Подписанная транзакция"
             }
           },
           {
@@ -12641,7 +12641,7 @@ https://tx.test.fastnear.com
             "required": false,
             "schema": {
               "type": "object",
-              "description": "The execution outcome of the signed транзакции."
+              "description": "Результат исполнения подписанной транзакции."
             }
           }
         ]
@@ -13058,7 +13058,7 @@ https://tx.test.fastnear.com
       "required": false,
       "schema": {
         "type": "object",
-        "description": "Information about this epoch валидаторы and next epoch валидаторы",
+        "description": "Информация о валидаторах текущей и следующей эпохи",
         "required": [
           "current_validators",
           "next_validators",
@@ -13075,7 +13075,7 @@ https://tx.test.fastnear.com
             "required": true,
             "schema": {
               "type": "array",
-              "description": "Fishermen for the текущий epoch",
+              "description": "Fishermen текущей эпохи",
               "items": {
                 "type": "object",
                 "description": "One of multiple possible types"
@@ -13087,7 +13087,7 @@ https://tx.test.fastnear.com
             "required": true,
             "schema": {
               "type": "array",
-              "description": "Proposals in the текущий epoch",
+              "description": "Заявки (proposals) в текущей эпохе",
               "items": {
                 "type": "object",
                 "description": "One of multiple possible types"
@@ -13099,10 +13099,10 @@ https://tx.test.fastnear.com
             "required": true,
             "schema": {
               "type": "array",
-              "description": "Валидаторы for the текущий epoch",
+              "description": "Валидаторы текущей эпохи",
               "items": {
                 "type": "object",
-                "description": "Describes information about the текущий epoch валидатора"
+                "description": "Описывает сведения о валидаторе текущей эпохи"
               }
             }
           },
@@ -13120,7 +13120,7 @@ https://tx.test.fastnear.com
             "required": true,
             "schema": {
               "type": "integer",
-              "description": "Epoch start блока height",
+              "description": "Высота блока начала эпохи",
               "format": "uint64"
             }
           },
@@ -13141,7 +13141,7 @@ https://tx.test.fastnear.com
             "required": true,
             "schema": {
               "type": "array",
-              "description": "Валидаторы for the next epoch",
+              "description": "Валидаторы следующей эпохи",
               "items": {
                 "type": "object"
               }
@@ -13350,7 +13350,7 @@ https://tx.test.fastnear.com
       "required": false,
       "schema": {
         "type": "object",
-        "description": "Information about this epoch валидаторы and next epoch валидаторы",
+        "description": "Информация о валидаторах текущей и следующей эпохи",
         "required": [
           "current_validators",
           "next_validators",
@@ -13367,7 +13367,7 @@ https://tx.test.fastnear.com
             "required": true,
             "schema": {
               "type": "array",
-              "description": "Fishermen for the текущий epoch",
+              "description": "Fishermen текущей эпохи",
               "items": {
                 "type": "object",
                 "description": "One of multiple possible types"
@@ -13379,7 +13379,7 @@ https://tx.test.fastnear.com
             "required": true,
             "schema": {
               "type": "array",
-              "description": "Proposals in the текущий epoch",
+              "description": "Заявки (proposals) в текущей эпохе",
               "items": {
                 "type": "object",
                 "description": "One of multiple possible types"
@@ -13391,10 +13391,10 @@ https://tx.test.fastnear.com
             "required": true,
             "schema": {
               "type": "array",
-              "description": "Валидаторы for the текущий epoch",
+              "description": "Валидаторы текущей эпохи",
               "items": {
                 "type": "object",
-                "description": "Describes information about the текущий epoch валидатора"
+                "description": "Описывает сведения о валидаторе текущей эпохи"
               }
             }
           },
@@ -13412,7 +13412,7 @@ https://tx.test.fastnear.com
             "required": true,
             "schema": {
               "type": "integer",
-              "description": "Epoch start блока height",
+              "description": "Высота блока начала эпохи",
               "format": "uint64"
             }
           },
@@ -13433,7 +13433,7 @@ https://tx.test.fastnear.com
             "required": true,
             "schema": {
               "type": "array",
-              "description": "Валидаторы for the next epoch",
+              "description": "Валидаторы следующей эпохи",
               "items": {
                 "type": "object"
               }
@@ -14518,14 +14518,14 @@ https://tx.test.fastnear.com
 
 ---
 
-## FastNEAR API - V1 Аккаунт Staking
+## FastNEAR API — V1 стейкинг аккаунта
 
 - HTML-маршрут: https://docs.fastnear.com/ru/apis/fastnear/v1/account_staking
 - Markdown-маршрут: https://docs.fastnear.com/ru/apis/fastnear/v1/account_staking.md
 
-# FastNEAR API - V1 Аккаунт Staking
-Поиск indexed staking pools for an аккаунта
-Returns staking pool rows for the requested аккаунта. `last_update_block_height` is nullable when FastNEAR has not recorded a recent indexed update for that pool relationship.
+# FastNEAR API — V1 стейкинг аккаунта
+Поиск индексированных стейкинг-пулов аккаунта
+Возвращает записи стейкинг-пулов для указанного аккаунта. Поле `last_update_block_height` может быть null, если FastNEAR не записал недавнее индексированное обновление для этой связи с пулом.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/apis/fastnear/v1/account_staking
 - https://docs.fastnear.com/ru/apis/fastnear/openapi/staking/account_staking_v1
@@ -14538,7 +14538,7 @@ Returns staking pool rows for the requested аккаунта. `last_update_block
 - Mainnet: https://api.fastnear.com/
 - Testnet: https://test.api.fastnear.com/
 ## Авторизация
-- API-ключ через query `apiKey`: Optional API ключ forwarded by embedded portal clients. The public FastNEAR API does not require it.
+- API-ключ через query `apiKey`: Необязательный API-ключ, передаваемый встраиваемыми клиентами портала. Публичный FastNEAR API его не требует.
 - Этот экспорт намеренно не включает локально сохранённые учётные данные
 ## Текущий запрос
 - Сеть: Mainnet
@@ -14558,19 +14558,19 @@ Returns staking pool rows for the requested аккаунта. `last_update_block
 }
 ```
 ### Входные данные
-- `account_id` (путь, обязательный, string): NEAR аккаунта ID to inspect.
+- `account_id` (путь, обязательный, string): ID аккаунта NEAR для проверки.
 ### Параметры пути
 
-- `account_id` (путь, обязательный, string): NEAR аккаунта ID to inspect.
+- `account_id` (путь, обязательный, string): ID аккаунта NEAR для проверки.
 
 ### Параметры запроса
 
-- `apiKey` (query, string): Optional API ключ forwarded by embedded portal clients. The public FastNEAR API does not require it.
+- `apiKey` (query, string): Необязательный API-ключ, передаваемый встраиваемыми клиентами портала. Публичный FastNEAR API его не требует.
 
 ## Справка по ответу
 - Статус: 200
 - Тип данных: application/json
-- Краткое описание: Indexed staking pool rows for the requested аккаунта
+- Краткое описание: Индексированные записи стейкинг-пулов для указанного аккаунта
 ### Схема ответа
 ```json
 {
@@ -14628,14 +14628,14 @@ Returns staking pool rows for the requested аккаунта. `last_update_block
 
 ---
 
-## FastNEAR API - V1 FT Top Holders
+## FastNEAR API — V1 топ держателей FT
 
 - HTML-маршрут: https://docs.fastnear.com/ru/apis/fastnear/v1/ft_top
 - Markdown-маршрут: https://docs.fastnear.com/ru/apis/fastnear/v1/ft_top.md
 
-# FastNEAR API - V1 FT Top Holders
-Поиск top indexed holders for a fungible token
-Returns the top indexed аккаунтов by balance for the requested fungible token.
+# FastNEAR API — V1 топ держателей FT
+Поиск индексированных топ-держателей FT-токена
+Возвращает проиндексированные аккаунты с наибольшим балансом указанного FT-токена.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/apis/fastnear/v1/ft_top
 - https://docs.fastnear.com/ru/apis/fastnear/openapi/fungible-tokens/ft_top_v1
@@ -14648,7 +14648,7 @@ Returns the top indexed аккаунтов by balance for the requested fungible
 - Mainnet: https://api.fastnear.com/
 - Testnet: https://test.api.fastnear.com/
 ## Авторизация
-- API-ключ через query `apiKey`: Optional API ключ forwarded by embedded portal clients. The public FastNEAR API does not require it.
+- API-ключ через query `apiKey`: Необязательный API-ключ, передаваемый встраиваемыми клиентами портала. Публичный FastNEAR API его не требует.
 - Этот экспорт намеренно не включает локально сохранённые учётные данные
 ## Текущий запрос
 - Сеть: Mainnet
@@ -14668,19 +14668,19 @@ Returns the top indexed аккаунтов by balance for the requested fungible
 }
 ```
 ### Входные данные
-- `token_id` (путь, обязательный, string): Fungible token контракта аккаунта ID.
+- `token_id` (путь, обязательный, string): ID аккаунта контракта FT-токена.
 ### Параметры пути
 
-- `token_id` (путь, обязательный, string): Fungible token контракта аккаунта ID.
+- `token_id` (путь, обязательный, string): ID аккаунта контракта FT-токена.
 
 ### Параметры запроса
 
-- `apiKey` (query, string): Optional API ключ forwarded by embedded portal clients. The public FastNEAR API does not require it.
+- `apiKey` (query, string): Необязательный API-ключ, передаваемый встраиваемыми клиентами портала. Публичный FastNEAR API его не требует.
 
 ## Справка по ответу
 - Статус: 200
 - Тип данных: application/json
-- Краткое описание: Indexed top holders for the requested fungible token
+- Краткое описание: Индексированные топ-держатели указанного FT-токена
 ### Схема ответа
 ```json
 {
@@ -14975,7 +14975,7 @@ Returns the top indexed аккаунтов by balance for the requested fungible
       "required": false,
       "schema": {
         "type": "boolean",
-        "description": "Include квитанция and signer metadata in each entry.",
+        "description": "Включать в каждую запись метаданные квитанции и подписанта.",
         "default": false
       }
     },
@@ -14992,7 +14992,7 @@ Returns the top indexed аккаунтов by balance for the requested fungible
       "required": false,
       "schema": {
         "type": "string",
-        "description": "Opaque pagination cursor from a previous `/v0/all/{predecessor_id}` ответ."
+        "description": "Непрозрачный курсор пагинации из предыдущего ответа `/v0/all/{predecessor_id}`."
       }
     }
   ],
@@ -15169,12 +15169,12 @@ Returns the top indexed аккаунтов by balance for the requested fungible
 ### Входные данные
 - `current_account_id` (путь, обязательный, string): Аккаунт контракта, для которого были записаны ключи FastData.
 - `predecessor_id` (путь, обязательный, string): Вызывающий аккаунт, который записал ключи FastData.
-- `ключ` (путь, обязательный, string): Exact FastData ключ to return.
+- `ключ` (путь, обязательный, string): Точный ключ FastData, который нужно вернуть.
 ### Параметры пути
 
 - `current_account_id` (путь, обязательный, string): Аккаунт контракта, для которого были записаны ключи FastData.
 - `predecessor_id` (путь, обязательный, string): Вызывающий аккаунт, который записал ключи FastData.
-- `ключ` (путь, обязательный, string): Exact FastData ключ to return.
+- `ключ` (путь, обязательный, string): Точный ключ FastData, который нужно вернуть.
 
 ## Справка по ответу
 - Статус: 200
@@ -15342,12 +15342,12 @@ Returns the top indexed аккаунтов by balance for the requested fungible
 ### Входные данные
 - `current_account_id` (путь, обязательный, string): Аккаунт контракта, для которого были записаны ключи FastData.
 - `predecessor_id` (путь, обязательный, string): Вызывающий аккаунт, который записал ключи FastData.
-- `ключ` (путь, обязательный, string): Exact FastData ключ to return.
+- `ключ` (путь, обязательный, string): Точный ключ FastData, который нужно вернуть.
 ### Параметры пути
 
 - `current_account_id` (путь, обязательный, string): Аккаунт контракта, для которого были записаны ключи FastData.
 - `predecessor_id` (путь, обязательный, string): Вызывающий аккаунт, который записал ключи FastData.
-- `ключ` (путь, обязательный, string): Exact FastData ключ to return.
+- `ключ` (путь, обязательный, string): Точный ключ FastData, который нужно вернуть.
 
 ## Справка по ответу
 - Статус: 200
@@ -15528,7 +15528,7 @@ Returns the top indexed аккаунтов by balance for the requested fungible
 - `current_account_id` (путь, обязательный, string): Аккаунт контракта, для которого были записаны ключи FastData.
 - `asc` (body, boolean): Сортировать результаты истории по возрастанию. По умолчанию сначала идут новые записи.
 - `include_metadata` (body, boolean): Добавить в каждую запись метаданные квитанции и подписанта.
-- `ключ` (body, string): Exact ключ filter. Mutually exclusive with `key_prefix`.
+- `ключ` (body, string): Фильтр по точному ключу. Взаимно исключающий с `key_prefix`.
 - `key_prefix` (body, string): Фильтр по префиксу для совпадения пространств имён ключей.
 - `limit` (body, integer)
 - `page_token` (body, string): Непрозрачный курсор пагинации из предыдущего ответа с тем же эндпоинтом и набором фильтров.
@@ -15543,7 +15543,7 @@ Returns the top indexed аккаунтов by balance for the requested fungible
       "required": false,
       "schema": {
         "type": "boolean",
-        "description": "Sort ascending for история endpoints. Defaults to newest-first.",
+        "description": "Сортировать по возрастанию для эндпоинтов истории. По умолчанию — от новых к старым.",
         "default": false
       }
     },
@@ -15552,7 +15552,7 @@ Returns the top indexed аккаунтов by balance for the requested fungible
       "required": false,
       "schema": {
         "type": "boolean",
-        "description": "Include квитанция and signer metadata in each entry.",
+        "description": "Включать в каждую запись метаданные квитанции и подписанта.",
         "default": false
       }
     },
@@ -15561,7 +15561,7 @@ Returns the top indexed аккаунтов by balance for the requested fungible
       "required": false,
       "schema": {
         "type": "string",
-        "description": "Exact ключ filter. Mutually exclusive with `key_prefix`."
+        "description": "Фильтр по точному ключу. Взаимно исключающий с `key_prefix`."
       }
     },
     {
@@ -15569,7 +15569,7 @@ Returns the top indexed аккаунтов by balance for the requested fungible
       "required": false,
       "schema": {
         "type": "string",
-        "description": "Prefix filter for matching ключ namespaces."
+        "description": "Фильтр по префиксу для сопоставления пространств имён ключей."
       }
     },
     {
@@ -15585,7 +15585,7 @@ Returns the top indexed аккаунтов by balance for the requested fungible
       "required": false,
       "schema": {
         "type": "string",
-        "description": "Opaque pagination cursor from a previous ответ for the same endpoint and filter set."
+        "description": "Непрозрачный курсор пагинации из предыдущего ответа того же эндпоинта и набора фильтров."
       }
     }
   ],
@@ -15771,7 +15771,7 @@ Returns the top indexed аккаунтов by balance for the requested fungible
 ### Входные данные
 - `asc` (body, boolean): Сортировать результаты истории по возрастанию. По умолчанию сначала идут новые записи.
 - `include_metadata` (body, boolean): Добавить в каждую запись метаданные квитанции и подписанта.
-- `ключ` (body, обязательный, string): Exact ключ name to match across all аккаунтов and predecessors.
+- `ключ` (body, обязательный, string): Точное имя ключа для сопоставления по всем аккаунтам и predecessor.
 - `limit` (body, integer)
 - `page_token` (body, string): Непрозрачный курсор пагинации из предыдущего ответа с тем же эндпоинтом и набором фильтров.
 ### Схема запроса
@@ -15788,7 +15788,7 @@ Returns the top indexed аккаунтов by balance for the requested fungible
       "required": false,
       "schema": {
         "type": "boolean",
-        "description": "Sort ascending for история results. Defaults to newest-first.",
+        "description": "Сортировать результаты истории по возрастанию. По умолчанию — от новых к старым.",
         "default": false
       }
     },
@@ -15797,7 +15797,7 @@ Returns the top indexed аккаунтов by balance for the requested fungible
       "required": false,
       "schema": {
         "type": "boolean",
-        "description": "Include квитанция and signer metadata in each entry.",
+        "description": "Включать в каждую запись метаданные квитанции и подписанта.",
         "default": false
       }
     },
@@ -15806,7 +15806,7 @@ Returns the top indexed аккаунтов by balance for the requested fungible
       "required": true,
       "schema": {
         "type": "string",
-        "description": "Exact ключ name to match across all аккаунтов and predecessors."
+        "description": "Точное имя ключа для сопоставления по всем аккаунтам и predecessor."
       }
     },
     {
@@ -15822,7 +15822,7 @@ Returns the top indexed аккаунтов by balance for the requested fungible
       "required": false,
       "schema": {
         "type": "string",
-        "description": "Opaque pagination cursor from a previous ответ for the same endpoint and filter set."
+        "description": "Непрозрачный курсор пагинации из предыдущего ответа того же эндпоинта и набора фильтров."
       }
     }
   ],
@@ -16010,7 +16010,7 @@ Returns the top indexed аккаунтов by balance for the requested fungible
 - `predecessor_id` (путь, обязательный, string): Вызывающий аккаунт, который записал ключи FastData.
 - `asc` (body, boolean): Сортировать результаты истории по возрастанию. По умолчанию сначала идут новые записи.
 - `include_metadata` (body, boolean): Добавить в каждую запись метаданные квитанции и подписанта.
-- `ключ` (body, string): Exact ключ filter. Mutually exclusive with `key_prefix`.
+- `ключ` (body, string): Фильтр по точному ключу. Взаимно исключающий с `key_prefix`.
 - `key_prefix` (body, string): Фильтр по префиксу для совпадения пространств имён ключей.
 - `limit` (body, integer)
 - `page_token` (body, string): Непрозрачный курсор пагинации из предыдущего ответа с тем же эндпоинтом и набором фильтров.
@@ -16025,7 +16025,7 @@ Returns the top indexed аккаунтов by balance for the requested fungible
       "required": false,
       "schema": {
         "type": "boolean",
-        "description": "Sort ascending for история endpoints. Defaults to newest-first.",
+        "description": "Сортировать по возрастанию для эндпоинтов истории. По умолчанию — от новых к старым.",
         "default": false
       }
     },
@@ -16034,7 +16034,7 @@ Returns the top indexed аккаунтов by balance for the requested fungible
       "required": false,
       "schema": {
         "type": "boolean",
-        "description": "Include квитанция and signer metadata in each entry.",
+        "description": "Включать в каждую запись метаданные квитанции и подписанта.",
         "default": false
       }
     },
@@ -16043,7 +16043,7 @@ Returns the top indexed аккаунтов by balance for the requested fungible
       "required": false,
       "schema": {
         "type": "string",
-        "description": "Exact ключ filter. Mutually exclusive with `key_prefix`."
+        "description": "Фильтр по точному ключу. Взаимно исключающий с `key_prefix`."
       }
     },
     {
@@ -16051,7 +16051,7 @@ Returns the top indexed аккаунтов by balance for the requested fungible
       "required": false,
       "schema": {
         "type": "string",
-        "description": "Prefix filter for matching ключ namespaces."
+        "description": "Фильтр по префиксу для сопоставления пространств имён ключей."
       }
     },
     {
@@ -16067,7 +16067,7 @@ Returns the top indexed аккаунтов by balance for the requested fungible
       "required": false,
       "schema": {
         "type": "string",
-        "description": "Opaque pagination cursor from a previous ответ for the same endpoint and filter set."
+        "description": "Непрозрачный курсор пагинации из предыдущего ответа того же эндпоинта и набора фильтров."
       }
     }
   ],
@@ -16255,7 +16255,7 @@ Returns the top indexed аккаунтов by balance for the requested fungible
 ### Входные данные
 - `current_account_id` (путь, обязательный, string): Аккаунт контракта, для которого были записаны ключи FastData.
 - `include_metadata` (body, boolean): Добавить в каждую запись метаданные квитанции и подписанта.
-- `ключ` (body, string): Exact ключ filter. Mutually exclusive with `key_prefix`.
+- `ключ` (body, string): Фильтр по точному ключу. Взаимно исключающий с `key_prefix`.
 - `key_prefix` (body, string): Фильтр по префиксу для совпадения пространств имён ключей.
 - `limit` (body, integer)
 - `page_token` (body, string): Непрозрачный курсор пагинации из предыдущего ответа с тем же эндпоинтом и набором фильтров.
@@ -16270,7 +16270,7 @@ Returns the top indexed аккаунтов by balance for the requested fungible
       "required": false,
       "schema": {
         "type": "boolean",
-        "description": "Include квитанция and signer metadata in each entry.",
+        "description": "Включать в каждую запись метаданные квитанции и подписанта.",
         "default": false
       }
     },
@@ -16279,7 +16279,7 @@ Returns the top indexed аккаунтов by balance for the requested fungible
       "required": false,
       "schema": {
         "type": "string",
-        "description": "Exact ключ filter. Mutually exclusive with `key_prefix`."
+        "description": "Фильтр по точному ключу. Взаимно исключающий с `key_prefix`."
       }
     },
     {
@@ -16287,7 +16287,7 @@ Returns the top indexed аккаунтов by balance for the requested fungible
       "required": false,
       "schema": {
         "type": "string",
-        "description": "Prefix filter for matching ключ namespaces."
+        "description": "Фильтр по префиксу для сопоставления пространств имён ключей."
       }
     },
     {
@@ -16303,7 +16303,7 @@ Returns the top indexed аккаунтов by balance for the requested fungible
       "required": false,
       "schema": {
         "type": "string",
-        "description": "Opaque pagination cursor from a previous ответ for the same endpoint and filter set."
+        "description": "Непрозрачный курсор пагинации из предыдущего ответа того же эндпоинта и набора фильтров."
       }
     }
   ],
@@ -16492,7 +16492,7 @@ Returns the top indexed аккаунтов by balance for the requested fungible
 - `current_account_id` (путь, обязательный, string): Аккаунт контракта, для которого были записаны ключи FastData.
 - `predecessor_id` (путь, обязательный, string): Вызывающий аккаунт, который записал ключи FastData.
 - `include_metadata` (body, boolean): Добавить в каждую запись метаданные квитанции и подписанта.
-- `ключ` (body, string): Exact ключ filter. Mutually exclusive with `key_prefix`.
+- `ключ` (body, string): Фильтр по точному ключу. Взаимно исключающий с `key_prefix`.
 - `key_prefix` (body, string): Фильтр по префиксу для совпадения пространств имён ключей.
 - `limit` (body, integer)
 - `page_token` (body, string): Непрозрачный курсор пагинации из предыдущего ответа с тем же эндпоинтом и набором фильтров.
@@ -16507,7 +16507,7 @@ Returns the top indexed аккаунтов by balance for the requested fungible
       "required": false,
       "schema": {
         "type": "boolean",
-        "description": "Include квитанция and signer metadata in each entry.",
+        "description": "Включать в каждую запись метаданные квитанции и подписанта.",
         "default": false
       }
     },
@@ -16516,7 +16516,7 @@ Returns the top indexed аккаунтов by balance for the requested fungible
       "required": false,
       "schema": {
         "type": "string",
-        "description": "Exact ключ filter. Mutually exclusive with `key_prefix`."
+        "description": "Фильтр по точному ключу. Взаимно исключающий с `key_prefix`."
       }
     },
     {
@@ -16524,7 +16524,7 @@ Returns the top indexed аккаунтов by balance for the requested fungible
       "required": false,
       "schema": {
         "type": "string",
-        "description": "Prefix filter for matching ключ namespaces."
+        "description": "Фильтр по префиксу для сопоставления пространств имён ключей."
       }
     },
     {
@@ -16540,7 +16540,7 @@ Returns the top indexed аккаунтов by balance for the requested fungible
       "required": false,
       "schema": {
         "type": "string",
-        "description": "Opaque pagination cursor from a previous ответ for the same endpoint and filter set."
+        "description": "Непрозрачный курсор пагинации из предыдущего ответа того же эндпоинта и набора фильтров."
       }
     }
   ],
@@ -16725,7 +16725,7 @@ Returns the top indexed аккаунтов by balance for the requested fungible
 ```
 ### Входные данные
 - `include_metadata` (body, boolean): Добавить в каждую запись метаданные квитанции и подписанта.
-- `ключи` (body, обязательный, array): Fully qualified ключи in current_account_id/predecessor_id/ключ form.
+- `ключи` (body, обязательный, array): Полноквалифицированные ключи в форме current_account_id/predecessor_id/key.
 ### Схема запроса
 ```json
 {
@@ -16740,7 +16740,7 @@ Returns the top indexed аккаунтов by balance for the requested fungible
       "required": false,
       "schema": {
         "type": "boolean",
-        "description": "Include квитанция and signer metadata in each entry.",
+        "description": "Включать в каждую запись метаданные квитанции и подписанта.",
         "default": false
       }
     },
@@ -16749,7 +16749,7 @@ Returns the top indexed аккаунтов by balance for the requested fungible
       "required": true,
       "schema": {
         "type": "array",
-        "description": "Fully qualified ключи in current_account_id/predecessor_id/ключ form.",
+        "description": "Полноквалифицированные ключи в форме current_account_id/predecessor_id/key.",
         "items": {
           "type": "string"
         }
@@ -17007,7 +17007,7 @@ Returns the top indexed аккаунтов by balance for the requested fungible
 ```json
 {
   "type": "object",
-  "description": "Full блока document as served by neardata, including `block` and `shards`.",
+  "description": "Полный документ блока, который отдаёт neardata, включая `block` и `shards`.",
   "additionalProperties": true
 }
 ```
@@ -17074,7 +17074,7 @@ Returns the top indexed аккаунтов by balance for the requested fungible
 ```json
 {
   "type": "object",
-  "description": "Chunk object for the requested шард ID.",
+  "description": "Объект чанка для указанного ID шарда.",
   "additionalProperties": true
 }
 ```
@@ -17138,7 +17138,7 @@ Returns the top indexed аккаунтов by balance for the requested fungible
 ```json
 {
   "type": "object",
-  "description": "Блок-level object returned by `/headers`, corresponding to the full ответ's `block` field.",
+  "description": "Объект уровня блока, возвращаемый `/headers`; соответствует полю `block` полного ответа.",
   "additionalProperties": true
 }
 ```
@@ -17202,7 +17202,7 @@ Returns the top indexed аккаунтов by balance for the requested fungible
 ```json
 {
   "type": "object",
-  "description": "Full блока document as served by neardata, including `block` and `shards`.",
+  "description": "Полный документ блока, который отдаёт neardata, включая `block` и `shards`.",
   "additionalProperties": true
 }
 ```
@@ -17269,7 +17269,7 @@ Returns the top indexed аккаунтов by balance for the requested fungible
 ```json
 {
   "type": "object",
-  "description": "Shard object for the requested шард ID.",
+  "description": "Объект шарда для указанного ID шарда.",
   "additionalProperties": true
 }
 ```
@@ -17325,7 +17325,7 @@ Returns the top indexed аккаунтов by balance for the requested fungible
 ```json
 {
   "type": "object",
-  "description": "Full блока document as served by neardata, including `block` and `shards`.",
+  "description": "Полный документ блока, который отдаёт neardata, включая `block` и `shards`.",
   "additionalProperties": true
 }
 ```
@@ -17381,7 +17381,7 @@ Returns the top indexed аккаунтов by balance for the requested fungible
 ```json
 {
   "type": "object",
-  "description": "Full блока document as served by neardata, including `block` and `shards`.",
+  "description": "Полный документ блока, который отдаёт neardata, включая `block` и `shards`.",
   "additionalProperties": true
 }
 ```
@@ -17437,7 +17437,7 @@ Returns the top indexed аккаунтов by balance for the requested fungible
 ```json
 {
   "type": "object",
-  "description": "Full блока document as served by neardata, including `block` and `shards`.",
+  "description": "Полный документ блока, который отдаёт neardata, включая `block` и `shards`.",
   "additionalProperties": true
 }
 ```
@@ -17951,14 +17951,14 @@ Returns the top indexed аккаунтов by balance for the requested fungible
 {
   "type": "object",
   "required": [
-    "блока",
+    "блок",
     "block_txs",
     "block_receipts"
   ],
   "additionalProperties": false,
   "properties": [
     {
-      "name": "блока",
+      "name": "блок",
       "required": true,
       "schema": {
         "type": "object",
@@ -18793,7 +18793,7 @@ Returns the top indexed аккаунтов by balance for the requested fungible
   "type": "object",
   "required": [
     "квитанция",
-    "транзакции"
+    "транзакция"
   ],
   "additionalProperties": false,
   "properties": [
@@ -18946,7 +18946,7 @@ Returns the top indexed аккаунтов by balance for the requested fungible
       }
     },
     {
-      "name": "транзакции",
+      "name": "транзакция",
       "required": true,
       "schema": {
         "type": "object",

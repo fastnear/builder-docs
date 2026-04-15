@@ -96,14 +96,14 @@
 {
   "type": "object",
   "required": [
-    "блока",
+    "блок",
     "block_txs",
     "block_receipts"
   ],
   "additionalProperties": false,
   "properties": [
     {
-      "name": "блока",
+      "name": "блок",
       "required": true,
       "schema": {
         "type": "object",

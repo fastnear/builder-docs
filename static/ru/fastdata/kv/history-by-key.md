@@ -46,7 +46,7 @@
 ### Входные данные
 - `asc` (body, boolean): Сортировать результаты истории по возрастанию. По умолчанию сначала идут новые записи.
 - `include_metadata` (body, boolean): Добавить в каждую запись метаданные квитанции и подписанта.
-- `ключ` (body, обязательный, string): Exact ключ name to match across all аккаунтов and predecessors.
+- `ключ` (body, обязательный, string): Точное имя ключа для сопоставления по всем аккаунтам и predecessor.
 - `limit` (body, integer)
 - `page_token` (body, string): Непрозрачный курсор пагинации из предыдущего ответа с тем же эндпоинтом и набором фильтров.
 ### Схема запроса
@@ -63,7 +63,7 @@
       "required": false,
       "schema": {
         "type": "boolean",
-        "description": "Sort ascending for история results. Defaults to newest-first.",
+        "description": "Сортировать результаты истории по возрастанию. По умолчанию — от новых к старым.",
         "default": false
       }
     },
@@ -72,7 +72,7 @@
       "required": false,
       "schema": {
         "type": "boolean",
-        "description": "Include квитанция and signer metadata in each entry.",
+        "description": "Включать в каждую запись метаданные квитанции и подписанта.",
         "default": false
       }
     },
@@ -81,7 +81,7 @@
       "required": true,
       "schema": {
         "type": "string",
-        "description": "Exact ключ name to match across all аккаунтов and predecessors."
+        "description": "Точное имя ключа для сопоставления по всем аккаунтам и predecessor."
       }
     },
     {
@@ -97,7 +97,7 @@
       "required": false,
       "schema": {
         "type": "string",
-        "description": "Opaque pagination cursor from a previous ответ for the same endpoint and filter set."
+        "description": "Непрозрачный курсор пагинации из предыдущего ответа того же эндпоинта и набора фильтров."
       }
     }
   ],

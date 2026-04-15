@@ -50,7 +50,7 @@
 ```json
 {
   "type": "object",
-  "description": "Блок-level object returned by `/headers`, corresponding to the full ответ's `block` field.",
+  "description": "Объект уровня блока, возвращаемый `/headers`; соответствует полю `block` полного ответа.",
   "additionalProperties": true
 }
 ```

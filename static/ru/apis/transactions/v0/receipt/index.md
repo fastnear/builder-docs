@@ -69,7 +69,7 @@
   "type": "object",
   "required": [
     "квитанция",
-    "транзакции"
+    "транзакция"
   ],
   "additionalProperties": false,
   "properties": [
@@ -222,7 +222,7 @@
       }
     },
     {
-      "name": "транзакции",
+      "name": "транзакция",
       "required": true,
       "schema": {
         "type": "object",

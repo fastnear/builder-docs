@@ -18,8 +18,8 @@
 - [FastNear API - V1 FT аккаунта](https://docs.fastnear.com/ru/apis/fastnear/v1/account_ft.md): Получить индексированные строки FT-токенов аккаунта
 - [FastNear API - V1 Полный снимок аккаунта](https://docs.fastnear.com/ru/apis/fastnear/v1/account_full.md): Получить полный индексированный снимок аккаунта
 - [FastNear API - V1 NFT аккаунта](https://docs.fastnear.com/ru/apis/fastnear/v1/account_nft.md): Получить индексированные строки NFT аккаунта
-- [FastNEAR API - V1 Аккаунт Staking](https://docs.fastnear.com/ru/apis/fastnear/v1/account_staking.md): Поиск indexed staking pools for an аккаунта
-- [FastNEAR API - V1 FT Top Holders](https://docs.fastnear.com/ru/apis/fastnear/v1/ft_top.md): Поиск top indexed holders for a fungible token
+- [FastNEAR API — V1 стейкинг аккаунта](https://docs.fastnear.com/ru/apis/fastnear/v1/account_staking.md): Поиск индексированных стейкинг-пулов аккаунта
+- [FastNEAR API — V1 топ держателей FT](https://docs.fastnear.com/ru/apis/fastnear/v1/ft_top.md): Поиск индексированных топ-держателей FT-токена
 - [FastNear API - V1 Поиск по публичному ключу](https://docs.fastnear.com/ru/apis/fastnear/v1/public_key_lookup.md): Найти аккаунты полного доступа по публичному ключу
 - [FastNear API - V1 Поиск по публичному ключу (все)](https://docs.fastnear.com/ru/apis/fastnear/v1/public_key_lookup_all.md): Найти все индексированные аккаунты по публичному ключу
 

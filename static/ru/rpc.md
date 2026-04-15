@@ -28,12 +28,12 @@ https://archival-rpc.testnet.fastnear.com
 
 ## С чего обычно начинают
 
-- `Аккаунт`: запросы по аккаунту, ключу доступа и списку ключей.
-- `Блоки`: поиск финализированных блоков или блоков по высоте и хешу.
-- `Контракты`: вызовы view-методов, получение кода и просмотр состояния контракта.
-- `Протокол`: статус, состояние узла, цена газа, конфигурация сети и экспериментальные методы протокола.
-- `Транзакции`: отправка транзакций и методы статуса исполнения.
-- `Валидаторы`: текущие валидаторы и данные по эпохам.
+- [`view_account`](https://docs.fastnear.com/ru/rpc/account/view-account), [`view_access_key`](https://docs.fastnear.com/ru/rpc/account/view-access-key), [`view_access_key_list`](https://docs.fastnear.com/ru/rpc/account/view-access-key-list) — запросы по аккаунту и ключам доступа.
+- [`block`](https://docs.fastnear.com/ru/rpc/block/block-by-id) — поиск по высоте или хешу; [`block_effects`](https://docs.fastnear.com/ru/rpc/block/block-effects) — изменения внутри блока.
+- [`call_function`](https://docs.fastnear.com/ru/rpc/contract/call-function), [`view_code`](https://docs.fastnear.com/ru/rpc/contract/view-code), [`view_state`](https://docs.fastnear.com/ru/rpc/contract/view-state) — работа с контрактами.
+- [`status`](https://docs.fastnear.com/ru/rpc/protocol/status), [`health`](https://docs.fastnear.com/ru/rpc/protocol/health), [`gas_price`](https://docs.fastnear.com/ru/rpc/protocol/gas-price) — диагностика узла и протокола.
+- [`send_tx`](https://docs.fastnear.com/ru/rpc/transaction/send-tx) — отправка транзакций; [`tx`](https://docs.fastnear.com/ru/rpc/transaction/tx-status) — статус исполнения.
+- [`validators`](https://docs.fastnear.com/ru/rpc/validators/validators-current) — валидаторы текущей эпохи.
 
 ## Используйте RPC, когда
 
