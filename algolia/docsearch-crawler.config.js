@@ -284,6 +284,8 @@ new Crawler({
         "content"
       ],
       searchableAttributes: [
+        "unordered(operation_id)",
+        "unordered(canonical_target)",
         "unordered(hierarchy.lvl1)",
         "unordered(hierarchy.lvl2)",
         "unordered(hierarchy.lvl3)",
@@ -292,8 +294,6 @@ new Crawler({
         "unordered(hierarchy.lvl6)",
         "unordered(hierarchy.lvl0)",
         "unordered(keywords)",
-        "unordered(operation_id)",
-        "unordered(canonical_target)",
         "content"
       ],
       distinct: true,

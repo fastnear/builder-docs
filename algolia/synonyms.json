@@ -107,5 +107,687 @@
       "non fungible token",
       "non fungible tokens"
     ]
+  },
+  {
+    "objectID": "fastnear-op-EXPERIMENTAL_congestion_level",
+    "type": "synonym",
+    "synonyms": [
+      "experimental_congestion_level",
+      "experimental-congestion-level",
+      "experimental congestion level",
+      "EXPERIMENTAL_congestion_level"
+    ]
+  },
+  {
+    "objectID": "fastnear-op-EXPERIMENTAL_light_client_block_proof",
+    "type": "synonym",
+    "synonyms": [
+      "experimental_light_client_block_proof",
+      "experimental-light-client-block-proof",
+      "experimental light client block proof",
+      "EXPERIMENTAL_light_client_block_proof"
+    ]
+  },
+  {
+    "objectID": "fastnear-op-EXPERIMENTAL_light_client_proof",
+    "type": "synonym",
+    "synonyms": [
+      "experimental_light_client_proof",
+      "experimental-light-client-proof",
+      "experimental light client proof",
+      "EXPERIMENTAL_light_client_proof"
+    ]
+  },
+  {
+    "objectID": "fastnear-op-EXPERIMENTAL_protocol_config",
+    "type": "synonym",
+    "synonyms": [
+      "experimental_protocol_config",
+      "experimental-protocol-config",
+      "experimental protocol config",
+      "EXPERIMENTAL_protocol_config"
+    ]
+  },
+  {
+    "objectID": "fastnear-op-EXPERIMENTAL_receipt",
+    "type": "synonym",
+    "synonyms": [
+      "experimental_receipt",
+      "experimental-receipt",
+      "experimental receipt",
+      "EXPERIMENTAL_receipt"
+    ]
+  },
+  {
+    "objectID": "fastnear-op-EXPERIMENTAL_split_storage_info",
+    "type": "synonym",
+    "synonyms": [
+      "experimental_split_storage_info",
+      "experimental-split-storage-info",
+      "experimental split storage info",
+      "EXPERIMENTAL_split_storage_info"
+    ]
+  },
+  {
+    "objectID": "fastnear-op-EXPERIMENTAL_tx_status",
+    "type": "synonym",
+    "synonyms": [
+      "experimental_tx_status",
+      "experimental-tx-status",
+      "experimental tx status",
+      "EXPERIMENTAL_tx_status"
+    ]
+  },
+  {
+    "objectID": "fastnear-op-EXPERIMENTAL_validators_ordered",
+    "type": "synonym",
+    "synonyms": [
+      "experimental_validators_ordered",
+      "experimental-validators-ordered",
+      "experimental validators ordered",
+      "EXPERIMENTAL_validators_ordered"
+    ]
+  },
+  {
+    "objectID": "fastnear-op-account_ft_v0",
+    "type": "synonym",
+    "synonyms": [
+      "account_ft_v0",
+      "account-ft-v0",
+      "account ft v0"
+    ]
+  },
+  {
+    "objectID": "fastnear-op-account_ft_v1",
+    "type": "synonym",
+    "synonyms": [
+      "account_ft_v1",
+      "account-ft-v1",
+      "account ft v1"
+    ]
+  },
+  {
+    "objectID": "fastnear-op-account_full_v1",
+    "type": "synonym",
+    "synonyms": [
+      "account_full_v1",
+      "account-full-v1",
+      "account full v1"
+    ]
+  },
+  {
+    "objectID": "fastnear-op-account_nft_v0",
+    "type": "synonym",
+    "synonyms": [
+      "account_nft_v0",
+      "account-nft-v0",
+      "account nft v0"
+    ]
+  },
+  {
+    "objectID": "fastnear-op-account_nft_v1",
+    "type": "synonym",
+    "synonyms": [
+      "account_nft_v1",
+      "account-nft-v1",
+      "account nft v1"
+    ]
+  },
+  {
+    "objectID": "fastnear-op-account_staking_v0",
+    "type": "synonym",
+    "synonyms": [
+      "account_staking_v0",
+      "account-staking-v0",
+      "account staking v0"
+    ]
+  },
+  {
+    "objectID": "fastnear-op-account_staking_v1",
+    "type": "synonym",
+    "synonyms": [
+      "account_staking_v1",
+      "account-staking-v1",
+      "account staking v1"
+    ]
+  },
+  {
+    "objectID": "fastnear-op-all_by_predecessor",
+    "type": "synonym",
+    "synonyms": [
+      "all_by_predecessor",
+      "all-by-predecessor",
+      "all by predecessor"
+    ]
+  },
+  {
+    "objectID": "fastnear-op-block_by_height",
+    "type": "synonym",
+    "synonyms": [
+      "block_by_height",
+      "block-by-height",
+      "block by height"
+    ]
+  },
+  {
+    "objectID": "fastnear-op-block_by_id",
+    "type": "synonym",
+    "synonyms": [
+      "block_by_id",
+      "block-by-id",
+      "block by id"
+    ]
+  },
+  {
+    "objectID": "fastnear-op-block_effects",
+    "type": "synonym",
+    "synonyms": [
+      "block_effects",
+      "block-effects",
+      "block effects"
+    ]
+  },
+  {
+    "objectID": "fastnear-op-broadcast_tx_async",
+    "type": "synonym",
+    "synonyms": [
+      "broadcast_tx_async",
+      "broadcast-tx-async",
+      "broadcast tx async"
+    ]
+  },
+  {
+    "objectID": "fastnear-op-broadcast_tx_commit",
+    "type": "synonym",
+    "synonyms": [
+      "broadcast_tx_commit",
+      "broadcast-tx-commit",
+      "broadcast tx commit"
+    ]
+  },
+  {
+    "objectID": "fastnear-op-call_function",
+    "type": "synonym",
+    "synonyms": [
+      "call_function",
+      "call-function",
+      "call function"
+    ]
+  },
+  {
+    "objectID": "fastnear-op-changes",
+    "type": "synonym",
+    "synonyms": [
+      "changes"
+    ]
+  },
+  {
+    "objectID": "fastnear-op-chunk_by_block_shard",
+    "type": "synonym",
+    "synonyms": [
+      "chunk_by_block_shard",
+      "chunk-by-block-shard",
+      "chunk by block shard"
+    ]
+  },
+  {
+    "objectID": "fastnear-op-chunk_by_hash",
+    "type": "synonym",
+    "synonyms": [
+      "chunk_by_hash",
+      "chunk-by-hash",
+      "chunk by hash"
+    ]
+  },
+  {
+    "objectID": "fastnear-op-client_config",
+    "type": "synonym",
+    "synonyms": [
+      "client_config",
+      "client-config",
+      "client config"
+    ]
+  },
+  {
+    "objectID": "fastnear-op-ft_top_v1",
+    "type": "synonym",
+    "synonyms": [
+      "ft_top_v1",
+      "ft-top-v1",
+      "ft top v1"
+    ]
+  },
+  {
+    "objectID": "fastnear-op-gas_price",
+    "type": "synonym",
+    "synonyms": [
+      "gas_price",
+      "gas-price",
+      "gas price"
+    ]
+  },
+  {
+    "objectID": "fastnear-op-gas_price_by_block",
+    "type": "synonym",
+    "synonyms": [
+      "gas_price_by_block",
+      "gas-price-by-block",
+      "gas price by block"
+    ]
+  },
+  {
+    "objectID": "fastnear-op-genesis_config",
+    "type": "synonym",
+    "synonyms": [
+      "genesis_config",
+      "genesis-config",
+      "genesis config"
+    ]
+  },
+  {
+    "objectID": "fastnear-op-get_account",
+    "type": "synonym",
+    "synonyms": [
+      "get_account",
+      "get-account",
+      "get account"
+    ]
+  },
+  {
+    "objectID": "fastnear-op-get_block",
+    "type": "synonym",
+    "synonyms": [
+      "get_block",
+      "get-block",
+      "get block"
+    ]
+  },
+  {
+    "objectID": "fastnear-op-get_block_headers",
+    "type": "synonym",
+    "synonyms": [
+      "get_block_headers",
+      "get-block-headers",
+      "get block headers"
+    ]
+  },
+  {
+    "objectID": "fastnear-op-get_block_optimistic",
+    "type": "synonym",
+    "synonyms": [
+      "get_block_optimistic",
+      "get-block-optimistic",
+      "get block optimistic"
+    ]
+  },
+  {
+    "objectID": "fastnear-op-get_blocks",
+    "type": "synonym",
+    "synonyms": [
+      "get_blocks",
+      "get-blocks",
+      "get blocks"
+    ]
+  },
+  {
+    "objectID": "fastnear-op-get_chunk",
+    "type": "synonym",
+    "synonyms": [
+      "get_chunk",
+      "get-chunk",
+      "get chunk"
+    ]
+  },
+  {
+    "objectID": "fastnear-op-get_first_block",
+    "type": "synonym",
+    "synonyms": [
+      "get_first_block",
+      "get-first-block",
+      "get first block"
+    ]
+  },
+  {
+    "objectID": "fastnear-op-get_health",
+    "type": "synonym",
+    "synonyms": [
+      "get_health",
+      "get-health",
+      "get health"
+    ]
+  },
+  {
+    "objectID": "fastnear-op-get_history_key",
+    "type": "synonym",
+    "synonyms": [
+      "get_history_key",
+      "get-history-key",
+      "get history key"
+    ]
+  },
+  {
+    "objectID": "fastnear-op-get_last_block_final",
+    "type": "synonym",
+    "synonyms": [
+      "get_last_block_final",
+      "get-last-block-final",
+      "get last block final"
+    ]
+  },
+  {
+    "objectID": "fastnear-op-get_last_block_optimistic",
+    "type": "synonym",
+    "synonyms": [
+      "get_last_block_optimistic",
+      "get-last-block-optimistic",
+      "get last block optimistic"
+    ]
+  },
+  {
+    "objectID": "fastnear-op-get_latest_key",
+    "type": "synonym",
+    "synonyms": [
+      "get_latest_key",
+      "get-latest-key",
+      "get latest key"
+    ]
+  },
+  {
+    "objectID": "fastnear-op-get_receipt",
+    "type": "synonym",
+    "synonyms": [
+      "get_receipt",
+      "get-receipt",
+      "get receipt"
+    ]
+  },
+  {
+    "objectID": "fastnear-op-get_shard",
+    "type": "synonym",
+    "synonyms": [
+      "get_shard",
+      "get-shard",
+      "get shard"
+    ]
+  },
+  {
+    "objectID": "fastnear-op-get_status",
+    "type": "synonym",
+    "synonyms": [
+      "get_status",
+      "get-status",
+      "get status"
+    ]
+  },
+  {
+    "objectID": "fastnear-op-get_transactions",
+    "type": "synonym",
+    "synonyms": [
+      "get_transactions",
+      "get-transactions",
+      "get transactions"
+    ]
+  },
+  {
+    "objectID": "fastnear-op-get_transfers_by_account",
+    "type": "synonym",
+    "synonyms": [
+      "get_transfers_by_account",
+      "get-transfers-by-account",
+      "get transfers by account"
+    ]
+  },
+  {
+    "objectID": "fastnear-op-health",
+    "type": "synonym",
+    "synonyms": [
+      "health"
+    ]
+  },
+  {
+    "objectID": "fastnear-op-history_by_account",
+    "type": "synonym",
+    "synonyms": [
+      "history_by_account",
+      "history-by-account",
+      "history by account"
+    ]
+  },
+  {
+    "objectID": "fastnear-op-history_by_key",
+    "type": "synonym",
+    "synonyms": [
+      "history_by_key",
+      "history-by-key",
+      "history by key"
+    ]
+  },
+  {
+    "objectID": "fastnear-op-history_by_predecessor",
+    "type": "synonym",
+    "synonyms": [
+      "history_by_predecessor",
+      "history-by-predecessor",
+      "history by predecessor"
+    ]
+  },
+  {
+    "objectID": "fastnear-op-latest_block",
+    "type": "synonym",
+    "synonyms": [
+      "latest_block",
+      "latest-block",
+      "latest block"
+    ]
+  },
+  {
+    "objectID": "fastnear-op-latest_by_account",
+    "type": "synonym",
+    "synonyms": [
+      "latest_by_account",
+      "latest-by-account",
+      "latest by account"
+    ]
+  },
+  {
+    "objectID": "fastnear-op-latest_by_predecessor",
+    "type": "synonym",
+    "synonyms": [
+      "latest_by_predecessor",
+      "latest-by-predecessor",
+      "latest by predecessor"
+    ]
+  },
+  {
+    "objectID": "fastnear-op-light_client_proof",
+    "type": "synonym",
+    "synonyms": [
+      "light_client_proof",
+      "light-client-proof",
+      "light client proof"
+    ]
+  },
+  {
+    "objectID": "fastnear-op-lookup_by_public_key_all_v0",
+    "type": "synonym",
+    "synonyms": [
+      "lookup_by_public_key_all_v0",
+      "lookup-by-public-key-all-v0",
+      "lookup by public key all v0"
+    ]
+  },
+  {
+    "objectID": "fastnear-op-lookup_by_public_key_all_v1",
+    "type": "synonym",
+    "synonyms": [
+      "lookup_by_public_key_all_v1",
+      "lookup-by-public-key-all-v1",
+      "lookup by public key all v1"
+    ]
+  },
+  {
+    "objectID": "fastnear-op-lookup_by_public_key_v0",
+    "type": "synonym",
+    "synonyms": [
+      "lookup_by_public_key_v0",
+      "lookup-by-public-key-v0",
+      "lookup by public key v0"
+    ]
+  },
+  {
+    "objectID": "fastnear-op-lookup_by_public_key_v1",
+    "type": "synonym",
+    "synonyms": [
+      "lookup_by_public_key_v1",
+      "lookup-by-public-key-v1",
+      "lookup by public key v1"
+    ]
+  },
+  {
+    "objectID": "fastnear-op-maintenance_windows",
+    "type": "synonym",
+    "synonyms": [
+      "maintenance_windows",
+      "maintenance-windows",
+      "maintenance windows"
+    ]
+  },
+  {
+    "objectID": "fastnear-op-metrics",
+    "type": "synonym",
+    "synonyms": [
+      "metrics"
+    ]
+  },
+  {
+    "objectID": "fastnear-op-multi",
+    "type": "synonym",
+    "synonyms": [
+      "multi"
+    ]
+  },
+  {
+    "objectID": "fastnear-op-network_info",
+    "type": "synonym",
+    "synonyms": [
+      "network_info",
+      "network-info",
+      "network info"
+    ]
+  },
+  {
+    "objectID": "fastnear-op-next_light_client_block",
+    "type": "synonym",
+    "synonyms": [
+      "next_light_client_block",
+      "next-light-client-block",
+      "next light client block"
+    ]
+  },
+  {
+    "objectID": "fastnear-op-send_tx",
+    "type": "synonym",
+    "synonyms": [
+      "send_tx",
+      "send-tx",
+      "send tx"
+    ]
+  },
+  {
+    "objectID": "fastnear-op-status",
+    "type": "synonym",
+    "synonyms": [
+      "status"
+    ]
+  },
+  {
+    "objectID": "fastnear-op-tx_status",
+    "type": "synonym",
+    "synonyms": [
+      "tx_status",
+      "tx-status",
+      "tx status"
+    ]
+  },
+  {
+    "objectID": "fastnear-op-validators_by_epoch",
+    "type": "synonym",
+    "synonyms": [
+      "validators_by_epoch",
+      "validators-by-epoch",
+      "validators by epoch"
+    ]
+  },
+  {
+    "objectID": "fastnear-op-validators_current",
+    "type": "synonym",
+    "synonyms": [
+      "validators_current",
+      "validators-current",
+      "validators current"
+    ]
+  },
+  {
+    "objectID": "fastnear-op-view_access_key",
+    "type": "synonym",
+    "synonyms": [
+      "view_access_key",
+      "view-access-key",
+      "view access key"
+    ]
+  },
+  {
+    "objectID": "fastnear-op-view_access_key_list",
+    "type": "synonym",
+    "synonyms": [
+      "view_access_key_list",
+      "view-access-key-list",
+      "view access key list"
+    ]
+  },
+  {
+    "objectID": "fastnear-op-view_account",
+    "type": "synonym",
+    "synonyms": [
+      "view_account",
+      "view-account",
+      "view account"
+    ]
+  },
+  {
+    "objectID": "fastnear-op-view_code",
+    "type": "synonym",
+    "synonyms": [
+      "view_code",
+      "view-code",
+      "view code"
+    ]
+  },
+  {
+    "objectID": "fastnear-op-view_global_contract_code",
+    "type": "synonym",
+    "synonyms": [
+      "view_global_contract_code",
+      "view-global-contract-code",
+      "view global contract code"
+    ]
+  },
+  {
+    "objectID": "fastnear-op-view_global_contract_code_by_account_id",
+    "type": "synonym",
+    "synonyms": [
+      "view_global_contract_code_by_account_id",
+      "view-global-contract-code-by-account-id",
+      "view global contract code by account id"
+    ]
+  },
+  {
+    "objectID": "fastnear-op-view_state",
+    "type": "synonym",
+    "synonyms": [
+      "view_state",
+      "view-state",
+      "view state"
+    ]
   }
 ]
