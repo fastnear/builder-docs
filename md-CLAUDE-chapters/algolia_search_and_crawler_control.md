@@ -136,19 +136,6 @@ Notes:
 - `DOCSEARCH_API_KEY` is the public search-only key.
 - `DOCSEARCH_INDEX_NAME` must match the crawler action `indexName`, not the crawler display name.
 
-### Search-admin env vars
-
-These power repo-managed live index sync:
-
-```bash
-ALGOLIA_ADMIN_API_KEY=...
-```
-
-This is needed for:
-
-- `yarn algolia:status`
-- `yarn algolia:sync`
-
 ### Crawler env vars
 
 These power repo-managed crawler control:
@@ -168,6 +155,8 @@ Important detail:
   - `ALGOLIA_CRAWLER_ID`
 
 That keeps the operator experience simpler and closer to what Algolia actually shows in the crawler UI.
+
+The repo also deliberately does **not** use `ALGOLIA_ADMIN_API_KEY`. `yarn algolia:status` and `yarn algolia:sync` act on the crawler API only. Rules (`algolia/rules.json`) and synonyms (`algolia/synonyms.json`) are managed through the Algolia dashboard UI — the JSON files are the intended-state reference, not a machine-synced artifact. `scripts/audit-indexing-surface.js` enforces that `.env.example` never documents the admin key so this posture stays explicit.
 
 ---
 
@@ -638,15 +627,14 @@ This is an important milestone because it means the site content entering the in
 
 ---
 
-## What still depends on search-admin sync
+## What still depends on the Algolia dashboard
 
 The crawler alone is not enough to finish the search product.
 
-Some relevance failures still depend on the search-admin layer being live:
+Some relevance failures still depend on Rules and synonyms that the crawler API cannot touch:
 
-- Rules
-- synonyms
-- existing index settings for the current index
+- Rules (promoted results for specific query intents)
+- synonyms (query rewrites)
 
 If the live relevance audit still shows misses like:
 
@@ -655,18 +643,17 @@ If the live relevance audit still shows misses like:
 - `api key`
 - `bearer token`
 
-after the crawler sync, that usually means the remaining work is:
+after `yarn algolia:sync` and a fresh crawl, the remaining work is **in the Algolia dashboard UI**. Reconcile `algolia/rules.json` and `algolia/synonyms.json` against what the dashboard shows, then apply the missing entries by hand. `algolia/operations.md` treats those JSON files as the "dashboard curation baseline" — the intended state to bring the dashboard in line with.
 
-```bash
-yarn algolia:sync
-```
+Why this is not automated:
 
-with a valid `ALGOLIA_ADMIN_API_KEY`.
+- The repo intentionally does not hold an Algolia admin API key (see the env-var section above), so there is no Search API client that could push Rules/synonyms programmatically.
+- The JSON files still serve: they document the intended dashboard state, they drive the `audit-indexing-surface.js` shape assertions, and they give a new operator a concrete diff target.
 
 In other words:
 
 - crawler sync fixes what gets crawled and how records are created
-- search-admin sync fixes how the live index interprets and ranks those records
+- the dashboard is where Rules and synonyms actually get applied — copy from the repo JSON by hand
 
 ---
 
