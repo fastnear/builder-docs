@@ -562,6 +562,7 @@ function auditConfigSurface() {
     `Missing Algolia crawler config: ${path.relative(ROOT, ALGOLIA_CRAWLER_CONFIG_PATH)}`
   );
   const crawlerConfigText = fs.readFileSync(ALGOLIA_CRAWLER_CONFIG_PATH, "utf8");
+  const searchBarText = fs.readFileSync(SEARCH_BAR_PATH, "utf8");
   const crawlerConfig = createCrawlerConfig();
   const crawlerPathsToMatch = crawlerConfig.actions?.[0]?.pathsToMatch || [];
   const crawlerSitemaps = crawlerConfig.sitemaps || [];
@@ -624,6 +625,10 @@ function auditConfigSurface() {
     localeRegistry.locales?.ru?.htmlLang === "ru",
     "localeRegistry.json should set htmlLang=ru for the Russian locale"
   );
+  assert(
+    searchBarText.includes("language:${currentLocale}"),
+    "src/theme/SearchBar/index.js should hard-filter Algolia results to the active locale"
+  );
   [
     "NODE_ENV=production",
     "DOCS_SEARCH_PROVIDER=algolia",
@@ -665,6 +670,7 @@ function auditConfigSurface() {
     '"transport"',
     '"operation_id"',
     '"canonical_target"',
+    '"keywords"',
     "data-fastnear-crawler-skip",
     "removeCrawlerNoise",
     "getMetaContent",
@@ -693,17 +699,21 @@ function auditConfigSurface() {
     JSON.stringify(indexSettings.attributesToSnippet) === JSON.stringify(["content:14"]),
     "algolia/index-settings.json should set attributesToSnippet=[\"content:14\"]"
   );
-  ["transport", "operation_id", "canonical_target"].forEach((attribute) => {
+  ["transport", "operation_id", "canonical_target", "keywords"].forEach((attribute) => {
     assert(
       indexSettings.attributesToRetrieve.includes(attribute),
       `algolia/index-settings.json should retrieve ${attribute}`
     );
   });
   const contentIndex = indexSettings.searchableAttributes.indexOf("content");
-  assert(contentIndex >= 2, "algolia/index-settings.json should keep content in searchableAttributes");
+  assert(contentIndex >= 3, "algolia/index-settings.json should keep content in searchableAttributes");
+  assert(
+    indexSettings.searchableAttributes[contentIndex - 3] === "unordered(keywords)",
+    "algolia/index-settings.json should search keywords immediately before operation_id"
+  );
   assert(
     indexSettings.searchableAttributes[contentIndex - 2] === "unordered(operation_id)",
-    "algolia/index-settings.json should search operation_id immediately before content"
+    "algolia/index-settings.json should search operation_id immediately before canonical_target"
   );
   assert(
     indexSettings.searchableAttributes[contentIndex - 1] === "unordered(canonical_target)",

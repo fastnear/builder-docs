@@ -70,28 +70,31 @@ html[data-theme='light'] .DocSearch {
   --docsearch-background-color: #ecf1ff;
   --docsearch-searchbox-background: #fff;
   --docsearch-searchbox-focus-background: #fff;
-  --docsearch-hit-background: rgb(255 255 255 / 92%);
+  --docsearch-secondary-text-color: #5a678f;
+  --docsearch-muted-color: #66759a;
+  --docsearch-hit-background: rgb(255 255 255 / 96%);
   --docsearch-footer-background: #eef3ff;
+  --docsearch-hit-border: rgb(54 84 168 / 10%);
 }
 
 html[data-theme='dark'] .DocSearch {
   --docsearch-text-color: #f3f5ff;
-  --docsearch-muted-color: rgb(224 230 255 / 70%);
-  --docsearch-secondary-text-color: rgb(224 230 255 / 72%);
+  --docsearch-muted-color: rgb(232 238 255 / 82%);
+  --docsearch-secondary-text-color: rgb(236 241 255 / 86%);
   --docsearch-icon-color: rgb(224 230 255 / 78%);
   --docsearch-container-background: rgb(2 6 23 / 72%);
-  --docsearch-background-color: #151b33;
-  --docsearch-modal-background: #11172d;
+  --docsearch-background-color: #18203a;
+  --docsearch-modal-background: #141b31;
   --docsearch-modal-shadow: 0 28px 60px rgb(0 0 0 / 42%);
-  --docsearch-search-button-background: rgb(17 23 45 / 66%);
+  --docsearch-search-button-background: rgb(20 28 52 / 78%);
   --docsearch-search-button-text-color: rgb(232 238 255 / 78%);
-  --docsearch-searchbox-background: #0d1327;
-  --docsearch-searchbox-focus-background: #0b1021;
-  --docsearch-hit-background: rgb(10 14 30 / 88%);
-  --docsearch-footer-background: #0d1224;
-  --docsearch-modal-border: rgb(163 184 255 / 12%);
-  --docsearch-form-border: rgb(96 165 250 / 22%);
-  --docsearch-hit-border: rgb(163 184 255 / 10%);
+  --docsearch-searchbox-background: #11182d;
+  --docsearch-searchbox-focus-background: #0f1629;
+  --docsearch-hit-background: rgb(18 25 47 / 96%);
+  --docsearch-footer-background: #11182b;
+  --docsearch-modal-border: rgb(163 184 255 / 16%);
+  --docsearch-form-border: rgb(96 165 250 / 28%);
+  --docsearch-hit-border: rgb(163 184 255 / 14%);
   --docsearch-search-button-shadow: 0 14px 30px rgb(0 0 0 / 24%);
 }
 
@@ -207,13 +210,13 @@ html[data-theme='dark'] .DocSearch {
 .DocSearch-Hit a:hover {
   background: color-mix(
     in srgb,
-    var(--docsearch-primary-color) 5%,
-    var(--docsearch-hit-background) 95%
+    var(--docsearch-primary-color) 8%,
+    var(--docsearch-hit-background) 92%
   );
   border-color: color-mix(
     in srgb,
-    var(--docsearch-primary-color) 18%,
-    var(--docsearch-form-border) 82%
+    var(--docsearch-primary-color) 22%,
+    var(--docsearch-form-border) 78%
   );
   box-shadow: none;
 }
@@ -221,13 +224,13 @@ html[data-theme='dark'] .DocSearch {
 .DocSearch-Hit[aria-selected='true'] a {
   background: color-mix(
     in srgb,
-    var(--docsearch-primary-color) 9%,
-    var(--docsearch-hit-background) 91%
+    var(--docsearch-primary-color) 14%,
+    var(--docsearch-hit-background) 86%
   );
   border-color: color-mix(
     in srgb,
-    var(--docsearch-primary-color) 24%,
-    var(--docsearch-form-border) 76%
+    var(--docsearch-primary-color) 30%,
+    var(--docsearch-form-border) 70%
   );
   box-shadow: none;
 }
@@ -254,6 +257,22 @@ html[data-theme='dark'] .DocSearch {
   justify-content: space-between;
 }
 
+.fastnear-search-hit__title-row {
+  align-items: center;
+  display: flex;
+  gap: 0.55rem;
+  min-width: 0;
+}
+
+.fastnear-search-hit__header-meta {
+  align-items: center;
+  display: flex;
+  flex-shrink: 0;
+  gap: 0.5rem;
+  justify-content: flex-end;
+  min-width: 0;
+}
+
 .fastnear-search-hit__title {
   color: var(--docsearch-text-color);
   font-size: 0.98rem;
@@ -274,6 +293,10 @@ html[data-theme='dark'] .DocSearch {
   white-space: nowrap;
 }
 
+.fastnear-search-hit__path--endpoint {
+  max-width: 20rem;
+}
+
 .fastnear-search-hit__snippet {
   color: var(--docsearch-muted-color);
   display: -webkit-box;
@@ -285,18 +308,9 @@ html[data-theme='dark'] .DocSearch {
   -webkit-line-clamp: 2;
 }
 
-.fastnear-search-hit__endpoint-meta {
-  align-items: center;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.45rem;
-  min-width: 0;
-}
-
 .fastnear-search-hit__endpoint-stack {
-  display: flex;
-  flex-direction: column;
-  gap: 0.28rem;
+  display: grid;
+  gap: 0.25rem;
   min-width: 0;
 }
 
@@ -323,6 +337,23 @@ html[data-theme='dark'] .DocSearch {
   text-transform: uppercase;
 }
 
+.fastnear-search-hit__badge--family {
+  background: color-mix(
+    in srgb,
+    var(--docsearch-secondary-text-color) 8%,
+    var(--docsearch-hit-background) 92%
+  );
+  border-color: color-mix(
+    in srgb,
+    var(--docsearch-secondary-text-color) 16%,
+    transparent
+  );
+  color: var(--docsearch-secondary-text-color);
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
 .fastnear-search-hit__target {
   background: none;
   border: 0;
@@ -338,23 +369,7 @@ html[data-theme='dark'] .DocSearch {
 
 .fastnear-search-hit__target--primary {
   color: var(--docsearch-text-color);
-  font-size: 0.78rem;
-  font-weight: 600;
-}
-
-.fastnear-search-hit__target--secondary {
-  color: var(--docsearch-secondary-text-color);
-  font-size: 0.73rem;
-}
-
-.fastnear-search-hit__location {
-  color: var(--docsearch-muted-color);
-  font-family: var(--ifm-font-family-monospace);
-  font-size: 0.72rem;
-  line-height: 1.4;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  font-size: 0.8rem;
 }
 
 .fastnear-search-hit__highlight {
@@ -379,16 +394,20 @@ html[data-theme='dark'] .DocSearch {
     gap: 0.3rem;
   }
 
+  .fastnear-search-hit__title-row {
+    width: 100%;
+  }
+
+  .fastnear-search-hit__header-meta {
+    justify-content: flex-start;
+    width: 100%;
+  }
+
   .fastnear-search-hit__path {
     max-width: 100%;
   }
 
-  .fastnear-search-hit__target,
-  .fastnear-search-hit__location {
+  .fastnear-search-hit__target {
     white-space: normal;
-  }
-
-  .fastnear-search-hit__endpoint-meta {
-    align-items: flex-start;
   }
 }
