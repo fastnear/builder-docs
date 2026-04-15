@@ -38,6 +38,10 @@ export default function WrappedDocItemContent(props) {
       ) || null,
     [hiddenSections, metadata.permalink]
   );
+  const shouldExposeSeo = useMemo(
+    () => !hiddenSection && isPublicDocsPermalink(metadata.permalink),
+    [hiddenSection, metadata.permalink]
+  );
 
   const actions = useMemo(() => {
     if (!pageActions.includes('markdown')) {
@@ -73,7 +77,7 @@ export default function WrappedDocItemContent(props) {
   }, [metadata.permalink, pageActions]);
 
   const seoMeta = useMemo(() => {
-    if (!isPublicDocsPermalink(metadata.permalink)) {
+    if (!shouldExposeSeo) {
       return null;
     }
 
@@ -101,6 +105,7 @@ export default function WrappedDocItemContent(props) {
     frontMatter.description,
     frontMatter.keywords,
     currentLocale,
+    shouldExposeSeo,
     metadata.description,
     metadata.permalink,
     metadata.title,
@@ -144,6 +149,12 @@ export default function WrappedDocItemContent(props) {
               {JSON.stringify(seoMeta.structuredData.structuredData)}
             </script>
           ) : null}
+        </Head>
+      ) : null}
+      {hiddenSection ? (
+        <Head>
+          <meta name="robots" content="noindex" />
+          <meta name="googlebot" content="noindex" />
         </Head>
       ) : null}
       {actions.length ? (

@@ -103,7 +103,7 @@ Wave policy is intentionally lightweight:
 - `wave 2` is the broader public-surface pass
 - `long-tail` cleanup stays non-blocking
 
-Hidden sections, such as `/transaction-flow`, are tracked in each locale's `translation-policy.yml`. They are excluded from required editorial coverage until they become public, and the live docs render a visible banner so the scope is explicit.
+Hidden sections, such as `/transaction-flow`, are tracked in each locale's `translation-policy.yml`. They are excluded from required editorial coverage until they become public, the live docs render a visible banner so the scope is explicit, and they stay out of sitemap/crawler indexing until they are ready to surface publicly.
 
 ### Playwright smoke tests
 
@@ -118,7 +118,7 @@ The Playwright config starts a local Docusaurus server automatically, then runs 
 
 Treat the clean root-mounted public docs as the public search surface.
 
-- Crawl: `/`, `/rpc/**`, `/api/**`, `/tx/**`, `/transfers/**`, `/neardata/**`, `/fastdata/**`, `/auth/**`, `/agents/**`, `/snapshots/**`, `/transaction-flow/**`
+- Crawl: `/`, `/rpc/**`, `/api/**`, `/tx/**`, `/transfers/**`, `/neardata/**`, `/fastdata/**`, `/auth/**`, `/agents/**`, `/snapshots/**`
 - Exclude: `/rpcs/**`, `/apis/**`, `/**/*.md`, `/llms.txt`, `/llms-full.txt`, `/guides/llms.txt`, `/rpcs/llms.txt`, `/apis/llms.txt`, `/structured-data/**`
 - Exclude low-value utility pages already kept out of the sitemap: `/api/reference`, `/redocly-config`
 - Add `category`, `method_type`, `surface`, `family`, `audience`, and `page_type` to `attributesForFaceting`

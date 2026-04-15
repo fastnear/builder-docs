@@ -333,6 +333,8 @@ const config = {
           ignorePatterns: buildLocalizedIgnorePatterns([
             '/api/reference',
             '/redocly-config',
+            '/transaction-flow',
+            '/transaction-flow/**',
             ...(hideEarlyApiFamilies ? ['/transfers/**', '/fastdata/**'] : []),
           ]),
           lastmod: 'date',

@@ -65,6 +65,7 @@ const HIDDEN_DOC_PREFIXES = [
   "/fastdata",
 ];
 const HIDDEN_CANONICAL_PREFIXES = ["/apis/transfers", "/apis/kv-fastdata"];
+const ALWAYS_HIDDEN_DOC_PREFIXES = ["/transaction-flow"];
 const SECRET_QUERY_PARAM_PATTERNS = [/^apiKey$/i, /^token$/i, /^header\./i];
 
 const API_SERVICE_LABELS = {
@@ -536,9 +537,14 @@ function computeDocRoute(relativePath, frontmatter) {
 
 function isHiddenRoute(route) {
   return (
-    hideEarlyApiFamilies &&
-    HIDDEN_DOC_PREFIXES.some(
+    ALWAYS_HIDDEN_DOC_PREFIXES.some(
       (prefix) => route === prefix || route.startsWith(`${prefix}/`)
+    ) ||
+    (
+      hideEarlyApiFamilies &&
+      HIDDEN_DOC_PREFIXES.some(
+        (prefix) => route === prefix || route.startsWith(`${prefix}/`)
+      )
     )
   );
 }

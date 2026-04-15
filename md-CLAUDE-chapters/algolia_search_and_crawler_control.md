@@ -187,10 +187,11 @@ The crawler is deliberately focused on the public root-mounted docs surface.
 - `/auth/**`
 - `/agents/**`
 - `/snapshots/**`
-- `/transaction-flow/**`
 
 ### Excluded
 
+- `/transaction-flow`
+- `/transaction-flow/**`
 - `/rpcs/**`
 - `/apis/**`
 - `/**/*.md`

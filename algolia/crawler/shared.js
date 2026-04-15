@@ -15,10 +15,11 @@ const CRAWL_PATHS = [
   `${SITE_ROOT}/auth/**`,
   `${SITE_ROOT}/agents/**`,
   `${SITE_ROOT}/snapshots/**`,
-  `${SITE_ROOT}/transaction-flow/**`,
 ];
 
 const CRAWL_EXCLUDES = [
+  `!${SITE_ROOT}/transaction-flow`,
+  `!${SITE_ROOT}/transaction-flow/**`,
   `!${SITE_ROOT}/rpcs/**`,
   `!${SITE_ROOT}/apis/**`,
   `!${SITE_ROOT}/**/*.md`,

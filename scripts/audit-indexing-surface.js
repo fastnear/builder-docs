@@ -64,12 +64,16 @@ const EXCLUDED_SITEMAP_ROUTES = [
   "/api/reference",
   "/redocly-config",
 ];
+const EXCLUDED_SITEMAP_ROUTE_PREFIXES = [
+  "/transaction-flow",
+];
 
 const HIDDEN_DOC_PREFIXES = [
   "/transfers",
   "/fastdata",
 ];
 const HIDDEN_CANONICAL_PREFIXES = ["/apis/transfers", "/apis/kv-fastdata"];
+const ALWAYS_HIDDEN_DOC_PREFIXES = ["/transaction-flow"];
 
 const COLLECTION_ROUTE_SET = new Set([
   "/",
@@ -299,9 +303,14 @@ function getLegacyMarkdownMirrorPath(route) {
 
 function isHiddenDocsRoute(route) {
   return (
-    hideEarlyApiFamilies &&
-    HIDDEN_DOC_PREFIXES.some(
+    ALWAYS_HIDDEN_DOC_PREFIXES.some(
       (prefix) => route === prefix || route.startsWith(`${prefix}/`)
+    ) ||
+    (
+      hideEarlyApiFamilies &&
+      HIDDEN_DOC_PREFIXES.some(
+        (prefix) => route === prefix || route.startsWith(`${prefix}/`)
+      )
     )
   );
 }
@@ -777,6 +786,15 @@ function auditDocsBuildOutput(routeEntries, structuredGraph) {
         `${path.relative(ROOT, sitemapPath)} should exclude low-value route ${localizeRoute(route, locale)}`
       );
     });
+    EXCLUDED_SITEMAP_ROUTE_PREFIXES.forEach((routePrefix) => {
+      const localizedPrefixUrl = buildLocalizedProductionUrl(routePrefix, locale);
+      assert(
+        !sitemapUrls.some(
+          (url) => url === localizedPrefixUrl || url.startsWith(`${localizedPrefixUrl}/`)
+        ),
+        `${path.relative(ROOT, sitemapPath)} should exclude hidden route prefix ${localizeRoute(routePrefix, locale)}`
+      );
+    });
 
     assert(
       !sitemapUrls.some((url) => url.includes("/blog/")),
@@ -1099,6 +1117,23 @@ function auditHostedBuildOutput(structuredGraph) {
       assert(
         getNodeRefIds(operationNode.subjectOf).includes(pageNodeId),
         `Hosted route APIReference should include the hosted page in subjectOf: ${localizedCanonicalPath}`
+      );
+    });
+  });
+
+  ["/transaction-flow", "/transaction-flow/foundations"].forEach((route) => {
+    SUPPORTED_LOCALES.forEach((locale) => {
+      const localizedRoute = localizeRoute(route, locale);
+      const htmlPath = routeToBuildHtmlPath(localizedRoute);
+      assert(
+        fs.existsSync(htmlPath),
+        `Built HTML missing for hidden docs route ${localizedRoute}`
+      );
+
+      const html = fs.readFileSync(htmlPath, "utf8");
+      assert(
+        html.includes('name="robots" content="noindex"'),
+        `Hidden docs route must remain noindex: ${localizedRoute}`
       );
     });
   });

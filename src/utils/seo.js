@@ -113,6 +113,8 @@ const REFERENCE_COLLECTION_ROUTES = new Set([
   '/tx',
 ]);
 
+const HIDDEN_PUBLIC_DOC_PREFIXES = ['/transaction-flow'];
+
 const OPERATION_CANONICAL_RULES = [
   { prefix: '/rpcs/account', family: 'account', methodType: 'account', surface: 'rpc' },
   { prefix: '/rpcs/block', family: 'block', methodType: 'block', surface: 'rpc' },
@@ -240,6 +242,9 @@ export function isPublicDocsPermalink(permalink) {
   const normalizedRoute = normalizeRoute(permalink);
   return Boolean(
     normalizedRoute &&
+      !HIDDEN_PUBLIC_DOC_PREFIXES.some(
+        (prefix) => normalizedRoute === prefix || normalizedRoute.startsWith(`${prefix}/`)
+      ) &&
       !normalizedRoute.startsWith('/rpcs/') &&
       !normalizedRoute.startsWith('/apis/')
   );
