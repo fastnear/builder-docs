@@ -1,0 +1,75 @@
+{
+  "attributesForFaceting": [
+    "type",
+    "lang",
+    "language",
+    "category",
+    "method_type",
+    "surface",
+    "family",
+    "audience",
+    "page_type"
+  ],
+  "attributesToRetrieve": [
+    "hierarchy",
+    "content",
+    "anchor",
+    "url",
+    "url_without_anchor",
+    "type",
+    "category",
+    "method_type",
+    "surface",
+    "family",
+    "audience",
+    "page_type"
+  ],
+  "attributesToHighlight": [
+    "hierarchy",
+    "content"
+  ],
+  "attributesToSnippet": [
+    "content:14"
+  ],
+  "camelCaseAttributes": [
+    "hierarchy",
+    "content"
+  ],
+  "searchableAttributes": [
+    "unordered(hierarchy.lvl1)",
+    "unordered(hierarchy.lvl2)",
+    "unordered(hierarchy.lvl3)",
+    "unordered(hierarchy.lvl4)",
+    "unordered(hierarchy.lvl5)",
+    "unordered(hierarchy.lvl6)",
+    "unordered(hierarchy.lvl0)",
+    "content"
+  ],
+  "distinct": true,
+  "attributeForDistinct": "url_without_anchor",
+  "customRanking": [
+    "desc(weight.pageRank)",
+    "desc(weight.level)",
+    "asc(weight.position)"
+  ],
+  "ranking": [
+    "words",
+    "filters",
+    "typo",
+    "attribute",
+    "proximity",
+    "exact",
+    "custom"
+  ],
+  "highlightPreTag": "<span class=\"algolia-docsearch-suggestion--highlight\">",
+  "highlightPostTag": "</span>",
+  "minWordSizefor1Typo": 3,
+  "minWordSizefor2Typos": 7,
+  "allowTyposOnNumericTokens": false,
+  "minProximity": 1,
+  "ignorePlurals": true,
+  "advancedSyntax": true,
+  "attributeCriteriaComputedByMinProximity": true,
+  "removeWordsIfNoResults": "allOptional",
+  "separatorsToIndex": "_"
+}

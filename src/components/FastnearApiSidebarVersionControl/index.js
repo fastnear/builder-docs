@@ -1,6 +1,13 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { translate } from '@docusaurus/Translate';
 import clsx from 'clsx';
 import { useHistory, useLocation } from '@docusaurus/router';
+
+import {
+  getRouteLocale,
+  localizeRoute,
+  stripLocalePrefix,
+} from '@site/src/utils/localizedRoutes';
 
 const STORAGE_KEY = 'fastnear-api:selected-version';
 const VERSION_LABEL_RE = /^V(\d+)$/i;
@@ -40,7 +47,7 @@ function getVersionCategories(items) {
 }
 
 function getVersionFromPath(pathname, versionKeys) {
-  const match = pathname.match(/\/api\/(v\d+)(?:\/|$)/i);
+  const match = stripLocalePrefix(pathname).match(/\/api\/(v\d+)(?:\/|$)/i);
   if (!match) {
     return null;
   }
@@ -80,9 +87,13 @@ function findTargetHref(versionCategories, currentPath, targetVersion) {
     return null;
   }
 
-  const matchedVersionPath = currentPath.match(VERSION_PATH_RE);
+  const currentLocale = getRouteLocale(currentPath);
+  const matchedVersionPath = stripLocalePrefix(currentPath).match(VERSION_PATH_RE);
   if (matchedVersionPath) {
-    const candidatePath = `${matchedVersionPath[1]}${targetVersion}${matchedVersionPath[3] || ''}`;
+    const candidatePath = localizeRoute(
+      `${matchedVersionPath[1]}${targetVersion}${matchedVersionPath[3] || ''}`,
+      currentLocale
+    );
     if (targetCategory.links.includes(candidatePath)) {
       return candidatePath;
     }
@@ -122,7 +133,10 @@ function createSystemSection(items) {
   return [
     {
       type: 'category',
-      label: 'System',
+      label: translate({
+        id: 'fastnear.apiSidebar.system',
+        message: 'System',
+      }),
       collapsible: false,
       collapsed: false,
       items,
@@ -244,7 +258,10 @@ export function FastnearApiSidebarVersionControl({
   return (
     <div className={clsx('fastnear-api-sidebar-version-control', className)}>
       <label className="fastnear-api-sidebar-version-control__label" htmlFor="fastnear-api-version-select">
-        Version
+        {translate({
+          id: 'fastnear.apiSidebar.versionLabel',
+          message: 'Version',
+        })}
       </label>
       <select
         id="fastnear-api-version-select"

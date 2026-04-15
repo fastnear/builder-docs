@@ -1,0 +1,152 @@
+# FastNear Builder Docs
+
+AI-читабельные индексы для гайдов FastNear, RPC-справочника и справочника REST API.
+
+## Индексы
+
+- [Индекс гайдов](https://docs.fastnear.com/ru/guides/llms.txt)
+- [Индекс RPC-справочника](https://docs.fastnear.com/ru/rpcs/llms.txt)
+- [Индекс REST API](https://docs.fastnear.com/ru/apis/llms.txt)
+- [Полный архив](https://docs.fastnear.com/ru/llms-full.txt)
+
+## Гайды по RPC / API
+
+- [Справочник RPC / API](https://docs.fastnear.com/ru/index.md): Выберите подходящую поверхность FastNear для сырого RPC, индексированных балансов, истории транзакций, снапшотов, повышенных лимитов и чтения данных почти в реальном времени.
+- [FastNear API](https://docs.fastnear.com/ru/api.md): Индексированные представления аккаунтов, токенов, NFT и публичных ключей для кошельков, обозревателей, аналитики и агентных бэкендов.
+- [Справочник API](https://docs.fastnear.com/ru/api/reference.md): Обзор семейств FastNear REST API и того, чем они отличаются от прямых методов JSON-RPC.
+- [Аутентификация и доступ](https://docs.fastnear.com/ru/auth.md): Выберите подходящую схему аутентификации FastNear для браузерных демо, повышенных лимитов и безопасных продакшен-бэкендов.
+- [KV FastData API](https://docs.fastnear.com/ru/fastdata/kv.md): Запросы только для чтения к данным «ключ-значение» поверх FastData для сценариев с вызывающим аккаунтом, аккаунтом контракта, ключом и пакетным чтением.
+- [NEAR Data API](https://docs.fastnear.com/ru/neardata.md): Кэшированные и архивные чтения по блокам для оптимистичных, финализированных и сценариев с перенаправлением.
+- [Справочник RPC](https://docs.fastnear.com/ru/rpc.md): Прямой доступ по JSON-RPC к узлам NEAR от FastNear для запросов состояния, блоков, вызовов контрактов и отправки транзакций.
+- [Transfers API](https://docs.fastnear.com/ru/transfers.md): Аккаунт-centric NEAR and fungible-token transfer история for product feeds and investigative tooling.
+- [Транзакции API](https://docs.fastnear.com/ru/tx.md): Индексированные запросы по транзакциям, квитанциям, истории аккаунтов и истории блоков для FastNear.
+
+## AI и агенты
+
+- [Аутентификация для агентов](https://docs.fastnear.com/ru/agents/auth.md): Безопасная работа с учётными данными FastNear для AI-агентов, сервисов автоматизации, воркеров и серверных сред выполнения.
+- [Как выбрать подходящую поверхность](https://docs.fastnear.com/ru/agents/choosing-surfaces.md): Определите, должен ли ваш агент использовать сырой RPC, индексированные API, NEAR Data API или снапшоты.
+- [Плейбуки для агентов](https://docs.fastnear.com/ru/agents/playbooks.md): Рекомендуемые комбинации поверхностей FastNear для типовых сценариев AI и автоматизации.
+
+## Другие гайды
+
+- [Аутентификация серверной части](https://docs.fastnear.com/ru/auth/backend.md): Храните API-ключи FastNear на стороне сервера для продакшен-приложений, воркеров и агентных рантаймов.
+- [Аутентификация в браузерном демо](https://docs.fastnear.com/ru/auth/browser-demo.md): Используйте интерфейс документации FastNear для запуска аутентифицированных примеров во время демо, локальной разработки и исследования API.
+- [Руководство по интернационализации](https://docs.fastnear.com/ru/internationalization.md): Руководство для сопровождающих по добавлению локалей Docusaurus, локализованных оверлеев FastNear и безопасного для discovery процесса перевода.
+- [redocly-config](https://docs.fastnear.com/ru/redocly-config.md): Исторические заметки о прежнем бэкенде Redocly и о том, где он всё ещё важен для проверки документации FastNear.
+
+## Снапшоты
+
+- [Снапшоты для валидаторов](https://docs.fastnear.com/ru/snapshots.md): Обычные и архивные снапшоты доступны для валидаторов и помогают быстрее догонять цепочку или поднимать историческую инфраструктуру.
+- [mainnet](https://docs.fastnear.com/ru/snapshots/mainnet.md): Скачайте RPC- и архивные снапшоты mainnet для быстрого развёртывания NEAR-инфраструктуры на базе FastNear.
+- [testnet](https://docs.fastnear.com/ru/snapshots/testnet.md): Скачайте RPC- и архивные снапшоты testnet для быстрого развёртывания NEAR-инфраструктуры на базе FastNear.
+
+## RPC аккаунта
+
+- [RPC протокола NEAR: Просмотр ключа доступа](https://docs.fastnear.com/ru/rpcs/account/view_access_key.md): Просмотр ключа доступа аккаунта
+- [RPC протокола NEAR: Список ключей доступа](https://docs.fastnear.com/ru/rpcs/account/view_access_key_list.md): Просмотр списка ключей доступа аккаунта
+- [RPC протокола NEAR: Просмотр аккаунта](https://docs.fastnear.com/ru/rpcs/account/view_account.md): Просмотр аккаунта
+
+## RPC блоков
+
+- [RPC протокола NEAR: Блок по высоте](https://docs.fastnear.com/ru/rpcs/block/block_by_height.md): Получить блок по высоте
+- [RPC протокола NEAR: Блок по хешу](https://docs.fastnear.com/ru/rpcs/block/block_by_id.md): Получить блок по хешу
+- [RPC протокола NEAR: Эффекты блока](https://docs.fastnear.com/ru/rpcs/block/block_effects.md): Получить эффекты блока
+
+## RPC контрактов
+
+- [RPC протокола NEAR: Вызов view-метода](https://docs.fastnear.com/ru/rpcs/contract/call.md): Вызвать view-метод контракта
+- [RPC протокола NEAR: Код контракта](https://docs.fastnear.com/ru/rpcs/contract/view_code.md): Получить код контракта
+- [RPC протокола NEAR: Глобальный код контракта](https://docs.fastnear.com/ru/rpcs/contract/view_global_contract_code.md): Получить глобальный код контракта
+- [RPC протокола NEAR: Глобальный код контракта по аккаунту](https://docs.fastnear.com/ru/rpcs/contract/view_global_contract_code_by_account_id.md): Получить глобальный код контракта по аккаунту
+- [RPC протокола NEAR: Состояние контракта](https://docs.fastnear.com/ru/rpcs/contract/view_state.md): Получить состояние контракта
+
+## RPC протокола
+
+- [RPC протокола NEAR: Изменения состояния](https://docs.fastnear.com/ru/rpcs/protocol/changes.md): Получить изменения состояния
+- [RPC протокола NEAR: Чанк по блоку и шарду](https://docs.fastnear.com/ru/rpcs/protocol/chunk_by_block_shard.md): Получить чанк по блоку и шарду
+- [RPC протокола NEAR: Чанк по хешу](https://docs.fastnear.com/ru/rpcs/protocol/chunk_by_hash.md): Получить чанк по хешу
+- [RPC протокола NEAR: Конфигурация клиента](https://docs.fastnear.com/ru/rpcs/protocol/client_config.md): Получить конфигурацию клиента
+- [RPC протокола NEAR: Уровень перегрузки](https://docs.fastnear.com/ru/rpcs/protocol/EXPERIMENTAL_congestion_level.md): Получить уровень перегрузки
+- [RPC протокола NEAR: Доказательство блока для лайт-клиента](https://docs.fastnear.com/ru/rpcs/protocol/EXPERIMENTAL_light_client_block_proof.md): Получить доказательство блока для лайт-клиента
+- [RPC протокола NEAR: Доказательство исполнения для лайт-клиента](https://docs.fastnear.com/ru/rpcs/protocol/EXPERIMENTAL_light_client_proof.md): Получить доказательство исполнения для лайт-клиента
+- [RPC протокола NEAR: Конфигурация протокола](https://docs.fastnear.com/ru/rpcs/protocol/EXPERIMENTAL_protocol_config.md): Получить конфигурацию протокола
+- [RPC протокола NEAR: Информация о разделённом хранилище](https://docs.fastnear.com/ru/rpcs/protocol/EXPERIMENTAL_split_storage_info.md): Получить сведения о разделённом хранилище
+- [RPC протокола NEAR: Цена газа](https://docs.fastnear.com/ru/rpcs/protocol/gas_price.md): Получить текущую цену газа
+- [RPC протокола NEAR: Цена газа по блоку](https://docs.fastnear.com/ru/rpcs/protocol/gas_price_by_block.md): Получить цену газа по блоку
+- [RPC протокола NEAR: Конфигурация генезиса](https://docs.fastnear.com/ru/rpcs/protocol/genesis_config.md): Получить конфигурацию генезиса
+- [RPC протокола NEAR: Состояние узла](https://docs.fastnear.com/ru/rpcs/protocol/health.md): Проверить состояние узла
+- [RPC протокола NEAR: Последний блок](https://docs.fastnear.com/ru/rpcs/protocol/latest_block.md): Получить последний блок
+- [RPC протокола NEAR: Доказательство для лайт-клиента](https://docs.fastnear.com/ru/rpcs/protocol/light_client_proof.md): Получить доказательство для лайт-клиента
+- [RPC протокола NEAR: Окна обслуживания](https://docs.fastnear.com/ru/rpcs/protocol/maintenance_windows.md): Получить окна обслуживания
+- [RPC протокола NEAR: Метрики узла](https://docs.fastnear.com/ru/rpcs/protocol/metrics.md): Получить метрики узла
+- [RPC протокола NEAR: Сведения о сети](https://docs.fastnear.com/ru/rpcs/protocol/network_info.md): Получить сведения о сети
+- [RPC протокола NEAR: Следующий блок для лайт-клиента](https://docs.fastnear.com/ru/rpcs/protocol/next_light_client_block.md): Получить следующий блок для лайт-клиента
+- [RPC протокола NEAR: Статус узла](https://docs.fastnear.com/ru/rpcs/protocol/status.md): Получить статус узла
+
+## RPC транзакций
+
+- [RPC протокола NEAR: Отправка транзакции (асинхронно)](https://docs.fastnear.com/ru/rpcs/transaction/broadcast_tx_async.md): Отправить транзакцию асинхронно
+- [RPC протокола NEAR: Отправка транзакции (с подтверждением)](https://docs.fastnear.com/ru/rpcs/transaction/broadcast_tx_commit.md): Отправить транзакцию и дождаться подтверждения
+- [RPC протокола NEAR: Квитанция по ID](https://docs.fastnear.com/ru/rpcs/transaction/EXPERIMENTAL_receipt.md): Получить квитанцию по ID
+- [RPC протокола NEAR: Подробный статус транзакции](https://docs.fastnear.com/ru/rpcs/transaction/EXPERIMENTAL_tx_status.md): Получить подробный статус транзакции
+- [RPC протокола NEAR: Отправить транзакцию](https://docs.fastnear.com/ru/rpcs/transaction/send_tx.md): Отправить транзакцию
+- [RPC протокола NEAR: Статус транзакции](https://docs.fastnear.com/ru/rpcs/transaction/tx_status.md): Проверить статус транзакции
+
+## RPC валидаторов
+
+- [RPC протокола NEAR: Упорядоченные валидаторы](https://docs.fastnear.com/ru/rpcs/validators/EXPERIMENTAL_validators_ordered.md): Получить упорядоченных валидаторов
+- [RPC протокола NEAR: Валидаторы по эпохе](https://docs.fastnear.com/ru/rpcs/validators/validators_by_epoch.md): Получить валидаторов по эпохе
+- [RPC протокола NEAR: Текущие валидаторы](https://docs.fastnear.com/ru/rpcs/validators/validators_current.md): Получить текущих валидаторов
+
+## FastNear API
+
+- [FastNear API - Состояние](https://docs.fastnear.com/ru/apis/fastnear/system/health.md): Проверить состояние сервиса
+- [FastNear API - Статус](https://docs.fastnear.com/ru/apis/fastnear/system/status.md): Получить статус синхронизации сервиса
+- [FastNear API - V0 FT аккаунта](https://docs.fastnear.com/ru/apis/fastnear/v0/account_ft.md): Получить ID FT-контрактов аккаунта
+- [FastNear API - V0 NFT аккаунта](https://docs.fastnear.com/ru/apis/fastnear/v0/account_nft.md): Получить ID NFT-контрактов аккаунта
+- [FastNear API - V0 стейкинг аккаунта](https://docs.fastnear.com/ru/apis/fastnear/v0/account_staking.md): Получить ID стейкинг-пулов аккаунта
+- [FastNear API - V0 Поиск по публичному ключу](https://docs.fastnear.com/ru/apis/fastnear/v0/public_key_lookup.md): Найти аккаунты полного доступа по публичному ключу
+- [FastNear API - V0 Поиск по публичному ключу (все)](https://docs.fastnear.com/ru/apis/fastnear/v0/public_key_lookup_all.md): Найти все аккаунты по публичному ключу
+- [FastNear API - V1 FT аккаунта](https://docs.fastnear.com/ru/apis/fastnear/v1/account_ft.md): Получить индексированные строки FT-токенов аккаунта
+- [FastNear API - V1 Полный снимок аккаунта](https://docs.fastnear.com/ru/apis/fastnear/v1/account_full.md): Получить полный индексированный снимок аккаунта
+- [FastNear API - V1 NFT аккаунта](https://docs.fastnear.com/ru/apis/fastnear/v1/account_nft.md): Получить индексированные строки NFT аккаунта
+- [FastNEAR API - V1 Аккаунт Staking](https://docs.fastnear.com/ru/apis/fastnear/v1/account_staking.md): Поиск indexed staking pools for an аккаунта
+- [FastNEAR API - V1 FT Top Holders](https://docs.fastnear.com/ru/apis/fastnear/v1/ft_top.md): Поиск top indexed holders for a fungible token
+- [FastNear API - V1 Поиск по публичному ключу](https://docs.fastnear.com/ru/apis/fastnear/v1/public_key_lookup.md): Найти аккаунты полного доступа по публичному ключу
+- [FastNear API - V1 Поиск по публичному ключу (все)](https://docs.fastnear.com/ru/apis/fastnear/v1/public_key_lookup_all.md): Найти все индексированные аккаунты по публичному ключу
+
+## KV FastData API
+
+- [KV FastData API - Последние ключи по вызывающему аккаунту](https://docs.fastnear.com/ru/apis/kv-fastdata/v0/all_by_predecessor.md): Получить последние строки «ключ-значение» для одного вызывающего аккаунта по всем контрактам
+- [KV FastData API - История по точному ключу](https://docs.fastnear.com/ru/apis/kv-fastdata/v0/get_history_key.md): Получить исторические строки для одного точного ключа в рамках одного вызывающего аккаунта и контракта
+- [KV FastData API - Последнее значение по точному ключу](https://docs.fastnear.com/ru/apis/kv-fastdata/v0/get_latest_key.md): Получить последнюю строку для одного точного ключа в рамках одного вызывающего аккаунта и контракта
+- [KV FastData API - История по аккаунту](https://docs.fastnear.com/ru/apis/kv-fastdata/v0/history_by_account.md): Получить историю записей «ключ-значение» для одного контракта по всем вызывающим аккаунтам
+- [KV FastData API - История по глобальному ключу](https://docs.fastnear.com/ru/apis/kv-fastdata/v0/history_by_key.md): Получить историю по точному ключу во всех индексированных контрактах
+- [KV FastData API - История по вызывающему аккаунту](https://docs.fastnear.com/ru/apis/kv-fastdata/v0/history_by_predecessor.md): Получить историю записей «ключ-значение» для одного вызывающего аккаунта и контракта
+- [KV FastData API - Последние значения по аккаунту](https://docs.fastnear.com/ru/apis/kv-fastdata/v0/latest_by_account.md): Получить последние строки «ключ-значение» для одного контракта по всем вызывающим аккаунтам
+- [KV FastData API - Последние значения по вызывающему аккаунту](https://docs.fastnear.com/ru/apis/kv-fastdata/v0/latest_by_predecessor.md): Получить последние строки «ключ-значение» для одного вызывающего аккаунта и контракта
+- [KV FastData API - Пакетный поиск по ключам](https://docs.fastnear.com/ru/apis/kv-fastdata/v0/multi.md): Получить последние строки для нескольких полностью квалифицированных ключей
+
+## NEAR Data API
+
+- [NEAR Data API - Состояние](https://docs.fastnear.com/ru/apis/neardata/system/health.md): Проверить состояние сервиса
+- [NEAR Data API - Финализированный блок](https://docs.fastnear.com/ru/apis/neardata/v0/block.md): Получить финализированный блок по высоте
+- [NEAR Data API - Чанк блока](https://docs.fastnear.com/ru/apis/neardata/v0/block_chunk.md): Получить чанк из финализированного блока
+- [NEAR Data API - Заголовки блока](https://docs.fastnear.com/ru/apis/neardata/v0/block_headers.md): Получить объект блока для финализированного блока
+- [NEAR Data API - Оптимистичный блок](https://docs.fastnear.com/ru/apis/neardata/v0/block_optimistic.md): Получить оптимистичный блок по высоте
+- [NEAR Data API - Шард блока](https://docs.fastnear.com/ru/apis/neardata/v0/block_shard.md): Получить шард из финализированного блока
+- [NEAR Data API - Первый блок](https://docs.fastnear.com/ru/apis/neardata/v0/first_block.md): Перенаправление на первый блок после генезиса
+- [NEAR Data API - Последний финализированный блок](https://docs.fastnear.com/ru/apis/neardata/v0/last_block_final.md): Перенаправление на последний финализированный блок
+- [NEAR Data API - Последний оптимистичный блок](https://docs.fastnear.com/ru/apis/neardata/v0/last_block_optimistic.md): Перенаправление на последний оптимистичный блок
+
+## Transactions API
+
+- [Транзакции API - История аккаунта](https://docs.fastnear.com/ru/apis/transactions/v0/account.md): Получить историю транзакций аккаунта
+- [Транзакции API - Поиск блока](https://docs.fastnear.com/ru/apis/transactions/v0/block.md): Получить блок по высоте или хешу
+- [Транзакции API - Диапазон блоков](https://docs.fastnear.com/ru/apis/transactions/v0/blocks.md): Получить список блоков
+- [Транзакции API - Поиск квитанции](https://docs.fastnear.com/ru/apis/transactions/v0/receipt.md): Получить квитанцию по ID
+- [Транзакции API - Транзакции по хешу](https://docs.fastnear.com/ru/apis/transactions/v0/transactions.md): Получить транзакции по хешу
+
+## Transfers API
+
+- [Transfers API - Запрос переводов](https://docs.fastnear.com/ru/apis/transfers/v0/transfers.md): Запросить переводы для аккаунта

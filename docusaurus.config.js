@@ -5,6 +5,7 @@
 // See: https://docusaurus.io/docs/api/docusaurus-config
 
 import fs from 'node:fs';
+import { createRequire } from 'node:module';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { themes as prismThemes } from 'prism-react-renderer';
@@ -12,6 +13,70 @@ import { themes as prismThemes } from 'prism-react-renderer';
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 
 const configDir = path.dirname(fileURLToPath(import.meta.url));
+const require = createRequire(import.meta.url);
+const {
+  DEFAULT_LOCALE: DEFAULT_DOCS_LOCALE,
+  SUPPORTED_LOCALES: DOCS_LOCALES,
+  getHiddenSectionsForClient,
+  readLocaleRegistry,
+} = require('./scripts/lib/locale-framework.js');
+const localeRegistry = readLocaleRegistry();
+const localeConfigs = Object.fromEntries(
+  Object.entries(localeRegistry.locales).map(([locale, localeConfig]) => [
+    locale,
+    {
+      htmlLang: localeConfig.htmlLang,
+      label: localeConfig.label,
+    },
+  ])
+);
+const localeFrameworkHiddenSections = getHiddenSectionsForClient();
+const LOCAL_ENV_KEYS = new Set([
+  'DOCS_SEARCH_PROVIDER',
+  'DOCSEARCH_APP_ID',
+  'DOCSEARCH_API_KEY',
+  'DOCSEARCH_INDEX_NAME',
+  'HIDE_EARLY_API_FAMILIES',
+]);
+
+function loadLocalEnvFiles(baseDir) {
+  const shellEnvKeys = new Set(Object.keys(process.env));
+  const envPaths = ['.env', '.env.local'].map((fileName) => path.join(baseDir, fileName));
+
+  envPaths.forEach((envPath) => {
+    if (!fs.existsSync(envPath)) {
+      return;
+    }
+
+    const raw = fs.readFileSync(envPath, 'utf8');
+    raw.split(/\r?\n/).forEach((line) => {
+      const trimmed = line.trim();
+      if (!trimmed || trimmed.startsWith('#')) {
+        return;
+      }
+
+      const separatorIndex = trimmed.indexOf('=');
+      if (separatorIndex === -1) {
+        return;
+      }
+
+      const key = trimmed.slice(0, separatorIndex).trim();
+      if (!LOCAL_ENV_KEYS.has(key) || shellEnvKeys.has(key)) {
+        return;
+      }
+
+      const value = trimmed
+        .slice(separatorIndex + 1)
+        .trim()
+        .replace(/^['"]|['"]$/g, '');
+
+      process.env[key] = value;
+    });
+  });
+}
+
+loadLocalEnvFiles(configDir);
+
 const vscodeLanguageServerTypesEsmPath = path.join(
   configDir,
   'node_modules/vscode-languageserver-types/lib/esm/main.js'
@@ -30,6 +95,7 @@ const hasDocsearchConfig = Boolean(
 );
 const resolvedSearchProvider =
   requestedSearchProvider === 'algolia' && hasDocsearchConfig ? 'algolia' : 'local';
+const docsearchInsightsConfig = hasDocsearchConfig ? { insights: true } : {};
 const docsRoot = path.join(configDir, 'docs');
 const localSearchTheme = [
   require.resolve('@easyops-cn/docusaurus-search-local'),
@@ -51,7 +117,7 @@ const localSearchTheme = [
     indexBlog: false,
     indexDocs: true,
     indexPages: false,
-    language: 'en',
+    language: ['en', 'ru'],
     searchBarPosition: 'right',
     searchBarShortcut: true,
     searchBarShortcutHint: true,
@@ -60,6 +126,15 @@ const localSearchTheme = [
     searchResultLimits: 8,
   },
 ];
+
+function buildLocalizedIgnorePatterns(patterns) {
+  return patterns.flatMap((pattern) => [
+    pattern,
+    ...DOCS_LOCALES.filter((locale) => locale !== DEFAULT_DOCS_LOCALE).map((locale) =>
+      pattern === '/' ? `/${locale}` : `/${locale}${pattern}`
+    ),
+  ]);
+}
 
 function walkDocsFiles(dirPath) {
   const collected = [];
@@ -186,7 +261,6 @@ const config = {
         '@type': 'WebSite',
         description:
           'API and RPC documentation for FastNear, high-performance infrastructure for the NEAR Protocol.',
-        inLanguage: 'en',
         name: 'FastNear Docs',
         url: 'https://docs.fastnear.com',
         publisher: {
@@ -233,8 +307,9 @@ const config = {
   // useful metadata like html lang. For example, if your site is Chinese, you
   // may want to replace "en" with "zh-Hans".
   i18n: {
-    defaultLocale: 'en',
-    locales: ['en'],
+    defaultLocale: DEFAULT_DOCS_LOCALE,
+    locales: DOCS_LOCALES,
+    localeConfigs,
   },
 
   presets: [
@@ -255,11 +330,13 @@ const config = {
         },
         sitemap: {
           changefreq: null,
-          ignorePatterns: [
+          ignorePatterns: buildLocalizedIgnorePatterns([
             '/api/reference',
             '/redocly-config',
+            '/transaction-flow',
+            '/transaction-flow/**',
             ...(hideEarlyApiFamilies ? ['/transfers/**', '/fastdata/**'] : []),
-          ],
+          ]),
           lastmod: 'date',
           priority: null,
         },
@@ -286,6 +363,7 @@ const config = {
         },
       };
     },
+    path.resolve(configDir, 'plugins/finalizeLocalizedStaticAssets.cjs'),
     [
       '@docusaurus/plugin-client-redirects',
       {
@@ -304,6 +382,11 @@ const config = {
     ],
   ],
   customFields: {
+    localeFramework: {
+      defaultLocale: DEFAULT_DOCS_LOCALE,
+      hiddenSections: localeFrameworkHiddenSections,
+      locales: DOCS_LOCALES,
+    },
     hideEarlyApiFamilies,
     requestedSearchProvider,
     resolvedSearchProvider,
@@ -312,6 +395,11 @@ const config = {
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
+      colorMode: {
+        defaultMode: 'light',
+        disableSwitch: false,
+        respectPrefersColorScheme: false,
+      },
       navbar: {
         title: '',
         logo: {
@@ -352,21 +440,16 @@ const config = {
           {
             type: 'docSidebar',
             sidebarId: 'nearDataApiSidebar',
-            label: 'NEAR Data',
+            label: 'NEAR\u00A0Data',
             position: 'left',
           },
           ...(!hideEarlyApiFamilies
             ? [
                 {
+                  type: 'doc',
+                  docId: 'fastdata/kv/index',
                   label: 'FastData',
                   position: 'left',
-                  items: [
-                    {
-                      type: 'doc',
-                      docId: 'fastdata/kv/index',
-                      label: 'KV FastData API',
-                    },
-                  ],
                 },
               ]
             : []),
@@ -385,8 +468,7 @@ const config = {
             position: 'right',
           },
           {
-            href: 'https://github.com/fastnear/builder-docs',
-            label: 'GitHub',
+            type: 'localeDropdown',
             position: 'right',
           },
         ],
@@ -404,6 +486,7 @@ const config = {
               apiKey: docsearchConfig.apiKey,
               indexName: docsearchConfig.indexName,
               contextualSearch: true,
+              ...docsearchInsightsConfig,
             },
           }
         : {}),
@@ -439,10 +522,6 @@ const config = {
           {
             title: 'More',
             items: [
-              {
-                label: 'Company GitHub',
-                href: 'https://github.com/fastnear',
-              },
               {
                 label: 'JS API (alpha version)',
                 href: 'https://js.fastnear.com',

@@ -10,7 +10,8 @@ page_actions:
 
 # RPC Reference
 
-FastNear RPC gives you direct JSON-RPC access to NEAR nodes for state queries, block and chunk inspection, transaction submission, validator data, and protocol introspection.
+FastNear RPC gives you direct JSON-RPC access to NEAR nodes for state queries,
+block and chunk inspection, transaction submission, validator data, and protocol introspection.
 
 ## Endpoints
 

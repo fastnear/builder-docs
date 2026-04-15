@@ -1,0 +1,190 @@
+waves:
+  wave1:
+    docs:
+      - index.md
+      - api/v0-account-ft.mdx
+      - api/v0-account-nft.mdx
+      - api/v0-account-staking.mdx
+      - auth/index.mdx
+      - auth/backend.mdx
+      - auth/browser-demo.mdx
+      - api/index.md
+      - rpc/index.md
+      - rpc/block/block-effects.mdx
+      - rpc/protocol/status.mdx
+      - rpc/protocol/health.mdx
+      - rpc/protocol/latest-block.mdx
+      - rpc/protocol/network-info.mdx
+      - rpc/protocol/client-config.mdx
+      - rpc/protocol/gas-price.mdx
+      - rpc/protocol/gas-price-by-block.mdx
+      - rpc/protocol/changes.mdx
+      - rpc/validators/validators-current.mdx
+      - rpc/validators/validators-by-epoch.mdx
+      - tx/index.md
+      - tx/account.mdx
+      - tx/block.mdx
+      - tx/blocks.mdx
+      - tx/receipt.mdx
+      - tx/transactions.mdx
+      - neardata/index.md
+      - neardata/block.mdx
+      - neardata/block-optimistic.mdx
+      - neardata/block-headers.mdx
+      - neardata/block-chunk.mdx
+      - neardata/block-shard.mdx
+      - neardata/first-block.mdx
+      - neardata/last-block-final.mdx
+      - neardata/last-block-optimistic.mdx
+      - neardata/health.mdx
+      - fastdata/kv/index.md
+      - fastdata/kv/all-by-predecessor.mdx
+      - fastdata/kv/history-by-account.mdx
+      - fastdata/kv/history-by-key.mdx
+      - fastdata/kv/history-by-predecessor.mdx
+      - fastdata/kv/latest-by-account.mdx
+      - fastdata/kv/latest-by-predecessor.mdx
+      - fastdata/kv/multi.mdx
+      - fastdata/kv/get-history-key.mdx
+      - fastdata/kv/get-latest-key.mdx
+      - snapshots/index.mdx
+      - transfers/transfers.mdx
+      - agents/choosing-surfaces.mdx
+      - agents/auth-for-agents.mdx
+      - agents/playbooks.mdx
+    pageModels:
+      - rpc-view-access-key
+      - rpc-view-access-key-list
+      - rpc-view-account
+      - rpc-block-by-height
+      - rpc-block-by-id
+      - rpc-call-function
+      - rpc-view-code
+      - rpc-view-state
+      - rpc-block-effects
+      - rpc-status
+      - rpc-health
+      - rpc-latest-block
+      - rpc-network-info
+      - rpc-client-config
+      - rpc-gas-price
+      - rpc-gas-price-by-block
+      - rpc-changes
+      - rpc-send-tx
+      - rpc-tx-status
+      - rpc-validators-current
+      - rpc-validators-by-epoch
+      - fastnear-v0-account-ft
+      - fastnear-v0-account-nft
+      - fastnear-v0-account-staking
+      - fastnear-v0-public-key-lookup
+      - fastnear-v0-public-key-lookup-all
+      - fastnear-v1-account-full
+      - fastnear-v1-account-ft
+      - fastnear-v1-account-nft
+      - fastnear-v1-public-key-lookup
+      - fastnear-v1-public-key-lookup-all
+      - fastnear-system-status
+      - fastnear-system-health
+      - transactions-v0-account
+      - transactions-v0-block
+      - transactions-v0-blocks
+      - transactions-v0-receipt
+      - transactions-v0-transactions
+      - transfers-v0-transfers
+      - kv-fastdata-v0-all-by-predecessor
+      - kv-fastdata-v0-get-history-key
+      - kv-fastdata-v0-get-latest-key
+      - kv-fastdata-v0-history-by-predecessor
+      - kv-fastdata-v0-history-by-account
+      - kv-fastdata-v0-history-by-key
+      - kv-fastdata-v0-latest-by-account
+      - kv-fastdata-v0-latest-by-predecessor
+      - kv-fastdata-v0-multi
+      - neardata-v0-block
+      - neardata-v0-block-chunk
+      - neardata-v0-block-shard
+      - neardata-v0-first-block
+      - neardata-v0-block-optimistic
+      - neardata-v0-last-block-final
+      - neardata-v0-last-block-optimistic
+      - neardata-v0-block-headers
+      - neardata-system-health
+  wave2:
+    docs:
+      - redocly-config.md
+      - internationalization.md
+      - api/reference.md
+      - transfers/index.md
+      - snapshots/mainnet.mdx
+      - snapshots/testnet.mdx
+      - rpc/account/view-access-key-list.mdx
+      - rpc/account/view-access-key.mdx
+      - rpc/account/view-account.mdx
+      - rpc/block/block-by-height.mdx
+      - rpc/block/block-by-id.mdx
+      - rpc/contract/call-function.mdx
+      - rpc/contract/view-code.mdx
+      - rpc/contract/view-global-contract-code-by-account-id.mdx
+      - rpc/contract/view-global-contract-code.mdx
+      - rpc/contract/view-state.mdx
+      - rpc/protocol/chunk-by-block-shard.mdx
+      - rpc/protocol/chunk-by-hash.mdx
+      - rpc/protocol/experimental-congestion-level.mdx
+      - rpc/protocol/experimental-light-client-block-proof.mdx
+      - rpc/protocol/experimental-light-client-proof.mdx
+      - rpc/protocol/experimental-protocol-config.mdx
+      - rpc/protocol/experimental-split-storage-info.mdx
+      - rpc/protocol/genesis-config.mdx
+      - rpc/protocol/light-client-proof.mdx
+      - rpc/protocol/maintenance-windows.mdx
+      - rpc/protocol/metrics.mdx
+      - rpc/protocol/next-light-client-block.mdx
+      - rpc/transaction/broadcast-tx-async.mdx
+      - rpc/transaction/broadcast-tx-commit.mdx
+      - rpc/transaction/experimental-receipt.mdx
+      - rpc/transaction/experimental-tx-status.mdx
+      - rpc/transaction/send-tx.mdx
+      - rpc/transaction/tx-status.mdx
+      - rpc/validators/experimental-validators-ordered.mdx
+    pageModels:
+      - rpc-view-global-contract-code-by-account-id
+      - rpc-view-global-contract-code
+      - rpc-chunk-by-block-shard
+      - rpc-chunk-by-hash
+      - rpc-EXPERIMENTAL-congestion-level
+      - rpc-EXPERIMENTAL-light-client-block-proof
+      - rpc-EXPERIMENTAL-light-client-proof
+      - rpc-EXPERIMENTAL-protocol-config
+      - rpc-EXPERIMENTAL-split-storage-info
+      - rpc-genesis-config
+      - rpc-light-client-proof
+      - rpc-maintenance-windows
+      - rpc-metrics
+      - rpc-next-light-client-block
+      - rpc-broadcast-tx-async
+      - rpc-broadcast-tx-commit
+      - rpc-EXPERIMENTAL-receipt
+      - rpc-EXPERIMENTAL-tx-status
+      - rpc-EXPERIMENTAL-validators-ordered
+hiddenSections:
+  - id: transaction-flow
+    routePrefix: /transaction-flow
+    docPathPrefix: transaction-flow/
+bootstrap:
+  routeLabels:
+    "/": "Справочник RPC / API"
+    "/agents/choosing-surfaces": "Агенты"
+    "/api": "FastNear API"
+    "/auth": "Аутентификация и доступ"
+    "/fastdata/kv": "KV FastData API"
+    "/neardata": "NEAR Data API"
+    "/rpc": "RPC"
+    "/snapshots": "Снапшоты"
+    "/transaction-flow": "Поток транзакций"
+    "/transfers": "Transfers API"
+    "/tx": "Transactions API"
+  translationJsonOverrides:
+    code.json:
+      fastnear.hiddenSectionScope.title: "Редакционная доработка ещё не завершена"
+      fastnear.hiddenSectionScope.message: "Этот раздел скрыт из основной навигации. Перевод и редакторская полировка намеренно не считаются обязательными, пока раздел не станет публичным."

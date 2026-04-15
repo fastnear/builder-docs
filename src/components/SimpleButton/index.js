@@ -1,5 +1,7 @@
 import React from 'react';
-import Link from '@docusaurus/Link';
+
+import { isLocalizedRoute } from '@site/src/utils/localizedRoutes';
+import LocalizedLink from '@site/src/components/LocalizedLink';
 import styles from './styles.module.css';
 
 export default function SimpleButton({to, children}) {
@@ -8,7 +10,7 @@ export default function SimpleButton({to, children}) {
   const isExternalLink = to && (to.startsWith('http://') || to.startsWith('https://'));
 
   // For non-link usage or when we suspect nesting issues
-  if (!to || typeof window !== 'undefined' && window.location.pathname === to) {
+  if (!to || (typeof window !== 'undefined' && isLocalizedRoute(window.location.pathname, to))) {
     return (
       <span className={styles.button}>
         {children}
@@ -18,10 +20,10 @@ export default function SimpleButton({to, children}) {
 
   // Otherwise, render as a link
   return (
-    <Link
+    <LocalizedLink
       className={styles.button}
       to={to}>
       {children}
-    </Link>
+    </LocalizedLink>
   );
 }

@@ -23,6 +23,97 @@ const turndownService = new TurndownService({
 
 turndownService.use(gfm);
 
+const MARKDOWN_EXPORT_LABELS = {
+  en: {
+    activeExample: 'Active example',
+    array: 'array',
+    auth: 'Auth',
+    bearerTokenViaHeader: 'Bearer token via `Authorization: Bearer <token>` header',
+    body: 'body',
+    currentRequest: 'Current request',
+    endpoint: 'Endpoint',
+    finality: 'Finality',
+    headerParameters: 'Header parameters',
+    inputs: 'Inputs',
+    mediaType: 'Media type',
+    method: 'Method',
+    network: 'Network',
+    networks: 'Networks',
+    noAuthRequired: 'No auth required',
+    notSpecified: 'Not specified',
+    object: 'object',
+    operation: 'Operation',
+    path: 'Path',
+    pathField: 'path',
+    pathParameters: 'Path parameters',
+    queryParameters: 'Query parameters',
+    queryField: 'query',
+    requestBody: 'Request body',
+    requestBodyField: 'body',
+    requestReference: 'Request reference',
+    requestSchema: 'Request schema',
+    required: 'required',
+    responseReference: 'Response reference',
+    responseSchema: 'Response schema',
+    sourceLinks: 'Source links',
+    sourceSpec: 'Source spec',
+    status: 'Status',
+    summary: 'Summary',
+    transport: 'Transport',
+    type: 'type',
+    url: 'URL',
+    value: 'value',
+    withoutSavedCredentials: 'This export intentionally omits any locally saved credentials',
+    apiKeyVia: 'API key via',
+  },
+  ru: {
+    activeExample: 'Активный пример',
+    array: 'массив',
+    auth: 'Авторизация',
+    bearerTokenViaHeader: 'Bearer-токен через заголовок `Authorization: Bearer <token>`',
+    body: 'тело',
+    currentRequest: 'Текущий запрос',
+    endpoint: 'Эндпоинт',
+    finality: 'Финальность',
+    headerParameters: 'Параметры заголовков',
+    inputs: 'Входные данные',
+    mediaType: 'Тип данных',
+    method: 'Метод',
+    network: 'Сеть',
+    networks: 'Сети',
+    noAuthRequired: 'Авторизация не требуется',
+    notSpecified: 'Не указано',
+    object: 'объект',
+    operation: 'Операция',
+    path: 'Путь',
+    pathField: 'путь',
+    pathParameters: 'Параметры пути',
+    queryParameters: 'Параметры запроса',
+    queryField: 'query',
+    requestBody: 'Тело запроса',
+    requestBodyField: 'тело',
+    requestReference: 'Справка по запросу',
+    requestSchema: 'Схема запроса',
+    required: 'обязательный',
+    responseReference: 'Справка по ответу',
+    responseSchema: 'Схема ответа',
+    sourceLinks: 'Ссылки на источник',
+    sourceSpec: 'Исходная спецификация',
+    status: 'Статус',
+    summary: 'Краткое описание',
+    transport: 'Транспорт',
+    type: 'тип',
+    url: 'URL',
+    value: 'значение',
+    withoutSavedCredentials: 'Этот экспорт намеренно не включает локально сохранённые учётные данные',
+    apiKeyVia: 'API-ключ через',
+  },
+};
+
+function getMarkdownExportLabels(locale = 'en') {
+  return MARKDOWN_EXPORT_LABELS[locale] || MARKDOWN_EXPORT_LABELS.en;
+}
+
 function isSecretQueryParam(key) {
   return SECRET_QUERY_PARAM_PATTERNS.some((pattern) => pattern.test(key));
 }
@@ -144,9 +235,9 @@ function formatJsonCodeBlock(value) {
   return formatCodeBlock('json', JSON.stringify(value, null, 2));
 }
 
-function formatNetworkLines(networks) {
+function formatNetworkLines(networks, labels) {
   if (!Array.isArray(networks) || !networks.length) {
-    return '- Not specified';
+    return `- ${labels.notSpecified}`;
   }
 
   return networks
@@ -154,7 +245,7 @@ function formatNetworkLines(networks) {
     .join('\n');
 }
 
-function formatSchemaType(schema = {}) {
+function formatSchemaType(schema = {}, labels = MARKDOWN_EXPORT_LABELS.en) {
   if (Array.isArray(schema.type)) {
     return schema.type.join(' | ');
   }
@@ -171,24 +262,34 @@ function formatSchemaType(schema = {}) {
   }
 
   if (schema.properties) {
-    return 'object';
+    return labels.object;
   }
 
   if (schema.items) {
-    return 'array';
+    return labels.array;
   }
 
-  return 'value';
+  return labels.value;
 }
 
-function formatFieldDescription(field) {
-  const parts = [];
-  parts.push(field.location || 'body');
-  if (field.required) {
-    parts.push('required');
+function formatFieldDescription(field, labels) {
+  if (!field) {
+    return '';
   }
 
-  const type = formatSchemaType(field.schema);
+  const parts = [];
+  if (field.location === 'path') {
+    parts.push(labels.pathField);
+  } else if (field.location === 'query') {
+    parts.push(labels.queryField);
+  } else {
+    parts.push(field.location || labels.requestBodyField || labels.body);
+  }
+  if (field.required) {
+    parts.push(labels.required);
+  }
+
+  const type = formatSchemaType(field.schema, labels);
   if (type) {
     parts.push(type);
   }
@@ -199,34 +300,37 @@ function formatFieldDescription(field) {
   return `- \`${field.name}\` (${parts.join(', ')})${suffix}`;
 }
 
-function formatParameterGroup(title, parameters) {
+function formatParameterGroup(title, parameters, labels = MARKDOWN_EXPORT_LABELS.en) {
   if (!parameters?.length) {
     return '';
   }
 
-  return [`### ${title}`, '', ...parameters.map((parameter) => formatFieldDescription(parameter)), ''].join(
-    '\n'
-  );
+  return [
+    `### ${title}`,
+    '',
+    ...parameters.map((parameter) => formatFieldDescription(parameter, labels)).filter(Boolean),
+    '',
+  ].join('\n');
 }
 
-function formatSecuritySummary(securitySchemes) {
+function formatSecuritySummary(securitySchemes, labels) {
   if (!Array.isArray(securitySchemes) || !securitySchemes.length) {
-    return '- No auth required';
+    return `- ${labels.noAuthRequired}`;
   }
 
   const lines = securitySchemes.map((scheme) => {
     if (scheme.type === 'apiKey') {
-      return `- API key via ${scheme.in} \`${scheme.name}\`${scheme.description ? `: ${scheme.description}` : ''}`;
+      return `- ${labels.apiKeyVia} ${scheme.in} \`${scheme.name}\`${scheme.description ? `: ${scheme.description}` : ''}`;
     }
 
     if (scheme.type === 'http' && scheme.scheme === 'bearer') {
-      return '- Bearer token via `Authorization: Bearer <token>` header';
+      return `- ${labels.bearerTokenViaHeader}`;
     }
 
     return `- ${scheme.id || 'Auth'} (${scheme.type || 'custom'})${scheme.description ? `: ${scheme.description}` : ''}`;
   });
 
-  lines.push('- This export intentionally omits any locally saved credentials');
+  lines.push(`- ${labels.withoutSavedCredentials}`);
   return lines.join('\n');
 }
 
@@ -257,6 +361,7 @@ function sanitizeExampleRequest(example) {
 }
 
 function formatCurrentRequestSection({
+  locale = 'en',
   pageModel,
   requestUrl,
   httpRequestBody,
@@ -265,30 +370,31 @@ function formatCurrentRequestSection({
   selectedFinality,
   selectedNetworkDetails,
 }) {
-  const lines = ['## Current request', ''];
+  const labels = getMarkdownExportLabels(locale);
+  const lines = [`## ${labels.currentRequest}`, ''];
 
   if (selectedNetworkDetails?.label || selectedNetworkDetails?.key) {
-    lines.push(`- Network: ${selectedNetworkDetails.label || selectedNetworkDetails.key}`);
+    lines.push(`- ${labels.network}: ${selectedNetworkDetails.label || selectedNetworkDetails.key}`);
   }
 
   if (pageModel.route.transport === 'json-rpc') {
     if (selectedFinality) {
-      lines.push(`- Finality: ${selectedFinality}`);
+      lines.push(`- ${labels.finality}: ${selectedFinality}`);
     }
-    lines.push(`- Endpoint: ${sanitizePublicUrl(selectedNetworkDetails?.url)}`);
+    lines.push(`- ${labels.endpoint}: ${sanitizePublicUrl(selectedNetworkDetails?.url)}`);
     lines.push('');
-    lines.push('### Request body');
+    lines.push(`### ${labels.requestBody}`);
     lines.push('');
     lines.push(formatJsonCodeBlock(rpcPayload));
   } else {
-    lines.push(`- Method: ${pageModel.route.method}`);
-    lines.push(`- URL: ${sanitizePublicUrl(requestUrl?.toString())}`);
+    lines.push(`- ${labels.method}: ${pageModel.route.method}`);
+    lines.push(`- ${labels.url}: ${sanitizePublicUrl(requestUrl?.toString())}`);
     if (selectedExample?.label) {
-      lines.push(`- Active example: ${selectedExample.label}`);
+      lines.push(`- ${labels.activeExample}: ${selectedExample.label}`);
     }
     lines.push('');
     if (httpRequestBody) {
-      lines.push('### Request body');
+      lines.push(`### ${labels.requestBody}`);
       lines.push('');
       lines.push(formatJsonCodeBlock(httpRequestBody));
     }
@@ -297,26 +403,27 @@ function formatCurrentRequestSection({
   return lines.filter(Boolean).join('\n');
 }
 
-function formatRequestReference(pageModel, selectedExample) {
-  const sections = ['## Request reference', ''];
+function formatRequestReference(pageModel, selectedExample, locale = 'en') {
+  const labels = getMarkdownExportLabels(locale);
+  const sections = [`## ${labels.requestReference}`, ''];
   const exampleRequest = sanitizeExampleRequest(selectedExample);
 
   if (exampleRequest) {
-    sections.push('### Active example');
+    sections.push(`### ${labels.activeExample}`);
     sections.push('');
     sections.push(formatJsonCodeBlock(exampleRequest));
     sections.push('');
   }
 
   if (pageModel.interaction?.fields?.length) {
-    sections.push('### Inputs');
+    sections.push(`### ${labels.inputs}`);
     sections.push('');
-    sections.push(...pageModel.interaction.fields.map((field) => formatFieldDescription(field)));
+    sections.push(...pageModel.interaction.fields.map((field) => formatFieldDescription(field, labels)));
     sections.push('');
   }
 
   if (pageModel.request?.bodySchema) {
-    sections.push('### Request schema');
+    sections.push(`### ${labels.requestSchema}`);
     sections.push('');
     sections.push(formatJsonCodeBlock(pageModel.request.bodySchema));
     sections.push('');
@@ -324,30 +431,31 @@ function formatRequestReference(pageModel, selectedExample) {
 
   if (pageModel.request?.parameters) {
     const { path = [], query = [], header = [] } = pageModel.request.parameters;
-    sections.push(formatParameterGroup('Path parameters', path));
-    sections.push(formatParameterGroup('Query parameters', query));
-    sections.push(formatParameterGroup('Header parameters', header));
+    sections.push(formatParameterGroup(labels.pathParameters, path, labels));
+    sections.push(formatParameterGroup(labels.queryParameters, query, labels));
+    sections.push(formatParameterGroup(labels.headerParameters, header, labels));
   }
 
   return sections.filter(Boolean).join('\n');
 }
 
-function formatResponseReference(response) {
+function formatResponseReference(response, locale = 'en') {
   if (!response) {
     return '';
   }
 
-  const lines = ['## Response reference', ''];
-  lines.push(`- Status: ${response.status || '200'}`);
+  const labels = getMarkdownExportLabels(locale);
+  const lines = [`## ${labels.responseReference}`, ''];
+  lines.push(`- ${labels.status}: ${response.status || '200'}`);
   if (response.mediaType) {
-    lines.push(`- Media type: ${response.mediaType}`);
+    lines.push(`- ${labels.mediaType}: ${response.mediaType}`);
   }
   if (response.description) {
-    lines.push(`- Summary: ${response.description}`);
+    lines.push(`- ${labels.summary}: ${response.description}`);
   }
   lines.push('');
   if (response.schema) {
-    lines.push('### Response schema');
+    lines.push(`### ${labels.responseSchema}`);
     lines.push('');
     lines.push(formatJsonCodeBlock(response.schema));
   }
@@ -368,6 +476,7 @@ export function buildMarkdownFromDocContent(rootElement, { sourceUrl } = {}) {
 export function buildOperationMarkdown({
   currentUrl,
   httpRequestBody,
+  locale = 'en',
   pageModel,
   requestUrl,
   rpcPayload,
@@ -375,6 +484,7 @@ export function buildOperationMarkdown({
   selectedFinality,
   selectedNetworkDetails,
 }) {
+  const labels = getMarkdownExportLabels(locale);
   const sourceLinks = new Set();
   const baseUrl = typeof window !== 'undefined' ? window.location.origin : currentUrl;
 
@@ -392,25 +502,26 @@ export function buildOperationMarkdown({
     sections.push(pageModel.info.description, '');
   }
 
-  sections.push('## Source links', '');
+  sections.push(`## ${labels.sourceLinks}`, '');
   sections.push(...[...sourceLinks].map((link) => `- ${link}`));
   sections.push('');
-  sections.push('## Operation', '');
-  sections.push(`- Transport: ${pageModel.route.transport}`);
-  sections.push(`- Method: ${pageModel.route.method}`);
-  sections.push(`- Path: \`${pageModel.route.path}\``);
+  sections.push(`## ${labels.operation}`, '');
+  sections.push(`- ${labels.transport}: ${pageModel.route.transport}`);
+  sections.push(`- ${labels.method}: ${pageModel.route.method}`);
+  sections.push(`- ${labels.path}: \`${pageModel.route.path}\``);
   if (pageModel.sourceSpec) {
-    sections.push(`- Source spec: \`${pageModel.sourceSpec}\``);
+    sections.push(`- ${labels.sourceSpec}: \`${pageModel.sourceSpec}\``);
   }
   sections.push('');
-  sections.push('## Networks', '');
-  sections.push(formatNetworkLines(pageModel.interaction?.networks));
+  sections.push(`## ${labels.networks}`, '');
+  sections.push(formatNetworkLines(pageModel.interaction?.networks, labels));
   sections.push('');
-  sections.push('## Auth', '');
-  sections.push(formatSecuritySummary(pageModel.securitySchemes));
+  sections.push(`## ${labels.auth}`, '');
+  sections.push(formatSecuritySummary(pageModel.securitySchemes, labels));
   sections.push('');
   sections.push(
     formatCurrentRequestSection({
+      locale,
       pageModel,
       requestUrl,
       httpRequestBody,
@@ -421,9 +532,9 @@ export function buildOperationMarkdown({
     })
   );
   sections.push('');
-  sections.push(formatRequestReference(pageModel, selectedExample));
+  sections.push(formatRequestReference(pageModel, selectedExample, locale));
   sections.push('');
-  sections.push(formatResponseReference(pageModel.responses?.[0]));
+  sections.push(formatResponseReference(pageModel.responses?.[0], locale));
 
   return `${normalizeMarkdown(sections.filter(Boolean).join('\n'))}\n`;
 }

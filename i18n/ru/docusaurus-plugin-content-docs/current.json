@@ -1,0 +1,38 @@
+{
+  "version.label": {
+    "message": "Next",
+    "description": "The label for version current"
+  },
+  "sidebar.rpcSidebar.category.Account": {
+    "message": "Аккаунт",
+    "description": "The label for category 'Account' in sidebar 'rpcSidebar'"
+  },
+  "sidebar.rpcSidebar.category.Block": {
+    "message": "Блок",
+    "description": "The label for category 'Block' in sidebar 'rpcSidebar'"
+  },
+  "sidebar.rpcSidebar.category.Contract": {
+    "message": "Контракт",
+    "description": "The label for category 'Contract' in sidebar 'rpcSidebar'"
+  },
+  "sidebar.rpcSidebar.category.Protocol": {
+    "message": "Протокол",
+    "description": "The label for category 'Protocol' in sidebar 'rpcSidebar'"
+  },
+  "sidebar.rpcSidebar.category.Transaction": {
+    "message": "Транзакция",
+    "description": "The label for category 'Transaction' in sidebar 'rpcSidebar'"
+  },
+  "sidebar.rpcSidebar.category.Validators": {
+    "message": "Валидаторы",
+    "description": "The label for category 'Validators' in sidebar 'rpcSidebar'"
+  },
+  "sidebar.fastnearApiSidebar.category.V0": {
+    "message": "V0",
+    "description": "The label for category 'V0' in sidebar 'fastnearApiSidebar'"
+  },
+  "sidebar.fastnearApiSidebar.category.V1": {
+    "message": "V1",
+    "description": "The label for category 'V1' in sidebar 'fastnearApiSidebar'"
+  }
+}

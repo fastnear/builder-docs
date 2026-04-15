@@ -9,6 +9,8 @@
 /* You can override the default Infima variables here. */
 :root {
   --ifm-font-family-base: 'DM Sans', system-ui, -apple-system, sans-serif;
+  --ifm-navbar-height: 4rem;
+  --ifm-navbar-padding-vertical: 0;
 
   --ifm-color-primary: #0f56b3;
   --ifm-color-primary-dark: #0d4da1;
@@ -32,6 +34,16 @@
   --ifm-code-background: #f0f0f0;
   --ifm-code-color: #333;
   --ifm-breadcrumb-item-background-active: transparent;
+  --ifm-link-color: var(--ifm-color-primary);
+  --ifm-link-hover-color: var(--ifm-color-primary-dark);
+
+  --fastnear-navbar-bg: rgb(255 255 255 / 82%);
+  --fastnear-navbar-border: rgb(15 86 179 / 10%);
+  --fastnear-navbar-shadow: 0 14px 40px rgb(15 23 42 / 7%);
+  --fastnear-toggle-bg: rgb(15 86 179 / 6%);
+  --fastnear-toggle-border: rgb(15 86 179 / 12%);
+  --fastnear-toggle-hover-bg: rgb(15 86 179 / 11%);
+  --fastnear-toggle-text: #0f56b3;
 }
 
 [data-theme='dark'] {
@@ -48,9 +60,72 @@
   --ifm-background-color: #0d102d;
   --ifm-background-surface-color: #1a1f36;
   --ifm-font-color-base: #ffffff;
+  --ifm-link-color: #82c0ff;
+  --ifm-link-hover-color: #a6d2ff;
 
   --docusaurus-highlighted-code-line-bg: rgba(255, 255, 255, 0.05);
   --ifm-breadcrumb-item-background-active: transparent;
+
+  --fastnear-navbar-bg: rgb(13 16 45 / 78%);
+  --fastnear-navbar-border: rgb(152 199 253 / 12%);
+  --fastnear-navbar-shadow: 0 18px 44px rgb(0 0 0 / 26%);
+  --fastnear-toggle-bg: rgb(96 165 250 / 12%);
+  --fastnear-toggle-border: rgb(152 199 253 / 18%);
+  --fastnear-toggle-hover-bg: rgb(96 165 250 / 18%);
+  --fastnear-toggle-text: #dbe2ff;
+}
+
+html[data-theme='light'] {
+  color-scheme: light;
+}
+
+html[data-theme='dark'] {
+  color-scheme: dark;
+}
+
+.navbar {
+  background: var(--fastnear-navbar-bg);
+  backdrop-filter: blur(18px);
+  border-bottom: 1px solid var(--fastnear-navbar-border);
+  box-shadow: var(--fastnear-navbar-shadow);
+}
+
+.navbar > .container,
+.navbar > .container-fluid,
+.navbar__inner,
+.navbar__items {
+  align-items: center;
+}
+
+.navbar__inner {
+  min-height: var(--ifm-navbar-height);
+}
+
+.theme-layout-navbar .navbar__link,
+.theme-layout-navbar .navbar__title {
+  font-weight: 600;
+}
+
+.theme-layout-navbar .navbar__link {
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+}
+
+.navbar__brand {
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.navbar__logo {
+  height: auto;
+  margin-right: 0;
+}
+
+.navbar__logo img {
+  display: block;
+  height: 1.6rem;
+  width: auto;
 }
 
 html[data-theme='light'] a:hover {
@@ -596,10 +671,16 @@ pre code {
   gap: 1rem;
 }
 
+.fastnear-doc-content-shell {
+  display: flow-root;
+}
+
 .fastnear-doc-content__toolbar {
+  float: right;
   display: flex;
   justify-content: flex-end;
-  margin-bottom: 1rem;
+  width: fit-content;
+  margin: 0 0 0.85rem 1rem;
 }
 
 .fastnear-doc-content__title {
@@ -672,6 +753,54 @@ pre code {
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 1rem;
   margin: 1.5rem 0 2rem;
+}
+
+.fastnear-doc-card-grid--surface {
+  margin-top: 0.25rem;
+}
+
+.fastnear-doc-card-grid--surface .fastnear-doc-card {
+  position: relative;
+  gap: 0.72rem;
+  padding: 1.25rem 1.25rem 1.15rem;
+  border-color: rgba(15, 86, 179, 0.12);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(248, 250, 255, 0.96)),
+    #fff;
+  box-shadow:
+    0 10px 28px rgba(15, 23, 42, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.72);
+}
+
+.fastnear-doc-card-grid--surface .fastnear-doc-card::before {
+  content: '';
+  position: absolute;
+  inset: 0 auto auto 1.1rem;
+  width: 2.2rem;
+  height: 2px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--ifm-color-primary) 72%, white 28%);
+  opacity: 0.8;
+}
+
+.fastnear-doc-card-grid--surface .fastnear-doc-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(15, 86, 179, 0.22);
+  box-shadow:
+    0 16px 34px rgba(15, 23, 42, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.82);
+}
+
+.fastnear-doc-card-grid--surface .fastnear-doc-card__eyebrow {
+  color: rgba(30, 41, 59, 0.62);
+}
+
+.fastnear-doc-card-grid--surface .fastnear-doc-card > span:not(.fastnear-doc-card__eyebrow):not(.fastnear-doc-card__bestfor-label) {
+  color: rgba(30, 41, 59, 0.84);
+}
+
+.fastnear-doc-card-grid--surface .fastnear-doc-card__bestfor-label {
+  color: rgba(30, 41, 59, 0.72);
 }
 
 .fastnear-doc-card {
@@ -791,9 +920,44 @@ pre code {
   box-shadow: 0 18px 36px rgba(0, 0, 0, 0.28);
 }
 
+[data-theme='dark'] .fastnear-doc-card-grid--surface .fastnear-doc-card {
+  border-color: rgba(198, 213, 255, 0.12);
+  background:
+    linear-gradient(180deg, rgba(26, 31, 54, 0.96), rgba(13, 16, 45, 0.98)),
+    rgba(13, 16, 45, 0.98);
+  box-shadow:
+    0 14px 34px rgba(0, 0, 0, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+
+[data-theme='dark'] .fastnear-doc-card-grid--surface .fastnear-doc-card:hover {
+  border-color: rgba(198, 213, 255, 0.24);
+  box-shadow:
+    0 18px 38px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+[data-theme='dark'] .fastnear-doc-card-grid--surface .fastnear-doc-card__eyebrow {
+  color: rgba(224, 230, 255, 0.64);
+}
+
+[data-theme='dark'] .fastnear-doc-card-grid--surface .fastnear-doc-card > span:not(.fastnear-doc-card__eyebrow):not(.fastnear-doc-card__bestfor-label) {
+  color: rgba(243, 245, 255, 0.84);
+}
+
+[data-theme='dark'] .fastnear-doc-card-grid--surface .fastnear-doc-card__bestfor-label {
+  color: rgba(224, 230, 255, 0.72);
+}
+
 @media (max-width: 996px) {
   .fastnear-doc-content__header {
     align-items: stretch;
+  }
+
+  .fastnear-doc-content__toolbar {
+    float: none;
+    width: auto;
+    margin: 0 0 0.9rem;
   }
 
   .fastnear-doc-card-grid {

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { translate } from '@docusaurus/Translate';
 import styles from './styles.module.css';
 
 const PORTAL_AUTH_EVENT = 'fastnear:authchange';
@@ -57,9 +58,18 @@ export default function ApiKeyManager() {
 
   return (
     <div className={styles.container} data-markdown-skip>
-      <h3>API Key Configuration</h3>
+      <h3>
+        {translate({
+          id: 'fastnear.apiKeyManager.heading',
+          message: 'API Key Configuration',
+        })}
+      </h3>
       <p className={styles.description}>
-        Set your FastNear API key here. It will be automatically included in all RPC documentation examples.
+        {translate({
+          id: 'fastnear.apiKeyManager.description',
+          message:
+            'Set your FastNear API key here. It will be automatically included in all RPC documentation examples.',
+        })}
       </p>
       
       <div className={styles.inputGroup}>
@@ -67,7 +77,10 @@ export default function ApiKeyManager() {
           type={showKey ? 'text' : 'password'}
           value={apiKey}
           onChange={(e) => setApiKey(e.target.value)}
-          placeholder="Enter your FastNear API key"
+          placeholder={translate({
+            id: 'fastnear.apiKeyManager.placeholder',
+            message: 'Enter your FastNear API key',
+          })}
           className={styles.input}
         />
         <button
@@ -75,28 +88,63 @@ export default function ApiKeyManager() {
           className={styles.toggleButton}
           type="button"
         >
-          {showKey ? 'Hide' : 'Show'}
+          {showKey
+            ? translate({
+                id: 'fastnear.apiKeyManager.hide',
+                message: 'Hide',
+              })
+            : translate({
+                id: 'fastnear.apiKeyManager.show',
+                message: 'Show',
+              })}
         </button>
       </div>
 
       <div className={styles.buttonGroup}>
         <button onClick={handleSave} className={styles.saveButton}>
-          Save API Key
+          {translate({
+            id: 'fastnear.apiKeyManager.save',
+            message: 'Save API Key',
+          })}
         </button>
         <button onClick={handleClear} className={styles.clearButton}>
-          Clear API Key
+          {translate({
+            id: 'fastnear.apiKeyManager.clear',
+            message: 'Clear API Key',
+          })}
         </button>
       </div>
 
       {saved && (
         <div className={styles.successMessage}>
-          API key {apiKey ? 'saved' : 'cleared'} successfully.
+          {translate(
+            {
+              id: 'fastnear.apiKeyManager.savedState',
+              message: 'API key {state} successfully.',
+            },
+            {
+              state: apiKey
+                ? translate({
+                    id: 'fastnear.apiKeyManager.savedState.saved',
+                    message: 'saved',
+                  })
+                : translate({
+                    id: 'fastnear.apiKeyManager.savedState.cleared',
+                    message: 'cleared',
+                  }),
+            }
+          )}
         </div>
       )}
 
       {apiKey && (
         <div className={styles.example}>
-          <h4>Example Usage:</h4>
+          <h4>
+            {translate({
+              id: 'fastnear.apiKeyManager.exampleUsage',
+              message: 'Example Usage:',
+            })}
+          </h4>
           <pre className={styles.codeBlock}>
 {`curl "https://rpc.mainnet.fastnear.com?apiKey=${apiKey}" \\
   -H "Content-Type: application/json" \\

@@ -1,0 +1,57 @@
+[
+  {
+    "query": "view account",
+    "expectedPath": "/rpc/account/view-account"
+  },
+  {
+    "query": "view-account",
+    "expectedPath": "/rpc/account/view-account"
+  },
+  {
+    "query": "view_account",
+    "expectedPath": "/rpc/account/view-account"
+  },
+  {
+    "query": "account history",
+    "expectedPath": "/tx/account"
+  },
+  {
+    "query": "public key",
+    "expectedAnyOf": [
+      "/api/v1/public-key",
+      "/api/v1/public-key-all"
+    ]
+  },
+  {
+    "query": "choosing surfaces",
+    "expectedPath": "/agents/choosing-surfaces"
+  },
+  {
+    "query": "send tx",
+    "expectedPath": "/rpc/transaction/send-tx"
+  },
+  {
+    "query": "send-tx",
+    "expectedPath": "/rpc/transaction/send-tx"
+  },
+  {
+    "query": "send_tx",
+    "expectedPath": "/rpc/transaction/send-tx"
+  },
+  {
+    "query": "authentication",
+    "expectedPath": "/auth"
+  },
+  {
+    "query": "api key",
+    "expectedPath": "/auth/backend"
+  },
+  {
+    "query": "bearer token",
+    "expectedPath": "/auth/backend"
+  },
+  {
+    "query": "block headers",
+    "expectedPath": "/neardata/block-headers"
+  }
+]

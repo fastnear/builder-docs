@@ -1,0 +1,226 @@
+# KV FastData API - История по глобальному ключу
+Получить историю по точному ключу во всех индексированных контрактах
+Возвращает исторические строки FastData для одного точного ключа по всем индексированным контрактам и вызывающим аккаунтам. Значения `page_token` непрозрачны и валидны только при повторном использовании с тем же эндпоинтом и фильтрами.
+## Ссылки на источник
+- https://docs.fastnear.com/ru/fastdata/kv/history-by-key
+- https://docs.fastnear.com/ru/apis/kv-fastdata/v0/history_by_key
+- https://docs.fastnear.com/ru/apis/kv-fastdata/openapi/history/history_by_key
+## Операция
+- Транспорт: http
+- Метод: POST
+- Путь: `/v0/history`
+- Исходная спецификация: `apis/kv-fastdata/v0/history_by_key.yaml`
+## Сети
+- Mainnet: https://kv.main.fastnear.com/
+- Testnet: https://kv.test.fastnear.com/
+## Авторизация
+- Авторизация не требуется
+## Текущий запрос
+- Сеть: Mainnet
+- Метод: POST
+- URL: https://kv.main.fastnear.com/v0/history
+- Активный пример: Mainnet
+### Тело запроса
+```json
+{
+  "asc": false,
+  "include_metadata": false,
+  "limit": 50
+}
+```
+## Справка по запросу
+### Активный пример
+```json
+{
+  "body": {
+    "asc": false,
+    "include_metadata": false,
+    "key": "graph/follow/sleet.near",
+    "limit": 50
+  },
+  "headers": {},
+  "path": {},
+  "query": {}
+}
+```
+### Входные данные
+- `asc` (body, boolean): Сортировать результаты истории по возрастанию. По умолчанию сначала идут новые записи.
+- `include_metadata` (body, boolean): Добавить в каждую запись метаданные квитанции и подписанта.
+- `ключ` (body, обязательный, string): Exact ключ name to match across all аккаунтов and predecessors.
+- `limit` (body, integer)
+- `page_token` (body, string): Непрозрачный курсор пагинации из предыдущего ответа с тем же эндпоинтом и набором фильтров.
+### Схема запроса
+```json
+{
+  "type": "object",
+  "required": [
+    "ключ"
+  ],
+  "additionalProperties": false,
+  "properties": [
+    {
+      "name": "asc",
+      "required": false,
+      "schema": {
+        "type": "boolean",
+        "description": "Sort ascending for история results. Defaults to newest-first.",
+        "default": false
+      }
+    },
+    {
+      "name": "include_metadata",
+      "required": false,
+      "schema": {
+        "type": "boolean",
+        "description": "Include квитанция and signer metadata in each entry.",
+        "default": false
+      }
+    },
+    {
+      "name": "ключ",
+      "required": true,
+      "schema": {
+        "type": "string",
+        "description": "Exact ключ name to match across all аккаунтов and predecessors."
+      }
+    },
+    {
+      "name": "limit",
+      "required": false,
+      "schema": {
+        "type": "integer",
+        "format": "int32"
+      }
+    },
+    {
+      "name": "page_token",
+      "required": false,
+      "schema": {
+        "type": "string",
+        "description": "Opaque pagination cursor from a previous ответ for the same endpoint and filter set."
+      }
+    }
+  ],
+  "refName": "ByKeyRequest"
+}
+```
+## Справка по ответу
+- Статус: 200
+- Тип данных: application/json
+- Краткое описание: Исторические строки для выбранного ключа
+### Схема ответа
+```json
+{
+  "type": "object",
+  "required": [
+    "entries"
+  ],
+  "additionalProperties": false,
+  "properties": [
+    {
+      "name": "entries",
+      "required": true,
+      "schema": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": [
+            "predecessor_id",
+            "current_account_id",
+            "block_height",
+            "block_timestamp",
+            "ключ",
+            "value"
+          ],
+          "additionalProperties": false,
+          "properties": [
+            {
+              "name": "action_index",
+              "required": false,
+              "schema": {
+                "type": "integer",
+                "format": "uint32"
+              }
+            },
+            {
+              "name": "block_height",
+              "required": true,
+              "schema": {
+                "type": "integer",
+                "format": "uint64"
+              }
+            },
+            {
+              "name": "block_timestamp",
+              "required": true,
+              "schema": {
+                "type": "integer",
+                "format": "uint64"
+              }
+            },
+            {
+              "name": "current_account_id",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "ключ",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "predecessor_id",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "receipt_id",
+              "required": false,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "signer_id",
+              "required": false,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "tx_hash",
+              "required": false,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "value",
+              "required": true,
+              "schema": {
+                "description": "Raw JSON value as stored in FastData."
+              }
+            }
+          ],
+          "refName": "KvEntry"
+        }
+      }
+    },
+    {
+      "name": "page_token",
+      "required": false,
+      "schema": {
+        "type": "string",
+        "description": "Opaque pagination cursor for the next page. Absent when there are no more results."
+      }
+    }
+  ],
+  "refName": "ListResponse"
+}
+```
