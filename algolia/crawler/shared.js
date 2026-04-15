@@ -292,7 +292,12 @@ function createCrawlerConfig({
       },
     ],
     appId,
-    discoveryPatterns: [`${SITE_ROOT}/**`],
+    discoveryPatterns: [
+      `${SITE_ROOT}/**`,
+      `!${SITE_ROOT}/**/*.md`,
+      `!${SITE_ROOT}/**/*.txt`,
+      `!${SITE_ROOT}/**/*.json`,
+    ],
     ignoreCanonicalTo: true,
     initialIndexSettings: {
       [indexName]: indexSettings,

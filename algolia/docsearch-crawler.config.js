@@ -235,7 +235,10 @@ new Crawler({
   ],
   appId: "YOUR_ALGOLIA_APP_ID",
   discoveryPatterns: [
-    "https://docs.fastnear.com/**"
+    "https://docs.fastnear.com/**",
+    "!https://docs.fastnear.com/**/*.md",
+    "!https://docs.fastnear.com/**/*.txt",
+    "!https://docs.fastnear.com/**/*.json"
   ],
   ignoreCanonicalTo: true,
   initialIndexSettings: {
