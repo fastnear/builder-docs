@@ -474,7 +474,7 @@
             "required": true,
             "schema": {
               "type": "integer",
-              "description": "Протокол version that this genesis works with.",
+              "description": "Версия протокола, для которой предназначен этот genesis.",
               "format": "uint32"
             }
           },
@@ -554,7 +554,7 @@
               "description": "Список начальных валидаторов.",
               "items": {
                 "type": "object",
-                "description": "Аккаунт info for validators"
+                "description": "Информация об аккаунтах валидаторов"
               }
             }
           }
