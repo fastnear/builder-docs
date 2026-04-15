@@ -334,5 +334,341 @@
         }
       ]
     }
+  },
+  {
+    "objectID": "fastnear-promote-view-account-ru",
+    "description": "RU mirror: promote the canonical RPC account-state page for exact 'view account' intent.",
+    "conditions": [
+      {
+        "pattern": "view account",
+        "anchoring": "is",
+        "alternatives": false
+      }
+    ],
+    "consequence": {
+      "promote": [
+        {
+          "objectIDs": [
+            "1-https://docs.fastnear.com/ru/rpc/account/view-account"
+          ],
+          "position": 0
+        }
+      ]
+    }
+  },
+  {
+    "objectID": "fastnear-promote-view-account-hyphen-ru",
+    "description": "RU mirror: promote the canonical RPC account-state page for exact 'view-account' intent.",
+    "conditions": [
+      {
+        "pattern": "view-account",
+        "anchoring": "is",
+        "alternatives": false
+      }
+    ],
+    "consequence": {
+      "promote": [
+        {
+          "objectIDs": [
+            "1-https://docs.fastnear.com/ru/rpc/account/view-account"
+          ],
+          "position": 0
+        }
+      ]
+    }
+  },
+  {
+    "objectID": "fastnear-promote-view-account-underscore-ru",
+    "description": "RU mirror: promote the canonical RPC account-state page for exact 'view_account' intent.",
+    "conditions": [
+      {
+        "pattern": "view_account",
+        "anchoring": "is",
+        "alternatives": false
+      }
+    ],
+    "consequence": {
+      "promote": [
+        {
+          "objectIDs": [
+            "1-https://docs.fastnear.com/ru/rpc/account/view-account"
+          ],
+          "position": 0
+        }
+      ]
+    }
+  },
+  {
+    "objectID": "fastnear-promote-send-tx-ru",
+    "description": "RU mirror: promote the canonical RPC transaction submission page for exact 'send tx' intent.",
+    "conditions": [
+      {
+        "pattern": "send tx",
+        "anchoring": "is",
+        "alternatives": false
+      }
+    ],
+    "consequence": {
+      "promote": [
+        {
+          "objectIDs": [
+            "2-https://docs.fastnear.com/ru/rpc/transaction/send-tx"
+          ],
+          "position": 0
+        }
+      ]
+    }
+  },
+  {
+    "objectID": "fastnear-promote-send-tx-hyphen-ru",
+    "description": "RU mirror: promote the canonical RPC transaction submission page for exact 'send-tx' intent.",
+    "conditions": [
+      {
+        "pattern": "send-tx",
+        "anchoring": "is",
+        "alternatives": false
+      }
+    ],
+    "consequence": {
+      "promote": [
+        {
+          "objectIDs": [
+            "2-https://docs.fastnear.com/ru/rpc/transaction/send-tx"
+          ],
+          "position": 0
+        }
+      ]
+    }
+  },
+  {
+    "objectID": "fastnear-promote-send-tx-underscore-ru",
+    "description": "RU mirror: promote the canonical RPC transaction submission page for exact 'send_tx' intent.",
+    "conditions": [
+      {
+        "pattern": "send_tx",
+        "anchoring": "is",
+        "alternatives": false
+      }
+    ],
+    "consequence": {
+      "promote": [
+        {
+          "objectIDs": [
+            "2-https://docs.fastnear.com/ru/rpc/transaction/send-tx"
+          ],
+          "position": 0
+        }
+      ]
+    }
+  },
+  {
+    "objectID": "fastnear-promote-account-history-ru",
+    "description": "RU mirror: promote the Transactions API account-history leaf for exact history intent.",
+    "conditions": [
+      {
+        "pattern": "account history",
+        "anchoring": "is",
+        "alternatives": false
+      }
+    ],
+    "consequence": {
+      "promote": [
+        {
+          "objectIDs": [
+            "1-https://docs.fastnear.com/ru/tx/account"
+          ],
+          "position": 0
+        }
+      ]
+    }
+  },
+  {
+    "objectID": "fastnear-promote-public-key-ru",
+    "description": "RU mirror: promote the broader public-key lookup surface for exact 'public key' intent.",
+    "conditions": [
+      {
+        "pattern": "public key",
+        "anchoring": "is",
+        "alternatives": false
+      }
+    ],
+    "consequence": {
+      "promote": [
+        {
+          "objectIDs": [
+            "1-https://docs.fastnear.com/ru/api/v1/public-key-all"
+          ],
+          "position": 0
+        }
+      ]
+    }
+  },
+  {
+    "objectID": "fastnear-promote-block-headers-ru",
+    "description": "RU mirror: promote the NEAR Data block-headers page for exact block-header intent.",
+    "conditions": [
+      {
+        "pattern": "block headers",
+        "anchoring": "is",
+        "alternatives": false
+      }
+    ],
+    "consequence": {
+      "promote": [
+        {
+          "objectIDs": [
+            "1-https://docs.fastnear.com/ru/neardata/block-headers"
+          ],
+          "position": 0
+        }
+      ]
+    }
+  },
+  {
+    "objectID": "fastnear-promote-authentication-ru",
+    "description": "RU mirror: route generic authentication intent to the auth landing page.",
+    "conditions": [
+      {
+        "pattern": "authentication",
+        "anchoring": "is",
+        "alternatives": false
+      }
+    ],
+    "consequence": {
+      "promote": [
+        {
+          "objectIDs": [
+            "0-https://docs.fastnear.com/ru/auth"
+          ],
+          "position": 0
+        }
+      ]
+    }
+  },
+  {
+    "objectID": "fastnear-promote-api-key-ru",
+    "description": "RU mirror: route API-key searches to the auth landing page.",
+    "conditions": [
+      {
+        "pattern": "api key",
+        "anchoring": "is",
+        "alternatives": false
+      }
+    ],
+    "consequence": {
+      "promote": [
+        {
+          "objectIDs": [
+            "0-https://docs.fastnear.com/ru/auth"
+          ],
+          "position": 0
+        }
+      ]
+    }
+  },
+  {
+    "objectID": "fastnear-promote-x-api-key-ru",
+    "description": "RU mirror: route x-api-key searches to the auth landing page.",
+    "conditions": [
+      {
+        "pattern": "x-api-key",
+        "anchoring": "is",
+        "alternatives": false
+      }
+    ],
+    "consequence": {
+      "promote": [
+        {
+          "objectIDs": [
+            "0-https://docs.fastnear.com/ru/auth"
+          ],
+          "position": 0
+        }
+      ]
+    }
+  },
+  {
+    "objectID": "fastnear-promote-x-api-key-spaced-ru",
+    "description": "RU mirror: route x api key searches to the auth landing page.",
+    "conditions": [
+      {
+        "pattern": "x api key",
+        "anchoring": "is",
+        "alternatives": false
+      }
+    ],
+    "consequence": {
+      "promote": [
+        {
+          "objectIDs": [
+            "0-https://docs.fastnear.com/ru/auth"
+          ],
+          "position": 0
+        }
+      ]
+    }
+  },
+  {
+    "objectID": "fastnear-promote-bearer-token-ru",
+    "description": "RU mirror: route bearer-token searches to the auth landing page.",
+    "conditions": [
+      {
+        "pattern": "bearer token",
+        "anchoring": "is",
+        "alternatives": false
+      }
+    ],
+    "consequence": {
+      "promote": [
+        {
+          "objectIDs": [
+            "0-https://docs.fastnear.com/ru/auth"
+          ],
+          "position": 0
+        }
+      ]
+    }
+  },
+  {
+    "objectID": "fastnear-promote-access-token-ru",
+    "description": "RU mirror: route access-token searches to the auth landing page.",
+    "conditions": [
+      {
+        "pattern": "access token",
+        "anchoring": "is",
+        "alternatives": false
+      }
+    ],
+    "consequence": {
+      "promote": [
+        {
+          "objectIDs": [
+            "0-https://docs.fastnear.com/ru/auth"
+          ],
+          "position": 0
+        }
+      ]
+    }
+  },
+  {
+    "objectID": "fastnear-promote-authorization-header-ru",
+    "description": "RU mirror: route authorization-header searches to the auth landing page.",
+    "conditions": [
+      {
+        "pattern": "authorization header",
+        "anchoring": "is",
+        "alternatives": false
+      }
+    ],
+    "consequence": {
+      "promote": [
+        {
+          "objectIDs": [
+            "0-https://docs.fastnear.com/ru/auth"
+          ],
+          "position": 0
+        }
+      ]
+    }
   }
 ]
