@@ -324,3 +324,40 @@ Session cumulative delta on Algolia-mode EN main.js: **-426 KB raw /
 | Tranche A SSR hydration test | 0 (guardrail) | queued | Playwright spec for the search shell |
 | Tranche C measurement CLI | 0 (infra) | partially done | `BUNDLE_REPORT_PATH` / `BUNDLE_STATS_PATH` plugin landed; no before/after diff script yet |
 | Tranche E rebase onto `main` | n/a | queued | `FastnearDirectOperation/index.js` conflict with 16d592a |
+
+### 2026-04-16 late afternoon — overengineering audit + Lighthouse confirmation
+
+Follow-ups landed on top of the rebase:
+
+- **Retry UI simplified.** Dropped `invalidateFastnearPageModelCache`, the
+  `attempt` counter, `startTransition`-driven boundary remount, and the
+  `onReset` / `onRetry` plumbing. `FastnearOperationFailure` now reloads the
+  page via `window.location.reload()`. Error boundary is a bare catch-and-render.
+  The old cache-invalidation path bought nothing a reload didn't already buy and
+  was ~30 lines of state machinery.
+- **Prism noop alias now self-guards.** The `prismIncludeLanguagesNoopWebpackAlias`
+  plugin in `docusaurus.config.js` accepts `context` and throws at load time if
+  `themeConfig.prism.additionalLanguages` is non-empty, with a message that
+  explains the ~135 KB raw / ~30 KB gz tradeoff and points at both escape
+  hatches (remove the languages, or remove the plugin). Silent breakage
+  becomes a loud build failure.
+- **Lighthouse mobile (Algolia mode, local `yarn serve`).** Built both
+  branch tips with identical `.env`; reports at `/tmp/lh-{before,after}/`.
+
+  | | Perf | FCP | LCP | SI | TBT | main.js raw | total JS raw |
+  |---|---:|---:|---:|---:|---:|---:|---:|
+  | BEFORE `/` (41ed179) | 57 | 8243 | 14929 | 8243 | 83 | 958 KB | 2009 KB |
+  | AFTER  `/` (034e918+2) | 72 | 2256 | 9618 | 2532 | 54 | 430 KB | 1141 KB |
+  | BEFORE `/rpc/.../view-account` | 56 | 8141 | 14679 | 8141 | 145 | 958 KB | 1998 KB |
+  | AFTER  `/rpc/.../view-account` | 73 | 2254 | 9792 | 2254 | 36 | 430 KB | 1143 KB |
+
+  Mobile FCP improved by ~5.9 s (≈−73 %) on both surfaces. LCP improved ~5 s
+  (≈−34 %); the remaining LCP is the largest content inside the operation
+  renderer, not a bundle-ship cost. Main.js raw dropped 55 %; total JS raw
+  dropped 43 %. TBT on the RPC page fell 75 %. (Values are transfer size with
+  `yarn serve`'s no-compression defaults, so the deltas are apples-to-apples
+  but larger in absolute terms than the gzipped numbers we tracked during
+  Tranche F.)
+
+  The prism flash and mobile-sidebar lazy plumbing both earned their keep —
+  the main.js drop is the direct input to the FCP halving.
