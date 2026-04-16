@@ -1,7 +1,6 @@
 import TurndownService from 'turndown';
 import { gfm } from 'turndown-plugin-gfm';
-
-const SECRET_QUERY_PARAM_PATTERNS = [/^apiKey$/i, /^token$/i, /^header\./i];
+import { isSecretQueryParam as isFastnearSecretQueryParam } from './fastnearOperationUrlState';
 const DOC_SKIP_SELECTORS = [
   '[data-markdown-skip]',
   'button',
@@ -115,7 +114,7 @@ function getMarkdownExportLabels(locale = 'en') {
 }
 
 function isSecretQueryParam(key) {
-  return SECRET_QUERY_PARAM_PATTERNS.some((pattern) => pattern.test(key));
+  return isFastnearSecretQueryParam(key);
 }
 
 export function sanitizePublicUrl(input, baseUrl) {

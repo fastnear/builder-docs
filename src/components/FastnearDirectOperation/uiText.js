@@ -18,9 +18,26 @@ export function getFastnearOperationUiText() {
       id: 'fastnear.operationUi.copiedCurlCommand',
       message: 'Copied curl command',
     }),
+    copiedExampleUrl: translate({
+      id: 'fastnear.operationUi.copiedExampleUrl',
+      message: 'Copied example URL',
+    }),
     copiedMarkdown: translate({
       id: 'fastnear.operationUi.copyMarkdown.completed',
       message: 'Copied',
+    }),
+    copyExampleUrl: translate({
+      id: 'fastnear.operationUi.copyExampleUrl',
+      message: 'Copy example URL',
+    }),
+    copyExampleUrlHelpAriaLabel: translate({
+      id: 'fastnear.operationUi.copyExampleUrlHelpAriaLabel',
+      message: 'About example URLs',
+    }),
+    copyExampleUrlHelpBody: translate({
+      id: 'fastnear.operationUi.copyExampleUrlHelpBody',
+      message:
+        'Copy a docs URL that reloads this page with the selected network, request example, finality, and any filled inputs preloaded as URL params. Saved API keys and tokens are never included.',
     }),
     copyMarkdown: translate({
       id: 'fastnear.operationUi.copyMarkdown',

@@ -610,6 +610,13 @@ pre code {
   align-items: flex-start;
 }
 
+.builder-fastnear-direct .fastnear-interaction__action-group {
+  position: relative;
+  display: inline-flex;
+  align-items: stretch;
+  gap: 8px;
+}
+
 .builder-fastnear-direct .fastnear-segmented {
   display: inline-flex;
   flex-wrap: wrap;
@@ -672,6 +679,49 @@ pre code {
   min-height: 34px;
   border-radius: 8px;
   white-space: nowrap;
+}
+
+.builder-fastnear-direct .fastnear-interaction__action-help-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 34px;
+  min-height: 34px;
+  padding: 0;
+  border: 1px solid var(--fastnear-border-strong);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--fastnear-text-soft);
+  font: inherit;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.builder-fastnear-direct .fastnear-interaction__action-help-button:hover {
+  color: var(--fastnear-text);
+  border-color: var(--fastnear-accent-border);
+}
+
+.builder-fastnear-direct .fastnear-interaction__action-help-button:focus-visible {
+  outline: 2px solid var(--fastnear-accent-border);
+  outline-offset: 2px;
+}
+
+.builder-fastnear-direct .fastnear-interaction__action-tooltip {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 2;
+  width: min(22rem, calc(100vw - 64px));
+  padding: 10px 12px;
+  border: 1px solid var(--fastnear-border-strong);
+  border-radius: 10px;
+  background: var(--fastnear-surface-strong);
+  color: var(--fastnear-text);
+  font-size: 0.84rem;
+  line-height: 1.45;
+  box-shadow: 0 16px 32px rgba(15, 23, 42, 0.16);
 }
 
 .builder-fastnear-direct .fastnear-button--primary {
@@ -1460,9 +1510,23 @@ pre code {
     align-items: start;
   }
 
+  .builder-fastnear-direct .fastnear-interaction__actions > .fastnear-interaction__action-group {
+    width: 100%;
+  }
+
   .builder-fastnear-direct .fastnear-interaction__actions > .fastnear-button,
   .builder-fastnear-direct .fastnear-interaction__auth-actions > .fastnear-button {
     width: 100%;
+  }
+
+  .builder-fastnear-direct .fastnear-interaction__action-group > .fastnear-button {
+    flex: 1 1 auto;
+  }
+
+  .builder-fastnear-direct .fastnear-interaction__action-tooltip {
+    right: auto;
+    left: 0;
+    width: min(100%, 24rem);
   }
 }
 

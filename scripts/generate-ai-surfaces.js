@@ -2,6 +2,7 @@
 
 const fs = require("fs");
 const path = require("path");
+const { isSecretQueryParam } = require("../src/utils/fastnearOperationUrlState");
 
 const {
   DEFAULT_LOCALE,
@@ -66,8 +67,6 @@ const HIDDEN_DOC_PREFIXES = [
 ];
 const HIDDEN_CANONICAL_PREFIXES = ["/apis/transfers", "/apis/kv-fastdata"];
 const ALWAYS_HIDDEN_DOC_PREFIXES = ["/transaction-flow"];
-const SECRET_QUERY_PARAM_PATTERNS = [/^apiKey$/i, /^token$/i, /^header\./i];
-
 const API_SERVICE_LABELS = {
   en: {
     fastnear: "FastNear API",
@@ -449,7 +448,7 @@ function sanitizePublicUrl(input, baseUrl) {
   }
 
   [...url.searchParams.keys()].forEach((key) => {
-    if (SECRET_QUERY_PARAM_PATTERNS.some((pattern) => pattern.test(key))) {
+    if (isSecretQueryParam(key)) {
       url.searchParams.delete(key);
     }
   });
@@ -1225,7 +1224,7 @@ function sanitizeExampleRequest(example) {
 
   if (sanitized.query) {
     Object.keys(sanitized.query).forEach((key) => {
-      if (SECRET_QUERY_PARAM_PATTERNS.some((pattern) => pattern.test(key))) {
+      if (isSecretQueryParam(key)) {
         delete sanitized.query[key];
       }
     });

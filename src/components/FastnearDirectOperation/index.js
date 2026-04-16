@@ -6,6 +6,25 @@ import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 import PageActions from "@site/src/components/PageActions";
 import { copyTextToClipboard } from "@site/src/utils/clipboard";
 import {
+  fieldSupportsType,
+  isBooleanField,
+  isMultilineField,
+  parseFieldValue,
+} from "@site/src/utils/fastnearFieldValueCodec";
+import {
+  OPERATION_QUERY_PARAMS,
+  collectOperationFieldPrefills,
+  getOperationRequestedExampleId,
+  getOperationRequestedFinality,
+  getOperationRequestedNetworkKey,
+  getShareableOperationWrapperQueryEntries,
+} from "@site/src/utils/fastnearOperationUrlState";
+import {
+  buildOperationSelectionState,
+  getDefaultFieldValue,
+  pickInitialExample,
+} from "@site/src/utils/fastnearOperationSelection";
+import {
   buildOperationMarkdown,
   sanitizePublicUrl,
 } from "@site/src/utils/markdownExport";
@@ -121,91 +140,41 @@ function getResolvedSearchParams(search) {
 
 function getInitialNetwork(pageModel, search) {
   const resolvedSearch = getResolvedSearchParams(search);
-  const requestedNetwork = resolvedSearch.get("network");
+  const requestedNetwork = getOperationRequestedNetworkKey(resolvedSearch);
   const matched = pageModel.interaction.networks.find((network) => network.key === requestedNetwork);
   return matched?.key || pageModel.interaction.networks[0]?.key || "mainnet";
 }
 
-function getUrlFieldPrefills(pageModel, search) {
+function getRequestedExample(pageModel, search) {
   const resolvedSearch = getResolvedSearchParams(search);
-
-  return Object.fromEntries(
-    pageModel.interaction.fields.flatMap((field) => {
-      const value = resolvedSearch.get(field.name);
-      return value === null ? [] : [[field.name, value]];
-    })
-  );
-}
-
-function getDefaultFieldValue(pageModel, field, networkKey) {
-  const selectedNetwork = pageModel.interaction.networks.find((network) => network.key === networkKey);
-  return serializeFieldDraftValue(field, selectedNetwork?.defaultFields?.[field.name]);
-}
-
-function getDefaultFieldValues(pageModel, networkKey) {
-  return Object.fromEntries(
-    pageModel.interaction.fields.map((field) => [
-      field.name,
-      getDefaultFieldValue(pageModel, field, networkKey),
-    ])
-  );
-}
-
-function pickInitialExample(pageModel, networkKey) {
-  const examples = pageModel.request?.examples || [];
-  if (examples.length === 0) {
+  const requestedExampleId = getOperationRequestedExampleId(resolvedSearch);
+  if (!requestedExampleId) {
     return null;
   }
-  return examples.find((example) => example.network === networkKey) || examples[0] || null;
+
+  return pageModel.request.examples.find((example) => example.id === requestedExampleId) || null;
 }
 
-function computeFieldValuesForExample(pageModel, networkKey, example) {
-  const defaults = getDefaultFieldValues(pageModel, networkKey);
-  if (!example) {
-    return defaults;
+function getInitialFinality(pageModel, search) {
+  if (!pageModel.interaction.supportsFinality) {
+    return "final";
   }
 
-  const isJsonRpc = pageModel.route.transport === "json-rpc";
-  const body = example.request?.body;
-  const hasJsonRpcParams =
-    isJsonRpc &&
-    body &&
-    typeof body === "object" &&
-    !Array.isArray(body) &&
-    body.params &&
-    typeof body.params === "object" &&
-    !Array.isArray(body.params);
-  const bodyMerge = isJsonRpc ? (hasJsonRpcParams ? body.params : {}) : body || {};
-
-  const merged = {
-    ...defaults,
-    ...bodyMerge,
-    ...(example.request?.path || {}),
-    ...(example.request?.query || {}),
-  };
-
-  return Object.fromEntries(
-    Object.entries(merged).map(([key, value]) => {
-      const field = pageModel.interaction.fields.find((candidate) => candidate.name === key);
-      return [key, field ? serializeFieldDraftValue(field, value) : String(value)];
-    })
-  );
+  const resolvedSearch = getResolvedSearchParams(search);
+  const requestedFinality = getOperationRequestedFinality(resolvedSearch);
+  const matchedFinality = FINALITY_OPTIONS.find((option) => option.value === requestedFinality);
+  return matchedFinality?.value || "final";
 }
 
-function buildOperationSelectionState(pageModel, networkKey, example, fieldOverrides = {}) {
-  return {
-    selectedExampleId: example?.id || "",
-    fieldValues: {
-      ...computeFieldValuesForExample(pageModel, networkKey, example),
-      ...fieldOverrides,
-    },
-  };
+function getUrlFieldPrefills(pageModel, search) {
+  return collectOperationFieldPrefills(pageModel, getResolvedSearchParams(search));
 }
 
 function buildInitialOperationState(pageModel, search) {
   const resolvedSearch = getResolvedSearchParams(search);
-  const selectedNetwork = getInitialNetwork(pageModel, resolvedSearch);
-  const selectedExample = pickInitialExample(pageModel, selectedNetwork);
+  const requestedExample = getRequestedExample(pageModel, resolvedSearch);
+  const selectedNetwork = requestedExample?.network || getInitialNetwork(pageModel, resolvedSearch);
+  const selectedExample = requestedExample || pickInitialExample(pageModel, selectedNetwork);
   const urlFieldPrefills = getUrlFieldPrefills(pageModel, resolvedSearch);
   const selectionState = buildOperationSelectionState(
     pageModel,
@@ -217,6 +186,7 @@ function buildInitialOperationState(pageModel, search) {
   return {
     ...selectionState,
     protectedFieldNames: new Set(Object.keys(urlFieldPrefills)),
+    selectedFinality: getInitialFinality(pageModel, resolvedSearch),
     selectedNetwork,
   };
 }
@@ -341,40 +311,6 @@ function getFieldLocationLabel(field) {
   return getFastnearFieldLocationLabel(field);
 }
 
-function getFieldTypeValues(field) {
-  return Array.isArray(field.schema?.type)
-    ? field.schema.type
-    : field.schema?.type
-      ? [field.schema.type]
-      : [];
-}
-
-function fieldSupportsType(field, type) {
-  const fieldTypes = getFieldTypeValues(field);
-  const fieldOneOf = field.schema?.oneOf;
-
-  return (
-    fieldTypes.includes(type) ||
-    (fieldOneOf || []).some((variant) => variant?.type === type)
-  );
-}
-
-function isBooleanField(field) {
-  return fieldSupportsType(field, "boolean");
-}
-
-function isArrayField(field) {
-  return fieldSupportsType(field, "array") || Boolean(field.schema?.items);
-}
-
-function isObjectField(field) {
-  return fieldSupportsType(field, "object") || Boolean(field.schema?.properties?.length);
-}
-
-function isMultilineField(field) {
-  return isArrayField(field) || isObjectField(field);
-}
-
 function getEnumOptions(field) {
   const enumValues = Array.isArray(field.schema?.enum) ? field.schema.enum : [];
   return enumValues.map((value) => String(value));
@@ -386,95 +322,6 @@ function formatChoiceLabel(value) {
     .filter(Boolean)
     .map((segment) => segment.charAt(0).toUpperCase() + segment.slice(1))
     .join(" ");
-}
-
-function serializeFieldDraftValue(field, value) {
-  if (value === undefined || value === null) {
-    return "";
-  }
-
-  if (Array.isArray(value)) {
-    if (field.schema?.items?.type === "string" || value.every((entry) => typeof entry === "string")) {
-      return value.map((entry) => String(entry)).join("\n");
-    }
-
-    return JSON.stringify(value, null, 2);
-  }
-
-  if (typeof value === "object") {
-    return JSON.stringify(value, null, 2);
-  }
-
-  if (typeof value === "boolean") {
-    return value ? "true" : "false";
-  }
-
-  return String(value);
-}
-
-function parseFieldValue(field, rawValue) {
-  const trimmedValue = rawValue.trim();
-  const canBeArray = isArrayField(field);
-  const canBeObject = isObjectField(field);
-  const canBeBoolean = isBooleanField(field);
-  const canBeInteger = fieldSupportsType(field, "integer");
-  const canBeNumber = fieldSupportsType(field, "number");
-  const fieldTypes = getFieldTypeValues(field);
-  const canBeString = fieldSupportsType(field, "string") || fieldTypes.length === 0;
-
-  if (canBeArray) {
-    if (!trimmedValue) {
-      return [];
-    }
-
-    if (trimmedValue.startsWith("[")) {
-      try {
-        return JSON.parse(trimmedValue);
-      } catch (_error) {
-        return trimmedValue
-          .split(/\r?\n|,/)
-          .map((entry) => entry.trim())
-          .filter(Boolean);
-      }
-    }
-
-    return trimmedValue
-      .split(/\r?\n|,/)
-      .map((entry) => entry.trim())
-      .filter(Boolean);
-  }
-
-  if (canBeObject) {
-    if (!trimmedValue) {
-      return {};
-    }
-
-    if (trimmedValue.startsWith("{")) {
-      try {
-        return JSON.parse(trimmedValue);
-      } catch (_error) {
-        return trimmedValue;
-      }
-    }
-  }
-
-  if (canBeBoolean && (trimmedValue === "true" || trimmedValue === "false")) {
-    return trimmedValue === "true";
-  }
-
-  if (canBeInteger && /^-?\d+$/.test(trimmedValue)) {
-    return Number(trimmedValue);
-  }
-
-  if (canBeNumber && /^-?\d+(\.\d+)?$/.test(trimmedValue)) {
-    return Number(trimmedValue);
-  }
-
-  if (canBeString || canBeInteger || canBeNumber || canBeBoolean) {
-    return trimmedValue;
-  }
-
-  return trimmedValue;
 }
 
 function buildRpcPayload(pageModel, fieldValues, finality, requestTemplate) {
@@ -651,6 +498,58 @@ function buildHttpExample(pageModel, example) {
   const renderedPath = buildExamplePath(pageModel.route.path, pathValues);
   const renderedSearch = buildExampleSearch(queryValues);
   return `${pageModel.route.method} ${renderedPath}${renderedSearch}`;
+}
+
+function buildOperationExampleUrl(
+  pageModel,
+  currentHref,
+  selectedNetwork,
+  selectedExampleId,
+  selectedFinality,
+  fieldValues
+) {
+  if (!currentHref) {
+    return "";
+  }
+
+  let currentUrl;
+  try {
+    currentUrl = new URL(
+      currentHref,
+      typeof window !== "undefined" ? window.location.origin : "https://docs.fastnear.com"
+    );
+  } catch (_error) {
+    return "";
+  }
+
+  const nextUrl = new URL(currentUrl.pathname, currentUrl.origin);
+  const currentSearch = new URLSearchParams(currentUrl.search);
+  for (const [key, value] of getShareableOperationWrapperQueryEntries(currentSearch)) {
+    nextUrl.searchParams.set(key, value);
+  }
+
+  if (selectedNetwork) {
+    nextUrl.searchParams.set(OPERATION_QUERY_PARAMS.network, selectedNetwork);
+  }
+
+  if (selectedExampleId) {
+    nextUrl.searchParams.set(OPERATION_QUERY_PARAMS.requestExample, selectedExampleId);
+  }
+
+  if (pageModel.interaction.supportsFinality && selectedFinality) {
+    nextUrl.searchParams.set(OPERATION_QUERY_PARAMS.requestFinality, selectedFinality);
+  }
+
+  for (const field of pageModel.interaction.fields) {
+    const value = fieldValues[field.name]?.trim();
+    if (!value) {
+      continue;
+    }
+
+    nextUrl.searchParams.set(field.name, value);
+  }
+
+  return sanitizePublicUrl(nextUrl.toString());
 }
 
 function hasHttpRequestBody(pageModel) {
@@ -1095,14 +994,17 @@ function FastnearOperationPage({ pageModel }) {
   const protectedHydrationFieldsRef = useRef(initialOperationState.protectedFieldNames);
   const [selectedNetwork, setSelectedNetwork] = useState(initialOperationState.selectedNetwork);
   const [selectedExampleId, setSelectedExampleId] = useState(initialOperationState.selectedExampleId);
-  const [selectedFinality, setSelectedFinality] = useState("final");
+  const [selectedFinality, setSelectedFinality] = useState(initialOperationState.selectedFinality);
   const [fieldValues, setFieldValues] = useState(initialOperationState.fieldValues);
   const [apiKeyDraft, setApiKeyDraft] = useState("");
   const [copiedCurl, setCopiedCurl] = useState(false);
+  const [copiedExampleUrl, setCopiedExampleUrl] = useState(false);
   const [copiedResponse, setCopiedResponse] = useState(false);
+  const [isExampleUrlHelpOpen, setIsExampleUrlHelpOpen] = useState(false);
   const [isRunning, setIsRunning] = useState(false);
   const [runError, setRunError] = useState(null);
   const [runResult, setRunResult] = useState(null);
+  const exampleUrlHelpId = useId();
   const selectedFinalityDetails =
     FINALITY_OPTIONS.find((option) => option.value === selectedFinality) || FINALITY_OPTIONS[2];
   const selectedNetworkDetails =
@@ -1121,10 +1023,13 @@ function FastnearOperationPage({ pageModel }) {
     protectedHydrationFieldsRef.current = initialOperationState.protectedFieldNames;
     setSelectedNetwork(initialOperationState.selectedNetwork);
     setSelectedExampleId(initialOperationState.selectedExampleId);
+    setSelectedFinality(initialOperationState.selectedFinality);
     setFieldValues(initialOperationState.fieldValues);
     setRunError(null);
     setRunResult(null);
+    setCopiedExampleUrl(false);
     setCopiedResponse(false);
+    setIsExampleUrlHelpOpen(false);
   }, [initialOperationState]);
 
   useEffect(() => {
@@ -1175,6 +1080,15 @@ function FastnearOperationPage({ pageModel }) {
     const timeout = window.setTimeout(() => setCopiedCurl(false), 2000);
     return () => window.clearTimeout(timeout);
   }, [copiedCurl]);
+
+  useEffect(() => {
+    if (!copiedExampleUrl || typeof window === "undefined") {
+      return undefined;
+    }
+
+    const timeout = window.setTimeout(() => setCopiedExampleUrl(false), 2000);
+    return () => window.clearTimeout(timeout);
+  }, [copiedExampleUrl]);
 
   useEffect(() => {
     if (!copiedResponse || typeof window === "undefined") {
@@ -1262,6 +1176,18 @@ function FastnearOperationPage({ pageModel }) {
   const runResultText = useMemo(() => getRunResultText(deferredRunResult), [deferredRunResult]);
   const currentUrl =
     typeof window !== "undefined" ? sanitizePublicUrl(window.location.href) : pageModel.canonicalPath;
+  const exampleUrl = useMemo(
+    () =>
+      buildOperationExampleUrl(
+        pageModel,
+        currentUrl,
+        selectedNetwork,
+        selectedExample?.id || "",
+        selectedFinality,
+        trimmedFieldValues
+      ),
+    [currentUrl, pageModel, selectedExample?.id, selectedFinality, selectedNetwork, trimmedFieldValues]
+  );
   const operationMarkdown = useMemo(
     () =>
       buildOperationMarkdown({
@@ -1309,6 +1235,7 @@ function FastnearOperationPage({ pageModel }) {
     setSelectedNetwork(networkKey);
     setSelectedExampleId(nextSelectionState.selectedExampleId);
     setFieldValues(nextSelectionState.fieldValues);
+    setCopiedExampleUrl(false);
     setRunError(null);
     setRunResult(null);
     setCopiedResponse(false);
@@ -1316,6 +1243,7 @@ function FastnearOperationPage({ pageModel }) {
 
   const handleFinalityChange = (finality) => {
     setSelectedFinality(finality);
+    setCopiedExampleUrl(false);
     setRunError(null);
     setRunResult(null);
     setCopiedResponse(false);
@@ -1327,6 +1255,7 @@ function FastnearOperationPage({ pageModel }) {
       ...currentValues,
       [fieldName]: value,
     }));
+    setCopiedExampleUrl(false);
     setRunError(null);
     setRunResult(null);
     setCopiedResponse(false);
@@ -1344,6 +1273,7 @@ function FastnearOperationPage({ pageModel }) {
     setSelectedExampleId(nextSelectionState.selectedExampleId);
     setSelectedNetwork(nextNetwork);
     setFieldValues(nextSelectionState.fieldValues);
+    setCopiedExampleUrl(false);
   };
 
   const handleRun = async () => {
@@ -1736,6 +1666,53 @@ function FastnearOperationPage({ pageModel }) {
                 )}
                 <span>{copiedCurl ? uiText.copiedCurlCommand : uiText.copyCurlCommand}</span>
               </button>
+              <div
+                className="fastnear-interaction__action-group"
+                onMouseEnter={() => setIsExampleUrlHelpOpen(true)}
+                onMouseLeave={() => setIsExampleUrlHelpOpen(false)}
+              >
+                <button
+                  type="button"
+                  className="fastnear-button fastnear-button--secondary"
+                  onClick={async () => {
+                    if (!exampleUrl) {
+                      return;
+                    }
+
+                    await copyTextToClipboard(exampleUrl);
+                    setCopiedExampleUrl(true);
+                  }}
+                  disabled={!exampleUrl}
+                >
+                  {copiedExampleUrl ? (
+                    <CheckGlyph className="fastnear-button__icon" />
+                  ) : (
+                    <CopyGlyph className="fastnear-button__icon" />
+                  )}
+                  <span>{copiedExampleUrl ? uiText.copiedExampleUrl : uiText.copyExampleUrl}</span>
+                </button>
+                <button
+                  type="button"
+                  className="fastnear-interaction__action-help-button"
+                  aria-label={uiText.copyExampleUrlHelpAriaLabel}
+                  aria-expanded={isExampleUrlHelpOpen}
+                  aria-controls={exampleUrlHelpId}
+                  onClick={() => setIsExampleUrlHelpOpen(true)}
+                  onFocus={() => setIsExampleUrlHelpOpen(true)}
+                  onBlur={() => setIsExampleUrlHelpOpen(false)}
+                >
+                  ?
+                </button>
+                {isExampleUrlHelpOpen ? (
+                  <div
+                    id={exampleUrlHelpId}
+                    role="tooltip"
+                    className="fastnear-interaction__action-tooltip"
+                  >
+                    {uiText.copyExampleUrlHelpBody}
+                  </div>
+                ) : null}
+              </div>
             </div>
 
             <div className="fastnear-interaction__meta">

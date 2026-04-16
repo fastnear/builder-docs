@@ -425,8 +425,20 @@
   "fastnear.operationUi.copiedCurlCommand": {
     "message": "Команда curl скопирована"
   },
+  "fastnear.operationUi.copiedExampleUrl": {
+    "message": "URL примера скопирован"
+  },
   "fastnear.operationUi.copyMarkdown.completed": {
     "message": "Скопировано"
+  },
+  "fastnear.operationUi.copyExampleUrl": {
+    "message": "Скопировать URL примера"
+  },
+  "fastnear.operationUi.copyExampleUrlHelpAriaLabel": {
+    "message": "О URL примера"
+  },
+  "fastnear.operationUi.copyExampleUrlHelpBody": {
+    "message": "Скопируйте URL документации, который заново откроет эту страницу с выбранной сетью, примером запроса, финальностью и заполненными входными данными, подставленными через URL-параметры. Сохранённые API-ключи и токены никогда не включаются."
   },
   "fastnear.operationUi.copyMarkdown": {
     "message": "Копировать Markdown"

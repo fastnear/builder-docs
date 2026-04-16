@@ -11,6 +11,11 @@ This folder collects longer-form reference chapters that are useful while evolvi
 - [FastNear Algolia Search Runbook](/Users/mikepurvis/near/fn/builder-docs/md-CLAUDE-chapters/algolia_search_runbook.md)
   - Operator-oriented runbook for env setup, sync flow, reindexing, verification, and troubleshooting.
 
+### Interactive operation URLs
+
+- [Builder Docs Operation URL State and Shareable Example URLs](/Users/mikepurvis/near/fn/builder-docs/md-CLAUDE-chapters/operation_url_state_and_shareable_examples.md)
+  - Architecture and testing chapter for URL-prefilled live examples, shareable `Copy example URL` links, hydration protection, route coverage, and compatibility constraints.
+
 ### i18n translation guidance
 
 - [Translating API and RPC documentation into Russian](/Users/mikepurvis/near/fn/builder-docs/md-CLAUDE-chapters/i18n_translating_russian.md)
