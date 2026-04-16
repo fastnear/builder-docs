@@ -350,15 +350,10 @@ function Hit({ hit, children }) {
                   {!card.titleHtml ? card.titleText : null}
                 </span>
               </div>
-              {card.endpointFamily || card.pathLabel ? (
+              {card.endpointFamily ? (
                 <div className="fastnear-search-hit__header-meta">
-                  {card.endpointFamily ? (
-                    <span className="fastnear-search-hit__badge fastnear-search-hit__badge--family">
-                      {card.endpointFamily}
-                    </span>
-                  ) : null}
-                  <span className="fastnear-search-hit__path fastnear-search-hit__path--endpoint">
-                    {card.pathLabel}
+                  <span className="fastnear-search-hit__badge fastnear-search-hit__badge--family">
+                    {card.endpointFamily}
                   </span>
                 </div>
               ) : null}

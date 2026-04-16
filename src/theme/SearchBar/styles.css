@@ -316,10 +316,6 @@ html[data-theme='dark'] .DocSearch {
   white-space: nowrap;
 }
 
-.fastnear-search-hit__path--endpoint {
-  max-width: 20rem;
-}
-
 .fastnear-search-hit__snippet {
   color: var(--docsearch-muted-color);
   display: -webkit-box;
@@ -349,15 +345,15 @@ html[data-theme='dark'] .DocSearch {
     var(--docsearch-primary-color) 20%,
     transparent
   );
-  border-radius: 999px;
+  border-radius: 4px;
   color: var(--docsearch-primary-color);
   display: inline-flex;
   flex-shrink: 0;
-  font-size: 0.67rem;
+  font-size: 0.7rem;
   font-weight: 700;
   letter-spacing: 0.08em;
   line-height: 1;
-  padding: 0.22rem 0.42rem;
+  padding: 0.3rem 0.5rem;
   text-transform: uppercase;
 }
 
@@ -372,12 +368,12 @@ html[data-theme='dark'] .DocSearch {
     var(--docsearch-secondary-text-color) 12%,
     transparent
   );
-  border-radius: 12px;
+  border-radius: 4px;
   color: var(--docsearch-text-color);
-  font-size: 0.78rem;
+  font-size: 0.82rem;
   font-weight: 500;
   letter-spacing: 0;
-  padding: 0.3rem 0.55rem;
+  padding: 0.38rem 0.7rem;
   text-transform: none;
 }
 
