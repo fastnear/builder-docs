@@ -1783,6 +1783,11 @@ html[data-theme='light'] .fastnear-home-button--primary:focus-visible {
     inset 0 1px 0 rgba(255, 255, 255, 0.03);
 }
 
+[data-theme='dark'] .fastnear-home-surface-card::after {
+  background: radial-gradient(circle, color-mix(in srgb, var(--fastnear-home-accent, #60a5fa) 16%, transparent 84%), transparent 72%);
+  opacity: 0.55;
+}
+
 [data-theme='dark'] .fastnear-home-utility-card__title,
 [data-theme='dark'] .fastnear-home-surface-card__title {
   color: color-mix(in srgb, var(--fastnear-home-accent, #60a5fa) 72%, white 28%);
