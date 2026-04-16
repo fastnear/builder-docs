@@ -955,7 +955,11 @@ function FastnearOperationReference({
             </div>
           ) : null}
 
-          <div className="fastnear-reference__summary" data-fastnear-content="request-summary">
+          <div
+            className="fastnear-reference__summary"
+            data-fastnear-content="request-summary"
+            data-fastnear-crawler-skip
+          >
             <p>{requestSummary}</p>
             <p>
               {uiText.requiredRequestInputs}{' '}
@@ -1817,7 +1821,7 @@ function FastnearOperationPage({ pageModel }) {
   );
 }
 
-export default function FastnearDirectOperation({ pageModelId, renderDescription }) {
+export default function FastnearDirectOperation({ pageModelId, renderDescription = true }) {
   const { i18n } = useDocusaurusContext();
   const currentLocale = i18n.currentLocale || "en";
   const pageModel = getFastnearPageModelById(pageModelId, currentLocale);
