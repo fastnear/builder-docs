@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import clsx from 'clsx';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import {
@@ -17,21 +17,34 @@ function useNavbarItems() {
   return useThemeConfig().navbar.items;
 }
 
+let mobileSidebarItemsPromise = null;
+
+function loadMobileSidebarItems() {
+  if (!mobileSidebarItemsPromise) {
+    mobileSidebarItemsPromise = import(
+      /* webpackChunkName: "fastnear-mobile-sidebar-items" */
+      '@site/src/data/generatedFastnearMobileSidebarItems.json'
+    )
+      .then((moduleValue) => moduleValue?.default || moduleValue || {})
+      .catch((error) => {
+        console.error('Unable to load mobile sidebar items:', error);
+        return {};
+      });
+  }
+
+  return mobileSidebarItemsPromise;
+}
+
 function MobileDocSidebarNavbarItem({
   sidebarId,
   label,
   docsPluginId,
   className,
-  mobileSidebarItemsByLocale,
 }) {
   const { i18n } = useDocusaurusContext();
   const { activeDoc } = useActiveDocContext(docsPluginId);
   const { openMenu, selectedMenu } = useMobileNavbarDocsMenu();
   const sidebarLink = useLayoutDocsSidebar(sidebarId, docsPluginId).link;
-  const sidebarItems =
-    mobileSidebarItemsByLocale?.[i18n.currentLocale] ??
-    mobileSidebarItemsByLocale?.en ??
-    [];
   const triggerId = `fastnear-mobile-navbar-trigger-${sidebarId}`;
   const isExpanded = selectedMenu?.sidebarId === sidebarId;
 
@@ -40,6 +53,21 @@ function MobileDocSidebarNavbarItem({
       `DocSidebarNavbarItem: Sidebar with ID "${sidebarId}" doesn't have anything to be linked to.`
     );
   }
+
+  const handleClick = useCallback(async () => {
+    const data = await loadMobileSidebarItems();
+    const sidebarItems =
+      data[sidebarId]?.[i18n.currentLocale] ??
+      data[sidebarId]?.en ??
+      [];
+    openMenu({
+      label: label ?? sidebarLink.label,
+      path: sidebarLink.path,
+      sidebarId,
+      sidebar: sidebarItems,
+      triggerId,
+    });
+  }, [i18n.currentLocale, label, openMenu, sidebarId, sidebarLink.label, sidebarLink.path, triggerId]);
 
   return (
     <li className="menu__list-item">
@@ -54,15 +82,10 @@ function MobileDocSidebarNavbarItem({
         )}
         aria-controls={MOBILE_NAVBAR_SECONDARY_PANEL_ID}
         aria-expanded={isExpanded}
-        onClick={() =>
-          openMenu({
-            label: label ?? sidebarLink.label,
-            path: sidebarLink.path,
-            sidebarId,
-            sidebar: sidebarItems,
-            triggerId,
-          })
-        }>
+        onPointerEnter={() => {
+          void loadMobileSidebarItems();
+        }}
+        onClick={handleClick}>
         <span className="fastnear-mobile-navbar__drilldown-label">
           {label ?? sidebarLink.label}
         </span>
@@ -81,7 +104,7 @@ export default function NavbarMobilePrimaryMenu() {
   return (
     <ul className="menu__list">
       {items.map((item, i) =>
-        item.type === 'docSidebar' && item.mobileSidebarItemsByLocale ? (
+        item.type === 'docSidebar' ? (
           <MobileDocSidebarNavbarItem key={i} {...item} />
         ) : (
           <NavbarItem

@@ -9,6 +9,7 @@
 # Generated files
 .docusaurus
 .cache-loader
+/src/data/generatedFastnearMobileSidebarItems.json
 /static/apis
 /static/agents
 /static/api

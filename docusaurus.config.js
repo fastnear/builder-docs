@@ -275,26 +275,53 @@ function resolveMobileSidebarItem(item, locale) {
   return null;
 }
 
-const mobileSidebarItemsByLocaleCache = new Map();
+const MOBILE_SIDEBAR_NAVBAR_IDS = [
+  'rpcSidebar',
+  'fastnearApiSidebar',
+  'transactionsApiSidebar',
+  'transfersApiSidebar',
+  'nearDataApiSidebar',
+  'kvFastDataSidebar',
+];
 
-function getMobileSidebarItemsByLocale(sidebarId) {
-  if (!mobileSidebarItemsByLocaleCache.has(sidebarId)) {
-    const sidebarItems = sidebars[sidebarId] || [];
-    mobileSidebarItemsByLocaleCache.set(
-      sidebarId,
-      Object.fromEntries(
-        DOCS_LOCALES.map((locale) => [
-          locale,
-          sidebarItems
-            .map((item) => resolveMobileSidebarItem(item, locale))
-            .filter(Boolean),
-        ])
-      )
-    );
-  }
-
-  return mobileSidebarItemsByLocaleCache.get(sidebarId);
+function buildMobileSidebarItemsByLocale(sidebarId) {
+  const sidebarItems = sidebars[sidebarId] || [];
+  return Object.fromEntries(
+    DOCS_LOCALES.map((locale) => [
+      locale,
+      sidebarItems
+        .map((item) => resolveMobileSidebarItem(item, locale))
+        .filter(Boolean),
+    ])
+  );
 }
+
+function generateMobileSidebarItemsFile() {
+  const allSidebars = Object.fromEntries(
+    MOBILE_SIDEBAR_NAVBAR_IDS.filter((id) => sidebars[id]).map((sidebarId) => [
+      sidebarId,
+      buildMobileSidebarItemsByLocale(sidebarId),
+    ])
+  );
+  const targetPath = path.join(
+    configDir,
+    'src',
+    'data',
+    'generatedFastnearMobileSidebarItems.json'
+  );
+  const nextContent = `${JSON.stringify(allSidebars)}\n`;
+  let shouldWrite = true;
+  try {
+    shouldWrite = fs.readFileSync(targetPath, 'utf8') !== nextContent;
+  } catch (_error) {
+    shouldWrite = true;
+  }
+  if (shouldWrite) {
+    fs.writeFileSync(targetPath, nextContent);
+  }
+}
+
+generateMobileSidebarItemsFile();
 
 function readDocSlugs() {
   return walkDocsFiles(docsRoot)
@@ -560,21 +587,18 @@ const config = {
             type: 'docSidebar',
             sidebarId: 'rpcSidebar',
             label: 'RPC',
-            mobileSidebarItemsByLocale: getMobileSidebarItemsByLocale('rpcSidebar'),
             position: 'left',
           },
           {
             type: 'docSidebar',
             sidebarId: 'fastnearApiSidebar',
             label: 'API',
-            mobileSidebarItemsByLocale: getMobileSidebarItemsByLocale('fastnearApiSidebar'),
             position: 'left',
           },
           {
             type: 'docSidebar',
             sidebarId: 'transactionsApiSidebar',
             label: 'Transactions',
-            mobileSidebarItemsByLocale: getMobileSidebarItemsByLocale('transactionsApiSidebar'),
             position: 'left',
           },
           ...(!hideEarlyApiFamilies
@@ -583,7 +607,6 @@ const config = {
                   type: 'docSidebar',
                   sidebarId: 'transfersApiSidebar',
                   label: 'Transfers',
-                  mobileSidebarItemsByLocale: getMobileSidebarItemsByLocale('transfersApiSidebar'),
                   position: 'left',
                 },
               ]
@@ -592,7 +615,6 @@ const config = {
             type: 'docSidebar',
             sidebarId: 'nearDataApiSidebar',
             label: 'NEAR\u00A0Data',
-            mobileSidebarItemsByLocale: getMobileSidebarItemsByLocale('nearDataApiSidebar'),
             position: 'left',
           },
           ...(!hideEarlyApiFamilies
@@ -601,7 +623,6 @@ const config = {
                   type: 'docSidebar',
                   sidebarId: 'kvFastDataSidebar',
                   label: 'FastData',
-                  mobileSidebarItemsByLocale: getMobileSidebarItemsByLocale('kvFastDataSidebar'),
                   position: 'left',
                 },
               ]
