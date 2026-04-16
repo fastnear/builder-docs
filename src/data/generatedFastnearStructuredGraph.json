@@ -1599,7 +1599,7 @@
     {
       "authSummary": "No auth required",
       "canonicalPath": "/apis/kv-fastdata/v0/get_history_key",
-      "description": "This GET route is useful for simple exact-key lookups without a request body.",
+      "description": "Fetch every historical write for one exact key under one predecessor and contract.",
       "docsPath": "/fastdata/kv/get-history-key",
       "familyId": "api-kv-fastdata",
       "headline": "KV FastData API - History by Exact Key",
@@ -1625,7 +1625,7 @@
     {
       "authSummary": "No auth required",
       "canonicalPath": "/apis/kv-fastdata/v0/get_latest_key",
-      "description": "This GET route is useful for quick exact-key reads without a request body.",
+      "description": "Fetch the latest value for one exact key under one predecessor and contract.",
       "docsPath": "/fastdata/kv/get-latest-key",
       "familyId": "api-kv-fastdata",
       "headline": "KV FastData API - Latest by Exact Key",
