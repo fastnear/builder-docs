@@ -11,7 +11,10 @@ import {
 } from "@site/src/utils/markdownExport";
 import { buildOperationKeywords, getOperationSemanticMeta } from "@site/src/utils/seo";
 import { FINALITY_OPTIONS } from "./finalityOptions";
-import { useFastnearPageModelById } from "./pageModels";
+import {
+  invalidateFastnearPageModelCache,
+  useFastnearPageModelById,
+} from "./pageModels";
 import {
   clearPortalApiKey,
   setPortalApiKey,
@@ -1900,7 +1903,7 @@ function FastnearOperationLoading() {
   );
 }
 
-function ResolvedFastnearDirectOperation({ currentLocale, pageModelId, renderDescription }) {
+function ResolvedFastnearDirectOperation({ currentLocale, onRetry, pageModelId, renderDescription }) {
   const pageModel = useFastnearPageModelById(pageModelId, currentLocale);
   const canonicalPageModel = useFastnearPageModelById(pageModelId, "en");
   const operationMeta = useMemo(
@@ -1911,12 +1914,16 @@ function ResolvedFastnearDirectOperation({ currentLocale, pageModelId, renderDes
   const semanticMeta = useMemo(() => getOperationSemanticMeta(pageModel), [pageModel]);
 
   if (!pageModel) {
+    const uiText = getFastnearOperationUiText();
     return (
-      <div className="builder-fastnear-direct">
-        <p className="fastnear-interaction__error">
-          {getFastnearOperationUiText().missingPageModel} <code>{pageModelId}</code>.
-        </p>
-      </div>
+      <FastnearOperationFailure
+        message={
+          <>
+            {uiText.missingPageModel} <code>{pageModelId}</code>.
+          </>
+        }
+        onRetry={onRetry}
+      />
     );
   }
 
@@ -1957,17 +1964,89 @@ function ResolvedFastnearDirectOperation({ currentLocale, pageModelId, renderDes
   );
 }
 
+function FastnearOperationFailure({ message, onRetry }) {
+  const uiText = getFastnearOperationUiText();
+  return (
+    <div className="builder-fastnear-direct">
+      <div
+        className="fastnear-operation-page fastnear-operation-page--failed"
+        role="alert"
+      >
+        <p className="fastnear-interaction__error">
+          {message || uiText.loadFailed}
+        </p>
+        {onRetry ? (
+          <button
+            type="button"
+            className="fastnear-interaction__retry"
+            onClick={onRetry}
+          >
+            {uiText.retry}
+          </button>
+        ) : null}
+      </div>
+    </div>
+  );
+}
+
+class FastnearOperationErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { error: null };
+  }
+
+  static getDerivedStateFromError(error) {
+    return { error };
+  }
+
+  componentDidCatch(error, info) {
+    if (typeof console !== "undefined" && console.error) {
+      console.error("FastnearDirectOperation failed:", error, info);
+    }
+  }
+
+  handleReset = () => {
+    const { pageModelId, onReset } = this.props;
+    invalidateFastnearPageModelCache(pageModelId);
+    this.setState({ error: null });
+    if (typeof onReset === "function") {
+      onReset();
+    }
+  };
+
+  render() {
+    if (this.state.error) {
+      return <FastnearOperationFailure onRetry={this.handleReset} />;
+    }
+    return this.props.children;
+  }
+}
+
 export default function FastnearDirectOperation({ pageModelId, renderDescription = true }) {
   const { i18n } = useDocusaurusContext();
   const currentLocale = i18n.currentLocale || "en";
+  const [attempt, setAttempt] = useState(0);
+
+  const handleReset = () => {
+    startTransition(() => {
+      setAttempt((value) => value + 1);
+    });
+  };
 
   return (
-    <Suspense fallback={<FastnearOperationLoading />}>
-      <ResolvedFastnearDirectOperation
-        currentLocale={currentLocale}
-        pageModelId={pageModelId}
-        renderDescription={renderDescription}
-      />
-    </Suspense>
+    <FastnearOperationErrorBoundary
+      key={`boundary-${attempt}`}
+      pageModelId={pageModelId}
+      onReset={handleReset}
+    >
+      <Suspense fallback={<FastnearOperationLoading />}>
+        <ResolvedFastnearDirectOperation
+          currentLocale={currentLocale}
+          pageModelId={pageModelId}
+          renderDescription={renderDescription}
+          onRetry={handleReset}
+        />
+      </Suspense>
+    </FastnearOperationErrorBoundary>
   );
 }

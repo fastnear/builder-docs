@@ -3,6 +3,8 @@ import { use } from "react";
 import pageModelChunkManifest from "@site/src/data/generatedFastnearPageModelChunkManifest.json";
 import { localizePageModel } from "@site/src/utils/fastnearLocalization";
 
+const SUPPORTED_LOCALES = ["en", "ru"];
+
 const PAGE_MODEL_CHUNK_LOADERS = {
   "rpcs/account": () =>
     import(
@@ -215,4 +217,23 @@ export function useFastnearPageModelById(pageModelId, locale = "en") {
   }
 
   return use(loadFastnearPageModelById(pageModelId, locale));
+}
+
+export function invalidateFastnearPageModelCache(pageModelId) {
+  if (!pageModelId) {
+    return;
+  }
+
+  SUPPORTED_LOCALES.forEach((locale) => {
+    const cacheKey = getPageModelCacheKey(pageModelId, locale);
+    localizedPageModelCache.delete(cacheKey);
+    localizedPageModelPromiseCache.delete(cacheKey);
+  });
+
+  rawPageModelCache.delete(pageModelId);
+
+  const chunkKey = getPageModelChunkKey(pageModelId);
+  if (chunkKey) {
+    pageModelChunkPromiseCache.delete(chunkKey);
+  }
 }

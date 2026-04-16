@@ -262,6 +262,14 @@ export function getFastnearOperationUiText() {
       id: 'fastnear.operationUi.missingPageModel',
       message: 'No generated page model is available for',
     }),
+    loadFailed: translate({
+      id: 'fastnear.operationUi.loadFailed',
+      message: 'We couldn’t load this operation. Check your connection and try again.',
+    }),
+    retry: translate({
+      id: 'fastnear.operationUi.retry',
+      message: 'Try again',
+    }),
     object: translate({
       id: 'fastnear.operationUi.schema.object',
       message: 'object',

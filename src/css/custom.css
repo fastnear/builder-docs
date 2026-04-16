@@ -2017,6 +2017,31 @@ html[data-theme='light'] .fastnear-home-button--primary:focus-visible {
   text-align: center;
 }
 
+.builder-fastnear-direct .fastnear-operation-page--failed {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 24px;
+}
+
+.builder-fastnear-direct .fastnear-interaction__retry {
+  appearance: none;
+  border: 1px solid var(--ifm-color-primary);
+  color: var(--ifm-color-primary);
+  background: transparent;
+  border-radius: 999px;
+  padding: 6px 18px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.builder-fastnear-direct .fastnear-interaction__retry:hover,
+.builder-fastnear-direct .fastnear-interaction__retry:focus-visible {
+  background: var(--ifm-color-primary);
+  color: white;
+}
+
 .builder-fastnear-direct .fastnear-interaction__placeholder--panel {
   border: 1px dashed var(--fastnear-border-strong);
   color: var(--fastnear-text-soft);
