@@ -134,7 +134,6 @@ new Crawler({
         const getContentSelectors = (pageType) => {
           if (pageType === "reference") {
             return [
-              "article .theme-doc-markdown > p",
               "article li",
               "article td:last-child",
               "article [data-fastnear-content]",

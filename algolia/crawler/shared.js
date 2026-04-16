@@ -177,7 +177,6 @@ const RECORD_EXTRACTOR_SOURCE = dedent(`
     const getContentSelectors = (pageType) => {
       if (pageType === "reference") {
         return [
-          "article .theme-doc-markdown > p",
           "article li",
           "article td:last-child",
           "article [data-fastnear-content]",
