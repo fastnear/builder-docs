@@ -2,7 +2,7 @@
 sidebar_position: 2
 slug: /snapshots
 title: "Снапшоты для валидаторов"
-description: "Обычные и архивные снапшоты помогают валидаторам и RPC-операторам быстрее догонять цепочку и поднимать историческую инфраструктуру."
+description: "Пути загрузки снапшотов FastNear для подъёма и восстановления узлов NEAR."
 sidebar_label: "Обзор снапшотов"
 displayed_sidebar: snapshotsSidebars
 keywords:
@@ -18,29 +18,54 @@ import SimpleButton from '@site/src/components/SimpleButton';
 
 # Снапшоты блокчейна
 
+Этот раздел — для операторов узлов, которые поднимают или восстанавливают инфраструктуру NEAR. Это не поверхность для прикладных данных. Если задача — читать балансы, историю, блоки или состояние контракта, используйте документацию API и RPC, а не сценарии со снапшотами.
+
 :::warning[Бесплатные снапшоты устарели]
 Бесплатные снапшоты данных nearcore больше не выпускаются.
 
-Infrastructure Committee и Near One рекомендуют использовать Epoch Sync и децентрализованную синхронизацию состояния. Подробности есть на <Link to="https://near-nodes.io">NEAR Nodes</Link>.
+Infrastructure Committee и Near One рекомендуют Epoch Sync вместе с децентрализованной синхронизацией состояния. Актуальные рекомендации и режим подъёма смотрите на <Link to="https://near-nodes.io">NEAR Nodes</Link>.
 :::
 
-Скачайте состояние блокчейна, если хотите быстрее поднять валидаторский или RPC-узел. Подробнее о требованиях к узлам и запуску смотрите в <Link to="https://github.com/near/nearcore?tab=readme-ov-file#about-near">nearcore</Link>.
+## Используйте этот раздел, когда
 
-:::info[Установка rclone]
-Для этих крупных загрузок используется `rclone`, который можно установить так:
+- нужно поднять узел mainnet или testnet из данных снапшота
+- идёт восстановление RPC- или архивного узла
+- уже известно, что нужен путь загрузки снапшота FastNear
+
+## Не используйте этот раздел, когда
+
+- идёт запрос данных цепочки для приложения
+- нужны свежие блоки, балансы, история или состояние контракта
+- нужны общие рекомендации по продуктовому API, а не настройка оператором
+
+В этих случаях используйте [Справочник RPC](/rpc), [FastNear API](/api), [Транзакции API](/tx) или [NEAR Data API](/neardata).
+
+## Перед загрузкой
+
+- Сначала выберите сеть: mainnet или testnet.
+- Решите, нужны обычные данные RPC или архивные.
+- Убедитесь, что понимаете, где должны лежать горячие и холодные данные, прежде чем стартовать архивную загрузку.
+
+- Установите `rclone` — скрипты загрузки от него зависят.
+
+:::info[Установка `rclone`]
+Установите `rclone` командой:
 
 ```bash
 sudo -v ; curl https://rclone.org/install.sh | sudo bash
 ```
 :::
 
-Более подробные рекомендации по настройке валидаторов доступны на <Link to="https://near-nodes.io">NEAR Nodes</Link>.
+## Что покрывает каждый путь
 
-Эти руководства используют ту же логику, что и <Link to="https://github.com/fastnear/static">репозиторий FastNear static</Link>.
+- **Mainnet** включает оптимизированный `fast-rpc`, обычный RPC и архивные пути загрузки для горячих и холодных данных.
+- **Testnet** включает RPC и архивные пути снапшотов для операторов testnet.
+
+Требования к узлам смотрите в <Link to="https://github.com/near/nearcore?tab=readme-ov-file#about-near">nearcore</Link>, а исходники скриптов загрузки, которые используются в этих руководствах, — в <Link to="https://github.com/fastnear/static">fastnear/static</Link>.
 
 ## Выберите сеть
 
-<div style={{display: 'flex', margin: '2rem 0'}}>
+<div style={{display: 'flex', flexWrap: 'wrap', gap: '1rem', margin: '2rem 0'}}>
   <SimpleButton to="/snapshots/mainnet">Снапшоты mainnet</SimpleButton>
   <SimpleButton to="/snapshots/testnet">Снапшоты testnet</SimpleButton>
 </div>
