@@ -27,9 +27,9 @@
   "id": "fastnear",
   "method": "EXPERIMENTAL_light_client_proof",
   "params": {
-    "light_client_head": "AF2yY9x1SkCsPWpgfXa4RvnEY99YeSEExBZZ4ouiwoa1",
-    "sender_id": "00000000012.near",
-    "transaction_hash": "ESShk21GZb6cgFRoJyEJqdJXuoP72fuCmCn6pNMhXFC7",
+    "light_client_head": "9XN7MtDywZvfGx6TKy1MT2iCZkKuHikJXmNazxdZ4x6T",
+    "sender_id": "escrow.ai.near",
+    "transaction_hash": "34E7weKCDqXh3xPKdBgSWRqo44yTWjbka9deMK8JbAxx",
     "type": "транзакция"
   }
 }
@@ -43,9 +43,9 @@
     "id": "fastnear",
     "method": "EXPERIMENTAL_light_client_proof",
     "params": {
-      "light_client_head": "AF2yY9x1SkCsPWpgfXa4RvnEY99YeSEExBZZ4ouiwoa1",
-      "sender_id": "00000000012.near",
-      "transaction_hash": "ESShk21GZb6cgFRoJyEJqdJXuoP72fuCmCn6pNMhXFC7",
+      "light_client_head": "9XN7MtDywZvfGx6TKy1MT2iCZkKuHikJXmNazxdZ4x6T",
+      "sender_id": "escrow.ai.near",
+      "transaction_hash": "34E7weKCDqXh3xPKdBgSWRqo44yTWjbka9deMK8JbAxx",
       "type": "транзакция"
     }
   },

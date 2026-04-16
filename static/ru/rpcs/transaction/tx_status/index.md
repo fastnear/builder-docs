@@ -27,8 +27,8 @@
   "id": "fastnear",
   "method": "tx",
   "params": {
-    "tx_hash": "ESShk21GZb6cgFRoJyEJqdJXuoP72fuCmCn6pNMhXFC7",
-    "sender_account_id": "00000000012.near"
+    "tx_hash": "34E7weKCDqXh3xPKdBgSWRqo44yTWjbka9deMK8JbAxx",
+    "sender_account_id": "escrow.ai.near"
   }
 }
 ```
@@ -41,8 +41,8 @@
     "id": "fastnear",
     "method": "tx",
     "params": {
-      "tx_hash": "ESShk21GZb6cgFRoJyEJqdJXuoP72fuCmCn6pNMhXFC7",
-      "sender_account_id": "00000000012.near"
+      "tx_hash": "34E7weKCDqXh3xPKdBgSWRqo44yTWjbka9deMK8JbAxx",
+      "sender_account_id": "escrow.ai.near"
     }
   },
   "headers": {},

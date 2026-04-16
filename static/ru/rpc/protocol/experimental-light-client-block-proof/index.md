@@ -28,8 +28,8 @@
   "id": "fastnear",
   "method": "EXPERIMENTAL_light_client_block_proof",
   "params": {
-    "block_hash": "8fbT7nWhBwsBJjPcwhv2uqzseFJSd5Y4XcqfLAWryBsu",
-    "light_client_head": "6sddgq8nkENAz4f8qR72qxRPM25QWNBVMrkYr63DgC2E"
+    "block_hash": "64utzv4G8AwNSxVnj23KPwU46VL435jQbQokbaYFtZ6V",
+    "light_client_head": "9XN7MtDywZvfGx6TKy1MT2iCZkKuHikJXmNazxdZ4x6T"
   }
 }
 ```
@@ -42,8 +42,8 @@
     "id": "fastnear",
     "method": "EXPERIMENTAL_light_client_block_proof",
     "params": {
-      "block_hash": "8fbT7nWhBwsBJjPcwhv2uqzseFJSd5Y4XcqfLAWryBsu",
-      "light_client_head": "6sddgq8nkENAz4f8qR72qxRPM25QWNBVMrkYr63DgC2E"
+      "block_hash": "64utzv4G8AwNSxVnj23KPwU46VL435jQbQokbaYFtZ6V",
+      "light_client_head": "9XN7MtDywZvfGx6TKy1MT2iCZkKuHikJXmNazxdZ4x6T"
     }
   },
   "headers": {},

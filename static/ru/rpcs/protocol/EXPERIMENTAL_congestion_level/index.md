@@ -27,8 +27,8 @@
   "id": "fastnear",
   "method": "EXPERIMENTAL_congestion_level",
   "params": {
-    "block_id": 9820210,
-    "shard_id": 0
+    "block_id": "9XN7MtDywZvfGx6TKy1MT2iCZkKuHikJXmNazxdZ4x6T",
+    "shard_id": 10
   }
 }
 ```
@@ -41,8 +41,8 @@
     "id": "fastnear",
     "method": "EXPERIMENTAL_congestion_level",
     "params": {
-      "block_id": 9820210,
-      "shard_id": 0
+      "block_id": "9XN7MtDywZvfGx6TKy1MT2iCZkKuHikJXmNazxdZ4x6T",
+      "shard_id": 10
     }
   },
   "headers": {},

@@ -28,7 +28,7 @@
   "id": "fastnear",
   "method": "валидаторы",
   "params": {
-    "epoch_id": "9p3TzDhp6B5sRCaMi36TXqKWHfjEt4oyqaGoftHHaa8E"
+    "epoch_id": "4cPDvNDzf3zbKvAxPNWnNGGz8x2tty6xhowmsugAm3fo"
   }
 }
 ```
@@ -41,7 +41,7 @@
     "id": "fastnear",
     "method": "валидаторы",
     "params": {
-      "epoch_id": "9p3TzDhp6B5sRCaMi36TXqKWHfjEt4oyqaGoftHHaa8E"
+      "epoch_id": "4cPDvNDzf3zbKvAxPNWnNGGz8x2tty6xhowmsugAm3fo"
     }
   },
   "headers": {},

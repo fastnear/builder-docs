@@ -27,7 +27,7 @@
   "id": "fastnear",
   "method": "EXPERIMENTAL_validators_ordered",
   "params": {
-    "block_id": 193909529
+    "block_id": 194263739
   }
 }
 ```
@@ -40,7 +40,7 @@
     "id": "fastnear",
     "method": "EXPERIMENTAL_validators_ordered",
     "params": {
-      "block_id": 193909529
+      "block_id": 194263739
     }
   },
   "headers": {},

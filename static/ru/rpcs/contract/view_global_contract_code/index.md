@@ -27,7 +27,7 @@
   "id": "fastnear",
   "method": "query",
   "params": {
-    "code_hash": "ExampleCodeHash",
+    "code_hash": "A2VxywASqbnarBAfTWobhDZjMXobjnYyJmkjhoXAiYBz",
     "request_type": "view_global_contract_code",
     "finality": "final"
   }
@@ -42,7 +42,7 @@
     "id": "fastnear",
     "method": "query",
     "params": {
-      "code_hash": "ExampleCodeHash",
+      "code_hash": "A2VxywASqbnarBAfTWobhDZjMXobjnYyJmkjhoXAiYBz",
       "request_type": "view_global_contract_code",
       "finality": "final"
     }

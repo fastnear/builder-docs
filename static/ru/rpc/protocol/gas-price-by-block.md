@@ -28,7 +28,7 @@
   "id": "fastnear",
   "method": "gas_price",
   "params": {
-    "block_id": "6sddgq8nkENAz4f8qR72qxRPM25QWNBVMrkYr63DgC2E"
+    "block_id": "9XN7MtDywZvfGx6TKy1MT2iCZkKuHikJXmNazxdZ4x6T"
   }
 }
 ```
@@ -41,7 +41,7 @@
     "id": "fastnear",
     "method": "gas_price",
     "params": {
-      "block_id": "6sddgq8nkENAz4f8qR72qxRPM25QWNBVMrkYr63DgC2E"
+      "block_id": "9XN7MtDywZvfGx6TKy1MT2iCZkKuHikJXmNazxdZ4x6T"
     }
   },
   "headers": {},

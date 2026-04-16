@@ -28,7 +28,7 @@
   "method": "query",
   "params": {
     "account_id": "root.near",
-    "public_key": "ed25519:6666666666666666666666666666666666666666666",
+    "public_key": "ed25519:CByX7HPjgSGFi5G26zwgZGDFCFyBHvSv1fe7AFzmVe3",
     "request_type": "view_access_key",
     "finality": "final"
   }
@@ -44,7 +44,7 @@
     "method": "query",
     "params": {
       "account_id": "root.near",
-      "public_key": "ed25519:6666666666666666666666666666666666666666666",
+      "public_key": "ed25519:CByX7HPjgSGFi5G26zwgZGDFCFyBHvSv1fe7AFzmVe3",
       "request_type": "view_access_key",
       "finality": "final"
     }

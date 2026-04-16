@@ -28,9 +28,9 @@
   "method": "light_client_proof",
   "params": {
     "type": "транзакция",
-    "transaction_hash": "ESShk21GZb6cgFRoJyEJqdJXuoP72fuCmCn6pNMhXFC7",
-    "sender_id": "00000000012.near",
-    "light_client_head": "AF2yY9x1SkCsPWpgfXa4RvnEY99YeSEExBZZ4ouiwoa1"
+    "transaction_hash": "34E7weKCDqXh3xPKdBgSWRqo44yTWjbka9deMK8JbAxx",
+    "sender_id": "escrow.ai.near",
+    "light_client_head": "9XN7MtDywZvfGx6TKy1MT2iCZkKuHikJXmNazxdZ4x6T"
   }
 }
 ```
@@ -44,9 +44,9 @@
     "method": "light_client_proof",
     "params": {
       "type": "транзакция",
-      "transaction_hash": "ESShk21GZb6cgFRoJyEJqdJXuoP72fuCmCn6pNMhXFC7",
-      "sender_id": "00000000012.near",
-      "light_client_head": "AF2yY9x1SkCsPWpgfXa4RvnEY99YeSEExBZZ4ouiwoa1"
+      "transaction_hash": "34E7weKCDqXh3xPKdBgSWRqo44yTWjbka9deMK8JbAxx",
+      "sender_id": "escrow.ai.near",
+      "light_client_head": "9XN7MtDywZvfGx6TKy1MT2iCZkKuHikJXmNazxdZ4x6T"
     }
   },
   "headers": {},
