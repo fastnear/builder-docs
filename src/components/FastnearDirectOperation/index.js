@@ -1,4 +1,4 @@
-import React, { startTransition, useDeferredValue, useEffect, useId, useMemo, useState } from "react";
+import React, { startTransition, useDeferredValue, useEffect, useId, useMemo, useRef, useState } from "react";
 import Head from "@docusaurus/Head";
 import { translate } from "@docusaurus/Translate";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
@@ -103,15 +103,38 @@ function cloneJsonValue(value) {
   return value === undefined ? value : JSON.parse(JSON.stringify(value));
 }
 
-function getInitialNetwork(pageModel) {
-  if (typeof window === "undefined") {
-    return pageModel.interaction.networks[0]?.key || "mainnet";
+function getResolvedSearchParams(search) {
+  if (search instanceof URLSearchParams) {
+    return search;
   }
 
-  const search = new URLSearchParams(window.location.search);
-  const requestedNetwork = search.get("network");
+  if (typeof search === "string") {
+    return new URLSearchParams(search);
+  }
+
+  if (typeof window !== "undefined") {
+    return new URLSearchParams(window.location.search);
+  }
+
+  return new URLSearchParams();
+}
+
+function getInitialNetwork(pageModel, search) {
+  const resolvedSearch = getResolvedSearchParams(search);
+  const requestedNetwork = resolvedSearch.get("network");
   const matched = pageModel.interaction.networks.find((network) => network.key === requestedNetwork);
   return matched?.key || pageModel.interaction.networks[0]?.key || "mainnet";
+}
+
+function getUrlFieldPrefills(pageModel, search) {
+  const resolvedSearch = getResolvedSearchParams(search);
+
+  return Object.fromEntries(
+    pageModel.interaction.fields.flatMap((field) => {
+      const value = resolvedSearch.get(field.name);
+      return value === null ? [] : [[field.name, value]];
+    })
+  );
 }
 
 function getDefaultFieldValue(pageModel, field, networkKey) {
@@ -167,6 +190,35 @@ function computeFieldValuesForExample(pageModel, networkKey, example) {
       return [key, field ? serializeFieldDraftValue(field, value) : String(value)];
     })
   );
+}
+
+function buildOperationSelectionState(pageModel, networkKey, example, fieldOverrides = {}) {
+  return {
+    selectedExampleId: example?.id || "",
+    fieldValues: {
+      ...computeFieldValuesForExample(pageModel, networkKey, example),
+      ...fieldOverrides,
+    },
+  };
+}
+
+function buildInitialOperationState(pageModel, search) {
+  const resolvedSearch = getResolvedSearchParams(search);
+  const selectedNetwork = getInitialNetwork(pageModel, resolvedSearch);
+  const selectedExample = pickInitialExample(pageModel, selectedNetwork);
+  const urlFieldPrefills = getUrlFieldPrefills(pageModel, resolvedSearch);
+  const selectionState = buildOperationSelectionState(
+    pageModel,
+    selectedNetwork,
+    selectedExample,
+    urlFieldPrefills
+  );
+
+  return {
+    ...selectionState,
+    protectedFieldNames: new Set(Object.keys(urlFieldPrefills)),
+    selectedNetwork,
+  };
 }
 
 const RUNTIME_FIELD_BINDINGS = {
@@ -1039,22 +1091,12 @@ function FastnearOperationPage({ pageModel }) {
   const currentLocale = i18n.currentLocale || "en";
   const uiText = getFastnearOperationUiText();
   const auth = usePortalAuth();
-  const [selectedNetwork, setSelectedNetwork] = useState(() => getInitialNetwork(pageModel));
-  const [selectedExampleId, setSelectedExampleId] = useState(
-    () =>
-      pageModel.request.examples.find((example) => example.network === getInitialNetwork(pageModel))?.id ||
-      pageModel.request.examples[0]?.id ||
-      ""
-  );
+  const initialOperationState = useMemo(() => buildInitialOperationState(pageModel), [pageModel]);
+  const protectedHydrationFieldsRef = useRef(initialOperationState.protectedFieldNames);
+  const [selectedNetwork, setSelectedNetwork] = useState(initialOperationState.selectedNetwork);
+  const [selectedExampleId, setSelectedExampleId] = useState(initialOperationState.selectedExampleId);
   const [selectedFinality, setSelectedFinality] = useState("final");
-  const [fieldValues, setFieldValues] = useState(() => {
-    const initialNetwork = getInitialNetwork(pageModel);
-    return computeFieldValuesForExample(
-      pageModel,
-      initialNetwork,
-      pickInitialExample(pageModel, initialNetwork)
-    );
-  });
+  const [fieldValues, setFieldValues] = useState(initialOperationState.fieldValues);
   const [apiKeyDraft, setApiKeyDraft] = useState("");
   const [copiedCurl, setCopiedCurl] = useState(false);
   const [copiedResponse, setCopiedResponse] = useState(false);
@@ -1076,10 +1118,14 @@ function FastnearOperationPage({ pageModel }) {
   }, [auth.storedApiKey]);
 
   useEffect(() => {
-    const matchingExample = pickInitialExample(pageModel, selectedNetwork);
-    setSelectedExampleId(matchingExample?.id || "");
-    setFieldValues(computeFieldValuesForExample(pageModel, selectedNetwork, matchingExample));
-  }, [pageModel, selectedNetwork]);
+    protectedHydrationFieldsRef.current = initialOperationState.protectedFieldNames;
+    setSelectedNetwork(initialOperationState.selectedNetwork);
+    setSelectedExampleId(initialOperationState.selectedExampleId);
+    setFieldValues(initialOperationState.fieldValues);
+    setRunError(null);
+    setRunResult(null);
+    setCopiedResponse(false);
+  }, [initialOperationState]);
 
   useEffect(() => {
     const bindings = RUNTIME_FIELD_BINDINGS[pageModel.pageModelId];
@@ -1104,7 +1150,9 @@ function FastnearOperationPage({ pageModel }) {
       const live = await fetchRuntimeExampleValues(selectedNetworkDetails.url, controller.signal);
       setFieldValues((currentValues) => {
         let next = currentValues;
+        const protectedHydrationFields = protectedHydrationFieldsRef.current;
         for (const binding of resolvedBindings) {
+          if (protectedHydrationFields.has(binding.field)) continue;
           const liveValue = live[binding.source];
           if (liveValue === undefined || liveValue === null || liveValue === "") continue;
           const currentValue = (currentValues[binding.field] || "").trim();
@@ -1255,7 +1303,12 @@ function FastnearOperationPage({ pageModel }) {
   );
 
   const handleNetworkChange = (networkKey) => {
+    const matchingExample = pickInitialExample(pageModel, networkKey);
+    const nextSelectionState = buildOperationSelectionState(pageModel, networkKey, matchingExample);
+    protectedHydrationFieldsRef.current = new Set();
     setSelectedNetwork(networkKey);
+    setSelectedExampleId(nextSelectionState.selectedExampleId);
+    setFieldValues(nextSelectionState.fieldValues);
     setRunError(null);
     setRunResult(null);
     setCopiedResponse(false);
@@ -1269,6 +1322,7 @@ function FastnearOperationPage({ pageModel }) {
   };
 
   const handleFieldChange = (fieldName, value) => {
+    protectedHydrationFieldsRef.current.delete(fieldName);
     setFieldValues((currentValues) => ({
       ...currentValues,
       [fieldName]: value,
@@ -1284,14 +1338,12 @@ function FastnearOperationPage({ pageModel }) {
       return;
     }
 
-    setSelectedExampleId(example.id);
-    if (example.network) {
-      setSelectedNetwork(example.network);
-    }
-
-    setFieldValues(
-      computeFieldValuesForExample(pageModel, example.network || selectedNetwork, example)
-    );
+    const nextNetwork = example.network || selectedNetwork;
+    const nextSelectionState = buildOperationSelectionState(pageModel, nextNetwork, example);
+    protectedHydrationFieldsRef.current = new Set();
+    setSelectedExampleId(nextSelectionState.selectedExampleId);
+    setSelectedNetwork(nextNetwork);
+    setFieldValues(nextSelectionState.fieldValues);
   };
 
   const handleRun = async () => {
