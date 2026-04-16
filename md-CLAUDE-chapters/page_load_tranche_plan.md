@@ -274,3 +274,53 @@ Sequencing proposal:
 **Tranche B is dropped; this Tranche F replaces it as the next actionable
 work.** Tranche A (harden existing: fonts, error boundary, SSR test) is
 still queued but deferred until we have the bundle-analyzer picture.
+
+### 2026-04-16 afternoon — Tranche F wins landed
+
+**`perf(search): lazy-load SearchBarFallback`** (47205c2). Bundle analyzer
+pinpointed `@docsearch/react/dist/esm/Sidepanel.js` (380 KB raw) sitting
+in the main chunk because `@docsearch/docusaurus-adapter`'s SearchBar
+statically imported `SidepanelButton from '@docsearch/react/sidepanel'`,
+and our swizzle imported the adapter SearchBar as its fallback. Wrapping
+the fallback in `React.lazy` + `Suspense` kicked Sidepanel.js into its
+own chunk (9580), loaded only when the Ask AI path is invoked.
+
+- EN Algolia-mode main.js: 978,218 → 582,549 raw; **267,904 → 165,795 gz**
+- Delta: -395 KB raw / **-102 KB gz** (-38 %).
+
+**`perf(navbar): lazy-load mobile sidebar items`** (5457d3a). The 6
+navbar `docSidebar` entries each embedded a fully-resolved
+`mobileSidebarItemsByLocale` map, ~52 KB raw / ~10 KB gz of themeConfig
+baked into main.js. Moved the data into
+`src/data/generatedFastnearMobileSidebarItems.json` (written at config
+load, gitignored) and lazy-imported it from
+`src/theme/Navbar/MobileSidebar/PrimaryMenu/index.js` on
+pointer-enter/click. Desktop users never pay for it.
+
+- EN Algolia-mode main.js: 582,549 → 552,035 raw; **165,798 → 161,902 gz**
+- Delta: -30 KB raw / -4 KB gz this step.
+
+**Tranche D (beacon hygiene) closed.** Prod HTML has exactly one
+`static.cloudflareinsights.com/beacon.min.js` injection (with the
+`data-cf-beacon` token); `docusaurus.config.js` only injects when
+`CF_ANALYTICS_TOKEN` is set, so non-prod builds have zero. No duplicate
+versioned-beacon path in the served HTML.
+
+**Playwright smoke suite green** against a fresh local-mode build: all 9
+specs pass (search-smoke, theme-smoke, rpc-routes). Validates the search
+shell lazy-load, mobile-sidebar lazy-load, and structuredData localize
+paths still work end-to-end, including Russian locale pages.
+
+### Remaining inventory (end of 2026-04-16 afternoon)
+
+Session cumulative delta on Algolia-mode EN main.js: **-426 KB raw /
+-106 KB gz** (978,218 → 552,035 raw; 267,904 → 161,902 gz; -40 %).
+
+| Target | Est. gz | Status | Notes |
+|---|---|---|---|
+| Prism syntax highlighting | ~35-45 KB | deferred | Used on every docs page with code; deferral risks visible reflow/FOUC on code-heavy pages |
+| Font weights 500/600/700 | 0 (polish) | deferred | Current decls reference 400 WOFF2; either source missing weights or adopt variable font |
+| Tranche A error boundary | 0 (correctness) | queued | `useFastnearPageModelById` null-state fallback at `pageModels.js:114-139` |
+| Tranche A SSR hydration test | 0 (guardrail) | queued | Playwright spec for the search shell |
+| Tranche C measurement CLI | 0 (infra) | partially done | `BUNDLE_REPORT_PATH` / `BUNDLE_STATS_PATH` plugin landed; no before/after diff script yet |
+| Tranche E rebase onto `main` | n/a | queued | `FastnearDirectOperation/index.js` conflict with 16d592a |
