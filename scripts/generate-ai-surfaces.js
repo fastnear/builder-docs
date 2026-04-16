@@ -664,12 +664,17 @@ function transformInlineLinks(markdown, locale = DEFAULT_LOCALE) {
     .replace(
       /<Link\b[^>]*to="([^"]+)"[^>]*>([\s\S]*?)<\/Link>/g,
       (_match, href, inner) => `[${stripInlineTags(inner)}](${localizeInternalHref(href.trim(), locale)})`
+    )
+    .replace(
+      /<Link\b[^>]*href="([^"]+)"[^>]*>([\s\S]*?)<\/Link>/g,
+      (_match, href, inner) => `[${stripInlineTags(inner)}](${href.trim()})`
     );
 }
 
 function transformSimpleJsx(markdown, locale = DEFAULT_LOCALE) {
   let transformed = markdown
     .replace(/<\/?React\.Fragment[^>]*>/g, "")
+    .replace(/<IconExternalLink\s*\/>/g, "")
     .replace(/<strong>([\s\S]*?)<\/strong>/g, "**$1**");
 
   let previous;
