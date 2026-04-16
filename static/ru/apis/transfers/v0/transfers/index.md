@@ -32,7 +32,7 @@
 {
   "body": {
     "account_id": "intents.near",
-    "asset_id": "near",
+    "asset_id": "native:near",
     "desc": true,
     "direction": "receiver",
     "limit": 10,
