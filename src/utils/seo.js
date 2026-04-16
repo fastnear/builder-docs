@@ -219,6 +219,8 @@ export function buildOperationKeywords(pageModel) {
 
   const title = pageModel.info?.title || '';
   const titleKeyword = humanizeKeyword(title);
+  const titleSegments = String(title).split(/\s+[-–—]\s+/).map((segment) => segment.trim()).filter(Boolean);
+  const titleTail = titleSegments.length > 1 ? titleSegments[titleSegments.length - 1] : '';
   const operationId = pageModel.info?.operationId || '';
   const operationIdKeyword = humanizeKeyword(operationId);
   const requestTypeKeyword = humanizeKeyword(pageModel.interaction?.requestType || '');
@@ -229,6 +231,8 @@ export function buildOperationKeywords(pageModel) {
     ...extractCanonicalKeywords(pageModel),
     title,
     titleKeyword,
+    titleTail,
+    humanizeKeyword(titleTail),
     operationId,
     operationIdKeyword,
     requestTypeKeyword,
