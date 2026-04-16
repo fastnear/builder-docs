@@ -6,8 +6,12 @@ This folder collects longer-form reference chapters that are useful while evolvi
 
 ### Performance investigations
 
-- [Cloudflare page load investigation](/Users/mikepurvis/.codex/worktrees/d3da/builder-docs/md-CLAUDE-chapters/cloudflare_page_load_investigation.md)
+- [Cloudflare page load investigation](/Users/mikepurvis/near/fn/builder-docs/md-CLAUDE-chapters/cloudflare_page_load_investigation.md)
   - Evidence-backed memo on the `Page Load 5,888 ms` Cloudflare Web Analytics reading, what is actually slow, and which optimizations are worth pursuing first.
+- [Page-load tranche plan](/Users/mikepurvis/near/fn/builder-docs/md-CLAUDE-chapters/page_load_tranche_plan.md)
+  - Session-local tactical plan for the `address-page-load-latency` branch, including tranches landed, tranches dropped with reasoning, and the remaining-inventory table.
+- [Page-load latency advisory](/Users/mikepurvis/near/fn/builder-docs/md-CLAUDE-chapters/page_load_latency_advisory.md)
+  - Portable playbook for reducing first-load JS weight on a modern docs or marketing site (framework-agnostic with a NextJS appendix). Distilled from the audit that took Algolia-mode `main.js` from 268 KB gz to 127 KB gz.
 
 ### Algolia search and crawler
 
