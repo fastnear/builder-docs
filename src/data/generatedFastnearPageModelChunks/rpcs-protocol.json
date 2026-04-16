@@ -688,13 +688,16 @@
           }
         },
         {
+          "description": "Proof subject — `transaction` proves inclusion of the top-level transaction, `receipt` proves inclusion of a specific receipt produced during execution.",
           "label": "Type",
           "location": "body",
           "name": "type",
           "required": false,
           "schema": {
             "type": "string",
+            "description": "Proof subject — `transaction` proves inclusion of the top-level transaction, `receipt` proves inclusion of a specific receipt produced during execution.",
             "enum": [
+              "transaction",
               "receipt"
             ]
           }
@@ -829,7 +832,9 @@
                   "required": false,
                   "schema": {
                     "type": "string",
+                    "description": "Proof subject — `transaction` proves inclusion of the top-level transaction, `receipt` proves inclusion of a specific receipt produced during execution.",
                     "enum": [
+                      "transaction",
                       "receipt"
                     ]
                   }
@@ -5731,7 +5736,7 @@
   {
     "canonicalPath": "/rpcs/protocol/latest_block",
     "info": {
-      "description": "Retrieves the most recent block from the blockchain",
+      "description": "Fetch the latest final block — finality set automatically, no block ID needed.",
       "operationId": "latest_block",
       "summary": "Get latest block",
       "title": "NEAR Protocol RPC: Latest Block",
@@ -6030,13 +6035,16 @@
           }
         },
         {
+          "description": "Proof subject — `transaction` proves inclusion of the top-level transaction, `receipt` proves inclusion of a specific receipt produced during execution.",
           "label": "Type",
           "location": "body",
           "name": "type",
           "required": false,
           "schema": {
             "type": "string",
+            "description": "Proof subject — `transaction` proves inclusion of the top-level transaction, `receipt` proves inclusion of a specific receipt produced during execution.",
             "enum": [
+              "transaction",
               "receipt"
             ]
           }
@@ -6171,7 +6179,9 @@
                   "required": false,
                   "schema": {
                     "type": "string",
+                    "description": "Proof subject — `transaction` proves inclusion of the top-level transaction, `receipt` proves inclusion of a specific receipt produced during execution.",
                     "enum": [
+                      "transaction",
                       "receipt"
                     ]
                   }

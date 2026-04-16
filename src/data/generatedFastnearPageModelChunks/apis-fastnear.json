@@ -827,7 +827,7 @@
   {
     "canonicalPath": "/apis/fastnear/v0/public_key_lookup",
     "info": {
-      "description": "Fetch the indexed account IDs associated with a full-access public key.",
+      "description": "Fetch the account IDs that have registered a full-access public key, via the legacy V0 lookup path.",
       "operationId": "lookup_by_public_key_v0",
       "summary": "Lookup full-access accounts by public key",
       "title": "FastNEAR API - V0 Public Key Lookup",
@@ -1005,7 +1005,7 @@
   {
     "canonicalPath": "/apis/fastnear/v0/public_key_lookup_all",
     "info": {
-      "description": "Fetch every account tied to a public key — full-access and limited-access keys together.",
+      "description": "List every account tied to a public key — full-access and limited-access keys together — via the legacy V0 lookup-all path.",
       "operationId": "lookup_by_public_key_all_v0",
       "summary": "Lookup all indexed accounts by public key",
       "title": "FastNEAR API - V0 Public Key Lookup (All)",
@@ -2079,7 +2079,7 @@
   {
     "canonicalPath": "/apis/fastnear/v1/public_key_lookup",
     "info": {
-      "description": "Fetch the indexed account IDs associated with a full-access public key.",
+      "description": "Resolve a full-access public key to the indexed NEAR accounts that have registered it — V1 canonical lookup path.",
       "operationId": "lookup_by_public_key_v1",
       "summary": "Lookup full-access accounts by public key",
       "title": "FastNEAR API - V1 Public Key Lookup",
@@ -2457,7 +2457,7 @@
   {
     "canonicalPath": "/apis/fastnear/v1/public_key_lookup_all",
     "info": {
-      "description": "Fetch every account tied to a public key — full-access and limited-access keys together.",
+      "description": "Resolve a public key to every account that holds it — full-access and limited-access keys alike — via the V1 lookup-all path.",
       "operationId": "lookup_by_public_key_all_v1",
       "summary": "Lookup all indexed accounts by public key",
       "title": "FastNEAR API - V1 Public Key Lookup (All)",
