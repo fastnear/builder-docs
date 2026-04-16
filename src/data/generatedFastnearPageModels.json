@@ -40,7 +40,7 @@
         {
           "defaultFields": {
             "account_id": "root.near",
-            "public_key": "ed25519:CByX7HPjgSGFi5G26zwgZGDFCFyBHvSv1fe7AFzmVe3"
+            "public_key": "ed25519:6666666666666666666666666666666666666666666"
           },
           "key": "mainnet",
           "label": "Mainnet",
@@ -49,7 +49,7 @@
         {
           "defaultFields": {
             "account_id": "root.testnet",
-            "public_key": "ed25519:4eUPQ64CXPrKd3CBVzpjDHkvZeDmPZtoU5U6nTZozz1A"
+            "public_key": "ed25519:Bt6gx87fRm99KkkN1Q9UEA8vY9DBLkRSntqcLDuZt3S"
           },
           "key": "testnet",
           "label": "Testnet",
@@ -169,7 +169,7 @@
               "method": "query",
               "params": {
                 "account_id": "root.near",
-                "public_key": "ed25519:CByX7HPjgSGFi5G26zwgZGDFCFyBHvSv1fe7AFzmVe3",
+                "public_key": "ed25519:6666666666666666666666666666666666666666666",
                 "request_type": "view_access_key",
                 "finality": "final"
               }
@@ -190,7 +190,7 @@
               "method": "query",
               "params": {
                 "account_id": "root.testnet",
-                "public_key": "ed25519:4eUPQ64CXPrKd3CBVzpjDHkvZeDmPZtoU5U6nTZozz1A",
+                "public_key": "ed25519:Bt6gx87fRm99KkkN1Q9UEA8vY9DBLkRSntqcLDuZt3S",
                 "request_type": "view_access_key",
                 "finality": "final"
               }
@@ -1013,7 +1013,7 @@
       "networks": [
         {
           "defaultFields": {
-            "block_id": 193909529
+            "block_id": 9820210
           },
           "key": "mainnet",
           "label": "Mainnet",
@@ -1021,7 +1021,7 @@
         },
         {
           "defaultFields": {
-            "block_id": 245639469
+            "block_id": 245254793
           },
           "key": "testnet",
           "label": "Testnet",
@@ -1105,7 +1105,7 @@
               "id": "fastnear",
               "method": "block",
               "params": {
-                "block_id": 193909529
+                "block_id": 9820210
               }
             },
             "headers": {},
@@ -1123,7 +1123,7 @@
               "id": "fastnear",
               "method": "block",
               "params": {
-                "block_id": 245639469
+                "block_id": 245254793
               }
             },
             "headers": {},
@@ -1267,7 +1267,7 @@
       "networks": [
         {
           "defaultFields": {
-            "block_id": "6sddgq8nkENAz4f8qR72qxRPM25QWNBVMrkYr63DgC2E"
+            "block_id": "EPnLgE7iEq9s7yTkos96M3cWymH5avBAPm3qx3NXqR8H"
           },
           "key": "mainnet",
           "label": "Mainnet",
@@ -1275,7 +1275,7 @@
         },
         {
           "defaultFields": {
-            "block_id": "Ayfw9wu3T3zEqCbrvq9CuKmGmuyiJiETvwCApXZHmCho"
+            "block_id": "CoPszhGFqcx9L1HQYM62g3UjxMpuZD8RiZL6QdpBZXA4"
           },
           "key": "testnet",
           "label": "Testnet",
@@ -1359,7 +1359,7 @@
               "id": "fastnear",
               "method": "block",
               "params": {
-                "block_id": "6sddgq8nkENAz4f8qR72qxRPM25QWNBVMrkYr63DgC2E"
+                "block_id": "EPnLgE7iEq9s7yTkos96M3cWymH5avBAPm3qx3NXqR8H"
               }
             },
             "headers": {},
@@ -1377,7 +1377,7 @@
               "id": "fastnear",
               "method": "block",
               "params": {
-                "block_id": "Ayfw9wu3T3zEqCbrvq9CuKmGmuyiJiETvwCApXZHmCho"
+                "block_id": "CoPszhGFqcx9L1HQYM62g3UjxMpuZD8RiZL6QdpBZXA4"
               }
             },
             "headers": {},
@@ -1530,7 +1530,7 @@
       "networks": [
         {
           "defaultFields": {
-            "block_id": 193909529
+            "block_id": 9820210
           },
           "key": "mainnet",
           "label": "Mainnet",
@@ -1538,7 +1538,7 @@
         },
         {
           "defaultFields": {
-            "block_id": 245639469
+            "block_id": 245254793
           },
           "key": "testnet",
           "label": "Testnet",
@@ -1631,7 +1631,7 @@
               "id": "fastnear",
               "method": "block_effects",
               "params": {
-                "block_id": 193909529
+                "block_id": 9820210
               }
             },
             "headers": {},
@@ -1649,7 +1649,7 @@
               "id": "fastnear",
               "method": "block_effects",
               "params": {
-                "block_id": 245639469
+                "block_id": 245254793
               }
             },
             "headers": {},
@@ -3464,8 +3464,8 @@
       "networks": [
         {
           "defaultFields": {
-            "block_id": "6sddgq8nkENAz4f8qR72qxRPM25QWNBVMrkYr63DgC2E",
-            "shard_id": 10
+            "block_id": 9820210,
+            "shard_id": 0
           },
           "key": "mainnet",
           "label": "Mainnet",
@@ -3577,8 +3577,8 @@
               "id": "fastnear",
               "method": "EXPERIMENTAL_congestion_level",
               "params": {
-                "block_id": "6sddgq8nkENAz4f8qR72qxRPM25QWNBVMrkYr63DgC2E",
-                "shard_id": 10
+                "block_id": 9820210,
+                "shard_id": 0
               }
             },
             "headers": {},
@@ -4111,8 +4111,30 @@
           "schema": {
             "type": "string",
             "enum": [
-              "transaction"
+              "receipt"
             ]
+          }
+        },
+        {
+          "description": "Base58-encoded hash",
+          "label": "Receipt Id",
+          "location": "body",
+          "name": "receipt_id",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "description": "Base58-encoded hash"
+          }
+        },
+        {
+          "description": "NEAR account ID",
+          "label": "Receiver Id",
+          "location": "body",
+          "name": "receiver_id",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "description": "NEAR account ID"
           }
         }
       ],
@@ -4120,9 +4142,9 @@
       "networks": [
         {
           "defaultFields": {
-            "light_client_head": "6sddgq8nkENAz4f8qR72qxRPM25QWNBVMrkYr63DgC2E",
-            "sender_id": "intents.near",
-            "transaction_hash": "4EQZ5qoEJUbz8SRNkNwrAPtsn2VFhg9Ci1weaNNpiuR7",
+            "light_client_head": "AF2yY9x1SkCsPWpgfXa4RvnEY99YeSEExBZZ4ouiwoa1",
+            "sender_id": "00000000012.near",
+            "transaction_hash": "ESShk21GZb6cgFRoJyEJqdJXuoP72fuCmCn6pNMhXFC7",
             "type": "transaction"
           },
           "key": "mainnet",
@@ -4224,8 +4246,24 @@
                   "schema": {
                     "type": "string",
                     "enum": [
-                      "transaction"
+                      "receipt"
                     ]
+                  }
+                },
+                {
+                  "name": "receipt_id",
+                  "required": false,
+                  "schema": {
+                    "type": "string",
+                    "description": "Base58-encoded hash"
+                  }
+                },
+                {
+                  "name": "receiver_id",
+                  "required": false,
+                  "schema": {
+                    "type": "string",
+                    "description": "NEAR account ID"
                   }
                 }
               ]
@@ -4244,9 +4282,9 @@
               "id": "fastnear",
               "method": "EXPERIMENTAL_light_client_proof",
               "params": {
-                "light_client_head": "6sddgq8nkENAz4f8qR72qxRPM25QWNBVMrkYr63DgC2E",
-                "sender_id": "intents.near",
-                "transaction_hash": "4EQZ5qoEJUbz8SRNkNwrAPtsn2VFhg9Ci1weaNNpiuR7",
+                "light_client_head": "AF2yY9x1SkCsPWpgfXa4RvnEY99YeSEExBZZ4ouiwoa1",
+                "sender_id": "00000000012.near",
+                "transaction_hash": "ESShk21GZb6cgFRoJyEJqdJXuoP72fuCmCn6pNMhXFC7",
                 "type": "transaction"
               }
             },
@@ -4526,7 +4564,7 @@
         }
       ],
       "requestMethod": "EXPERIMENTAL_protocol_config",
-      "supportsFinality": true,
+      "supportsFinality": false,
       "transport": "json-rpc"
     },
     "pageModelId": "rpc-EXPERIMENTAL-protocol-config",
@@ -4574,24 +4612,7 @@
             "required": true,
             "schema": {
               "type": "object",
-              "required": [
-                "finality"
-              ],
-              "properties": [
-                {
-                  "name": "finality",
-                  "required": true,
-                  "schema": {
-                    "type": "string",
-                    "description": "Block finality",
-                    "enum": [
-                      "final",
-                      "near-final",
-                      "optimistic"
-                    ]
-                  }
-                }
-              ]
+              "description": "One of multiple possible types"
             }
           }
         ]
@@ -5379,64 +5400,24 @@
     "interaction": {
       "authTransport": "bearer",
       "defaultId": "fastnear",
-      "fields": [
-        {
-          "description": "State change selector used by this example",
-          "label": "Changes Type",
-          "location": "body",
-          "name": "changes_type",
-          "required": true,
-          "schema": {
-            "type": "string",
-            "description": "State change selector used by this example",
-            "enum": [
-              "account_changes"
-            ]
-          }
-        },
-        {
-          "description": "Accounts whose state changes should be returned",
-          "label": "Account Ids",
-          "location": "body",
-          "name": "account_ids",
-          "required": true,
-          "schema": {
-            "type": "array",
-            "description": "Accounts whose state changes should be returned",
-            "items": {
-              "type": "string",
-              "description": "NEAR account ID"
-            }
-          }
-        }
-      ],
+      "fields": [],
       "kind": "rpc-changes",
       "networks": [
         {
-          "defaultFields": {
-            "changes_type": "account_changes",
-            "account_ids": [
-              "root.near"
-            ]
-          },
+          "defaultFields": {},
           "key": "mainnet",
           "label": "Mainnet",
           "url": "https://rpc.mainnet.fastnear.com"
         },
         {
-          "defaultFields": {
-            "changes_type": "account_changes",
-            "account_ids": [
-              "root.testnet"
-            ]
-          },
+          "defaultFields": {},
           "key": "testnet",
           "label": "Testnet",
           "url": "https://rpc.testnet.fastnear.com"
         }
       ],
       "requestMethod": "changes",
-      "supportsFinality": true,
+      "supportsFinality": false,
       "transport": "json-rpc"
     },
     "pageModelId": "rpc-changes",
@@ -5484,49 +5465,7 @@
             "required": true,
             "schema": {
               "type": "object",
-              "required": [
-                "finality",
-                "changes_type",
-                "account_ids"
-              ],
-              "properties": [
-                {
-                  "name": "finality",
-                  "required": true,
-                  "schema": {
-                    "type": "string",
-                    "description": "Block finality",
-                    "enum": [
-                      "final",
-                      "near-final",
-                      "optimistic"
-                    ]
-                  }
-                },
-                {
-                  "name": "changes_type",
-                  "required": true,
-                  "schema": {
-                    "type": "string",
-                    "description": "State change selector used by this example",
-                    "enum": [
-                      "account_changes"
-                    ]
-                  }
-                },
-                {
-                  "name": "account_ids",
-                  "required": true,
-                  "schema": {
-                    "type": "array",
-                    "description": "Accounts whose state changes should be returned",
-                    "items": {
-                      "type": "string",
-                      "description": "NEAR account ID"
-                    }
-                  }
-                }
-              ]
+              "description": "One of multiple possible types"
             }
           }
         ]
@@ -5769,8 +5708,8 @@
       "networks": [
         {
           "defaultFields": {
-            "block_id": "6sddgq8nkENAz4f8qR72qxRPM25QWNBVMrkYr63DgC2E",
-            "shard_id": 10
+            "block_id": 9820210,
+            "shard_id": 0
           },
           "key": "mainnet",
           "label": "Mainnet",
@@ -5881,8 +5820,8 @@
               "id": "fastnear",
               "method": "chunk",
               "params": {
-                "block_id": "6sddgq8nkENAz4f8qR72qxRPM25QWNBVMrkYr63DgC2E",
-                "shard_id": 10
+                "block_id": 9820210,
+                "shard_id": 0
               }
             },
             "headers": {},
@@ -6275,7 +6214,7 @@
       "networks": [
         {
           "defaultFields": {
-            "chunk_id": "H6zcZFttQB82dDKUgZUcB3D7kU2TKCToujEu4dAmNtey"
+            "chunk_id": "CUc7UcYGcXwu5Y6UqEkkS6UbffHN4NNHhh5XLRHV8kLu"
           },
           "key": "mainnet",
           "label": "Mainnet",
@@ -6367,7 +6306,7 @@
               "id": "fastnear",
               "method": "chunk",
               "params": {
-                "chunk_id": "H6zcZFttQB82dDKUgZUcB3D7kU2TKCToujEu4dAmNtey"
+                "chunk_id": "CUc7UcYGcXwu5Y6UqEkkS6UbffHN4NNHhh5XLRHV8kLu"
               }
             },
             "headers": {},
@@ -9514,8 +9453,30 @@
           "schema": {
             "type": "string",
             "enum": [
-              "transaction"
+              "receipt"
             ]
+          }
+        },
+        {
+          "description": "Base58-encoded hash",
+          "label": "Receipt Id",
+          "location": "body",
+          "name": "receipt_id",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "description": "Base58-encoded hash"
+          }
+        },
+        {
+          "description": "NEAR account ID",
+          "label": "Receiver Id",
+          "location": "body",
+          "name": "receiver_id",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "description": "NEAR account ID"
           }
         }
       ],
@@ -9523,9 +9484,9 @@
       "networks": [
         {
           "defaultFields": {
-            "light_client_head": "6sddgq8nkENAz4f8qR72qxRPM25QWNBVMrkYr63DgC2E",
-            "sender_id": "intents.near",
-            "transaction_hash": "4EQZ5qoEJUbz8SRNkNwrAPtsn2VFhg9Ci1weaNNpiuR7",
+            "light_client_head": "AF2yY9x1SkCsPWpgfXa4RvnEY99YeSEExBZZ4ouiwoa1",
+            "sender_id": "00000000012.near",
+            "transaction_hash": "ESShk21GZb6cgFRoJyEJqdJXuoP72fuCmCn6pNMhXFC7",
             "type": "transaction"
           },
           "key": "mainnet",
@@ -9627,8 +9588,24 @@
                   "schema": {
                     "type": "string",
                     "enum": [
-                      "transaction"
+                      "receipt"
                     ]
+                  }
+                },
+                {
+                  "name": "receipt_id",
+                  "required": false,
+                  "schema": {
+                    "type": "string",
+                    "description": "Base58-encoded hash"
+                  }
+                },
+                {
+                  "name": "receiver_id",
+                  "required": false,
+                  "schema": {
+                    "type": "string",
+                    "description": "NEAR account ID"
                   }
                 }
               ]
@@ -9648,9 +9625,9 @@
               "method": "light_client_proof",
               "params": {
                 "type": "transaction",
-                "transaction_hash": "4EQZ5qoEJUbz8SRNkNwrAPtsn2VFhg9Ci1weaNNpiuR7",
-                "sender_id": "intents.near",
-                "light_client_head": "6sddgq8nkENAz4f8qR72qxRPM25QWNBVMrkYr63DgC2E"
+                "transaction_hash": "ESShk21GZb6cgFRoJyEJqdJXuoP72fuCmCn6pNMhXFC7",
+                "sender_id": "00000000012.near",
+                "light_client_head": "AF2yY9x1SkCsPWpgfXa4RvnEY99YeSEExBZZ4ouiwoa1"
               }
             },
             "headers": {},
@@ -11520,7 +11497,7 @@
       "networks": [
         {
           "defaultFields": {
-            "receipt_id": "5QtWzoy2VpKZEvUbe9aUjpwnXTqHzv4gehuox8g3DA4y"
+            "receipt_id": "FcFKrKQziMPCgYMFiLMZwecBtA7vqxdkatkhc1j3GYj8"
           },
           "key": "mainnet",
           "label": "Mainnet",
@@ -11612,7 +11589,7 @@
               "id": "fastnear",
               "method": "EXPERIMENTAL_receipt",
               "params": {
-                "receipt_id": "5QtWzoy2VpKZEvUbe9aUjpwnXTqHzv4gehuox8g3DA4y"
+                "receipt_id": "FcFKrKQziMPCgYMFiLMZwecBtA7vqxdkatkhc1j3GYj8"
               }
             },
             "headers": {},
@@ -11867,8 +11844,8 @@
         {
           "defaultFields": {
             "wait_until": "EXECUTED_OPTIMISTIC",
-            "sender_account_id": "intents.near",
-            "tx_hash": "4EQZ5qoEJUbz8SRNkNwrAPtsn2VFhg9Ci1weaNNpiuR7"
+            "sender_account_id": "00000000012.near",
+            "tx_hash": "ESShk21GZb6cgFRoJyEJqdJXuoP72fuCmCn6pNMhXFC7"
           },
           "key": "mainnet",
           "label": "Mainnet",
@@ -11993,8 +11970,8 @@
               "method": "EXPERIMENTAL_tx_status",
               "params": {
                 "wait_until": "EXECUTED_OPTIMISTIC",
-                "sender_account_id": "intents.near",
-                "tx_hash": "4EQZ5qoEJUbz8SRNkNwrAPtsn2VFhg9Ci1weaNNpiuR7"
+                "sender_account_id": "00000000012.near",
+                "tx_hash": "ESShk21GZb6cgFRoJyEJqdJXuoP72fuCmCn6pNMhXFC7"
               }
             },
             "headers": {},
@@ -12210,14 +12187,14 @@
       "defaultId": "fastnear",
       "fields": [
         {
-          "description": "Base64-encoded signed transaction. This must be generated for the signing account just before submission.",
+          "description": "Base64-encoded signed transaction",
           "label": "Signed Tx Base64",
           "location": "body",
           "name": "signed_tx_base64",
           "required": true,
           "schema": {
             "type": "string",
-            "description": "Base64-encoded signed transaction. This must be generated for the signing account just before submission."
+            "description": "Base64-encoded signed transaction"
           }
         },
         {
@@ -12318,7 +12295,7 @@
                   "required": true,
                   "schema": {
                     "type": "string",
-                    "description": "Base64-encoded signed transaction. This must be generated for the signing account just before submission."
+                    "description": "Base64-encoded signed transaction"
                   }
                 },
                 {
@@ -12502,14 +12479,14 @@
       "defaultId": "fastnear",
       "fields": [
         {
-          "description": "Base64-encoded signed transaction. This must be generated for the signing account just before submission.",
+          "description": "Base64-encoded signed transaction",
           "label": "Signed Tx Base64",
           "location": "body",
           "name": "signed_tx_base64",
           "required": true,
           "schema": {
             "type": "string",
-            "description": "Base64-encoded signed transaction. This must be generated for the signing account just before submission."
+            "description": "Base64-encoded signed transaction"
           }
         },
         {
@@ -12610,7 +12587,7 @@
                   "required": true,
                   "schema": {
                     "type": "string",
-                    "description": "Base64-encoded signed transaction. This must be generated for the signing account just before submission."
+                    "description": "Base64-encoded signed transaction"
                   }
                 },
                 {
@@ -12860,14 +12837,14 @@
       "defaultId": "fastnear",
       "fields": [
         {
-          "description": "Base64-encoded signed transaction. This must be generated for the signing account just before submission.",
+          "description": "Base64-encoded signed transaction",
           "label": "Signed Tx Base64",
           "location": "body",
           "name": "signed_tx_base64",
           "required": true,
           "schema": {
             "type": "string",
-            "description": "Base64-encoded signed transaction. This must be generated for the signing account just before submission."
+            "description": "Base64-encoded signed transaction"
           }
         },
         {
@@ -12970,7 +12947,7 @@
                   "required": true,
                   "schema": {
                     "type": "string",
-                    "description": "Base64-encoded signed transaction. This must be generated for the signing account just before submission."
+                    "description": "Base64-encoded signed transaction"
                   }
                 },
                 {
@@ -13279,8 +13256,8 @@
       "networks": [
         {
           "defaultFields": {
-            "sender_account_id": "intents.near",
-            "tx_hash": "4EQZ5qoEJUbz8SRNkNwrAPtsn2VFhg9Ci1weaNNpiuR7"
+            "sender_account_id": "00000000012.near",
+            "tx_hash": "ESShk21GZb6cgFRoJyEJqdJXuoP72fuCmCn6pNMhXFC7"
           },
           "key": "mainnet",
           "label": "Mainnet",
@@ -13403,8 +13380,8 @@
               "id": "fastnear",
               "method": "tx",
               "params": {
-                "tx_hash": "4EQZ5qoEJUbz8SRNkNwrAPtsn2VFhg9Ci1weaNNpiuR7",
-                "sender_account_id": "intents.near"
+                "tx_hash": "ESShk21GZb6cgFRoJyEJqdJXuoP72fuCmCn6pNMhXFC7",
+                "sender_account_id": "00000000012.near"
               }
             },
             "headers": {},
@@ -17630,7 +17607,7 @@
       "networks": [
         {
           "defaultFields": {
-            "asc": false,
+            "asc": true,
             "include_metadata": false,
             "key": "graph/follow/sleet.near",
             "limit": 50,
@@ -17719,7 +17696,7 @@
           "network": "mainnet",
           "request": {
             "body": {
-              "asc": false,
+              "asc": true,
               "include_metadata": false,
               "key": "graph/follow/sleet.near",
               "limit": 50
@@ -18028,11 +18005,11 @@
         {
           "defaultFields": {
             "current_account_id": "social.near",
-            "asc": false,
+            "asc": true,
             "include_metadata": true,
             "key": "",
-            "key_prefix": "graph/follow/",
-            "limit": 50,
+            "key_prefix": "graph/follow/sleet.near",
+            "limit": 10,
             "page_token": ""
           },
           "key": "mainnet",
@@ -18125,10 +18102,10 @@
           "network": "mainnet",
           "request": {
             "body": {
-              "asc": false,
+              "asc": true,
               "include_metadata": true,
-              "key_prefix": "graph/follow/",
-              "limit": 50
+              "key_prefix": "graph/follow/sleet.near",
+              "limit": 10
             },
             "headers": {},
             "path": {
@@ -20809,7 +20786,7 @@
       "fields": [
         {
           "description": "NEAR block height to retrieve.",
-          "example": "9820210",
+          "example": "50000000",
           "label": "Block Height",
           "location": "path",
           "name": "block_height",
@@ -20879,7 +20856,7 @@
         "path": [
           {
             "description": "NEAR block height to retrieve.",
-            "example": "9820210",
+            "example": "50000000",
             "location": "path",
             "name": "block_height",
             "required": true,
@@ -21005,7 +20982,7 @@
       "fields": [
         {
           "description": "NEAR block height to retrieve.",
-          "example": "9820210",
+          "example": "50000000",
           "label": "Block Height",
           "location": "path",
           "name": "block_height",
@@ -21075,7 +21052,7 @@
         "path": [
           {
             "description": "NEAR block height to retrieve.",
-            "example": "9820210",
+            "example": "50000000",
             "location": "path",
             "name": "block_height",
             "required": true,
@@ -21201,7 +21178,7 @@
       "fields": [
         {
           "description": "NEAR block height to retrieve.",
-          "example": "9820210",
+          "example": "50000000",
           "label": "Block Height",
           "location": "path",
           "name": "block_height",
@@ -21226,7 +21203,7 @@
       "networks": [
         {
           "defaultFields": {
-            "block_height": "9820210",
+            "block_height": "50000000",
             "shard_id": "0"
           },
           "key": "mainnet",
@@ -21260,7 +21237,7 @@
             "body": null,
             "headers": {},
             "path": {
-              "block_height": "9820210",
+              "block_height": "50000000",
               "shard_id": "0"
             },
             "query": {}
@@ -21286,7 +21263,7 @@
         "path": [
           {
             "description": "NEAR block height to retrieve.",
-            "example": "9820210",
+            "example": "50000000",
             "location": "path",
             "name": "block_height",
             "required": true,
@@ -21422,7 +21399,7 @@
       "fields": [
         {
           "description": "NEAR block height to retrieve.",
-          "example": "9820210",
+          "example": "50000000",
           "label": "Block Height",
           "location": "path",
           "name": "block_height",
@@ -21447,7 +21424,7 @@
       "networks": [
         {
           "defaultFields": {
-            "block_height": "9820210",
+            "block_height": "50000000",
             "shard_id": "0"
           },
           "key": "mainnet",
@@ -21481,7 +21458,7 @@
             "body": null,
             "headers": {},
             "path": {
-              "block_height": "9820210",
+              "block_height": "50000000",
               "shard_id": "0"
             },
             "query": {}
@@ -21507,7 +21484,7 @@
         "path": [
           {
             "description": "NEAR block height to retrieve.",
-            "example": "9820210",
+            "example": "50000000",
             "location": "path",
             "name": "block_height",
             "required": true,
@@ -21643,7 +21620,7 @@
       "fields": [
         {
           "description": "NEAR block height to retrieve.",
-          "example": "9820210",
+          "example": "50000000",
           "label": "Block Height",
           "location": "path",
           "name": "block_height",
@@ -21713,7 +21690,7 @@
         "path": [
           {
             "description": "NEAR block height to retrieve.",
-            "example": "9820210",
+            "example": "50000000",
             "location": "path",
             "name": "block_height",
             "required": true,

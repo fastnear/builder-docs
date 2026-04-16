@@ -1349,7 +1349,7 @@ https://tx.test.fastnear.com
   "method": "query",
   "params": {
     "account_id": "root.near",
-    "public_key": "ed25519:CByX7HPjgSGFi5G26zwgZGDFCFyBHvSv1fe7AFzmVe3",
+    "public_key": "ed25519:6666666666666666666666666666666666666666666",
     "request_type": "view_access_key",
     "finality": "final"
   }
@@ -1365,7 +1365,7 @@ https://tx.test.fastnear.com
     "method": "query",
     "params": {
       "account_id": "root.near",
-      "public_key": "ed25519:CByX7HPjgSGFi5G26zwgZGDFCFyBHvSv1fe7AFzmVe3",
+      "public_key": "ed25519:6666666666666666666666666666666666666666666",
       "request_type": "view_access_key",
       "finality": "final"
     }
@@ -2156,7 +2156,7 @@ https://tx.test.fastnear.com
   "id": "fastnear",
   "method": "блок",
   "params": {
-    "block_id": 193909529
+    "block_id": 9820210
   }
 }
 ```
@@ -2169,7 +2169,7 @@ https://tx.test.fastnear.com
     "id": "fastnear",
     "method": "блок",
     "params": {
-      "block_id": 193909529
+      "block_id": 9820210
     }
   },
   "headers": {},
@@ -2356,7 +2356,7 @@ https://tx.test.fastnear.com
   "id": "fastnear",
   "method": "блок",
   "params": {
-    "block_id": "6sddgq8nkENAz4f8qR72qxRPM25QWNBVMrkYr63DgC2E"
+    "block_id": "EPnLgE7iEq9s7yTkos96M3cWymH5avBAPm3qx3NXqR8H"
   }
 }
 ```
@@ -2369,7 +2369,7 @@ https://tx.test.fastnear.com
     "id": "fastnear",
     "method": "блок",
     "params": {
-      "block_id": "6sddgq8nkENAz4f8qR72qxRPM25QWNBVMrkYr63DgC2E"
+      "block_id": "EPnLgE7iEq9s7yTkos96M3cWymH5avBAPm3qx3NXqR8H"
     }
   },
   "headers": {},
@@ -2556,7 +2556,7 @@ https://tx.test.fastnear.com
   "id": "fastnear",
   "method": "block_effects",
   "params": {
-    "block_id": 193909529
+    "block_id": 9820210
   }
 }
 ```
@@ -2569,7 +2569,7 @@ https://tx.test.fastnear.com
     "id": "fastnear",
     "method": "block_effects",
     "params": {
-      "block_id": 193909529
+      "block_id": 9820210
     }
   },
   "headers": {},
@@ -4128,9 +4128,6 @@ https://tx.test.fastnear.com
   "query": {}
 }
 ```
-### Входные данные
-- `changes_type` (body, обязательный, string): Селектор изменений состояния, используемый в этом примере.
-- `account_ids` (body, обязательный, array): Аккаунты, изменения состояния которых нужно вернуть.
 ### Схема запроса
 ```json
 {
@@ -4175,49 +4172,7 @@ https://tx.test.fastnear.com
       "required": true,
       "schema": {
         "type": "object",
-        "required": [
-          "финальность",
-          "changes_type",
-          "account_ids"
-        ],
-        "properties": [
-          {
-            "name": "финальность",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "description": "Финальность блока",
-              "enum": [
-                "final",
-                "near-final",
-                "optimistic"
-              ]
-            }
-          },
-          {
-            "name": "changes_type",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "description": "Селектор изменений состояния для этого примера",
-              "enum": [
-                "account_changes"
-              ]
-            }
-          },
-          {
-            "name": "account_ids",
-            "required": true,
-            "schema": {
-              "type": "array",
-              "description": "Аккаунты, для которых нужно вернуть изменения состояния",
-              "items": {
-                "type": "string",
-                "description": "ID аккаунта NEAR"
-              }
-            }
-          }
-        ]
+        "description": "One of multiple possible types"
       }
     }
   ]
@@ -4375,8 +4330,8 @@ https://tx.test.fastnear.com
   "id": "fastnear",
   "method": "chunk",
   "params": {
-    "block_id": "6sddgq8nkENAz4f8qR72qxRPM25QWNBVMrkYr63DgC2E",
-    "shard_id": 10
+    "block_id": 9820210,
+    "shard_id": 0
   }
 }
 ```
@@ -4389,8 +4344,8 @@ https://tx.test.fastnear.com
     "id": "fastnear",
     "method": "chunk",
     "params": {
-      "block_id": "6sddgq8nkENAz4f8qR72qxRPM25QWNBVMrkYr63DgC2E",
-      "shard_id": 10
+      "block_id": 9820210,
+      "shard_id": 0
     }
   },
   "headers": {},
@@ -4826,7 +4781,7 @@ https://tx.test.fastnear.com
   "id": "fastnear",
   "method": "chunk",
   "params": {
-    "chunk_id": "H6zcZFttQB82dDKUgZUcB3D7kU2TKCToujEu4dAmNtey"
+    "chunk_id": "CUc7UcYGcXwu5Y6UqEkkS6UbffHN4NNHhh5XLRHV8kLu"
   }
 }
 ```
@@ -4839,7 +4794,7 @@ https://tx.test.fastnear.com
     "id": "fastnear",
     "method": "chunk",
     "params": {
-      "chunk_id": "H6zcZFttQB82dDKUgZUcB3D7kU2TKCToujEu4dAmNtey"
+      "chunk_id": "CUc7UcYGcXwu5Y6UqEkkS6UbffHN4NNHhh5XLRHV8kLu"
     }
   },
   "headers": {},
@@ -6293,8 +6248,8 @@ https://tx.test.fastnear.com
   "id": "fastnear",
   "method": "EXPERIMENTAL_congestion_level",
   "params": {
-    "block_id": "6sddgq8nkENAz4f8qR72qxRPM25QWNBVMrkYr63DgC2E",
-    "shard_id": 10
+    "block_id": 9820210,
+    "shard_id": 0
   }
 }
 ```
@@ -6307,8 +6262,8 @@ https://tx.test.fastnear.com
     "id": "fastnear",
     "method": "EXPERIMENTAL_congestion_level",
     "params": {
-      "block_id": "6sddgq8nkENAz4f8qR72qxRPM25QWNBVMrkYr63DgC2E",
-      "shard_id": 10
+      "block_id": 9820210,
+      "shard_id": 0
     }
   },
   "headers": {},
@@ -6794,9 +6749,9 @@ https://tx.test.fastnear.com
   "id": "fastnear",
   "method": "EXPERIMENTAL_light_client_proof",
   "params": {
-    "light_client_head": "6sddgq8nkENAz4f8qR72qxRPM25QWNBVMrkYr63DgC2E",
-    "sender_id": "intents.near",
-    "transaction_hash": "4EQZ5qoEJUbz8SRNkNwrAPtsn2VFhg9Ci1weaNNpiuR7",
+    "light_client_head": "AF2yY9x1SkCsPWpgfXa4RvnEY99YeSEExBZZ4ouiwoa1",
+    "sender_id": "00000000012.near",
+    "transaction_hash": "ESShk21GZb6cgFRoJyEJqdJXuoP72fuCmCn6pNMhXFC7",
     "type": "транзакция"
   }
 }
@@ -6810,9 +6765,9 @@ https://tx.test.fastnear.com
     "id": "fastnear",
     "method": "EXPERIMENTAL_light_client_proof",
     "params": {
-      "light_client_head": "6sddgq8nkENAz4f8qR72qxRPM25QWNBVMrkYr63DgC2E",
-      "sender_id": "intents.near",
-      "transaction_hash": "4EQZ5qoEJUbz8SRNkNwrAPtsn2VFhg9Ci1weaNNpiuR7",
+      "light_client_head": "AF2yY9x1SkCsPWpgfXa4RvnEY99YeSEExBZZ4ouiwoa1",
+      "sender_id": "00000000012.near",
+      "transaction_hash": "ESShk21GZb6cgFRoJyEJqdJXuoP72fuCmCn6pNMhXFC7",
       "type": "транзакция"
     }
   },
@@ -6826,6 +6781,8 @@ https://tx.test.fastnear.com
 - `sender_id` (body, string): ID аккаунта NEAR.
 - `transaction_hash` (body, string): Хеш в кодировке Base58.
 - `type` (body, string)
+- `receipt_id` (body, string): Base58-encoded hash
+- `receiver_id` (body, string): ID аккаунта NEAR
 ### Схема запроса
 ```json
 {
@@ -6904,8 +6861,24 @@ https://tx.test.fastnear.com
             "schema": {
               "type": "string",
               "enum": [
-                "транзакция"
+                "квитанция"
               ]
+            }
+          },
+          {
+            "name": "receipt_id",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "Base58-encoded hash"
+            }
+          },
+          {
+            "name": "receiver_id",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "ID аккаунта NEAR"
             }
           }
         ]
@@ -7208,24 +7181,7 @@ https://tx.test.fastnear.com
       "required": true,
       "schema": {
         "type": "object",
-        "required": [
-          "финальность"
-        ],
-        "properties": [
-          {
-            "name": "финальность",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "description": "Финальность блока",
-              "enum": [
-                "final",
-                "near-final",
-                "optimistic"
-              ]
-            }
-          }
-        ]
+        "description": "One of multiple possible types"
       }
     }
   ]
@@ -9354,9 +9310,9 @@ https://tx.test.fastnear.com
   "method": "light_client_proof",
   "params": {
     "type": "транзакция",
-    "transaction_hash": "4EQZ5qoEJUbz8SRNkNwrAPtsn2VFhg9Ci1weaNNpiuR7",
-    "sender_id": "intents.near",
-    "light_client_head": "6sddgq8nkENAz4f8qR72qxRPM25QWNBVMrkYr63DgC2E"
+    "transaction_hash": "ESShk21GZb6cgFRoJyEJqdJXuoP72fuCmCn6pNMhXFC7",
+    "sender_id": "00000000012.near",
+    "light_client_head": "AF2yY9x1SkCsPWpgfXa4RvnEY99YeSEExBZZ4ouiwoa1"
   }
 }
 ```
@@ -9370,9 +9326,9 @@ https://tx.test.fastnear.com
     "method": "light_client_proof",
     "params": {
       "type": "транзакция",
-      "transaction_hash": "4EQZ5qoEJUbz8SRNkNwrAPtsn2VFhg9Ci1weaNNpiuR7",
-      "sender_id": "intents.near",
-      "light_client_head": "6sddgq8nkENAz4f8qR72qxRPM25QWNBVMrkYr63DgC2E"
+      "transaction_hash": "ESShk21GZb6cgFRoJyEJqdJXuoP72fuCmCn6pNMhXFC7",
+      "sender_id": "00000000012.near",
+      "light_client_head": "AF2yY9x1SkCsPWpgfXa4RvnEY99YeSEExBZZ4ouiwoa1"
     }
   },
   "headers": {},
@@ -9385,6 +9341,8 @@ https://tx.test.fastnear.com
 - `sender_id` (body, string): ID аккаунта NEAR.
 - `transaction_hash` (body, string): Хеш в кодировке Base58.
 - `type` (body, string)
+- `receipt_id` (body, string): Base58-encoded hash
+- `receiver_id` (body, string): ID аккаунта NEAR
 ### Схема запроса
 ```json
 {
@@ -9463,8 +9421,24 @@ https://tx.test.fastnear.com
             "schema": {
               "type": "string",
               "enum": [
-                "транзакция"
+                "квитанция"
               ]
+            }
+          },
+          {
+            "name": "receipt_id",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "Base58-encoded hash"
+            }
+          },
+          {
+            "name": "receiver_id",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "ID аккаунта NEAR"
             }
           }
         ]
@@ -11148,7 +11122,7 @@ https://tx.test.fastnear.com
             "required": true,
             "schema": {
               "type": "string",
-              "description": "Подписанная транзакция в кодировке Base64. Её нужно сгенерировать для подписывающего аккаунта непосредственно перед отправкой."
+              "description": "Подписанная транзакция в кодировке Base64"
             }
           },
           {
@@ -11367,7 +11341,7 @@ https://tx.test.fastnear.com
             "required": true,
             "schema": {
               "type": "string",
-              "description": "Подписанная транзакция в кодировке Base64. Её нужно сгенерировать для подписывающего аккаунта непосредственно перед отправкой."
+              "description": "Подписанная транзакция в кодировке Base64"
             }
           },
           {
@@ -11575,7 +11549,7 @@ https://tx.test.fastnear.com
   "id": "fastnear",
   "method": "EXPERIMENTAL_receipt",
   "params": {
-    "receipt_id": "5QtWzoy2VpKZEvUbe9aUjpwnXTqHzv4gehuox8g3DA4y"
+    "receipt_id": "FcFKrKQziMPCgYMFiLMZwecBtA7vqxdkatkhc1j3GYj8"
   }
 }
 ```
@@ -11588,7 +11562,7 @@ https://tx.test.fastnear.com
     "id": "fastnear",
     "method": "EXPERIMENTAL_receipt",
     "params": {
-      "receipt_id": "5QtWzoy2VpKZEvUbe9aUjpwnXTqHzv4gehuox8g3DA4y"
+      "receipt_id": "FcFKrKQziMPCgYMFiLMZwecBtA7vqxdkatkhc1j3GYj8"
     }
   },
   "headers": {},
@@ -11826,8 +11800,8 @@ https://tx.test.fastnear.com
   "method": "EXPERIMENTAL_tx_status",
   "params": {
     "wait_until": "EXECUTED_OPTIMISTIC",
-    "sender_account_id": "intents.near",
-    "tx_hash": "4EQZ5qoEJUbz8SRNkNwrAPtsn2VFhg9Ci1weaNNpiuR7"
+    "sender_account_id": "00000000012.near",
+    "tx_hash": "ESShk21GZb6cgFRoJyEJqdJXuoP72fuCmCn6pNMhXFC7"
   }
 }
 ```
@@ -11841,8 +11815,8 @@ https://tx.test.fastnear.com
     "method": "EXPERIMENTAL_tx_status",
     "params": {
       "wait_until": "EXECUTED_OPTIMISTIC",
-      "sender_account_id": "intents.near",
-      "tx_hash": "4EQZ5qoEJUbz8SRNkNwrAPtsn2VFhg9Ci1weaNNpiuR7"
+      "sender_account_id": "00000000012.near",
+      "tx_hash": "ESShk21GZb6cgFRoJyEJqdJXuoP72fuCmCn6pNMhXFC7"
     }
   },
   "headers": {},
@@ -12208,7 +12182,7 @@ https://tx.test.fastnear.com
             "required": true,
             "schema": {
               "type": "string",
-              "description": "Подписанная транзакция в кодировке Base64. Её нужно сгенерировать для подписывающего аккаунта непосредственно перед отправкой."
+              "description": "Подписанная транзакция в кодировке Base64"
             }
           },
           {
@@ -12416,8 +12390,8 @@ https://tx.test.fastnear.com
   "id": "fastnear",
   "method": "tx",
   "params": {
-    "tx_hash": "4EQZ5qoEJUbz8SRNkNwrAPtsn2VFhg9Ci1weaNNpiuR7",
-    "sender_account_id": "intents.near"
+    "tx_hash": "ESShk21GZb6cgFRoJyEJqdJXuoP72fuCmCn6pNMhXFC7",
+    "sender_account_id": "00000000012.near"
   }
 }
 ```
@@ -12430,8 +12404,8 @@ https://tx.test.fastnear.com
     "id": "fastnear",
     "method": "tx",
     "params": {
-      "tx_hash": "4EQZ5qoEJUbz8SRNkNwrAPtsn2VFhg9Ci1weaNNpiuR7",
-      "sender_account_id": "intents.near"
+      "tx_hash": "ESShk21GZb6cgFRoJyEJqdJXuoP72fuCmCn6pNMhXFC7",
+      "sender_account_id": "00000000012.near"
     }
   },
   "headers": {},
@@ -15501,10 +15475,10 @@ https://tx.test.fastnear.com
 ### Тело запроса
 ```json
 {
-  "asc": false,
+  "asc": true,
   "include_metadata": true,
-  "key_prefix": "graph/follow/",
-  "limit": 50
+  "key_prefix": "graph/follow/sleet.near",
+  "limit": 10
 }
 ```
 ## Справка по запросу
@@ -15512,10 +15486,10 @@ https://tx.test.fastnear.com
 ```json
 {
   "body": {
-    "asc": false,
+    "asc": true,
     "include_metadata": true,
-    "key_prefix": "graph/follow/",
-    "limit": 50
+    "key_prefix": "graph/follow/sleet.near",
+    "limit": 10
   },
   "headers": {},
   "path": {
@@ -15748,7 +15722,7 @@ https://tx.test.fastnear.com
 ### Тело запроса
 ```json
 {
-  "asc": false,
+  "asc": true,
   "include_metadata": false,
   "limit": 50
 }
@@ -15758,7 +15732,7 @@ https://tx.test.fastnear.com
 ```json
 {
   "body": {
-    "asc": false,
+    "asc": true,
     "include_metadata": false,
     "key": "graph/follow/sleet.near",
     "limit": 50
@@ -17039,7 +17013,7 @@ https://tx.test.fastnear.com
 ## Текущий запрос
 - Сеть: Mainnet
 - Метод: GET
-- URL: https://mainnet.neardata.xyz/v0/block/9820210/chunk/0
+- URL: https://mainnet.neardata.xyz/v0/block/50000000/chunk/0
 - Активный пример: Mainnet
 ## Справка по запросу
 ### Активный пример
@@ -17048,7 +17022,7 @@ https://tx.test.fastnear.com
   "body": null,
   "headers": {},
   "path": {
-    "block_height": "9820210",
+    "block_height": "50000000",
     "shard_id": "0"
   },
   "query": {}
@@ -17234,7 +17208,7 @@ https://tx.test.fastnear.com
 ## Текущий запрос
 - Сеть: Mainnet
 - Метод: GET
-- URL: https://mainnet.neardata.xyz/v0/block/9820210/shard/0
+- URL: https://mainnet.neardata.xyz/v0/block/50000000/shard/0
 - Активный пример: Mainnet
 ## Справка по запросу
 ### Активный пример
@@ -17243,7 +17217,7 @@ https://tx.test.fastnear.com
   "body": null,
   "headers": {},
   "path": {
-    "block_height": "9820210",
+    "block_height": "50000000",
     "shard_id": "0"
   },
   "query": {}

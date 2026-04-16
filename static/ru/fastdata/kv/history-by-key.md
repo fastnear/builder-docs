@@ -23,7 +23,7 @@
 ### Тело запроса
 ```json
 {
-  "asc": false,
+  "asc": true,
   "include_metadata": false,
   "limit": 50
 }
@@ -33,7 +33,7 @@
 ```json
 {
   "body": {
-    "asc": false,
+    "asc": true,
     "include_metadata": false,
     "key": "graph/follow/sleet.near",
     "limit": 50

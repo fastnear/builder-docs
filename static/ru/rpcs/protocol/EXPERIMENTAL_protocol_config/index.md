@@ -92,24 +92,7 @@
       "required": true,
       "schema": {
         "type": "object",
-        "required": [
-          "финальность"
-        ],
-        "properties": [
-          {
-            "name": "финальность",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "description": "Финальность блока",
-              "enum": [
-                "final",
-                "near-final",
-                "optimistic"
-              ]
-            }
-          }
-        ]
+        "description": "One of multiple possible types"
       }
     }
   ]

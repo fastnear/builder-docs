@@ -23,10 +23,10 @@
 ### Тело запроса
 ```json
 {
-  "asc": false,
+  "asc": true,
   "include_metadata": true,
-  "key_prefix": "graph/follow/",
-  "limit": 50
+  "key_prefix": "graph/follow/sleet.near",
+  "limit": 10
 }
 ```
 ## Справка по запросу
@@ -34,10 +34,10 @@
 ```json
 {
   "body": {
-    "asc": false,
+    "asc": true,
     "include_metadata": true,
-    "key_prefix": "graph/follow/",
-    "limit": 50
+    "key_prefix": "graph/follow/sleet.near",
+    "limit": 10
   },
   "headers": {},
   "path": {

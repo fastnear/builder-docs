@@ -27,7 +27,7 @@
   "id": "fastnear",
   "method": "block_effects",
   "params": {
-    "block_id": 193909529
+    "block_id": 9820210
   }
 }
 ```
@@ -40,7 +40,7 @@
     "id": "fastnear",
     "method": "block_effects",
     "params": {
-      "block_id": 193909529
+      "block_id": 9820210
     }
   },
   "headers": {},

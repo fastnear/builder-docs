@@ -29,9 +29,9 @@
   "method": "light_client_proof",
   "params": {
     "type": "транзакция",
-    "transaction_hash": "4EQZ5qoEJUbz8SRNkNwrAPtsn2VFhg9Ci1weaNNpiuR7",
-    "sender_id": "intents.near",
-    "light_client_head": "6sddgq8nkENAz4f8qR72qxRPM25QWNBVMrkYr63DgC2E"
+    "transaction_hash": "ESShk21GZb6cgFRoJyEJqdJXuoP72fuCmCn6pNMhXFC7",
+    "sender_id": "00000000012.near",
+    "light_client_head": "AF2yY9x1SkCsPWpgfXa4RvnEY99YeSEExBZZ4ouiwoa1"
   }
 }
 ```
@@ -45,9 +45,9 @@
     "method": "light_client_proof",
     "params": {
       "type": "транзакция",
-      "transaction_hash": "4EQZ5qoEJUbz8SRNkNwrAPtsn2VFhg9Ci1weaNNpiuR7",
-      "sender_id": "intents.near",
-      "light_client_head": "6sddgq8nkENAz4f8qR72qxRPM25QWNBVMrkYr63DgC2E"
+      "transaction_hash": "ESShk21GZb6cgFRoJyEJqdJXuoP72fuCmCn6pNMhXFC7",
+      "sender_id": "00000000012.near",
+      "light_client_head": "AF2yY9x1SkCsPWpgfXa4RvnEY99YeSEExBZZ4ouiwoa1"
     }
   },
   "headers": {},
@@ -60,6 +60,8 @@
 - `sender_id` (body, string): ID аккаунта NEAR.
 - `transaction_hash` (body, string): Хеш в кодировке Base58.
 - `type` (body, string)
+- `receipt_id` (body, string): Base58-encoded hash
+- `receiver_id` (body, string): ID аккаунта NEAR
 ### Схема запроса
 ```json
 {
@@ -138,8 +140,24 @@
             "schema": {
               "type": "string",
               "enum": [
-                "транзакция"
+                "квитанция"
               ]
+            }
+          },
+          {
+            "name": "receipt_id",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "Base58-encoded hash"
+            }
+          },
+          {
+            "name": "receiver_id",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "ID аккаунта NEAR"
             }
           }
         ]

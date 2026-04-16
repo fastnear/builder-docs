@@ -28,8 +28,8 @@
   "id": "fastnear",
   "method": "tx",
   "params": {
-    "tx_hash": "4EQZ5qoEJUbz8SRNkNwrAPtsn2VFhg9Ci1weaNNpiuR7",
-    "sender_account_id": "intents.near"
+    "tx_hash": "ESShk21GZb6cgFRoJyEJqdJXuoP72fuCmCn6pNMhXFC7",
+    "sender_account_id": "00000000012.near"
   }
 }
 ```
@@ -42,8 +42,8 @@
     "id": "fastnear",
     "method": "tx",
     "params": {
-      "tx_hash": "4EQZ5qoEJUbz8SRNkNwrAPtsn2VFhg9Ci1weaNNpiuR7",
-      "sender_account_id": "intents.near"
+      "tx_hash": "ESShk21GZb6cgFRoJyEJqdJXuoP72fuCmCn6pNMhXFC7",
+      "sender_account_id": "00000000012.near"
     }
   },
   "headers": {},

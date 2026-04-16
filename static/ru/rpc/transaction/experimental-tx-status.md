@@ -29,8 +29,8 @@
   "method": "EXPERIMENTAL_tx_status",
   "params": {
     "wait_until": "EXECUTED_OPTIMISTIC",
-    "sender_account_id": "intents.near",
-    "tx_hash": "4EQZ5qoEJUbz8SRNkNwrAPtsn2VFhg9Ci1weaNNpiuR7"
+    "sender_account_id": "00000000012.near",
+    "tx_hash": "ESShk21GZb6cgFRoJyEJqdJXuoP72fuCmCn6pNMhXFC7"
   }
 }
 ```
@@ -44,8 +44,8 @@
     "method": "EXPERIMENTAL_tx_status",
     "params": {
       "wait_until": "EXECUTED_OPTIMISTIC",
-      "sender_account_id": "intents.near",
-      "tx_hash": "4EQZ5qoEJUbz8SRNkNwrAPtsn2VFhg9Ci1weaNNpiuR7"
+      "sender_account_id": "00000000012.near",
+      "tx_hash": "ESShk21GZb6cgFRoJyEJqdJXuoP72fuCmCn6pNMhXFC7"
     }
   },
   "headers": {},

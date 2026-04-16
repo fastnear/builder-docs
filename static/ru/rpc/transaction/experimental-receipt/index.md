@@ -28,7 +28,7 @@
   "id": "fastnear",
   "method": "EXPERIMENTAL_receipt",
   "params": {
-    "receipt_id": "5QtWzoy2VpKZEvUbe9aUjpwnXTqHzv4gehuox8g3DA4y"
+    "receipt_id": "FcFKrKQziMPCgYMFiLMZwecBtA7vqxdkatkhc1j3GYj8"
   }
 }
 ```
@@ -41,7 +41,7 @@
     "id": "fastnear",
     "method": "EXPERIMENTAL_receipt",
     "params": {
-      "receipt_id": "5QtWzoy2VpKZEvUbe9aUjpwnXTqHzv4gehuox8g3DA4y"
+      "receipt_id": "FcFKrKQziMPCgYMFiLMZwecBtA7vqxdkatkhc1j3GYj8"
     }
   },
   "headers": {},

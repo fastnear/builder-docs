@@ -18,7 +18,7 @@
 ## Текущий запрос
 - Сеть: Mainnet
 - Метод: GET
-- URL: https://mainnet.neardata.xyz/v0/block/9820210/chunk/0
+- URL: https://mainnet.neardata.xyz/v0/block/50000000/chunk/0
 - Активный пример: Mainnet
 ## Справка по запросу
 ### Активный пример
@@ -27,7 +27,7 @@
   "body": null,
   "headers": {},
   "path": {
-    "block_height": "9820210",
+    "block_height": "50000000",
     "shard_id": "0"
   },
   "query": {}

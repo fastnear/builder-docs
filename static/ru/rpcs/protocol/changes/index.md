@@ -56,9 +56,6 @@
   "query": {}
 }
 ```
-### Входные данные
-- `changes_type` (body, обязательный, string): Селектор изменений состояния, используемый в этом примере.
-- `account_ids` (body, обязательный, array): Аккаунты, изменения состояния которых нужно вернуть.
 ### Схема запроса
 ```json
 {
@@ -103,49 +100,7 @@
       "required": true,
       "schema": {
         "type": "object",
-        "required": [
-          "финальность",
-          "changes_type",
-          "account_ids"
-        ],
-        "properties": [
-          {
-            "name": "финальность",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "description": "Финальность блока",
-              "enum": [
-                "final",
-                "near-final",
-                "optimistic"
-              ]
-            }
-          },
-          {
-            "name": "changes_type",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "description": "Селектор изменений состояния для этого примера",
-              "enum": [
-                "account_changes"
-              ]
-            }
-          },
-          {
-            "name": "account_ids",
-            "required": true,
-            "schema": {
-              "type": "array",
-              "description": "Аккаунты, для которых нужно вернуть изменения состояния",
-              "items": {
-                "type": "string",
-                "description": "ID аккаунта NEAR"
-              }
-            }
-          }
-        ]
+        "description": "One of multiple possible types"
       }
     }
   ]

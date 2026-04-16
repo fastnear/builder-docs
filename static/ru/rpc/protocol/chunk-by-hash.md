@@ -28,7 +28,7 @@
   "id": "fastnear",
   "method": "chunk",
   "params": {
-    "chunk_id": "H6zcZFttQB82dDKUgZUcB3D7kU2TKCToujEu4dAmNtey"
+    "chunk_id": "CUc7UcYGcXwu5Y6UqEkkS6UbffHN4NNHhh5XLRHV8kLu"
   }
 }
 ```
@@ -41,7 +41,7 @@
     "id": "fastnear",
     "method": "chunk",
     "params": {
-      "chunk_id": "H6zcZFttQB82dDKUgZUcB3D7kU2TKCToujEu4dAmNtey"
+      "chunk_id": "CUc7UcYGcXwu5Y6UqEkkS6UbffHN4NNHhh5XLRHV8kLu"
     }
   },
   "headers": {},

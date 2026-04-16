@@ -169,54 +169,110 @@ function computeFieldValuesForExample(pageModel, networkKey, example) {
   );
 }
 
-const RUNTIME_STATUS_FIELD_DEFAULTS = {
-  "rpc-block-by-height": "block_id",
+const RUNTIME_FIELD_BINDINGS = {
+  "rpc-block-by-height":               [{ field: "block_id", source: "latest_block_height" }],
+  "rpc-block-by-id":                   [{ field: "block_id", source: "latest_block_hash" }],
+  "rpc-block-effects":                 [{ field: "block_id", source: "latest_block_height" }],
+  "rpc-EXPERIMENTAL-congestion-level": [{ field: "block_id", source: "latest_block_height" }],
+  "rpc-chunk-by-block-shard":          [{ field: "block_id", source: "latest_block_height" }],
+  "rpc-chunk-by-hash":                 [{ field: "chunk_id", source: "latest_chunk_hash" }],
+  "rpc-tx-status": [
+    { field: "tx_hash", source: "latest_tx_hash" },
+    { field: "sender_account_id", source: "latest_tx_signer_id" },
+  ],
+  "rpc-EXPERIMENTAL-tx-status": [
+    { field: "tx_hash", source: "latest_tx_hash" },
+    { field: "sender_account_id", source: "latest_tx_signer_id" },
+  ],
+  "rpc-EXPERIMENTAL-receipt": [{ field: "receipt_id", source: "latest_receipt_id" }],
+  "rpc-light-client-proof": [
+    { field: "transaction_hash", source: "latest_tx_hash" },
+    { field: "sender_id", source: "latest_tx_signer_id" },
+    { field: "light_client_head", source: "latest_block_hash" },
+  ],
+  "rpc-EXPERIMENTAL-light-client-proof": [
+    { field: "transaction_hash", source: "latest_tx_hash" },
+    { field: "sender_id", source: "latest_tx_signer_id" },
+    { field: "light_client_head", source: "latest_block_hash" },
+  ],
 };
 
-async function fetchLatestBlockHeight(baseUrl, signal) {
-  const normalizedUrl = baseUrl.replace(/\/+$/, "");
+async function jsonRpcCall(baseUrl, method, params, signal) {
+  try {
+    const response = await fetch(baseUrl, {
+      method: "POST",
+      headers: { Accept: "application/json", "Content-Type": "application/json" },
+      body: JSON.stringify({ jsonrpc: "2.0", id: "fastnear-docs", method, params }),
+      signal,
+    });
+    if (!response.ok) return null;
+    const payload = await response.json();
+    return payload?.result ?? null;
+  } catch {
+    return null;
+  }
+}
 
+async function fetchStatusSummary(baseUrl, signal) {
+  const normalizedUrl = baseUrl.replace(/\/+$/, "");
   try {
     const response = await fetch(`${normalizedUrl}/status`, {
       headers: { Accept: "application/json" },
       signal,
     });
-
     if (response.ok) {
       const payload = await response.json();
-      const latestBlockHeight = Number(payload?.latest_block_height);
-      if (Number.isFinite(latestBlockHeight)) {
-        return latestBlockHeight;
-      }
+      const height = Number(payload?.sync_info?.latest_block_height ?? payload?.latest_block_height);
+      const hash = payload?.sync_info?.latest_block_hash ?? payload?.latest_block_hash;
+      if (Number.isFinite(height)) return { latest_block_height: height, latest_block_hash: hash };
     }
   } catch {}
 
-  try {
-    const response = await fetch(normalizedUrl, {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        jsonrpc: "2.0",
-        id: "fastnear-docs",
-        method: "status",
-        params: [],
-      }),
-      signal,
-    });
-
-    if (response.ok) {
-      const payload = await response.json();
-      const latestBlockHeight = Number(payload?.result?.sync_info?.latest_block_height);
-      if (Number.isFinite(latestBlockHeight)) {
-        return latestBlockHeight;
-      }
-    }
-  } catch {}
-
+  const rpcStatus = await jsonRpcCall(normalizedUrl, "status", [], signal);
+  const height = Number(rpcStatus?.sync_info?.latest_block_height);
+  if (Number.isFinite(height)) {
+    return {
+      latest_block_height: height,
+      latest_block_hash: rpcStatus?.sync_info?.latest_block_hash,
+    };
+  }
   return null;
+}
+
+async function fetchRuntimeExampleValues(baseUrl, signal) {
+  const normalizedUrl = baseUrl.replace(/\/+$/, "");
+  const values = {};
+  const status = await fetchStatusSummary(normalizedUrl, signal);
+  if (!status) return values;
+  values.latest_block_height = status.latest_block_height;
+  if (status.latest_block_hash) values.latest_block_hash = status.latest_block_hash;
+
+  const block = await jsonRpcCall(
+    normalizedUrl,
+    "block",
+    { block_id: status.latest_block_height },
+    signal
+  );
+  const interestingChunk = block?.chunks?.find(
+    (c) => c.tx_root && c.tx_root !== "11111111111111111111111111111111"
+  );
+  if (interestingChunk?.chunk_hash) {
+    values.latest_chunk_hash = interestingChunk.chunk_hash;
+    const chunk = await jsonRpcCall(
+      normalizedUrl,
+      "chunk",
+      { chunk_id: interestingChunk.chunk_hash },
+      signal
+    );
+    const tx = chunk?.transactions?.[0];
+    if (tx?.hash) {
+      values.latest_tx_hash = tx.hash;
+      if (tx.signer_id) values.latest_tx_signer_id = tx.signer_id;
+    }
+    const receipt = chunk?.receipts?.[0];
+    if (receipt?.receipt_id) values.latest_receipt_id = receipt.receipt_id;
+  }
+  return values;
 }
 
 function waitForNextPaint() {
@@ -1026,39 +1082,37 @@ function FastnearOperationPage({ pageModel }) {
   }, [pageModel, selectedNetwork]);
 
   useEffect(() => {
-    const targetFieldName = RUNTIME_STATUS_FIELD_DEFAULTS[pageModel.pageModelId];
-    if (!targetFieldName || !selectedNetworkDetails?.url) {
+    const bindings = RUNTIME_FIELD_BINDINGS[pageModel.pageModelId];
+    if (!bindings || !selectedNetworkDetails?.url) {
       return undefined;
     }
 
-    const targetField = pageModel.interaction.fields.find((field) => field.name === targetFieldName);
-    if (!targetField) {
+    const resolvedBindings = bindings
+      .map((binding) => {
+        const field = pageModel.interaction.fields.find((f) => f.name === binding.field);
+        if (!field) return null;
+        const expectedDefault = getDefaultFieldValue(pageModel, field, selectedNetwork).trim();
+        return { ...binding, expectedDefault };
+      })
+      .filter(Boolean);
+    if (resolvedBindings.length === 0) {
       return undefined;
     }
 
-    const expectedDefaultValue = getDefaultFieldValue(pageModel, targetField, selectedNetwork).trim();
     const controller = new AbortController();
-
     void (async () => {
-      const latestBlockHeight = await fetchLatestBlockHeight(
-        selectedNetworkDetails.url,
-        controller.signal
-      );
-
-      if (!Number.isFinite(latestBlockHeight)) {
-        return;
-      }
-
+      const live = await fetchRuntimeExampleValues(selectedNetworkDetails.url, controller.signal);
       setFieldValues((currentValues) => {
-        const currentValue = (currentValues[targetFieldName] || "").trim();
-        if (currentValue && currentValue !== expectedDefaultValue) {
-          return currentValues;
+        let next = currentValues;
+        for (const binding of resolvedBindings) {
+          const liveValue = live[binding.source];
+          if (liveValue === undefined || liveValue === null || liveValue === "") continue;
+          const currentValue = (currentValues[binding.field] || "").trim();
+          if (currentValue && currentValue !== binding.expectedDefault) continue;
+          if (next === currentValues) next = { ...currentValues };
+          next[binding.field] = String(liveValue);
         }
-
-        return {
-          ...currentValues,
-          [targetFieldName]: String(latestBlockHeight),
-        };
+        return next;
       });
     })();
 
