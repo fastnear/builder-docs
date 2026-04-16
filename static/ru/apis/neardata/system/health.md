@@ -1,6 +1,6 @@
 # NEAR Data API - Состояние
 Проверить состояние сервиса
-Проверьте работоспособность сервиса neardata — возвращает `{status: ok}` при успехе, ошибку при проблемах.
+Проверьте работоспособность сервиса NEAR Data — возвращает `{status: ok}` при успехе, ошибку при проблемах.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/apis/neardata/system/health
 - https://docs.fastnear.com/ru/apis/neardata/openapi/system/get_health

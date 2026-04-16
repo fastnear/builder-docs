@@ -28,6 +28,7 @@ const ALGOLIA_RELEVANCE_CASES_PATH = path.join(ROOT, "algolia/relevance-cases.js
 const ALGOLIA_OPERATIONS_PATH = path.join(ROOT, "algolia/operations.md");
 const ALGOLIA_RELEVANCE_AUDIT_PATH = path.join(ROOT, "scripts/audit-algolia-relevance.js");
 const SEARCH_BAR_PATH = path.join(ROOT, "src/theme/SearchBar/index.js");
+const SEARCH_BAR_RUNTIME_PATH = path.join(ROOT, "src/theme/SearchBar/AlgoliaSearchRuntime.js");
 const SEARCH_BAR_STYLES_PATH = path.join(ROOT, "src/theme/SearchBar/styles.css");
 const REDIRECTS_PATH = path.join(BUILD_ROOT, "_redirects");
 const ROBOTS_PATH = path.join(BUILD_ROOT, "robots.txt");
@@ -564,6 +565,9 @@ function auditConfigSurface() {
   );
   const crawlerConfigText = fs.readFileSync(ALGOLIA_CRAWLER_CONFIG_PATH, "utf8");
   const searchBarText = fs.readFileSync(SEARCH_BAR_PATH, "utf8");
+  const searchBarRuntimeText = fs.existsSync(SEARCH_BAR_RUNTIME_PATH)
+    ? fs.readFileSync(SEARCH_BAR_RUNTIME_PATH, "utf8")
+    : "";
   const crawlerConfig = createCrawlerConfig();
   const crawlerPathsToMatch = crawlerConfig.actions?.[0]?.pathsToMatch || [];
   const crawlerSitemaps = crawlerConfig.sitemaps || [];
@@ -627,8 +631,9 @@ function auditConfigSurface() {
     "localeRegistry.json should set htmlLang=ru for the Russian locale"
   );
   assert(
-    searchBarText.includes("language:${currentLocale}"),
-    "src/theme/SearchBar/index.js should hard-filter Algolia results to the active locale"
+    searchBarText.includes("language:${currentLocale}") ||
+      searchBarRuntimeText.includes("language:${currentLocale}"),
+    "SearchBar (index.js or AlgoliaSearchRuntime.js) should hard-filter Algolia results to the active locale"
   );
   [
     "NODE_ENV=production",
@@ -715,20 +720,22 @@ function auditConfigSurface() {
     contentIndex === indexSettings.searchableAttributes.length - 1,
     "algolia/index-settings.json should keep content last in searchableAttributes"
   );
-  // Machine-name search is prioritized (see commit 0db6469): operation_id and
-  // canonical_target lead the searchable-attribute list so queries like
-  // `view_account` rank the canonical endpoint above incidental mentions.
+  // Machine-name search is prioritized (see commits 0db6469 + 67a9aab):
+  // operation_id leads the searchable-attribute list so queries like
+  // `view_account` rank the canonical endpoint above incidental mentions;
+  // keywords sits second to carry synonym/tail matches above hierarchy
+  // levels. canonical_target is retained as a filterOnly facet only.
   assert(
     indexSettings.searchableAttributes[0] === "unordered(operation_id)",
     "algolia/index-settings.json should rank operation_id first for machine-name search priority"
   );
   assert(
-    indexSettings.searchableAttributes[1] === "unordered(canonical_target)",
-    "algolia/index-settings.json should rank canonical_target second"
+    indexSettings.searchableAttributes[1] === "unordered(keywords)",
+    "algolia/index-settings.json should rank keywords second so synonyms/tails outrank hierarchy"
   );
   assert(
-    indexSettings.searchableAttributes.includes("unordered(keywords)"),
-    "algolia/index-settings.json should include unordered(keywords) in searchableAttributes"
+    !indexSettings.searchableAttributes.some((attr) => attr.includes("canonical_target")),
+    "algolia/index-settings.json should keep canonical_target out of searchableAttributes (filterOnly facet only)"
   );
   assert(
     rules.every((rule) => String(rule.objectID || "").startsWith("fastnear-")),

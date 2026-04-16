@@ -82,6 +82,10 @@ preserve:
   - Link
   - V0
   - V1
+  - Google
+  - email
+  - nonce
+  - fastnear
 translate:
   exact:
     - from: "Choose Your FastNear Surface"

@@ -73,7 +73,7 @@ function normalizeForAudit(rawText, allowedLiteralPatterns) {
   let text = String(rawText || "").replace(/\u00a0/g, " ");
 
   text = text.replace(/\[([^\]]+)\]\([^)]+\)/g, "$1");
-  text = text.replace(/https?:\/\/[^\s)]+/g, " ");
+  text = text.replace(/https?:\/\/[^\s)"']+/g, " ");
   text = text.replace(/`[^`\n]+`/g, " ");
   text = text.replace(/<[^>\n]+>/g, " ");
   text = text.replace(/\{[^}\n]+\}/g, " ");
