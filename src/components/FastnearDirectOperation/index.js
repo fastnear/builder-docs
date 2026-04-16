@@ -11,10 +11,7 @@ import {
 } from "@site/src/utils/markdownExport";
 import { buildOperationKeywords, getOperationSemanticMeta } from "@site/src/utils/seo";
 import { FINALITY_OPTIONS } from "./finalityOptions";
-import {
-  invalidateFastnearPageModelCache,
-  useFastnearPageModelById,
-} from "./pageModels";
+import { useFastnearPageModelById } from "./pageModels";
 import {
   clearPortalApiKey,
   setPortalApiKey,
@@ -1903,7 +1900,7 @@ function FastnearOperationLoading() {
   );
 }
 
-function ResolvedFastnearDirectOperation({ currentLocale, onRetry, pageModelId, renderDescription }) {
+function ResolvedFastnearDirectOperation({ currentLocale, pageModelId, renderDescription }) {
   const pageModel = useFastnearPageModelById(pageModelId, currentLocale);
   const canonicalPageModel = useFastnearPageModelById(pageModelId, "en");
   const operationMeta = useMemo(
@@ -1922,7 +1919,6 @@ function ResolvedFastnearDirectOperation({ currentLocale, onRetry, pageModelId, 
             {uiText.missingPageModel} <code>{pageModelId}</code>.
           </>
         }
-        onRetry={onRetry}
       />
     );
   }
@@ -1964,8 +1960,13 @@ function ResolvedFastnearDirectOperation({ currentLocale, onRetry, pageModelId, 
   );
 }
 
-function FastnearOperationFailure({ message, onRetry }) {
+function FastnearOperationFailure({ message }) {
   const uiText = getFastnearOperationUiText();
+  const handleReload = () => {
+    if (typeof window !== "undefined") {
+      window.location.reload();
+    }
+  };
   return (
     <div className="builder-fastnear-direct">
       <div
@@ -1975,15 +1976,13 @@ function FastnearOperationFailure({ message, onRetry }) {
         <p className="fastnear-interaction__error">
           {message || uiText.loadFailed}
         </p>
-        {onRetry ? (
-          <button
-            type="button"
-            className="fastnear-interaction__retry"
-            onClick={onRetry}
-          >
-            {uiText.retry}
-          </button>
-        ) : null}
+        <button
+          type="button"
+          className="fastnear-interaction__retry"
+          onClick={handleReload}
+        >
+          {uiText.retry}
+        </button>
       </div>
     </div>
   );
@@ -2005,18 +2004,9 @@ class FastnearOperationErrorBoundary extends React.Component {
     }
   }
 
-  handleReset = () => {
-    const { pageModelId, onReset } = this.props;
-    invalidateFastnearPageModelCache(pageModelId);
-    this.setState({ error: null });
-    if (typeof onReset === "function") {
-      onReset();
-    }
-  };
-
   render() {
     if (this.state.error) {
-      return <FastnearOperationFailure onRetry={this.handleReset} />;
+      return <FastnearOperationFailure />;
     }
     return this.props.children;
   }
@@ -2025,26 +2015,14 @@ class FastnearOperationErrorBoundary extends React.Component {
 export default function FastnearDirectOperation({ pageModelId, renderDescription = true }) {
   const { i18n } = useDocusaurusContext();
   const currentLocale = i18n.currentLocale || "en";
-  const [attempt, setAttempt] = useState(0);
-
-  const handleReset = () => {
-    startTransition(() => {
-      setAttempt((value) => value + 1);
-    });
-  };
 
   return (
-    <FastnearOperationErrorBoundary
-      key={`boundary-${attempt}`}
-      pageModelId={pageModelId}
-      onReset={handleReset}
-    >
+    <FastnearOperationErrorBoundary>
       <Suspense fallback={<FastnearOperationLoading />}>
         <ResolvedFastnearDirectOperation
           currentLocale={currentLocale}
           pageModelId={pageModelId}
           renderDescription={renderDescription}
-          onRetry={handleReset}
         />
       </Suspense>
     </FastnearOperationErrorBoundary>
