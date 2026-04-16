@@ -1,8 +1,9 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { Suspense, lazy, useCallback, useEffect, useRef, useState } from 'react';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
-import SearchBarFallback from '@theme-original/SearchBar';
 import translations from '@theme/SearchTranslations';
 import './shell.css';
+
+const SearchBarFallback = lazy(() => import('@theme-original/SearchBar'));
 
 let algoliaSearchRuntimePromise = null;
 
@@ -157,7 +158,11 @@ export default function SearchBar(props) {
   const resolvedSearchProvider = siteConfig?.customFields?.resolvedSearchProvider;
 
   if (resolvedSearchProvider !== 'algolia') {
-    return <SearchBarFallback {...props} />;
+    return (
+      <Suspense fallback={null}>
+        <SearchBarFallback {...props} />
+      </Suspense>
+    );
   }
 
   return <LazyAlgoliaSearchBar {...props} />;
