@@ -64,6 +64,12 @@ In those cases, move to the indexed REST families such as [FastNear API](/api), 
 - FastNear API keys are optional; the public endpoints work without one.
 - Higher-limit or paid access goes through [Auth & Access](/auth), where the same key works as either an `Authorization: Bearer` header or an `?apiKey=` URL parameter.
 
+## Shareable live examples
+
+- Use `Copy example URL` on any interactive RPC page to share the selected network, example tab, finality, and filled inputs.
+- Use `Copy auto-run URL` when you want the page to execute immediately after it opens.
+- Saved API keys and tokens are never included in those shared docs URLs.
+
 ## Troubleshooting
 
 ### My request worked locally but fails in production

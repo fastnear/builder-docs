@@ -1,57 +1,70 @@
-# Builder Docs Operation URL State and Shareable Example URLs
+# Builder Docs Operation URL State, Shareable Examples, and Response Inspection
 
 This chapter documents the URL-driven live example system in `builder-docs`.
 
-It covers two closely related capabilities:
+It now covers the full user-facing loop:
 
 - URL-prefilled operation inputs
-- shareable "Copy example URL" links that reconstruct a runnable live example
+- shareable example URLs
+- deliberate auto-run URLs
+- expanded live-response inspection
+- find-in-response and response-view URL state
+- the current future-proofing seam for privileged URL params
 
-This is an internal architecture chapter, not end-user docs copy.
+This is an internal continuity chapter, not end-user docs copy.
 
 ---
 
 ## Why this feature matters
 
-Before this work, live examples were already useful, but they were still relatively session-local.
+Before this work, live examples were already useful, but still relatively session-local.
 
-The docs runtime could hydrate certain fields with recent values so a request would succeed, but that did not help with a common real-world need:
+The docs runtime could hydrate certain fields with recent values so a request would succeed, but that did not solve several common workflows:
 
 - a user wants a docs link pre-filled for their account
 - a teammate wants to send a runnable example URL to another teammate
 - an internal guide wants to deep-link directly into a valid request state
 - a support workflow wants to say "open this URL and click `Send request`"
+- a technical user wants to inspect a large response in a roomier view than the inline panel
+- a technical user wants to search a response and share that inspection state too
 
-The goal of this feature was to make operation pages addressable by state without turning the docs into a full client-side router/state-sync project.
+The goal was to make operation pages addressable by state without turning the docs into a full client-side router/state-sync app.
 
-That design constraint matters.
+That design constraint still matters.
 
 The feature is intentionally:
 
 - page-model-driven
-- load-time-based
+- centralized in one shared runtime
 - explicit about reserved query params
 - careful not to leak secrets
+- load-time-oriented rather than long-lived URL sync
 - broad across route families without becoming custom per endpoint
 
 ---
 
 ## What shipped
 
-The completed feature set includes:
+The completed feature set now includes:
 
 - exact field-name URL prefills for operation inputs
 - support across all `FastnearDirectOperation` surfaces
 - support for both docs routes and hosted canonical routes
 - locale-safe behavior on Russian routes
 - shareable example URLs generated from current page state
+- explicit auto-run URLs
 - extra UI-state round-trip for selected network, example tab, and finality
 - protection against runtime hydration overwriting explicit URL-provided values
+- an expanded response modal
+- find-in-response for large formatted responses
+- shareable response-view URL state
+- modal-level share buttons so response-view state can be copied while active
 - representative Playwright coverage
 - generated matrix coverage across root docs and hosted canonical routes
 - lightweight builder-docs audits for page-model reference integrity
+- a small privileged URL-param reservation seam for future account-linked docs behavior
 
-This is no longer a small convenience tweak. It is part of the contract of the interactive docs runtime.
+This is no longer a convenience tweak. It is part of the contract of the interactive docs runtime.
 
 ---
 
@@ -87,16 +100,34 @@ Unknown params are ignored silently.
 
 ### Reserved query params
 
-The runtime reserves these keys:
+The runtime reserves these active keys:
 
 - `network`
+- `autorun`
 - `requestExample`
 - `requestFinality`
+- `responseView`
+- `responseFind`
 - `colorSchema`
 - `apiKey`
 - `token`
 
 Their meanings are centralized in `src/utils/fastnearOperationUrlState.js`.
+
+### Response-view params
+
+The current response-view contract is:
+
+- `responseView=expanded`
+- `responseFind=<literal search term>`
+
+Rules:
+
+- `responseView=expanded` opens the response modal on load
+- `responseFind` implies expanded response mode on load
+- `responseFind` pre-fills the modal search box
+- the first match becomes active automatically
+- no URL param is used for current match index in v1
 
 ### Load-time semantics
 
@@ -114,13 +145,18 @@ This was an intentional design choice to keep the feature sharp and low-complexi
 
 `Copy example URL` serializes the current operation state into a public URL.
 
-That URL includes:
+`Copy auto-run URL` does the same thing, but always includes `autorun=1`.
+
+That URL can include:
 
 - the current route
 - the selected network
-- the selected request example when present
+- `autorun=1`
+- the selected request example when it differs from the default example for the selected network
 - selected finality when the page supports finality
 - all non-empty field draft values
+- `responseView=expanded` when the response modal is open
+- `responseFind=<term>` when the modal search box is non-empty
 - supported wrapper params such as hosted `colorSchema`
 
 That URL excludes:
@@ -128,7 +164,20 @@ That URL excludes:
 - `apiKey`
 - `token`
 - unknown wrapper params
+- future privileged params
 - arbitrary local-only state that is not part of the supported URL contract
+
+### Modal behavior
+
+The expanded response modal is intentionally simple:
+
+- it opens with a dedicated expand button next to response copy
+- it can be dismissed with `Escape`
+- it can be dismissed with the `X` button in the upper right
+- clicking the overlay dismisses it on desktop
+- on mobile it effectively fills the available viewport inside safe-area padding
+
+This is designed as a technical inspection surface, not a feature-rich console.
 
 ---
 
@@ -147,16 +196,18 @@ That matters because it means the behavior is not implemented separately for:
 
 All of those surfaces are consumers of the same operation runtime.
 
-This was the biggest architectural win of the feature.
+This is the biggest architectural win of the feature.
 
 ### 2. URL contract is centralized
 
 `src/utils/fastnearOperationUrlState.js` is the source of truth for:
 
 - reserved query param names
+- future privileged query param reservations
 - field-prefill collection
 - safe wrapper-param passthrough
 - secret-query-param detection
+- non-shareable query-param detection
 
 This keeps the parser and serializer aligned.
 
@@ -181,7 +232,7 @@ The URL layer does not need custom coercion logic per field type.
 
 ### 4. Default/example selection is centralized
 
-`src/utils/fastnearOperationSelection.js` now owns:
+`src/utils/fastnearOperationSelection.js` owns:
 
 - default field values per network
 - initial example picking
@@ -203,13 +254,31 @@ At load time, the runtime does this:
 5. collect exact field-name URL prefills
 6. build the merged draft field state from defaults/example plus URL overrides
 7. derive selected finality
-8. track which fields were explicitly sourced from the URL
+8. derive requested response-view state
+9. track which fields were explicitly sourced from the URL
 
 That is the core state assembly path.
 
 The key behavior is that URL-prefilled field values are an overlay on top of example/default state, not a separate parallel model.
 
-### 6. Copy example URL flow
+### 6. Public URL sanitization is shared
+
+`src/utils/markdownExport.js` uses the same URL-state rules to strip non-shareable params from public links and exports.
+
+That means the same contract now applies across:
+
+- copied example URLs
+- copied auto-run URLs
+- markdown exports
+- source links and related sanitized URLs
+
+This is an important hardening improvement.
+
+---
+
+## Request-state round-trip
+
+### Copy example URL flow
 
 When the user clicks `Copy example URL`, the runtime:
 
@@ -217,9 +286,35 @@ When the user clicks `Copy example URL`, the runtime:
 2. preserves safe wrapper params like hosted `colorSchema`
 3. serializes supported reserved params
 4. serializes all non-empty field draft values
-5. sanitizes the result as a public URL
+5. serializes active response-view state when present
+6. sanitizes the result as a public URL
 
-This keeps the copied link faithful to the visible example while still removing secrets.
+This keeps the copied link faithful to the visible example while still removing secrets and non-shareable future state.
+
+### Copy auto-run URL flow
+
+`Copy auto-run URL` reuses the same serializer, but forces `autorun=1`.
+
+This means it composes cleanly with:
+
+- request field prefills
+- `requestExample`
+- `requestFinality`
+- `responseView=expanded`
+- `responseFind=<term>`
+
+### Deliberate rather than default auto-run
+
+`autorun=1` is an explicit opt-in for load-time execution.
+
+That is why:
+
+- normal shared links restore a runnable state but still wait for the user to press `Send request`
+- a user can append `autorun=1` when they want the page to immediately execute on load
+- a user can click `Copy auto-run URL` when they want that variant explicitly
+- `Copy example URL` preserves `autorun=1` if the current page was already explicitly opened that way
+
+This keeps automatic execution explicit while still making fully self-running examples easy to share.
 
 ---
 
@@ -249,50 +344,128 @@ That is one of the most important implementation details in the whole feature.
 
 ---
 
-## Shareable UI state beyond raw fields
+## Response inspection
 
-The feature now carries a small supported set of non-field UI state:
+### Why a modal exists
 
-- `network`
-- `requestExample`
-- `requestFinality`
+The inline response panel is useful for quick checks, but it is not ideal for:
 
-These are the right level of UI state to preserve because they materially affect:
+- large JSON payloads
+- repeated key inspection
+- sharing a response-focused link
+- searching a response the way a technical user expects
 
-- the visible example
-- request payload shape
-- selected server
-- "click send and it works" behavior
+The response modal exists to solve those problems without turning the inline panel into a full log viewer.
 
-They are also relatively stable and explainable.
+### Response rendering model
 
-The feature does **not** try to serialize every possible ephemeral UI detail.
+The response search works on `runResultText`, not on the raw parsed object.
 
-That restraint is part of why the implementation still feels sane.
+That means:
+
+- both JSON and text responses can be handled consistently
+- the search logic operates on the same formatted output the user sees
+- we avoid repeated object re-interpretation while navigating matches
+
+### Find-in-response behavior
+
+The current search model is intentionally simple:
+
+- case-insensitive
+- literal substring matching
+- no regex mode
+- no replace mode
+- no case-sensitivity toggle
+
+The modal supports:
+
+- next match
+- previous match
+- `Enter` for next
+- `Shift+Enter` for previous
+- active-match highlighting
+- result count such as `3 of 12`
+- auto-scroll of the active match into view
+
+This is enough to make large technical responses genuinely inspectable without overbuilding the UI.
+
+### Shared response-view state
+
+Response inspection is treated as first-class shareable state when active.
+
+That means:
+
+- if the modal is open, copied URLs can preserve that
+- if the search box contains a term, copied URLs can preserve that
+- the modal now has its own share buttons so users can copy that state while it is active
+
+This is important because otherwise response-view state would exist in theory but not in a realistic user flow.
+
+### Modal shell and visual language
+
+The current modal styling intentionally borrows from the product's existing Algolia/DocSearch overlay language rather than inventing a disconnected shell.
+
+That means:
+
+- centered roomy desktop presentation
+- strong but not flashy container edges
+- predictable top-right close affordance
+- mobile behavior that nearly fills the viewport
+
+This is a technical inspection surface, not a marketing modal.
 
 ---
 
-## Secrets and safe public URLs
+## Auth caveat
 
-This feature would be much less trustworthy if copied URLs could accidentally leak credentials.
+One subtle but important implementation detail is that `interaction.authTransport` is not the same thing as "auth required."
 
-The public-URL hygiene rules are:
+In the current contract it only tells the runtime how to attach auth when a key is present, for example:
 
-- `apiKey` must never survive into copied public URLs
-- `token` must never survive into copied public URLs
-- `header.*` query params are also considered secret-like and stripped
+- `bearer` means send `Authorization: Bearer ...`
+- `query` means send `?apiKey=...`
 
-These rules are shared through `isSecretQueryParam` in `src/utils/fastnearOperationUrlState.js`.
+That is why the runtime's auto-run gating mirrors the existing `Send request` behavior instead of trying to infer whether a missing key should block execution.
 
-They are also used by `src/utils/markdownExport.js`, which means:
+If we ever need a true "must have auth to run" distinction, that should become an explicit page-model contract rather than a guess derived from `authTransport`.
 
-- copied example URLs
-- public markdown/export URLs
-- related AI/discovery surfaces
+See also:
 
-all use the same secret-stripping contract.
+- `md-CLAUDE-chapters/auth_contract_and_page_model_semantics.md`
 
-That shared rule is an important hardening improvement.
+---
+
+## Future privileged params
+
+There is now a small forward-compatibility seam for future account-linked docs behavior.
+
+The URL-state layer reserves `useArchival` as a future privileged query param, but it is intentionally inactive today.
+
+That reservation matters because it:
+
+- keeps future gated params out of normal field-prefill matching
+- makes our public URL sanitizers treat those params as non-shareable until the product contract is real
+- gives us a clear place to attach future entitlement-aware parsing without rewriting the URL contract from scratch
+
+### Important naming rule
+
+Do not introduce a bare reserved param like `block`.
+
+The direct renderer already supports exact field-name URL prefills, and generic names like `block` are too collision-prone for a reserved control param. There are already generated schemas with a literal `block` field name, so using that as a control param would be unsafe.
+
+If we later add an archival block selector, it should be explicitly namespaced, for example:
+
+- `archivalBlock`
+- `archivalBlockHeight`
+- `archivalBlockHash`
+
+The eventual rule should be:
+
+- namespaced param
+- explicit entitlement check through docs auth
+- no public-share serialization unless product says otherwise
+
+That is the right ownership boundary.
 
 ---
 
@@ -305,188 +478,104 @@ There are many hosted routes under:
 - `/rpcs/**`
 - `/apis/**`
 
-But they are thin wrappers around the same shared operation renderer.
+But those are thin wrappers over the same direct renderer.
 
-That means confidence comes from two layers:
+So:
 
-- core runtime coverage in the shared renderer
-- wrapper-specific checks for hosted-route behavior such as `noindex`, canonical path shape, and locale preservation
+- root-mounted matrix coverage proves the core runtime behavior
+- representative hosted tests prove wrapper-specific behavior such as route shape and `noindex`
 
-This is why the test strategy uses both representative hosted tests and a generated hosted-route matrix.
+This is why the feature scales across many routes without per-endpoint UI logic.
 
 ---
 
 ## Testing strategy
 
-This feature ended up with a two-level test strategy, which is the right shape for this repo.
+This feature is protected by several layers of tests.
 
-### Focused representative specs
+### Focused Playwright specs
 
-The hand-written Playwright specs are now split by concern:
+Focused specs cover:
 
-- `tests/playwright/rpc-operations.spec.js`
-- `tests/playwright/http-operations.spec.js`
-- `tests/playwright/shareable-operation-urls.spec.js`
-- `tests/playwright/docs-routes-and-locales.spec.js`
+- basic request-state prefills
+- auto-run behavior
+- response modal behavior
+- find-in-response navigation
+- copied URL round-tripping
+- modal-level share buttons
+- locale smoke behavior
 
-These focused specs cover:
-
-- core RPC prefill behavior
-- HTTP prefill behavior
-- hydration-protection behavior
-- shareable URL round-trips
-- hosted route behavior
-- locale behavior
-- docs-route smoke behavior
-
-They are intentionally readable and scenario-driven.
+These tests are intentionally readable and user-flow-oriented.
 
 ### Generated matrices
 
-Broad confidence comes from the generated Playwright matrices:
+Generated matrices cover:
 
-- `tests/playwright/url-prefill-matrix.spec.js`
-- `tests/playwright/url-prefill-hosted-matrix.spec.js`
+- root-mounted docs routes
+- hosted canonical routes
 
-Those matrices validate URL-prefill behavior across the generated page-model inventory rather than only across a handful of hand-selected examples.
+The matrices prove that the shared URL-prefill contract works broadly across page models without requiring hand-written tests for every operation page.
 
-This gives the feature near-exhaustive breadth without requiring us to hand-author one test per endpoint.
+### What still needs hand-writing
 
-### Shared Playwright helpers
+The matrix is not enough for everything.
 
-`tests/playwright/helpers/operation-page.js` holds the test-level glue for:
+Hand-written tests are still the right place for:
 
-- clipboard spying
-- copied-text retrieval
-- request payload parsing
-- RPC request waits
-- HTTP request waits
+- wrapper-family behavior
+- locale-specific route behavior
+- hydration overwrite protection
+- response modal and search behavior
+- share/copy affordance behavior
+- reserved-param interaction behavior
 
-This keeps the concern-based specs focused on behavior instead of repetitive harness code.
+That division is healthy.
 
-### Verification commands
+### Generator and repo guardrails
 
-The main commands to run while changing this feature are:
+Outside Playwright, we also now rely on:
 
-- `yarn test:e2e`
-- `yarn audit:page-models`
+- generator-side compatibility rules for page-model identity and example IDs
+- builder-docs audits for authored page-model references
 
-The first verifies runtime behavior. The second verifies that the underlying page-model world is still coherent.
-
----
-
-## Stability and compatibility model
-
-This feature depends on some generated identifiers being treated as compatibility-sensitive.
-
-### In `builder-docs`
-
-The repo now has a lightweight authored-reference audit:
-
-- `scripts/audit-page-model-references.js`
-
-It checks:
-
-- authored docs references to `pageModelId`
-- localized docs references to `pageModelId`
-- localized FastNear overlay references to generated page-model IDs
-
-That audit runs via:
-
-- `yarn audit:page-models`
-
-This catches local drift such as:
-
-- a docs page referencing a missing `pageModelId`
-- a localization overlay targeting a removed model
-
-### Cross-repo dependency on `mike-docs`
-
-The feature also relies on upstream generation stability.
-
-The most important compatibility-sensitive identifiers are:
-
-- `pageModelId`
-- `canonicalPath`
-- `request.examples[].id`
-
-Why they matter:
-
-- `pageModelId` ties authored docs and overlays to generated operation models
-- `canonicalPath` ties hosted route generation and structured graph records to stable operation URLs
-- `request.examples[].id` now powers shareable `requestExample` round-trips
-
-If those identifiers drift silently upstream, shared example URLs can degrade from "restores this exact example" into "falls back to something else."
-
-So the feature should be thought of as a cross-repo compatibility contract, not merely a frontend convenience.
+Together, those reduce the chance of silent drift.
 
 ---
 
-## What the feature intentionally does not do
+## Why the feature feels crisp now
 
-These non-goals are important and should stay intentional unless there is a strong reason to change them.
+The feature feels crisp now because the responsibilities are well-shaped:
 
-- no alias matching such as `accountId`
-- no case-insensitive field matching
-- no automatic URL sync while the user types
-- no serialization of arbitrary local-only UI details
-- no inclusion of saved or URL-provided secrets in copied public URLs
-- no endpoint-specific URL parsing branches unless truly unavoidable
+- request-state URL parsing is centralized
+- selection/defaulting is centralized
+- field coercion is centralized
+- public URL sanitization is shared
+- response inspection is an extension of the same state model, not a bolt-on side path
+- coverage is broad without being purely manual
 
-The feature is stronger because it is constrained.
+It is not "finished forever," but it has reached the point where future work should mostly be:
 
----
+- product polish
+- richer auth contracts
+- future privileged capability
 
-## Extending the feature safely
-
-If future work needs to extend URL-driven operation state, the safe path is:
-
-1. decide whether the new state deserves to be public and shareable
-2. add the reserved query-param contract in `src/utils/fastnearOperationUrlState.js`
-3. teach initial state assembly how to read it
-4. teach URL copying how to write it
-5. keep field interpretation inside `fastnearFieldValueCodec` if the new state uses field-like drafts
-6. add one focused scenario test
-7. add or update matrix coverage only if the new state materially affects broad route behavior
-
-Good candidates for future extension are small, explicit, and user-visible.
-
-Bad candidates are ad hoc bits of ephemeral UI state that would make links harder to reason about.
+not cleanup of a shaky core.
 
 ---
 
-## Files to know
+## Recommended future extensions
 
-These are the key files for anyone working on this feature again:
+If we extend this feature again, the clean next directions are:
 
-- `src/components/FastnearDirectOperation/index.js`
-- `src/utils/fastnearOperationUrlState.js`
-- `src/utils/fastnearFieldValueCodec.js`
-- `src/utils/fastnearOperationSelection.js`
-- `src/utils/markdownExport.js`
-- `tests/playwright/helpers/operation-page.js`
-- `tests/playwright/rpc-operations.spec.js`
-- `tests/playwright/http-operations.spec.js`
-- `tests/playwright/shareable-operation-urls.spec.js`
-- `tests/playwright/docs-routes-and-locales.spec.js`
-- `tests/playwright/url-prefill-matrix.spec.js`
-- `tests/playwright/url-prefill-hosted-matrix.spec.js`
-- `scripts/audit-page-model-references.js`
+1. Introduce a real upstream auth-requirement contract.
+2. Add docs-account-linked privileged URL handling only after entitlement checks exist.
+3. If needed, add richer response inspection features without abandoning the simple modal contract.
 
----
+The key discipline is to keep new behavior in the same shape:
 
-## Bottom line
+- explicit
+- centralized
+- page-model-aware
+- public-share-safe by default
 
-This feature is one of the better examples of what the bespoke builder-docs runtime is good at.
-
-It takes generated operation metadata, applies a small explicit URL contract, and turns docs pages into durable runnable links without introducing a heavy client-state architecture.
-
-That is the right kind of sophistication for this system:
-
-- shared, not duplicated
-- explicit, not magical
-- broad, not endpoint-by-endpoint
-- safe for public sharing
-- backed by both scenario tests and generated coverage
-
-If this chapter stays accurate, future work on operation URLs should feel like extending a coherent subsystem rather than re-discovering tribal knowledge.
+That is the architectural pattern that made this feature hold together.

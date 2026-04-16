@@ -82,6 +82,25 @@ test('HTTP operation pages prefill path fields from matching URL params', async 
   expect(request.url()).toBe('https://api.fastnear.com/v1/account/near/full');
 });
 
+test('autorun query params execute HTTP requests on load when inputs are ready', async ({ page }) => {
+  await page.route('https://api.fastnear.com/**', async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        account_id: 'near',
+      }),
+    });
+  });
+
+  const requestPromise = waitForHttpRequest(page, 'https://api.fastnear.com');
+  await page.goto('/api/v1/account-full?account_id=near&autorun=1');
+
+  const request = await requestPromise;
+  expect(request.url()).toBe('https://api.fastnear.com/v1/account/near/full');
+  await expect(page.locator('.fastnear-interaction__text-response')).toContainText('"account_id": "near"');
+});
+
 test('FastData operation pages prefill path and body fields from matching URL params', async ({ page }) => {
   await page.route('https://kv.main.fastnear.com/**', async (route) => {
     await route.fulfill({

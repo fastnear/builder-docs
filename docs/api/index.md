@@ -43,6 +43,12 @@ https://test.api.fastnear.com
 - The docs UI can still forward an optional FastNear key when you want authenticated behavior or higher limits on supported surfaces.
 - Add `?network=testnet` to move compatible pages to the testnet backend and seeded testnet defaults.
 
+## Shareable live examples
+
+- Use `Copy example URL` on any interactive API page to share the selected network and filled request state.
+- Use `Copy auto-run URL` when the recipient should open the page and have the request execute right away.
+- Saved API keys and tokens are never included in those shared docs URLs.
+
 ## Common starting points
 
 - [V1 full account view](/api/v1/account-full) for a combined account snapshot.

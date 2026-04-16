@@ -34,6 +34,18 @@ export function getFastnearOperationUiText() {
       id: 'fastnear.operationUi.copyExampleUrl',
       message: 'Copy example URL',
     }),
+    copyAutorunUrl: translate({
+      id: 'fastnear.operationUi.copyAutorunUrl',
+      message: 'Copy auto-run URL',
+    }),
+    copiedAutorunUrl: translate({
+      id: 'fastnear.operationUi.copiedAutorunUrl',
+      message: 'Copied auto-run URL',
+    }),
+    copyAutorunUrlButtonLabel: translate({
+      id: 'fastnear.operationUi.copyAutorunUrlButtonLabel',
+      message: 'Auto-run URL',
+    }),
     copyExampleUrlButtonLabel: translate({
       id: 'fastnear.operationUi.copyExampleUrlButtonLabel',
       message: 'Example URL',
@@ -45,7 +57,7 @@ export function getFastnearOperationUiText() {
     copyExampleUrlHelpBody: translate({
       id: 'fastnear.operationUi.copyExampleUrlHelpBody',
       message:
-        'Share a docs URL that reloads this example with the selected network, request example, finality, and any filled inputs preloaded. Saved API keys and tokens are never included.',
+        'Share a docs URL that reloads this example with the selected network, request example, finality, and any filled inputs preloaded. Use Auto-run URL when you want it to execute on load. Saved API keys and tokens are never included.',
     }),
     copyCurlCommandButtonLabel: translate({
       id: 'fastnear.operationUi.copyCurlCommandButtonLabel',
@@ -62,6 +74,10 @@ export function getFastnearOperationUiText() {
     copyResponse: translate({
       id: 'fastnear.operationUi.copyResponse',
       message: 'Copy response',
+    }),
+    expandResponse: translate({
+      id: 'fastnear.operationUi.expandResponse',
+      message: 'Expand response',
     }),
     endpoint: translate({
       id: 'fastnear.operationUi.endpoint',
@@ -187,6 +203,46 @@ export function getFastnearOperationUiText() {
       id: 'fastnear.operationUi.responseCopied',
       message: 'Response copied',
     }),
+    closeExpandedResponse: translate({
+      id: 'fastnear.operationUi.closeExpandedResponse',
+      message: 'Close expanded response',
+    }),
+    expandedResponseTitle: translate({
+      id: 'fastnear.operationUi.expandedResponseTitle',
+      message: 'Expanded response',
+    }),
+    expandedResponseHint: translate({
+      id: 'fastnear.operationUi.expandedResponseHint',
+      message: 'Search and inspect the formatted live response.',
+    }),
+    findInResponse: translate({
+      id: 'fastnear.operationUi.findInResponse',
+      message: 'Find in response',
+    }),
+    findInResponsePlaceholder: translate({
+      id: 'fastnear.operationUi.findInResponsePlaceholder',
+      message: 'Find in response',
+    }),
+    nextResponseMatch: translate({
+      id: 'fastnear.operationUi.nextResponseMatch',
+      message: 'Next match',
+    }),
+    previousResponseMatch: translate({
+      id: 'fastnear.operationUi.previousResponseMatch',
+      message: 'Previous match',
+    }),
+    responseFindNoResults: translate({
+      id: 'fastnear.operationUi.responseFindNoResults',
+      message: '0 results',
+    }),
+    responseFindResults: ({ active, total }) =>
+      translate(
+        {
+          id: 'fastnear.operationUi.responseFindResults',
+          message: '{active} of {total}',
+        },
+        { active, total }
+      ),
     responseFormattingPending: translate({
       id: 'fastnear.operationUi.responseFormattingPending',
       message: 'Formatting response output...',

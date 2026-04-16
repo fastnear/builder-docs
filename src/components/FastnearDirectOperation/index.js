@@ -14,10 +14,15 @@ import {
 import {
   OPERATION_QUERY_PARAMS,
   collectOperationFieldPrefills,
+  getOperationRequestedAutorun,
   getOperationRequestedExampleId,
   getOperationRequestedFinality,
   getOperationRequestedNetworkKey,
+  getOperationRequestedResponseFind,
+  getOperationRequestedResponseView,
   getShareableOperationWrapperQueryEntries,
+  setOperationRequestedAutorun,
+  setOperationRequestedResponseState,
 } from "@site/src/utils/fastnearOperationUrlState";
 import {
   buildOperationSelectionState,
@@ -68,6 +73,32 @@ function CheckGlyph(props) {
         strokeLinejoin="round"
         strokeWidth={2}
         d="M5 13l4 4L19 7"
+      />
+    </svg>
+  );
+}
+
+function ExpandGlyph(props) {
+  return (
+    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" {...props}>
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M8 4H4v4m0-4 6 6m10-6h-4m4 0v4m0-4-6 6M4 16v4h4m-4 0 6-6m10 6h-4m4 0v-4m0 4-6-6"
+      />
+    </svg>
+  );
+}
+
+function CloseGlyph(props) {
+  return (
+    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" {...props}>
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M6 6l12 12M18 6 6 18"
       />
     </svg>
   );
@@ -176,6 +207,7 @@ function buildInitialOperationState(pageModel, search) {
   const selectedNetwork = requestedExample?.network || getInitialNetwork(pageModel, resolvedSearch);
   const selectedExample = requestedExample || pickInitialExample(pageModel, selectedNetwork);
   const urlFieldPrefills = getUrlFieldPrefills(pageModel, resolvedSearch);
+  const requestedResponseState = getRequestedResponseState(resolvedSearch);
   const selectionState = buildOperationSelectionState(
     pageModel,
     selectedNetwork,
@@ -186,6 +218,9 @@ function buildInitialOperationState(pageModel, search) {
   return {
     ...selectionState,
     protectedFieldNames: new Set(Object.keys(urlFieldPrefills)),
+    responseFind: requestedResponseState.responseFind,
+    shouldOpenResponseModal: requestedResponseState.isExpanded,
+    shouldAutorun: getOperationRequestedAutorun(resolvedSearch),
     selectedFinality: getInitialFinality(pageModel, resolvedSearch),
     selectedNetwork,
   };
@@ -506,7 +541,8 @@ function buildOperationExampleUrl(
   selectedNetwork,
   selectedExampleId,
   selectedFinality,
-  fieldValues
+  fieldValues,
+  options = {}
 ) {
   if (!currentHref) {
     return "";
@@ -532,7 +568,17 @@ function buildOperationExampleUrl(
     nextUrl.searchParams.set(OPERATION_QUERY_PARAMS.network, selectedNetwork);
   }
 
-  if (selectedExampleId) {
+  setOperationRequestedAutorun(
+    nextUrl.searchParams,
+    Boolean(options.forceAutorun || getOperationRequestedAutorun(currentSearch))
+  );
+  setOperationRequestedResponseState(nextUrl.searchParams, {
+    isExpanded: Boolean(options.isResponseExpanded),
+    responseFind: options.responseFind || "",
+  });
+
+  const defaultExampleId = pickInitialExample(pageModel, selectedNetwork)?.id || "";
+  if (selectedExampleId && selectedExampleId !== defaultExampleId) {
     nextUrl.searchParams.set(OPERATION_QUERY_PARAMS.requestExample, selectedExampleId);
   }
 
@@ -624,6 +670,124 @@ function getRunResultText(runResult) {
   }
 
   return runResult.kind === "json" ? formatJson(runResult.value) : runResult.value;
+}
+
+function getRequestedResponseState(search) {
+  const resolvedSearch = getResolvedSearchParams(search);
+  const responseFind = getOperationRequestedResponseFind(resolvedSearch);
+  return {
+    isExpanded: Boolean(getOperationRequestedResponseView(resolvedSearch) || responseFind),
+    responseFind,
+  };
+}
+
+function findResponseMatches(text, searchTerm) {
+  const normalizedSearchTerm = searchTerm.trim().toLowerCase();
+  if (!text || !normalizedSearchTerm) {
+    return [];
+  }
+
+  const normalizedText = text.toLowerCase();
+  const matches = [];
+  let cursor = 0;
+
+  while (cursor < normalizedText.length) {
+    const start = normalizedText.indexOf(normalizedSearchTerm, cursor);
+    if (start === -1) {
+      break;
+    }
+
+    matches.push({
+      start,
+      end: start + normalizedSearchTerm.length,
+    });
+    cursor = start + normalizedSearchTerm.length;
+  }
+
+  return matches;
+}
+
+function getResponseFindResultsLabel(uiText, searchTerm, matches, activeMatchIndex) {
+  if (!searchTerm.trim()) {
+    return "";
+  }
+
+  if (!matches.length) {
+    return uiText.responseFindNoResults;
+  }
+
+  const normalizedIndex =
+    activeMatchIndex >= 0 && activeMatchIndex < matches.length ? activeMatchIndex : 0;
+
+  return uiText.responseFindResults({
+    active: normalizedIndex + 1,
+    total: matches.length,
+  });
+}
+
+function FastnearOperationResponseText({
+  text,
+  matches = [],
+  activeMatchIndex = -1,
+  className = "",
+}) {
+  const activeMatchRefs = useRef([]);
+
+  useEffect(() => {
+    if (activeMatchIndex < 0 || activeMatchIndex >= matches.length) {
+      return;
+    }
+
+    activeMatchRefs.current[activeMatchIndex]?.scrollIntoView({
+      block: "nearest",
+      inline: "nearest",
+    });
+  }, [activeMatchIndex, matches.length]);
+
+  if (!matches.length) {
+    return <pre className={className}>{text}</pre>;
+  }
+
+  const children = [];
+  let cursor = 0;
+
+  matches.forEach((match, index) => {
+    if (match.start > cursor) {
+      children.push(
+        <React.Fragment key={`response-text-${cursor}`}>
+          {text.slice(cursor, match.start)}
+        </React.Fragment>
+      );
+    }
+
+    const isActive = index === activeMatchIndex;
+    children.push(
+      <mark
+        key={`response-match-${match.start}-${match.end}`}
+        ref={(element) => {
+          activeMatchRefs.current[index] = element;
+        }}
+        className={`fastnear-interaction__response-match ${
+          isActive ? "is-active" : ""
+        }`}
+        data-fastnear-response-match-index={index}
+        data-fastnear-response-match-active={isActive ? "true" : "false"}
+      >
+        {text.slice(match.start, match.end)}
+      </mark>
+    );
+    cursor = match.end;
+  });
+
+  if (cursor < text.length) {
+    children.push(
+      <React.Fragment key={`response-text-${cursor}`}>
+        {text.slice(cursor)}
+      </React.Fragment>
+    );
+  }
+
+  return <pre className={className}>{children}</pre>;
 }
 
 function isInlineSchemaVariant(schema) {
@@ -999,12 +1163,24 @@ function FastnearOperationPage({ pageModel }) {
   const [apiKeyDraft, setApiKeyDraft] = useState("");
   const [copiedCurl, setCopiedCurl] = useState(false);
   const [copiedExampleUrl, setCopiedExampleUrl] = useState(false);
+  const [copiedAutorunUrl, setCopiedAutorunUrl] = useState(false);
   const [copiedResponse, setCopiedResponse] = useState(false);
   const [isExampleUrlHelpOpen, setIsExampleUrlHelpOpen] = useState(false);
+  const [isResponseModalOpen, setIsResponseModalOpen] = useState(
+    initialOperationState.shouldOpenResponseModal
+  );
+  const [responseFindDraft, setResponseFindDraft] = useState(initialOperationState.responseFind);
+  const [activeResponseFindIndex, setActiveResponseFindIndex] = useState(
+    initialOperationState.responseFind ? 0 : -1
+  );
   const [isRunning, setIsRunning] = useState(false);
   const [runError, setRunError] = useState(null);
   const [runResult, setRunResult] = useState(null);
+  const autorunKeyRef = useRef(null);
   const exampleUrlHelpId = useId();
+  const expandedResponseTitleId = useId();
+  const responseFindInputRef = useRef(null);
+  const inlineExpandResponseButtonRef = useRef(null);
   const selectedFinalityDetails =
     FINALITY_OPTIONS.find((option) => option.value === selectedFinality) || FINALITY_OPTIONS[2];
   const selectedNetworkDetails =
@@ -1021,13 +1197,18 @@ function FastnearOperationPage({ pageModel }) {
 
   useEffect(() => {
     protectedHydrationFieldsRef.current = initialOperationState.protectedFieldNames;
+    autorunKeyRef.current = null;
     setSelectedNetwork(initialOperationState.selectedNetwork);
     setSelectedExampleId(initialOperationState.selectedExampleId);
     setSelectedFinality(initialOperationState.selectedFinality);
     setFieldValues(initialOperationState.fieldValues);
+    setIsResponseModalOpen(initialOperationState.shouldOpenResponseModal);
+    setResponseFindDraft(initialOperationState.responseFind);
+    setActiveResponseFindIndex(initialOperationState.responseFind ? 0 : -1);
     setRunError(null);
     setRunResult(null);
     setCopiedExampleUrl(false);
+    setCopiedAutorunUrl(false);
     setCopiedResponse(false);
     setIsExampleUrlHelpOpen(false);
   }, [initialOperationState]);
@@ -1091,6 +1272,15 @@ function FastnearOperationPage({ pageModel }) {
   }, [copiedExampleUrl]);
 
   useEffect(() => {
+    if (!copiedAutorunUrl || typeof window === "undefined") {
+      return undefined;
+    }
+
+    const timeout = window.setTimeout(() => setCopiedAutorunUrl(false), 2000);
+    return () => window.clearTimeout(timeout);
+  }, [copiedAutorunUrl]);
+
+  useEffect(() => {
     if (!copiedResponse || typeof window === "undefined") {
       return undefined;
     }
@@ -1121,6 +1311,7 @@ function FastnearOperationPage({ pageModel }) {
   const missingField = pageModel.interaction.fields.find(
     (field) => field.required && !trimmedFieldValues[field.name]
   );
+  const canAutorun = initialOperationState.shouldAutorun && !missingField;
   const curlCommand = useMemo(() => {
     const lines = [];
 
@@ -1174,6 +1365,18 @@ function FastnearOperationPage({ pageModel }) {
   const deferredRunResult = useDeferredValue(runResult);
   const isRunResultTextPending = Boolean(runResult && deferredRunResult !== runResult);
   const runResultText = useMemo(() => getRunResultText(deferredRunResult), [deferredRunResult]);
+  const normalizedResponseFind = responseFindDraft.trim();
+  const responseMatches = useMemo(
+    () => findResponseMatches(runResultText, normalizedResponseFind),
+    [normalizedResponseFind, runResultText]
+  );
+  const responseFindResultsLabel = getResponseFindResultsLabel(
+    uiText,
+    normalizedResponseFind,
+    responseMatches,
+    activeResponseFindIndex
+  );
+  const canCopyResponse = Boolean(runResultText) && !isRunResultTextPending;
   const currentUrl =
     typeof window !== "undefined" ? sanitizePublicUrl(window.location.href) : pageModel.canonicalPath;
   const exampleUrl = useMemo(
@@ -1184,9 +1387,48 @@ function FastnearOperationPage({ pageModel }) {
         selectedNetwork,
         selectedExample?.id || "",
         selectedFinality,
-        trimmedFieldValues
+        trimmedFieldValues,
+        {
+          isResponseExpanded: isResponseModalOpen,
+          responseFind: normalizedResponseFind,
+        }
       ),
-    [currentUrl, pageModel, selectedExample?.id, selectedFinality, selectedNetwork, trimmedFieldValues]
+    [
+      currentUrl,
+      isResponseModalOpen,
+      normalizedResponseFind,
+      pageModel,
+      selectedExample?.id,
+      selectedFinality,
+      selectedNetwork,
+      trimmedFieldValues,
+    ]
+  );
+  const autorunExampleUrl = useMemo(
+    () =>
+      buildOperationExampleUrl(
+        pageModel,
+        currentUrl,
+        selectedNetwork,
+        selectedExample?.id || "",
+        selectedFinality,
+        trimmedFieldValues,
+        {
+          forceAutorun: true,
+          isResponseExpanded: isResponseModalOpen,
+          responseFind: normalizedResponseFind,
+        }
+      ),
+    [
+      currentUrl,
+      isResponseModalOpen,
+      normalizedResponseFind,
+      pageModel,
+      selectedExample?.id,
+      selectedFinality,
+      selectedNetwork,
+      trimmedFieldValues,
+    ]
   );
   const operationMarkdown = useMemo(
     () =>
@@ -1227,6 +1469,155 @@ function FastnearOperationPage({ pageModel }) {
     ],
     [operationMarkdown, uiText.copiedMarkdown, uiText.copyMarkdown, uiText.copyingMarkdown]
   );
+  const autorunRequestKey = useMemo(() => {
+    if (!canAutorun) {
+      return "";
+    }
+
+    if (pageModel.route.transport === "json-rpc") {
+      if (!selectedNetworkDetails?.url || !rpcPayload) {
+        return "";
+      }
+
+      return JSON.stringify({
+        payload: rpcPayload,
+        transport: "json-rpc",
+        url: selectedNetworkDetails.url,
+      });
+    }
+
+    if (!requestUrl) {
+      return "";
+    }
+
+    return JSON.stringify({
+      body: httpRequestBody || null,
+      method: pageModel.route.method,
+      transport: "http",
+      url: requestUrl.toString(),
+    });
+  }, [
+    canAutorun,
+    httpRequestBody,
+    pageModel.route.method,
+    pageModel.route.transport,
+    requestUrl,
+    rpcPayload,
+    selectedNetworkDetails?.url,
+  ]);
+  const handleCopyCurl = async () => {
+    if (!curlCommand) {
+      return;
+    }
+
+    await copyTextToClipboard(curlCommand);
+    setCopiedCurl(true);
+    setCopiedExampleUrl(false);
+    setCopiedAutorunUrl(false);
+  };
+  const handleCopyExampleUrl = async () => {
+    if (!exampleUrl) {
+      return;
+    }
+
+    await copyTextToClipboard(exampleUrl);
+    setCopiedExampleUrl(true);
+    setCopiedAutorunUrl(false);
+  };
+  const handleCopyAutorunUrl = async () => {
+    if (!autorunExampleUrl) {
+      return;
+    }
+
+    await copyTextToClipboard(autorunExampleUrl);
+    setCopiedAutorunUrl(true);
+    setCopiedExampleUrl(false);
+  };
+  const handleCopyResponse = async () => {
+    if (!canCopyResponse) {
+      return;
+    }
+
+    await copyTextToClipboard(runResultText);
+    setCopiedResponse(true);
+  };
+  const openResponseModal = (searchTerm = "") => {
+    const nextSearchTerm = searchTerm.trim();
+    setIsResponseModalOpen(true);
+    setResponseFindDraft(nextSearchTerm);
+    setActiveResponseFindIndex(nextSearchTerm ? 0 : -1);
+  };
+  const closeResponseModal = () => {
+    setIsResponseModalOpen(false);
+    setResponseFindDraft("");
+    setActiveResponseFindIndex(-1);
+
+    if (typeof window !== "undefined") {
+      window.setTimeout(() => {
+        inlineExpandResponseButtonRef.current?.focus();
+      }, 0);
+    }
+  };
+  const handlePreviousResponseMatch = () => {
+    if (!responseMatches.length) {
+      return;
+    }
+
+    setActiveResponseFindIndex((currentIndex) =>
+      currentIndex <= 0 ? responseMatches.length - 1 : currentIndex - 1
+    );
+  };
+  const handleNextResponseMatch = () => {
+    if (!responseMatches.length) {
+      return;
+    }
+
+    setActiveResponseFindIndex((currentIndex) =>
+      currentIndex < 0 || currentIndex >= responseMatches.length - 1 ? 0 : currentIndex + 1
+    );
+  };
+
+  useEffect(() => {
+    if (!normalizedResponseFind) {
+      setActiveResponseFindIndex(-1);
+      return;
+    }
+
+    setActiveResponseFindIndex(responseMatches.length ? 0 : -1);
+  }, [normalizedResponseFind, runResultText, responseMatches.length]);
+
+  useEffect(() => {
+    if (!isResponseModalOpen || typeof document === "undefined") {
+      return undefined;
+    }
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    const focusHandle =
+      typeof window !== "undefined"
+        ? window.setTimeout(() => {
+            responseFindInputRef.current?.focus();
+          }, 0)
+        : null;
+
+    const handleDocumentKeyDown = (event) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        closeResponseModal();
+      }
+    };
+
+    document.addEventListener("keydown", handleDocumentKeyDown);
+
+    return () => {
+      document.removeEventListener("keydown", handleDocumentKeyDown);
+      document.body.style.overflow = previousOverflow;
+      if (focusHandle !== null && typeof window !== "undefined") {
+        window.clearTimeout(focusHandle);
+      }
+    };
+  }, [isResponseModalOpen]);
 
   const handleNetworkChange = (networkKey) => {
     const matchingExample = pickInitialExample(pageModel, networkKey);
@@ -1236,6 +1627,7 @@ function FastnearOperationPage({ pageModel }) {
     setSelectedExampleId(nextSelectionState.selectedExampleId);
     setFieldValues(nextSelectionState.fieldValues);
     setCopiedExampleUrl(false);
+    setCopiedAutorunUrl(false);
     setRunError(null);
     setRunResult(null);
     setCopiedResponse(false);
@@ -1244,6 +1636,7 @@ function FastnearOperationPage({ pageModel }) {
   const handleFinalityChange = (finality) => {
     setSelectedFinality(finality);
     setCopiedExampleUrl(false);
+    setCopiedAutorunUrl(false);
     setRunError(null);
     setRunResult(null);
     setCopiedResponse(false);
@@ -1256,6 +1649,7 @@ function FastnearOperationPage({ pageModel }) {
       [fieldName]: value,
     }));
     setCopiedExampleUrl(false);
+    setCopiedAutorunUrl(false);
     setRunError(null);
     setRunResult(null);
     setCopiedResponse(false);
@@ -1274,6 +1668,7 @@ function FastnearOperationPage({ pageModel }) {
     setSelectedNetwork(nextNetwork);
     setFieldValues(nextSelectionState.fieldValues);
     setCopiedExampleUrl(false);
+    setCopiedAutorunUrl(false);
   };
 
   const handleRun = async () => {
@@ -1380,6 +1775,15 @@ function FastnearOperationPage({ pageModel }) {
       setIsRunning(false);
     }
   };
+
+  useEffect(() => {
+    if (!autorunRequestKey || autorunKeyRef.current === autorunRequestKey) {
+      return;
+    }
+
+    autorunKeyRef.current = autorunRequestKey;
+    void handleRun();
+  }, [autorunRequestKey]);
 
   return (
     <div className="fastnear-operation-page" data-fastnear-operation-root data-fastnear-page-model-id={pageModel.pageModelId}>
@@ -1687,13 +2091,8 @@ function FastnearOperationPage({ pageModel }) {
                     className="fastnear-button fastnear-button--secondary"
                     aria-label={copiedCurl ? uiText.copiedCurlCommand : uiText.copyCurlCommand}
                     title={copiedCurl ? uiText.copiedCurlCommand : uiText.copyCurlCommand}
-                    onClick={async () => {
-                      if (!curlCommand) {
-                        return;
-                      }
-
-                      await copyTextToClipboard(curlCommand);
-                      setCopiedCurl(true);
+                    onClick={() => {
+                      void handleCopyCurl();
                     }}
                     disabled={!curlCommand}
                   >
@@ -1709,13 +2108,8 @@ function FastnearOperationPage({ pageModel }) {
                     className="fastnear-button fastnear-button--secondary"
                     aria-label={copiedExampleUrl ? uiText.copiedExampleUrl : uiText.copyExampleUrl}
                     title={copiedExampleUrl ? uiText.copiedExampleUrl : uiText.copyExampleUrl}
-                    onClick={async () => {
-                      if (!exampleUrl) {
-                        return;
-                      }
-
-                      await copyTextToClipboard(exampleUrl);
-                      setCopiedExampleUrl(true);
+                    onClick={() => {
+                      void handleCopyExampleUrl();
                     }}
                     disabled={!exampleUrl}
                   >
@@ -1725,6 +2119,23 @@ function FastnearOperationPage({ pageModel }) {
                       <CopyGlyph className="fastnear-button__icon" />
                     )}
                     <span>{uiText.copyExampleUrlButtonLabel}</span>
+                  </button>
+                  <button
+                    type="button"
+                    className="fastnear-button fastnear-button--secondary"
+                    aria-label={copiedAutorunUrl ? uiText.copiedAutorunUrl : uiText.copyAutorunUrl}
+                    title={copiedAutorunUrl ? uiText.copiedAutorunUrl : uiText.copyAutorunUrl}
+                    onClick={() => {
+                      void handleCopyAutorunUrl();
+                    }}
+                    disabled={!autorunExampleUrl}
+                  >
+                    {copiedAutorunUrl ? (
+                      <CheckGlyph className="fastnear-button__icon" />
+                    ) : (
+                      <CopyGlyph className="fastnear-button__icon" />
+                    )}
+                    <span>{uiText.copyAutorunUrlButtonLabel}</span>
                   </button>
                 </div>
               </div>
@@ -1804,37 +2215,46 @@ function FastnearOperationPage({ pageModel }) {
                     className="fastnear-interaction__result-shell"
                     aria-busy={isRunResultTextPending ? "true" : "false"}
                   >
-                    <button
-                      type="button"
-                      className={`fastnear-interaction__copy-button ${
-                        copiedResponse ? "is-copied" : ""
-                      }`}
-                      onClick={async () => {
-                        if (!runResultText || isRunResultTextPending) {
-                          return;
-                        }
-
-                        await copyTextToClipboard(runResultText);
-                        setCopiedResponse(true);
-                      }}
-                      disabled={!runResultText || isRunResultTextPending}
-                      aria-label={copiedResponse ? uiText.responseCopied : uiText.copyResponse}
-                      title={copiedResponse ? uiText.responseCopied : uiText.copyResponse}
-                    >
-                      {copiedResponse ? (
-                        <CheckGlyph className="fastnear-interaction__copy-icon" />
-                      ) : (
-                        <CopyGlyph className="fastnear-interaction__copy-icon" />
-                      )}
-                    </button>
+                    <div className="fastnear-interaction__result-actions">
+                      <button
+                        type="button"
+                        className={`fastnear-interaction__copy-button ${
+                          copiedResponse ? "is-copied" : ""
+                        }`}
+                        onClick={() => {
+                          void handleCopyResponse();
+                        }}
+                        disabled={!canCopyResponse}
+                        aria-label={copiedResponse ? uiText.responseCopied : uiText.copyResponse}
+                        title={copiedResponse ? uiText.responseCopied : uiText.copyResponse}
+                      >
+                        {copiedResponse ? (
+                          <CheckGlyph className="fastnear-interaction__copy-icon" />
+                        ) : (
+                          <CopyGlyph className="fastnear-interaction__copy-icon" />
+                        )}
+                      </button>
+                      <button
+                        ref={inlineExpandResponseButtonRef}
+                        type="button"
+                        className="fastnear-interaction__copy-button"
+                        onClick={() => openResponseModal()}
+                        disabled={!runResultText || isRunResultTextPending}
+                        aria-label={uiText.expandResponse}
+                        title={uiText.expandResponse}
+                      >
+                        <ExpandGlyph className="fastnear-interaction__copy-icon" />
+                      </button>
+                    </div>
                     {isRunResultTextPending ? (
                       <p className="fastnear-interaction__placeholder fastnear-interaction__placeholder--panel fastnear-interaction__placeholder--pending">
                         {uiText.responseFormattingPending}
                       </p>
                     ) : (
-                      <pre className="fastnear-interaction__text-response">
-                        {runResultText}
-                      </pre>
+                      <FastnearOperationResponseText
+                        className="fastnear-interaction__text-response"
+                        text={runResultText}
+                      />
                     )}
                   </div>
                 </>
@@ -1851,6 +2271,203 @@ function FastnearOperationPage({ pageModel }) {
           </div>
         </div>
       </div>
+
+      {isResponseModalOpen ? (
+        <div
+          className="fastnear-response-modal"
+          role="presentation"
+          onClick={() => closeResponseModal()}
+        >
+          <div
+            className="fastnear-response-modal__dialog"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby={expandedResponseTitleId}
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="fastnear-response-modal__header">
+              <div className="fastnear-response-modal__heading">
+                <span
+                  id={expandedResponseTitleId}
+                  className="fastnear-interaction__label"
+                >
+                  {uiText.expandedResponseTitle}
+                </span>
+                <p className="fastnear-response-modal__copy">
+                  {uiText.expandedResponseHint}
+                </p>
+              </div>
+
+              <div className="fastnear-response-modal__header-actions">
+                <button
+                  type="button"
+                  className="fastnear-button fastnear-button--secondary"
+                  aria-label={copiedExampleUrl ? uiText.copiedExampleUrl : uiText.copyExampleUrl}
+                  title={copiedExampleUrl ? uiText.copiedExampleUrl : uiText.copyExampleUrl}
+                  onClick={() => {
+                    void handleCopyExampleUrl();
+                  }}
+                  disabled={!exampleUrl}
+                >
+                  {copiedExampleUrl ? (
+                    <CheckGlyph className="fastnear-button__icon" />
+                  ) : (
+                    <CopyGlyph className="fastnear-button__icon" />
+                  )}
+                  <span>{uiText.copyExampleUrlButtonLabel}</span>
+                </button>
+                <button
+                  type="button"
+                  className="fastnear-button fastnear-button--secondary"
+                  aria-label={copiedAutorunUrl ? uiText.copiedAutorunUrl : uiText.copyAutorunUrl}
+                  title={copiedAutorunUrl ? uiText.copiedAutorunUrl : uiText.copyAutorunUrl}
+                  onClick={() => {
+                    void handleCopyAutorunUrl();
+                  }}
+                  disabled={!autorunExampleUrl}
+                >
+                  {copiedAutorunUrl ? (
+                    <CheckGlyph className="fastnear-button__icon" />
+                  ) : (
+                    <CopyGlyph className="fastnear-button__icon" />
+                  )}
+                  <span>{uiText.copyAutorunUrlButtonLabel}</span>
+                </button>
+                <button
+                  type="button"
+                  className={`fastnear-interaction__copy-button ${
+                    copiedResponse ? "is-copied" : ""
+                  }`}
+                  onClick={() => {
+                    void handleCopyResponse();
+                  }}
+                  disabled={!canCopyResponse}
+                  aria-label={copiedResponse ? uiText.responseCopied : uiText.copyResponse}
+                  title={copiedResponse ? uiText.responseCopied : uiText.copyResponse}
+                >
+                  {copiedResponse ? (
+                    <CheckGlyph className="fastnear-interaction__copy-icon" />
+                  ) : (
+                    <CopyGlyph className="fastnear-interaction__copy-icon" />
+                  )}
+                </button>
+                <button
+                  type="button"
+                  className="fastnear-interaction__copy-button fastnear-response-modal__close-button"
+                  onClick={() => closeResponseModal()}
+                  aria-label={uiText.closeExpandedResponse}
+                  title={uiText.closeExpandedResponse}
+                >
+                  <CloseGlyph className="fastnear-interaction__copy-icon" />
+                </button>
+              </div>
+            </div>
+
+            {runResult ? (
+              <div className="fastnear-interaction__result-meta fastnear-response-modal__result-meta">
+                <span
+                  className={`fastnear-interaction__status ${
+                    runResult.ok && !hasRpcError
+                      ? "fastnear-interaction__status--success"
+                      : "fastnear-interaction__status--error"
+                  }`}
+                >
+                  {runResult.ok && !hasRpcError ? uiText.success : uiText.error}
+                </span>
+                <span>{uiText.httpStatus} {runResult.status}</span>
+                <code className="fastnear-interaction__result-url">{runResult.url}</code>
+              </div>
+            ) : null}
+
+            <div className="fastnear-response-modal__findbar">
+              <label className="fastnear-response-modal__find-input-shell">
+                <span className="sr-only">{uiText.findInResponse}</span>
+                <input
+                  ref={responseFindInputRef}
+                  type="text"
+                  className="fastnear-interaction__input fastnear-interaction__input--code fastnear-response-modal__find-input"
+                  value={responseFindDraft}
+                  onChange={(event) => setResponseFindDraft(event.target.value)}
+                  onKeyDown={(event) => {
+                    if (event.key !== "Enter") {
+                      return;
+                    }
+
+                    event.preventDefault();
+                    if (event.shiftKey) {
+                      handlePreviousResponseMatch();
+                      return;
+                    }
+
+                    handleNextResponseMatch();
+                  }}
+                  placeholder={uiText.findInResponsePlaceholder}
+                  aria-label={uiText.findInResponse}
+                  autoComplete="off"
+                  spellCheck={false}
+                />
+              </label>
+
+              <span className="fastnear-response-modal__find-results" aria-live="polite">
+                {responseFindResultsLabel}
+              </span>
+
+              <div className="fastnear-response-modal__find-actions">
+                <button
+                  type="button"
+                  className="fastnear-response-modal__find-button"
+                  onClick={handlePreviousResponseMatch}
+                  disabled={!responseMatches.length}
+                  aria-label={uiText.previousResponseMatch}
+                  title={uiText.previousResponseMatch}
+                >
+                  ↑
+                </button>
+                <button
+                  type="button"
+                  className="fastnear-response-modal__find-button"
+                  onClick={handleNextResponseMatch}
+                  disabled={!responseMatches.length}
+                  aria-label={uiText.nextResponseMatch}
+                  title={uiText.nextResponseMatch}
+                >
+                  ↓
+                </button>
+              </div>
+            </div>
+
+            <div
+              className="fastnear-response-modal__viewer"
+              aria-busy={isRunResultTextPending ? "true" : "false"}
+            >
+              {runError ? (
+                <p className="fastnear-interaction__error">{runError}</p>
+              ) : runResult ? (
+                isRunResultTextPending ? (
+                  <p className="fastnear-interaction__placeholder fastnear-interaction__placeholder--panel fastnear-interaction__placeholder--pending">
+                    {uiText.responseFormattingPending}
+                  </p>
+                ) : (
+                  <FastnearOperationResponseText
+                    activeMatchIndex={activeResponseFindIndex}
+                    className="fastnear-interaction__text-response fastnear-response-modal__text-response"
+                    matches={responseMatches}
+                    text={runResultText}
+                  />
+                )
+              ) : isRunning ? (
+                <p className="fastnear-interaction__placeholder fastnear-interaction__placeholder--panel fastnear-interaction__placeholder--pending">
+                  {uiText.sendingRequestPending}
+                </p>
+              ) : (
+                <p className="fastnear-interaction__placeholder fastnear-interaction__placeholder--panel">
+                  {uiText.liveResponsePlaceholder}
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
+      ) : null}
 
       <FastnearOperationReference
         pageModel={pageModel}

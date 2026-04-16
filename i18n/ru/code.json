@@ -431,6 +431,15 @@
   "fastnear.operationUi.copiedExampleUrl": {
     "message": "URL примера скопирован"
   },
+  "fastnear.operationUi.copyAutorunUrl": {
+    "message": "Скопировать auto-run URL"
+  },
+  "fastnear.operationUi.copiedAutorunUrl": {
+    "message": "Auto-run URL скопирован"
+  },
+  "fastnear.operationUi.copyAutorunUrlButtonLabel": {
+    "message": "Auto-run URL"
+  },
   "fastnear.operationUi.copyMarkdown.completed": {
     "message": "Скопировано"
   },
@@ -444,7 +453,7 @@
     "message": "О URL примера"
   },
   "fastnear.operationUi.copyExampleUrlHelpBody": {
-    "message": "Поделитесь URL документации, который заново откроет этот пример с выбранной сетью, примером запроса, финальностью и заполненными входными данными. Сохранённые API-ключи и токены никогда не включаются."
+    "message": "Поделитесь URL документации, который заново откроет этот пример с выбранной сетью, примером запроса, финальностью и заполненными входными данными. Используйте Auto-run URL, если нужно выполнить запрос сразу при загрузке. Сохранённые API-ключи и токены никогда не включаются."
   },
   "fastnear.operationUi.copyCurlCommandButtonLabel": {
     "message": "cURL"
@@ -457,6 +466,9 @@
   },
   "fastnear.operationUi.copyResponse": {
     "message": "Скопировать ответ"
+  },
+  "fastnear.operationUi.expandResponse": {
+    "message": "Развернуть ответ"
   },
   "fastnear.operationUi.endpoint": {
     "message": "Эндпоинт"
@@ -550,6 +562,33 @@
   },
   "fastnear.operationUi.responseCopied": {
     "message": "Ответ скопирован"
+  },
+  "fastnear.operationUi.closeExpandedResponse": {
+    "message": "Закрыть развернутый ответ"
+  },
+  "fastnear.operationUi.expandedResponseTitle": {
+    "message": "Развернутый ответ"
+  },
+  "fastnear.operationUi.expandedResponseHint": {
+    "message": "Ищите и изучайте отформатированный живой ответ."
+  },
+  "fastnear.operationUi.findInResponse": {
+    "message": "Найти в ответе"
+  },
+  "fastnear.operationUi.findInResponsePlaceholder": {
+    "message": "Найти в ответе"
+  },
+  "fastnear.operationUi.previousResponseMatch": {
+    "message": "Предыдущее совпадение"
+  },
+  "fastnear.operationUi.nextResponseMatch": {
+    "message": "Следующее совпадение"
+  },
+  "fastnear.operationUi.responseFindNoResults": {
+    "message": "0 результатов"
+  },
+  "fastnear.operationUi.responseFindResults": {
+    "message": "{active} из {total}"
   },
   "fastnear.operationUi.responseFormattingPending": {
     "message": "Форматирование вывода ответа..."

@@ -2,6 +2,7 @@ const { test, expect } = require('@playwright/test');
 const {
   getRequestPayload,
   waitForHttpRequest,
+  waitForRpcRequest,
 } = require('./helpers/operation-page');
 
 test('Russian locale API routes prefill matching URL params across request body types', async ({ page }) => {
@@ -91,11 +92,51 @@ test('Russian RPC operation pages live under /ru/rpc with translated controls', 
   await expect(page.getByText('Successful ответ')).toHaveCount(0);
 });
 
+test('Russian expanded response modal exposes translated find controls', async ({ page }) => {
+  await page.route('https://rpc.mainnet.fastnear.com/**', async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        jsonrpc: '2.0',
+        id: 'fastnear',
+        result: {
+          amount: '1',
+          nested: {
+            amount: '2',
+          },
+        },
+      }),
+    });
+  });
+
+  const requestPromise = waitForRpcRequest(
+    page,
+    'https://rpc.mainnet.fastnear.com',
+    (payload) => payload?.id !== 'fastnear-docs'
+  );
+  await page.goto('/ru/rpc/account/view-account?account_id=near&autorun=1&responseView=expanded&responseFind=amount');
+
+  const dialog = page.getByRole('dialog', { name: 'Развернутый ответ' });
+  await expect(dialog).toBeVisible();
+  await requestPromise;
+  await expect(dialog.getByRole('textbox', { name: 'Найти в ответе' })).toHaveValue('amount');
+  await expect(dialog.getByRole('button', { name: 'Предыдущее совпадение' })).toBeVisible();
+  await expect(dialog.getByRole('button', { name: 'Следующее совпадение' })).toBeVisible();
+});
+
 test('auth and agent guides live under clean docs prefixes', async ({ page }) => {
   await page.goto('/auth');
 
   await expect(page).toHaveURL(/\/auth\/?$/);
   await expect(page.getByRole('heading', { name: 'Auth & Access' })).toBeVisible();
+  await expect(page.getByText('Copy auto-run URL')).toBeVisible();
+
+  await page.goto('/ru/auth');
+
+  await expect(page).toHaveURL(/\/ru\/auth\/?$/);
+  await expect(page.getByRole('heading', { name: 'Аутентификация и доступ' })).toBeVisible();
+  await expect(page.getByText('Copy auto-run URL')).toBeVisible();
 
   await page.goto('/agents/choosing-surfaces');
 

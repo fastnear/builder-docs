@@ -30,9 +30,12 @@ test('Copy example URL copies a shareable docs URL and shows the help tooltip', 
 
   const copiedUrl = new URL(await getCopiedText(page));
   expect(copiedUrl.pathname).toBe('/rpc/account/view-account');
+  expect(copiedUrl.searchParams.get(OPERATION_QUERY_PARAMS.autorun)).toBeNull();
   expect(copiedUrl.searchParams.get('network')).toBe('testnet');
-  expect(copiedUrl.searchParams.get('requestExample')).toBe('testnet');
+  expect(copiedUrl.searchParams.get('requestExample')).toBeNull();
   expect(copiedUrl.searchParams.get('requestFinality')).toBe('near-final');
+  expect(copiedUrl.searchParams.get(OPERATION_QUERY_PARAMS.responseView)).toBeNull();
+  expect(copiedUrl.searchParams.get(OPERATION_QUERY_PARAMS.responseFind)).toBeNull();
   expect(copiedUrl.searchParams.get('account_id')).toBe('alice.testnet');
   expect(copiedUrl.searchParams.get('apiKey')).toBeNull();
   expect(copiedUrl.searchParams.get('token')).toBeNull();
@@ -62,9 +65,12 @@ test('Copy example URL round-trips RPC extra UI state', async ({ page }) => {
 
   const copiedUrl = new URL(await getCopiedText(page));
   expect(copiedUrl.pathname).toBe('/rpc/account/view-account');
+  expect(copiedUrl.searchParams.get(OPERATION_QUERY_PARAMS.autorun)).toBeNull();
   expect(copiedUrl.searchParams.get(OPERATION_QUERY_PARAMS.network)).toBe('testnet');
-  expect(copiedUrl.searchParams.get(OPERATION_QUERY_PARAMS.requestExample)).toBe('testnet');
+  expect(copiedUrl.searchParams.get(OPERATION_QUERY_PARAMS.requestExample)).toBeNull();
   expect(copiedUrl.searchParams.get(OPERATION_QUERY_PARAMS.requestFinality)).toBe('near-final');
+  expect(copiedUrl.searchParams.get(OPERATION_QUERY_PARAMS.responseView)).toBeNull();
+  expect(copiedUrl.searchParams.get(OPERATION_QUERY_PARAMS.responseFind)).toBeNull();
   expect(copiedUrl.searchParams.get('account_id')).toBe('alice.testnet');
 
   await page.goto(copiedUrl.toString());
@@ -92,6 +98,52 @@ test('Copy example URL round-trips RPC extra UI state', async ({ page }) => {
   expect(sentPayload?.params?.finality).toBe('near-final');
 });
 
+test('Copy auto-run URL round-trips RPC extra UI state and executes on load', async ({ page }) => {
+  await installClipboardSpy(page);
+
+  await page.route('https://rpc.testnet.fastnear.com/**', async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        jsonrpc: '2.0',
+        id: 'fastnear',
+        result: { amount: '1' },
+      }),
+    });
+  });
+
+  await page.goto('/rpc/account/view-account');
+
+  await page.getByLabel('Select network').getByRole('button', { name: 'Testnet' }).click();
+  await page.locator('.fastnear-interaction__field--account_id input').fill('alice.testnet');
+  await page.getByLabel('Select finality').getByRole('button', { name: 'Near-final' }).click();
+  await page.getByRole('button', { name: 'Copy auto-run URL' }).click();
+
+  const copiedUrl = new URL(await getCopiedText(page));
+  expect(copiedUrl.pathname).toBe('/rpc/account/view-account');
+  expect(copiedUrl.searchParams.get(OPERATION_QUERY_PARAMS.autorun)).toBe('1');
+  expect(copiedUrl.searchParams.get(OPERATION_QUERY_PARAMS.network)).toBe('testnet');
+  expect(copiedUrl.searchParams.get(OPERATION_QUERY_PARAMS.requestExample)).toBeNull();
+  expect(copiedUrl.searchParams.get(OPERATION_QUERY_PARAMS.requestFinality)).toBe('near-final');
+  expect(copiedUrl.searchParams.get(OPERATION_QUERY_PARAMS.responseView)).toBeNull();
+  expect(copiedUrl.searchParams.get(OPERATION_QUERY_PARAMS.responseFind)).toBeNull();
+  expect(copiedUrl.searchParams.get('account_id')).toBe('alice.testnet');
+
+  const requestPromise = waitForRpcRequest(
+    page,
+    'https://rpc.testnet.fastnear.com',
+    (payload) => payload?.id !== 'fastnear-docs'
+  );
+  await page.goto(copiedUrl.toString());
+
+  const request = await requestPromise;
+  const sentPayload = getRequestPayload(request);
+  expect(sentPayload?.params?.account_id).toBe('alice.testnet');
+  expect(sentPayload?.params?.finality).toBe('near-final');
+  await expect(page.locator('.fastnear-interaction__text-response')).toContainText('"amount": "1"');
+});
+
 test('Copy example URL round-trips HTTP boolean body state on first paint', async ({ page }) => {
   await installClipboardSpy(page);
 
@@ -116,8 +168,9 @@ test('Copy example URL round-trips HTTP boolean body state on first paint', asyn
 
   const copiedUrl = new URL(await getCopiedText(page));
   expect(copiedUrl.pathname).toBe('/fastdata/kv/all-by-predecessor');
+  expect(copiedUrl.searchParams.get(OPERATION_QUERY_PARAMS.autorun)).toBeNull();
   expect(copiedUrl.searchParams.get(OPERATION_QUERY_PARAMS.network)).toBe('testnet');
-  expect(copiedUrl.searchParams.get(OPERATION_QUERY_PARAMS.requestExample)).toBe('testnet');
+  expect(copiedUrl.searchParams.get(OPERATION_QUERY_PARAMS.requestExample)).toBeNull();
   expect(copiedUrl.searchParams.get('predecessor_id')).toBe('copied.testnet');
   expect(copiedUrl.searchParams.get('include_metadata')).toBe('false');
   expect(copiedUrl.searchParams.get('limit')).toBe('25');
@@ -150,6 +203,120 @@ test('Copy example URL round-trips HTTP boolean body state on first paint', asyn
   });
 });
 
+test('Copy example URL in the expanded response modal preserves response view state', async ({ page }) => {
+  await installClipboardSpy(page);
+
+  await page.route('https://rpc.mainnet.fastnear.com/**', async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        jsonrpc: '2.0',
+        id: 'fastnear',
+        result: {
+          amount: '1',
+          nested: {
+            amount: '2',
+          },
+          note: 'amount',
+        },
+      }),
+    });
+  });
+
+  await page.goto('/rpc/account/view-account?account_id=near');
+
+  const requestPromise = waitForRpcRequest(
+    page,
+    'https://rpc.mainnet.fastnear.com',
+    (payload) => payload?.id !== 'fastnear-docs'
+  );
+  await page.getByRole('button', { name: 'Send request' }).click();
+  await requestPromise;
+
+  await page.getByRole('button', { name: 'Expand response' }).click();
+  const dialog = page.getByRole('dialog', { name: 'Expanded response' });
+  await expect(dialog).toBeVisible();
+  await dialog.getByRole('textbox', { name: 'Find in response' }).fill('amount');
+  await expect(dialog.locator('.fastnear-response-modal__find-results')).toHaveText('1 of 3');
+
+  await dialog.getByRole('button', { name: 'Copy example URL' }).click();
+
+  const copiedUrl = new URL(await getCopiedText(page));
+  expect(copiedUrl.pathname).toBe('/rpc/account/view-account');
+  expect(copiedUrl.searchParams.get(OPERATION_QUERY_PARAMS.autorun)).toBeNull();
+  expect(copiedUrl.searchParams.get(OPERATION_QUERY_PARAMS.network)).toBe('mainnet');
+  expect(copiedUrl.searchParams.get(OPERATION_QUERY_PARAMS.responseView)).toBe('expanded');
+  expect(copiedUrl.searchParams.get(OPERATION_QUERY_PARAMS.responseFind)).toBe('amount');
+  expect(copiedUrl.searchParams.get('account_id')).toBe('near');
+});
+
+test('Copy auto-run URL in the expanded response modal round-trips response view state and strips secrets', async ({ page }) => {
+  await installClipboardSpy(page);
+
+  await page.route('https://rpc.mainnet.fastnear.com/**', async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        jsonrpc: '2.0',
+        id: 'fastnear',
+        result: {
+          amount: '1',
+          nested: {
+            amount: '2',
+          },
+          note: 'amount',
+        },
+      }),
+    });
+  });
+
+  await page.goto('/rpc/account/view-account?account_id=near&apiKey=test-key-123');
+
+  let requestPromise = waitForRpcRequest(
+    page,
+    'https://rpc.mainnet.fastnear.com',
+    (payload) => payload?.id !== 'fastnear-docs'
+  );
+  await page.getByRole('button', { name: 'Send request' }).click();
+  await requestPromise;
+
+  await page.getByRole('button', { name: 'Expand response' }).click();
+  const dialog = page.getByRole('dialog', { name: 'Expanded response' });
+  await expect(dialog).toBeVisible();
+  await dialog.getByRole('textbox', { name: 'Find in response' }).fill('amount');
+  await expect(dialog.locator('.fastnear-response-modal__find-results')).toHaveText('1 of 3');
+
+  await dialog.getByRole('button', { name: 'Copy auto-run URL' }).click();
+
+  const copiedUrl = new URL(await getCopiedText(page));
+  expect(copiedUrl.pathname).toBe('/rpc/account/view-account');
+  expect(copiedUrl.searchParams.get(OPERATION_QUERY_PARAMS.autorun)).toBe('1');
+  expect(copiedUrl.searchParams.get(OPERATION_QUERY_PARAMS.network)).toBe('mainnet');
+  expect(copiedUrl.searchParams.get(OPERATION_QUERY_PARAMS.responseView)).toBe('expanded');
+  expect(copiedUrl.searchParams.get(OPERATION_QUERY_PARAMS.responseFind)).toBe('amount');
+  expect(copiedUrl.searchParams.get('account_id')).toBe('near');
+  expect(copiedUrl.searchParams.get(OPERATION_QUERY_PARAMS.apiKey)).toBeNull();
+  expect(copiedUrl.searchParams.get(OPERATION_QUERY_PARAMS.token)).toBeNull();
+
+  requestPromise = waitForRpcRequest(
+    page,
+    'https://rpc.mainnet.fastnear.com',
+    (payload) => payload?.id !== 'fastnear-docs'
+  );
+  await page.goto(copiedUrl.toString());
+
+  const roundTripDialog = page.getByRole('dialog', { name: 'Expanded response' });
+  await expect(roundTripDialog).toBeVisible();
+  await expect(
+    roundTripDialog.getByRole('textbox', { name: 'Find in response' })
+  ).toHaveValue('amount');
+
+  await requestPromise;
+  await expect(roundTripDialog.locator('.fastnear-response-modal__find-results')).toHaveText('1 of 3');
+});
+
 test('Copy example URL preserves hosted canonical routes and safe wrapper params', async ({ page }) => {
   await installClipboardSpy(page);
   await page.goto('/apis/fastnear/v1/account_full?account_id=near&colorSchema=dark&unknown_param=ignored');
@@ -160,10 +327,38 @@ test('Copy example URL preserves hosted canonical routes and safe wrapper params
   const copiedUrl = new URL(await getCopiedText(page));
   expect(copiedUrl.pathname).toBe('/apis/fastnear/v1/account_full');
   expect(copiedUrl.searchParams.get('colorSchema')).toBe('dark');
+  expect(copiedUrl.searchParams.get(OPERATION_QUERY_PARAMS.autorun)).toBeNull();
   expect(copiedUrl.searchParams.get('network')).toBe('mainnet');
-  expect(copiedUrl.searchParams.get('requestExample')).toBe('mainnet');
+  expect(copiedUrl.searchParams.get('requestExample')).toBeNull();
   expect(copiedUrl.searchParams.get('account_id')).toBe('near');
   expect(copiedUrl.searchParams.get('unknown_param')).toBeNull();
   expect(copiedUrl.searchParams.get('apiKey')).toBeNull();
   expect(copiedUrl.searchParams.get('token')).toBeNull();
+});
+
+test('Copy example URL strips apiKey URL overrides from the copied docs link', async ({ page }) => {
+  await installClipboardSpy(page);
+  await page.goto('/rpc/account/view-account?account_id=near&apiKey=test-key-123');
+
+  await expect(page.locator('.fastnear-interaction__auth input')).toHaveValue('test-key-123');
+  await page.getByRole('button', { name: 'Copy example URL' }).click();
+
+  const copiedUrl = new URL(await getCopiedText(page));
+  expect(copiedUrl.pathname).toBe('/rpc/account/view-account');
+  expect(copiedUrl.searchParams.get('account_id')).toBe('near');
+  expect(copiedUrl.searchParams.get(OPERATION_QUERY_PARAMS.network)).toBe('mainnet');
+  expect(copiedUrl.searchParams.get('apiKey')).toBeNull();
+  expect(copiedUrl.searchParams.get('token')).toBeNull();
+});
+
+test('Copy example URL preserves explicit autorun when present in the current URL', async ({ page }) => {
+  await installClipboardSpy(page);
+  await page.goto('/rpc/account/view-account?account_id=near&autorun=1');
+
+  await page.getByRole('button', { name: 'Copy example URL' }).click();
+
+  const copiedUrl = new URL(await getCopiedText(page));
+  expect(copiedUrl.searchParams.get(OPERATION_QUERY_PARAMS.autorun)).toBe('1');
+  expect(copiedUrl.searchParams.get(OPERATION_QUERY_PARAMS.requestExample)).toBeNull();
+  expect(copiedUrl.searchParams.get('account_id')).toBe('near');
 });

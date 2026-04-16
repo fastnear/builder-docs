@@ -42,6 +42,196 @@ test('RPC operation pages prefill request fields from matching URL params', asyn
   expect(sentPayload?.params?.account_id).toBe('near');
 });
 
+test('apiKey URL params preload the auth input and bearer header for RPC requests', async ({ page }) => {
+  let authorizationHeader = null;
+
+  await page.route('https://rpc.mainnet.fastnear.com/**', async (route) => {
+    authorizationHeader = route.request().headers().authorization || null;
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        jsonrpc: '2.0',
+        id: 'fastnear',
+        result: { amount: '1' },
+      }),
+    });
+  });
+
+  await page.goto('/rpc/account/view-account?account_id=near&apiKey=test-key-123');
+
+  const apiKeyInput = page.locator('.fastnear-interaction__auth input');
+  await expect(apiKeyInput).toHaveValue('test-key-123');
+  await expect(apiKeyInput).toHaveAttribute('readonly', '');
+  await expect(page.getByText('From URL override')).toBeVisible();
+
+  const requestPromise = waitForRpcRequest(
+    page,
+    'https://rpc.mainnet.fastnear.com',
+    (payload) => payload?.id !== 'fastnear-docs'
+  );
+  await page.getByRole('button', { name: 'Send request' }).click();
+
+  const sentPayload = getRequestPayload(await requestPromise);
+  expect(sentPayload?.params?.account_id).toBe('near');
+  expect(authorizationHeader).toBe('Bearer test-key-123');
+});
+
+test('autorun query params execute RPC requests on load when inputs are ready', async ({ page }) => {
+  await page.route('https://rpc.mainnet.fastnear.com/**', async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        jsonrpc: '2.0',
+        id: 'fastnear',
+        result: { amount: '1' },
+      }),
+    });
+  });
+
+  const requestPromise = waitForRpcRequest(
+    page,
+    'https://rpc.mainnet.fastnear.com',
+    (payload) => payload?.id !== 'fastnear-docs'
+  );
+  await page.goto('/rpc/account/view-account?account_id=near&autorun=1');
+
+  const sentPayload = getRequestPayload(await requestPromise);
+  expect(sentPayload?.params?.account_id).toBe('near');
+  await expect(page.locator('.fastnear-interaction__text-response')).toContainText('"amount": "1"');
+});
+
+test('expanded response modal supports find, next, previous, and keyboard navigation', async ({ page }) => {
+  await page.route('https://rpc.mainnet.fastnear.com/**', async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        jsonrpc: '2.0',
+        id: 'fastnear',
+        result: {
+          amount: '1',
+          nested: {
+            amount: '2',
+          },
+          note: 'amount',
+        },
+      }),
+    });
+  });
+
+  await page.goto('/rpc/account/view-account?account_id=near');
+
+  const requestPromise = waitForRpcRequest(
+    page,
+    'https://rpc.mainnet.fastnear.com',
+    (payload) => payload?.id !== 'fastnear-docs'
+  );
+  await page.getByRole('button', { name: 'Send request' }).click();
+  await requestPromise;
+
+  await page.getByRole('button', { name: 'Expand response' }).click();
+  const dialog = page.getByRole('dialog', { name: 'Expanded response' });
+  await expect(dialog).toBeVisible();
+  await expect(dialog).toContainText('"amount": "1"');
+
+  const findInput = dialog.getByRole('textbox', { name: 'Find in response' });
+  await findInput.fill('amount');
+  await expect(dialog.locator('.fastnear-response-modal__find-results')).toHaveText('1 of 3');
+  await expect(dialog.locator('[data-fastnear-response-match-active="true"]')).toHaveAttribute(
+    'data-fastnear-response-match-index',
+    '0'
+  );
+
+  await dialog.getByRole('button', { name: 'Next match' }).click();
+  await expect(dialog.locator('.fastnear-response-modal__find-results')).toHaveText('2 of 3');
+  await expect(dialog.locator('[data-fastnear-response-match-active="true"]')).toHaveAttribute(
+    'data-fastnear-response-match-index',
+    '1'
+  );
+
+  await dialog.getByRole('button', { name: 'Previous match' }).click();
+  await expect(dialog.locator('.fastnear-response-modal__find-results')).toHaveText('1 of 3');
+
+  await findInput.press('Enter');
+  await expect(dialog.locator('.fastnear-response-modal__find-results')).toHaveText('2 of 3');
+
+  await findInput.press('Shift+Enter');
+  await expect(dialog.locator('.fastnear-response-modal__find-results')).toHaveText('1 of 3');
+});
+
+test('expanded response URL state opens the modal immediately during autorun', async ({ page }) => {
+  await page.route('https://rpc.mainnet.fastnear.com/**', async (route) => {
+    await new Promise((resolve) => setTimeout(resolve, 250));
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        jsonrpc: '2.0',
+        id: 'fastnear',
+        result: { amount: '1' },
+      }),
+    });
+  });
+
+  const requestPromise = waitForRpcRequest(
+    page,
+    'https://rpc.mainnet.fastnear.com',
+    (payload) => payload?.id !== 'fastnear-docs'
+  );
+  await page.goto('/rpc/account/view-account?account_id=near&autorun=1&responseView=expanded');
+
+  const dialog = page.getByRole('dialog', { name: 'Expanded response' });
+  await expect(dialog).toBeVisible();
+  await expect(dialog.getByText('Sending request to the selected endpoint...')).toBeVisible();
+
+  const sentPayload = getRequestPayload(await requestPromise);
+  expect(sentPayload?.params?.account_id).toBe('near');
+  await expect(dialog).toContainText('"amount": "1"');
+});
+
+test('responseFind URL params prefill modal search and activate the first result after autorun', async ({ page }) => {
+  await page.route('https://rpc.mainnet.fastnear.com/**', async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        jsonrpc: '2.0',
+        id: 'fastnear',
+        result: {
+          amount: '1',
+          nested: {
+            amount: '2',
+          },
+          note: 'amount',
+        },
+      }),
+    });
+  });
+
+  const requestPromise = waitForRpcRequest(
+    page,
+    'https://rpc.mainnet.fastnear.com',
+    (payload) => payload?.id !== 'fastnear-docs'
+  );
+  await page.goto(
+    '/rpc/account/view-account?account_id=near&autorun=1&responseView=expanded&responseFind=amount'
+  );
+
+  const dialog = page.getByRole('dialog', { name: 'Expanded response' });
+  await expect(dialog).toBeVisible();
+  await expect(dialog.getByRole('textbox', { name: 'Find in response' })).toHaveValue('amount');
+
+  const sentPayload = getRequestPayload(await requestPromise);
+  expect(sentPayload?.params?.account_id).toBe('near');
+  await expect(dialog.locator('.fastnear-response-modal__find-results')).toHaveText('1 of 3');
+  await expect(dialog.locator('[data-fastnear-response-match-active="true"]')).toHaveAttribute(
+    'data-fastnear-response-match-index',
+    '0'
+  );
+});
+
 test('request example and finality URL params restore extra UI state on load', async ({ page }) => {
   await page.route('https://rpc.testnet.fastnear.com/**', async (route) => {
     await route.fulfill({
