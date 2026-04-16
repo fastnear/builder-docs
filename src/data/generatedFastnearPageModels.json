@@ -20518,7 +20518,7 @@
   {
     "canonicalPath": "/apis/neardata/system/health",
     "info": {
-      "description": "Check whether the neardata service is healthy for the current deployment.",
+      "description": "Ping the neardata service for liveness — returns `{status: ok}` when healthy, errors otherwise.",
       "operationId": "get_health",
       "summary": "Get service health",
       "title": "NEAR Data API - Health",
@@ -20654,7 +20654,7 @@
   {
     "canonicalPath": "/apis/neardata/v0/first_block",
     "info": {
-      "description": "This endpoint redirects to the canonical first block URL for the selected network.",
+      "description": "Redirect to the chain's first post-genesis block — a starting cursor for indexers backfilling from the beginning.",
       "operationId": "get_first_block",
       "summary": "Redirect to the first block after genesis",
       "title": "NEAR Data API - First Block",
@@ -20775,7 +20775,7 @@
   {
     "canonicalPath": "/apis/neardata/v0/block",
     "info": {
-      "description": "Fetch the finalized block document for a given height, including all chunks and shard data.",
+      "description": "Fetch a finalized block's full document at a chosen height — header plus every chunk and shard payload.",
       "operationId": "get_block",
       "summary": "Fetch a finalized block by height",
       "title": "NEAR Data API - Block",
@@ -20971,7 +20971,7 @@
   {
     "canonicalPath": "/apis/neardata/v0/block_headers",
     "info": {
-      "description": "Fetch the top-level block object for a finalized block, including the block header and chunk summaries.",
+      "description": "Fetch only a finalized block's header and chunk summaries — no per-shard payload.",
       "operationId": "get_block_headers",
       "summary": "Fetch the block-level object for a finalized block",
       "title": "NEAR Data API - Block Headers",
@@ -21167,7 +21167,7 @@
   {
     "canonicalPath": "/apis/neardata/v0/block_chunk",
     "info": {
-      "description": "Fetch a single chunk for a given finalized block and shard ID.",
+      "description": "Fetch one chunk — a single shard's transactions and incoming receipts — at a chosen block height.",
       "operationId": "get_chunk",
       "summary": "Fetch one chunk from a finalized block",
       "title": "NEAR Data API - Block Chunk",
@@ -21388,7 +21388,7 @@
   {
     "canonicalPath": "/apis/neardata/v0/block_shard",
     "info": {
-      "description": "Fetch a single shard document for a given finalized block and shard ID.",
+      "description": "Fetch one shard's full payload at a chosen block — chunk plus state changes and produced receipts.",
       "operationId": "get_shard",
       "summary": "Fetch one shard from a finalized block",
       "title": "NEAR Data API - Block Shard",
@@ -21609,7 +21609,7 @@
   {
     "canonicalPath": "/apis/neardata/v0/block_optimistic",
     "info": {
-      "description": "Fetch an optimistic block document when the endpoint can serve it directly, or follow the documented redirect behavior when the deployment hands off to finalized or archive infrastructure.",
+      "description": "Fetch an optimistic (not-yet-final) block at a chosen height — may redirect once the optimistic window has finalized.",
       "operationId": "get_block_optimistic",
       "summary": "Fetch an optimistic block by height",
       "title": "NEAR Data API - Optimistic Block",
@@ -21805,7 +21805,7 @@
   {
     "canonicalPath": "/apis/neardata/v0/last_block_final",
     "info": {
-      "description": "This endpoint redirects to the latest finalized block URL for the active deployment.",
+      "description": "Redirect to the most recent finalized block — the chain-tip cursor once consensus has settled.",
       "operationId": "get_last_block_final",
       "summary": "Redirect to the latest finalized block",
       "title": "NEAR Data API - Last Final Block",
@@ -21934,7 +21934,7 @@
   {
     "canonicalPath": "/apis/neardata/v0/last_block_optimistic",
     "info": {
-      "description": "This endpoint redirects to the latest optimistic block URL for the active deployment.",
+      "description": "Redirect to the most recent optimistic block — the freshest-possible tip, ahead of final settlement.",
       "operationId": "get_last_block_optimistic",
       "summary": "Redirect to the latest optimistic block",
       "title": "NEAR Data API - Last Optimistic Block",

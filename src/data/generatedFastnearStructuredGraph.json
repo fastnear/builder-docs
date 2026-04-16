@@ -1807,7 +1807,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/apis/neardata/system/health",
-      "description": "Check whether the neardata service is healthy for the current deployment.",
+      "description": "Ping the neardata service for liveness — returns `{status: ok}` when healthy, errors otherwise.",
       "docsPath": "/neardata/system/health",
       "familyId": "api-neardata",
       "headline": "NEAR Data API - Health",
@@ -1833,7 +1833,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/apis/neardata/v0/block",
-      "description": "Fetch the finalized block document for a given height, including all chunks and shard data.",
+      "description": "Fetch a finalized block's full document at a chosen height — header plus every chunk and shard payload.",
       "docsPath": "/neardata/block",
       "familyId": "api-neardata",
       "headline": "NEAR Data API - Block",
@@ -1859,7 +1859,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/apis/neardata/v0/block_chunk",
-      "description": "Fetch a single chunk for a given finalized block and shard ID.",
+      "description": "Fetch one chunk — a single shard's transactions and incoming receipts — at a chosen block height.",
       "docsPath": "/neardata/block-chunk",
       "familyId": "api-neardata",
       "headline": "NEAR Data API - Block Chunk",
@@ -1885,7 +1885,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/apis/neardata/v0/block_headers",
-      "description": "Fetch the top-level block object for a finalized block, including the block header and chunk summaries.",
+      "description": "Fetch only a finalized block's header and chunk summaries — no per-shard payload.",
       "docsPath": "/neardata/block-headers",
       "familyId": "api-neardata",
       "headline": "NEAR Data API - Block Headers",
@@ -1911,7 +1911,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/apis/neardata/v0/block_optimistic",
-      "description": "Fetch an optimistic block document when the endpoint can serve it directly, or follow the documented redirect behavior when the deployment hands off to finalized or archive infrastructure.",
+      "description": "Fetch an optimistic (not-yet-final) block at a chosen height — may redirect once the optimistic window has finalized.",
       "docsPath": "/neardata/block-optimistic",
       "familyId": "api-neardata",
       "headline": "NEAR Data API - Optimistic Block",
@@ -1937,7 +1937,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/apis/neardata/v0/block_shard",
-      "description": "Fetch a single shard document for a given finalized block and shard ID.",
+      "description": "Fetch one shard's full payload at a chosen block — chunk plus state changes and produced receipts.",
       "docsPath": "/neardata/block-shard",
       "familyId": "api-neardata",
       "headline": "NEAR Data API - Block Shard",
@@ -1963,7 +1963,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/apis/neardata/v0/first_block",
-      "description": "This endpoint redirects to the canonical first block URL for the selected network.",
+      "description": "Redirect to the chain's first post-genesis block — a starting cursor for indexers backfilling from the beginning.",
       "docsPath": "/neardata/first-block",
       "familyId": "api-neardata",
       "headline": "NEAR Data API - First Block",
@@ -1989,7 +1989,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/apis/neardata/v0/last_block_final",
-      "description": "This endpoint redirects to the latest finalized block URL for the active deployment.",
+      "description": "Redirect to the most recent finalized block — the chain-tip cursor once consensus has settled.",
       "docsPath": "/neardata/last-block-final",
       "familyId": "api-neardata",
       "headline": "NEAR Data API - Last Final Block",
@@ -2015,7 +2015,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/apis/neardata/v0/last_block_optimistic",
-      "description": "This endpoint redirects to the latest optimistic block URL for the active deployment.",
+      "description": "Redirect to the most recent optimistic block — the freshest-possible tip, ahead of final settlement.",
       "docsPath": "/neardata/last-block-optimistic",
       "familyId": "api-neardata",
       "headline": "NEAR Data API - Last Optimistic Block",
