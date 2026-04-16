@@ -1209,7 +1209,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/apis/fastnear/system/health",
-      "description": "Returns `ok` when the service is healthy. When FastNEAR is degraded, the same `status` field carries a diagnostic string instead.",
+      "description": "Use this lightweight probe to confirm the FastNear API is healthy.",
       "docsPath": "/api/system/health",
       "familyId": "api-fastnear",
       "headline": "FastNEAR API - Health",
@@ -1235,7 +1235,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/apis/fastnear/system/status",
-      "description": "Returns the latest indexed sync heights, the indexed block timestamp, the measured sync latency, and the deployed FastNEAR API version.",
+      "description": "Check the current indexed block height, latency, and deployed service version.",
       "docsPath": "/api/system/status",
       "familyId": "api-fastnear",
       "headline": "FastNEAR API - Status",
@@ -1261,7 +1261,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/apis/fastnear/v0/account_ft",
-      "description": "Returns only fungible token contract account IDs that FastNEAR has indexed for the requested account. Unlike the v1 route, this response does not include balances or block-height metadata.",
+      "description": "Retrieve the indexed fungible token contract IDs for an account. This v0 route does not return balances.",
       "docsPath": "/api/v0/account-ft",
       "familyId": "api-fastnear",
       "headline": "FastNEAR API - V0 Account FT",
@@ -1287,7 +1287,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/apis/fastnear/v0/account_nft",
-      "description": "Returns only NFT contract account IDs that FastNEAR has indexed for the requested account. Unlike the v1 route, this response does not include `last_update_block_height` metadata.",
+      "description": "Fetch the indexed NFT contract IDs associated with an account. This v0 route does not include block-height metadata.",
       "docsPath": "/api/v0/account-nft",
       "familyId": "api-fastnear",
       "headline": "FastNEAR API - V0 Account NFT",
@@ -1313,7 +1313,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/apis/fastnear/v0/account_staking",
-      "description": "Returns staking pool account IDs that FastNEAR has indexed for the requested account. Unlike the v1 route, this response does not include `last_update_block_height` metadata.",
+      "description": "Fetch the staking pool account IDs FastNear has indexed for one account. This v0 route returns pool IDs only, without block-height metadata.",
       "docsPath": "/api/v0/account-staking",
       "familyId": "api-fastnear",
       "headline": "FastNEAR API - V0 Account Staking",
@@ -1339,7 +1339,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/apis/fastnear/v0/public_key_lookup",
-      "description": "Returns account IDs currently associated with the provided full-access public key. The response includes account IDs only.",
+      "description": "Fetch the indexed account IDs associated with a full-access public key.",
       "docsPath": "/api/v0/public-key",
       "familyId": "api-fastnear",
       "headline": "FastNEAR API - V0 Public Key Lookup",
@@ -1365,7 +1365,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/apis/fastnear/v0/public_key_lookup_all",
-      "description": "Returns account IDs currently associated with the supplied public key, including limited-access keys when they are present in the FastNEAR index.",
+      "description": "Use this variant when one public key may control multiple accounts and you want the full set.",
       "docsPath": "/api/v0/public-key-all",
       "familyId": "api-fastnear",
       "headline": "FastNEAR API - V0 Public Key Lookup (All)",
@@ -1391,7 +1391,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/apis/fastnear/v1/account_ft",
-      "description": "Returns fungible token rows for the requested account. Balances and `last_update_block_height` remain nullable when the index has not recorded them yet.",
+      "description": "Fetch the v1 indexed fungible token balance rows for one account.",
       "docsPath": "/api/v1/account-ft",
       "familyId": "api-fastnear",
       "headline": "FastNEAR API - V1 Account FT",
@@ -1417,7 +1417,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/apis/fastnear/v1/account_full",
-      "description": "Returns staking, fungible token, NFT, and account-state information for the requested account. `state` remains nullable when the account state has not been recorded.",
+      "description": "Fetch the combined indexed account view, including staking pools, FT balances, NFTs, and account state.",
       "docsPath": "/api/v1/account-full",
       "familyId": "api-fastnear",
       "headline": "FastNEAR API - V1 Account Full",
@@ -1443,7 +1443,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/apis/fastnear/v1/account_nft",
-      "description": "Returns NFT contract rows for the requested account. `last_update_block_height` is nullable when FastNEAR has not recorded a recent indexed update for that contract relationship.",
+      "description": "Fetch NFT contract rows for an account, including block-height metadata for each contract.",
       "docsPath": "/api/v1/account-nft",
       "familyId": "api-fastnear",
       "headline": "FastNEAR API - V1 Account NFT",
@@ -1469,7 +1469,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/apis/fastnear/v1/account_staking",
-      "description": "Returns staking pool rows for the requested account. `last_update_block_height` is nullable when FastNEAR has not recorded a recent indexed update for that pool relationship.",
+      "description": "Retrieve staking pool rows for an account, including block-height metadata for each pool relationship.",
       "docsPath": "/api/v1/account-staking",
       "familyId": "api-fastnear",
       "headline": "FastNEAR API - V1 Account Staking",
@@ -1495,7 +1495,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/apis/fastnear/v1/ft_top",
-      "description": "Returns the top indexed accounts by balance for the requested fungible token.",
+      "description": "Use this endpoint to inspect the indexed top holders for a fungible token contract.",
       "docsPath": "/api/v1/ft-top",
       "familyId": "api-fastnear",
       "headline": "FastNEAR API - V1 FT Top Holders",
@@ -1521,7 +1521,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/apis/fastnear/v1/public_key_lookup",
-      "description": "Returns account IDs currently associated with the supplied full-access public key. This v1 route currently uses the same `{ public_key, account_ids }` response shape as the v0 route.",
+      "description": "Use the v1 endpoint for the newer namespace. It currently returns the same response shape as the v0 route.",
       "docsPath": "/api/v1/public-key",
       "familyId": "api-fastnear",
       "headline": "FastNEAR API - V1 Public Key Lookup",
@@ -1547,7 +1547,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/apis/fastnear/v1/public_key_lookup_all",
-      "description": "Returns account IDs currently associated with the supplied public key, including limited-access keys when they are present in the FastNEAR index. This v1 route currently uses the same `{ public_key, account_ids }` response shape as the v0 route.",
+      "description": "Fetch every indexed account tied to a public key. This v1 route currently uses the same response shape as the v0 route.",
       "docsPath": "/api/v1/public-key-all",
       "familyId": "api-fastnear",
       "headline": "FastNEAR API - V1 Public Key Lookup (All)",
@@ -1573,7 +1573,7 @@
     {
       "authSummary": "No auth required",
       "canonicalPath": "/apis/kv-fastdata/v0/all_by_predecessor",
-      "description": "Returns the latest row for each `(current_account_id, key)` pair written by the selected predecessor. `page_token` values are opaque and scoped to this endpoint and predecessor.",
+      "description": "Fetch the latest values for all contracts touched by one predecessor account.",
       "docsPath": "/fastdata/kv/all-by-predecessor",
       "familyId": "api-kv-fastdata",
       "headline": "KV FastData API - All Latest Keys by Predecessor",
@@ -1599,7 +1599,7 @@
     {
       "authSummary": "No auth required",
       "canonicalPath": "/apis/kv-fastdata/v0/get_history_key",
-      "description": "Returns historical rows for one exact key written by the selected predecessor to the selected contract.",
+      "description": "This GET route is useful for simple exact-key lookups without a request body.",
       "docsPath": "/fastdata/kv/get-history-key",
       "familyId": "api-kv-fastdata",
       "headline": "KV FastData API - History by Exact Key",
@@ -1625,7 +1625,7 @@
     {
       "authSummary": "No auth required",
       "canonicalPath": "/apis/kv-fastdata/v0/get_latest_key",
-      "description": "Returns the latest row for one exact key written by the selected predecessor to the selected contract.",
+      "description": "This GET route is useful for quick exact-key reads without a request body.",
       "docsPath": "/fastdata/kv/get-latest-key",
       "familyId": "api-kv-fastdata",
       "headline": "KV FastData API - Latest by Exact Key",
@@ -1651,7 +1651,7 @@
     {
       "authSummary": "No auth required",
       "canonicalPath": "/apis/kv-fastdata/v0/history_by_account",
-      "description": "Returns historical rows for the requested contract account across all predecessors. `page_token` values are opaque and only valid when reused with the same endpoint and filters.",
+      "description": "Fetch historical FastData rows for one target account across all predecessor accounts.",
       "docsPath": "/fastdata/kv/history-by-account",
       "familyId": "api-kv-fastdata",
       "headline": "KV FastData API - History by Account",
@@ -1677,7 +1677,7 @@
     {
       "authSummary": "No auth required",
       "canonicalPath": "/apis/kv-fastdata/v0/history_by_key",
-      "description": "Returns historical FastData rows for one exact key across every indexed contract and predecessor. `page_token` values are opaque and only valid when reused with the same endpoint and filters.",
+      "description": "Fetch the historical values for a selected key across accounts and predecessors.",
       "docsPath": "/fastdata/kv/history-by-key",
       "familyId": "api-kv-fastdata",
       "headline": "KV FastData API - History by Global Key",
@@ -1703,7 +1703,7 @@
     {
       "authSummary": "No auth required",
       "canonicalPath": "/apis/kv-fastdata/v0/history_by_predecessor",
-      "description": "Returns historical rows for one `predecessor_id` + `current_account_id` pair. Use `key` or `key_prefix` to narrow the search. `page_token` values are opaque and only valid when reused with the same endpoint and filters.",
+      "description": "Fetch historical FastData rows for a single predecessor and target account.",
       "docsPath": "/fastdata/kv/history-by-predecessor",
       "familyId": "api-kv-fastdata",
       "headline": "KV FastData API - History by Predecessor",
@@ -1729,7 +1729,7 @@
     {
       "authSummary": "No auth required",
       "canonicalPath": "/apis/kv-fastdata/v0/latest_by_account",
-      "description": "Returns the latest row for each `(predecessor_id, key)` pair written to the contract. `page_token` values are opaque and scoped to this endpoint, the contract account, and the active filters.",
+      "description": "Fetch the latest FastData rows for one target account across all predecessor accounts.",
       "docsPath": "/fastdata/kv/latest-by-account",
       "familyId": "api-kv-fastdata",
       "headline": "KV FastData API - Latest by Account",
@@ -1755,7 +1755,7 @@
     {
       "authSummary": "No auth required",
       "canonicalPath": "/apis/kv-fastdata/v0/latest_by_predecessor",
-      "description": "Returns the latest row for each key written by the selected predecessor to the requested contract. `page_token` values are opaque and scoped to this endpoint and filter set.",
+      "description": "Fetch the latest FastData rows for a single predecessor and target account.",
       "docsPath": "/fastdata/kv/latest-by-predecessor",
       "familyId": "api-kv-fastdata",
       "headline": "KV FastData API - Latest by Predecessor",
@@ -1781,7 +1781,7 @@
     {
       "authSummary": "No auth required",
       "canonicalPath": "/apis/kv-fastdata/v0/multi",
-      "description": "Returns the latest entry for each requested fully qualified key. Missing keys are represented as `null` entries in the response array.",
+      "description": "Fetch the latest FastData row for up to 100 keys in a single request.",
       "docsPath": "/fastdata/kv/multi",
       "familyId": "api-kv-fastdata",
       "headline": "KV FastData API - Multi-Key Lookup",
@@ -1807,7 +1807,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/apis/neardata/system/health",
-      "description": "Returns `ok` when the current deployment is healthy and `unhealthy` when the latest indexed block is too stale. Invalid API keys can be rejected upstream before the request reaches the app.",
+      "description": "Check whether the neardata service is healthy for the current deployment.",
       "docsPath": "/neardata/system/health",
       "familyId": "api-neardata",
       "headline": "NEAR Data API - Health",
@@ -1833,7 +1833,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/apis/neardata/v0/block",
-      "description": "Returns the finalized block document for the requested height, or `null` when the block does not exist within the requested archive segment. Depending on deployment topology, the request may redirect to another host that owns the canonical archive range.",
+      "description": "Fetch the finalized block document for a given height, including all chunks and shard data.",
       "docsPath": "/neardata/block",
       "familyId": "api-neardata",
       "headline": "NEAR Data API - Block",
@@ -1859,7 +1859,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/apis/neardata/v0/block_chunk",
-      "description": "Returns the chunk object for the requested shard ID, or `null` when that chunk is absent. Depending on deployment topology, the request may redirect to another host that owns the canonical archive range.",
+      "description": "Fetch a single chunk for a given finalized block and shard ID.",
       "docsPath": "/neardata/block-chunk",
       "familyId": "api-neardata",
       "headline": "NEAR Data API - Block Chunk",
@@ -1885,7 +1885,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/apis/neardata/v0/block_headers",
-      "description": "Returns the `block` object extracted from the full block response, not just the nested `header` sub-object. Depending on deployment topology, the request may redirect to another host that owns the canonical archive range.",
+      "description": "Fetch the top-level block object for a finalized block, including the block header and chunk summaries.",
       "docsPath": "/neardata/block-headers",
       "familyId": "api-neardata",
       "headline": "NEAR Data API - Block Headers",
@@ -1911,7 +1911,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/apis/neardata/v0/block_optimistic",
-      "description": "Returns an optimistic block document when the deployment can serve it directly. Older or archive-only heights may redirect to a canonical finalized or archive URL instead.",
+      "description": "Fetch an optimistic block document when the endpoint can serve it directly, or follow the documented redirect behavior when the deployment hands off to finalized or archive infrastructure.",
       "docsPath": "/neardata/block-optimistic",
       "familyId": "api-neardata",
       "headline": "NEAR Data API - Optimistic Block",
@@ -1937,7 +1937,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/apis/neardata/v0/block_shard",
-      "description": "Returns the shard object for the requested shard ID, or `null` when that shard is absent. Depending on deployment topology, the request may redirect to another host that owns the canonical archive range.",
+      "description": "Fetch a single shard document for a given finalized block and shard ID.",
       "docsPath": "/neardata/block-shard",
       "familyId": "api-neardata",
       "headline": "NEAR Data API - Block Shard",
@@ -1963,7 +1963,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/apis/neardata/v0/first_block",
-      "description": "Returns a redirect to the canonical first block URL for the selected deployment. Clients that automatically follow redirects will receive the full block document instead.",
+      "description": "This endpoint redirects to the canonical first block URL for the selected network.",
       "docsPath": "/neardata/first-block",
       "familyId": "api-neardata",
       "headline": "NEAR Data API - First Block",
@@ -1989,7 +1989,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/apis/neardata/v0/last_block_final",
-      "description": "Returns a redirect to the canonical latest finalized block URL for the current deployment. Clients that automatically follow redirects will receive the full block document instead.",
+      "description": "This endpoint redirects to the latest finalized block URL for the active deployment.",
       "docsPath": "/neardata/last-block-final",
       "familyId": "api-neardata",
       "headline": "NEAR Data API - Last Final Block",
@@ -2015,7 +2015,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/apis/neardata/v0/last_block_optimistic",
-      "description": "Returns a redirect to the canonical latest optimistic block URL for the current deployment. Clients that automatically follow redirects will receive the resulting block document instead.",
+      "description": "This endpoint redirects to the latest optimistic block URL for the active deployment.",
       "docsPath": "/neardata/last-block-optimistic",
       "familyId": "api-neardata",
       "headline": "NEAR Data API - Last Optimistic Block",
@@ -2041,7 +2041,7 @@
     {
       "authSummary": "No auth required",
       "canonicalPath": "/apis/transactions/v0/account",
-      "description": "Returns account transaction rows, an optional total count on the first page, and an optional resume token.",
+      "description": "Fetch account transaction history with optional filters for signer, success status, and sort order.",
       "docsPath": "/tx/account",
       "familyId": "api-transactions",
       "headline": "Transactions API - Account History",
@@ -2067,7 +2067,7 @@
     {
       "authSummary": "No auth required",
       "canonicalPath": "/apis/transactions/v0/block",
-      "description": "Returns a block row and optionally its transactions and receipts.",
+      "description": "Fetch a block row by height or hash and optionally expand its transactions and receipts.",
       "docsPath": "/tx/block",
       "familyId": "api-transactions",
       "headline": "Transactions API - Block Lookup",
@@ -2093,7 +2093,7 @@
     {
       "authSummary": "No auth required",
       "canonicalPath": "/apis/transactions/v0/blocks",
-      "description": "Returns up to 100 block rows for the requested height window.",
+      "description": "Fetch a bounded list of indexed blocks ordered ascending or descending.",
       "docsPath": "/tx/blocks",
       "familyId": "api-transactions",
       "headline": "Transactions API - Block Range",
@@ -2119,7 +2119,7 @@
     {
       "authSummary": "No auth required",
       "canonicalPath": "/apis/transactions/v0/receipt",
-      "description": "Returns a receipt row and, when present, the associated raw transaction payload.",
+      "description": "Use this endpoint to fetch a receipt row and the associated transaction when available.",
       "docsPath": "/tx/receipt",
       "familyId": "api-transactions",
       "headline": "Transactions API - Receipt Lookup",
@@ -2145,7 +2145,7 @@
     {
       "authSummary": "No auth required",
       "canonicalPath": "/apis/transactions/v0/transactions",
-      "description": "Returns up to 20 raw transaction payloads for the supplied transaction hashes.",
+      "description": "Use this endpoint to fetch up to 20 indexed transactions by hash.",
       "docsPath": "/tx/transactions",
       "familyId": "api-transactions",
       "headline": "Transactions API - Transactions by Hash",
@@ -2171,7 +2171,7 @@
     {
       "authSummary": "No auth required",
       "canonicalPath": "/apis/transfers/v0/transfers",
-      "description": "Returns transfer rows plus an opaque resume token for pagination.",
+      "description": "Fetch transfer rows for one account with optional direction, asset, amount, and time filters.",
       "docsPath": "/transfers/query",
       "familyId": "api-transfers",
       "headline": "Transfers API - Query Transfers",

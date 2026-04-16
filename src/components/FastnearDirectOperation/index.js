@@ -1736,7 +1736,7 @@ function FastnearOperationPage({ pageModel }) {
   );
 }
 
-export default function FastnearDirectOperation({ pageModelId }) {
+export default function FastnearDirectOperation({ pageModelId, renderDescription }) {
   const { i18n } = useDocusaurusContext();
   const currentLocale = i18n.currentLocale || "en";
   const pageModel = getFastnearPageModelById(pageModelId, currentLocale);
@@ -1784,6 +1784,11 @@ export default function FastnearDirectOperation({ pageModelId }) {
             <meta name="docsearch:canonical_target" content={operationMeta.canonicalTarget} />
           ) : null}
         </Head>
+      ) : null}
+      {renderDescription && pageModel.info?.description ? (
+        <div data-fastnear-content="endpoint-description">
+          <p>{pageModel.info.description}</p>
+        </div>
       ) : null}
       <FastnearOperationPage pageModel={pageModel} />
     </div>
