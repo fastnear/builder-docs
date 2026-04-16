@@ -1677,7 +1677,12 @@ function FastnearOperationPage({ pageModel }) {
                 }}
                 disabled={!curlCommand}
               >
-                {copiedCurl ? uiText.copiedCurlCommand : uiText.copyCurlCommand}
+                {copiedCurl ? (
+                  <CheckGlyph className="fastnear-button__icon" />
+                ) : (
+                  <CopyGlyph className="fastnear-button__icon" />
+                )}
+                <span>{copiedCurl ? uiText.copiedCurlCommand : uiText.copyCurlCommand}</span>
               </button>
             </div>
 
