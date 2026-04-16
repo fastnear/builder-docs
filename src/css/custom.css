@@ -107,8 +107,6 @@ html[data-theme='dark'] {
 }
 
 .theme-layout-navbar .navbar__link {
-  display: inline-flex;
-  align-items: center;
   white-space: nowrap;
 }
 
@@ -189,6 +187,72 @@ html[data-theme='light'] a:hover {
   color: rgba(243, 245, 255, 0.28);
 }
 
+@media (min-width: 997px) {
+  .theme-layout-navbar .navbar__link {
+    display: inline-flex;
+    align-items: center;
+  }
+}
+
+@media (min-width: 997px) and (max-width: 1200px) {
+  .navbar__brand {
+    flex-shrink: 0;
+    margin-right: 0.4rem;
+  }
+
+  .navbar__logo img {
+    height: 1.35rem;
+  }
+
+  .navbar__item {
+    padding-inline: 0.25rem;
+  }
+
+  .theme-layout-navbar .navbar__link,
+  .theme-layout-navbar-right .navbar__item,
+  .theme-layout-navbar-right .navbar__link {
+    font-size: 0.95rem;
+  }
+
+  .theme-layout-navbar-right .navbar__item,
+  .theme-layout-navbar-right [class*='navbarSearchContainer'] {
+    padding-inline: 0.2rem;
+  }
+
+  .navbar .DocSearch-Button {
+    min-width: 0;
+    padding-inline: 0.55rem;
+  }
+
+  .navbar .DocSearch-Button-Placeholder,
+  .navbar .DocSearch-Button-Keys,
+  .theme-layout-navbar-right [class*='colorModeToggle'] {
+    display: none;
+  }
+}
+
+@media (min-width: 1201px) and (max-width: 1320px) {
+  .navbar__brand {
+    flex-shrink: 0;
+  }
+
+  .theme-layout-navbar-right .navbar__item,
+  .theme-layout-navbar-right [class*='navbarSearchContainer'] {
+    padding-inline: 0.2rem;
+  }
+
+  .navbar .DocSearch-Button {
+    min-width: 0;
+    padding-inline: 0.55rem;
+  }
+
+  .navbar .DocSearch-Button-Placeholder,
+  .navbar .DocSearch-Button-Keys,
+  .theme-layout-navbar-right [class*='colorModeToggle'] {
+    display: none;
+  }
+}
+
 pre code {
   border: none;
   background: transparent;
@@ -201,8 +265,22 @@ pre code {
     --ifm-link-font-size: 1rem;
   }
 
+  .navbar {
+    backdrop-filter: none;
+  }
+
   .navbar__inner {
     min-height: 4rem;
+  }
+
+  .navbar .DocSearch-Button {
+    min-width: 0;
+    padding-inline: 0.55rem;
+  }
+
+  .navbar .DocSearch-Button-Placeholder,
+  .navbar .DocSearch-Button-Keys {
+    display: none;
   }
 
   .navbar-sidebar .menu__link,
@@ -218,9 +296,49 @@ pre code {
     align-items: flex-start;
   }
 
+  .fastnear-mobile-navbar__drilldown {
+    align-items: center;
+    background: transparent;
+    border: 0;
+    display: flex;
+    gap: 0.85rem;
+    justify-content: space-between;
+    text-align: left;
+    width: 100%;
+  }
+
+  .fastnear-mobile-navbar__drilldown-label {
+    flex: 1 1 auto;
+  }
+
+  .fastnear-mobile-navbar__drilldown-icon {
+    color: rgba(17, 17, 17, 0.48);
+    flex: 0 0 auto;
+    font-size: 1.15rem;
+    line-height: 1;
+  }
+
+  .fastnear-mobile-navbar__section-title {
+    color: rgba(17, 17, 17, 0.58);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    margin: 0 0 0.35rem;
+    padding: 0 1rem;
+    text-transform: uppercase;
+  }
+
   .theme-doc-sidebar-menu {
     padding-bottom: 2rem;
   }
+}
+
+[data-theme='dark'] .fastnear-mobile-navbar__drilldown-icon {
+  color: rgba(243, 245, 255, 0.54);
+}
+
+[data-theme='dark'] .fastnear-mobile-navbar__section-title {
+  color: rgba(243, 245, 255, 0.62);
 }
 
 /* Swap toggle icons: show destination mode instead of current mode */
@@ -1345,6 +1463,100 @@ pre code {
   .builder-fastnear-direct .fastnear-interaction__actions > .fastnear-button,
   .builder-fastnear-direct .fastnear-interaction__auth-actions > .fastnear-button {
     width: 100%;
+  }
+}
+
+@media (max-width: 996px) and (max-height: 500px) and (orientation: landscape) {
+  :root {
+    --ifm-navbar-height: 3.5rem;
+  }
+
+  .navbar__inner {
+    min-height: var(--ifm-navbar-height);
+  }
+
+  .navbar__logo img {
+    height: 1.45rem;
+  }
+
+  .theme-doc-breadcrumbs {
+    margin-bottom: 0.3rem;
+  }
+
+  .theme-doc-breadcrumbs .breadcrumbs {
+    font-size: 0.76rem;
+  }
+
+  .theme-doc-markdown h1:first-child {
+    font-size: 2.5rem !important;
+    line-height: 1.02 !important;
+    margin-bottom: 0.45rem !important;
+  }
+
+  .theme-doc-markdown h1:first-child + p {
+    margin-bottom: 0.45rem !important;
+    font-size: 1rem;
+  }
+
+  .theme-doc-markdown h1:first-child + p + p {
+    margin-bottom: 0.8rem !important;
+    line-height: 1.4;
+  }
+
+  .fastnear-doc-page-actions__button,
+  .builder-fastnear-direct .fastnear-operation-page__toolbar .fastnear-doc-page-actions__button {
+    min-height: 2.05rem;
+    padding: 0.34rem 0.72rem;
+    font-size: 0.84rem;
+  }
+
+  .builder-fastnear-direct {
+    margin: 0.8rem 0 1.35rem;
+  }
+
+  .builder-fastnear-direct .fastnear-operation-page {
+    gap: 14px;
+  }
+
+  .builder-fastnear-direct .fastnear-operation-page__toolbar {
+    margin-bottom: 0;
+  }
+
+  .builder-fastnear-direct .fastnear-interaction,
+  .builder-fastnear-direct .fastnear-reference__panel {
+    padding: 14px;
+  }
+
+  .builder-fastnear-direct .fastnear-interaction__layout,
+  .builder-fastnear-direct .fastnear-interaction__sidebar,
+  .builder-fastnear-direct .fastnear-interaction__response,
+  .builder-fastnear-direct .fastnear-interaction__controls,
+  .builder-fastnear-direct .fastnear-reference__grid,
+  .builder-fastnear-direct .fastnear-reference__panel {
+    gap: 10px;
+  }
+
+  .builder-fastnear-direct .fastnear-interaction__field {
+    gap: 4px;
+  }
+
+  .builder-fastnear-direct .fastnear-interaction__input {
+    min-height: 40px;
+    padding: 8px 10px;
+  }
+
+  .builder-fastnear-direct .fastnear-interaction__input--multiline {
+    min-height: 88px;
+  }
+
+  .builder-fastnear-direct .fastnear-interaction__auth {
+    gap: 8px;
+    padding: 12px;
+  }
+
+  .builder-fastnear-direct .fastnear-reference__summary,
+  .builder-fastnear-direct .fastnear-reference__response-description {
+    margin-bottom: 8px;
   }
 }
 

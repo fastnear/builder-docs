@@ -77,6 +77,7 @@ function loadLocalEnvFiles(baseDir) {
 }
 
 loadLocalEnvFiles(configDir);
+const sidebars = require('./sidebars.js').default;
 
 const vscodeLanguageServerTypesEsmPath = path.join(
   configDir,
@@ -99,6 +100,8 @@ const resolvedSearchProvider =
   requestedSearchProvider === 'algolia' && hasDocsearchConfig ? 'algolia' : 'local';
 const docsearchInsightsConfig = hasDocsearchConfig ? { insights: true } : {};
 const docsRoot = path.join(configDir, 'docs');
+const localizedDocsRoot = (locale) =>
+  path.join(configDir, 'i18n', locale, 'docusaurus-plugin-content-docs', 'current');
 const localSearchTheme = [
   require.resolve('@easyops-cn/docusaurus-search-local'),
   {
@@ -154,6 +157,143 @@ function walkDocsFiles(dirPath) {
   }
 
   return collected;
+}
+
+function readFrontmatter(rawContent) {
+  const frontmatterMatch = rawContent.match(/^---\n([\s\S]*?)\n---\n?/);
+  return frontmatterMatch ? frontmatterMatch[1] : '';
+}
+
+function readFrontmatterValue(rawContent, key) {
+  const frontmatter = readFrontmatter(rawContent);
+  if (!frontmatter) {
+    return null;
+  }
+
+  const match = frontmatter.match(new RegExp(`^${key}:\\s*(.+)$`, 'm'));
+  return match ? match[1].trim().replace(/^['"]|['"]$/g, '') : null;
+}
+
+function readFirstHeading(rawContent) {
+  const headingMatch = rawContent.match(/^#\s+(.+)$/m);
+  return headingMatch ? headingMatch[1].trim() : null;
+}
+
+function toDocId(filePath, docsDir) {
+  return path.relative(docsDir, filePath).replace(/\.(md|mdx)$/i, '').split(path.sep).join('/');
+}
+
+function buildDefaultDocSlug(docId) {
+  if (docId === 'index') {
+    return '/';
+  }
+
+  return `/${docId.replace(/\/index$/, '')}`;
+}
+
+function localizeDocSlug(slug, locale) {
+  if (locale === DEFAULT_DOCS_LOCALE) {
+    return slug;
+  }
+
+  if (slug === `/${locale}` || slug.startsWith(`/${locale}/`)) {
+    return slug;
+  }
+
+  return slug === '/' ? `/${locale}` : `/${locale}${slug}`;
+}
+
+function readDocMetadataById(docsDir) {
+  if (!fs.existsSync(docsDir)) {
+    return new Map();
+  }
+
+  return new Map(
+    walkDocsFiles(docsDir).map((filePath) => {
+      const rawContent = fs.readFileSync(filePath, 'utf8');
+      const docId = toDocId(filePath, docsDir);
+      const title = readFrontmatterValue(rawContent, 'title') || readFirstHeading(rawContent) || docId;
+      const slug = readFrontmatterValue(rawContent, 'slug') || buildDefaultDocSlug(docId);
+      return [docId, { title, slug }];
+    })
+  );
+}
+
+const docMetadataByLocale = (() => {
+  const defaultDocs = readDocMetadataById(docsRoot);
+  return Object.fromEntries(
+    DOCS_LOCALES.map((locale) => {
+      if (locale === DEFAULT_DOCS_LOCALE) {
+        return [locale, defaultDocs];
+      }
+
+      const localizedDocs = readDocMetadataById(localizedDocsRoot(locale));
+      return [locale, new Map([...defaultDocs, ...localizedDocs])];
+    })
+  );
+})();
+
+function resolveMobileSidebarLink(docId, locale) {
+  const docMetadata = docMetadataByLocale[locale].get(docId);
+
+  if (!docMetadata) {
+    throw new Error(`Unable to resolve mobile sidebar doc "${docId}" for locale "${locale}"`);
+  }
+
+  return {
+    type: 'link',
+    docId,
+    href: localizeDocSlug(docMetadata.slug, locale),
+    label: docMetadata.title,
+    unlisted: false,
+  };
+}
+
+function resolveMobileSidebarItem(item, locale) {
+  if (typeof item === 'string') {
+    return resolveMobileSidebarLink(item, locale);
+  }
+
+  if (item.type === 'category') {
+    return {
+      type: 'category',
+      label: item.label,
+      collapsible: item.collapsible ?? true,
+      collapsed: item.collapsed ?? true,
+      items: (item.items || []).map((childItem) => resolveMobileSidebarItem(childItem, locale)),
+    };
+  }
+
+  if (item.type === 'link') {
+    return {
+      type: 'link',
+      href: item.href,
+      label: item.label,
+    };
+  }
+
+  return null;
+}
+
+const mobileSidebarItemsByLocaleCache = new Map();
+
+function getMobileSidebarItemsByLocale(sidebarId) {
+  if (!mobileSidebarItemsByLocaleCache.has(sidebarId)) {
+    const sidebarItems = sidebars[sidebarId] || [];
+    mobileSidebarItemsByLocaleCache.set(
+      sidebarId,
+      Object.fromEntries(
+        DOCS_LOCALES.map((locale) => [
+          locale,
+          sidebarItems
+            .map((item) => resolveMobileSidebarItem(item, locale))
+            .filter(Boolean),
+        ])
+      )
+    );
+  }
+
+  return mobileSidebarItemsByLocaleCache.get(sidebarId);
 }
 
 function readDocSlugs() {
@@ -419,18 +559,21 @@ const config = {
             type: 'docSidebar',
             sidebarId: 'rpcSidebar',
             label: 'RPC',
+            mobileSidebarItemsByLocale: getMobileSidebarItemsByLocale('rpcSidebar'),
             position: 'left',
           },
           {
             type: 'docSidebar',
             sidebarId: 'fastnearApiSidebar',
             label: 'API',
+            mobileSidebarItemsByLocale: getMobileSidebarItemsByLocale('fastnearApiSidebar'),
             position: 'left',
           },
           {
             type: 'docSidebar',
             sidebarId: 'transactionsApiSidebar',
             label: 'Transactions',
+            mobileSidebarItemsByLocale: getMobileSidebarItemsByLocale('transactionsApiSidebar'),
             position: 'left',
           },
           ...(!hideEarlyApiFamilies
@@ -439,6 +582,7 @@ const config = {
                   type: 'docSidebar',
                   sidebarId: 'transfersApiSidebar',
                   label: 'Transfers',
+                  mobileSidebarItemsByLocale: getMobileSidebarItemsByLocale('transfersApiSidebar'),
                   position: 'left',
                 },
               ]
@@ -447,14 +591,16 @@ const config = {
             type: 'docSidebar',
             sidebarId: 'nearDataApiSidebar',
             label: 'NEAR\u00A0Data',
+            mobileSidebarItemsByLocale: getMobileSidebarItemsByLocale('nearDataApiSidebar'),
             position: 'left',
           },
           ...(!hideEarlyApiFamilies
             ? [
                 {
-                  type: 'doc',
-                  docId: 'fastdata/kv/index',
+                  type: 'docSidebar',
+                  sidebarId: 'kvFastDataSidebar',
                   label: 'FastData',
+                  mobileSidebarItemsByLocale: getMobileSidebarItemsByLocale('kvFastDataSidebar'),
                   position: 'left',
                 },
               ]
