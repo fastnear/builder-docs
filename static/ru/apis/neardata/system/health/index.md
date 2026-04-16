@@ -1,6 +1,6 @@
 # NEAR Data API - Состояние
 Проверить состояние сервиса
-Возвращает `ok`, когда текущий деплой исправен, и `unhealthy`, когда последний индексированный блок слишком устарел. Неверные API-ключи могут быть отклонены ещё до того, как запрос дойдёт до приложения.
+Проверьте работоспособность сервиса neardata — возвращает `{status: ok}` при успехе, ошибку при проблемах.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/apis/neardata/system/health
 - https://docs.fastnear.com/ru/apis/neardata/openapi/system/get_health

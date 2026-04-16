@@ -1235,7 +1235,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/ru/apis/neardata/system/health",
-      "description": "Возвращает `ok`, когда текущий деплой исправен, и `unhealthy`, когда последний индексированный блок слишком устарел. Неверные API-ключи могут быть отклонены ещё до того, как запрос дойдёт до приложения.",
+      "description": "Проверьте работоспособность сервиса neardata — возвращает `{status: ok}` при успехе, ошибку при проблемах.",
       "docsPath": "/ru/neardata/system/health",
       "familyId": "api-neardata",
       "headline": "NEAR Data API - Health",
@@ -1280,7 +1280,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/ru/apis/neardata/v0/block",
-      "description": "Возвращает документ финализированного блока для запрошенной высоты или `null`, если блок отсутствует в выбранном архивном сегменте. В зависимости от топологии деплоя запрос может быть перенаправлен на другой хост, которому принадлежит канонический архивный диапазон.",
+      "description": "Получите полный документ финализированного блока на выбранной высоте — заголовок плюс каждый чанк и данные шарда.",
       "docsPath": "/ru/neardata/block",
       "familyId": "api-neardata",
       "headline": "NEAR Data API - Блок",
@@ -1325,7 +1325,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/ru/apis/neardata/v0/block_chunk",
-      "description": "Возвращает объект чанка для запрошенного `shard_id` или `null`, если этот чанк отсутствует. В зависимости от топологии деплоя запрос может быть перенаправлен на другой хост, которому принадлежит канонический архивный диапазон.",
+      "description": "Получите один чанк — транзакции и входящие квитанции одного шарда — на выбранной высоте блока.",
       "docsPath": "/ru/neardata/block-chunk",
       "familyId": "api-neardata",
       "headline": "NEAR Data API - Блок Chunk",
@@ -1370,7 +1370,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/ru/apis/neardata/v0/block_headers",
-      "description": "Возвращает объект `block`, извлечённый из полного ответа по блоку, а не только вложенный объект `header`. В зависимости от топологии деплоя запрос может быть перенаправлен на другой хост, которому принадлежит канонический архивный диапазон.",
+      "description": "Получите только заголовок финализированного блока и сводку по чанкам — без содержимого отдельных шардов.",
       "docsPath": "/ru/neardata/block-headers",
       "familyId": "api-neardata",
       "headline": "NEAR Data API - Блок Headers",
@@ -1415,7 +1415,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/ru/apis/neardata/v0/block_optimistic",
-      "description": "Возвращает оптимистичный документ блока, если текущий деплой может отдать его напрямую. Старые высоты или чисто архивные диапазоны могут вместо этого перенаправить вас на канонический финализированный или архивный URL.",
+      "description": "Получите оптимистичный (ещё не финализированный) блок на выбранной высоте — может перенаправить на финализированные данные, когда окно оптимистичности закрылось.",
       "docsPath": "/ru/neardata/block-optimistic",
       "familyId": "api-neardata",
       "headline": "NEAR Data API - Optimistic Блок",
@@ -1460,7 +1460,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/ru/apis/neardata/v0/block_shard",
-      "description": "Возвращает объект шарда для запрошенного `shard_id` или `null`, если этот шард отсутствует. В зависимости от топологии деплоя запрос может быть перенаправлен на другой хост, которому принадлежит канонический архивный диапазон.",
+      "description": "Получите полное содержимое одного шарда на выбранном блоке — чанк плюс изменения состояния и произведённые квитанции.",
       "docsPath": "/ru/neardata/block-shard",
       "familyId": "api-neardata",
       "headline": "NEAR Data API - Блок Shard",
@@ -1505,7 +1505,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/ru/apis/neardata/v0/first_block",
-      "description": "Возвращает перенаправление на канонический URL первого блока для выбранного деплоя. Клиенты, которые автоматически следуют перенаправлению, вместо этого получат полный документ блока.",
+      "description": "Перенаправление на первый блок цепочки после генезиса — стартовый курсор для индексаторов, обходящих цепочку с начала.",
       "docsPath": "/ru/neardata/first-block",
       "familyId": "api-neardata",
       "headline": "NEAR Data API - первый блок",
@@ -1550,7 +1550,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/ru/apis/neardata/v0/last_block_final",
-      "description": "Возвращает перенаправление на канонический URL последнего финализированного блока для текущего деплоя. Клиенты, которые автоматически проходят перенаправление, вместо этого получат полный документ блока.",
+      "description": "Перенаправление на самый свежий финализированный блок — курсор вершины цепочки после достижения консенсуса.",
       "docsPath": "/ru/neardata/last-block-final",
       "familyId": "api-neardata",
       "headline": "NEAR Data API - Last Final Блок",
@@ -1595,7 +1595,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/ru/apis/neardata/v0/last_block_optimistic",
-      "description": "Возвращает перенаправление на канонический URL последнего оптимистичного блока для текущего деплоя. Клиенты, которые автоматически следуют перенаправлению, вместо этого получат итоговый документ блока.",
+      "description": "Перенаправление на самый свежий оптимистичный блок — максимально свежая вершина, до финализации.",
       "docsPath": "/ru/neardata/last-block-optimistic",
       "familyId": "api-neardata",
       "headline": "NEAR Data API — последний оптимистичный блок",
