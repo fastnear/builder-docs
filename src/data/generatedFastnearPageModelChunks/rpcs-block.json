@@ -1,0 +1,807 @@
+[
+  {
+    "canonicalPath": "/rpcs/block/block_by_height",
+    "info": {
+      "description": "Fetch a block's header and chunk summaries by its height in the chain.",
+      "operationId": "block_by_height",
+      "summary": "Get block by height",
+      "title": "NEAR Protocol RPC: Get block by height",
+      "version": "1.0.0"
+    },
+    "interaction": {
+      "authTransport": "bearer",
+      "defaultId": "fastnear",
+      "fields": [
+        {
+          "description": "Block height to query",
+          "label": "Block Height",
+          "location": "body",
+          "name": "block_id",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "description": "Block height to query"
+          }
+        }
+      ],
+      "kind": "rpc-block-by-height",
+      "networks": [
+        {
+          "defaultFields": {
+            "block_id": 194263739
+          },
+          "key": "mainnet",
+          "label": "Mainnet",
+          "url": "https://rpc.mainnet.fastnear.com"
+        },
+        {
+          "defaultFields": {
+            "block_id": 246016197
+          },
+          "key": "testnet",
+          "label": "Testnet",
+          "url": "https://rpc.testnet.fastnear.com"
+        }
+      ],
+      "requestMethod": "block",
+      "supportsFinality": false,
+      "transport": "json-rpc"
+    },
+    "pageModelId": "rpc-block-by-height",
+    "replaceOperationPage": true,
+    "request": {
+      "bodySchema": {
+        "type": "object",
+        "required": [
+          "jsonrpc",
+          "id",
+          "method",
+          "params"
+        ],
+        "properties": [
+          {
+            "name": "jsonrpc",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "2.0"
+              ]
+            }
+          },
+          {
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "fastnear"
+            }
+          },
+          {
+            "name": "method",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "block"
+              ]
+            }
+          },
+          {
+            "name": "params",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "block_id"
+              ],
+              "properties": [
+                {
+                  "name": "block_id",
+                  "required": true,
+                  "schema": {
+                    "type": "integer",
+                    "description": "Block height to query"
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "examples": [
+        {
+          "id": "mainnet",
+          "label": "Get block by height (Mainnet)",
+          "network": "mainnet",
+          "request": {
+            "body": {
+              "jsonrpc": "2.0",
+              "id": "fastnear",
+              "method": "block",
+              "params": {
+                "block_id": 194263739
+              }
+            },
+            "headers": {},
+            "path": {},
+            "query": {}
+          }
+        },
+        {
+          "id": "testnet",
+          "label": "Get block by height (Testnet)",
+          "network": "testnet",
+          "request": {
+            "body": {
+              "jsonrpc": "2.0",
+              "id": "fastnear",
+              "method": "block",
+              "params": {
+                "block_id": 246016197
+              }
+            },
+            "headers": {},
+            "path": {},
+            "query": {}
+          }
+        }
+      ],
+      "mediaType": "application/json",
+      "parameters": {
+        "header": [],
+        "path": [],
+        "query": []
+      },
+      "required": true
+    },
+    "responses": [
+      {
+        "description": "Successful response",
+        "mediaType": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "jsonrpc",
+            "id"
+          ],
+          "properties": [
+            {
+              "name": "jsonrpc",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "enum": [
+                  "2.0"
+                ]
+              }
+            },
+            {
+              "name": "id",
+              "required": true,
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "number"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "result",
+              "required": false,
+              "schema": {
+                "type": "object"
+              }
+            },
+            {
+              "name": "error",
+              "required": false,
+              "schema": {
+                "type": "object",
+                "properties": [
+                  {
+                    "name": "code",
+                    "required": false,
+                    "schema": {
+                      "type": "integer"
+                    }
+                  },
+                  {
+                    "name": "message",
+                    "required": false,
+                    "schema": {
+                      "type": "string"
+                    }
+                  },
+                  {
+                    "name": "data",
+                    "required": false,
+                    "schema": {
+                      "type": "object"
+                    }
+                  }
+                ]
+              }
+            }
+          ],
+          "refName": "JsonRpcResponse"
+        },
+        "status": "200"
+      }
+    ],
+    "route": {
+      "method": "POST",
+      "path": "/",
+      "transport": "json-rpc"
+    },
+    "routeAliases": [
+      "/rpcs/block/block_by_height/other/block_by_height",
+      "/reference/operation/block_by_height"
+    ],
+    "securitySchemes": [
+      {
+        "description": "The OpenAPI contract describes the FastNEAR API key as a query parameter named apiKey.",
+        "id": "ApiKeyAuth",
+        "in": "query",
+        "name": "apiKey",
+        "type": "apiKey"
+      }
+    ],
+    "sourceSpec": "rpcs/block/block_by_height.yaml"
+  },
+  {
+    "canonicalPath": "/rpcs/block/block_by_id",
+    "info": {
+      "description": "Fetch a block's header and chunk summaries by its SHA-256 hash.",
+      "operationId": "block_by_id",
+      "summary": "Get block by hash",
+      "title": "NEAR Protocol RPC: Get block by hash",
+      "version": "1.0.0"
+    },
+    "interaction": {
+      "authTransport": "bearer",
+      "defaultId": "fastnear",
+      "fields": [
+        {
+          "description": "Base58-encoded block hash",
+          "label": "Block Hash",
+          "location": "body",
+          "name": "block_id",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "description": "Base58-encoded block hash"
+          }
+        }
+      ],
+      "kind": "rpc-block-by-id",
+      "networks": [
+        {
+          "defaultFields": {
+            "block_id": "9XN7MtDywZvfGx6TKy1MT2iCZkKuHikJXmNazxdZ4x6T"
+          },
+          "key": "mainnet",
+          "label": "Mainnet",
+          "url": "https://rpc.mainnet.fastnear.com"
+        },
+        {
+          "defaultFields": {
+            "block_id": "6JYj6i1FaUCzdoqy41CqUcZJxa5n9EmLEENRDH2gLm5u"
+          },
+          "key": "testnet",
+          "label": "Testnet",
+          "url": "https://rpc.testnet.fastnear.com"
+        }
+      ],
+      "requestMethod": "block",
+      "supportsFinality": false,
+      "transport": "json-rpc"
+    },
+    "pageModelId": "rpc-block-by-id",
+    "replaceOperationPage": true,
+    "request": {
+      "bodySchema": {
+        "type": "object",
+        "required": [
+          "jsonrpc",
+          "id",
+          "method",
+          "params"
+        ],
+        "properties": [
+          {
+            "name": "jsonrpc",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "2.0"
+              ]
+            }
+          },
+          {
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "fastnear"
+            }
+          },
+          {
+            "name": "method",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "block"
+              ]
+            }
+          },
+          {
+            "name": "params",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "block_id"
+              ],
+              "properties": [
+                {
+                  "name": "block_id",
+                  "required": true,
+                  "schema": {
+                    "type": "string",
+                    "description": "Base58-encoded block hash"
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "examples": [
+        {
+          "id": "mainnet",
+          "label": "Get block by hash (Mainnet)",
+          "network": "mainnet",
+          "request": {
+            "body": {
+              "jsonrpc": "2.0",
+              "id": "fastnear",
+              "method": "block",
+              "params": {
+                "block_id": "9XN7MtDywZvfGx6TKy1MT2iCZkKuHikJXmNazxdZ4x6T"
+              }
+            },
+            "headers": {},
+            "path": {},
+            "query": {}
+          }
+        },
+        {
+          "id": "testnet",
+          "label": "Get block by hash (Testnet)",
+          "network": "testnet",
+          "request": {
+            "body": {
+              "jsonrpc": "2.0",
+              "id": "fastnear",
+              "method": "block",
+              "params": {
+                "block_id": "6JYj6i1FaUCzdoqy41CqUcZJxa5n9EmLEENRDH2gLm5u"
+              }
+            },
+            "headers": {},
+            "path": {},
+            "query": {}
+          }
+        }
+      ],
+      "mediaType": "application/json",
+      "parameters": {
+        "header": [],
+        "path": [],
+        "query": []
+      },
+      "required": true
+    },
+    "responses": [
+      {
+        "description": "Successful response",
+        "mediaType": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "jsonrpc",
+            "id"
+          ],
+          "properties": [
+            {
+              "name": "jsonrpc",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "enum": [
+                  "2.0"
+                ]
+              }
+            },
+            {
+              "name": "id",
+              "required": true,
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "number"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "result",
+              "required": false,
+              "schema": {
+                "type": "object"
+              }
+            },
+            {
+              "name": "error",
+              "required": false,
+              "schema": {
+                "type": "object",
+                "properties": [
+                  {
+                    "name": "code",
+                    "required": false,
+                    "schema": {
+                      "type": "integer"
+                    }
+                  },
+                  {
+                    "name": "message",
+                    "required": false,
+                    "schema": {
+                      "type": "string"
+                    }
+                  },
+                  {
+                    "name": "data",
+                    "required": false,
+                    "schema": {
+                      "type": "object"
+                    }
+                  }
+                ]
+              }
+            }
+          ],
+          "refName": "JsonRpcResponse"
+        },
+        "status": "200"
+      }
+    ],
+    "route": {
+      "method": "POST",
+      "path": "/",
+      "transport": "json-rpc"
+    },
+    "routeAliases": [
+      "/rpcs/block/block_by_id/other/block_by_id",
+      "/reference/operation/block_by_id"
+    ],
+    "securitySchemes": [
+      {
+        "description": "The OpenAPI contract describes the FastNEAR API key as a query parameter named apiKey.",
+        "id": "ApiKeyAuth",
+        "in": "query",
+        "name": "apiKey",
+        "type": "apiKey"
+      }
+    ],
+    "sourceSpec": "rpcs/block/block_by_id.yaml"
+  },
+  {
+    "canonicalPath": "/rpcs/block/block_effects",
+    "info": {
+      "description": "Summarize every state change in a block — which accounts, keys, and contract-state entries were touched.",
+      "operationId": "block_effects",
+      "summary": "Get block effects",
+      "title": "NEAR Protocol RPC: Get block effects",
+      "version": "1.0.0"
+    },
+    "interaction": {
+      "authTransport": "bearer",
+      "defaultId": "fastnear",
+      "fields": [
+        {
+          "description": "Block height (integer) or block hash (string)",
+          "label": "Block ID",
+          "location": "body",
+          "name": "block_id",
+          "required": true,
+          "schema": {
+            "description": "Block height (integer) or block hash (string)",
+            "oneOf": [
+              {
+                "type": "integer",
+                "description": "Block height"
+              },
+              {
+                "type": "string",
+                "description": "Base58-encoded block hash"
+              }
+            ]
+          }
+        }
+      ],
+      "kind": "rpc-block-effects",
+      "networks": [
+        {
+          "defaultFields": {
+            "block_id": 194263739
+          },
+          "key": "mainnet",
+          "label": "Mainnet",
+          "url": "https://rpc.mainnet.fastnear.com"
+        },
+        {
+          "defaultFields": {
+            "block_id": 246016197
+          },
+          "key": "testnet",
+          "label": "Testnet",
+          "url": "https://rpc.testnet.fastnear.com"
+        }
+      ],
+      "requestMethod": "block_effects",
+      "supportsFinality": false,
+      "transport": "json-rpc"
+    },
+    "pageModelId": "rpc-block-effects",
+    "replaceOperationPage": true,
+    "request": {
+      "bodySchema": {
+        "type": "object",
+        "required": [
+          "jsonrpc",
+          "id",
+          "method",
+          "params"
+        ],
+        "properties": [
+          {
+            "name": "jsonrpc",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "2.0"
+              ]
+            }
+          },
+          {
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "fastnear"
+            }
+          },
+          {
+            "name": "method",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "block_effects"
+              ]
+            }
+          },
+          {
+            "name": "params",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "block_id"
+              ],
+              "properties": [
+                {
+                  "name": "block_id",
+                  "required": true,
+                  "schema": {
+                    "description": "Block height (integer) or block hash (string)",
+                    "oneOf": [
+                      {
+                        "type": "integer",
+                        "description": "Block height"
+                      },
+                      {
+                        "type": "string",
+                        "description": "Base58-encoded block hash"
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "examples": [
+        {
+          "id": "mainnet",
+          "label": "Get block effects (Mainnet)",
+          "network": "mainnet",
+          "request": {
+            "body": {
+              "jsonrpc": "2.0",
+              "id": "fastnear",
+              "method": "block_effects",
+              "params": {
+                "block_id": 194263739
+              }
+            },
+            "headers": {},
+            "path": {},
+            "query": {}
+          }
+        },
+        {
+          "id": "testnet",
+          "label": "Get block effects (Testnet)",
+          "network": "testnet",
+          "request": {
+            "body": {
+              "jsonrpc": "2.0",
+              "id": "fastnear",
+              "method": "block_effects",
+              "params": {
+                "block_id": 246016197
+              }
+            },
+            "headers": {},
+            "path": {},
+            "query": {}
+          }
+        }
+      ],
+      "mediaType": "application/json",
+      "parameters": {
+        "header": [],
+        "path": [],
+        "query": []
+      },
+      "required": true
+    },
+    "responses": [
+      {
+        "description": "Successful response",
+        "mediaType": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "jsonrpc",
+            "id"
+          ],
+          "properties": [
+            {
+              "name": "jsonrpc",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "enum": [
+                  "2.0"
+                ]
+              }
+            },
+            {
+              "name": "id",
+              "required": true,
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "number"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "result",
+              "required": false,
+              "schema": {
+                "type": "object",
+                "required": [
+                  "block_hash",
+                  "changes"
+                ],
+                "properties": [
+                  {
+                    "name": "block_hash",
+                    "required": true,
+                    "schema": {
+                      "type": "string",
+                      "description": "Base58-encoded hash"
+                    }
+                  },
+                  {
+                    "name": "changes",
+                    "required": true,
+                    "schema": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "description": "One of multiple possible types"
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "name": "error",
+              "required": false,
+              "schema": {
+                "type": "object",
+                "properties": [
+                  {
+                    "name": "code",
+                    "required": false,
+                    "schema": {
+                      "type": "integer"
+                    }
+                  },
+                  {
+                    "name": "message",
+                    "required": false,
+                    "schema": {
+                      "type": "string"
+                    }
+                  },
+                  {
+                    "name": "data",
+                    "required": false,
+                    "schema": {
+                      "type": "object"
+                    }
+                  }
+                ]
+              }
+            }
+          ],
+          "refName": "JsonRpcResponse"
+        },
+        "status": "200"
+      }
+    ],
+    "route": {
+      "method": "POST",
+      "path": "/",
+      "transport": "json-rpc"
+    },
+    "routeAliases": [
+      "/rpcs/block/block_effects/other/block_effects",
+      "/reference/operation/block_effects"
+    ],
+    "securitySchemes": [
+      {
+        "description": "The OpenAPI contract describes the FastNEAR API key as a query parameter named apiKey.",
+        "id": "ApiKeyAuth",
+        "in": "query",
+        "name": "apiKey",
+        "type": "apiKey"
+      }
+    ],
+    "sourceSpec": "rpcs/block/block_effects.yaml"
+  }
+]

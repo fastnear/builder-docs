@@ -1,4 +1,4 @@
-import React, { startTransition, useDeferredValue, useEffect, useId, useMemo, useState } from "react";
+import React, { Suspense, startTransition, useDeferredValue, useEffect, useId, useMemo, useState } from "react";
 import Head from "@docusaurus/Head";
 import { translate } from "@docusaurus/Translate";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
@@ -11,7 +11,7 @@ import {
 } from "@site/src/utils/markdownExport";
 import { buildOperationKeywords, getOperationSemanticMeta } from "@site/src/utils/seo";
 import { FINALITY_OPTIONS } from "./finalityOptions";
-import { getFastnearPageModelById } from "./pageModels";
+import { useFastnearPageModelById } from "./pageModels";
 import {
   clearPortalApiKey,
   setPortalApiKey,
@@ -1821,11 +1821,88 @@ function FastnearOperationPage({ pageModel }) {
   );
 }
 
-export default function FastnearDirectOperation({ pageModelId, renderDescription = true }) {
-  const { i18n } = useDocusaurusContext();
-  const currentLocale = i18n.currentLocale || "en";
-  const pageModel = getFastnearPageModelById(pageModelId, currentLocale);
-  const canonicalPageModel = getFastnearPageModelById(pageModelId, "en");
+function FastnearOperationLoading() {
+  const uiText = getFastnearOperationUiText();
+
+  return (
+    <div className="builder-fastnear-direct">
+      <div
+        className="fastnear-operation-page fastnear-operation-page--loading"
+        aria-busy="true"
+        aria-live="polite"
+      >
+        <div className="fastnear-interaction fastnear-direct-loading-shell">
+          <div className="fastnear-interaction__layout">
+            <div className="fastnear-interaction__controls fastnear-direct-loading-shell__controls">
+              <div
+                className="fastnear-direct-loading-shell__line fastnear-direct-loading-shell__line--short"
+                aria-hidden="true"
+              />
+              <div className="fastnear-direct-loading-shell__field" aria-hidden="true" />
+              <div className="fastnear-direct-loading-shell__field" aria-hidden="true" />
+              <div className="fastnear-direct-loading-shell__actions" aria-hidden="true" />
+            </div>
+            <div className="fastnear-interaction__sidebar fastnear-direct-loading-shell__sidebar">
+              <div className="fastnear-interaction__auth fastnear-direct-loading-shell__card">
+                <p className="fastnear-direct-loading-shell__status">{uiText.loadingPageModel}</p>
+                <div
+                  className="fastnear-direct-loading-shell__line fastnear-direct-loading-shell__line--medium"
+                  aria-hidden="true"
+                />
+                <div
+                  className="fastnear-direct-loading-shell__line fastnear-direct-loading-shell__line--short"
+                  aria-hidden="true"
+                />
+              </div>
+              <div className="fastnear-interaction__response fastnear-direct-loading-shell__card">
+                <p className="fastnear-interaction__placeholder--panel fastnear-interaction__placeholder--pending">
+                  {uiText.loadingPageModel}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="fastnear-reference fastnear-direct-loading-shell__reference">
+          <div className="fastnear-reference__grid">
+            <div className="fastnear-reference__panel fastnear-direct-loading-shell__reference-panel">
+              <div
+                className="fastnear-direct-loading-shell__line fastnear-direct-loading-shell__line--medium"
+                aria-hidden="true"
+              />
+              <div
+                className="fastnear-direct-loading-shell__line fastnear-direct-loading-shell__line--long"
+                aria-hidden="true"
+              />
+              <div
+                className="fastnear-direct-loading-shell__line fastnear-direct-loading-shell__line--medium"
+                aria-hidden="true"
+              />
+            </div>
+            <div className="fastnear-reference__panel fastnear-direct-loading-shell__reference-panel">
+              <div
+                className="fastnear-direct-loading-shell__line fastnear-direct-loading-shell__line--short"
+                aria-hidden="true"
+              />
+              <div
+                className="fastnear-direct-loading-shell__line fastnear-direct-loading-shell__line--long"
+                aria-hidden="true"
+              />
+              <div
+                className="fastnear-direct-loading-shell__line fastnear-direct-loading-shell__line--medium"
+                aria-hidden="true"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ResolvedFastnearDirectOperation({ currentLocale, pageModelId, renderDescription }) {
+  const pageModel = useFastnearPageModelById(pageModelId, currentLocale);
+  const canonicalPageModel = useFastnearPageModelById(pageModelId, "en");
   const operationMeta = useMemo(
     () => getOperationDocsearchMeta(canonicalPageModel),
     [canonicalPageModel]
@@ -1877,5 +1954,20 @@ export default function FastnearDirectOperation({ pageModelId, renderDescription
       ) : null}
       <FastnearOperationPage pageModel={pageModel} />
     </div>
+  );
+}
+
+export default function FastnearDirectOperation({ pageModelId, renderDescription = true }) {
+  const { i18n } = useDocusaurusContext();
+  const currentLocale = i18n.currentLocale || "en";
+
+  return (
+    <Suspense fallback={<FastnearOperationLoading />}>
+      <ResolvedFastnearDirectOperation
+        currentLocale={currentLocale}
+        pageModelId={pageModelId}
+        renderDescription={renderDescription}
+      />
+    </Suspense>
   );
 }

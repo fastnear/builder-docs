@@ -78,6 +78,10 @@ export function getFastnearOperationUiText() {
       id: 'fastnear.operationUi.liveResponseIntro',
       message: 'Responses from the selected endpoint appear here after you run a request.',
     }),
+    loadingPageModel: translate({
+      id: 'fastnear.operationUi.loadingPageModel',
+      message: 'Loading operation details...',
+    }),
     no: translate({
       id: 'fastnear.operationUi.no',
       message: 'no',

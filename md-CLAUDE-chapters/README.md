@@ -4,6 +4,11 @@ This folder collects longer-form reference chapters that are useful while evolvi
 
 ## Current chapters
 
+### Performance investigations
+
+- [Cloudflare page load investigation](/Users/mikepurvis/.codex/worktrees/d3da/builder-docs/md-CLAUDE-chapters/cloudflare_page_load_investigation.md)
+  - Evidence-backed memo on the `Page Load 5,888 ms` Cloudflare Web Analytics reading, what is actually slow, and which optimizations are worth pursuing first.
+
 ### Algolia search and crawler
 
 - [FastNear Algolia Search and Crawler Control](/Users/mikepurvis/near/fn/builder-docs/md-CLAUDE-chapters/algolia_search_and_crawler_control.md)

@@ -1,0 +1,2635 @@
+[
+  {
+    "canonicalPath": "/apis/fastnear/system/health",
+    "info": {
+      "description": "Ping the FastNEAR API for liveness — returns `{status: ok}` when healthy.",
+      "operationId": "get_health",
+      "summary": "Get service health",
+      "title": "FastNEAR API - Health",
+      "version": "3.0.3"
+    },
+    "interaction": {
+      "authTransport": "bearer",
+      "fields": [],
+      "kind": "fastnear-rest-read",
+      "networks": [
+        {
+          "defaultFields": {},
+          "key": "mainnet",
+          "label": "Mainnet",
+          "url": "https://api.fastnear.com"
+        },
+        {
+          "defaultFields": {},
+          "key": "testnet",
+          "label": "Testnet",
+          "url": "https://test.api.fastnear.com"
+        }
+      ],
+      "requestMethod": "get_health",
+      "supportsFinality": false,
+      "transport": "http"
+    },
+    "pageModelId": "fastnear-system-health",
+    "replaceOperationPage": true,
+    "request": {
+      "bodySchema": null,
+      "examples": [
+        {
+          "id": "mainnet",
+          "label": "Mainnet",
+          "network": "mainnet",
+          "request": {
+            "body": null,
+            "headers": {},
+            "path": {},
+            "query": {}
+          }
+        },
+        {
+          "id": "testnet",
+          "label": "Testnet",
+          "network": "testnet",
+          "request": {
+            "body": null,
+            "headers": {},
+            "path": {},
+            "query": {}
+          }
+        }
+      ],
+      "parameters": {
+        "header": [],
+        "path": [],
+        "query": [
+          {
+            "description": "Optional API key forwarded by embedded portal clients. The public FastNEAR API does not require it.",
+            "location": "query",
+            "name": "apiKey",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      },
+      "required": false,
+      "supportsBody": false
+    },
+    "responses": [
+      {
+        "description": "Health status string",
+        "mediaType": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "status"
+          ],
+          "additionalProperties": false,
+          "properties": [
+            {
+              "name": "status",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "refName": "HealthResponse"
+        },
+        "status": "200"
+      },
+      {
+        "description": "Internal Server Error",
+        "mediaType": "application/json",
+        "schema": {
+          "type": "string"
+        },
+        "status": "500"
+      }
+    ],
+    "route": {
+      "method": "GET",
+      "path": "/health",
+      "transport": "http"
+    },
+    "routeAliases": [
+      "/apis/fastnear/openapi/system/get_health"
+    ],
+    "securitySchemes": [
+      {
+        "description": "Optional API key forwarded by embedded portal clients. The public FastNEAR API does not require it.",
+        "id": "ApiKeyAuth",
+        "in": "query",
+        "name": "apiKey",
+        "type": "apiKey"
+      }
+    ],
+    "sourceSpec": "apis/fastnear/system/health.yaml"
+  },
+  {
+    "canonicalPath": "/apis/fastnear/system/status",
+    "info": {
+      "description": "Check the current indexed block height, latency, and deployed service version.",
+      "operationId": "get_status",
+      "summary": "Get service sync status",
+      "title": "FastNEAR API - Status",
+      "version": "3.0.3"
+    },
+    "interaction": {
+      "authTransport": "bearer",
+      "fields": [],
+      "kind": "fastnear-rest-read",
+      "networks": [
+        {
+          "defaultFields": {},
+          "key": "mainnet",
+          "label": "Mainnet",
+          "url": "https://api.fastnear.com"
+        },
+        {
+          "defaultFields": {},
+          "key": "testnet",
+          "label": "Testnet",
+          "url": "https://test.api.fastnear.com"
+        }
+      ],
+      "requestMethod": "get_status",
+      "supportsFinality": false,
+      "transport": "http"
+    },
+    "pageModelId": "fastnear-system-status",
+    "replaceOperationPage": true,
+    "request": {
+      "bodySchema": null,
+      "examples": [
+        {
+          "id": "mainnet",
+          "label": "Mainnet",
+          "network": "mainnet",
+          "request": {
+            "body": null,
+            "headers": {},
+            "path": {},
+            "query": {}
+          }
+        },
+        {
+          "id": "testnet",
+          "label": "Testnet",
+          "network": "testnet",
+          "request": {
+            "body": null,
+            "headers": {},
+            "path": {},
+            "query": {}
+          }
+        }
+      ],
+      "parameters": {
+        "header": [],
+        "path": [],
+        "query": [
+          {
+            "description": "Optional API key forwarded by embedded portal clients. The public FastNEAR API does not require it.",
+            "location": "query",
+            "name": "apiKey",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      },
+      "required": false,
+      "supportsBody": false
+    },
+    "responses": [
+      {
+        "description": "Current FastNEAR API sync status",
+        "mediaType": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "version",
+            "sync_block_height",
+            "sync_latency_sec",
+            "sync_block_timestamp_nanosec",
+            "sync_balance_block_height"
+          ],
+          "additionalProperties": false,
+          "properties": [
+            {
+              "name": "sync_balance_block_height",
+              "required": true,
+              "schema": {
+                "type": "integer",
+                "format": "uint64"
+              }
+            },
+            {
+              "name": "sync_block_height",
+              "required": true,
+              "schema": {
+                "type": "integer",
+                "format": "uint64"
+              }
+            },
+            {
+              "name": "sync_block_timestamp_nanosec",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "sync_latency_sec",
+              "required": true,
+              "schema": {
+                "type": "number",
+                "format": "double"
+              }
+            },
+            {
+              "name": "version",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "refName": "StatusResponse"
+        },
+        "status": "200"
+      },
+      {
+        "description": "Internal Server Error",
+        "mediaType": "application/json",
+        "schema": {
+          "type": "string"
+        },
+        "status": "500"
+      }
+    ],
+    "route": {
+      "method": "GET",
+      "path": "/status",
+      "transport": "http"
+    },
+    "routeAliases": [
+      "/apis/fastnear/openapi/system/get_status"
+    ],
+    "securitySchemes": [
+      {
+        "description": "Optional API key forwarded by embedded portal clients. The public FastNEAR API does not require it.",
+        "id": "ApiKeyAuth",
+        "in": "query",
+        "name": "apiKey",
+        "type": "apiKey"
+      }
+    ],
+    "sourceSpec": "apis/fastnear/system/status.yaml"
+  },
+  {
+    "canonicalPath": "/apis/fastnear/v0/account_staking",
+    "info": {
+      "description": "Fetch staking pool account IDs for one account — pool IDs only, no block-height metadata.",
+      "operationId": "account_staking_v0",
+      "summary": "Lookup staking pool account IDs for an account",
+      "title": "FastNEAR API - V0 Account Staking",
+      "version": "3.0.3"
+    },
+    "interaction": {
+      "authTransport": "bearer",
+      "fields": [
+        {
+          "description": "NEAR account ID to inspect.",
+          "example": "mob.near",
+          "label": "Account ID",
+          "location": "path",
+          "name": "account_id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "kind": "fastnear-rest-read",
+      "networks": [
+        {
+          "defaultFields": {
+            "account_id": "root.near"
+          },
+          "key": "mainnet",
+          "label": "Mainnet",
+          "url": "https://api.fastnear.com"
+        },
+        {
+          "defaultFields": {
+            "account_id": "root.testnet"
+          },
+          "key": "testnet",
+          "label": "Testnet",
+          "url": "https://test.api.fastnear.com"
+        }
+      ],
+      "requestMethod": "account_staking_v0",
+      "supportsFinality": false,
+      "transport": "http"
+    },
+    "pageModelId": "fastnear-v0-account-staking",
+    "replaceOperationPage": true,
+    "request": {
+      "bodySchema": null,
+      "examples": [
+        {
+          "id": "mainnet",
+          "label": "Mainnet",
+          "network": "mainnet",
+          "request": {
+            "body": null,
+            "headers": {},
+            "path": {
+              "account_id": "root.near"
+            },
+            "query": {}
+          }
+        },
+        {
+          "id": "testnet",
+          "label": "Testnet",
+          "network": "testnet",
+          "request": {
+            "body": null,
+            "headers": {},
+            "path": {
+              "account_id": "root.testnet"
+            },
+            "query": {}
+          }
+        }
+      ],
+      "parameters": {
+        "header": [],
+        "path": [
+          {
+            "description": "NEAR account ID to inspect.",
+            "example": "mob.near",
+            "location": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "query": [
+          {
+            "description": "Optional API key forwarded by embedded portal clients. The public FastNEAR API does not require it.",
+            "location": "query",
+            "name": "apiKey",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      },
+      "required": true,
+      "supportsBody": false
+    },
+    "responses": [
+      {
+        "description": "Staking pool account IDs for the requested account",
+        "mediaType": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "account_id",
+            "pools"
+          ],
+          "additionalProperties": false,
+          "properties": [
+            {
+              "name": "account_id",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "pools",
+              "required": true,
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          ],
+          "refName": "V0StakingResponse"
+        },
+        "status": "200"
+      },
+      {
+        "description": "Bad Request",
+        "mediaType": "application/json",
+        "schema": {
+          "type": "string"
+        },
+        "status": "400"
+      },
+      {
+        "description": "Internal Server Error",
+        "mediaType": "application/json",
+        "schema": {
+          "type": "string"
+        },
+        "status": "500"
+      }
+    ],
+    "route": {
+      "method": "GET",
+      "path": "/v0/account/{account_id}/staking",
+      "transport": "http"
+    },
+    "routeAliases": [
+      "/apis/fastnear/openapi/staking/account_staking_v0"
+    ],
+    "securitySchemes": [
+      {
+        "description": "Optional API key forwarded by embedded portal clients. The public FastNEAR API does not require it.",
+        "id": "ApiKeyAuth",
+        "in": "query",
+        "name": "apiKey",
+        "type": "apiKey"
+      }
+    ],
+    "sourceSpec": "apis/fastnear/v0/account_staking.yaml"
+  },
+  {
+    "canonicalPath": "/apis/fastnear/v0/account_ft",
+    "info": {
+      "description": "Fetch the fungible token contract IDs an account has held — contract IDs only, no balances.",
+      "operationId": "account_ft_v0",
+      "summary": "Lookup fungible token contract IDs for an account",
+      "title": "FastNEAR API - V0 Account FT",
+      "version": "3.0.3"
+    },
+    "interaction": {
+      "authTransport": "bearer",
+      "fields": [
+        {
+          "description": "NEAR account ID to inspect.",
+          "example": "here.tg",
+          "label": "Account ID",
+          "location": "path",
+          "name": "account_id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "kind": "fastnear-rest-read",
+      "networks": [
+        {
+          "defaultFields": {
+            "account_id": "root.near"
+          },
+          "key": "mainnet",
+          "label": "Mainnet",
+          "url": "https://api.fastnear.com"
+        },
+        {
+          "defaultFields": {
+            "account_id": "root.testnet"
+          },
+          "key": "testnet",
+          "label": "Testnet",
+          "url": "https://test.api.fastnear.com"
+        }
+      ],
+      "requestMethod": "account_ft_v0",
+      "supportsFinality": false,
+      "transport": "http"
+    },
+    "pageModelId": "fastnear-v0-account-ft",
+    "replaceOperationPage": true,
+    "request": {
+      "bodySchema": null,
+      "examples": [
+        {
+          "id": "mainnet",
+          "label": "Mainnet",
+          "network": "mainnet",
+          "request": {
+            "body": null,
+            "headers": {},
+            "path": {
+              "account_id": "root.near"
+            },
+            "query": {}
+          }
+        },
+        {
+          "id": "testnet",
+          "label": "Testnet",
+          "network": "testnet",
+          "request": {
+            "body": null,
+            "headers": {},
+            "path": {
+              "account_id": "root.testnet"
+            },
+            "query": {}
+          }
+        }
+      ],
+      "parameters": {
+        "header": [],
+        "path": [
+          {
+            "description": "NEAR account ID to inspect.",
+            "example": "here.tg",
+            "location": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "query": [
+          {
+            "description": "Optional API key forwarded by embedded portal clients. The public FastNEAR API does not require it.",
+            "location": "query",
+            "name": "apiKey",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      },
+      "required": true,
+      "supportsBody": false
+    },
+    "responses": [
+      {
+        "description": "Fungible token contract IDs for the requested account",
+        "mediaType": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "account_id",
+            "contract_ids"
+          ],
+          "additionalProperties": false,
+          "properties": [
+            {
+              "name": "account_id",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "contract_ids",
+              "required": true,
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          ],
+          "refName": "V0ContractsResponse"
+        },
+        "status": "200"
+      },
+      {
+        "description": "Bad Request",
+        "mediaType": "application/json",
+        "schema": {
+          "type": "string"
+        },
+        "status": "400"
+      },
+      {
+        "description": "Internal Server Error",
+        "mediaType": "application/json",
+        "schema": {
+          "type": "string"
+        },
+        "status": "500"
+      }
+    ],
+    "route": {
+      "method": "GET",
+      "path": "/v0/account/{account_id}/ft",
+      "transport": "http"
+    },
+    "routeAliases": [
+      "/apis/fastnear/openapi/fungible-tokens/account_ft_v0"
+    ],
+    "securitySchemes": [
+      {
+        "description": "Optional API key forwarded by embedded portal clients. The public FastNEAR API does not require it.",
+        "id": "ApiKeyAuth",
+        "in": "query",
+        "name": "apiKey",
+        "type": "apiKey"
+      }
+    ],
+    "sourceSpec": "apis/fastnear/v0/account_ft.yaml"
+  },
+  {
+    "canonicalPath": "/apis/fastnear/v0/account_nft",
+    "info": {
+      "description": "Fetch the NFT contract IDs an account has held — contract IDs only, no block-height metadata.",
+      "operationId": "account_nft_v0",
+      "summary": "Lookup NFT contract IDs for an account",
+      "title": "FastNEAR API - V0 Account NFT",
+      "version": "3.0.3"
+    },
+    "interaction": {
+      "authTransport": "bearer",
+      "fields": [
+        {
+          "description": "NEAR account ID to inspect.",
+          "example": "sharddog.near",
+          "label": "Account ID",
+          "location": "path",
+          "name": "account_id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "kind": "fastnear-rest-read",
+      "networks": [
+        {
+          "defaultFields": {
+            "account_id": "root.near"
+          },
+          "key": "mainnet",
+          "label": "Mainnet",
+          "url": "https://api.fastnear.com"
+        },
+        {
+          "defaultFields": {
+            "account_id": "root.testnet"
+          },
+          "key": "testnet",
+          "label": "Testnet",
+          "url": "https://test.api.fastnear.com"
+        }
+      ],
+      "requestMethod": "account_nft_v0",
+      "supportsFinality": false,
+      "transport": "http"
+    },
+    "pageModelId": "fastnear-v0-account-nft",
+    "replaceOperationPage": true,
+    "request": {
+      "bodySchema": null,
+      "examples": [
+        {
+          "id": "mainnet",
+          "label": "Mainnet",
+          "network": "mainnet",
+          "request": {
+            "body": null,
+            "headers": {},
+            "path": {
+              "account_id": "root.near"
+            },
+            "query": {}
+          }
+        },
+        {
+          "id": "testnet",
+          "label": "Testnet",
+          "network": "testnet",
+          "request": {
+            "body": null,
+            "headers": {},
+            "path": {
+              "account_id": "root.testnet"
+            },
+            "query": {}
+          }
+        }
+      ],
+      "parameters": {
+        "header": [],
+        "path": [
+          {
+            "description": "NEAR account ID to inspect.",
+            "example": "sharddog.near",
+            "location": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "query": [
+          {
+            "description": "Optional API key forwarded by embedded portal clients. The public FastNEAR API does not require it.",
+            "location": "query",
+            "name": "apiKey",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      },
+      "required": true,
+      "supportsBody": false
+    },
+    "responses": [
+      {
+        "description": "NFT contract IDs for the requested account",
+        "mediaType": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "account_id",
+            "contract_ids"
+          ],
+          "additionalProperties": false,
+          "properties": [
+            {
+              "name": "account_id",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "contract_ids",
+              "required": true,
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          ],
+          "refName": "V0ContractsResponse"
+        },
+        "status": "200"
+      },
+      {
+        "description": "Bad Request",
+        "mediaType": "application/json",
+        "schema": {
+          "type": "string"
+        },
+        "status": "400"
+      },
+      {
+        "description": "Internal Server Error",
+        "mediaType": "application/json",
+        "schema": {
+          "type": "string"
+        },
+        "status": "500"
+      }
+    ],
+    "route": {
+      "method": "GET",
+      "path": "/v0/account/{account_id}/nft",
+      "transport": "http"
+    },
+    "routeAliases": [
+      "/apis/fastnear/openapi/non-fungible-tokens/account_nft_v0"
+    ],
+    "securitySchemes": [
+      {
+        "description": "Optional API key forwarded by embedded portal clients. The public FastNEAR API does not require it.",
+        "id": "ApiKeyAuth",
+        "in": "query",
+        "name": "apiKey",
+        "type": "apiKey"
+      }
+    ],
+    "sourceSpec": "apis/fastnear/v0/account_nft.yaml"
+  },
+  {
+    "canonicalPath": "/apis/fastnear/v0/public_key_lookup",
+    "info": {
+      "description": "Fetch the indexed account IDs associated with a full-access public key.",
+      "operationId": "lookup_by_public_key_v0",
+      "summary": "Lookup full-access accounts by public key",
+      "title": "FastNEAR API - V0 Public Key Lookup",
+      "version": "3.0.3"
+    },
+    "interaction": {
+      "authTransport": "bearer",
+      "fields": [
+        {
+          "description": "NEAR public key in `ed25519:...` or `secp256k1:...` form.",
+          "example": "ed25519:CCaThr3uokqnUs6Z5vVnaDcJdrfuTpYJHJWcAGubDjT",
+          "label": "Public Key",
+          "location": "path",
+          "name": "public_key",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "kind": "fastnear-rest-read",
+      "networks": [
+        {
+          "defaultFields": {
+            "public_key": "ed25519:CCaThr3uokqnUs6Z5vVnaDcJdrfuTpYJHJWcAGubDjT"
+          },
+          "key": "mainnet",
+          "label": "Mainnet",
+          "url": "https://api.fastnear.com"
+        },
+        {
+          "defaultFields": {
+            "public_key": "ed25519:5FiU4tWnA2QmivpLTdHJhLeSfeZ7KuW4KKNaDqoBKue2"
+          },
+          "key": "testnet",
+          "label": "Testnet",
+          "url": "https://test.api.fastnear.com"
+        }
+      ],
+      "requestMethod": "lookup_by_public_key_v0",
+      "supportsFinality": false,
+      "transport": "http"
+    },
+    "pageModelId": "fastnear-v0-public-key-lookup",
+    "replaceOperationPage": true,
+    "request": {
+      "bodySchema": null,
+      "examples": [
+        {
+          "id": "mainnet",
+          "label": "Mainnet",
+          "network": "mainnet",
+          "request": {
+            "body": null,
+            "headers": {},
+            "path": {
+              "public_key": "ed25519:CCaThr3uokqnUs6Z5vVnaDcJdrfuTpYJHJWcAGubDjT"
+            },
+            "query": {}
+          }
+        },
+        {
+          "id": "testnet",
+          "label": "Testnet",
+          "network": "testnet",
+          "request": {
+            "body": null,
+            "headers": {},
+            "path": {
+              "public_key": "ed25519:5FiU4tWnA2QmivpLTdHJhLeSfeZ7KuW4KKNaDqoBKue2"
+            },
+            "query": {}
+          }
+        }
+      ],
+      "parameters": {
+        "header": [],
+        "path": [
+          {
+            "description": "NEAR public key in `ed25519:...` or `secp256k1:...` form.",
+            "example": "ed25519:CCaThr3uokqnUs6Z5vVnaDcJdrfuTpYJHJWcAGubDjT",
+            "location": "path",
+            "name": "public_key",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "query": [
+          {
+            "description": "Optional API key forwarded by embedded portal clients. The public FastNEAR API does not require it.",
+            "location": "query",
+            "name": "apiKey",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      },
+      "required": true,
+      "supportsBody": false
+    },
+    "responses": [
+      {
+        "description": "Matching account IDs for the supplied full-access public key",
+        "mediaType": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "public_key",
+            "account_ids"
+          ],
+          "additionalProperties": false,
+          "properties": [
+            {
+              "name": "account_ids",
+              "required": true,
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "name": "public_key",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "refName": "PublicKeyLookupResponse"
+        },
+        "status": "200"
+      },
+      {
+        "description": "Bad Request",
+        "mediaType": "application/json",
+        "schema": {
+          "type": "string"
+        },
+        "status": "400"
+      },
+      {
+        "description": "Internal Server Error",
+        "mediaType": "application/json",
+        "schema": {
+          "type": "string"
+        },
+        "status": "500"
+      }
+    ],
+    "route": {
+      "method": "GET",
+      "path": "/v0/public_key/{public_key}",
+      "transport": "http"
+    },
+    "routeAliases": [
+      "/apis/fastnear/openapi/public-key/lookup_by_public_key_v0"
+    ],
+    "securitySchemes": [
+      {
+        "description": "Optional API key forwarded by embedded portal clients. The public FastNEAR API does not require it.",
+        "id": "ApiKeyAuth",
+        "in": "query",
+        "name": "apiKey",
+        "type": "apiKey"
+      }
+    ],
+    "sourceSpec": "apis/fastnear/v0/public_key_lookup.yaml"
+  },
+  {
+    "canonicalPath": "/apis/fastnear/v0/public_key_lookup_all",
+    "info": {
+      "description": "Fetch every account tied to a public key — full-access and limited-access keys together.",
+      "operationId": "lookup_by_public_key_all_v0",
+      "summary": "Lookup all indexed accounts by public key",
+      "title": "FastNEAR API - V0 Public Key Lookup (All)",
+      "version": "3.0.3"
+    },
+    "interaction": {
+      "authTransport": "bearer",
+      "fields": [
+        {
+          "description": "NEAR public key in `ed25519:...` or `secp256k1:...` form.",
+          "example": "ed25519:CCaThr3uokqnUs6Z5vVnaDcJdrfuTpYJHJWcAGubDjT",
+          "label": "Public Key",
+          "location": "path",
+          "name": "public_key",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "kind": "fastnear-rest-read",
+      "networks": [
+        {
+          "defaultFields": {
+            "public_key": "ed25519:CCaThr3uokqnUs6Z5vVnaDcJdrfuTpYJHJWcAGubDjT"
+          },
+          "key": "mainnet",
+          "label": "Mainnet",
+          "url": "https://api.fastnear.com"
+        },
+        {
+          "defaultFields": {
+            "public_key": "ed25519:5FiU4tWnA2QmivpLTdHJhLeSfeZ7KuW4KKNaDqoBKue2"
+          },
+          "key": "testnet",
+          "label": "Testnet",
+          "url": "https://test.api.fastnear.com"
+        }
+      ],
+      "requestMethod": "lookup_by_public_key_all_v0",
+      "supportsFinality": false,
+      "transport": "http"
+    },
+    "pageModelId": "fastnear-v0-public-key-lookup-all",
+    "replaceOperationPage": true,
+    "request": {
+      "bodySchema": null,
+      "examples": [
+        {
+          "id": "mainnet",
+          "label": "Mainnet",
+          "network": "mainnet",
+          "request": {
+            "body": null,
+            "headers": {},
+            "path": {
+              "public_key": "ed25519:CCaThr3uokqnUs6Z5vVnaDcJdrfuTpYJHJWcAGubDjT"
+            },
+            "query": {}
+          }
+        },
+        {
+          "id": "testnet",
+          "label": "Testnet",
+          "network": "testnet",
+          "request": {
+            "body": null,
+            "headers": {},
+            "path": {
+              "public_key": "ed25519:5FiU4tWnA2QmivpLTdHJhLeSfeZ7KuW4KKNaDqoBKue2"
+            },
+            "query": {}
+          }
+        }
+      ],
+      "parameters": {
+        "header": [],
+        "path": [
+          {
+            "description": "NEAR public key in `ed25519:...` or `secp256k1:...` form.",
+            "example": "ed25519:CCaThr3uokqnUs6Z5vVnaDcJdrfuTpYJHJWcAGubDjT",
+            "location": "path",
+            "name": "public_key",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "query": [
+          {
+            "description": "Optional API key forwarded by embedded portal clients. The public FastNEAR API does not require it.",
+            "location": "query",
+            "name": "apiKey",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      },
+      "required": true,
+      "supportsBody": false
+    },
+    "responses": [
+      {
+        "description": "Matching account IDs for the supplied public key, including limited-access keys",
+        "mediaType": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "public_key",
+            "account_ids"
+          ],
+          "additionalProperties": false,
+          "properties": [
+            {
+              "name": "account_ids",
+              "required": true,
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "name": "public_key",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "refName": "PublicKeyLookupResponse"
+        },
+        "status": "200"
+      },
+      {
+        "description": "Bad Request",
+        "mediaType": "application/json",
+        "schema": {
+          "type": "string"
+        },
+        "status": "400"
+      },
+      {
+        "description": "Internal Server Error",
+        "mediaType": "application/json",
+        "schema": {
+          "type": "string"
+        },
+        "status": "500"
+      }
+    ],
+    "route": {
+      "method": "GET",
+      "path": "/v0/public_key/{public_key}/all",
+      "transport": "http"
+    },
+    "routeAliases": [
+      "/apis/fastnear/openapi/public-key/lookup_by_public_key_all_v0"
+    ],
+    "securitySchemes": [
+      {
+        "description": "Optional API key forwarded by embedded portal clients. The public FastNEAR API does not require it.",
+        "id": "ApiKeyAuth",
+        "in": "query",
+        "name": "apiKey",
+        "type": "apiKey"
+      }
+    ],
+    "sourceSpec": "apis/fastnear/v0/public_key_lookup_all.yaml"
+  },
+  {
+    "canonicalPath": "/apis/fastnear/v1/account_staking",
+    "info": {
+      "description": "Retrieve staking pool rows for an account, including block-height metadata for each pool relationship.",
+      "operationId": "account_staking_v1",
+      "summary": "Lookup indexed staking pools for an account",
+      "title": "FastNEAR API - V1 Account Staking",
+      "version": "3.0.3"
+    },
+    "interaction": {
+      "authTransport": "bearer",
+      "fields": [
+        {
+          "description": "NEAR account ID to inspect.",
+          "example": "mob.near",
+          "label": "Account ID",
+          "location": "path",
+          "name": "account_id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "kind": "fastnear-rest-read",
+      "networks": [
+        {
+          "defaultFields": {
+            "account_id": "root.near"
+          },
+          "key": "mainnet",
+          "label": "Mainnet",
+          "url": "https://api.fastnear.com"
+        },
+        {
+          "defaultFields": {
+            "account_id": "root.testnet"
+          },
+          "key": "testnet",
+          "label": "Testnet",
+          "url": "https://test.api.fastnear.com"
+        }
+      ],
+      "requestMethod": "account_staking_v1",
+      "supportsFinality": false,
+      "transport": "http"
+    },
+    "pageModelId": "fastnear-v1-account-staking",
+    "replaceOperationPage": true,
+    "request": {
+      "bodySchema": null,
+      "examples": [
+        {
+          "id": "mainnet",
+          "label": "Mainnet",
+          "network": "mainnet",
+          "request": {
+            "body": null,
+            "headers": {},
+            "path": {
+              "account_id": "root.near"
+            },
+            "query": {}
+          }
+        },
+        {
+          "id": "testnet",
+          "label": "Testnet",
+          "network": "testnet",
+          "request": {
+            "body": null,
+            "headers": {},
+            "path": {
+              "account_id": "root.testnet"
+            },
+            "query": {}
+          }
+        }
+      ],
+      "parameters": {
+        "header": [],
+        "path": [
+          {
+            "description": "NEAR account ID to inspect.",
+            "example": "mob.near",
+            "location": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "query": [
+          {
+            "description": "Optional API key forwarded by embedded portal clients. The public FastNEAR API does not require it.",
+            "location": "query",
+            "name": "apiKey",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      },
+      "required": true,
+      "supportsBody": false
+    },
+    "responses": [
+      {
+        "description": "Indexed staking pool rows for the requested account",
+        "mediaType": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "account_id",
+            "pools"
+          ],
+          "additionalProperties": false,
+          "properties": [
+            {
+              "name": "account_id",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "pools",
+              "required": true,
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "pool_id",
+                    "last_update_block_height"
+                  ],
+                  "additionalProperties": false,
+                  "properties": [
+                    {
+                      "name": "last_update_block_height",
+                      "required": true,
+                      "schema": {
+                        "type": "integer",
+                        "format": "uint64"
+                      }
+                    },
+                    {
+                      "name": "pool_id",
+                      "required": true,
+                      "schema": {
+                        "type": "string"
+                      }
+                    }
+                  ],
+                  "refName": "PoolRow"
+                }
+              }
+            }
+          ],
+          "refName": "V1StakingResponse"
+        },
+        "status": "200"
+      },
+      {
+        "description": "Bad Request",
+        "mediaType": "application/json",
+        "schema": {
+          "type": "string"
+        },
+        "status": "400"
+      },
+      {
+        "description": "Internal Server Error",
+        "mediaType": "application/json",
+        "schema": {
+          "type": "string"
+        },
+        "status": "500"
+      }
+    ],
+    "route": {
+      "method": "GET",
+      "path": "/v1/account/{account_id}/staking",
+      "transport": "http"
+    },
+    "routeAliases": [
+      "/apis/fastnear/openapi/staking/account_staking_v1"
+    ],
+    "securitySchemes": [
+      {
+        "description": "Optional API key forwarded by embedded portal clients. The public FastNEAR API does not require it.",
+        "id": "ApiKeyAuth",
+        "in": "query",
+        "name": "apiKey",
+        "type": "apiKey"
+      }
+    ],
+    "sourceSpec": "apis/fastnear/v1/account_staking.yaml"
+  },
+  {
+    "canonicalPath": "/apis/fastnear/v1/account_ft",
+    "info": {
+      "description": "Fetch an account's fungible token balance rows, each with contract ID, balance, and last-update block height.",
+      "operationId": "account_ft_v1",
+      "summary": "Lookup indexed fungible token rows for an account",
+      "title": "FastNEAR API - V1 Account FT",
+      "version": "3.0.3"
+    },
+    "interaction": {
+      "authTransport": "bearer",
+      "fields": [
+        {
+          "description": "NEAR account ID to inspect.",
+          "example": "here.tg",
+          "label": "Account ID",
+          "location": "path",
+          "name": "account_id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "kind": "fastnear-rest-read",
+      "networks": [
+        {
+          "defaultFields": {
+            "account_id": "root.near"
+          },
+          "key": "mainnet",
+          "label": "Mainnet",
+          "url": "https://api.fastnear.com"
+        },
+        {
+          "defaultFields": {
+            "account_id": "root.testnet"
+          },
+          "key": "testnet",
+          "label": "Testnet",
+          "url": "https://test.api.fastnear.com"
+        }
+      ],
+      "requestMethod": "account_ft_v1",
+      "supportsFinality": false,
+      "transport": "http"
+    },
+    "pageModelId": "fastnear-v1-account-ft",
+    "replaceOperationPage": true,
+    "request": {
+      "bodySchema": null,
+      "examples": [
+        {
+          "id": "mainnet",
+          "label": "Mainnet",
+          "network": "mainnet",
+          "request": {
+            "body": null,
+            "headers": {},
+            "path": {
+              "account_id": "root.near"
+            },
+            "query": {}
+          }
+        },
+        {
+          "id": "testnet",
+          "label": "Testnet",
+          "network": "testnet",
+          "request": {
+            "body": null,
+            "headers": {},
+            "path": {
+              "account_id": "root.testnet"
+            },
+            "query": {}
+          }
+        }
+      ],
+      "parameters": {
+        "header": [],
+        "path": [
+          {
+            "description": "NEAR account ID to inspect.",
+            "example": "here.tg",
+            "location": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "query": [
+          {
+            "description": "Optional API key forwarded by embedded portal clients. The public FastNEAR API does not require it.",
+            "location": "query",
+            "name": "apiKey",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      },
+      "required": true,
+      "supportsBody": false
+    },
+    "responses": [
+      {
+        "description": "Indexed fungible token rows for the requested account",
+        "mediaType": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "account_id",
+            "tokens"
+          ],
+          "additionalProperties": false,
+          "properties": [
+            {
+              "name": "account_id",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "tokens",
+              "required": true,
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "contract_id",
+                    "last_update_block_height",
+                    "balance"
+                  ],
+                  "additionalProperties": false,
+                  "properties": [
+                    {
+                      "name": "balance",
+                      "required": true,
+                      "schema": {
+                        "type": "string"
+                      }
+                    },
+                    {
+                      "name": "contract_id",
+                      "required": true,
+                      "schema": {
+                        "type": "string"
+                      }
+                    },
+                    {
+                      "name": "last_update_block_height",
+                      "required": true,
+                      "schema": {
+                        "type": "integer",
+                        "format": "uint64"
+                      }
+                    }
+                  ],
+                  "refName": "TokenRow"
+                }
+              }
+            }
+          ],
+          "refName": "V1FtResponse"
+        },
+        "status": "200"
+      },
+      {
+        "description": "Bad Request",
+        "mediaType": "application/json",
+        "schema": {
+          "type": "string"
+        },
+        "status": "400"
+      },
+      {
+        "description": "Internal Server Error",
+        "mediaType": "application/json",
+        "schema": {
+          "type": "string"
+        },
+        "status": "500"
+      }
+    ],
+    "route": {
+      "method": "GET",
+      "path": "/v1/account/{account_id}/ft",
+      "transport": "http"
+    },
+    "routeAliases": [
+      "/apis/fastnear/openapi/fungible-tokens/account_ft_v1"
+    ],
+    "securitySchemes": [
+      {
+        "description": "Optional API key forwarded by embedded portal clients. The public FastNEAR API does not require it.",
+        "id": "ApiKeyAuth",
+        "in": "query",
+        "name": "apiKey",
+        "type": "apiKey"
+      }
+    ],
+    "sourceSpec": "apis/fastnear/v1/account_ft.yaml"
+  },
+  {
+    "canonicalPath": "/apis/fastnear/v1/account_nft",
+    "info": {
+      "description": "Fetch NFT contract rows for an account, including block-height metadata for each contract.",
+      "operationId": "account_nft_v1",
+      "summary": "Lookup indexed NFT contract rows for an account",
+      "title": "FastNEAR API - V1 Account NFT",
+      "version": "3.0.3"
+    },
+    "interaction": {
+      "authTransport": "bearer",
+      "fields": [
+        {
+          "description": "NEAR account ID to inspect.",
+          "example": "sharddog.near",
+          "label": "Account ID",
+          "location": "path",
+          "name": "account_id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "kind": "fastnear-rest-read",
+      "networks": [
+        {
+          "defaultFields": {
+            "account_id": "root.near"
+          },
+          "key": "mainnet",
+          "label": "Mainnet",
+          "url": "https://api.fastnear.com"
+        },
+        {
+          "defaultFields": {
+            "account_id": "root.testnet"
+          },
+          "key": "testnet",
+          "label": "Testnet",
+          "url": "https://test.api.fastnear.com"
+        }
+      ],
+      "requestMethod": "account_nft_v1",
+      "supportsFinality": false,
+      "transport": "http"
+    },
+    "pageModelId": "fastnear-v1-account-nft",
+    "replaceOperationPage": true,
+    "request": {
+      "bodySchema": null,
+      "examples": [
+        {
+          "id": "mainnet",
+          "label": "Mainnet",
+          "network": "mainnet",
+          "request": {
+            "body": null,
+            "headers": {},
+            "path": {
+              "account_id": "root.near"
+            },
+            "query": {}
+          }
+        },
+        {
+          "id": "testnet",
+          "label": "Testnet",
+          "network": "testnet",
+          "request": {
+            "body": null,
+            "headers": {},
+            "path": {
+              "account_id": "root.testnet"
+            },
+            "query": {}
+          }
+        }
+      ],
+      "parameters": {
+        "header": [],
+        "path": [
+          {
+            "description": "NEAR account ID to inspect.",
+            "example": "sharddog.near",
+            "location": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "query": [
+          {
+            "description": "Optional API key forwarded by embedded portal clients. The public FastNEAR API does not require it.",
+            "location": "query",
+            "name": "apiKey",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      },
+      "required": true,
+      "supportsBody": false
+    },
+    "responses": [
+      {
+        "description": "Indexed NFT contract rows for the requested account",
+        "mediaType": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "account_id",
+            "tokens"
+          ],
+          "additionalProperties": false,
+          "properties": [
+            {
+              "name": "account_id",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "tokens",
+              "required": true,
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "contract_id",
+                    "last_update_block_height"
+                  ],
+                  "additionalProperties": false,
+                  "properties": [
+                    {
+                      "name": "contract_id",
+                      "required": true,
+                      "schema": {
+                        "type": "string"
+                      }
+                    },
+                    {
+                      "name": "last_update_block_height",
+                      "required": true,
+                      "schema": {
+                        "type": "integer",
+                        "format": "uint64"
+                      }
+                    }
+                  ],
+                  "refName": "NftRow"
+                }
+              }
+            }
+          ],
+          "refName": "V1NftResponse"
+        },
+        "status": "200"
+      },
+      {
+        "description": "Bad Request",
+        "mediaType": "application/json",
+        "schema": {
+          "type": "string"
+        },
+        "status": "400"
+      },
+      {
+        "description": "Internal Server Error",
+        "mediaType": "application/json",
+        "schema": {
+          "type": "string"
+        },
+        "status": "500"
+      }
+    ],
+    "route": {
+      "method": "GET",
+      "path": "/v1/account/{account_id}/nft",
+      "transport": "http"
+    },
+    "routeAliases": [
+      "/apis/fastnear/openapi/non-fungible-tokens/account_nft_v1"
+    ],
+    "securitySchemes": [
+      {
+        "description": "Optional API key forwarded by embedded portal clients. The public FastNEAR API does not require it.",
+        "id": "ApiKeyAuth",
+        "in": "query",
+        "name": "apiKey",
+        "type": "apiKey"
+      }
+    ],
+    "sourceSpec": "apis/fastnear/v1/account_nft.yaml"
+  },
+  {
+    "canonicalPath": "/apis/fastnear/v1/account_full",
+    "info": {
+      "description": "Fetch the combined indexed account view, including staking pools, FT balances, NFTs, and account state.",
+      "operationId": "account_full_v1",
+      "summary": "Lookup full indexed account information",
+      "title": "FastNEAR API - V1 Account Full",
+      "version": "3.0.3"
+    },
+    "interaction": {
+      "authTransport": "bearer",
+      "fields": [
+        {
+          "description": "NEAR account ID to inspect.",
+          "example": "here.tg",
+          "label": "Account ID",
+          "location": "path",
+          "name": "account_id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "kind": "fastnear-rest-read",
+      "networks": [
+        {
+          "defaultFields": {
+            "account_id": "root.near"
+          },
+          "key": "mainnet",
+          "label": "Mainnet",
+          "url": "https://api.fastnear.com"
+        },
+        {
+          "defaultFields": {
+            "account_id": "root.testnet"
+          },
+          "key": "testnet",
+          "label": "Testnet",
+          "url": "https://test.api.fastnear.com"
+        }
+      ],
+      "requestMethod": "account_full_v1",
+      "supportsFinality": false,
+      "transport": "http"
+    },
+    "pageModelId": "fastnear-v1-account-full",
+    "replaceOperationPage": true,
+    "request": {
+      "bodySchema": null,
+      "examples": [
+        {
+          "id": "mainnet",
+          "label": "Mainnet",
+          "network": "mainnet",
+          "request": {
+            "body": null,
+            "headers": {},
+            "path": {
+              "account_id": "root.near"
+            },
+            "query": {}
+          }
+        },
+        {
+          "id": "testnet",
+          "label": "Testnet",
+          "network": "testnet",
+          "request": {
+            "body": null,
+            "headers": {},
+            "path": {
+              "account_id": "root.testnet"
+            },
+            "query": {}
+          }
+        }
+      ],
+      "parameters": {
+        "header": [],
+        "path": [
+          {
+            "description": "NEAR account ID to inspect.",
+            "example": "here.tg",
+            "location": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "query": [
+          {
+            "description": "Optional API key forwarded by embedded portal clients. The public FastNEAR API does not require it.",
+            "location": "query",
+            "name": "apiKey",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      },
+      "required": true,
+      "supportsBody": false
+    },
+    "responses": [
+      {
+        "description": "Full indexed account information for the requested account",
+        "mediaType": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "account_id",
+            "pools",
+            "tokens",
+            "nfts",
+            "state"
+          ],
+          "additionalProperties": false,
+          "properties": [
+            {
+              "name": "account_id",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "nfts",
+              "required": true,
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "contract_id",
+                    "last_update_block_height"
+                  ],
+                  "additionalProperties": false,
+                  "properties": [
+                    {
+                      "name": "contract_id",
+                      "required": true,
+                      "schema": {
+                        "type": "string"
+                      }
+                    },
+                    {
+                      "name": "last_update_block_height",
+                      "required": true,
+                      "schema": {
+                        "type": "integer",
+                        "format": "uint64"
+                      }
+                    }
+                  ],
+                  "refName": "NftRow"
+                }
+              }
+            },
+            {
+              "name": "pools",
+              "required": true,
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "pool_id",
+                    "last_update_block_height"
+                  ],
+                  "additionalProperties": false,
+                  "properties": [
+                    {
+                      "name": "last_update_block_height",
+                      "required": true,
+                      "schema": {
+                        "type": "integer",
+                        "format": "uint64"
+                      }
+                    },
+                    {
+                      "name": "pool_id",
+                      "required": true,
+                      "schema": {
+                        "type": "string"
+                      }
+                    }
+                  ],
+                  "refName": "PoolRow"
+                }
+              }
+            },
+            {
+              "name": "state",
+              "required": true,
+              "schema": {
+                "type": "object"
+              }
+            },
+            {
+              "name": "tokens",
+              "required": true,
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "contract_id",
+                    "last_update_block_height",
+                    "balance"
+                  ],
+                  "additionalProperties": false,
+                  "properties": [
+                    {
+                      "name": "balance",
+                      "required": true,
+                      "schema": {
+                        "type": "string"
+                      }
+                    },
+                    {
+                      "name": "contract_id",
+                      "required": true,
+                      "schema": {
+                        "type": "string"
+                      }
+                    },
+                    {
+                      "name": "last_update_block_height",
+                      "required": true,
+                      "schema": {
+                        "type": "integer",
+                        "format": "uint64"
+                      }
+                    }
+                  ],
+                  "refName": "TokenRow"
+                }
+              }
+            }
+          ],
+          "refName": "AccountFullResponse"
+        },
+        "status": "200"
+      },
+      {
+        "description": "Bad Request",
+        "mediaType": "application/json",
+        "schema": {
+          "type": "string"
+        },
+        "status": "400"
+      },
+      {
+        "description": "Internal Server Error",
+        "mediaType": "application/json",
+        "schema": {
+          "type": "string"
+        },
+        "status": "500"
+      }
+    ],
+    "route": {
+      "method": "GET",
+      "path": "/v1/account/{account_id}/full",
+      "transport": "http"
+    },
+    "routeAliases": [
+      "/apis/fastnear/openapi/accounts/account_full_v1"
+    ],
+    "securitySchemes": [
+      {
+        "description": "Optional API key forwarded by embedded portal clients. The public FastNEAR API does not require it.",
+        "id": "ApiKeyAuth",
+        "in": "query",
+        "name": "apiKey",
+        "type": "apiKey"
+      }
+    ],
+    "sourceSpec": "apis/fastnear/v1/account_full.yaml"
+  },
+  {
+    "canonicalPath": "/apis/fastnear/v1/public_key_lookup",
+    "info": {
+      "description": "Fetch the indexed account IDs associated with a full-access public key.",
+      "operationId": "lookup_by_public_key_v1",
+      "summary": "Lookup full-access accounts by public key",
+      "title": "FastNEAR API - V1 Public Key Lookup",
+      "version": "3.0.3"
+    },
+    "interaction": {
+      "authTransport": "bearer",
+      "fields": [
+        {
+          "description": "NEAR public key in `ed25519:...` or `secp256k1:...` form.",
+          "example": "ed25519:CCaThr3uokqnUs6Z5vVnaDcJdrfuTpYJHJWcAGubDjT",
+          "label": "Public Key",
+          "location": "path",
+          "name": "public_key",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "kind": "fastnear-rest-read",
+      "networks": [
+        {
+          "defaultFields": {
+            "public_key": "ed25519:CCaThr3uokqnUs6Z5vVnaDcJdrfuTpYJHJWcAGubDjT"
+          },
+          "key": "mainnet",
+          "label": "Mainnet",
+          "url": "https://api.fastnear.com"
+        },
+        {
+          "defaultFields": {
+            "public_key": "ed25519:5FiU4tWnA2QmivpLTdHJhLeSfeZ7KuW4KKNaDqoBKue2"
+          },
+          "key": "testnet",
+          "label": "Testnet",
+          "url": "https://test.api.fastnear.com"
+        }
+      ],
+      "requestMethod": "lookup_by_public_key_v1",
+      "supportsFinality": false,
+      "transport": "http"
+    },
+    "pageModelId": "fastnear-v1-public-key-lookup",
+    "replaceOperationPage": true,
+    "request": {
+      "bodySchema": null,
+      "examples": [
+        {
+          "id": "mainnet",
+          "label": "Mainnet",
+          "network": "mainnet",
+          "request": {
+            "body": null,
+            "headers": {},
+            "path": {
+              "public_key": "ed25519:CCaThr3uokqnUs6Z5vVnaDcJdrfuTpYJHJWcAGubDjT"
+            },
+            "query": {}
+          }
+        },
+        {
+          "id": "testnet",
+          "label": "Testnet",
+          "network": "testnet",
+          "request": {
+            "body": null,
+            "headers": {},
+            "path": {
+              "public_key": "ed25519:5FiU4tWnA2QmivpLTdHJhLeSfeZ7KuW4KKNaDqoBKue2"
+            },
+            "query": {}
+          }
+        }
+      ],
+      "parameters": {
+        "header": [],
+        "path": [
+          {
+            "description": "NEAR public key in `ed25519:...` or `secp256k1:...` form.",
+            "example": "ed25519:CCaThr3uokqnUs6Z5vVnaDcJdrfuTpYJHJWcAGubDjT",
+            "location": "path",
+            "name": "public_key",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "query": [
+          {
+            "description": "Optional API key forwarded by embedded portal clients. The public FastNEAR API does not require it.",
+            "location": "query",
+            "name": "apiKey",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      },
+      "required": true,
+      "supportsBody": false
+    },
+    "responses": [
+      {
+        "description": "Matching account IDs for the supplied full-access public key",
+        "mediaType": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "public_key",
+            "account_ids"
+          ],
+          "additionalProperties": false,
+          "properties": [
+            {
+              "name": "account_ids",
+              "required": true,
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "name": "public_key",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "refName": "PublicKeyLookupResponse"
+        },
+        "status": "200"
+      },
+      {
+        "description": "Bad Request",
+        "mediaType": "application/json",
+        "schema": {
+          "type": "string"
+        },
+        "status": "400"
+      },
+      {
+        "description": "Internal Server Error",
+        "mediaType": "application/json",
+        "schema": {
+          "type": "string"
+        },
+        "status": "500"
+      }
+    ],
+    "route": {
+      "method": "GET",
+      "path": "/v1/public_key/{public_key}",
+      "transport": "http"
+    },
+    "routeAliases": [
+      "/apis/fastnear/openapi/public-key/lookup_by_public_key_v1"
+    ],
+    "securitySchemes": [
+      {
+        "description": "Optional API key forwarded by embedded portal clients. The public FastNEAR API does not require it.",
+        "id": "ApiKeyAuth",
+        "in": "query",
+        "name": "apiKey",
+        "type": "apiKey"
+      }
+    ],
+    "sourceSpec": "apis/fastnear/v1/public_key_lookup.yaml"
+  },
+  {
+    "canonicalPath": "/apis/fastnear/v1/ft_top",
+    "info": {
+      "description": "Fetch the top-balance holder list for a fungible token contract, ranked highest balance first.",
+      "operationId": "ft_top_v1",
+      "summary": "Lookup top indexed holders for a fungible token",
+      "title": "FastNEAR API - V1 FT Top Holders",
+      "version": "3.0.3"
+    },
+    "interaction": {
+      "authTransport": "bearer",
+      "fields": [
+        {
+          "description": "Fungible token contract account ID.",
+          "example": "wrap.near",
+          "label": "Token Id",
+          "location": "path",
+          "name": "token_id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "kind": "fastnear-rest-read",
+      "networks": [
+        {
+          "defaultFields": {
+            "token_id": "wrap.near"
+          },
+          "key": "mainnet",
+          "label": "Mainnet",
+          "url": "https://api.fastnear.com"
+        },
+        {
+          "defaultFields": {
+            "token_id": "wrap.testnet"
+          },
+          "key": "testnet",
+          "label": "Testnet",
+          "url": "https://test.api.fastnear.com"
+        }
+      ],
+      "requestMethod": "ft_top_v1",
+      "supportsFinality": false,
+      "transport": "http"
+    },
+    "pageModelId": "fastnear-v1-ft-top",
+    "replaceOperationPage": true,
+    "request": {
+      "bodySchema": null,
+      "examples": [
+        {
+          "id": "mainnet",
+          "label": "Mainnet",
+          "network": "mainnet",
+          "request": {
+            "body": null,
+            "headers": {},
+            "path": {
+              "token_id": "wrap.near"
+            },
+            "query": {}
+          }
+        },
+        {
+          "id": "testnet",
+          "label": "Testnet",
+          "network": "testnet",
+          "request": {
+            "body": null,
+            "headers": {},
+            "path": {
+              "token_id": "wrap.testnet"
+            },
+            "query": {}
+          }
+        }
+      ],
+      "parameters": {
+        "header": [],
+        "path": [
+          {
+            "description": "Fungible token contract account ID.",
+            "example": "wrap.near",
+            "location": "path",
+            "name": "token_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "query": [
+          {
+            "description": "Optional API key forwarded by embedded portal clients. The public FastNEAR API does not require it.",
+            "location": "query",
+            "name": "apiKey",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      },
+      "required": true,
+      "supportsBody": false
+    },
+    "responses": [
+      {
+        "description": "Indexed top holders for the requested fungible token",
+        "mediaType": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "token_id",
+            "accounts"
+          ],
+          "additionalProperties": false,
+          "properties": [
+            {
+              "name": "accounts",
+              "required": true,
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "account_id",
+                    "balance"
+                  ],
+                  "additionalProperties": false,
+                  "properties": [
+                    {
+                      "name": "account_id",
+                      "required": true,
+                      "schema": {
+                        "type": "string"
+                      }
+                    },
+                    {
+                      "name": "balance",
+                      "required": true,
+                      "schema": {
+                        "type": "string"
+                      }
+                    }
+                  ],
+                  "refName": "AccountBalanceRow"
+                }
+              }
+            },
+            {
+              "name": "token_id",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "refName": "TokenAccountsResponse"
+        },
+        "status": "200"
+      },
+      {
+        "description": "Bad Request",
+        "mediaType": "application/json",
+        "schema": {
+          "type": "string"
+        },
+        "status": "400"
+      },
+      {
+        "description": "Internal Server Error",
+        "mediaType": "application/json",
+        "schema": {
+          "type": "string"
+        },
+        "status": "500"
+      }
+    ],
+    "route": {
+      "method": "GET",
+      "path": "/v1/ft/{token_id}/top",
+      "transport": "http"
+    },
+    "routeAliases": [
+      "/apis/fastnear/openapi/fungible-tokens/ft_top_v1"
+    ],
+    "securitySchemes": [
+      {
+        "description": "Optional API key forwarded by embedded portal clients. The public FastNEAR API does not require it.",
+        "id": "ApiKeyAuth",
+        "in": "query",
+        "name": "apiKey",
+        "type": "apiKey"
+      }
+    ],
+    "sourceSpec": "apis/fastnear/v1/ft_top.yaml"
+  },
+  {
+    "canonicalPath": "/apis/fastnear/v1/public_key_lookup_all",
+    "info": {
+      "description": "Fetch every account tied to a public key — full-access and limited-access keys together.",
+      "operationId": "lookup_by_public_key_all_v1",
+      "summary": "Lookup all indexed accounts by public key",
+      "title": "FastNEAR API - V1 Public Key Lookup (All)",
+      "version": "3.0.3"
+    },
+    "interaction": {
+      "authTransport": "bearer",
+      "fields": [
+        {
+          "description": "NEAR public key in `ed25519:...` or `secp256k1:...` form.",
+          "example": "ed25519:CCaThr3uokqnUs6Z5vVnaDcJdrfuTpYJHJWcAGubDjT",
+          "label": "Public Key",
+          "location": "path",
+          "name": "public_key",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "kind": "fastnear-rest-read",
+      "networks": [
+        {
+          "defaultFields": {
+            "public_key": "ed25519:CCaThr3uokqnUs6Z5vVnaDcJdrfuTpYJHJWcAGubDjT"
+          },
+          "key": "mainnet",
+          "label": "Mainnet",
+          "url": "https://api.fastnear.com"
+        },
+        {
+          "defaultFields": {
+            "public_key": "ed25519:5FiU4tWnA2QmivpLTdHJhLeSfeZ7KuW4KKNaDqoBKue2"
+          },
+          "key": "testnet",
+          "label": "Testnet",
+          "url": "https://test.api.fastnear.com"
+        }
+      ],
+      "requestMethod": "lookup_by_public_key_all_v1",
+      "supportsFinality": false,
+      "transport": "http"
+    },
+    "pageModelId": "fastnear-v1-public-key-lookup-all",
+    "replaceOperationPage": true,
+    "request": {
+      "bodySchema": null,
+      "examples": [
+        {
+          "id": "mainnet",
+          "label": "Mainnet",
+          "network": "mainnet",
+          "request": {
+            "body": null,
+            "headers": {},
+            "path": {
+              "public_key": "ed25519:CCaThr3uokqnUs6Z5vVnaDcJdrfuTpYJHJWcAGubDjT"
+            },
+            "query": {}
+          }
+        },
+        {
+          "id": "testnet",
+          "label": "Testnet",
+          "network": "testnet",
+          "request": {
+            "body": null,
+            "headers": {},
+            "path": {
+              "public_key": "ed25519:5FiU4tWnA2QmivpLTdHJhLeSfeZ7KuW4KKNaDqoBKue2"
+            },
+            "query": {}
+          }
+        }
+      ],
+      "parameters": {
+        "header": [],
+        "path": [
+          {
+            "description": "NEAR public key in `ed25519:...` or `secp256k1:...` form.",
+            "example": "ed25519:CCaThr3uokqnUs6Z5vVnaDcJdrfuTpYJHJWcAGubDjT",
+            "location": "path",
+            "name": "public_key",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "query": [
+          {
+            "description": "Optional API key forwarded by embedded portal clients. The public FastNEAR API does not require it.",
+            "location": "query",
+            "name": "apiKey",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      },
+      "required": true,
+      "supportsBody": false
+    },
+    "responses": [
+      {
+        "description": "Matching account IDs for the supplied public key, including limited-access keys",
+        "mediaType": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "public_key",
+            "account_ids"
+          ],
+          "additionalProperties": false,
+          "properties": [
+            {
+              "name": "account_ids",
+              "required": true,
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "name": "public_key",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "refName": "PublicKeyLookupResponse"
+        },
+        "status": "200"
+      },
+      {
+        "description": "Bad Request",
+        "mediaType": "application/json",
+        "schema": {
+          "type": "string"
+        },
+        "status": "400"
+      },
+      {
+        "description": "Internal Server Error",
+        "mediaType": "application/json",
+        "schema": {
+          "type": "string"
+        },
+        "status": "500"
+      }
+    ],
+    "route": {
+      "method": "GET",
+      "path": "/v1/public_key/{public_key}/all",
+      "transport": "http"
+    },
+    "routeAliases": [
+      "/apis/fastnear/openapi/public-key/lookup_by_public_key_all_v1"
+    ],
+    "securitySchemes": [
+      {
+        "description": "Optional API key forwarded by embedded portal clients. The public FastNEAR API does not require it.",
+        "id": "ApiKeyAuth",
+        "in": "query",
+        "name": "apiKey",
+        "type": "apiKey"
+      }
+    ],
+    "sourceSpec": "apis/fastnear/v1/public_key_lookup_all.yaml"
+  }
+]
