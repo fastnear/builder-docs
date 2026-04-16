@@ -10,7 +10,7 @@ page_actions:
 
 # Transfers API
 
-Transfers API focuses on account-centric transfer history. It is the simplest starting point when the question is specifically about movement of NEAR or fungible tokens.
+Transfers API is the narrowest FastNear history surface. Start here when the question is specifically about asset movement and not about the broader execution story behind that movement.
 
 ## Base URL
 
@@ -18,28 +18,52 @@ Transfers API focuses on account-centric transfer history. It is the simplest st
 https://transfers.main.fastnear.com
 ```
 
-This surface is mainnet-only today; `?network=testnet` does not switch the backend.
+This surface is mainnet-only today. `?network=testnet` does not switch the backend.
 
-## Best fit
+## Use this API when
 
-- Transfer feeds.
-- Wallet history views.
-- Compliance or support tooling focused on sends and receives.
+- you want account-centric NEAR or FT transfer history
+- you are building wallet feeds or transfer-only activity views
+- you are answering support or compliance questions about sends and receives
 
-## When not to use it
+## Do not start here when
 
-- Use [Transactions API](/tx) when you need broader transaction or receipt history.
-- Use [FastNear API](/api) when you need balances or holdings rather than transfer events.
+- you need broader transaction or receipt history
+- you need balances, holdings, NFTs, or staking views
+- you need testnet traffic
+
+Use [Transactions API](/tx) for broader execution history and [FastNear API](/api) for account-state style answers.
+
+## Minimum useful inputs
+
+- `account_id`
+- optional asset, direction, amount, or time filters
+- whether the user wants just a few events or a longer history scan
+
+## Default workflow
+
+1. Start with [Query Transfers](/transfers/query) using the narrowest filter set that still answers the question.
+2. Read the returned events as transfer history only. Do not reconstruct a full receipt timeline unless the user asks for it.
+3. Reuse the opaque `resume_token` exactly as returned when paging further.
+4. Stop once you can answer who sent what, when, and in what asset.
 
 ## Auth and availability
 
 - These pages do not use API keys or bearer tokens.
 - Responses include an opaque `resume_token` for pagination.
+- The service is mainnet-only today.
+
+## Widen only if
+
+- the user starts asking about receipts or non-transfer actions
+- the user wants the broader transaction context behind a transfer
+- the user is really asking for balances or current holdings rather than movement
+
+When that happens, widen to [Transactions API](/tx) or [FastNear API](/api) instead of overloading the transfer view.
 
 ## Common starting points
 
-- [Query Transfers](/transfers/query) when you want the account-centric feed with direction, asset, amount, and time filters.
-- Reuse the opaque `resume_token` exactly as returned when paging further into history.
+- [Query Transfers](/transfers/query) for the account-centric feed with direction, asset, amount, and time filters
 
 ## Troubleshooting
 

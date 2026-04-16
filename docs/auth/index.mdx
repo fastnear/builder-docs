@@ -6,13 +6,43 @@ sidebar_position: 0
 displayed_sidebar: rpcSidebar
 page_actions:
   - markdown
+keywords:
+  - api key
+  - API key
+  - api-key
+  - apikey
+  - x-api-key
+  - bearer token
+  - access token
+  - authorization header
+  - authentication
+  - auth
+  - FastNear API key
 ---
 
 # Auth & Access
 
-One FastNear API key works across both the [RPC](/rpc) and the [REST APIs](/api). Log in at [dashboard.fastnear.com](https://dashboard.fastnear.com) to get a key, then send it on each request either way below.
+One FastNear API key works across the RPC and REST APIs that accept authenticated traffic. Public endpoints remain readable for many common requests, but the auth model stays simple when you do need a key: use the same credential everywhere and send it either as a Bearer header or an `apiKey` query parameter.
 
-## Using the Authorization header
+Get a key at [dashboard.fastnear.com](https://dashboard.fastnear.com).
+
+## If you only need the rule
+
+- One FastNear API key works across RPC and supported REST traffic.
+- Prefer `Authorization: Bearer ${API_KEY}` for production backends.
+- Use `?apiKey=${API_KEY}` when headers are awkward or you are doing quick curl/debug work.
+- Agents and automations should keep the key in env vars or a secret manager, not in browser storage.
+
+## Choose the auth form
+
+| Form | Best for | Notes |
+| --- | --- | --- |
+| `Authorization: Bearer ${API_KEY}` | production backends, workers, automations, and proxies | Best default. Keeps credentials out of copied URLs and most URL logs. |
+| `?apiKey=${API_KEY}` | simple curl, one-off debugging, systems that cannot set headers easily | Valid, but the key may end up in shell history, logs, analytics, or copied links. |
+
+If you control the client, use the header form.
+
+## Authorization header example
 
 ```bash
 curl "https://rpc.mainnet.fastnear.com" \
@@ -21,10 +51,45 @@ curl "https://rpc.mainnet.fastnear.com" \
   --data '{"method":"block","params":{"finality":"final"},"id":1,"jsonrpc":"2.0"}'
 ```
 
-## Using the `?apiKey=` URL parameter
+## `?apiKey=` query parameter example
 
 ```bash
 curl "https://rpc.mainnet.fastnear.com?apiKey=${API_KEY}" \
   -H "Content-Type: application/json" \
   --data '{"method":"block","params":{"finality":"final"},"id":1,"jsonrpc":"2.0"}'
 ```
+
+## Where this applies
+
+- [RPC Reference](/rpc) uses the shared FastNear key model directly.
+- Supported REST surfaces use the same key when authenticated traffic is enabled.
+- The docs UI can forward an optional FastNear key for supported pages, but that browser storage behavior is a docs convenience, not a production pattern.
+
+For agent and automation runtimes, use [Auth for Agents](/agents/auth).
+
+## Production defaults
+
+Use these defaults unless you have a specific reason not to:
+
+- keep the key in an env var or secret manager
+- inject it at the backend, worker, or proxy layer
+- prefer the Bearer header over the query parameter
+- rotate the key if it leaks into a prompt, URL, or debug log
+
+## Common failure modes
+
+### The request works without a key in one context but not another
+
+That usually means you moved from public traffic to a higher-limit or authenticated path. Add the same FastNear key you use elsewhere.
+
+### My key is showing up in logs
+
+Switch to the `Authorization` header if you are currently using `?apiKey=`. URLs tend to travel through more logging and observability systems.
+
+### The docs UI worked, but my backend does not
+
+Do not rely on browser storage behavior from the docs UI. Production backends should inject credentials explicitly.
+
+### I am building an agent or automation
+
+Use [Auth for Agents](/agents/auth) for the runtime posture. Browser `localStorage` is a docs convenience, not an agent secret store.

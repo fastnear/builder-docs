@@ -267,7 +267,6 @@ function translateDocContent(content, translatePlainText) {
       trimmed.startsWith("export ") ||
       trimmed.startsWith("<FastnearDirectOperation") ||
       trimmed.startsWith("<ApiKeyManager") ||
-      trimmed.startsWith("<RpcApiServiceLinks") ||
       trimmed === ""
     ) {
       translatedLines.push(line);
