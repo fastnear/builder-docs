@@ -1,6 +1,6 @@
 # RPC протокола NEAR: Последний блок
 Получить последний блок
-Возвращает самый свежий блок в блокчейне.
+Получите последний финализированный блок — финальность выбирается автоматически, ID блока не требуется.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/rpcs/protocol/latest_block
 - https://docs.fastnear.com/ru/rpcs/protocol/latest_block/other/latest_block

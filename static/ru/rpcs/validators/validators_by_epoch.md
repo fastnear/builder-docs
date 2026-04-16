@@ -1,6 +1,6 @@
 # RPC протокола NEAR: Валидаторы по эпохе
 Получить валидаторов по эпохе
-Возвращает список валидаторов и их параметры для выбранной эпохи.
+Получите набор валидаторов выбранной прошлой эпохи по высоте или хешу её начального блока.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/rpcs/validators/validators_by_epoch
 - https://docs.fastnear.com/ru/rpcs/validators/validators_by_epoch/other/validators_by_epoch

@@ -1,6 +1,6 @@
 # RPC протокола NEAR: Вызов view-метода
 Вызвать view-метод контракта
-Выполняет view-метод смарт-контракта без изменения состояния.
+Вызовите view-метод контракта без газа и изменений состояния — чтение вычисляемых значений из логики контракта.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/rpc/contract/call-function
 - https://docs.fastnear.com/ru/rpcs/contract/call

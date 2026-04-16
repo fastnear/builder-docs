@@ -200,7 +200,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/ru/apis/fastnear/system/health",
-      "description": "Возвращает `ok`, когда сервис исправен. Если FastNear деградирует, то это же поле `status` содержит диагностическую строку.",
+      "description": "Пинг FastNEAR API для проверки доступности — возвращает `{status: ok}` при успехе.",
       "docsPath": "/ru/api/system/health",
       "familyId": "api-fastnear",
       "headline": "FastNEAR API - Health",
@@ -245,7 +245,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/ru/apis/fastnear/system/status",
-      "description": "Возвращает последнюю индексированную высоту синхронизации, временную метку индексированного блока, измеренную задержку синхронизации и версию FastNear API.",
+      "description": "Проверьте текущую индексированную высоту блока, задержку и версию развёрнутого сервиса.",
       "docsPath": "/ru/api/system/status",
       "familyId": "api-fastnear",
       "headline": "FastNEAR API - статус",
@@ -290,7 +290,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/ru/apis/fastnear/v0/account_ft",
-      "description": "Возвращает только ID FT-контрактов, которые FastNear проиндексировал для запрошенного аккаунта. В отличие от маршрута v1, этот ответ не включает балансы и метаданные по высоте блока.",
+      "description": "Получите ID FT-контрактов, которых касался аккаунт — только ID, без балансов.",
       "docsPath": "/ru/api/v0/account-ft",
       "familyId": "api-fastnear",
       "headline": "FastNEAR API - V0 FT аккаунта",
@@ -335,7 +335,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/ru/apis/fastnear/v0/account_nft",
-      "description": "Возвращает только ID NFT-контрактов, которые FastNear проиндексировал для запрошенного аккаунта. В отличие от маршрута v1, этот ответ не включает метаданные `last_update_block_height`.",
+      "description": "Получите ID NFT-контрактов, которых касался аккаунт — только ID, без метаданных по высоте блока.",
       "docsPath": "/ru/api/v0/account-nft",
       "familyId": "api-fastnear",
       "headline": "FastNEAR API - V0 NFT аккаунта",
@@ -380,7 +380,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/ru/apis/fastnear/v0/account_staking",
-      "description": "Возвращает ID стейкинг-пулов, которые FastNear проиндексировал для запрошенного аккаунта. В отличие от маршрута v1, этот ответ не включает метаданные `last_update_block_height`.",
+      "description": "Получите ID стейкинг-пулов для одного аккаунта — только ID пулов, без метаданных по высоте блока.",
       "docsPath": "/ru/api/v0/account-staking",
       "familyId": "api-fastnear",
       "headline": "FastNEAR API - V0 стейкинг аккаунта",
@@ -425,7 +425,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/ru/apis/fastnear/v0/public_key_lookup",
-      "description": "Возвращает ID аккаунтов, которые сейчас связаны с переданным публичным ключом полного доступа.",
+      "description": "Получите индексированные ID аккаунтов, связанные с публичным ключом полного доступа.",
       "docsPath": "/ru/api/v0/public-key",
       "familyId": "api-fastnear",
       "headline": "FastNEAR API - V0 поиск по публичному ключу",
@@ -470,7 +470,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/ru/apis/fastnear/v0/public_key_lookup_all",
-      "description": "Возвращает ID аккаунтов, которые сейчас связаны с переданным публичным ключом, включая ключи ограниченного доступа.",
+      "description": "Получите все аккаунты, связанные с публичным ключом — ключи полного доступа и ключи с ограничениями вместе.",
       "docsPath": "/ru/api/v0/public-key-all",
       "familyId": "api-fastnear",
       "headline": "FastNEAR API - V0 поиск по публичному ключу (все)",
@@ -515,7 +515,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/ru/apis/fastnear/v1/account_ft",
-      "description": "Возвращает индексированные строки FT-токенов для указанного аккаунта. Балансы и `last_update_block_height` могут быть `null`, если индекс ещё не записал эти данные.",
+      "description": "Получите строки балансов FT-токенов аккаунта — каждая с ID контракта, балансом и высотой последнего обновления.",
       "docsPath": "/ru/api/v1/account-ft",
       "familyId": "api-fastnear",
       "headline": "FastNEAR API - V1 FT аккаунта",
@@ -560,7 +560,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/ru/apis/fastnear/v1/account_full",
-      "description": "Возвращает данные по стейкингу, FT-токенам, NFT и состоянию аккаунта для указанного аккаунта. Поле `state` может быть `null`, если индекс ещё не зафиксировал состояние аккаунта.",
+      "description": "Получите объединённое индексированное представление аккаунта, включая стейкинг-пулы, FT-балансы, NFT и состояние аккаунта.",
       "docsPath": "/ru/api/v1/account-full",
       "familyId": "api-fastnear",
       "headline": "FastNEAR API - V1 полные данные аккаунта",
@@ -605,7 +605,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/ru/apis/fastnear/v1/account_nft",
-      "description": "Возвращает индексированные строки NFT-контрактов для указанного аккаунта. `last_update_block_height` может быть `null`, если FastNear ещё не записал недавнее обновление по этой связи с контрактом.",
+      "description": "Получите строки NFT-контрактов для аккаунта, каждая с метаданными по высоте блока.",
       "docsPath": "/ru/api/v1/account-nft",
       "familyId": "api-fastnear",
       "headline": "FastNEAR API - V1 NFT аккаунта",
@@ -650,7 +650,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/ru/apis/fastnear/v1/account_staking",
-      "description": "Возвращает записи стейкинг-пулов для указанного аккаунта. Поле `last_update_block_height` может быть null, если FastNEAR не записал недавнее индексированное обновление для этой связи с пулом.",
+      "description": "Получите строки по стейкинг-пулам для аккаунта, каждая с метаданными по высоте блока.",
       "docsPath": "/ru/api/v1/account-staking",
       "familyId": "api-fastnear",
       "headline": "FastNEAR API - V1 стейкинг аккаунта",
@@ -695,7 +695,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/ru/apis/fastnear/v1/ft_top",
-      "description": "Возвращает проиндексированные аккаунты с наибольшим балансом указанного FT-токена.",
+      "description": "Получите список держателей с наибольшим балансом для FT-контракта, отсортированный по убыванию баланса.",
       "docsPath": "/ru/api/v1/ft-top",
       "familyId": "api-fastnear",
       "headline": "FastNEAR API - V1 FT Top Holders",
@@ -740,7 +740,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/ru/apis/fastnear/v1/public_key_lookup",
-      "description": "Возвращает ID аккаунтов, которые сейчас связаны с переданным публичным ключом полного доступа. Этот маршрут v1 пока использует ту же форму ответа `{ public_key, account_ids }`, что и маршрут v0.",
+      "description": "Получите индексированные ID аккаунтов, связанные с публичным ключом полного доступа.",
       "docsPath": "/ru/api/v1/public-key",
       "familyId": "api-fastnear",
       "headline": "FastNEAR API - V1 поиск по публичному ключу",
@@ -785,7 +785,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/ru/apis/fastnear/v1/public_key_lookup_all",
-      "description": "Возвращает ID аккаунтов, которые сейчас связаны с переданным публичным ключом, включая ключи ограниченного доступа, если они присутствуют в индексе FastNear. Этот маршрут v1 пока использует ту же форму ответа `{ public_key, account_ids }`, что и маршрут v0.",
+      "description": "Получите все аккаунты, связанные с публичным ключом — ключи полного доступа и ключи с ограничениями вместе.",
       "docsPath": "/ru/api/v1/public-key-all",
       "familyId": "api-fastnear",
       "headline": "FastNEAR API - V1 поиск по публичному ключу (все)",
@@ -830,7 +830,7 @@
     {
       "authSummary": "No auth required",
       "canonicalPath": "/ru/apis/kv-fastdata/v0/all_by_predecessor",
-      "description": "Возвращает последнюю строку для каждой пары `(current_account_id, key)`, записанной выбранным вызывающим аккаунтом. Значения `page_token` непрозрачны и привязаны к этому эндпоинту и выбранному вызывающему аккаунту.",
+      "description": "Получите последние значения для всех контрактов, к которым обращался один вызывающий аккаунт.",
       "docsPath": "/ru/fastdata/kv/all-by-predecessor",
       "familyId": "api-kv-fastdata",
       "headline": "KV FastData API - последние ключи по предшественнику",
@@ -875,7 +875,7 @@
     {
       "authSummary": "No auth required",
       "canonicalPath": "/ru/apis/kv-fastdata/v0/get_history_key",
-      "description": "Возвращает исторические строки для одного точного ключа, который выбранный вызывающий аккаунт записал в выбранный контракт.",
+      "description": "Получите каждую историческую запись для одного точного ключа под одним вызывающим аккаунтом и контрактом.",
       "docsPath": "/ru/fastdata/kv/get-history-key",
       "familyId": "api-kv-fastdata",
       "headline": "KV FastData API - история по конкретному ключу",
@@ -920,7 +920,7 @@
     {
       "authSummary": "No auth required",
       "canonicalPath": "/ru/apis/kv-fastdata/v0/get_latest_key",
-      "description": "Возвращает последнюю строку для одного точного ключа, который выбранный вызывающий аккаунт записал в выбранный контракт.",
+      "description": "Получите последнее значение для одного точного ключа под одним вызывающим аккаунтом и контрактом.",
       "docsPath": "/ru/fastdata/kv/get-latest-key",
       "familyId": "api-kv-fastdata",
       "headline": "KV FastData API - последние записи по конкретному ключу",
@@ -965,7 +965,7 @@
     {
       "authSummary": "No auth required",
       "canonicalPath": "/ru/apis/kv-fastdata/v0/history_by_account",
-      "description": "Возвращает исторические строки для выбранного аккаунта контракта по всем вызывающим аккаунтам. Значения `page_token` непрозрачны и валидны только при повторном использовании с тем же эндпоинтом и фильтрами.",
+      "description": "Получите исторические строки FastData для одного целевого аккаунта по всем вызывающим аккаунтам.",
       "docsPath": "/ru/fastdata/kv/history-by-account",
       "familyId": "api-kv-fastdata",
       "headline": "KV FastData API - история по аккаунту",
@@ -1010,7 +1010,7 @@
     {
       "authSummary": "No auth required",
       "canonicalPath": "/ru/apis/kv-fastdata/v0/history_by_key",
-      "description": "Возвращает исторические строки FastData для одного точного ключа по всем индексированным контрактам и вызывающим аккаунтам. Значения `page_token` непрозрачны и валидны только при повторном использовании с тем же эндпоинтом и фильтрами.",
+      "description": "Получите исторические значения выбранного ключа по аккаунтам и вызывающим аккаунтам.",
       "docsPath": "/ru/fastdata/kv/history-by-key",
       "familyId": "api-kv-fastdata",
       "headline": "KV FastData API - история по глобальному ключу",
@@ -1055,7 +1055,7 @@
     {
       "authSummary": "No auth required",
       "canonicalPath": "/ru/apis/kv-fastdata/v0/history_by_predecessor",
-      "description": "Возвращает исторические строки для пары `predecessor_id` + `current_account_id`. Используйте `key` или `key_prefix`, чтобы сузить поиск. Значения `page_token` непрозрачны и валидны только при повторном использовании с тем же эндпоинтом и теми же фильтрами.",
+      "description": "Получите исторические строки FastData для одного вызывающего аккаунта и целевого аккаунта.",
       "docsPath": "/ru/fastdata/kv/history-by-predecessor",
       "familyId": "api-kv-fastdata",
       "headline": "KV FastData API - история по предшественнику",
@@ -1100,7 +1100,7 @@
     {
       "authSummary": "No auth required",
       "canonicalPath": "/ru/apis/kv-fastdata/v0/latest_by_account",
-      "description": "Возвращает последнюю строку для каждой пары `(predecessor_id, key)`, записанной в контракт. Значения `page_token` непрозрачны и привязаны к этому эндпоинту, аккаунту контракта и активным фильтрам.",
+      "description": "Получите последние строки FastData для одного целевого аккаунта по всем вызывающим аккаунтам.",
       "docsPath": "/ru/fastdata/kv/latest-by-account",
       "familyId": "api-kv-fastdata",
       "headline": "KV FastData API - последние записи по аккаунту",
@@ -1145,7 +1145,7 @@
     {
       "authSummary": "No auth required",
       "canonicalPath": "/ru/apis/kv-fastdata/v0/latest_by_predecessor",
-      "description": "Возвращает последнюю строку для каждой пары `(current_account_id, key)`, записанной выбранным вызывающим аккаунтом в выбранный контракт. Значения `page_token` непрозрачны и валидны только при повторном использовании с тем же эндпоинтом и теми же фильтрами.",
+      "description": "Получите последние строки FastData для одного вызывающего аккаунта и целевого аккаунта.",
       "docsPath": "/ru/fastdata/kv/latest-by-predecessor",
       "familyId": "api-kv-fastdata",
       "headline": "KV FastData API - последние записи по предшественнику",
@@ -1190,7 +1190,7 @@
     {
       "authSummary": "No auth required",
       "canonicalPath": "/ru/apis/kv-fastdata/v0/multi",
-      "description": "Возвращает последнюю запись для каждого запрошенного полностью квалифицированного ключа. Отсутствующие ключи представлены как элементы `null` в массиве ответа.",
+      "description": "Получите последнюю строку FastData сразу для 100 ключей в одном запросе.",
       "docsPath": "/ru/fastdata/kv/multi",
       "familyId": "api-kv-fastdata",
       "headline": "KV FastData API - поиск по нескольким ключам",
@@ -1640,7 +1640,7 @@
     {
       "authSummary": "No auth required",
       "canonicalPath": "/ru/apis/transactions/v0/account",
-      "description": "Возвращает строки транзакций аккаунта, необязательное общее количество на первой странице и необязательный `resume_token`.",
+      "description": "Получите историю транзакций аккаунта с необязательными фильтрами по подписанту, статусу успеха и порядку сортировки.",
       "docsPath": "/ru/tx/account",
       "familyId": "api-transactions",
       "headline": "Транзакции API — история аккаунта",
@@ -1685,7 +1685,7 @@
     {
       "authSummary": "No auth required",
       "canonicalPath": "/ru/apis/transactions/v0/block",
-      "description": "Возвращает строку блока и, при необходимости, связанные транзакции и квитанции.",
+      "description": "Получите строку блока по высоте или хешу и при необходимости разверните связанные транзакции и квитанции.",
       "docsPath": "/ru/tx/block",
       "familyId": "api-transactions",
       "headline": "Транзакции API — поиск блока",
@@ -1730,7 +1730,7 @@
     {
       "authSummary": "No auth required",
       "canonicalPath": "/ru/apis/transactions/v0/blocks",
-      "description": "Возвращает до 100 строк блоков для запрошенного диапазона высот.",
+      "description": "Получите ограниченный список индексированных блоков, отсортированный по возрастанию или убыванию.",
       "docsPath": "/ru/tx/blocks",
       "familyId": "api-transactions",
       "headline": "Транзакции API — диапазон блоков",
@@ -1775,7 +1775,7 @@
     {
       "authSummary": "No auth required",
       "canonicalPath": "/ru/apis/transactions/v0/receipt",
-      "description": "Возвращает строку квитанции и, если она есть, связанные сырые данные транзакции.",
+      "description": "Получите квитанцию по ID вместе с транзакцией, её создавшей.",
       "docsPath": "/ru/tx/receipt",
       "familyId": "api-transactions",
       "headline": "Транзакции API — поиск квитанции",
@@ -1820,7 +1820,7 @@
     {
       "authSummary": "No auth required",
       "canonicalPath": "/ru/apis/transactions/v0/transactions",
-      "description": "Возвращает до 20 наборов сырых данных транзакций для переданных хешей транзакций.",
+      "description": "Получите до 20 индексированных транзакций по хешу в одном запросе.",
       "docsPath": "/ru/tx/transactions",
       "familyId": "api-transactions",
       "headline": "Транзакции API — транзакции по хешу",
@@ -1865,7 +1865,7 @@
     {
       "authSummary": "No auth required",
       "canonicalPath": "/ru/apis/transfers/v0/transfers",
-      "description": "Возвращает строки переводов для аккаунта и непрозрачный `resume_token` для пагинации.",
+      "description": "Получите строки переводов для одного аккаунта с необязательными фильтрами по направлению, активу, сумме и времени.",
       "docsPath": "/ru/transfers/query",
       "familyId": "api-transfers",
       "headline": "API переводов: запрос переводов",
@@ -1909,13 +1909,13 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/ru/rpcs/account/view_access_key",
-      "description": "Возвращает информацию о конкретном ключе доступа аккаунта NEAR.",
+      "description": "Получите права и nonce одного ключа доступа аккаунта по его публичному ключу.",
       "docsPath": "/ru/rpc/account/view-access-key",
       "familyId": "rpc-account",
-      "headline": "NEAR Protocol RPC: просмотр ключа доступа",
+      "headline": "NEAR Protocol RPC: View access key",
       "httpMethod": "POST",
       "id": "rpc-view-access-key",
-      "name": "NEAR Protocol RPC: просмотр ключа доступа",
+      "name": "NEAR Protocol RPC: View access key",
       "networkKeys": [
         "mainnet",
         "testnet"
@@ -1956,13 +1956,13 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/ru/rpcs/account/view_access_key_list",
-      "description": "Возвращает список всех ключей доступа аккаунта NEAR.",
+      "description": "Получите все ключи доступа аккаунта — каждый с правами и nonce.",
       "docsPath": "/ru/rpc/account/view-access-key-list",
       "familyId": "rpc-account",
-      "headline": "NEAR Protocol RPC: просмотр списка ключей доступа",
+      "headline": "NEAR Protocol RPC: View access key list",
       "httpMethod": "POST",
       "id": "rpc-view-access-key-list",
-      "name": "NEAR Protocol RPC: просмотр списка ключей доступа",
+      "name": "NEAR Protocol RPC: View access key list",
       "networkKeys": [
         "mainnet",
         "testnet"
@@ -2003,7 +2003,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/ru/rpcs/account/view_account",
-      "description": "Возвращает подробную информацию об аккаунте NEAR, включая баланс и использование хранилища.",
+      "description": "Получите баланс аккаунта, размер хранилища и хеш кода на выбранной высоте блока или финальности.",
       "docsPath": "/ru/rpc/account/view-account",
       "familyId": "rpc-account",
       "headline": "NEAR Protocol RPC: просмотр аккаунта",
@@ -2050,13 +2050,13 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/ru/rpcs/block/block_by_height",
-      "description": "Возвращает данные блока по указанной высоте.",
+      "description": "Получите заголовок и сводку по чанкам блока по его высоте в цепочке.",
       "docsPath": "/ru/rpc/block/block-by-height",
       "familyId": "rpc-block",
-      "headline": "NEAR Protocol RPC: блок по высоте",
+      "headline": "NEAR Protocol RPC: Get block by height",
       "httpMethod": "POST",
       "id": "rpc-block-by-height",
-      "name": "NEAR Protocol RPC: блок по высоте",
+      "name": "NEAR Protocol RPC: Get block by height",
       "networkKeys": [
         "mainnet",
         "testnet"
@@ -2097,13 +2097,13 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/ru/rpcs/block/block_by_id",
-      "description": "Возвращает данные блока по указанному хешу.",
+      "description": "Получите заголовок и сводку по чанкам блока по его SHA-256-хешу.",
       "docsPath": "/ru/rpc/block/block-by-id",
       "familyId": "rpc-block",
-      "headline": "NEAR Protocol RPC: блок по ID",
+      "headline": "NEAR Protocol RPC: Get block by hash",
       "httpMethod": "POST",
       "id": "rpc-block-by-id",
-      "name": "NEAR Protocol RPC: блок по ID",
+      "name": "NEAR Protocol RPC: Get block by hash",
       "networkKeys": [
         "mainnet",
         "testnet"
@@ -2144,7 +2144,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/ru/rpcs/block/block_effects",
-      "description": "Возвращает изменения, вызванные блоком, для заданной высоты блока или хеша по всем типам транзакций.",
+      "description": "Получите сводку всех изменений состояния в одном блоке — какие аккаунты, ключи и записи состояния контрактов были затронуты.",
       "docsPath": "/ru/rpc/block/block-effects",
       "familyId": "rpc-block",
       "headline": "NEAR Protocol RPC: эффекты блока",
@@ -2191,13 +2191,13 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/ru/rpcs/contract/call",
-      "description": "Выполняет view-метод смарт-контракта без изменения состояния.",
+      "description": "Вызовите view-метод контракта без газа и изменений состояния — чтение вычисляемых значений из логики контракта.",
       "docsPath": "/ru/rpc/contract/call-function",
       "familyId": "rpc-contract",
-      "headline": "NEAR Protocol RPC: вызов функции",
+      "headline": "NEAR Protocol RPC: Call contract function",
       "httpMethod": "POST",
       "id": "rpc-call-function",
-      "name": "NEAR Protocol RPC: вызов функции",
+      "name": "NEAR Protocol RPC: Call contract function",
       "networkKeys": [
         "mainnet",
         "testnet"
@@ -2238,7 +2238,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/ru/rpcs/contract/view_code",
-      "description": "Возвращает код контракта (Wasm), опубликованный в аккаунте.",
+      "description": "Получите скомпилированный WebAssembly-байткод, развёрнутый непосредственно на одном аккаунте.",
       "docsPath": "/ru/rpc/contract/view-code",
       "familyId": "rpc-contract",
       "headline": "NEAR Protocol RPC: просмотр кода контракта",
@@ -2285,7 +2285,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/ru/rpcs/contract/view_global_contract_code",
-      "description": "Возвращает глобально развёрнутый код контракта по его хешу.",
+      "description": "Найдите WebAssembly-байткод глобального контракта по SHA-256-хешу его кода.",
       "docsPath": "/ru/rpc/contract/view-global-contract-code",
       "familyId": "rpc-contract",
       "headline": "NEAR Protocol RPC: просмотр глобального кода контракта",
@@ -2332,7 +2332,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/ru/rpcs/contract/view_global_contract_code_by_account_id",
-      "description": "Возвращает глобально развёрнутый код контракта, который использует указанный аккаунт.",
+      "description": "Найдите WebAssembly-байткод глобального контракта по ID аккаунта, который его зарегистрировал.",
       "docsPath": "/ru/rpc/contract/view-global-contract-code-by-account-id",
       "familyId": "rpc-contract",
       "headline": "NEAR Protocol RPC: просмотр глобального кода контракта по аккаунту",
@@ -2379,13 +2379,13 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/ru/rpcs/contract/view_state",
-      "description": "Возвращает состояние (пары ключ-значение), сохранённое для аккаунта контракта.",
+      "description": "Получите сырое состояние «ключ-значение», записанное контрактом, с опциональным фильтром по префиксу ключа.",
       "docsPath": "/ru/rpc/contract/view-state",
       "familyId": "rpc-contract",
-      "headline": "NEAR Protocol RPC: просмотр состояния контракта",
+      "headline": "NEAR Protocol RPC: View contract state",
       "httpMethod": "POST",
       "id": "rpc-view-state",
-      "name": "NEAR Protocol RPC: просмотр состояния контракта",
+      "name": "NEAR Protocol RPC: View contract state",
       "networkKeys": [
         "mainnet",
         "testnet"
@@ -2426,7 +2426,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/ru/rpcs/protocol/changes",
-      "description": "Возвращает изменения для выбранного аккаунта, контракта или кода контракта по заданной высоте блока или хешу.",
+      "description": "Получите подробные изменения состояния в блоке — с фильтром по аккаунту, префиксу ключа или типу изменения.",
       "docsPath": "/ru/rpc/protocol/changes",
       "familyId": "rpc-protocol",
       "headline": "NEAR Protocol RPC: изменения состояния",
@@ -2473,13 +2473,13 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/ru/rpcs/protocol/chunk_by_block_shard",
-      "description": "Возвращает сведения о чанке по координатам `block_id` и `shard_id`.",
+      "description": "Получите транзакции и квитанции одного чанка по родительскому блоку и индексу шарда.",
       "docsPath": "/ru/rpc/protocol/chunk-by-block-shard",
       "familyId": "rpc-protocol",
-      "headline": "NEAR Protocol RPC: чанк по ID блока и ID шарда",
+      "headline": "NEAR Protocol RPC: Get chunk by block and shard",
       "httpMethod": "POST",
       "id": "rpc-chunk-by-block-shard",
-      "name": "NEAR Protocol RPC: чанк по ID блока и ID шарда",
+      "name": "NEAR Protocol RPC: Get chunk by block and shard",
       "networkKeys": [
         "mainnet",
         "testnet"
@@ -2520,13 +2520,13 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/ru/rpcs/protocol/chunk_by_hash",
-      "description": "Возвращает сведения о чанке по его хешу.",
+      "description": "Получите транзакции и квитанции одного чанка по его хешу содержимого.",
       "docsPath": "/ru/rpc/protocol/chunk-by-hash",
       "familyId": "rpc-protocol",
-      "headline": "NEAR Protocol RPC: чанк по хешу",
+      "headline": "NEAR Protocol RPC: Get chunk by hash",
       "httpMethod": "POST",
       "id": "rpc-chunk-by-hash",
-      "name": "NEAR Protocol RPC: чанк по хешу",
+      "name": "NEAR Protocol RPC: Get chunk by hash",
       "networkKeys": [
         "mainnet",
         "testnet"
@@ -2567,7 +2567,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/ru/rpcs/protocol/client_config",
-      "description": "Запрашивает конфигурацию клиента узла.",
+      "description": "Получите локальную клиентскую конфигурацию узла — таймауты, настройки повторов и параметры оператора.",
       "docsPath": "/ru/rpc/protocol/client-config",
       "familyId": "rpc-protocol",
       "headline": "NEAR Protocol RPC: конфигурация клиента",
@@ -2614,7 +2614,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/ru/rpcs/protocol/EXPERIMENTAL_congestion_level",
-      "description": "Запрашивает уровень перегрузки выбранного шарда.",
+      "description": "Измерьте нагрузку одного шарда на выбранном блоке — оценка насыщения от 0.0 до 1.0.",
       "docsPath": "/ru/rpc/protocol/experimental-congestion-level",
       "familyId": "rpc-protocol",
       "headline": "NEAR Protocol RPC: уровень перегрузки",
@@ -2661,7 +2661,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/ru/rpcs/protocol/EXPERIMENTAL_light_client_block_proof",
-      "description": "Возвращает доказательство блока для лайт-клиента.",
+      "description": "Получите Merkle-доказательство того, что блок включён в верифицированную цепочку лайт-клиента.",
       "docsPath": "/ru/rpc/protocol/experimental-light-client-block-proof",
       "familyId": "rpc-protocol",
       "headline": "NEAR Protocol RPC: доказательство блока для лёгкого клиента",
@@ -2708,7 +2708,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/ru/rpcs/protocol/EXPERIMENTAL_light_client_proof",
-      "description": "Возвращает доказательство исполнения транзакции для лайт-клиента.",
+      "description": "Получите Merkle-доказательство включения транзакции или квитанции — EXPERIMENTAL-вариант метода `light_client_proof`.",
       "docsPath": "/ru/rpc/protocol/experimental-light-client-proof",
       "familyId": "rpc-protocol",
       "headline": "NEAR Protocol RPC: доказательство исполнения для лёгкого клиента",
@@ -2755,7 +2755,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/ru/rpcs/protocol/EXPERIMENTAL_protocol_config",
-      "description": "Возвращает конфигурацию на уровне протокола: стоимость газа и хранения, лимиты, флаги возможностей и другие параметры.",
+      "description": "Получите рантайм-конфигурацию протокола на выбранном блоке — стоимость газа, цены хранилища и действующие лимиты.",
       "docsPath": "/ru/rpc/protocol/experimental-protocol-config",
       "familyId": "rpc-protocol",
       "headline": "NEAR Protocol RPC: конфигурация протокола",
@@ -2802,7 +2802,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/ru/rpcs/protocol/EXPERIMENTAL_split_storage_info",
-      "description": "Содержит сведения о разделённом хранилище для архивных узлов.",
+      "description": "Изучите раскладку разделённого хранилища узла — границу между горячими недавними и холодными архивными данными.",
       "docsPath": "/ru/rpc/protocol/experimental-split-storage-info",
       "familyId": "rpc-protocol",
       "headline": "NEAR Protocol RPC: информация о split storage",
@@ -2849,13 +2849,13 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/ru/rpcs/protocol/gas_price",
-      "description": "Возвращает сведения о текущей цене газа.",
+      "description": "Получите текущую общесетевую цену газа для самого последнего блока.",
       "docsPath": "/ru/rpc/protocol/gas-price",
       "familyId": "rpc-protocol",
-      "headline": "NEAR Protocol RPC: цена газа",
+      "headline": "NEAR Protocol RPC: Get gas price",
       "httpMethod": "POST",
       "id": "rpc-gas-price",
-      "name": "NEAR Protocol RPC: цена газа",
+      "name": "NEAR Protocol RPC: Get gas price",
       "networkKeys": [
         "mainnet",
         "testnet"
@@ -2896,13 +2896,13 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/ru/rpcs/protocol/gas_price_by_block",
-      "description": "Возвращает цену газа для конкретного блока.",
+      "description": "Получите общесетевую цену газа на выбранном историческом блоке — по высоте или хешу.",
       "docsPath": "/ru/rpc/protocol/gas-price-by-block",
       "familyId": "rpc-protocol",
-      "headline": "NEAR Protocol RPC: цена газа по блоку",
+      "headline": "NEAR Protocol RPC: Get gas price by block",
       "httpMethod": "POST",
       "id": "rpc-gas-price-by-block",
-      "name": "NEAR Protocol RPC: цена газа по блоку",
+      "name": "NEAR Protocol RPC: Get gas price by block",
       "networkKeys": [
         "mainnet",
         "testnet"
@@ -2943,7 +2943,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/ru/rpcs/protocol/genesis_config",
-      "description": "Возвращает начальное состояние и параметры генезис-блока.",
+      "description": "Получите неизменяемую генезис-конфигурацию цепочки — начальные записи, настройки протокола и длину эпохи в блоке 0.",
       "docsPath": "/ru/rpc/protocol/genesis-config",
       "familyId": "rpc-protocol",
       "headline": "NEAR Protocol RPC: конфигурация genesis",
@@ -2990,13 +2990,13 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/ru/rpcs/protocol/health",
-      "description": "Проверяет состояние узла и определяет, работает ли он корректно.",
+      "description": "Проверьте работоспособность узла — `null` при успехе, ошибка при проблемах.",
       "docsPath": "/ru/rpc/protocol/health",
       "familyId": "rpc-protocol",
-      "headline": "NEAR Protocol RPC: состояние узла",
+      "headline": "NEAR Protocol RPC: Check node health",
       "httpMethod": "POST",
       "id": "rpc-health",
-      "name": "NEAR Protocol RPC: состояние узла",
+      "name": "NEAR Protocol RPC: Check node health",
       "networkKeys": [
         "mainnet",
         "testnet"
@@ -3037,7 +3037,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/ru/rpcs/protocol/latest_block",
-      "description": "Возвращает самый свежий блок в блокчейне.",
+      "description": "Получите последний финализированный блок — финальность выбирается автоматически, ID блока не требуется.",
       "docsPath": "/ru/rpc/protocol/latest-block",
       "familyId": "rpc-protocol",
       "headline": "NEAR Protocol RPC: последний блок",
@@ -3086,13 +3086,13 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/ru/rpcs/protocol/light_client_proof",
-      "description": "Возвращает данные доказательства для проверки лайт-клиентом.",
+      "description": "Получите Merkle-доказательство того, что транзакция или квитанция была включена и исполнена — для верификации лайт-клиентом.",
       "docsPath": "/ru/rpc/protocol/light-client-proof",
       "familyId": "rpc-protocol",
-      "headline": "NEAR Protocol RPC: доказательство для лёгкого клиента",
+      "headline": "NEAR Protocol RPC: Get light client proof",
       "httpMethod": "POST",
       "id": "rpc-light-client-proof",
-      "name": "NEAR Protocol RPC: доказательство для лёгкого клиента",
+      "name": "NEAR Protocol RPC: Get light client proof",
       "networkKeys": [
         "mainnet",
         "testnet"
@@ -3133,7 +3133,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/ru/rpcs/protocol/maintenance_windows",
-      "description": "Возвращает будущие окна обслуживания в текущей эпохе для указанного аккаунта.",
+      "description": "Найдите предстоящие диапазоны блоков, когда валидатор может безопасно перезапуститься, не пропуская производство блоков.",
       "docsPath": "/ru/rpc/protocol/maintenance-windows",
       "familyId": "rpc-protocol",
       "headline": "NEAR Protocol RPC: окна обслуживания",
@@ -3180,7 +3180,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/ru/rpcs/protocol/metrics",
-      "description": "Возвращает метрики узла в формате Prometheus с HTTP-эндпоинта `/metrics`. Требуется API-ключ.",
+      "description": "Соберите метрики узла в Prometheus-формате для мониторинга.",
       "docsPath": "/ru/rpc/protocol/metrics",
       "familyId": "rpc-protocol",
       "headline": "NEAR Protocol RPC: метрики узла",
@@ -3227,13 +3227,13 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/ru/rpcs/protocol/network_info",
-      "description": "Возвращает информацию о сети и подключённых пирах, включая активные соединения, адреса пиров и параметры сети.",
+      "description": "Получите список активных подключений к пирам узла и отслеживаемых им производителей блоков.",
       "docsPath": "/ru/rpc/protocol/network-info",
       "familyId": "rpc-protocol",
-      "headline": "NEAR Protocol RPC: информация о сети",
+      "headline": "NEAR Protocol RPC: Get network info",
       "httpMethod": "POST",
       "id": "rpc-network-info",
-      "name": "NEAR Protocol RPC: информация о сети",
+      "name": "NEAR Protocol RPC: Get network info",
       "networkKeys": [
         "mainnet",
         "testnet"
@@ -3274,7 +3274,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/ru/rpcs/protocol/next_light_client_block",
-      "description": "Возвращает следующий блок для лайт-клиента.",
+      "description": "Получите следующий заголовок блока для лайт-клиента после известной вершины его верифицированной цепочки.",
       "docsPath": "/ru/rpc/protocol/next-light-client-block",
       "familyId": "rpc-protocol",
       "headline": "NEAR Protocol RPC: следующий блок для лёгкого клиента",
@@ -3321,13 +3321,13 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/ru/rpcs/protocol/status",
-      "description": "Возвращает текущий статус узла, включая сведения о синхронизации, валидаторах и сборке.",
+      "description": "Получите версию узла, прогресс синхронизации и последний обработанный блок в одном ответе.",
       "docsPath": "/ru/rpc/protocol/status",
       "familyId": "rpc-protocol",
-      "headline": "NEAR Protocol RPC: статус узла",
+      "headline": "NEAR Protocol RPC: Get node status",
       "httpMethod": "POST",
       "id": "rpc-status",
-      "name": "NEAR Protocol RPC: статус узла",
+      "name": "NEAR Protocol RPC: Get node status",
       "networkKeys": [
         "mainnet",
         "testnet"
@@ -3368,13 +3368,13 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/ru/rpcs/transaction/broadcast_tx_async",
-      "description": "Отправляет транзакцию в сеть без ожидания её исполнения. Требуется свежеподписанная транзакция; пример по умолчанию служит только иллюстрацией и не участвует в проверке живых ответов.",
+      "description": "Отправьте подписанную транзакцию и сразу получите её хеш — без ожидания исполнения.",
       "docsPath": "/ru/rpc/transaction/broadcast-tx-async",
       "familyId": "rpc-transaction",
-      "headline": "NEAR Protocol RPC: асинхронная отправка транзакции",
+      "headline": "NEAR Protocol RPC: Send transaction asynchronously",
       "httpMethod": "POST",
       "id": "rpc-broadcast-tx-async",
-      "name": "NEAR Protocol RPC: асинхронная отправка транзакции",
+      "name": "NEAR Protocol RPC: Send transaction asynchronously",
       "networkKeys": [
         "mainnet",
         "testnet"
@@ -3415,13 +3415,13 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/ru/rpcs/transaction/broadcast_tx_commit",
-      "description": "Отправляет транзакцию и ждёт, пока она будет полностью исполнена и подтверждена в блокчейне. Требуется свежеподписанная транзакция; пример по умолчанию служит только иллюстрацией и не участвует в проверке живых ответов.",
+      "description": "Отправьте подписанную транзакцию и дождитесь её подтверждения — устаревший синхронный способ, заменён на `send_tx`.",
       "docsPath": "/ru/rpc/transaction/broadcast-tx-commit",
       "familyId": "rpc-transaction",
-      "headline": "NEAR Protocol RPC: отправка транзакции с ожиданием коммита",
+      "headline": "NEAR Protocol RPC: Send transaction and wait",
       "httpMethod": "POST",
       "id": "rpc-broadcast-tx-commit",
-      "name": "NEAR Protocol RPC: отправка транзакции с ожиданием коммита",
+      "name": "NEAR Protocol RPC: Send transaction and wait",
       "networkKeys": [
         "mainnet",
         "testnet"
@@ -3462,7 +3462,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/ru/rpcs/transaction/EXPERIMENTAL_receipt",
-      "description": "Возвращает квитанцию по её ID как есть, без статуса и итогового результата исполнения.",
+      "description": "Получите одну квитанцию по её ID — межшардовую единицу исполнения, производимую транзакцией.",
       "docsPath": "/ru/rpc/transaction/experimental-receipt",
       "familyId": "rpc-transaction",
       "headline": "NEAR Protocol RPC: квитанция по ID",
@@ -3509,7 +3509,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/ru/rpcs/transaction/EXPERIMENTAL_tx_status",
-      "description": "Запрашивает статус транзакции по хешу и возвращает итоговый результат транзакции вместе с деталями всех квитанций.",
+      "description": "Получите полное дерево квитанций и результаты исполнения каждой квитанции — богаче, чем `tx_status`.",
       "docsPath": "/ru/rpc/transaction/experimental-tx-status",
       "familyId": "rpc-transaction",
       "headline": "NEAR Protocol RPC: подробный статус транзакции",
@@ -3556,7 +3556,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/ru/rpcs/transaction/send_tx",
-      "description": "Отправляет транзакцию и возвращает гарантированный статус исполнения и результаты. Требуется свежеподписанная транзакция; пример по умолчанию служит только иллюстрацией и не участвует в проверке живых ответов.",
+      "description": "Отправьте подписанную транзакцию и дождитесь её итогового результата исполнения — текущий синхронный способ.",
       "docsPath": "/ru/rpc/transaction/send-tx",
       "familyId": "rpc-transaction",
       "headline": "NEAR Protocol RPC: отправка транзакции",
@@ -3603,13 +3603,13 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/ru/rpcs/transaction/tx_status",
-      "description": "Возвращает статус и детали транзакции.",
+      "description": "Проверьте итоговый результат транзакции по её хешу — успех, сбой или ещё не завершена.",
       "docsPath": "/ru/rpc/transaction/tx-status",
       "familyId": "rpc-transaction",
-      "headline": "NEAR Protocol RPC: статус транзакции",
+      "headline": "NEAR Protocol RPC: Get transaction status",
       "httpMethod": "POST",
       "id": "rpc-tx-status",
-      "name": "NEAR Protocol RPC: статус транзакции",
+      "name": "NEAR Protocol RPC: Get transaction status",
       "networkKeys": [
         "mainnet",
         "testnet"
@@ -3650,7 +3650,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/ru/rpcs/validators/EXPERIMENTAL_validators_ordered",
-      "description": "Возвращает валидаторов текущей эпохи в порядке продюсеров блоков с повторениями.",
+      "description": "Получите список валидаторов, упорядоченный по размеру стейка на выбранном блоке — шире, чем только активный набор.",
       "docsPath": "/ru/rpc/validators/experimental-validators-ordered",
       "familyId": "rpc-validators",
       "headline": "NEAR Protocol RPC: упорядоченный список валидаторов",
@@ -3697,13 +3697,13 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/ru/rpcs/validators/validators_by_epoch",
-      "description": "Возвращает список валидаторов и их параметры для выбранной эпохи.",
+      "description": "Получите набор валидаторов выбранной прошлой эпохи по высоте или хешу её начального блока.",
       "docsPath": "/ru/rpc/validators/validators-by-epoch",
       "familyId": "rpc-validators",
-      "headline": "NEAR Protocol RPC: валидаторы по эпохе",
+      "headline": "NEAR Protocol RPC: Get validators by epoch",
       "httpMethod": "POST",
       "id": "rpc-validators-by-epoch",
-      "name": "NEAR Protocol RPC: валидаторы по эпохе",
+      "name": "NEAR Protocol RPC: Get validators by epoch",
       "networkKeys": [
         "mainnet",
         "testnet"
@@ -3744,13 +3744,13 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/ru/rpcs/validators/validators_current",
-      "description": "Возвращает список текущих валидаторов и их параметры.",
+      "description": "Получите активный набор валидаторов текущей эпохи со стейками и статистикой производительности.",
       "docsPath": "/ru/rpc/validators/validators-current",
       "familyId": "rpc-validators",
-      "headline": "NEAR Protocol RPC: валидаторы текущей эпохи",
+      "headline": "NEAR Protocol RPC: Get current validators",
       "httpMethod": "POST",
       "id": "rpc-validators-current",
-      "name": "NEAR Protocol RPC: валидаторы текущей эпохи",
+      "name": "NEAR Protocol RPC: Get current validators",
       "networkKeys": [
         "mainnet",
         "testnet"

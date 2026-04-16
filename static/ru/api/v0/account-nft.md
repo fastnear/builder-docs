@@ -1,6 +1,6 @@
 # FastNear API - V0 NFT аккаунта
 Получить ID NFT-контрактов аккаунта
-Возвращает только ID NFT-контрактов, которые FastNear проиндексировал для запрошенного аккаунта. В отличие от маршрута v1, этот ответ не включает метаданные `last_update_block_height`.
+Получите ID NFT-контрактов, которых касался аккаунт — только ID, без метаданных по высоте блока.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/api/v0/account-nft
 - https://docs.fastnear.com/ru/apis/fastnear/v0/account_nft

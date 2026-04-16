@@ -1,6 +1,6 @@
 # RPC протокола NEAR: Упорядоченные валидаторы
 Получить упорядоченных валидаторов
-Возвращает валидаторов текущей эпохи в порядке продюсеров блоков с повторениями.
+Получите список валидаторов, упорядоченный по размеру стейка на выбранном блоке — шире, чем только активный набор.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/rpc/validators/experimental-validators-ordered
 - https://docs.fastnear.com/ru/rpcs/validators/EXPERIMENTAL_validators_ordered

@@ -1,6 +1,6 @@
 # RPC протокола NEAR: Цена газа по блоку
 Получить цену газа по блоку
-Возвращает цену газа для конкретного блока.
+Получите общесетевую цену газа на выбранном историческом блоке — по высоте или хешу.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/rpc/protocol/gas-price-by-block
 - https://docs.fastnear.com/ru/rpcs/protocol/gas_price_by_block

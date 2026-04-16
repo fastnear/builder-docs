@@ -1,6 +1,6 @@
 # RPC протокола NEAR: Глобальный код контракта по аккаунту
 Получить глобальный код контракта по аккаунту
-Возвращает глобально развёрнутый код контракта, который использует указанный аккаунт.
+Найдите WebAssembly-байткод глобального контракта по ID аккаунта, который его зарегистрировал.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/rpc/contract/view-global-contract-code-by-account-id
 - https://docs.fastnear.com/ru/rpcs/contract/view_global_contract_code_by_account_id

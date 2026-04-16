@@ -1,6 +1,6 @@
 # FastNear API - V1 Поиск по публичному ключу
 Найти аккаунты полного доступа по публичному ключу
-Возвращает ID аккаунтов, которые сейчас связаны с переданным публичным ключом полного доступа. Этот маршрут v1 пока использует ту же форму ответа `{ public_key, account_ids }`, что и маршрут v0.
+Получите индексированные ID аккаунтов, связанные с публичным ключом полного доступа.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/apis/fastnear/v1/public_key_lookup
 - https://docs.fastnear.com/ru/apis/fastnear/openapi/public-key/lookup_by_public_key_v1

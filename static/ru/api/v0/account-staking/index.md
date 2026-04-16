@@ -1,6 +1,6 @@
 # FastNear API - V0 стейкинг аккаунта
 Получить ID стейкинг-пулов аккаунта
-Возвращает ID стейкинг-пулов, которые FastNear проиндексировал для запрошенного аккаунта. В отличие от маршрута v1, этот ответ не включает метаданные `last_update_block_height`.
+Получите ID стейкинг-пулов для одного аккаунта — только ID пулов, без метаданных по высоте блока.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/api/v0/account-staking
 - https://docs.fastnear.com/ru/apis/fastnear/v0/account_staking

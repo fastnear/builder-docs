@@ -1,6 +1,6 @@
 # RPC протокола NEAR: Уровень перегрузки
 Получить уровень перегрузки
-Запрашивает уровень перегрузки выбранного шарда.
+Измерьте нагрузку одного шарда на выбранном блоке — оценка насыщения от 0.0 до 1.0.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/rpcs/protocol/EXPERIMENTAL_congestion_level
 - https://docs.fastnear.com/ru/rpcs/protocol/EXPERIMENTAL_congestion_level/other/EXPERIMENTAL_congestion_level

@@ -1,6 +1,6 @@
 # RPC протокола NEAR: Информация о разделённом хранилище
 Получить сведения о разделённом хранилище
-Содержит сведения о разделённом хранилище для архивных узлов.
+Изучите раскладку разделённого хранилища узла — границу между горячими недавними и холодными архивными данными.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/rpc/protocol/experimental-split-storage-info
 - https://docs.fastnear.com/ru/rpcs/protocol/EXPERIMENTAL_split_storage_info

@@ -1,6 +1,6 @@
 # FastNear API - V1 NFT аккаунта
 Получить индексированные строки NFT аккаунта
-Возвращает индексированные строки NFT-контрактов для указанного аккаунта. `last_update_block_height` может быть `null`, если FastNear ещё не записал недавнее обновление по этой связи с контрактом.
+Получите строки NFT-контрактов для аккаунта, каждая с метаданными по высоте блока.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/apis/fastnear/v1/account_nft
 - https://docs.fastnear.com/ru/apis/fastnear/openapi/non-fungible-tokens/account_nft_v1

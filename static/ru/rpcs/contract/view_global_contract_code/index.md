@@ -1,6 +1,6 @@
 # RPC протокола NEAR: Глобальный код контракта
 Получить глобальный код контракта
-Возвращает глобально развёрнутый код контракта по его хешу.
+Найдите WebAssembly-байткод глобального контракта по SHA-256-хешу его кода.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/rpcs/contract/view_global_contract_code
 - https://docs.fastnear.com/ru/rpcs/contract/view_global_contract_code/other/view_global_contract_code

@@ -1,6 +1,6 @@
 # RPC протокола NEAR: Статус транзакции
 Проверить статус транзакции
-Возвращает статус и детали транзакции.
+Проверьте итоговый результат транзакции по её хешу — успех, сбой или ещё не завершена.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/rpc/transaction/tx-status
 - https://docs.fastnear.com/ru/rpcs/transaction/tx_status

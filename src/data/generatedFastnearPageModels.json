@@ -2,10 +2,10 @@
   {
     "canonicalPath": "/rpcs/account/view_access_key",
     "info": {
-      "description": "Retrieves information about a specific access key for a NEAR account",
+      "description": "Fetch one access key's permissions and nonce by public key on a given account.",
       "operationId": "view_access_key",
-      "summary": "View account access key",
-      "title": "NEAR Protocol RPC: View Access Key",
+      "summary": "View access key",
+      "title": "NEAR Protocol RPC: View access key",
       "version": "1.0.0"
     },
     "interaction": {
@@ -333,10 +333,10 @@
   {
     "canonicalPath": "/rpcs/account/view_access_key_list",
     "info": {
-      "description": "Retrieves a list of all access keys for a NEAR account",
+      "description": "Fetch every access key attached to an account, each with its permissions and nonce.",
       "operationId": "view_access_key_list",
-      "summary": "View all account access keys",
-      "title": "NEAR Protocol RPC: View Access Key List",
+      "summary": "View access key list",
+      "title": "NEAR Protocol RPC: View access key list",
       "version": "1.0.0"
     },
     "interaction": {
@@ -634,7 +634,7 @@
   {
     "canonicalPath": "/rpcs/account/view_account",
     "info": {
-      "description": "Retrieves detailed information about a NEAR account including balance and storage usage",
+      "description": "Fetch an account's balance, storage usage, and code hash at a chosen block or finality.",
       "operationId": "view_account",
       "summary": "View account",
       "title": "NEAR Protocol RPC: View account",
@@ -987,10 +987,10 @@
   {
     "canonicalPath": "/rpcs/block/block_by_height",
     "info": {
-      "description": "Retrieves block details using a specific block height (number)",
+      "description": "Fetch a block's header and chunk summaries by its height in the chain.",
       "operationId": "block_by_height",
       "summary": "Get block by height",
-      "title": "NEAR Protocol RPC: Block by Height",
+      "title": "NEAR Protocol RPC: Get block by height",
       "version": "1.0.0"
     },
     "interaction": {
@@ -1241,10 +1241,10 @@
   {
     "canonicalPath": "/rpcs/block/block_by_id",
     "info": {
-      "description": "Retrieves block details using a specific block hash",
+      "description": "Fetch a block's header and chunk summaries by its SHA-256 hash.",
       "operationId": "block_by_id",
-      "summary": "Get block by ID",
-      "title": "NEAR Protocol RPC: Block by ID",
+      "summary": "Get block by hash",
+      "title": "NEAR Protocol RPC: Get block by hash",
       "version": "1.0.0"
     },
     "interaction": {
@@ -1495,7 +1495,7 @@
   {
     "canonicalPath": "/rpcs/block/block_effects",
     "info": {
-      "description": "Returns changes in block for given block height or hash over all transactions for all types",
+      "description": "Summarize every state change in a block — which accounts, keys, and contract-state entries were touched.",
       "operationId": "block_effects",
       "summary": "Get block effects",
       "title": "NEAR Protocol RPC: Get block effects",
@@ -1792,10 +1792,10 @@
   {
     "canonicalPath": "/rpcs/contract/call",
     "info": {
-      "description": "Execute a view method on a smart contract without modifying state",
+      "description": "Invoke a contract view method without gas or state changes — reads computed values from contract logic.",
       "operationId": "call_function",
       "summary": "Call contract function",
-      "title": "NEAR Protocol RPC: Call Function",
+      "title": "NEAR Protocol RPC: Call contract function",
       "version": "1.0.0"
     },
     "interaction": {
@@ -2149,7 +2149,7 @@
   {
     "canonicalPath": "/rpcs/contract/view_code",
     "info": {
-      "description": "Returns the contract code (Wasm binary) deployed to the account",
+      "description": "Fetch the compiled WebAssembly bytes deployed directly to a single account.",
       "operationId": "view_code",
       "summary": "View contract code",
       "title": "NEAR Protocol RPC: View contract code",
@@ -2455,7 +2455,7 @@
   {
     "canonicalPath": "/rpcs/contract/view_global_contract_code",
     "info": {
-      "description": "Returns a globally deployed contract code by its code hash",
+      "description": "Look up a global contract's WebAssembly bytes by its SHA-256 code hash.",
       "operationId": "view_global_contract_code",
       "summary": "View global contract code",
       "title": "NEAR Protocol RPC: View global contract code",
@@ -2761,7 +2761,7 @@
   {
     "canonicalPath": "/rpcs/contract/view_global_contract_code_by_account_id",
     "info": {
-      "description": "Returns the globally deployed contract code used by a specific account",
+      "description": "Look up a global contract's WebAssembly bytes by the account that registered it.",
       "operationId": "view_global_contract_code_by_account_id",
       "summary": "View global contract code by account",
       "title": "NEAR Protocol RPC: View global contract code by account",
@@ -3067,10 +3067,10 @@
   {
     "canonicalPath": "/rpcs/contract/view_state",
     "info": {
-      "description": "Retrieves the state (key-value pairs) stored for a contract account",
+      "description": "Fetch the raw key-value state a contract has written, optionally filtered by key prefix.",
       "operationId": "view_state",
       "summary": "View contract state",
-      "title": "NEAR Protocol RPC: View Contract State",
+      "title": "NEAR Protocol RPC: View contract state",
       "version": "1.0.0"
     },
     "interaction": {
@@ -3418,7 +3418,7 @@
   {
     "canonicalPath": "/rpcs/protocol/EXPERIMENTAL_congestion_level",
     "info": {
-      "description": "Queries the congestion level of a shard",
+      "description": "Measure a single shard's congestion pressure at a chosen block — a 0.0-to-1.0 saturation score.",
       "operationId": "EXPERIMENTAL_congestion_level",
       "summary": "Get congestion level",
       "title": "NEAR Protocol RPC: Get congestion level",
@@ -3728,7 +3728,7 @@
   {
     "canonicalPath": "/rpcs/protocol/EXPERIMENTAL_light_client_block_proof",
     "info": {
-      "description": "Returns the proofs for a transaction execution",
+      "description": "Fetch a Merkle proof that a block is included in the light client's verified chain.",
       "operationId": "EXPERIMENTAL_light_client_block_proof",
       "summary": "Get light client block proof",
       "title": "NEAR Protocol RPC: Get light client block proof",
@@ -4060,7 +4060,7 @@
   {
     "canonicalPath": "/rpcs/protocol/EXPERIMENTAL_light_client_proof",
     "info": {
-      "description": "Returns the proofs for a transaction execution",
+      "description": "Fetch a Merkle proof of transaction or receipt inclusion — the EXPERIMENTAL alias of `light_client_proof`.",
       "operationId": "EXPERIMENTAL_light_client_proof",
       "summary": "Get light client execution proof",
       "title": "NEAR Protocol RPC: Get light client execution proof",
@@ -4538,7 +4538,7 @@
   {
     "canonicalPath": "/rpcs/protocol/EXPERIMENTAL_protocol_config",
     "info": {
-      "description": "A configuration that defines the protocol-level parameters such as gas/storage costs, limits, feature flags, and other settings",
+      "description": "Fetch the runtime protocol config at a chosen block — gas costs, storage prices, and limits currently in force.",
       "operationId": "EXPERIMENTAL_protocol_config",
       "summary": "Get protocol config",
       "title": "NEAR Protocol RPC: Get protocol config",
@@ -5130,7 +5130,7 @@
   {
     "canonicalPath": "/rpcs/protocol/EXPERIMENTAL_split_storage_info",
     "info": {
-      "description": "Contains the split storage information for archival nodes",
+      "description": "Inspect a node's split-storage layout — the boundary between hot recent data and cold archival data.",
       "operationId": "EXPERIMENTAL_split_storage_info",
       "summary": "Get split storage info",
       "title": "NEAR Protocol RPC: Get split storage info",
@@ -5391,7 +5391,7 @@
   {
     "canonicalPath": "/rpcs/protocol/changes",
     "info": {
-      "description": "Returns changes for a given account, contract or contract code for given block height or hash",
+      "description": "Fetch detailed state changes in a block — filter by account, key prefix, or change type.",
       "operationId": "changes",
       "summary": "Get state changes",
       "title": "NEAR Protocol RPC: Get state changes",
@@ -5662,10 +5662,10 @@
   {
     "canonicalPath": "/rpcs/protocol/chunk_by_block_shard",
     "info": {
-      "description": "Retrieves chunk details using block ID and shard ID coordinates",
+      "description": "Fetch a single chunk's transactions and receipts by its parent block plus shard index.",
       "operationId": "chunk_by_block_shard",
-      "summary": "Get chunk by block ID and shard ID",
-      "title": "NEAR Protocol RPC: Chunk by Block ID and Shard ID",
+      "summary": "Get chunk by block and shard",
+      "title": "NEAR Protocol RPC: Get chunk by block and shard",
       "version": "1.0.0"
     },
     "interaction": {
@@ -6188,10 +6188,10 @@
   {
     "canonicalPath": "/rpcs/protocol/chunk_by_hash",
     "info": {
-      "description": "Retrieves chunk details using a specific chunk hash",
+      "description": "Fetch a single chunk's transactions and receipts by its content hash.",
       "operationId": "chunk_by_hash",
       "summary": "Get chunk by hash",
-      "title": "NEAR Protocol RPC: Chunk by Hash",
+      "title": "NEAR Protocol RPC: Get chunk by hash",
       "version": "1.0.0"
     },
     "interaction": {
@@ -6672,7 +6672,7 @@
   {
     "canonicalPath": "/rpcs/protocol/client_config",
     "info": {
-      "description": "Queries client node configuration",
+      "description": "Fetch the node's own local client config — timeouts, retry settings, and operator-chosen parameters.",
       "operationId": "client_config",
       "summary": "Get client config",
       "title": "NEAR Protocol RPC: Get client config",
@@ -7749,10 +7749,10 @@
   {
     "canonicalPath": "/rpcs/protocol/gas_price",
     "info": {
-      "description": "Retrieves information about the current gas price",
+      "description": "Fetch the current chain-wide gas price for the most recent block.",
       "operationId": "gas_price",
-      "summary": "Get current gas price",
-      "title": "NEAR Protocol RPC: Gas Price",
+      "summary": "Get gas price",
+      "title": "NEAR Protocol RPC: Get gas price",
       "version": "1.0.0"
     },
     "interaction": {
@@ -7993,10 +7993,10 @@
   {
     "canonicalPath": "/rpcs/protocol/gas_price_by_block",
     "info": {
-      "description": "Retrieves gas price information for a specific block",
+      "description": "Fetch the chain-wide gas price at a chosen historical block, by height or hash.",
       "operationId": "gas_price_by_block",
       "summary": "Get gas price by block",
-      "title": "NEAR Protocol RPC: Gas Price By Block",
+      "title": "NEAR Protocol RPC: Get gas price by block",
       "version": "1.0.0"
     },
     "interaction": {
@@ -8278,7 +8278,7 @@
   {
     "canonicalPath": "/rpcs/protocol/genesis_config",
     "info": {
-      "description": "Get initial state and parameters for the genesis block",
+      "description": "Fetch the chain's immutable genesis config — initial records, protocol settings, and epoch length at block 0.",
       "operationId": "genesis_config",
       "summary": "Get genesis config",
       "title": "NEAR Protocol RPC: Get genesis config",
@@ -8923,10 +8923,10 @@
   {
     "canonicalPath": "/rpcs/protocol/health",
     "info": {
-      "description": "Performs a health check on the node to determine if it's operating correctly",
+      "description": "Ping a node for liveness — returns `null` on success, an error on unhealthy state.",
       "operationId": "health",
       "summary": "Check node health",
-      "title": "NEAR Protocol RPC: Node Health",
+      "title": "NEAR Protocol RPC: Check node health",
       "version": "1.0.0"
     },
     "interaction": {
@@ -9402,10 +9402,10 @@
   {
     "canonicalPath": "/rpcs/protocol/light_client_proof",
     "info": {
-      "description": "Retrieves verification proof data for light clients",
+      "description": "Fetch a Merkle proof that a transaction or receipt was included and executed, suitable for light-client verification.",
       "operationId": "light_client_proof",
       "summary": "Get light client proof",
-      "title": "NEAR Protocol RPC: Light Client Proof",
+      "title": "NEAR Protocol RPC: Get light client proof",
       "version": "1.0.0"
     },
     "interaction": {
@@ -9880,7 +9880,7 @@
   {
     "canonicalPath": "/rpcs/protocol/maintenance_windows",
     "info": {
-      "description": "Returns the future windows for maintenance in current epoch for the specified account",
+      "description": "Find upcoming block ranges where a validator can safely restart without missing block production.",
       "operationId": "maintenance_windows",
       "summary": "Get maintenance windows",
       "title": "NEAR Protocol RPC: Get maintenance windows",
@@ -10245,10 +10245,10 @@
   {
     "canonicalPath": "/rpcs/protocol/network_info",
     "info": {
-      "description": "Retrieves information about the network and connected peers including active connections, peer addresses, and network configuration",
+      "description": "List the node's active peer connections and the block producers it currently tracks.",
       "operationId": "network_info",
-      "summary": "Get network information",
-      "title": "NEAR Protocol RPC: Network Information",
+      "summary": "Get network info",
+      "title": "NEAR Protocol RPC: Get network info",
       "version": "1.0.0"
     },
     "interaction": {
@@ -10531,7 +10531,7 @@
   {
     "canonicalPath": "/rpcs/protocol/next_light_client_block",
     "info": {
-      "description": "Returns the next light client block",
+      "description": "Advance a light client's verified chain by fetching the next block header after a known head.",
       "operationId": "next_light_client_block",
       "summary": "Get next light client block",
       "title": "NEAR Protocol RPC: Get next light client block",
@@ -10928,10 +10928,10 @@
   {
     "canonicalPath": "/rpcs/protocol/status",
     "info": {
-      "description": "Retrieves current status of the node including sync info, validator status and build information",
+      "description": "Fetch a node's binary version, sync progress, and head block in one snapshot.",
       "operationId": "status",
       "summary": "Get node status",
-      "title": "NEAR Protocol RPC: Node Status",
+      "title": "NEAR Protocol RPC: Get node status",
       "version": "1.0.0"
     },
     "interaction": {
@@ -11471,7 +11471,7 @@
   {
     "canonicalPath": "/rpcs/transaction/EXPERIMENTAL_receipt",
     "info": {
-      "description": "Fetches a receipt by its ID (as is, without a status or execution outcome)",
+      "description": "Fetch a single receipt by ID — the cross-shard execution unit a transaction produces.",
       "operationId": "EXPERIMENTAL_receipt",
       "summary": "Get receipt by ID",
       "title": "NEAR Protocol RPC: Get receipt by ID",
@@ -11775,7 +11775,7 @@
   {
     "canonicalPath": "/rpcs/transaction/EXPERIMENTAL_tx_status",
     "info": {
-      "description": "Queries status of a transaction by hash, returning the final transaction result and details of all receipts",
+      "description": "Fetch a transaction's full receipt tree and per-receipt outcomes — richer than `tx_status`.",
       "operationId": "EXPERIMENTAL_tx_status",
       "summary": "Get detailed transaction status",
       "title": "NEAR Protocol RPC: Get detailed transaction status",
@@ -12176,10 +12176,10 @@
   {
     "canonicalPath": "/rpcs/transaction/broadcast_tx_async",
     "info": {
-      "description": "Submits a transaction to the network without waiting for its execution. Requires a freshly signed transaction; the default example is illustrative and is not part of the live audit.",
+      "description": "Submit a signed transaction and immediately get its hash — no wait for execution.",
       "operationId": "broadcast_tx_async",
       "summary": "Send transaction asynchronously",
-      "title": "NEAR Protocol RPC: Broadcast Transaction Async",
+      "title": "NEAR Protocol RPC: Send transaction asynchronously",
       "version": "1.0.0"
     },
     "interaction": {
@@ -12468,10 +12468,10 @@
   {
     "canonicalPath": "/rpcs/transaction/broadcast_tx_commit",
     "info": {
-      "description": "Submits a transaction and waits until it's fully committed to the blockchain. Requires a freshly signed transaction; the default example is illustrative and is not part of the live audit.",
+      "description": "Submit a signed transaction and wait for its commit — the legacy synchronous send, superseded by `send_tx`.",
       "operationId": "broadcast_tx_commit",
-      "summary": "Send transaction and wait for commit",
-      "title": "NEAR Protocol RPC: Broadcast Transaction Commit",
+      "summary": "Send transaction and wait",
+      "title": "NEAR Protocol RPC: Send transaction and wait",
       "version": "1.0.0"
     },
     "interaction": {
@@ -12826,7 +12826,7 @@
   {
     "canonicalPath": "/rpcs/transaction/send_tx",
     "info": {
-      "description": "Sends transaction and returns the guaranteed execution status and results. Requires a freshly signed transaction; the default example is illustrative and is not part of the live audit.",
+      "description": "Submit a signed transaction and wait for its final execution outcome — the current synchronous send.",
       "operationId": "send_tx",
       "summary": "Send transaction",
       "title": "NEAR Protocol RPC: Send transaction",
@@ -13188,10 +13188,10 @@
   {
     "canonicalPath": "/rpcs/transaction/tx_status",
     "info": {
-      "description": "Get the status and details of a transaction",
+      "description": "Check a transaction's final outcome by hash — succeeded, failed, or still unresolved.",
       "operationId": "tx_status",
-      "summary": "Check transaction status",
-      "title": "NEAR Protocol RPC: Transaction Status",
+      "summary": "Get transaction status",
+      "title": "NEAR Protocol RPC: Get transaction status",
       "version": "1.0.0"
     },
     "interaction": {
@@ -13585,7 +13585,7 @@
   {
     "canonicalPath": "/rpcs/validators/EXPERIMENTAL_validators_ordered",
     "info": {
-      "description": "Returns the current epoch validators ordered in the block producer order with repetition",
+      "description": "List validators ordered by stake size at a chosen block — broader than just the current active set.",
       "operationId": "EXPERIMENTAL_validators_ordered",
       "summary": "Get validators ordered",
       "title": "NEAR Protocol RPC: Get validators ordered",
@@ -13864,10 +13864,10 @@
   {
     "canonicalPath": "/rpcs/validators/validators_by_epoch",
     "info": {
-      "description": "Retrieves the list of validators and their details for a specific epoch",
+      "description": "Fetch the validator set for a chosen past epoch, selected by epoch-start block height or hash.",
       "operationId": "validators_by_epoch",
       "summary": "Get validators by epoch",
-      "title": "NEAR Protocol RPC: Validators By Epoch",
+      "title": "NEAR Protocol RPC: Get validators by epoch",
       "version": "1.0.0"
     },
     "interaction": {
@@ -14219,10 +14219,10 @@
   {
     "canonicalPath": "/rpcs/validators/validators_current",
     "info": {
-      "description": "Retrieves the list of current validators and their details",
+      "description": "Fetch the active validator set for the current epoch, with stakes and performance stats.",
       "operationId": "validators_current",
       "summary": "Get current validators",
-      "title": "NEAR Protocol RPC: Current Validators",
+      "title": "NEAR Protocol RPC: Get current validators",
       "version": "1.0.0"
     },
     "interaction": {
@@ -14551,7 +14551,7 @@
   {
     "canonicalPath": "/apis/fastnear/system/health",
     "info": {
-      "description": "Use this lightweight probe to confirm the FastNear API is healthy.",
+      "description": "Ping the FastNEAR API for liveness — returns `{status: ok}` when healthy.",
       "operationId": "get_health",
       "summary": "Get service health",
       "title": "FastNEAR API - Health",
@@ -14842,7 +14842,7 @@
   {
     "canonicalPath": "/apis/fastnear/v0/account_staking",
     "info": {
-      "description": "Fetch the staking pool account IDs FastNear has indexed for one account. This v0 route returns pool IDs only, without block-height metadata.",
+      "description": "Fetch staking pool account IDs for one account — pool IDs only, no block-height metadata.",
       "operationId": "account_staking_v0",
       "summary": "Lookup staking pool account IDs for an account",
       "title": "FastNEAR API - V0 Account Staking",
@@ -15020,7 +15020,7 @@
   {
     "canonicalPath": "/apis/fastnear/v0/account_ft",
     "info": {
-      "description": "Retrieve the indexed fungible token contract IDs for an account. This v0 route does not return balances.",
+      "description": "Fetch the fungible token contract IDs an account has held — contract IDs only, no balances.",
       "operationId": "account_ft_v0",
       "summary": "Lookup fungible token contract IDs for an account",
       "title": "FastNEAR API - V0 Account FT",
@@ -15198,7 +15198,7 @@
   {
     "canonicalPath": "/apis/fastnear/v0/account_nft",
     "info": {
-      "description": "Fetch the indexed NFT contract IDs associated with an account. This v0 route does not include block-height metadata.",
+      "description": "Fetch the NFT contract IDs an account has held — contract IDs only, no block-height metadata.",
       "operationId": "account_nft_v0",
       "summary": "Lookup NFT contract IDs for an account",
       "title": "FastNEAR API - V0 Account NFT",
@@ -15554,7 +15554,7 @@
   {
     "canonicalPath": "/apis/fastnear/v0/public_key_lookup_all",
     "info": {
-      "description": "Use this variant when one public key may control multiple accounts and you want the full set.",
+      "description": "Fetch every account tied to a public key — full-access and limited-access keys together.",
       "operationId": "lookup_by_public_key_all_v0",
       "summary": "Lookup all indexed accounts by public key",
       "title": "FastNEAR API - V0 Public Key Lookup (All)",
@@ -15933,7 +15933,7 @@
   {
     "canonicalPath": "/apis/fastnear/v1/account_ft",
     "info": {
-      "description": "Fetch the v1 indexed fungible token balance rows for one account.",
+      "description": "Fetch an account's fungible token balance rows, each with contract ID, balance, and last-update block height.",
       "operationId": "account_ft_v1",
       "summary": "Lookup indexed fungible token rows for an account",
       "title": "FastNEAR API - V1 Account FT",
@@ -16628,7 +16628,7 @@
   {
     "canonicalPath": "/apis/fastnear/v1/public_key_lookup",
     "info": {
-      "description": "Use the v1 endpoint for the newer namespace. It currently returns the same response shape as the v0 route.",
+      "description": "Fetch the indexed account IDs associated with a full-access public key.",
       "operationId": "lookup_by_public_key_v1",
       "summary": "Lookup full-access accounts by public key",
       "title": "FastNEAR API - V1 Public Key Lookup",
@@ -16806,7 +16806,7 @@
   {
     "canonicalPath": "/apis/fastnear/v1/ft_top",
     "info": {
-      "description": "Use this endpoint to inspect the indexed top holders for a fungible token contract.",
+      "description": "Fetch the top-balance holder list for a fungible token contract, ranked highest balance first.",
       "operationId": "ft_top_v1",
       "summary": "Lookup top indexed holders for a fungible token",
       "title": "FastNEAR API - V1 FT Top Holders",
@@ -17006,7 +17006,7 @@
   {
     "canonicalPath": "/apis/fastnear/v1/public_key_lookup_all",
     "info": {
-      "description": "Fetch every indexed account tied to a public key. This v1 route currently uses the same response shape as the v0 route.",
+      "description": "Fetch every account tied to a public key — full-access and limited-access keys together.",
       "operationId": "lookup_by_public_key_all_v1",
       "summary": "Lookup all indexed accounts by public key",
       "title": "FastNEAR API - V1 Public Key Lookup (All)",
@@ -23817,7 +23817,7 @@
   {
     "canonicalPath": "/apis/transactions/v0/receipt",
     "info": {
-      "description": "Use this endpoint to fetch a receipt row and the associated transaction when available.",
+      "description": "Fetch a receipt by ID along with the transaction that produced it.",
       "operationId": "get_receipt",
       "summary": "Fetch a receipt by ID",
       "title": "Transactions API - Receipt Lookup",
@@ -24142,7 +24142,7 @@
   {
     "canonicalPath": "/apis/transactions/v0/transactions",
     "info": {
-      "description": "Use this endpoint to fetch up to 20 indexed transactions by hash.",
+      "description": "Fetch up to 20 indexed transactions by hash in one request.",
       "operationId": "get_transactions",
       "summary": "Fetch transactions by hash",
       "title": "Transactions API - Transactions by Hash",

@@ -1,6 +1,6 @@
 # RPC протокола NEAR: Просмотр ключа доступа
 Просмотр ключа доступа аккаунта
-Возвращает информацию о конкретном ключе доступа аккаунта NEAR.
+Получите права и nonce одного ключа доступа аккаунта по его публичному ключу.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/rpc/account/view-access-key
 - https://docs.fastnear.com/ru/rpcs/account/view_access_key

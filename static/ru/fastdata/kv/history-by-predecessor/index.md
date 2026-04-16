@@ -1,6 +1,6 @@
 # KV FastData API - История по вызывающему аккаунту
 Получить историю записей «ключ-значение» для одного вызывающего аккаунта и контракта
-Возвращает исторические строки для пары `predecessor_id` + `current_account_id`. Используйте `key` или `key_prefix`, чтобы сузить поиск. Значения `page_token` непрозрачны и валидны только при повторном использовании с тем же эндпоинтом и теми же фильтрами.
+Получите исторические строки FastData для одного вызывающего аккаунта и целевого аккаунта.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/fastdata/kv/history-by-predecessor
 - https://docs.fastnear.com/ru/apis/kv-fastdata/v0/history_by_predecessor

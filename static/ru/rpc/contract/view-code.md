@@ -1,6 +1,6 @@
 # RPC протокола NEAR: Код контракта
 Получить код контракта
-Возвращает код контракта (Wasm), опубликованный в аккаунте.
+Получите скомпилированный WebAssembly-байткод, развёрнутый непосредственно на одном аккаунте.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/rpc/contract/view-code
 - https://docs.fastnear.com/ru/rpcs/contract/view_code

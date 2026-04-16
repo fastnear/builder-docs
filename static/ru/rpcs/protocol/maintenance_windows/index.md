@@ -1,6 +1,6 @@
 # RPC протокола NEAR: Окна обслуживания
 Получить окна обслуживания
-Возвращает будущие окна обслуживания в текущей эпохе для указанного аккаунта.
+Найдите предстоящие диапазоны блоков, когда валидатор может безопасно перезапуститься, не пропуская производство блоков.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/rpcs/protocol/maintenance_windows
 - https://docs.fastnear.com/ru/rpcs/protocol/maintenance_windows/other/maintenance_windows

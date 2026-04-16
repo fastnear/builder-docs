@@ -1,6 +1,6 @@
 # Транзакции API - Поиск квитанции
 Получить квитанцию по ID
-Возвращает строку квитанции и, если она есть, связанные сырые данные транзакции.
+Получите квитанцию по ID вместе с транзакцией, её создавшей.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/apis/transactions/v0/receipt
 - https://docs.fastnear.com/ru/apis/transactions/openapi/receipts/get_receipt

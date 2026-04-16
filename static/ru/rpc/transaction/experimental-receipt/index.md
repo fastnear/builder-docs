@@ -1,6 +1,6 @@
 # RPC протокола NEAR: Квитанция по ID
 Получить квитанцию по ID
-Возвращает квитанцию по её ID как есть, без статуса и итогового результата исполнения.
+Получите одну квитанцию по её ID — межшардовую единицу исполнения, производимую транзакцией.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/rpc/transaction/experimental-receipt
 - https://docs.fastnear.com/ru/rpcs/transaction/EXPERIMENTAL_receipt

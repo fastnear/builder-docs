@@ -1,6 +1,6 @@
 # RPC протокола NEAR: Доказательство для лайт-клиента
 Получить доказательство для лайт-клиента
-Возвращает данные доказательства для проверки лайт-клиентом.
+Получите Merkle-доказательство того, что транзакция или квитанция была включена и исполнена — для верификации лайт-клиентом.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/rpcs/protocol/light_client_proof
 - https://docs.fastnear.com/ru/rpcs/protocol/light_client_proof/other/light_client_proof

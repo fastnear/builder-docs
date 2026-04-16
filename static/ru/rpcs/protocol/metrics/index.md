@@ -1,6 +1,6 @@
 # RPC протокола NEAR: Метрики узла
 Получить метрики узла
-Возвращает метрики узла в формате Prometheus с HTTP-эндпоинта `/metrics`. Требуется API-ключ.
+Соберите метрики узла в Prometheus-формате для мониторинга.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/rpcs/protocol/metrics
 - https://docs.fastnear.com/ru/rpcs/protocol/metrics/other/metrics

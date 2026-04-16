@@ -1,6 +1,6 @@
 # RPC протокола NEAR: Чанк по хешу
 Получить чанк по хешу
-Возвращает сведения о чанке по его хешу.
+Получите транзакции и квитанции одного чанка по его хешу содержимого.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/rpc/protocol/chunk-by-hash
 - https://docs.fastnear.com/ru/rpcs/protocol/chunk_by_hash

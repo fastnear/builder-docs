@@ -1,6 +1,6 @@
 # RPC протокола NEAR: Список ключей доступа
 Просмотр списка ключей доступа аккаунта
-Возвращает список всех ключей доступа аккаунта NEAR.
+Получите все ключи доступа аккаунта — каждый с правами и nonce.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/rpcs/account/view_access_key_list
 - https://docs.fastnear.com/ru/rpcs/account/view_access_key_list/other/view_access_key_list

@@ -1,6 +1,6 @@
 # RPC протокола NEAR: Блок по хешу
 Получить блок по хешу
-Возвращает данные блока по указанному хешу.
+Получите заголовок и сводку по чанкам блока по его SHA-256-хешу.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/rpcs/block/block_by_id
 - https://docs.fastnear.com/ru/rpcs/block/block_by_id/other/block_by_id

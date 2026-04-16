@@ -1,6 +1,6 @@
 # RPC протокола NEAR: Конфигурация генезиса
 Получить конфигурацию генезиса
-Возвращает начальное состояние и параметры генезис-блока.
+Получите неизменяемую генезис-конфигурацию цепочки — начальные записи, настройки протокола и длину эпохи в блоке 0.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/rpcs/protocol/genesis_config
 - https://docs.fastnear.com/ru/rpcs/protocol/genesis_config/other/genesis_config

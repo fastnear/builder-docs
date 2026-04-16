@@ -1,6 +1,6 @@
 # RPC протокола NEAR: Чанк по блоку и шарду
 Получить чанк по блоку и шарду
-Возвращает сведения о чанке по координатам `block_id` и `shard_id`.
+Получите транзакции и квитанции одного чанка по родительскому блоку и индексу шарда.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/rpc/protocol/chunk-by-block-shard
 - https://docs.fastnear.com/ru/rpcs/protocol/chunk_by_block_shard

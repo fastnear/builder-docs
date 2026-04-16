@@ -1,6 +1,6 @@
 # RPC протокола NEAR: Цена газа
 Получить текущую цену газа
-Возвращает сведения о текущей цене газа.
+Получите текущую общесетевую цену газа для самого последнего блока.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/rpcs/protocol/gas_price
 - https://docs.fastnear.com/ru/rpcs/protocol/gas_price/other/gas_price

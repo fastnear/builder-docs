@@ -1,6 +1,6 @@
 # FastNear API - V0 Поиск по публичному ключу
 Найти аккаунты полного доступа по публичному ключу
-Возвращает ID аккаунтов, которые сейчас связаны с переданным публичным ключом полного доступа.
+Получите индексированные ID аккаунтов, связанные с публичным ключом полного доступа.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/apis/fastnear/v0/public_key_lookup
 - https://docs.fastnear.com/ru/apis/fastnear/openapi/public-key/lookup_by_public_key_v0

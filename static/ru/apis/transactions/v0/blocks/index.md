@@ -1,6 +1,6 @@
 # Транзакции API - Диапазон блоков
 Получить список блоков
-Возвращает до 100 строк блоков для запрошенного диапазона высот.
+Получите ограниченный список индексированных блоков, отсортированный по возрастанию или убыванию.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/apis/transactions/v0/blocks
 - https://docs.fastnear.com/ru/apis/transactions/openapi/blocks/get_blocks

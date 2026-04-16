@@ -1,6 +1,6 @@
 # FastNear API - Состояние
 Проверить состояние сервиса
-Возвращает `ok`, когда сервис исправен. Если FastNear деградирует, то это же поле `status` содержит диагностическую строку.
+Пинг FastNEAR API для проверки доступности — возвращает `{status: ok}` при успехе.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/api/system/health
 - https://docs.fastnear.com/ru/apis/fastnear/system/health

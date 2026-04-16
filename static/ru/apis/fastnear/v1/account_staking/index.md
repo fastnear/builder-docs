@@ -1,6 +1,6 @@
 # FastNEAR API — V1 стейкинг аккаунта
 Поиск индексированных стейкинг-пулов аккаунта
-Возвращает записи стейкинг-пулов для указанного аккаунта. Поле `last_update_block_height` может быть null, если FastNEAR не записал недавнее индексированное обновление для этой связи с пулом.
+Получите строки по стейкинг-пулам для аккаунта, каждая с метаданными по высоте блока.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/apis/fastnear/v1/account_staking
 - https://docs.fastnear.com/ru/apis/fastnear/openapi/staking/account_staking_v1

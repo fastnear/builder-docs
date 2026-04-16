@@ -1321,7 +1321,7 @@ https://tx.test.fastnear.com
 
 # RPC протокола NEAR: Просмотр ключа доступа
 Просмотр ключа доступа аккаунта
-Возвращает информацию о конкретном ключе доступа аккаунта NEAR.
+Получите права и nonce одного ключа доступа аккаунта по его публичному ключу.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/rpcs/account/view_access_key
 - https://docs.fastnear.com/ru/rpcs/account/view_access_key/other/view_access_key
@@ -1585,7 +1585,7 @@ https://tx.test.fastnear.com
 
 # RPC протокола NEAR: Список ключей доступа
 Просмотр списка ключей доступа аккаунта
-Возвращает список всех ключей доступа аккаунта NEAR.
+Получите все ключи доступа аккаунта — каждый с правами и nonce.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/rpcs/account/view_access_key_list
 - https://docs.fastnear.com/ru/rpcs/account/view_access_key_list/other/view_access_key_list
@@ -1831,7 +1831,7 @@ https://tx.test.fastnear.com
 
 # RPC протокола NEAR: Просмотр аккаунта
 Просмотр аккаунта
-Возвращает подробную информацию об аккаунте NEAR, включая баланс и использование хранилища.
+Получите баланс аккаунта, размер хранилища и хеш кода на выбранной высоте блока или финальности.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/rpcs/account/view_account
 - https://docs.fastnear.com/ru/rpcs/account/view_account/other/view_account
@@ -2129,7 +2129,7 @@ https://tx.test.fastnear.com
 
 # RPC протокола NEAR: Блок по высоте
 Получить блок по высоте
-Возвращает данные блока по указанной высоте.
+Получите заголовок и сводку по чанкам блока по его высоте в цепочке.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/rpcs/block/block_by_height
 - https://docs.fastnear.com/ru/rpcs/block/block_by_height/other/block_by_height
@@ -2329,7 +2329,7 @@ https://tx.test.fastnear.com
 
 # RPC протокола NEAR: Блок по хешу
 Получить блок по хешу
-Возвращает данные блока по указанному хешу.
+Получите заголовок и сводку по чанкам блока по его SHA-256-хешу.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/rpcs/block/block_by_id
 - https://docs.fastnear.com/ru/rpcs/block/block_by_id/other/block_by_id
@@ -2529,7 +2529,7 @@ https://tx.test.fastnear.com
 
 # RPC протокола NEAR: Эффекты блока
 Получить эффекты блока
-Возвращает изменения, вызванные блоком, для заданной высоты блока или хеша по всем типам транзакций.
+Получите сводку всех изменений состояния в одном блоке — какие аккаунты, ключи и записи состояния контрактов были затронуты.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/rpcs/block/block_effects
 - https://docs.fastnear.com/ru/rpcs/block/block_effects/other/block_effects
@@ -2763,7 +2763,7 @@ https://tx.test.fastnear.com
 
 # RPC протокола NEAR: Вызов view-метода
 Вызвать view-метод контракта
-Выполняет view-метод смарт-контракта без изменения состояния.
+Вызовите view-метод контракта без газа и изменений состояния — чтение вычисляемых значений из логики контракта.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/rpcs/contract/call
 - https://docs.fastnear.com/ru/rpcs/contract/call/other/call_function
@@ -3043,7 +3043,7 @@ https://tx.test.fastnear.com
 
 # RPC протокола NEAR: Код контракта
 Получить код контракта
-Возвращает код контракта (Wasm), опубликованный в аккаунте.
+Получите скомпилированный WebAssembly-байткод, развёрнутый непосредственно на одном аккаунте.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/rpcs/contract/view_code
 - https://docs.fastnear.com/ru/rpcs/contract/view_code/other/view_code
@@ -3294,7 +3294,7 @@ https://tx.test.fastnear.com
 
 # RPC протокола NEAR: Глобальный код контракта
 Получить глобальный код контракта
-Возвращает глобально развёрнутый код контракта по его хешу.
+Найдите WebAssembly-байткод глобального контракта по SHA-256-хешу его кода.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/rpcs/contract/view_global_contract_code
 - https://docs.fastnear.com/ru/rpcs/contract/view_global_contract_code/other/view_global_contract_code
@@ -3545,7 +3545,7 @@ https://tx.test.fastnear.com
 
 # RPC протокола NEAR: Глобальный код контракта по аккаунту
 Получить глобальный код контракта по аккаунту
-Возвращает глобально развёрнутый код контракта, который использует указанный аккаунт.
+Найдите WebAssembly-байткод глобального контракта по ID аккаунта, который его зарегистрировал.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/rpcs/contract/view_global_contract_code_by_account_id
 - https://docs.fastnear.com/ru/rpcs/contract/view_global_contract_code_by_account_id/other/view_global_contract_code_by_account_id
@@ -3796,7 +3796,7 @@ https://tx.test.fastnear.com
 
 # RPC протокола NEAR: Состояние контракта
 Получить состояние контракта
-Возвращает состояние (пары ключ-значение), сохранённое для аккаунта контракта.
+Получите сырое состояние «ключ-значение», записанное контрактом, с опциональным фильтром по префиксу ключа.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/rpcs/contract/view_state
 - https://docs.fastnear.com/ru/rpcs/contract/view_state/other/view_state
@@ -4072,7 +4072,7 @@ https://tx.test.fastnear.com
 
 # RPC протокола NEAR: Изменения состояния
 Получить изменения состояния
-Возвращает изменения для выбранного аккаунта, контракта или кода контракта по заданной высоте блока или хешу.
+Получите подробные изменения состояния в блоке — с фильтром по аккаунту, префиксу ключа или типу изменения.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/rpcs/protocol/changes
 - https://docs.fastnear.com/ru/rpcs/protocol/changes/other/changes
@@ -4303,7 +4303,7 @@ https://tx.test.fastnear.com
 
 # RPC протокола NEAR: Чанк по блоку и шарду
 Получить чанк по блоку и шарду
-Возвращает сведения о чанке по координатам `block_id` и `shard_id`.
+Получите транзакции и квитанции одного чанка по родительскому блоку и индексу шарда.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/rpcs/protocol/chunk_by_block_shard
 - https://docs.fastnear.com/ru/rpcs/protocol/chunk_by_block_shard/other/chunk_by_block_shard
@@ -4754,7 +4754,7 @@ https://tx.test.fastnear.com
 
 # RPC протокола NEAR: Чанк по хешу
 Получить чанк по хешу
-Возвращает сведения о чанке по его хешу.
+Получите транзакции и квитанции одного чанка по его хешу содержимого.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/rpcs/protocol/chunk_by_hash
 - https://docs.fastnear.com/ru/rpcs/protocol/chunk_by_hash/other/chunk_by_hash
@@ -5184,7 +5184,7 @@ https://tx.test.fastnear.com
 
 # RPC протокола NEAR: Конфигурация клиента
 Получить конфигурацию клиента
-Запрашивает конфигурацию клиента узла.
+Получите локальную клиентскую конфигурацию узла — таймауты, настройки повторов и параметры оператора.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/rpcs/protocol/client_config
 - https://docs.fastnear.com/ru/rpcs/protocol/client_config/other/client_config
@@ -6221,7 +6221,7 @@ https://tx.test.fastnear.com
 
 # RPC протокола NEAR: Уровень перегрузки
 Получить уровень перегрузки
-Запрашивает уровень перегрузки выбранного шарда.
+Измерьте нагрузку одного шарда на выбранном блоке — оценка насыщения от 0.0 до 1.0.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/rpcs/protocol/EXPERIMENTAL_congestion_level
 - https://docs.fastnear.com/ru/rpcs/protocol/EXPERIMENTAL_congestion_level/other/EXPERIMENTAL_congestion_level
@@ -6456,7 +6456,7 @@ https://tx.test.fastnear.com
 
 # RPC протокола NEAR: Доказательство блока для лайт-клиента
 Получить доказательство блока для лайт-клиента
-Возвращает доказательство блока для лайт-клиента.
+Получите Merkle-доказательство того, что блок включён в верифицированную цепочку лайт-клиента.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/rpcs/protocol/EXPERIMENTAL_light_client_block_proof
 - https://docs.fastnear.com/ru/rpcs/protocol/EXPERIMENTAL_light_client_block_proof/other/EXPERIMENTAL_light_client_block_proof
@@ -6722,7 +6722,7 @@ https://tx.test.fastnear.com
 
 # RPC протокола NEAR: Доказательство исполнения для лайт-клиента
 Получить доказательство исполнения для лайт-клиента
-Возвращает доказательство исполнения транзакции для лайт-клиента.
+Получите Merkle-доказательство включения транзакции или квитанции — EXPERIMENTAL-вариант метода `light_client_proof`.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/rpcs/protocol/EXPERIMENTAL_light_client_proof
 - https://docs.fastnear.com/ru/rpcs/protocol/EXPERIMENTAL_light_client_proof/other/EXPERIMENTAL_light_client_proof
@@ -7089,7 +7089,7 @@ https://tx.test.fastnear.com
 
 # RPC протокола NEAR: Конфигурация протокола
 Получить конфигурацию протокола
-Возвращает конфигурацию на уровне протокола: стоимость газа и хранения, лимиты, флаги возможностей и другие параметры.
+Получите рантайм-конфигурацию протокола на выбранном блоке — стоимость газа, цены хранилища и действующие лимиты.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/rpcs/protocol/EXPERIMENTAL_protocol_config
 - https://docs.fastnear.com/ru/rpcs/protocol/EXPERIMENTAL_protocol_config/other/EXPERIMENTAL_protocol_config
@@ -7641,7 +7641,7 @@ https://tx.test.fastnear.com
 
 # RPC протокола NEAR: Информация о разделённом хранилище
 Получить сведения о разделённом хранилище
-Содержит сведения о разделённом хранилище для архивных узлов.
+Изучите раскладку разделённого хранилища узла — границу между горячими недавними и холодными архивными данными.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/rpcs/protocol/EXPERIMENTAL_split_storage_info
 - https://docs.fastnear.com/ru/rpcs/protocol/EXPERIMENTAL_split_storage_info/other/EXPERIMENTAL_split_storage_info
@@ -7862,7 +7862,7 @@ https://tx.test.fastnear.com
 
 # RPC протокола NEAR: Цена газа
 Получить текущую цену газа
-Возвращает сведения о текущей цене газа.
+Получите текущую общесетевую цену газа для самого последнего блока.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/rpcs/protocol/gas_price
 - https://docs.fastnear.com/ru/rpcs/protocol/gas_price/other/gas_price
@@ -8066,7 +8066,7 @@ https://tx.test.fastnear.com
 
 # RPC протокола NEAR: Цена газа по блоку
 Получить цену газа по блоку
-Возвращает цену газа для конкретного блока.
+Получите общесетевую цену газа на выбранном историческом блоке — по высоте или хешу.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/rpcs/protocol/gas_price_by_block
 - https://docs.fastnear.com/ru/rpcs/protocol/gas_price_by_block/other/gas_price_by_block
@@ -8288,7 +8288,7 @@ https://tx.test.fastnear.com
 
 # RPC протокола NEAR: Конфигурация генезиса
 Получить конфигурацию генезиса
-Возвращает начальное состояние и параметры генезис-блока.
+Получите неизменяемую генезис-конфигурацию цепочки — начальные записи, настройки протокола и длину эпохи в блоке 0.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/rpcs/protocol/genesis_config
 - https://docs.fastnear.com/ru/rpcs/protocol/genesis_config/other/genesis_config
@@ -8893,7 +8893,7 @@ https://tx.test.fastnear.com
 
 # RPC протокола NEAR: Состояние узла
 Проверить состояние узла
-Проверяет состояние узла и определяет, работает ли он корректно.
+Проверьте работоспособность узла — `null` при успехе, ошибка при проблемах.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/rpcs/protocol/health
 - https://docs.fastnear.com/ru/rpcs/protocol/health/other/health
@@ -9077,7 +9077,7 @@ https://tx.test.fastnear.com
 
 # RPC протокола NEAR: Последний блок
 Получить последний блок
-Возвращает самый свежий блок в блокчейне.
+Получите последний финализированный блок — финальность выбирается автоматически, ID блока не требуется.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/rpcs/protocol/latest_block
 - https://docs.fastnear.com/ru/rpcs/protocol/latest_block/other/latest_block
@@ -9282,7 +9282,7 @@ https://tx.test.fastnear.com
 
 # RPC протокола NEAR: Доказательство для лайт-клиента
 Получить доказательство для лайт-клиента
-Возвращает данные доказательства для проверки лайт-клиентом.
+Получите Merkle-доказательство того, что транзакция или квитанция была включена и исполнена — для верификации лайт-клиентом.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/rpcs/protocol/light_client_proof
 - https://docs.fastnear.com/ru/rpcs/protocol/light_client_proof/other/light_client_proof
@@ -9649,7 +9649,7 @@ https://tx.test.fastnear.com
 
 # RPC протокола NEAR: Окна обслуживания
 Получить окна обслуживания
-Возвращает будущие окна обслуживания в текущей эпохе для указанного аккаунта.
+Найдите предстоящие диапазоны блоков, когда валидатор может безопасно перезапуститься, не пропуская производство блоков.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/rpcs/protocol/maintenance_windows
 - https://docs.fastnear.com/ru/rpcs/protocol/maintenance_windows/other/maintenance_windows
@@ -9874,7 +9874,7 @@ https://tx.test.fastnear.com
 
 # RPC протокола NEAR: Метрики узла
 Получить метрики узла
-Возвращает метрики узла в формате Prometheus с HTTP-эндпоинта `/metrics`. Требуется API-ключ.
+Соберите метрики узла в Prometheus-формате для мониторинга.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/rpcs/protocol/metrics
 - https://docs.fastnear.com/ru/rpcs/protocol/metrics/other/metrics
@@ -9926,7 +9926,7 @@ https://tx.test.fastnear.com
 
 # RPC протокола NEAR: Сведения о сети
 Получить сведения о сети
-Возвращает информацию о сети и подключённых пирах, включая активные соединения, адреса пиров и параметры сети.
+Получите список активных подключений к пирам узла и отслеживаемых им производителей блоков.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/rpcs/protocol/network_info
 - https://docs.fastnear.com/ru/rpcs/protocol/network_info/other/network_info
@@ -10172,7 +10172,7 @@ https://tx.test.fastnear.com
 
 # RPC протокола NEAR: Следующий блок для лайт-клиента
 Получить следующий блок для лайт-клиента
-Возвращает следующий блок для лайт-клиента.
+Получите следующий заголовок блока для лайт-клиента после известной вершины его верифицированной цепочки.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/rpcs/protocol/next_light_client_block
 - https://docs.fastnear.com/ru/rpcs/protocol/next_light_client_block/other/next_light_client_block
@@ -10515,7 +10515,7 @@ https://tx.test.fastnear.com
 
 # RPC протокола NEAR: Статус узла
 Получить статус узла
-Возвращает текущий статус узла, включая сведения о синхронизации, валидаторах и сборке.
+Получите версию узла, прогресс синхронизации и последний обработанный блок в одном ответе.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/rpcs/protocol/status
 - https://docs.fastnear.com/ru/rpcs/protocol/status/other/status
@@ -11018,7 +11018,7 @@ https://tx.test.fastnear.com
 
 # RPC протокола NEAR: Отправка транзакции (асинхронно)
 Отправить транзакцию асинхронно
-Отправляет транзакцию в сеть без ожидания её исполнения. Требуется свежеподписанная транзакция; пример по умолчанию служит только иллюстрацией и не участвует в проверке живых ответов.
+Отправьте подписанную транзакцию и сразу получите её хеш — без ожидания исполнения.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/rpcs/transaction/broadcast_tx_async
 - https://docs.fastnear.com/ru/rpcs/transaction/broadcast_tx_async/other/broadcast_tx_async
@@ -11237,7 +11237,7 @@ https://tx.test.fastnear.com
 
 # RPC протокола NEAR: Отправка транзакции (с подтверждением)
 Отправить транзакцию и дождаться подтверждения
-Отправляет транзакцию и ждёт, пока она будет полностью исполнена и подтверждена в блокчейне. Требуется свежеподписанная транзакция; пример по умолчанию служит только иллюстрацией и не участвует в проверке живых ответов.
+Отправьте подписанную транзакцию и дождитесь её подтверждения — устаревший синхронный способ, заменён на `send_tx`.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/rpcs/transaction/broadcast_tx_commit
 - https://docs.fastnear.com/ru/rpcs/transaction/broadcast_tx_commit/other/broadcast_tx_commit
@@ -11522,7 +11522,7 @@ https://tx.test.fastnear.com
 
 # RPC протокола NEAR: Квитанция по ID
 Получить квитанцию по ID
-Возвращает квитанцию по её ID как есть, без статуса и итогового результата исполнения.
+Получите одну квитанцию по её ID — межшардовую единицу исполнения, производимую транзакцией.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/rpcs/transaction/EXPERIMENTAL_receipt
 - https://docs.fastnear.com/ru/rpcs/transaction/EXPERIMENTAL_receipt/other/EXPERIMENTAL_receipt
@@ -11772,7 +11772,7 @@ https://tx.test.fastnear.com
 
 # RPC протокола NEAR: Подробный статус транзакции
 Получить подробный статус транзакции
-Запрашивает статус транзакции по хешу и возвращает итоговый результат транзакции вместе с деталями всех квитанций.
+Получите полное дерево квитанций и результаты исполнения каждой квитанции — богаче, чем `tx_status`.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/rpcs/transaction/EXPERIMENTAL_tx_status
 - https://docs.fastnear.com/ru/rpcs/transaction/EXPERIMENTAL_tx_status/other/EXPERIMENTAL_tx_status
@@ -12076,7 +12076,7 @@ https://tx.test.fastnear.com
 
 # RPC протокола NEAR: Отправить транзакцию
 Отправить транзакцию
-Отправляет транзакцию и возвращает гарантированный статус исполнения и результаты. Требуется свежеподписанная транзакция; пример по умолчанию служит только иллюстрацией и не участвует в проверке живых ответов.
+Отправьте подписанную транзакцию и дождитесь её итогового результата исполнения — текущий синхронный способ.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/rpcs/transaction/send_tx
 - https://docs.fastnear.com/ru/rpcs/transaction/send_tx/other/send_tx
@@ -12363,7 +12363,7 @@ https://tx.test.fastnear.com
 
 # RPC протокола NEAR: Статус транзакции
 Проверить статус транзакции
-Возвращает статус и детали транзакции.
+Проверьте итоговый результат транзакции по её хешу — успех, сбой или ещё не завершена.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/rpcs/transaction/tx_status
 - https://docs.fastnear.com/ru/rpcs/transaction/tx_status/other/tx_status
@@ -12665,7 +12665,7 @@ https://tx.test.fastnear.com
 
 # RPC протокола NEAR: Упорядоченные валидаторы
 Получить упорядоченных валидаторов
-Возвращает валидаторов текущей эпохи в порядке продюсеров блоков с повторениями.
+Получите список валидаторов, упорядоченный по размеру стейка на выбранном блоке — шире, чем только активный набор.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/rpcs/validators/EXPERIMENTAL_validators_ordered
 - https://docs.fastnear.com/ru/rpcs/validators/EXPERIMENTAL_validators_ordered/other/EXPERIMENTAL_validators_ordered
@@ -12878,7 +12878,7 @@ https://tx.test.fastnear.com
 
 # RPC протокола NEAR: Валидаторы по эпохе
 Получить валидаторов по эпохе
-Возвращает список валидаторов и их параметры для выбранной эпохи.
+Получите набор валидаторов выбранной прошлой эпохи по высоте или хешу её начального блока.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/rpcs/validators/validators_by_epoch
 - https://docs.fastnear.com/ru/rpcs/validators/validators_by_epoch/other/validators_by_epoch
@@ -13179,7 +13179,7 @@ https://tx.test.fastnear.com
 
 # RPC протокола NEAR: Текущие валидаторы
 Получить текущих валидаторов
-Возвращает список текущих валидаторов и их параметры.
+Получите активный набор валидаторов текущей эпохи со стейками и статистикой производительности.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/rpcs/validators/validators_current
 - https://docs.fastnear.com/ru/rpcs/validators/validators_current/other/validators_current
@@ -13471,7 +13471,7 @@ https://tx.test.fastnear.com
 
 # FastNear API - Состояние
 Проверить состояние сервиса
-Возвращает `ok`, когда сервис исправен. Если FastNear деградирует, то это же поле `status` содержит диагностическую строку.
+Пинг FastNEAR API для проверки доступности — возвращает `{status: ok}` при успехе.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/apis/fastnear/system/health
 - https://docs.fastnear.com/ru/apis/fastnear/openapi/system/get_health
@@ -13539,7 +13539,7 @@ https://tx.test.fastnear.com
 
 # FastNear API - Статус
 Получить статус синхронизации сервиса
-Возвращает последнюю индексированную высоту синхронизации, временную метку индексированного блока, измеренную задержку синхронизации и версию FastNear API.
+Проверьте текущую индексированную высоту блока, задержку и версию развёрнутого сервиса.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/apis/fastnear/system/status
 - https://docs.fastnear.com/ru/apis/fastnear/openapi/system/get_status
@@ -13642,7 +13642,7 @@ https://tx.test.fastnear.com
 
 # FastNear API - V0 FT аккаунта
 Получить ID FT-контрактов аккаунта
-Возвращает только ID FT-контрактов, которые FastNear проиндексировал для запрошенного аккаунта. В отличие от маршрута v1, этот ответ не включает балансы и метаданные по высоте блока.
+Получите ID FT-контрактов, которых касался аккаунт — только ID, без балансов.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/apis/fastnear/v0/account_ft
 - https://docs.fastnear.com/ru/apis/fastnear/openapi/fungible-tokens/account_ft_v0
@@ -13729,7 +13729,7 @@ https://tx.test.fastnear.com
 
 # FastNear API - V0 NFT аккаунта
 Получить ID NFT-контрактов аккаунта
-Возвращает только ID NFT-контрактов, которые FastNear проиндексировал для запрошенного аккаунта. В отличие от маршрута v1, этот ответ не включает метаданные `last_update_block_height`.
+Получите ID NFT-контрактов, которых касался аккаунт — только ID, без метаданных по высоте блока.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/apis/fastnear/v0/account_nft
 - https://docs.fastnear.com/ru/apis/fastnear/openapi/non-fungible-tokens/account_nft_v0
@@ -13816,7 +13816,7 @@ https://tx.test.fastnear.com
 
 # FastNear API - V0 стейкинг аккаунта
 Получить ID стейкинг-пулов аккаунта
-Возвращает ID стейкинг-пулов, которые FastNear проиндексировал для запрошенного аккаунта. В отличие от маршрута v1, этот ответ не включает метаданные `last_update_block_height`.
+Получите ID стейкинг-пулов для одного аккаунта — только ID пулов, без метаданных по высоте блока.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/apis/fastnear/v0/account_staking
 - https://docs.fastnear.com/ru/apis/fastnear/openapi/staking/account_staking_v0
@@ -13903,7 +13903,7 @@ https://tx.test.fastnear.com
 
 # FastNear API - V0 Поиск по публичному ключу
 Найти аккаунты полного доступа по публичному ключу
-Возвращает ID аккаунтов, которые сейчас связаны с переданным публичным ключом полного доступа.
+Получите индексированные ID аккаунтов, связанные с публичным ключом полного доступа.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/apis/fastnear/v0/public_key_lookup
 - https://docs.fastnear.com/ru/apis/fastnear/openapi/public-key/lookup_by_public_key_v0
@@ -13990,7 +13990,7 @@ https://tx.test.fastnear.com
 
 # FastNear API - V0 Поиск по публичному ключу (все)
 Найти все аккаунты по публичному ключу
-Возвращает ID аккаунтов, которые сейчас связаны с переданным публичным ключом, включая ключи ограниченного доступа.
+Получите все аккаунты, связанные с публичным ключом — ключи полного доступа и ключи с ограничениями вместе.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/apis/fastnear/v0/public_key_lookup_all
 - https://docs.fastnear.com/ru/apis/fastnear/openapi/public-key/lookup_by_public_key_all_v0
@@ -14077,7 +14077,7 @@ https://tx.test.fastnear.com
 
 # FastNear API - V1 FT аккаунта
 Получить индексированные строки FT-токенов аккаунта
-Возвращает индексированные строки FT-токенов для указанного аккаунта. Балансы и `last_update_block_height` могут быть `null`, если индекс ещё не записал эти данные.
+Получите строки балансов FT-токенов аккаунта — каждая с ID контракта, балансом и высотой последнего обновления.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/apis/fastnear/v1/account_ft
 - https://docs.fastnear.com/ru/apis/fastnear/openapi/fungible-tokens/account_ft_v1
@@ -14195,7 +14195,7 @@ https://tx.test.fastnear.com
 
 # FastNear API - V1 Полный снимок аккаунта
 Получить полный индексированный снимок аккаунта
-Возвращает данные по стейкингу, FT-токенам, NFT и состоянию аккаунта для указанного аккаунта. Поле `state` может быть `null`, если индекс ещё не зафиксировал состояние аккаунта.
+Получите объединённое индексированное представление аккаунта, включая стейкинг-пулы, FT-балансы, NFT и состояние аккаунта.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/apis/fastnear/v1/account_full
 - https://docs.fastnear.com/ru/apis/fastnear/openapi/accounts/account_full_v1
@@ -14389,7 +14389,7 @@ https://tx.test.fastnear.com
 
 # FastNear API - V1 NFT аккаунта
 Получить индексированные строки NFT аккаунта
-Возвращает индексированные строки NFT-контрактов для указанного аккаунта. `last_update_block_height` может быть `null`, если FastNear ещё не записал недавнее обновление по этой связи с контрактом.
+Получите строки NFT-контрактов для аккаунта, каждая с метаданными по высоте блока.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/apis/fastnear/v1/account_nft
 - https://docs.fastnear.com/ru/apis/fastnear/openapi/non-fungible-tokens/account_nft_v1
@@ -14499,7 +14499,7 @@ https://tx.test.fastnear.com
 
 # FastNEAR API — V1 стейкинг аккаунта
 Поиск индексированных стейкинг-пулов аккаунта
-Возвращает записи стейкинг-пулов для указанного аккаунта. Поле `last_update_block_height` может быть null, если FastNEAR не записал недавнее индексированное обновление для этой связи с пулом.
+Получите строки по стейкинг-пулам для аккаунта, каждая с метаданными по высоте блока.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/apis/fastnear/v1/account_staking
 - https://docs.fastnear.com/ru/apis/fastnear/openapi/staking/account_staking_v1
@@ -14609,7 +14609,7 @@ https://tx.test.fastnear.com
 
 # FastNEAR API — V1 топ держателей FT
 Поиск индексированных топ-держателей FT-токена
-Возвращает проиндексированные аккаунты с наибольшим балансом указанного FT-токена.
+Получите список держателей с наибольшим балансом для FT-контракта, отсортированный по убыванию баланса.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/apis/fastnear/v1/ft_top
 - https://docs.fastnear.com/ru/apis/fastnear/openapi/fungible-tokens/ft_top_v1
@@ -14718,7 +14718,7 @@ https://tx.test.fastnear.com
 
 # FastNear API - V1 Поиск по публичному ключу
 Найти аккаунты полного доступа по публичному ключу
-Возвращает ID аккаунтов, которые сейчас связаны с переданным публичным ключом полного доступа. Этот маршрут v1 пока использует ту же форму ответа `{ public_key, account_ids }`, что и маршрут v0.
+Получите индексированные ID аккаунтов, связанные с публичным ключом полного доступа.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/apis/fastnear/v1/public_key_lookup
 - https://docs.fastnear.com/ru/apis/fastnear/openapi/public-key/lookup_by_public_key_v1
@@ -14805,7 +14805,7 @@ https://tx.test.fastnear.com
 
 # FastNear API - V1 Поиск по публичному ключу (все)
 Найти все индексированные аккаунты по публичному ключу
-Возвращает ID аккаунтов, которые сейчас связаны с переданным публичным ключом, включая ключи ограниченного доступа, если они присутствуют в индексе FastNear. Этот маршрут v1 пока использует ту же форму ответа `{ public_key, account_ids }`, что и маршрут v0.
+Получите все аккаунты, связанные с публичным ключом — ключи полного доступа и ключи с ограничениями вместе.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/apis/fastnear/v1/public_key_lookup_all
 - https://docs.fastnear.com/ru/apis/fastnear/openapi/public-key/lookup_by_public_key_all_v1
@@ -14892,7 +14892,7 @@ https://tx.test.fastnear.com
 
 # KV FastData API - Последние ключи по вызывающему аккаунту
 Получить последние строки «ключ-значение» для одного вызывающего аккаунта по всем контрактам
-Возвращает последнюю строку для каждой пары `(current_account_id, key)`, записанной выбранным вызывающим аккаунтом. Значения `page_token` непрозрачны и привязаны к этому эндпоинту и выбранному вызывающему аккаунту.
+Получите последние значения для всех контрактов, к которым обращался один вызывающий аккаунт.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/apis/kv-fastdata/v0/all_by_predecessor
 - https://docs.fastnear.com/ru/apis/kv-fastdata/openapi/latest/all_by_predecessor
@@ -15107,7 +15107,7 @@ https://tx.test.fastnear.com
 
 # KV FastData API - История по точному ключу
 Получить исторические строки для одного точного ключа в рамках одного вызывающего аккаунта и контракта
-Возвращает исторические строки для одного точного ключа, который выбранный вызывающий аккаунт записал в выбранный контракт.
+Получите каждую историческую запись для одного точного ключа под одним вызывающим аккаунтом и контрактом.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/apis/kv-fastdata/v0/get_history_key
 - https://docs.fastnear.com/ru/apis/kv-fastdata/openapi/history/get_history_key
@@ -15280,7 +15280,7 @@ https://tx.test.fastnear.com
 
 # KV FastData API - Последнее значение по точному ключу
 Получить последнюю строку для одного точного ключа в рамках одного вызывающего аккаунта и контракта
-Возвращает последнюю строку для одного точного ключа, который выбранный вызывающий аккаунт записал в выбранный контракт.
+Получите последнее значение для одного точного ключа под одним вызывающим аккаунтом и контрактом.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/apis/kv-fastdata/v0/get_latest_key
 - https://docs.fastnear.com/ru/apis/kv-fastdata/openapi/latest/get_latest_key
@@ -15453,7 +15453,7 @@ https://tx.test.fastnear.com
 
 # KV FastData API - История по аккаунту
 Получить историю записей «ключ-значение» для одного контракта по всем вызывающим аккаунтам
-Возвращает исторические строки для выбранного аккаунта контракта по всем вызывающим аккаунтам. Значения `page_token` непрозрачны и валидны только при повторном использовании с тем же эндпоинтом и фильтрами.
+Получите исторические строки FastData для одного целевого аккаунта по всем вызывающим аккаунтам.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/apis/kv-fastdata/v0/history_by_account
 - https://docs.fastnear.com/ru/apis/kv-fastdata/openapi/history/history_by_account
@@ -15700,7 +15700,7 @@ https://tx.test.fastnear.com
 
 # KV FastData API - История по глобальному ключу
 Получить историю по точному ключу во всех индексированных контрактах
-Возвращает исторические строки FastData для одного точного ключа по всем индексированным контрактам и вызывающим аккаунтам. Значения `page_token` непрозрачны и валидны только при повторном использовании с тем же эндпоинтом и фильтрами.
+Получите исторические значения выбранного ключа по аккаунтам и вызывающим аккаунтам.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/apis/kv-fastdata/v0/history_by_key
 - https://docs.fastnear.com/ru/apis/kv-fastdata/openapi/history/history_by_key
@@ -15933,7 +15933,7 @@ https://tx.test.fastnear.com
 
 # KV FastData API - История по вызывающему аккаунту
 Получить историю записей «ключ-значение» для одного вызывающего аккаунта и контракта
-Возвращает исторические строки для пары `predecessor_id` + `current_account_id`. Используйте `key` или `key_prefix`, чтобы сузить поиск. Значения `page_token` непрозрачны и валидны только при повторном использовании с тем же эндпоинтом и теми же фильтрами.
+Получите исторические строки FastData для одного вызывающего аккаунта и целевого аккаунта.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/apis/kv-fastdata/v0/history_by_predecessor
 - https://docs.fastnear.com/ru/apis/kv-fastdata/openapi/history/history_by_predecessor
@@ -16183,7 +16183,7 @@ https://tx.test.fastnear.com
 
 # KV FastData API - Последние значения по аккаунту
 Получить последние строки «ключ-значение» для одного контракта по всем вызывающим аккаунтам
-Возвращает последнюю строку для каждой пары `(predecessor_id, key)`, записанной в контракт. Значения `page_token` непрозрачны и привязаны к этому эндпоинту, аккаунту контракта и активным фильтрам.
+Получите последние строки FastData для одного целевого аккаунта по всем вызывающим аккаунтам.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/apis/kv-fastdata/v0/latest_by_account
 - https://docs.fastnear.com/ru/apis/kv-fastdata/openapi/latest/latest_by_account
@@ -16418,7 +16418,7 @@ https://tx.test.fastnear.com
 
 # KV FastData API - Последние значения по вызывающему аккаунту
 Получить последние строки «ключ-значение» для одного вызывающего аккаунта и контракта
-Возвращает последнюю строку для каждой пары `(current_account_id, key)`, записанной выбранным вызывающим аккаунтом в выбранный контракт. Значения `page_token` непрозрачны и валидны только при повторном использовании с тем же эндпоинтом и теми же фильтрами.
+Получите последние строки FastData для одного вызывающего аккаунта и целевого аккаунта.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/apis/kv-fastdata/v0/latest_by_predecessor
 - https://docs.fastnear.com/ru/apis/kv-fastdata/openapi/latest/latest_by_predecessor
@@ -16656,7 +16656,7 @@ https://tx.test.fastnear.com
 
 # KV FastData API - Пакетный поиск по ключам
 Получить последние строки для нескольких полностью квалифицированных ключей
-Возвращает последнюю запись для каждого запрошенного полностью квалифицированного ключа. Отсутствующие ключи представлены как элементы `null` в массиве ответа.
+Получите последнюю строку FastData сразу для 100 ключей в одном запросе.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/apis/kv-fastdata/v0/multi
 - https://docs.fastnear.com/ru/apis/kv-fastdata/openapi/latest/multi
@@ -17425,7 +17425,7 @@ https://tx.test.fastnear.com
 
 # Транзакции API - История аккаунта
 Получить историю транзакций аккаунта
-Возвращает строки транзакций аккаунта, необязательное общее количество на первой странице и необязательный `resume_token`.
+Получите историю транзакций аккаунта с необязательными фильтрами по подписанту, статусу успеха и порядку сортировки.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/apis/transactions/v0/account
 - https://docs.fastnear.com/ru/apis/transactions/openapi/account/get_account
@@ -17830,7 +17830,7 @@ https://tx.test.fastnear.com
 
 # Транзакции API - Поиск блока
 Получить блок по высоте или хешу
-Возвращает строку блока и, при необходимости, связанные транзакции и квитанции.
+Получите строку блока по высоте или хешу и при необходимости разверните связанные транзакции и квитанции.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/apis/transactions/v0/block
 - https://docs.fastnear.com/ru/apis/transactions/openapi/blocks/get_block
@@ -18425,7 +18425,7 @@ https://tx.test.fastnear.com
 
 # Транзакции API - Диапазон блоков
 Получить список блоков
-Возвращает до 100 строк блоков для запрошенного диапазона высот.
+Получите ограниченный список индексированных блоков, отсортированный по возрастанию или убыванию.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/apis/transactions/v0/blocks
 - https://docs.fastnear.com/ru/apis/transactions/openapi/blocks/get_blocks
@@ -18698,7 +18698,7 @@ https://tx.test.fastnear.com
 
 # Транзакции API - Поиск квитанции
 Получить квитанцию по ID
-Возвращает строку квитанции и, если она есть, связанные сырые данные транзакции.
+Получите квитанцию по ID вместе с транзакцией, её создавшей.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/apis/transactions/v0/receipt
 - https://docs.fastnear.com/ru/apis/transactions/openapi/receipts/get_receipt
@@ -18941,7 +18941,7 @@ https://tx.test.fastnear.com
 
 # Транзакции API - Транзакции по хешу
 Получить транзакции по хешу
-Возвращает до 20 наборов сырых данных транзакций для переданных хешей транзакций.
+Получите до 20 индексированных транзакций по хешу в одном запросе.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/apis/transactions/v0/transactions
 - https://docs.fastnear.com/ru/apis/transactions/openapi/transactions/get_transactions
@@ -19047,7 +19047,7 @@ https://tx.test.fastnear.com
 
 # API переводов: запрос переводов
 Запросить переводы аккаунта
-Возвращает строки переводов для аккаунта и непрозрачный `resume_token` для пагинации.
+Получите строки переводов для одного аккаунта с необязательными фильтрами по направлению, активу, сумме и времени.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/apis/transfers/v0/transfers
 - https://docs.fastnear.com/ru/apis/transfers/openapi/transfers/get_transfers_by_account

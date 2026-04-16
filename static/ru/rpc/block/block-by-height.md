@@ -1,6 +1,6 @@
 # RPC протокола NEAR: Блок по высоте
 Получить блок по высоте
-Возвращает данные блока по указанной высоте.
+Получите заголовок и сводку по чанкам блока по его высоте в цепочке.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/rpc/block/block-by-height
 - https://docs.fastnear.com/ru/rpcs/block/block_by_height

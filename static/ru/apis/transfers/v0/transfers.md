@@ -1,6 +1,6 @@
 # API переводов: запрос переводов
 Запросить переводы аккаунта
-Возвращает строки переводов для аккаунта и непрозрачный `resume_token` для пагинации.
+Получите строки переводов для одного аккаунта с необязательными фильтрами по направлению, активу, сумме и времени.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/apis/transfers/v0/transfers
 - https://docs.fastnear.com/ru/apis/transfers/openapi/transfers/get_transfers_by_account

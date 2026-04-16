@@ -1,6 +1,6 @@
 # RPC протокола NEAR: Текущие валидаторы
 Получить текущих валидаторов
-Возвращает список текущих валидаторов и их параметры.
+Получите активный набор валидаторов текущей эпохи со стейками и статистикой производительности.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/rpc/validators/validators-current
 - https://docs.fastnear.com/ru/rpcs/validators/validators_current

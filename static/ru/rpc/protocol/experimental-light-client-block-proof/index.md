@@ -1,6 +1,6 @@
 # RPC протокола NEAR: Доказательство блока для лайт-клиента
 Получить доказательство блока для лайт-клиента
-Возвращает доказательство блока для лайт-клиента.
+Получите Merkle-доказательство того, что блок включён в верифицированную цепочку лайт-клиента.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/rpc/protocol/experimental-light-client-block-proof
 - https://docs.fastnear.com/ru/rpcs/protocol/EXPERIMENTAL_light_client_block_proof
