@@ -44,10 +44,10 @@ const FASTNEAR_DEFAULT_SEARCH_PARAMETERS = {
     'operation_id',
     'canonical_target',
   ],
-  attributesToSnippet: ['content:14'],
+  attributesToSnippet: ['content:30'],
   clickAnalytics: true,
-  distinct: true,
-  hitsPerPage: 20,
+  distinct: false,
+  hitsPerPage: 36,
   removeWordsIfNoResults: 'allOptional',
   snippetEllipsisText: '…',
 };
@@ -186,6 +186,38 @@ function buildResultCardData(hit) {
   };
 }
 
+function mergeContentIntoPrimary(primary, contentRecord) {
+  if (!contentRecord || contentRecord === primary) {
+    return primary;
+  }
+
+  const merged = { ...primary };
+
+  if (!merged.content && contentRecord.content) {
+    merged.content = contentRecord.content;
+  }
+
+  const primarySnippet = merged._snippetResult?.content?.value;
+  const contentSnippet = contentRecord._snippetResult?.content?.value;
+  if (!primarySnippet && contentSnippet) {
+    merged._snippetResult = {
+      ...(merged._snippetResult || {}),
+      content: contentRecord._snippetResult.content,
+    };
+  }
+
+  const primaryHighlight = merged._highlightResult?.content?.value;
+  const contentHighlight = contentRecord._highlightResult?.content?.value;
+  if (!primaryHighlight && contentHighlight) {
+    merged._highlightResult = {
+      ...(merged._highlightResult || {}),
+      content: contentRecord._highlightResult.content,
+    };
+  }
+
+  return merged;
+}
+
 function buildFastnearSearchItems(items, processSearchResultUrl) {
   const grouped = new Map();
 
@@ -198,18 +230,29 @@ function buildFastnearSearchItems(items, processSearchResultUrl) {
       url_without_anchor: processedBaseUrl,
     };
     const pageKey = processedBaseUrl || processedUrl;
+    const isContentRecord = normalizedItem.type === 'content' && Boolean(normalizedItem.content);
 
-    if (!grouped.has(pageKey)) {
+    const existing = grouped.get(pageKey);
+    if (!existing) {
       grouped.set(pageKey, {
         primary: normalizedItem,
+        contentRecord: isContentRecord ? normalizedItem : null,
       });
+      return;
+    }
+
+    if (!existing.contentRecord && isContentRecord) {
+      existing.contentRecord = normalizedItem;
     }
   });
 
-  return [...grouped.values()].map(({ primary }) => ({
-    ...primary,
-    __fastnear: buildResultCardData(primary),
-  }));
+  return [...grouped.values()].map(({ primary, contentRecord }) => {
+    const merged = mergeContentIntoPrimary(primary, contentRecord);
+    return {
+      ...merged,
+      __fastnear: buildResultCardData(merged),
+    };
+  });
 }
 
 function useNavigator({ externalUrlRegex }) {

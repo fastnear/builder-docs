@@ -327,8 +327,9 @@ html[data-theme='dark'] .DocSearch {
   line-height: 1.45;
   margin: 0;
   overflow: hidden;
+  white-space: pre-line;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: 4;
 }
 
 .fastnear-search-hit__endpoint-stack {
