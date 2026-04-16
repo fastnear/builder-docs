@@ -59,7 +59,7 @@
 - `light_client_head` (body, обязательный, string): Хеш в кодировке Base58.
 - `sender_id` (body, string): ID аккаунта NEAR.
 - `transaction_hash` (body, string): Хеш в кодировке Base58.
-- `type` (body, string)
+- `type` (body, string): Предмет доказательства — `transaction` подтверждает включение транзакции верхнего уровня, `receipt` подтверждает включение конкретной квитанции, сформированной в ходе исполнения.
 - `receipt_id` (body, string): Base58-encoded hash
 - `receiver_id` (body, string): ID аккаунта NEAR
 ### Схема запроса
@@ -139,7 +139,9 @@
             "required": false,
             "schema": {
               "type": "string",
+              "description": "Предмет доказательства — `transaction` подтверждает включение транзакции верхнего уровня, `receipt` подтверждает включение конкретной квитанции, сформированной в ходе исполнения.",
               "enum": [
+                "транзакция",
                 "квитанция"
               ]
             }

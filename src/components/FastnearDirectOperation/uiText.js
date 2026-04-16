@@ -78,6 +78,10 @@ export function getFastnearOperationUiText() {
       id: 'fastnear.operationUi.liveResponseIntro',
       message: 'Responses from the selected endpoint appear here after you run a request.',
     }),
+    loadingPageModel: translate({
+      id: 'fastnear.operationUi.loadingPageModel',
+      message: 'Loading operation details...',
+    }),
     no: translate({
       id: 'fastnear.operationUi.no',
       message: 'no',
@@ -257,6 +261,14 @@ export function getFastnearOperationUiText() {
     missingPageModel: translate({
       id: 'fastnear.operationUi.missingPageModel',
       message: 'No generated page model is available for',
+    }),
+    loadFailed: translate({
+      id: 'fastnear.operationUi.loadFailed',
+      message: 'We couldn’t load this operation. Check your connection and try again.',
+    }),
+    retry: translate({
+      id: 'fastnear.operationUi.retry',
+      message: 'Try again',
     }),
     object: translate({
       id: 'fastnear.operationUi.schema.object',

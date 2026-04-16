@@ -320,7 +320,10 @@ new Crawler({
       minWordSizefor2Typos: 7,
       allowTyposOnNumericTokens: false,
       minProximity: 1,
-      ignorePlurals: ["en", "ru"],
+      ignorePlurals: [
+        "en",
+        "ru"
+      ],
       advancedSyntax: true,
       attributeCriteriaComputedByMinProximity: true,
       removeWordsIfNoResults: "allOptional",
@@ -339,3 +342,4 @@ new Crawler({
     "https://docs.fastnear.com/ru/"
   ]
 });
+

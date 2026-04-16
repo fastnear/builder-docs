@@ -1235,7 +1235,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/ru/apis/neardata/system/health",
-      "description": "Проверьте работоспособность сервиса neardata — возвращает `{status: ok}` при успехе, ошибку при проблемах.",
+      "description": "Проверьте работоспособность сервиса NEAR Data — возвращает `{status: ok}` при успехе, ошибку при проблемах.",
       "docsPath": "/ru/neardata/system/health",
       "familyId": "api-neardata",
       "headline": "NEAR Data API - Health",

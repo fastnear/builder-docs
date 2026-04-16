@@ -4,7 +4,55 @@
  * work well for content-centric websites.
  */
 
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
+/*
+ * DM Sans as a single variable font (weight 100..1000, italic + roman).
+ * One face per subset + style instead of one per discrete weight, which
+ * previously pointed every weight at the 400-weight WOFF2 and made the
+ * browser synthesize bold for 500/600/700.
+ */
+@font-face {
+  font-family: 'DM Sans';
+  font-style: italic;
+  font-weight: 100 1000;
+  font-display: swap;
+  src: url('/fonts/dm-sans-variable-italic-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304,
+    U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0,
+    U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: 'DM Sans';
+  font-style: italic;
+  font-weight: 100 1000;
+  font-display: swap;
+  src: url('/fonts/dm-sans-variable-italic-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215,
+    U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'DM Sans';
+  font-style: normal;
+  font-weight: 100 1000;
+  font-display: swap;
+  src: url('/fonts/dm-sans-variable-normal-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304,
+    U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0,
+    U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: 'DM Sans';
+  font-style: normal;
+  font-weight: 100 1000;
+  font-display: swap;
+  src: url('/fonts/dm-sans-variable-normal-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215,
+    U+FEFF, U+FFFD;
+}
 
 /* You can override the default Infima variables here. */
 :root {
@@ -1735,6 +1783,11 @@ html[data-theme='light'] .fastnear-home-button--primary:focus-visible {
     inset 0 1px 0 rgba(255, 255, 255, 0.03);
 }
 
+[data-theme='dark'] .fastnear-home-surface-card::after {
+  background: radial-gradient(circle, color-mix(in srgb, var(--fastnear-home-accent, #60a5fa) 16%, transparent 84%), transparent 72%);
+  opacity: 0.55;
+}
+
 [data-theme='dark'] .fastnear-home-utility-card__title,
 [data-theme='dark'] .fastnear-home-surface-card__title {
   color: color-mix(in srgb, var(--fastnear-home-accent, #60a5fa) 72%, white 28%);
@@ -1909,6 +1962,31 @@ html[data-theme='light'] .fastnear-home-button--primary:focus-visible {
   text-align: center;
 }
 
+.builder-fastnear-direct .fastnear-operation-page--failed {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 24px;
+}
+
+.builder-fastnear-direct .fastnear-interaction__retry {
+  appearance: none;
+  border: 1px solid var(--ifm-color-primary);
+  color: var(--ifm-color-primary);
+  background: transparent;
+  border-radius: 999px;
+  padding: 6px 18px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.builder-fastnear-direct .fastnear-interaction__retry:hover,
+.builder-fastnear-direct .fastnear-interaction__retry:focus-visible {
+  background: var(--ifm-color-primary);
+  color: white;
+}
+
 .builder-fastnear-direct .fastnear-interaction__placeholder--panel {
   border: 1px dashed var(--fastnear-border-strong);
   color: var(--fastnear-text-soft);
@@ -1918,6 +1996,74 @@ html[data-theme='light'] .fastnear-home-button--primary:focus-visible {
   border-style: solid;
   background: var(--fastnear-panel-bg);
   color: var(--fastnear-text-muted);
+}
+
+.builder-fastnear-direct .fastnear-direct-loading-shell__controls,
+.builder-fastnear-direct .fastnear-direct-loading-shell__reference-panel {
+  align-content: start;
+}
+
+.builder-fastnear-direct .fastnear-direct-loading-shell__controls {
+  min-height: clamp(280px, 42vh, 420px);
+}
+
+.builder-fastnear-direct .fastnear-direct-loading-shell__sidebar {
+  align-content: stretch;
+}
+
+.builder-fastnear-direct .fastnear-direct-loading-shell__card {
+  min-height: 0;
+}
+
+.builder-fastnear-direct .fastnear-direct-loading-shell__status {
+  margin: 0;
+  color: var(--fastnear-text-muted);
+  font-weight: 600;
+}
+
+.builder-fastnear-direct .fastnear-direct-loading-shell__field,
+.builder-fastnear-direct .fastnear-direct-loading-shell__actions,
+.builder-fastnear-direct .fastnear-direct-loading-shell__line {
+  border-radius: 10px;
+  background: linear-gradient(
+    90deg,
+    var(--fastnear-panel-subtle-bg) 0%,
+    var(--fastnear-chip-bg) 48%,
+    var(--fastnear-panel-subtle-bg) 100%
+  );
+}
+
+.builder-fastnear-direct .fastnear-direct-loading-shell__line {
+  min-height: 14px;
+}
+
+.builder-fastnear-direct .fastnear-direct-loading-shell__line--short {
+  width: min(42%, 160px);
+}
+
+.builder-fastnear-direct .fastnear-direct-loading-shell__line--medium {
+  width: min(68%, 320px);
+}
+
+.builder-fastnear-direct .fastnear-direct-loading-shell__line--long {
+  width: 100%;
+}
+
+.builder-fastnear-direct .fastnear-direct-loading-shell__field {
+  min-height: 44px;
+}
+
+.builder-fastnear-direct .fastnear-direct-loading-shell__actions {
+  width: min(180px, 48%);
+  min-height: 34px;
+}
+
+.builder-fastnear-direct .fastnear-direct-loading-shell__card .fastnear-interaction__placeholder--panel {
+  min-height: clamp(260px, 38vh, 360px);
+}
+
+.builder-fastnear-direct .fastnear-direct-loading-shell__reference-panel {
+  min-height: clamp(320px, 48vh, 520px);
 }
 
 .builder-fastnear-direct .fastnear-interaction__error {
@@ -2269,6 +2415,18 @@ html[data-theme='light'] .fastnear-home-button--primary:focus-visible {
 
   .builder-fastnear-direct .fastnear-interaction__input--multiline {
     min-height: 88px;
+  }
+
+  .builder-fastnear-direct .fastnear-direct-loading-shell__controls {
+    min-height: 0;
+  }
+
+  .builder-fastnear-direct .fastnear-direct-loading-shell__card .fastnear-interaction__placeholder--panel {
+    min-height: 220px;
+  }
+
+  .builder-fastnear-direct .fastnear-direct-loading-shell__reference-panel {
+    min-height: 260px;
   }
 
   .builder-fastnear-direct .fastnear-interaction__auth {

@@ -728,7 +728,7 @@
             "label": "Хеш транзакции"
           },
           "type": {
-            "description": "",
+            "description": "Предмет доказательства — `transaction` подтверждает включение транзакции верхнего уровня, `receipt` подтверждает включение конкретной квитанции, сформированной в ходе исполнения.",
             "label": "Тип доказательства"
           }
         },
@@ -1289,7 +1289,7 @@
             "label": "Хеш транзакции"
           },
           "type": {
-            "description": "",
+            "description": "Предмет доказательства — `transaction` подтверждает включение транзакции верхнего уровня, `receipt` подтверждает включение конкретной квитанции, сформированной в ходе исполнения.",
             "label": "Тип доказательства"
           }
         },
@@ -3531,7 +3531,7 @@
         }
       },
       "info": {
-        "description": "Проверьте работоспособность сервиса neardata — возвращает `{status: ok}` при успехе, ошибку при проблемах.",
+        "description": "Проверьте работоспособность сервиса NEAR Data — возвращает `{status: ok}` при успехе, ошибку при проблемах.",
         "summary": "Проверить состояние сервиса",
         "title": "NEAR Data API - Состояние"
       },
@@ -4821,6 +4821,7 @@
     "NEAR Protocol RPC: Light Client Proof": "NEAR Protocol RPC: доказательство для лёгкого клиента",
     "Mainnet Light Client Proof": "Доказательство для лёгкого клиента в Mainnet",
     "Testnet Light Client Proof": "Доказательство для лёгкого клиента в Testnet",
+    "Proof subject — `transaction` proves inclusion of the top-level transaction, `receipt` proves inclusion of a specific receipt produced during execution.": "Предмет доказательства — `transaction` подтверждает включение транзакции верхнего уровня, `receipt` подтверждает включение конкретной квитанции, сформированной в ходе исполнения.",
     "Returns the future windows for maintenance in current epoch for the specified account": "Возвращает будущие окна обслуживания в текущей эпохе для указанного аккаунта",
     "Get maintenance windows": "Получить окна обслуживания",
     "NEAR Protocol RPC: Get maintenance windows": "NEAR Protocol RPC: окна обслуживания",

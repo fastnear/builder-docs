@@ -21,10 +21,10 @@ test('Russian locale preserves localized homepage navigation', async ({ page }) 
   await page.goto('/ru/');
 
   await expect(page.locator('html')).toHaveAttribute('lang', 'ru');
+  await expect(page.getByRole('heading', { name: 'Справочник RPC / API' })).toBeVisible();
   await expect(
-    page.getByText('FastNear предлагает несколько документированных поверхностей', { exact: false })
+    page.getByText('Выберите API или справочник FastNear.', { exact: false })
   ).toBeVisible();
-  await expect(page.getByText('docs поверхности')).toHaveCount(0);
 
   const apiLink = page.locator('main').getByRole('link', { name: 'FastNear API', exact: true }).first();
   await expect(apiLink).toHaveAttribute('href', /\/ru\/api\/?$/);

@@ -7494,7 +7494,7 @@ https://tx.test.fastnear.com
 - `light_client_head` (body, обязательный, string): Хеш в кодировке Base58.
 - `sender_id` (body, string): ID аккаунта NEAR.
 - `transaction_hash` (body, string): Хеш в кодировке Base58.
-- `type` (body, string)
+- `type` (body, string): Предмет доказательства — `transaction` подтверждает включение транзакции верхнего уровня, `receipt` подтверждает включение конкретной квитанции, сформированной в ходе исполнения.
 - `receipt_id` (body, string): Base58-encoded hash
 - `receiver_id` (body, string): ID аккаунта NEAR
 ### Схема запроса
@@ -7574,7 +7574,9 @@ https://tx.test.fastnear.com
             "required": false,
             "schema": {
               "type": "string",
+              "description": "Предмет доказательства — `transaction` подтверждает включение транзакции верхнего уровня, `receipt` подтверждает включение конкретной квитанции, сформированной в ходе исполнения.",
               "enum": [
+                "транзакция",
                 "квитанция"
               ]
             }
@@ -10054,7 +10056,7 @@ https://tx.test.fastnear.com
 - `light_client_head` (body, обязательный, string): Хеш в кодировке Base58.
 - `sender_id` (body, string): ID аккаунта NEAR.
 - `transaction_hash` (body, string): Хеш в кодировке Base58.
-- `type` (body, string)
+- `type` (body, string): Предмет доказательства — `transaction` подтверждает включение транзакции верхнего уровня, `receipt` подтверждает включение конкретной квитанции, сформированной в ходе исполнения.
 - `receipt_id` (body, string): Base58-encoded hash
 - `receiver_id` (body, string): ID аккаунта NEAR
 ### Схема запроса
@@ -10134,7 +10136,9 @@ https://tx.test.fastnear.com
             "required": false,
             "schema": {
               "type": "string",
+              "description": "Предмет доказательства — `transaction` подтверждает включение транзакции верхнего уровня, `receipt` подтверждает включение конкретной квитанции, сформированной в ходе исполнения.",
               "enum": [
+                "транзакция",
                 "квитанция"
               ]
             }
@@ -17577,7 +17581,7 @@ https://tx.test.fastnear.com
 
 # NEAR Data API - Состояние
 Проверить состояние сервиса
-Проверьте работоспособность сервиса neardata — возвращает `{status: ok}` при успехе, ошибку при проблемах.
+Проверьте работоспособность сервиса NEAR Data — возвращает `{status: ok}` при успехе, ошибку при проблемах.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/apis/neardata/system/health
 - https://docs.fastnear.com/ru/apis/neardata/openapi/system/get_health
