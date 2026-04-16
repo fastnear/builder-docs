@@ -37,6 +37,7 @@ const LOCAL_ENV_KEYS = new Set([
   'DOCSEARCH_API_KEY',
   'DOCSEARCH_INDEX_NAME',
   'HIDE_EARLY_API_FAMILIES',
+  'CF_ANALYTICS_TOKEN',
 ]);
 
 function loadLocalEnvFiles(baseDir) {
@@ -84,6 +85,7 @@ const vscodeLanguageServerTypesEsmPath = path.join(
 const hideEarlyApiFamilies = /^(1|true|yes|on)$/i.test(
   process.env.HIDE_EARLY_API_FAMILIES || ''
 );
+const cfAnalyticsToken = (process.env.CF_ANALYTICS_TOKEN || '').trim();
 const requestedSearchProvider = (process.env.DOCS_SEARCH_PROVIDER || 'local').toLowerCase();
 const docsearchConfig = {
   appId: process.env.DOCSEARCH_APP_ID,
@@ -275,6 +277,18 @@ const config = {
         sameAs: ['https://github.com/fastnear', 'https://x.com/fast_near'],
       }),
     },
+  ],
+
+  scripts: [
+    ...(cfAnalyticsToken
+      ? [
+          {
+            src: 'https://static.cloudflareinsights.com/beacon.min.js',
+            defer: true,
+            'data-cf-beacon': JSON.stringify({ token: cfAnalyticsToken }),
+          },
+        ]
+      : []),
   ],
 
   // GitHub pages deployment config.
