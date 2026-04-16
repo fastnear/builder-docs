@@ -14,6 +14,10 @@ export function getFastnearOperationUiText() {
       id: 'fastnear.operationUi.copyCurlCommand',
       message: 'Copy curl command',
     }),
+    copyGroupLabel: translate({
+      id: 'fastnear.operationUi.copyGroupLabel',
+      message: 'Copy',
+    }),
     copiedCurlCommand: translate({
       id: 'fastnear.operationUi.copiedCurlCommand',
       message: 'Copied curl command',
@@ -30,6 +34,10 @@ export function getFastnearOperationUiText() {
       id: 'fastnear.operationUi.copyExampleUrl',
       message: 'Copy example URL',
     }),
+    copyExampleUrlButtonLabel: translate({
+      id: 'fastnear.operationUi.copyExampleUrlButtonLabel',
+      message: 'Example URL',
+    }),
     copyExampleUrlHelpAriaLabel: translate({
       id: 'fastnear.operationUi.copyExampleUrlHelpAriaLabel',
       message: 'About example URLs',
@@ -37,7 +45,11 @@ export function getFastnearOperationUiText() {
     copyExampleUrlHelpBody: translate({
       id: 'fastnear.operationUi.copyExampleUrlHelpBody',
       message:
-        'Copy a docs URL that reloads this page with the selected network, request example, finality, and any filled inputs preloaded as URL params. Saved API keys and tokens are never included.',
+        'Share a docs URL that reloads this example with the selected network, request example, finality, and any filled inputs preloaded. Saved API keys and tokens are never included.',
+    }),
+    copyCurlCommandButtonLabel: translate({
+      id: 'fastnear.operationUi.copyCurlCommandButtonLabel',
+      message: 'cURL',
     }),
     copyMarkdown: translate({
       id: 'fastnear.operationUi.copyMarkdown',

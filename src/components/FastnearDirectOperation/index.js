@@ -1638,80 +1638,95 @@ function FastnearOperationPage({ pageModel }) {
             </div>
 
             <div className="fastnear-interaction__actions">
-              <button
-                type="button"
-                className="fastnear-button fastnear-button--primary"
-                onClick={handleRun}
-                disabled={isRunning || !!missingField}
-              >
-                {isRunning ? uiText.sending : uiText.sendRequest}
-              </button>
-              <button
-                type="button"
-                className="fastnear-button fastnear-button--secondary"
-                onClick={async () => {
-                  if (!curlCommand) {
-                    return;
-                  }
-
-                  await copyTextToClipboard(curlCommand);
-                  setCopiedCurl(true);
-                }}
-                disabled={!curlCommand}
-              >
-                {copiedCurl ? (
-                  <CheckGlyph className="fastnear-button__icon" />
-                ) : (
-                  <CopyGlyph className="fastnear-button__icon" />
-                )}
-                <span>{copiedCurl ? uiText.copiedCurlCommand : uiText.copyCurlCommand}</span>
-              </button>
-              <div
-                className="fastnear-interaction__action-group"
-                onMouseEnter={() => setIsExampleUrlHelpOpen(true)}
-                onMouseLeave={() => setIsExampleUrlHelpOpen(false)}
-              >
+              <div className="fastnear-interaction__primary-actions">
                 <button
                   type="button"
-                  className="fastnear-button fastnear-button--secondary"
-                  onClick={async () => {
-                    if (!exampleUrl) {
-                      return;
-                    }
+                  className="fastnear-button fastnear-button--primary"
+                  onClick={handleRun}
+                  disabled={isRunning || !!missingField}
+                >
+                  {isRunning ? uiText.sending : uiText.sendRequest}
+                </button>
+              </div>
 
-                    await copyTextToClipboard(exampleUrl);
-                    setCopiedExampleUrl(true);
-                  }}
-                  disabled={!exampleUrl}
-                >
-                  {copiedExampleUrl ? (
-                    <CheckGlyph className="fastnear-button__icon" />
-                  ) : (
-                    <CopyGlyph className="fastnear-button__icon" />
-                  )}
-                  <span>{copiedExampleUrl ? uiText.copiedExampleUrl : uiText.copyExampleUrl}</span>
-                </button>
-                <button
-                  type="button"
-                  className="fastnear-interaction__action-help-button"
-                  aria-label={uiText.copyExampleUrlHelpAriaLabel}
-                  aria-expanded={isExampleUrlHelpOpen}
-                  aria-controls={exampleUrlHelpId}
-                  onClick={() => setIsExampleUrlHelpOpen(true)}
-                  onFocus={() => setIsExampleUrlHelpOpen(true)}
-                  onBlur={() => setIsExampleUrlHelpOpen(false)}
-                >
-                  ?
-                </button>
-                {isExampleUrlHelpOpen ? (
+              <div className="fastnear-interaction__copy-row">
+                <div className="fastnear-interaction__copy-heading">
+                  <span className="fastnear-interaction__copy-label">{uiText.copyGroupLabel}</span>
                   <div
-                    id={exampleUrlHelpId}
-                    role="tooltip"
-                    className="fastnear-interaction__action-tooltip"
+                    className="fastnear-interaction__action-group fastnear-interaction__action-group--help"
+                    onMouseEnter={() => setIsExampleUrlHelpOpen(true)}
+                    onMouseLeave={() => setIsExampleUrlHelpOpen(false)}
                   >
-                    {uiText.copyExampleUrlHelpBody}
+                    <button
+                      type="button"
+                      className="fastnear-interaction__action-help-button"
+                      aria-label={uiText.copyExampleUrlHelpAriaLabel}
+                      aria-expanded={isExampleUrlHelpOpen}
+                      aria-controls={exampleUrlHelpId}
+                      onClick={() => setIsExampleUrlHelpOpen(true)}
+                      onFocus={() => setIsExampleUrlHelpOpen(true)}
+                      onBlur={() => setIsExampleUrlHelpOpen(false)}
+                    >
+                      ?
+                    </button>
+                    {isExampleUrlHelpOpen ? (
+                      <div
+                        id={exampleUrlHelpId}
+                        role="tooltip"
+                        className="fastnear-interaction__action-tooltip"
+                      >
+                        {uiText.copyExampleUrlHelpBody}
+                      </div>
+                    ) : null}
                   </div>
-                ) : null}
+                </div>
+
+                <div className="fastnear-interaction__copy-buttons">
+                  <button
+                    type="button"
+                    className="fastnear-button fastnear-button--secondary"
+                    aria-label={copiedCurl ? uiText.copiedCurlCommand : uiText.copyCurlCommand}
+                    title={copiedCurl ? uiText.copiedCurlCommand : uiText.copyCurlCommand}
+                    onClick={async () => {
+                      if (!curlCommand) {
+                        return;
+                      }
+
+                      await copyTextToClipboard(curlCommand);
+                      setCopiedCurl(true);
+                    }}
+                    disabled={!curlCommand}
+                  >
+                    {copiedCurl ? (
+                      <CheckGlyph className="fastnear-button__icon" />
+                    ) : (
+                      <CopyGlyph className="fastnear-button__icon" />
+                    )}
+                    <span>{uiText.copyCurlCommandButtonLabel}</span>
+                  </button>
+                  <button
+                    type="button"
+                    className="fastnear-button fastnear-button--secondary"
+                    aria-label={copiedExampleUrl ? uiText.copiedExampleUrl : uiText.copyExampleUrl}
+                    title={copiedExampleUrl ? uiText.copiedExampleUrl : uiText.copyExampleUrl}
+                    onClick={async () => {
+                      if (!exampleUrl) {
+                        return;
+                      }
+
+                      await copyTextToClipboard(exampleUrl);
+                      setCopiedExampleUrl(true);
+                    }}
+                    disabled={!exampleUrl}
+                  >
+                    {copiedExampleUrl ? (
+                      <CheckGlyph className="fastnear-button__icon" />
+                    ) : (
+                      <CopyGlyph className="fastnear-button__icon" />
+                    )}
+                    <span>{uiText.copyExampleUrlButtonLabel}</span>
+                  </button>
+                </div>
               </div>
             </div>
 

@@ -422,6 +422,9 @@
   "fastnear.operationUi.copyCurlCommand": {
     "message": "Скопировать curl-команду"
   },
+  "fastnear.operationUi.copyGroupLabel": {
+    "message": "Копировать"
+  },
   "fastnear.operationUi.copiedCurlCommand": {
     "message": "Команда curl скопирована"
   },
@@ -434,11 +437,17 @@
   "fastnear.operationUi.copyExampleUrl": {
     "message": "Скопировать URL примера"
   },
+  "fastnear.operationUi.copyExampleUrlButtonLabel": {
+    "message": "URL примера"
+  },
   "fastnear.operationUi.copyExampleUrlHelpAriaLabel": {
     "message": "О URL примера"
   },
   "fastnear.operationUi.copyExampleUrlHelpBody": {
-    "message": "Скопируйте URL документации, который заново откроет эту страницу с выбранной сетью, примером запроса, финальностью и заполненными входными данными, подставленными через URL-параметры. Сохранённые API-ключи и токены никогда не включаются."
+    "message": "Поделитесь URL документации, который заново откроет этот пример с выбранной сетью, примером запроса, финальностью и заполненными входными данными. Сохранённые API-ключи и токены никогда не включаются."
+  },
+  "fastnear.operationUi.copyCurlCommandButtonLabel": {
+    "message": "cURL"
   },
   "fastnear.operationUi.copyMarkdown": {
     "message": "Копировать Markdown"
