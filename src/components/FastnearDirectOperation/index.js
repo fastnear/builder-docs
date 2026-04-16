@@ -128,6 +128,47 @@ function getDefaultFieldValues(pageModel, networkKey) {
   );
 }
 
+function pickInitialExample(pageModel, networkKey) {
+  const examples = pageModel.request?.examples || [];
+  if (examples.length === 0) {
+    return null;
+  }
+  return examples.find((example) => example.network === networkKey) || examples[0] || null;
+}
+
+function computeFieldValuesForExample(pageModel, networkKey, example) {
+  const defaults = getDefaultFieldValues(pageModel, networkKey);
+  if (!example) {
+    return defaults;
+  }
+
+  const isJsonRpc = pageModel.route.transport === "json-rpc";
+  const body = example.request?.body;
+  const hasJsonRpcParams =
+    isJsonRpc &&
+    body &&
+    typeof body === "object" &&
+    !Array.isArray(body) &&
+    body.params &&
+    typeof body.params === "object" &&
+    !Array.isArray(body.params);
+  const bodyMerge = isJsonRpc ? (hasJsonRpcParams ? body.params : {}) : body || {};
+
+  const merged = {
+    ...defaults,
+    ...bodyMerge,
+    ...(example.request?.path || {}),
+    ...(example.request?.query || {}),
+  };
+
+  return Object.fromEntries(
+    Object.entries(merged).map(([key, value]) => {
+      const field = pageModel.interaction.fields.find((candidate) => candidate.name === key);
+      return [key, field ? serializeFieldDraftValue(field, value) : String(value)];
+    })
+  );
+}
+
 const RUNTIME_STATUS_FIELD_DEFAULTS = {
   "rpc-block-by-height": "block_id",
 };
@@ -950,9 +991,14 @@ function FastnearOperationPage({ pageModel }) {
       ""
   );
   const [selectedFinality, setSelectedFinality] = useState("final");
-  const [fieldValues, setFieldValues] = useState(() =>
-    getDefaultFieldValues(pageModel, getInitialNetwork(pageModel))
-  );
+  const [fieldValues, setFieldValues] = useState(() => {
+    const initialNetwork = getInitialNetwork(pageModel);
+    return computeFieldValuesForExample(
+      pageModel,
+      initialNetwork,
+      pickInitialExample(pageModel, initialNetwork)
+    );
+  });
   const [apiKeyDraft, setApiKeyDraft] = useState("");
   const [copiedCurl, setCopiedCurl] = useState(false);
   const [copiedResponse, setCopiedResponse] = useState(false);
@@ -974,11 +1020,9 @@ function FastnearOperationPage({ pageModel }) {
   }, [auth.storedApiKey]);
 
   useEffect(() => {
-    const matchingExample = pageModel.request.examples.find(
-      (example) => example.network === selectedNetwork
-    );
-    setSelectedExampleId(matchingExample?.id || pageModel.request.examples[0]?.id || "");
-    setFieldValues(getDefaultFieldValues(pageModel, selectedNetwork));
+    const matchingExample = pickInitialExample(pageModel, selectedNetwork);
+    setSelectedExampleId(matchingExample?.id || "");
+    setFieldValues(computeFieldValuesForExample(pageModel, selectedNetwork, matchingExample));
   }, [pageModel, selectedNetwork]);
 
   useEffect(() => {
@@ -1191,30 +1235,8 @@ function FastnearOperationPage({ pageModel }) {
       setSelectedNetwork(example.network);
     }
 
-    const nextFieldValues = {
-      ...getDefaultFieldValues(pageModel, example.network || selectedNetwork),
-      ...(pageModel.route.transport === "json-rpc" &&
-      example.request?.body &&
-      typeof example.request.body === "object" &&
-      !Array.isArray(example.request.body) &&
-      example.request.body.params &&
-      typeof example.request.body.params === "object" &&
-      !Array.isArray(example.request.body.params)
-        ? example.request.body.params
-        : pageModel.route.transport === "json-rpc"
-          ? {}
-          : example.request?.body || {}),
-      ...(example.request?.path || {}),
-      ...(example.request?.query || {}),
-    };
-
     setFieldValues(
-      Object.fromEntries(
-        Object.entries(nextFieldValues).map(([key, value]) => {
-          const field = pageModel.interaction.fields.find((candidate) => candidate.name === key);
-          return [key, field ? serializeFieldDraftValue(field, value) : String(value)];
-        })
-      )
+      computeFieldValuesForExample(pageModel, example.network || selectedNetwork, example)
     );
   };
 
