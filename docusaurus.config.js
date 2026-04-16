@@ -536,7 +536,7 @@ const config = {
         },
       };
     },
-    function prismIncludeLanguagesNoopWebpackAlias() {
+    function prismIncludeLanguagesNoopWebpackAlias(context) {
       // `@docusaurus/theme-classic` registers `lib/prism-include-languages.js`
       // as a clientModule that statically imports `{ Prism } from 'prism-react-renderer'`
       // and then iterates `themeConfig.prism.additionalLanguages`. We don't
@@ -544,6 +544,18 @@ const config = {
       // runtime but still drags ~135 KB raw (~30 KB gz) of prism-react-renderer
       // into main.js. Alias it to an empty module so main.js sheds that cost;
       // `CodeBlock/Content` is swizzled to load Highlight from a lazy chunk.
+      const additionalLanguages =
+        context?.siteConfig?.themeConfig?.prism?.additionalLanguages;
+      if (Array.isArray(additionalLanguages) && additionalLanguages.length > 0) {
+        throw new Error(
+          `[fastnear-prism-include-languages-noop] themeConfig.prism.additionalLanguages is non-empty (${JSON.stringify(
+            additionalLanguages
+          )}), but this plugin aliases @docusaurus/theme-classic/lib/prism-include-languages to a no-op ` +
+            `to shed ~135 KB raw (~30 KB gz) from main.js. Additional languages would be silently dropped. ` +
+            `Either remove them from themeConfig.prism.additionalLanguages, or remove this plugin from ` +
+            `docusaurus.config.js to restore language registration.`
+        );
+      }
       return {
         name: 'fastnear-prism-include-languages-noop',
         configureWebpack() {
