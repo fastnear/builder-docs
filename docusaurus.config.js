@@ -510,6 +510,7 @@ const config = {
       };
     },
     path.resolve(configDir, 'plugins/finalizeLocalizedStaticAssets.cjs'),
+    path.resolve(configDir, 'plugins/bundleAnalyzerStatic.cjs'),
     [
       '@docusaurus/plugin-client-redirects',
       {
