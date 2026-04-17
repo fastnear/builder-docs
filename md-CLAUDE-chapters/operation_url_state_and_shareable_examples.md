@@ -209,6 +209,9 @@ This keeps the parser and serializer aligned.
 
 It also gives us one place to extend if we ever add another supported piece of URL-driven state.
 
+It also now contains the future autorun escape hatch: a page model can opt out of implicit load-time
+execution by setting `interaction.autoruns === false`.
+
 ### 3. Field parsing and serialization are centralized
 
 `src/utils/fastnearFieldValueCodec.js` handles the raw draft-string contract for fields.
@@ -382,6 +385,9 @@ The modal supports:
 - active-match highlighting
 - result count such as `3 of 12`
 - auto-scroll of the active match into view
+
+For large responses, the runtime still computes the full match set and count, but switches from
+"highlight every hit" to "highlight only the active hit" so typing and navigation stay responsive.
 
 This is enough to make large technical responses genuinely inspectable without overbuilding the UI.
 

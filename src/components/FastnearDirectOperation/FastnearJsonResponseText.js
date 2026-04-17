@@ -174,12 +174,31 @@ function renderTokenRange(text, tokens, rangeStart, rangeEnd, keyPrefix) {
 
 export default function FastnearJsonResponseText({
   activeMatchIndex = -1,
+  activeMatchOnly = false,
   className = "",
   matches = [],
   text,
 }) {
   const activeMatchRefs = useRef([]);
   const tokens = useMemo(() => tokenizeJsonText(text), [text]);
+  const renderedMatches = useMemo(() => {
+    if (!matches.length) {
+      return [];
+    }
+
+    if (activeMatchOnly) {
+      if (activeMatchIndex < 0 || activeMatchIndex >= matches.length) {
+        return [];
+      }
+
+      return [{ ...matches[activeMatchIndex], matchIndex: activeMatchIndex }];
+    }
+
+    return matches.map((match, index) => ({
+      ...match,
+      matchIndex: index,
+    }));
+  }, [activeMatchIndex, activeMatchOnly, matches]);
 
   useEffect(() => {
     if (activeMatchIndex < 0 || activeMatchIndex >= matches.length) {
@@ -189,30 +208,30 @@ export default function FastnearJsonResponseText({
     scrollResponseMatchIntoView(activeMatchRefs.current[activeMatchIndex]);
   }, [activeMatchIndex, matches.length]);
 
-  if (!matches.length) {
+  if (!renderedMatches.length) {
     return <pre className={className}>{renderTokenRange(text, tokens, 0, text.length, "full")}</pre>;
   }
 
   const children = [];
   let cursor = 0;
 
-  matches.forEach((match, index) => {
+  renderedMatches.forEach((match) => {
     if (match.start > cursor) {
       children.push(...renderTokenRange(text, tokens, cursor, match.start, `gap-${cursor}`));
     }
 
-    const isActive = index === activeMatchIndex;
+    const isActive = match.matchIndex === activeMatchIndex;
     children.push(
       <mark
         key={`response-match-${match.start}-${match.end}`}
         ref={(element) => {
-          activeMatchRefs.current[index] = element;
+          activeMatchRefs.current[match.matchIndex] = element;
         }}
         className={`fastnear-interaction__response-match ${isActive ? "is-active" : ""}`}
-        data-fastnear-response-match-index={index}
+        data-fastnear-response-match-index={match.matchIndex}
         data-fastnear-response-match-active={isActive ? "true" : "false"}
       >
-        {renderTokenRange(text, tokens, match.start, match.end, `match-${index}`)}
+        {renderTokenRange(text, tokens, match.start, match.end, `match-${match.matchIndex}`)}
       </mark>
     );
     cursor = match.end;

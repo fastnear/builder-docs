@@ -688,13 +688,15 @@ function getRequestedResponseState(search) {
   };
 }
 
-function findResponseMatches(text, searchTerm) {
+const LARGE_RESPONSE_HIGHLIGHT_TEXT_THRESHOLD = 120000;
+const LARGE_RESPONSE_HIGHLIGHT_MATCH_THRESHOLD = 200;
+
+function findResponseMatches(normalizedText, searchTerm) {
   const normalizedSearchTerm = searchTerm.trim().toLowerCase();
-  if (!text || !normalizedSearchTerm) {
+  if (!normalizedText || !normalizedSearchTerm) {
     return [];
   }
 
-  const normalizedText = text.toLowerCase();
   const matches = [];
   let cursor = 0;
 
@@ -712,6 +714,13 @@ function findResponseMatches(text, searchTerm) {
   }
 
   return matches;
+}
+
+function shouldUseActiveOnlyResponseHighlight(text, matches) {
+  return (
+    text.length > LARGE_RESPONSE_HIGHLIGHT_TEXT_THRESHOLD ||
+    matches.length > LARGE_RESPONSE_HIGHLIGHT_MATCH_THRESHOLD
+  );
 }
 
 function getResponseFindResultsLabel(uiText, searchTerm, matches, activeMatchIndex) {
@@ -764,9 +773,28 @@ function FastnearOperationResponseText({
   text,
   matches = [],
   activeMatchIndex = -1,
+  activeMatchOnly = false,
   className = "",
 }) {
   const activeMatchRefs = useRef([]);
+  const renderedMatches = useMemo(() => {
+    if (!matches.length) {
+      return [];
+    }
+
+    if (activeMatchOnly) {
+      if (activeMatchIndex < 0 || activeMatchIndex >= matches.length) {
+        return [];
+      }
+
+      return [{ ...matches[activeMatchIndex], matchIndex: activeMatchIndex }];
+    }
+
+    return matches.map((match, index) => ({
+      ...match,
+      matchIndex: index,
+    }));
+  }, [activeMatchIndex, activeMatchOnly, matches]);
 
   useEffect(() => {
     if (activeMatchIndex < 0 || activeMatchIndex >= matches.length) {
@@ -776,14 +804,14 @@ function FastnearOperationResponseText({
     scrollResponseMatchIntoView(activeMatchRefs.current[activeMatchIndex]);
   }, [activeMatchIndex, matches.length]);
 
-  if (!matches.length) {
+  if (!renderedMatches.length) {
     return <pre className={className}>{text}</pre>;
   }
 
   const children = [];
   let cursor = 0;
 
-  matches.forEach((match, index) => {
+  renderedMatches.forEach((match) => {
     if (match.start > cursor) {
       children.push(
         <React.Fragment key={`response-text-${cursor}`}>
@@ -792,17 +820,17 @@ function FastnearOperationResponseText({
       );
     }
 
-    const isActive = index === activeMatchIndex;
+    const isActive = match.matchIndex === activeMatchIndex;
     children.push(
       <mark
         key={`response-match-${match.start}-${match.end}`}
         ref={(element) => {
-          activeMatchRefs.current[index] = element;
+          activeMatchRefs.current[match.matchIndex] = element;
         }}
         className={`fastnear-interaction__response-match ${
           isActive ? "is-active" : ""
         }`}
-        data-fastnear-response-match-index={index}
+        data-fastnear-response-match-index={match.matchIndex}
         data-fastnear-response-match-active={isActive ? "true" : "false"}
       >
         {text.slice(match.start, match.end)}
@@ -1191,6 +1219,8 @@ function FastnearOperationPage({ pageModel }) {
   const uiText = getFastnearOperationUiText();
   const auth = usePortalAuth();
   const initialOperationState = useMemo(() => buildInitialOperationState(pageModel), [pageModel]);
+  // URL-seeded fields are protected from one-time runtime hydration on first paint so a
+  // shared link's explicit inputs do not get replaced by "helpful" live defaults.
   const protectedHydrationFieldsRef = useRef(initialOperationState.protectedFieldNames);
   const [selectedNetwork, setSelectedNetwork] = useState(initialOperationState.selectedNetwork);
   const [selectedExampleId, setSelectedExampleId] = useState(initialOperationState.selectedExampleId);
@@ -1401,10 +1431,20 @@ function FastnearOperationPage({ pageModel }) {
   const deferredRunResult = useDeferredValue(runResult);
   const isRunResultTextPending = Boolean(runResult && deferredRunResult !== runResult);
   const runResultText = useMemo(() => getRunResultText(deferredRunResult), [deferredRunResult]);
-  const normalizedResponseFind = responseFindDraft.trim();
+  const normalizedRunResultText = useMemo(
+    () => (runResultText ? runResultText.toLowerCase() : ""),
+    [runResultText]
+  );
+  const deferredResponseFindDraft = useDeferredValue(responseFindDraft);
+  const immediateResponseFind = responseFindDraft.trim();
+  const normalizedResponseFind = deferredResponseFindDraft.trim();
   const responseMatches = useMemo(
-    () => findResponseMatches(runResultText, normalizedResponseFind),
-    [normalizedResponseFind, runResultText]
+    () => findResponseMatches(normalizedRunResultText, normalizedResponseFind),
+    [normalizedResponseFind, normalizedRunResultText]
+  );
+  const useActiveOnlyResponseHighlight = useMemo(
+    () => shouldUseActiveOnlyResponseHighlight(runResultText, responseMatches),
+    [responseMatches, runResultText]
   );
   const responseFindResultsLabel = getResponseFindResultsLabel(
     uiText,
@@ -1426,13 +1466,13 @@ function FastnearOperationPage({ pageModel }) {
         trimmedFieldValues,
         {
           isResponseExpanded: isResponseModalOpen,
-          responseFind: normalizedResponseFind,
+          responseFind: immediateResponseFind,
         }
       ),
     [
       currentUrl,
+      immediateResponseFind,
       isResponseModalOpen,
-      normalizedResponseFind,
       pageModel,
       selectedExample?.id,
       selectedFinality,
@@ -2437,6 +2477,7 @@ function FastnearOperationPage({ pageModel }) {
                     fallback={
                       <FastnearOperationResponseText
                         activeMatchIndex={activeResponseFindIndex}
+                        activeMatchOnly={useActiveOnlyResponseHighlight}
                         className="fastnear-interaction__text-response fastnear-response-modal__text-response"
                         matches={responseMatches}
                         text={runResultText}
@@ -2446,6 +2487,7 @@ function FastnearOperationPage({ pageModel }) {
                     {deferredRunResult?.kind === "json" ? (
                       <FastnearJsonResponseText
                         activeMatchIndex={activeResponseFindIndex}
+                        activeMatchOnly={useActiveOnlyResponseHighlight}
                         className="fastnear-interaction__text-response fastnear-response-modal__text-response"
                         matches={responseMatches}
                         text={runResultText}
@@ -2453,6 +2495,7 @@ function FastnearOperationPage({ pageModel }) {
                     ) : (
                       <FastnearOperationResponseText
                         activeMatchIndex={activeResponseFindIndex}
+                        activeMatchOnly={useActiveOnlyResponseHighlight}
                         className="fastnear-interaction__text-response fastnear-response-modal__text-response"
                         matches={responseMatches}
                         text={runResultText}

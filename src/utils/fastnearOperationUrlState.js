@@ -112,7 +112,15 @@ function hasRecognizedOperationQueryState(pageModel, searchParams) {
   return Object.keys(collectOperationFieldPrefills(pageModel, searchParams)).length > 0;
 }
 
+function operationAllowsAutorun(pageModel) {
+  return pageModel?.interaction?.autoruns !== false;
+}
+
 function shouldAutorunOperationOnLoad(pageModel, searchParams) {
+  if (!operationAllowsAutorun(pageModel)) {
+    return false;
+  }
+
   return hasRecognizedOperationQueryState(pageModel, searchParams);
 }
 

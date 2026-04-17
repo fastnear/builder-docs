@@ -364,6 +364,30 @@ test('response action rails stay visible while scrolling inline and expanded res
   await page.goto('/rpc/account/view-account?account_id=near');
   await expect(page.locator('.fastnear-interaction__text-response')).toContainText('"row-159');
 
+  const inlineStyleMetrics = await page.evaluate(() => {
+    const actions = document.querySelector('.fastnear-interaction__result-actions');
+    const text = document.querySelector('.fastnear-interaction__text-response');
+    if (!actions || !text) {
+      return null;
+    }
+
+    const actionStyles = window.getComputedStyle(actions);
+    const textStyles = window.getComputedStyle(text);
+
+    return {
+      actionsBackground: actionStyles.backgroundColor,
+      actionsBorderTopWidth: actionStyles.borderTopWidth,
+      actionsBoxShadow: actionStyles.boxShadow,
+      textPaddingTop: parseFloat(textStyles.paddingTop),
+    };
+  });
+
+  expect(inlineStyleMetrics).not.toBeNull();
+  expect(inlineStyleMetrics.actionsBackground).toBe('rgba(0, 0, 0, 0)');
+  expect(inlineStyleMetrics.actionsBorderTopWidth).toBe('0px');
+  expect(inlineStyleMetrics.actionsBoxShadow).toBe('none');
+  expect(inlineStyleMetrics.textPaddingTop).toBeLessThanOrEqual(18);
+
   const inlineMetrics = await page.evaluate(() => {
     const shell = document.querySelector('.fastnear-interaction__result-shell');
     const rail = document.querySelector('.fastnear-interaction__result-action-rail');
@@ -388,6 +412,30 @@ test('response action rails stay visible while scrolling inline and expanded res
   const dialog = page.getByRole('dialog', { name: 'Expanded response' });
   await expect(dialog).toBeVisible();
 
+  const modalStyleMetrics = await page.evaluate(() => {
+    const actions = document.querySelector('.fastnear-response-modal__viewer-actions');
+    const text = document.querySelector('.fastnear-response-modal__text-response');
+    if (!actions || !text) {
+      return null;
+    }
+
+    const actionStyles = window.getComputedStyle(actions);
+    const textStyles = window.getComputedStyle(text);
+
+    return {
+      actionsBackground: actionStyles.backgroundColor,
+      actionsBorderTopWidth: actionStyles.borderTopWidth,
+      actionsBoxShadow: actionStyles.boxShadow,
+      textPaddingTop: parseFloat(textStyles.paddingTop),
+    };
+  });
+
+  expect(modalStyleMetrics).not.toBeNull();
+  expect(modalStyleMetrics.actionsBackground).toBe('rgba(0, 0, 0, 0)');
+  expect(modalStyleMetrics.actionsBorderTopWidth).toBe('0px');
+  expect(modalStyleMetrics.actionsBoxShadow).toBe('none');
+  expect(modalStyleMetrics.textPaddingTop).toBeLessThanOrEqual(18);
+
   const modalMetrics = await page.evaluate(() => {
     const viewer = document.querySelector('.fastnear-response-modal__viewer');
     const rail = document.querySelector('.fastnear-response-modal__viewer-rail');
@@ -407,6 +455,78 @@ test('response action rails stay visible while scrolling inline and expanded res
 
   expect(modalMetrics).not.toBeNull();
   expect(Math.abs(modalMetrics.railTop - modalMetrics.viewerTop)).toBeLessThan(36);
+});
+
+test('large response find keeps typing responsive while only highlighting the active match', async ({ page }) => {
+  await page.route('https://rpc.mainnet.fastnear.com/**', async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        jsonrpc: '2.0',
+        id: 'fastnear',
+        result: {
+          sections: Array.from({ length: 250 }, (_, index) => ({
+            index,
+            text: `needle ${index} ${'payload '.repeat(90)}`,
+          })),
+        },
+      }),
+    });
+  });
+
+  await page.goto('/rpc/account/view-account?account_id=near');
+
+  const requestPromise = waitForRpcRequest(
+    page,
+    'https://rpc.mainnet.fastnear.com',
+    (payload) => payload?.id !== 'fastnear-docs'
+  );
+  await page.getByRole('button', { name: 'Send request' }).click();
+  await requestPromise;
+
+  await page.getByRole('button', { name: 'Expand response' }).click();
+  const dialog = page.getByRole('dialog', { name: 'Expanded response' });
+  await expect(dialog).toBeVisible();
+
+  const findInput = dialog.getByRole('textbox', { name: 'Find in response' });
+  await findInput.fill('needle');
+  await expect(findInput).toHaveValue('needle');
+  await expect(dialog.locator('.fastnear-response-modal__find-results')).toHaveText('1 of 250');
+  await expect(dialog.locator('[data-fastnear-response-match-index]')).toHaveCount(1);
+  await expect(dialog.locator('[data-fastnear-response-match-active="true"]')).toHaveAttribute(
+    'data-fastnear-response-match-index',
+    '0'
+  );
+
+  await dialog.getByRole('button', { name: 'Next match' }).click();
+  await expect(dialog.locator('.fastnear-response-modal__find-results')).toHaveText('2 of 250');
+  await expect(dialog.locator('[data-fastnear-response-match-index]')).toHaveCount(1);
+  await expect(dialog.locator('[data-fastnear-response-match-active="true"]')).toHaveAttribute(
+    'data-fastnear-response-match-index',
+    '1'
+  );
+
+  const centering = await page.evaluate(() => {
+    const viewer = document.querySelector('.fastnear-response-modal__viewer');
+    const activeMatch = document.querySelector('[data-fastnear-response-match-active="true"]');
+    if (!viewer || !activeMatch) {
+      return null;
+    }
+
+    const viewerRect = viewer.getBoundingClientRect();
+    const matchRect = activeMatch.getBoundingClientRect();
+    const viewerMiddle = viewerRect.top + viewerRect.height / 2;
+    const matchMiddle = matchRect.top + matchRect.height / 2;
+
+    return {
+      delta: Math.abs(matchMiddle - viewerMiddle),
+      viewerHeight: viewerRect.height,
+    };
+  });
+
+  expect(centering).not.toBeNull();
+  expect(centering.delta).toBeLessThan(centering.viewerHeight * 0.3);
 });
 
 test('request example and finality URL params restore extra UI state on load', async ({ page }) => {
