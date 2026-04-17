@@ -46,24 +46,24 @@
 }
 ```
 ### Входные данные
-- `account_id` (body, обязательный, string)
-- `desc` (body, boolean)
-- `from_tx_block_height` (body, integer)
-- `is_action_arg` (body, boolean)
-- `is_any_signer` (body, boolean)
-- `is_delegated_signer` (body, boolean)
-- `is_event_log` (body, boolean)
-- `is_explicit_refund_to` (body, boolean)
-- `is_function_call` (body, boolean)
-- `is_predecessor` (body, boolean)
-- `is_real_receiver` (body, boolean)
-- `is_real_signer` (body, boolean)
-- `is_receiver` (body, boolean)
-- `is_signer` (body, boolean)
-- `is_success` (body, boolean)
-- `limit` (body, integer)
-- `resume_token` (body, string)
-- `to_tx_block_height` (body, integer)
+- `account_id` (body, обязательный, string): NEAR account to query transactions for (may be a signer, predecessor, receiver, or related party).
+- `desc` (body, boolean): Sort newest-first when true; oldest-first when false or omitted.
+- `from_tx_block_height` (body, integer): Inclusive lower bound on the transaction's block height.
+- `is_action_arg` (body, boolean): Restrict to transactions where this account appeared in action arguments.
+- `is_any_signer` (body, boolean): Restrict to transactions where this account signed either the top-level transaction or a delegated action.
+- `is_delegated_signer` (body, boolean): Restrict to transactions where this account signed a delegated action.
+- `is_event_log` (body, boolean): Restrict to transactions where this account appeared in a JSON event log.
+- `is_explicit_refund_to` (body, boolean): Restrict to transactions where this account was the explicit `refund_to` target of an action receipt.
+- `is_function_call` (body, boolean): Restrict to transactions where this account was the target of a function-call action.
+- `is_predecessor` (body, boolean): Restrict to transactions where this account was the predecessor of a receipt.
+- `is_real_receiver` (body, boolean): Restrict to transactions where this account was the real receiver — excluding relayer receivers and gas refunds.
+- `is_real_signer` (body, boolean): Restrict to transactions where this account was the real signer — direct or delegated, excluding relayer signers.
+- `is_receiver` (body, boolean): Restrict to transactions where this account received a receipt.
+- `is_signer` (body, boolean): Restrict to transactions where this account signed the top-level transaction.
+- `is_success` (body, boolean): Restrict to transactions whose execution succeeded (true) or failed/pending (false).
+- `limit` (body, integer): Maximum rows to return in one page (1–200).
+- `resume_token` (body, string): Opaque pagination token returned on a prior page; omit for the first page.
+- `to_tx_block_height` (body, integer): Exclusive upper bound on the transaction's block height.
 ### Схема запроса
 ```json
 {
@@ -77,14 +77,16 @@
       "name": "account_id",
       "required": true,
       "schema": {
-        "type": "string"
+        "type": "string",
+        "description": "NEAR account to query transactions for (may be a signer, predecessor, receiver, or related party)."
       }
     },
     {
       "name": "desc",
       "required": false,
       "schema": {
-        "type": "boolean"
+        "type": "boolean",
+        "description": "Sort newest-first when true; oldest-first when false or omitted."
       }
     },
     {
@@ -92,6 +94,7 @@
       "required": false,
       "schema": {
         "type": "integer",
+        "description": "Inclusive lower bound on the transaction's block height.",
         "format": "uint64"
       }
     },
@@ -99,84 +102,96 @@
       "name": "is_action_arg",
       "required": false,
       "schema": {
-        "type": "boolean"
+        "type": "boolean",
+        "description": "Restrict to transactions where this account appeared in action arguments."
       }
     },
     {
       "name": "is_any_signer",
       "required": false,
       "schema": {
-        "type": "boolean"
+        "type": "boolean",
+        "description": "Restrict to transactions where this account signed either the top-level transaction or a delegated action."
       }
     },
     {
       "name": "is_delegated_signer",
       "required": false,
       "schema": {
-        "type": "boolean"
+        "type": "boolean",
+        "description": "Restrict to transactions where this account signed a delegated action."
       }
     },
     {
       "name": "is_event_log",
       "required": false,
       "schema": {
-        "type": "boolean"
+        "type": "boolean",
+        "description": "Restrict to transactions where this account appeared in a JSON event log."
       }
     },
     {
       "name": "is_explicit_refund_to",
       "required": false,
       "schema": {
-        "type": "boolean"
+        "type": "boolean",
+        "description": "Restrict to transactions where this account was the explicit `refund_to` target of an action receipt."
       }
     },
     {
       "name": "is_function_call",
       "required": false,
       "schema": {
-        "type": "boolean"
+        "type": "boolean",
+        "description": "Restrict to transactions where this account was the target of a function-call action."
       }
     },
     {
       "name": "is_predecessor",
       "required": false,
       "schema": {
-        "type": "boolean"
+        "type": "boolean",
+        "description": "Restrict to transactions where this account was the predecessor of a receipt."
       }
     },
     {
       "name": "is_real_receiver",
       "required": false,
       "schema": {
-        "type": "boolean"
+        "type": "boolean",
+        "description": "Restrict to transactions where this account was the real receiver — excluding relayer receivers and gas refunds."
       }
     },
     {
       "name": "is_real_signer",
       "required": false,
       "schema": {
-        "type": "boolean"
+        "type": "boolean",
+        "description": "Restrict to transactions where this account was the real signer — direct or delegated, excluding relayer signers."
       }
     },
     {
       "name": "is_receiver",
       "required": false,
       "schema": {
-        "type": "boolean"
+        "type": "boolean",
+        "description": "Restrict to transactions where this account received a receipt."
       }
     },
     {
       "name": "is_signer",
       "required": false,
       "schema": {
-        "type": "boolean"
+        "type": "boolean",
+        "description": "Restrict to transactions where this account signed the top-level transaction."
       }
     },
     {
       "name": "is_success",
       "required": false,
       "schema": {
-        "type": "boolean"
+        "type": "boolean",
+        "description": "Restrict to transactions whose execution succeeded (true) or failed/pending (false)."
       }
     },
     {
@@ -184,6 +199,7 @@
       "required": false,
       "schema": {
         "type": "integer",
+        "description": "Maximum rows to return in one page (1–200).",
         "format": "uint"
       }
     },
@@ -192,6 +208,7 @@
       "required": false,
       "schema": {
         "type": "string",
+        "description": "Opaque pagination token returned on a prior page; omit for the first page.",
         "default": null
       }
     },
@@ -200,6 +217,7 @@
       "required": false,
       "schema": {
         "type": "integer",
+        "description": "Exclusive upper bound on the transaction's block height.",
         "format": "uint64"
       }
     }

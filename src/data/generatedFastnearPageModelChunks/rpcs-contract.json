@@ -35,12 +35,14 @@
           }
         },
         {
+          "description": "Name of the contract view method to invoke.",
           "label": "Method Name",
           "location": "body",
           "name": "method_name",
           "required": true,
           "schema": {
-            "type": "string"
+            "type": "string",
+            "description": "Name of the contract view method to invoke."
           }
         }
       ],
@@ -145,7 +147,8 @@
                   "name": "method_name",
                   "required": true,
                   "schema": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "Name of the contract view method to invoke."
                   }
                 },
                 {
@@ -1299,12 +1302,14 @@
           }
         },
         {
+          "description": "Include a Merkle proof for the queried state alongside the values.",
           "label": "Include Proof",
           "location": "body",
           "name": "include_proof",
           "required": false,
           "schema": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Include a Merkle proof for the queried state alongside the values."
           }
         },
         {
@@ -1409,7 +1414,8 @@
                   "name": "include_proof",
                   "required": false,
                   "schema": {
-                    "type": "boolean"
+                    "type": "boolean",
+                    "description": "Include a Merkle proof for the queried state alongside the values."
                   }
                 },
                 {

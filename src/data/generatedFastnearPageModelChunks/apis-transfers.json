@@ -12,39 +12,47 @@
       "authTransport": "bearer",
       "fields": [
         {
+          "description": "NEAR account to query transfers for (the signer or receiver, depending on `direction`).",
           "label": "Account ID",
           "location": "body",
           "name": "account_id",
           "required": true,
           "schema": {
-            "type": "string"
+            "type": "string",
+            "description": "NEAR account to query transfers for (the signer or receiver, depending on `direction`)."
           }
         },
         {
+          "description": "Asset identifier such as `native:near` for NEAR or `<contract_id>` for fungible tokens.",
           "label": "Asset Id",
           "location": "body",
           "name": "asset_id",
           "required": false,
           "schema": {
-            "type": "string"
+            "type": "string",
+            "description": "Asset identifier such as `native:near` for NEAR or `<contract_id>` for fungible tokens."
           }
         },
         {
+          "description": "When true, sort newest-first; when false or omitted, sort oldest-first.",
           "label": "Desc",
           "location": "body",
           "name": "desc",
           "required": false,
           "schema": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "When true, sort newest-first; when false or omitted, sort oldest-first."
           }
         },
         {
+          "description": "Restrict to transfers where the account acts as `sender` or `receiver`; omit for both sides.",
           "label": "Direction",
           "location": "body",
           "name": "direction",
           "required": true,
           "schema": {
             "type": "string",
+            "description": "Restrict to transfers where the account acts as `sender` or `receiver`; omit for both sides.",
             "enum": [
               "sender",
               "receiver"
@@ -52,83 +60,99 @@
           }
         },
         {
+          "description": "Inclusive lower bound on block timestamp in milliseconds since the Unix epoch.",
           "label": "From Timestamp Ms",
           "location": "body",
           "name": "from_timestamp_ms",
           "required": false,
           "schema": {
             "type": "integer",
+            "description": "Inclusive lower bound on block timestamp in milliseconds since the Unix epoch.",
             "format": "uint64"
           }
         },
         {
+          "description": "When true, hide system transfers (validator rewards, implicit account creation, refunds).",
           "label": "Ignore System",
           "location": "body",
           "name": "ignore_system",
           "required": false,
           "schema": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "When true, hide system transfers (validator rewards, implicit account creation, refunds)."
           }
         },
         {
+          "description": "Maximum number of transfer rows to return in one page (1–100).",
           "label": "Limit",
           "location": "body",
           "name": "limit",
           "required": false,
           "schema": {
             "type": "integer",
+            "description": "Maximum number of transfer rows to return in one page (1–100).",
             "format": "uint"
           }
         },
         {
           "default": null,
+          "description": "Minimum absolute transfer amount in the asset's base units (e.g. yoctoNEAR), stringified u128.",
           "label": "Min Amount",
           "location": "body",
           "name": "min_amount",
           "required": false,
           "schema": {
             "type": "string",
+            "description": "Minimum absolute transfer amount in the asset's base units (e.g. yoctoNEAR), stringified u128.",
             "default": null
           }
         },
         {
+          "description": "Minimum transfer amount in human-readable units (decimals already applied).",
           "label": "Min Human Amount",
           "location": "body",
           "name": "min_human_amount",
           "required": false,
           "schema": {
             "type": "number",
+            "description": "Minimum transfer amount in human-readable units (decimals already applied).",
             "format": "double"
           }
         },
         {
+          "description": "Minimum transfer amount in USD-equivalent at time of transfer.",
           "label": "Min Usd Amount",
           "location": "body",
           "name": "min_usd_amount",
           "required": false,
           "schema": {
             "type": "number",
+            "description": "Minimum transfer amount in USD-equivalent at time of transfer.",
             "format": "double"
           }
         },
         {
           "default": null,
+          "description": "Opaque pagination token returned as `resume_token` on a prior page; omit for the first page.",
           "label": "Resume Token",
           "location": "body",
           "name": "resume_token",
           "required": false,
           "schema": {
             "type": "string",
+            "description": "Opaque pagination token returned as `resume_token` on a prior page; omit for the first page.",
             "default": null
           }
         },
         {
+          "description": "Exclusive upper bound on block timestamp in milliseconds since the Unix epoch.",
           "label": "To Timestamp Ms",
           "location": "body",
           "name": "to_timestamp_ms",
           "required": false,
           "schema": {
             "type": "integer",
+            "description": "Exclusive upper bound on block timestamp in milliseconds since the Unix epoch.",
             "format": "uint64"
           }
         }
@@ -174,21 +198,24 @@
             "name": "account_id",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "description": "NEAR account to query transfers for (the signer or receiver, depending on `direction`)."
             }
           },
           {
             "name": "asset_id",
             "required": false,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "description": "Asset identifier such as `native:near` for NEAR or `<contract_id>` for fungible tokens."
             }
           },
           {
             "name": "desc",
             "required": false,
             "schema": {
-              "type": "boolean"
+              "type": "boolean",
+              "description": "When true, sort newest-first; when false or omitted, sort oldest-first."
             }
           },
           {
@@ -196,6 +223,7 @@
             "required": true,
             "schema": {
               "type": "string",
+              "description": "Restrict to transfers where the account acts as `sender` or `receiver`; omit for both sides.",
               "enum": [
                 "sender",
                 "receiver"
@@ -207,6 +235,7 @@
             "required": false,
             "schema": {
               "type": "integer",
+              "description": "Inclusive lower bound on block timestamp in milliseconds since the Unix epoch.",
               "format": "uint64"
             }
           },
@@ -214,7 +243,8 @@
             "name": "ignore_system",
             "required": false,
             "schema": {
-              "type": "boolean"
+              "type": "boolean",
+              "description": "When true, hide system transfers (validator rewards, implicit account creation, refunds)."
             }
           },
           {
@@ -222,6 +252,7 @@
             "required": false,
             "schema": {
               "type": "integer",
+              "description": "Maximum number of transfer rows to return in one page (1–100).",
               "format": "uint"
             }
           },
@@ -230,6 +261,7 @@
             "required": false,
             "schema": {
               "type": "string",
+              "description": "Minimum absolute transfer amount in the asset's base units (e.g. yoctoNEAR), stringified u128.",
               "default": null
             }
           },
@@ -238,6 +270,7 @@
             "required": false,
             "schema": {
               "type": "number",
+              "description": "Minimum transfer amount in human-readable units (decimals already applied).",
               "format": "double"
             }
           },
@@ -246,6 +279,7 @@
             "required": false,
             "schema": {
               "type": "number",
+              "description": "Minimum transfer amount in USD-equivalent at time of transfer.",
               "format": "double"
             }
           },
@@ -254,6 +288,7 @@
             "required": false,
             "schema": {
               "type": "string",
+              "description": "Opaque pagination token returned as `resume_token` on a prior page; omit for the first page.",
               "default": null
             }
           },
@@ -262,6 +297,7 @@
             "required": false,
             "schema": {
               "type": "integer",
+              "description": "Exclusive upper bound on block timestamp in milliseconds since the Unix epoch.",
               "format": "uint64"
             }
           }

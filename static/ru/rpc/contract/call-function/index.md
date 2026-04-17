@@ -133,7 +133,8 @@
             "name": "method_name",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "description": "Name of the contract view method to invoke."
             }
           },
           {

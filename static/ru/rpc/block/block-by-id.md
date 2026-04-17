@@ -28,7 +28,7 @@
   "id": "fastnear",
   "method": "блок",
   "params": {
-    "block_id": "9XN7MtDywZvfGx6TKy1MT2iCZkKuHikJXmNazxdZ4x6T"
+    "block_id": "EPnLgE7iEq9s7yTkos96M3cWymH5avBAPm3qx3NXqR8H"
   }
 }
 ```
@@ -41,7 +41,7 @@
     "id": "fastnear",
     "method": "блок",
     "params": {
-      "block_id": "9XN7MtDywZvfGx6TKy1MT2iCZkKuHikJXmNazxdZ4x6T"
+      "block_id": "EPnLgE7iEq9s7yTkos96M3cWymH5avBAPm3qx3NXqR8H"
     }
   },
   "headers": {},

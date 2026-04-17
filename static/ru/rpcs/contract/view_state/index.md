@@ -121,7 +121,8 @@
             "name": "include_proof",
             "required": false,
             "schema": {
-              "type": "boolean"
+              "type": "boolean",
+              "description": "Include a Merkle proof for the queried state alongside the values."
             }
           },
           {

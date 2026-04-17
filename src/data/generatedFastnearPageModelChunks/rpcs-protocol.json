@@ -688,16 +688,15 @@
           }
         },
         {
-          "description": "Proof subject — `transaction` proves inclusion of the top-level transaction, `receipt` proves inclusion of a specific receipt produced during execution.",
+          "description": "Proof subject — `receipt` proves inclusion of a specific receipt produced during execution.",
           "label": "Type",
           "location": "body",
           "name": "type",
           "required": false,
           "schema": {
             "type": "string",
-            "description": "Proof subject — `transaction` proves inclusion of the top-level transaction, `receipt` proves inclusion of a specific receipt produced during execution.",
+            "description": "Proof subject — `receipt` proves inclusion of a specific receipt produced during execution.",
             "enum": [
-              "transaction",
               "receipt"
             ]
           }
@@ -732,7 +731,7 @@
             "light_client_head": "9XN7MtDywZvfGx6TKy1MT2iCZkKuHikJXmNazxdZ4x6T",
             "sender_id": "escrow.ai.near",
             "transaction_hash": "34E7weKCDqXh3xPKdBgSWRqo44yTWjbka9deMK8JbAxx",
-            "type": "transaction"
+            "type": "receipt"
           },
           "key": "mainnet",
           "label": "Mainnet",
@@ -743,7 +742,7 @@
             "light_client_head": "6JYj6i1FaUCzdoqy41CqUcZJxa5n9EmLEENRDH2gLm5u",
             "sender_id": "near-mpc-staking4all-01.testnet",
             "transaction_hash": "9LPbkwJ26HYgda7KHrURc6jozBcpdA1kUMSEzwm81JPx",
-            "type": "transaction"
+            "type": "receipt"
           },
           "key": "testnet",
           "label": "Testnet",
@@ -832,9 +831,8 @@
                   "required": false,
                   "schema": {
                     "type": "string",
-                    "description": "Proof subject — `transaction` proves inclusion of the top-level transaction, `receipt` proves inclusion of a specific receipt produced during execution.",
+                    "description": "Proof subject — `receipt` proves inclusion of a specific receipt produced during execution.",
                     "enum": [
-                      "transaction",
                       "receipt"
                     ]
                   }
@@ -874,7 +872,7 @@
                 "light_client_head": "9XN7MtDywZvfGx6TKy1MT2iCZkKuHikJXmNazxdZ4x6T",
                 "sender_id": "escrow.ai.near",
                 "transaction_hash": "34E7weKCDqXh3xPKdBgSWRqo44yTWjbka9deMK8JbAxx",
-                "type": "transaction"
+                "type": "receipt"
               }
             },
             "headers": {},
@@ -895,7 +893,7 @@
                 "light_client_head": "6JYj6i1FaUCzdoqy41CqUcZJxa5n9EmLEENRDH2gLm5u",
                 "sender_id": "near-mpc-staking4all-01.testnet",
                 "transaction_hash": "9LPbkwJ26HYgda7KHrURc6jozBcpdA1kUMSEzwm81JPx",
-                "type": "transaction"
+                "type": "receipt"
               }
             },
             "headers": {},
@@ -6035,16 +6033,15 @@
           }
         },
         {
-          "description": "Proof subject — `transaction` proves inclusion of the top-level transaction, `receipt` proves inclusion of a specific receipt produced during execution.",
+          "description": "Proof subject — `receipt` proves inclusion of a specific receipt produced during execution.",
           "label": "Type",
           "location": "body",
           "name": "type",
           "required": false,
           "schema": {
             "type": "string",
-            "description": "Proof subject — `transaction` proves inclusion of the top-level transaction, `receipt` proves inclusion of a specific receipt produced during execution.",
+            "description": "Proof subject — `receipt` proves inclusion of a specific receipt produced during execution.",
             "enum": [
-              "transaction",
               "receipt"
             ]
           }
@@ -6079,7 +6076,7 @@
             "light_client_head": "9XN7MtDywZvfGx6TKy1MT2iCZkKuHikJXmNazxdZ4x6T",
             "sender_id": "escrow.ai.near",
             "transaction_hash": "34E7weKCDqXh3xPKdBgSWRqo44yTWjbka9deMK8JbAxx",
-            "type": "transaction"
+            "type": "receipt"
           },
           "key": "mainnet",
           "label": "Mainnet",
@@ -6090,7 +6087,7 @@
             "light_client_head": "6JYj6i1FaUCzdoqy41CqUcZJxa5n9EmLEENRDH2gLm5u",
             "sender_id": "near-mpc-staking4all-01.testnet",
             "transaction_hash": "9LPbkwJ26HYgda7KHrURc6jozBcpdA1kUMSEzwm81JPx",
-            "type": "transaction"
+            "type": "receipt"
           },
           "key": "testnet",
           "label": "Testnet",
@@ -6179,9 +6176,8 @@
                   "required": false,
                   "schema": {
                     "type": "string",
-                    "description": "Proof subject — `transaction` proves inclusion of the top-level transaction, `receipt` proves inclusion of a specific receipt produced during execution.",
+                    "description": "Proof subject — `receipt` proves inclusion of a specific receipt produced during execution.",
                     "enum": [
-                      "transaction",
                       "receipt"
                     ]
                   }
@@ -6218,7 +6214,7 @@
               "id": "fastnear",
               "method": "light_client_proof",
               "params": {
-                "type": "transaction",
+                "type": "receipt",
                 "transaction_hash": "34E7weKCDqXh3xPKdBgSWRqo44yTWjbka9deMK8JbAxx",
                 "sender_id": "escrow.ai.near",
                 "light_client_head": "9XN7MtDywZvfGx6TKy1MT2iCZkKuHikJXmNazxdZ4x6T"
@@ -6239,7 +6235,7 @@
               "id": "fastnear",
               "method": "light_client_proof",
               "params": {
-                "type": "transaction",
+                "type": "receipt",
                 "transaction_hash": "9LPbkwJ26HYgda7KHrURc6jozBcpdA1kUMSEzwm81JPx",
                 "sender_id": "near-mpc-staking4all-01.testnet",
                 "light_client_head": "6JYj6i1FaUCzdoqy41CqUcZJxa5n9EmLEENRDH2gLm5u"

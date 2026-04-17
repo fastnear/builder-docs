@@ -44,7 +44,7 @@
 ### Входные данные
 - `predecessor_id` (путь, обязательный, string): Вызывающий аккаунт, который записал ключи FastData.
 - `include_metadata` (body, boolean): Добавить в каждую запись метаданные квитанции и подписанта.
-- `limit` (body, integer)
+- `limit` (body, integer): Maximum number of entries to return in one page (1–200, default 50).
 - `page_token` (body, string): Непрозрачный токен страницы из предыдущего ответа `/v0/all/{predecessor_id}`.
 ### Схема запроса
 ```json
@@ -66,6 +66,7 @@
       "required": false,
       "schema": {
         "type": "integer",
+        "description": "Maximum number of entries to return in one page (1–200, default 50).",
         "format": "int32"
       }
     },

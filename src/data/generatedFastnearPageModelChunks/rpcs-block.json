@@ -28,7 +28,7 @@
       "networks": [
         {
           "defaultFields": {
-            "block_id": 194263739
+            "block_id": 9820210
           },
           "key": "mainnet",
           "label": "Mainnet",
@@ -36,7 +36,7 @@
         },
         {
           "defaultFields": {
-            "block_id": 246016197
+            "block_id": 245254793
           },
           "key": "testnet",
           "label": "Testnet",
@@ -120,7 +120,7 @@
               "id": "fastnear",
               "method": "block",
               "params": {
-                "block_id": 194263739
+                "block_id": 9820210
               }
             },
             "headers": {},
@@ -138,7 +138,7 @@
               "id": "fastnear",
               "method": "block",
               "params": {
-                "block_id": 246016197
+                "block_id": 245254793
               }
             },
             "headers": {},
@@ -282,7 +282,7 @@
       "networks": [
         {
           "defaultFields": {
-            "block_id": "9XN7MtDywZvfGx6TKy1MT2iCZkKuHikJXmNazxdZ4x6T"
+            "block_id": "EPnLgE7iEq9s7yTkos96M3cWymH5avBAPm3qx3NXqR8H"
           },
           "key": "mainnet",
           "label": "Mainnet",
@@ -290,7 +290,7 @@
         },
         {
           "defaultFields": {
-            "block_id": "6JYj6i1FaUCzdoqy41CqUcZJxa5n9EmLEENRDH2gLm5u"
+            "block_id": "CoPszhGFqcx9L1HQYM62g3UjxMpuZD8RiZL6QdpBZXA4"
           },
           "key": "testnet",
           "label": "Testnet",
@@ -374,7 +374,7 @@
               "id": "fastnear",
               "method": "block",
               "params": {
-                "block_id": "9XN7MtDywZvfGx6TKy1MT2iCZkKuHikJXmNazxdZ4x6T"
+                "block_id": "EPnLgE7iEq9s7yTkos96M3cWymH5avBAPm3qx3NXqR8H"
               }
             },
             "headers": {},
@@ -392,7 +392,7 @@
               "id": "fastnear",
               "method": "block",
               "params": {
-                "block_id": "6JYj6i1FaUCzdoqy41CqUcZJxa5n9EmLEENRDH2gLm5u"
+                "block_id": "CoPszhGFqcx9L1HQYM62g3UjxMpuZD8RiZL6QdpBZXA4"
               }
             },
             "headers": {},
@@ -545,7 +545,7 @@
       "networks": [
         {
           "defaultFields": {
-            "block_id": 194263739
+            "block_id": 9820210
           },
           "key": "mainnet",
           "label": "Mainnet",
@@ -553,7 +553,7 @@
         },
         {
           "defaultFields": {
-            "block_id": 246016197
+            "block_id": 245254793
           },
           "key": "testnet",
           "label": "Testnet",
@@ -646,7 +646,7 @@
               "id": "fastnear",
               "method": "block_effects",
               "params": {
-                "block_id": 194263739
+                "block_id": 9820210
               }
             },
             "headers": {},
@@ -664,7 +664,7 @@
               "id": "fastnear",
               "method": "block_effects",
               "params": {
-                "block_id": 246016197
+                "block_id": 245254793
               }
             },
             "headers": {},

@@ -1,7 +1,6 @@
 import TurndownService from 'turndown';
 import { gfm } from 'turndown-plugin-gfm';
-
-const SECRET_QUERY_PARAM_PATTERNS = [/^apiKey$/i, /^token$/i, /^header\./i];
+import { isNonShareableOperationQueryParam } from './fastnearOperationUrlState';
 const DOC_SKIP_SELECTORS = [
   '[data-markdown-skip]',
   'button',
@@ -114,8 +113,8 @@ function getMarkdownExportLabels(locale = 'en') {
   return MARKDOWN_EXPORT_LABELS[locale] || MARKDOWN_EXPORT_LABELS.en;
 }
 
-function isSecretQueryParam(key) {
-  return SECRET_QUERY_PARAM_PATTERNS.some((pattern) => pattern.test(key));
+function isNonShareableQueryParam(key) {
+  return isNonShareableOperationQueryParam(key);
 }
 
 export function sanitizePublicUrl(input, baseUrl) {
@@ -132,7 +131,7 @@ export function sanitizePublicUrl(input, baseUrl) {
   }
 
   [...url.searchParams.keys()].forEach((key) => {
-    if (isSecretQueryParam(key)) {
+    if (isNonShareableQueryParam(key)) {
       url.searchParams.delete(key);
     }
   });
@@ -343,7 +342,7 @@ function sanitizeExampleRequest(example) {
 
   if (sanitized.query) {
     Object.keys(sanitized.query).forEach((key) => {
-      if (isSecretQueryParam(key)) {
+      if (isNonShareableQueryParam(key)) {
         delete sanitized.query[key];
       }
     });

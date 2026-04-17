@@ -953,6 +953,12 @@ https://test.api.fastnear.com
 - Интерфейс документации может передать необязательный API-ключ FastNear, если нужно аутентифицированное поведение или повышенные лимиты на поддерживаемых поверхностях.
 - Добавьте `?network=testnet`, чтобы переключить совместимые страницы на testnet-бэкенд и подготовленные значения по умолчанию для testnet.
 
+## Общие интерактивные примеры
+
+- Используйте `Copy example URL` на любой интерактивной API-странице, чтобы поделиться выбранной сетью и заполненным состоянием запроса.
+- Общие URL примеров выполняются автоматически при загрузке, когда в них есть состояние операции.
+- Сохранённые API-ключи и токены никогда не включаются в такие общедоступные URL документации.
+
 ## С чего обычно начинают
 
 - [V1 полный снимок аккаунта](https://docs.fastnear.com/ru/api/v1/account-full) — для объединённого снимка аккаунта.
@@ -1044,6 +1050,8 @@ https://test.api.fastnear.com
 # Аутентификация и доступ
 
 Один API-ключ FastNear работает и для [RPC](https://docs.fastnear.com/ru/rpc), и для [REST API](https://docs.fastnear.com/ru/api). Войдите на [dashboard.fastnear.com](https://dashboard.fastnear.com), чтобы получить ключ, и отправляйте его в каждом запросе одним из способов ниже.
+
+Страницы с интерактивными примерами также поддерживают `Copy example URL`, чтобы делиться уже заполненными запросами. Общие URL примеров выполняются автоматически при загрузке, когда в них есть состояние операции, а сохранённые API-ключи и токены никогда не включаются в такие общедоступные URL документации.
 
 ## Через заголовок Authorization
 
@@ -1589,6 +1597,12 @@ https://archival-rpc.testnet.fastnear.com
 - API-ключи FastNear необязательны; публичные эндпоинты работают и без них.
 - Для повышенных лимитов или платного доступа используйте [Аутентификацию и доступ](https://docs.fastnear.com/ru/auth): один и тот же ключ передаётся либо в заголовке `Authorization: Bearer`, либо в URL-параметре `?apiKey=`.
 
+## Общие интерактивные примеры
+
+- Используйте `Copy example URL` на любой интерактивной RPC-странице, чтобы поделиться выбранной сетью, вкладкой примера, финальностью и заполненными входными данными.
+- Общие URL примеров выполняются автоматически при загрузке, когда в них есть состояние операции.
+- Сохранённые API-ключи и токены никогда не включаются в такие общедоступные URL документации.
+
 ## Устранение неполадок
 
 ### Запрос работает локально, но падает на продовом контуре
@@ -2063,7 +2077,7 @@ https://tx.test.fastnear.com
   "method": "query",
   "params": {
     "account_id": "root.near",
-    "public_key": "ed25519:CByX7HPjgSGFi5G26zwgZGDFCFyBHvSv1fe7AFzmVe3",
+    "public_key": "ed25519:6666666666666666666666666666666666666666666",
     "request_type": "view_access_key",
     "finality": "final"
   }
@@ -2079,7 +2093,7 @@ https://tx.test.fastnear.com
     "method": "query",
     "params": {
       "account_id": "root.near",
-      "public_key": "ed25519:CByX7HPjgSGFi5G26zwgZGDFCFyBHvSv1fe7AFzmVe3",
+      "public_key": "ed25519:6666666666666666666666666666666666666666666",
       "request_type": "view_access_key",
       "finality": "final"
     }
@@ -2870,7 +2884,7 @@ https://tx.test.fastnear.com
   "id": "fastnear",
   "method": "блок",
   "params": {
-    "block_id": 194263739
+    "block_id": 9820210
   }
 }
 ```
@@ -2883,7 +2897,7 @@ https://tx.test.fastnear.com
     "id": "fastnear",
     "method": "блок",
     "params": {
-      "block_id": 194263739
+      "block_id": 9820210
     }
   },
   "headers": {},
@@ -3070,7 +3084,7 @@ https://tx.test.fastnear.com
   "id": "fastnear",
   "method": "блок",
   "params": {
-    "block_id": "9XN7MtDywZvfGx6TKy1MT2iCZkKuHikJXmNazxdZ4x6T"
+    "block_id": "EPnLgE7iEq9s7yTkos96M3cWymH5avBAPm3qx3NXqR8H"
   }
 }
 ```
@@ -3083,7 +3097,7 @@ https://tx.test.fastnear.com
     "id": "fastnear",
     "method": "блок",
     "params": {
-      "block_id": "9XN7MtDywZvfGx6TKy1MT2iCZkKuHikJXmNazxdZ4x6T"
+      "block_id": "EPnLgE7iEq9s7yTkos96M3cWymH5avBAPm3qx3NXqR8H"
     }
   },
   "headers": {},
@@ -3270,7 +3284,7 @@ https://tx.test.fastnear.com
   "id": "fastnear",
   "method": "block_effects",
   "params": {
-    "block_id": 194263739
+    "block_id": 9820210
   }
 }
 ```
@@ -3283,7 +3297,7 @@ https://tx.test.fastnear.com
     "id": "fastnear",
     "method": "block_effects",
     "params": {
-      "block_id": 194263739
+      "block_id": 9820210
     }
   },
   "headers": {},
@@ -3609,7 +3623,8 @@ https://tx.test.fastnear.com
             "name": "method_name",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "description": "Name of the contract view method to invoke."
             }
           },
           {
@@ -4631,7 +4646,8 @@ https://tx.test.fastnear.com
             "name": "include_proof",
             "required": false,
             "schema": {
-              "type": "boolean"
+              "type": "boolean",
+              "description": "Include a Merkle proof for the queried state alongside the values."
             }
           },
           {
@@ -7466,7 +7482,7 @@ https://tx.test.fastnear.com
     "light_client_head": "9XN7MtDywZvfGx6TKy1MT2iCZkKuHikJXmNazxdZ4x6T",
     "sender_id": "escrow.ai.near",
     "transaction_hash": "34E7weKCDqXh3xPKdBgSWRqo44yTWjbka9deMK8JbAxx",
-    "type": "транзакция"
+    "type": "квитанция"
   }
 }
 ```
@@ -7482,7 +7498,7 @@ https://tx.test.fastnear.com
       "light_client_head": "9XN7MtDywZvfGx6TKy1MT2iCZkKuHikJXmNazxdZ4x6T",
       "sender_id": "escrow.ai.near",
       "transaction_hash": "34E7weKCDqXh3xPKdBgSWRqo44yTWjbka9deMK8JbAxx",
-      "type": "транзакция"
+      "type": "квитанция"
     }
   },
   "headers": {},
@@ -7574,9 +7590,8 @@ https://tx.test.fastnear.com
             "required": false,
             "schema": {
               "type": "string",
-              "description": "Предмет доказательства — `transaction` подтверждает включение транзакции верхнего уровня, `receipt` подтверждает включение конкретной квитанции, сформированной в ходе исполнения.",
+              "description": "Proof subject — `receipt` proves inclusion of a specific receipt produced during execution.",
               "enum": [
-                "транзакция",
                 "квитанция"
               ]
             }
@@ -10025,7 +10040,7 @@ https://tx.test.fastnear.com
   "id": "fastnear",
   "method": "light_client_proof",
   "params": {
-    "type": "транзакция",
+    "type": "квитанция",
     "transaction_hash": "34E7weKCDqXh3xPKdBgSWRqo44yTWjbka9deMK8JbAxx",
     "sender_id": "escrow.ai.near",
     "light_client_head": "9XN7MtDywZvfGx6TKy1MT2iCZkKuHikJXmNazxdZ4x6T"
@@ -10041,7 +10056,7 @@ https://tx.test.fastnear.com
     "id": "fastnear",
     "method": "light_client_proof",
     "params": {
-      "type": "транзакция",
+      "type": "квитанция",
       "transaction_hash": "34E7weKCDqXh3xPKdBgSWRqo44yTWjbka9deMK8JbAxx",
       "sender_id": "escrow.ai.near",
       "light_client_head": "9XN7MtDywZvfGx6TKy1MT2iCZkKuHikJXmNazxdZ4x6T"
@@ -10136,9 +10151,8 @@ https://tx.test.fastnear.com
             "required": false,
             "schema": {
               "type": "string",
-              "description": "Предмет доказательства — `transaction` подтверждает включение транзакции верхнего уровня, `receipt` подтверждает включение конкретной квитанции, сформированной в ходе исполнения.",
+              "description": "Proof subject — `receipt` proves inclusion of a specific receipt produced during execution.",
               "enum": [
-                "транзакция",
                 "квитанция"
               ]
             }
@@ -15654,7 +15668,7 @@ https://tx.test.fastnear.com
 ### Входные данные
 - `predecessor_id` (путь, обязательный, string): Вызывающий аккаунт, который записал ключи FastData.
 - `include_metadata` (body, boolean): Добавить в каждую запись метаданные квитанции и подписанта.
-- `limit` (body, integer)
+- `limit` (body, integer): Maximum number of entries to return in one page (1–200, default 50).
 - `page_token` (body, string): Непрозрачный токен страницы из предыдущего ответа `/v0/all/{predecessor_id}`.
 ### Схема запроса
 ```json
@@ -15676,6 +15690,7 @@ https://tx.test.fastnear.com
       "required": false,
       "schema": {
         "type": "integer",
+        "description": "Maximum number of entries to return in one page (1–200, default 50).",
         "format": "int32"
       }
     },
@@ -16222,7 +16237,7 @@ https://tx.test.fastnear.com
 - `include_metadata` (body, boolean): Добавить в каждую запись метаданные квитанции и подписанта.
 - `ключ` (body, string): Фильтр по точному ключу. Взаимно исключающий с `key_prefix`.
 - `key_prefix` (body, string): Фильтр по префиксу для совпадения пространств имён ключей.
-- `limit` (body, integer)
+- `limit` (body, integer): Maximum number of entries to return in one page (1–200, default 50).
 - `page_token` (body, string): Непрозрачный токен страницы из предыдущего ответа с тем же эндпоинтом и набором фильтров.
 ### Схема запроса
 ```json
@@ -16269,6 +16284,7 @@ https://tx.test.fastnear.com
       "required": false,
       "schema": {
         "type": "integer",
+        "description": "Maximum number of entries to return in one page (1–200, default 50).",
         "format": "int32"
       }
     },
@@ -16464,7 +16480,7 @@ https://tx.test.fastnear.com
 - `asc` (body, boolean): Сортировать результаты истории по возрастанию. По умолчанию сначала идут новые записи.
 - `include_metadata` (body, boolean): Добавить в каждую запись метаданные квитанции и подписанта.
 - `ключ` (body, обязательный, string): Точное имя ключа для сопоставления по всем аккаунтам и предшественникам.
-- `limit` (body, integer)
+- `limit` (body, integer): Maximum number of entries to return in one page (1–200, default 50).
 - `page_token` (body, string): Непрозрачный токен страницы из предыдущего ответа с тем же эндпоинтом и набором фильтров.
 ### Схема запроса
 ```json
@@ -16506,6 +16522,7 @@ https://tx.test.fastnear.com
       "required": false,
       "schema": {
         "type": "integer",
+        "description": "Maximum number of entries to return in one page (1–200, default 50).",
         "format": "int32"
       }
     },
@@ -16704,7 +16721,7 @@ https://tx.test.fastnear.com
 - `include_metadata` (body, boolean): Добавить в каждую запись метаданные квитанции и подписанта.
 - `ключ` (body, string): Фильтр по точному ключу. Взаимно исключающий с `key_prefix`.
 - `key_prefix` (body, string): Фильтр по префиксу для совпадения пространств имён ключей.
-- `limit` (body, integer)
+- `limit` (body, integer): Maximum number of entries to return in one page (1–200, default 50).
 - `page_token` (body, string): Непрозрачный токен страницы из предыдущего ответа с тем же эндпоинтом и набором фильтров.
 ### Схема запроса
 ```json
@@ -16751,6 +16768,7 @@ https://tx.test.fastnear.com
       "required": false,
       "schema": {
         "type": "integer",
+        "description": "Maximum number of entries to return in one page (1–200, default 50).",
         "format": "int32"
       }
     },
@@ -16949,7 +16967,7 @@ https://tx.test.fastnear.com
 - `include_metadata` (body, boolean): Добавить в каждую запись метаданные квитанции и подписанта.
 - `ключ` (body, string): Фильтр по точному ключу. Взаимно исключающий с `key_prefix`.
 - `key_prefix` (body, string): Фильтр по префиксу для совпадения пространств имён ключей.
-- `limit` (body, integer)
+- `limit` (body, integer): Maximum number of entries to return in one page (1–200, default 50).
 - `page_token` (body, string): Непрозрачный токен страницы из предыдущего ответа с тем же эндпоинтом и набором фильтров.
 ### Схема запроса
 ```json
@@ -16987,6 +17005,7 @@ https://tx.test.fastnear.com
       "required": false,
       "schema": {
         "type": "integer",
+        "description": "Maximum number of entries to return in one page (1–200, default 50).",
         "format": "int32"
       }
     },
@@ -17186,7 +17205,7 @@ https://tx.test.fastnear.com
 - `include_metadata` (body, boolean): Добавить в каждую запись метаданные квитанции и подписанта.
 - `ключ` (body, string): Фильтр по точному ключу. Взаимно исключающий с `key_prefix`.
 - `key_prefix` (body, string): Фильтр по префиксу для совпадения пространств имён ключей.
-- `limit` (body, integer)
+- `limit` (body, integer): Maximum number of entries to return in one page (1–200, default 50).
 - `page_token` (body, string): Непрозрачный токен страницы из предыдущего ответа с тем же эндпоинтом и набором фильтров.
 ### Схема запроса
 ```json
@@ -17224,6 +17243,7 @@ https://tx.test.fastnear.com
       "required": false,
       "schema": {
         "type": "integer",
+        "description": "Maximum number of entries to return in one page (1–200, default 50).",
         "format": "int32"
       }
     },
@@ -18189,24 +18209,24 @@ https://tx.test.fastnear.com
 }
 ```
 ### Входные данные
-- `account_id` (body, обязательный, string)
-- `desc` (body, boolean)
-- `from_tx_block_height` (body, integer)
-- `is_action_arg` (body, boolean)
-- `is_any_signer` (body, boolean)
-- `is_delegated_signer` (body, boolean)
-- `is_event_log` (body, boolean)
-- `is_explicit_refund_to` (body, boolean)
-- `is_function_call` (body, boolean)
-- `is_predecessor` (body, boolean)
-- `is_real_receiver` (body, boolean)
-- `is_real_signer` (body, boolean)
-- `is_receiver` (body, boolean)
-- `is_signer` (body, boolean)
-- `is_success` (body, boolean)
-- `limit` (body, integer)
-- `resume_token` (body, string)
-- `to_tx_block_height` (body, integer)
+- `account_id` (body, обязательный, string): NEAR account to query transactions for (may be a signer, predecessor, receiver, or related party).
+- `desc` (body, boolean): Sort newest-first when true; oldest-first when false or omitted.
+- `from_tx_block_height` (body, integer): Inclusive lower bound on the transaction's block height.
+- `is_action_arg` (body, boolean): Restrict to transactions where this account appeared in action arguments.
+- `is_any_signer` (body, boolean): Restrict to transactions where this account signed either the top-level transaction or a delegated action.
+- `is_delegated_signer` (body, boolean): Restrict to transactions where this account signed a delegated action.
+- `is_event_log` (body, boolean): Restrict to transactions where this account appeared in a JSON event log.
+- `is_explicit_refund_to` (body, boolean): Restrict to transactions where this account was the explicit `refund_to` target of an action receipt.
+- `is_function_call` (body, boolean): Restrict to transactions where this account was the target of a function-call action.
+- `is_predecessor` (body, boolean): Restrict to transactions where this account was the predecessor of a receipt.
+- `is_real_receiver` (body, boolean): Restrict to transactions where this account was the real receiver — excluding relayer receivers and gas refunds.
+- `is_real_signer` (body, boolean): Restrict to transactions where this account was the real signer — direct or delegated, excluding relayer signers.
+- `is_receiver` (body, boolean): Restrict to transactions where this account received a receipt.
+- `is_signer` (body, boolean): Restrict to transactions where this account signed the top-level transaction.
+- `is_success` (body, boolean): Restrict to transactions whose execution succeeded (true) or failed/pending (false).
+- `limit` (body, integer): Maximum rows to return in one page (1–200).
+- `resume_token` (body, string): Opaque pagination token returned on a prior page; omit for the first page.
+- `to_tx_block_height` (body, integer): Exclusive upper bound on the transaction's block height.
 ### Схема запроса
 ```json
 {
@@ -18220,14 +18240,16 @@ https://tx.test.fastnear.com
       "name": "account_id",
       "required": true,
       "schema": {
-        "type": "string"
+        "type": "string",
+        "description": "NEAR account to query transactions for (may be a signer, predecessor, receiver, or related party)."
       }
     },
     {
       "name": "desc",
       "required": false,
       "schema": {
-        "type": "boolean"
+        "type": "boolean",
+        "description": "Sort newest-first when true; oldest-first when false or omitted."
       }
     },
     {
@@ -18235,6 +18257,7 @@ https://tx.test.fastnear.com
       "required": false,
       "schema": {
         "type": "integer",
+        "description": "Inclusive lower bound on the transaction's block height.",
         "format": "uint64"
       }
     },
@@ -18242,84 +18265,96 @@ https://tx.test.fastnear.com
       "name": "is_action_arg",
       "required": false,
       "schema": {
-        "type": "boolean"
+        "type": "boolean",
+        "description": "Restrict to transactions where this account appeared in action arguments."
       }
     },
     {
       "name": "is_any_signer",
       "required": false,
       "schema": {
-        "type": "boolean"
+        "type": "boolean",
+        "description": "Restrict to transactions where this account signed either the top-level transaction or a delegated action."
       }
     },
     {
       "name": "is_delegated_signer",
       "required": false,
       "schema": {
-        "type": "boolean"
+        "type": "boolean",
+        "description": "Restrict to transactions where this account signed a delegated action."
       }
     },
     {
       "name": "is_event_log",
       "required": false,
       "schema": {
-        "type": "boolean"
+        "type": "boolean",
+        "description": "Restrict to transactions where this account appeared in a JSON event log."
       }
     },
     {
       "name": "is_explicit_refund_to",
       "required": false,
       "schema": {
-        "type": "boolean"
+        "type": "boolean",
+        "description": "Restrict to transactions where this account was the explicit `refund_to` target of an action receipt."
       }
     },
     {
       "name": "is_function_call",
       "required": false,
       "schema": {
-        "type": "boolean"
+        "type": "boolean",
+        "description": "Restrict to transactions where this account was the target of a function-call action."
       }
     },
     {
       "name": "is_predecessor",
       "required": false,
       "schema": {
-        "type": "boolean"
+        "type": "boolean",
+        "description": "Restrict to transactions where this account was the predecessor of a receipt."
       }
     },
     {
       "name": "is_real_receiver",
       "required": false,
       "schema": {
-        "type": "boolean"
+        "type": "boolean",
+        "description": "Restrict to transactions where this account was the real receiver — excluding relayer receivers and gas refunds."
       }
     },
     {
       "name": "is_real_signer",
       "required": false,
       "schema": {
-        "type": "boolean"
+        "type": "boolean",
+        "description": "Restrict to transactions where this account was the real signer — direct or delegated, excluding relayer signers."
       }
     },
     {
       "name": "is_receiver",
       "required": false,
       "schema": {
-        "type": "boolean"
+        "type": "boolean",
+        "description": "Restrict to transactions where this account received a receipt."
       }
     },
     {
       "name": "is_signer",
       "required": false,
       "schema": {
-        "type": "boolean"
+        "type": "boolean",
+        "description": "Restrict to transactions where this account signed the top-level transaction."
       }
     },
     {
       "name": "is_success",
       "required": false,
       "schema": {
-        "type": "boolean"
+        "type": "boolean",
+        "description": "Restrict to transactions whose execution succeeded (true) or failed/pending (false)."
       }
     },
     {
@@ -18327,6 +18362,7 @@ https://tx.test.fastnear.com
       "required": false,
       "schema": {
         "type": "integer",
+        "description": "Maximum rows to return in one page (1–200).",
         "format": "uint"
       }
     },
@@ -18335,6 +18371,7 @@ https://tx.test.fastnear.com
       "required": false,
       "schema": {
         "type": "string",
+        "description": "Opaque pagination token returned on a prior page; omit for the first page.",
         "default": null
       }
     },
@@ -18343,6 +18380,7 @@ https://tx.test.fastnear.com
       "required": false,
       "schema": {
         "type": "integer",
+        "description": "Exclusive upper bound on the transaction's block height.",
         "format": "uint64"
       }
     }
@@ -18590,9 +18628,9 @@ https://tx.test.fastnear.com
 }
 ```
 ### Входные данные
-- `block_id` (body, обязательный, integer | string)
-- `with_receipts` (body, boolean)
-- `with_transactions` (body, boolean)
+- `block_id` (body, обязательный, integer | string): Block height (integer) or base58-encoded block hash (string) to fetch.
+- `with_receipts` (body, boolean): Include the block's receipts in the response when true.
+- `with_transactions` (body, boolean): Include the block's transactions in the response when true.
 ### Схема запроса
 ```json
 {
@@ -18606,6 +18644,7 @@ https://tx.test.fastnear.com
       "name": "block_id",
       "required": true,
       "schema": {
+        "description": "Block height (integer) or base58-encoded block hash (string) to fetch.",
         "oneOf": [
           {
             "type": "integer"
@@ -18620,14 +18659,16 @@ https://tx.test.fastnear.com
       "name": "with_receipts",
       "required": false,
       "schema": {
-        "type": "boolean"
+        "type": "boolean",
+        "description": "Include the block's receipts in the response when true."
       }
     },
     {
       "name": "with_transactions",
       "required": false,
       "schema": {
-        "type": "boolean"
+        "type": "boolean",
+        "description": "Include the block's transactions in the response when true."
       }
     }
   ],
@@ -19187,10 +19228,10 @@ https://tx.test.fastnear.com
 }
 ```
 ### Входные данные
-- `desc` (body, boolean)
-- `from_block_height` (body, integer)
-- `limit` (body, integer)
-- `to_block_height` (body, integer)
+- `desc` (body, boolean): Sort newest-first when true; oldest-first when false or omitted.
+- `from_block_height` (body, integer): Inclusive lower bound on block height.
+- `limit` (body, integer): Maximum blocks to return in one page (1–100).
+- `to_block_height` (body, integer): Exclusive upper bound on block height.
 ### Схема запроса
 ```json
 {
@@ -19201,7 +19242,8 @@ https://tx.test.fastnear.com
       "name": "desc",
       "required": false,
       "schema": {
-        "type": "boolean"
+        "type": "boolean",
+        "description": "Sort newest-first when true; oldest-first when false or omitted."
       }
     },
     {
@@ -19209,6 +19251,7 @@ https://tx.test.fastnear.com
       "required": false,
       "schema": {
         "type": "integer",
+        "description": "Inclusive lower bound on block height.",
         "format": "uint64"
       }
     },
@@ -19217,6 +19260,7 @@ https://tx.test.fastnear.com
       "required": false,
       "schema": {
         "type": "integer",
+        "description": "Maximum blocks to return in one page (1–100).",
         "format": "uint"
       }
     },
@@ -19225,6 +19269,7 @@ https://tx.test.fastnear.com
       "required": false,
       "schema": {
         "type": "integer",
+        "description": "Exclusive upper bound on block height.",
         "format": "uint64"
       }
     }
@@ -19454,7 +19499,7 @@ https://tx.test.fastnear.com
 }
 ```
 ### Входные данные
-- `receipt_id` (body, обязательный, string)
+- `receipt_id` (body, обязательный, string): Base58-encoded receipt ID to look up.
 ### Схема запроса
 ```json
 {
@@ -19468,7 +19513,8 @@ https://tx.test.fastnear.com
       "name": "receipt_id",
       "required": true,
       "schema": {
-        "type": "string"
+        "type": "string",
+        "description": "Base58-encoded receipt ID to look up."
       }
     }
   ],
@@ -19703,7 +19749,7 @@ https://tx.test.fastnear.com
 }
 ```
 ### Входные данные
-- `tx_hashes` (body, обязательный, array)
+- `tx_hashes` (body, обязательный, array): Up to 20 base58-encoded transaction hashes to fetch in one request.
 ### Схема запроса
 ```json
 {
@@ -19718,6 +19764,7 @@ https://tx.test.fastnear.com
       "required": true,
       "schema": {
         "type": "array",
+        "description": "Up to 20 base58-encoded transaction hashes to fetch in one request.",
         "items": {
           "type": "string"
         }
@@ -19835,21 +19882,24 @@ https://tx.test.fastnear.com
       "name": "account_id",
       "required": true,
       "schema": {
-        "type": "string"
+        "type": "string",
+        "description": "NEAR account to query transfers for (the signer or receiver, depending on `direction`)."
       }
     },
     {
       "name": "asset_id",
       "required": false,
       "schema": {
-        "type": "string"
+        "type": "string",
+        "description": "Asset identifier such as `native:near` for NEAR or `<contract_id>` for fungible tokens."
       }
     },
     {
       "name": "desc",
       "required": false,
       "schema": {
-        "type": "boolean"
+        "type": "boolean",
+        "description": "When true, sort newest-first; when false or omitted, sort oldest-first."
       }
     },
     {
@@ -19857,6 +19907,7 @@ https://tx.test.fastnear.com
       "required": true,
       "schema": {
         "type": "string",
+        "description": "Restrict to transfers where the account acts as `sender` or `receiver`; omit for both sides.",
         "enum": [
           "sender",
           "receiver"
@@ -19868,6 +19919,7 @@ https://tx.test.fastnear.com
       "required": false,
       "schema": {
         "type": "integer",
+        "description": "Inclusive lower bound on block timestamp in milliseconds since the Unix epoch.",
         "format": "uint64"
       }
     },
@@ -19875,7 +19927,8 @@ https://tx.test.fastnear.com
       "name": "ignore_system",
       "required": false,
       "schema": {
-        "type": "boolean"
+        "type": "boolean",
+        "description": "When true, hide system transfers (validator rewards, implicit account creation, refunds)."
       }
     },
     {
@@ -19883,6 +19936,7 @@ https://tx.test.fastnear.com
       "required": false,
       "schema": {
         "type": "integer",
+        "description": "Maximum number of transfer rows to return in one page (1–100).",
         "format": "uint"
       }
     },
@@ -19891,6 +19945,7 @@ https://tx.test.fastnear.com
       "required": false,
       "schema": {
         "type": "string",
+        "description": "Minimum absolute transfer amount in the asset's base units (e.g. yoctoNEAR), stringified u128.",
         "default": null
       }
     },
@@ -19899,6 +19954,7 @@ https://tx.test.fastnear.com
       "required": false,
       "schema": {
         "type": "number",
+        "description": "Minimum transfer amount in human-readable units (decimals already applied).",
         "format": "double"
       }
     },
@@ -19907,6 +19963,7 @@ https://tx.test.fastnear.com
       "required": false,
       "schema": {
         "type": "number",
+        "description": "Minimum transfer amount in USD-equivalent at time of transfer.",
         "format": "double"
       }
     },
@@ -19915,6 +19972,7 @@ https://tx.test.fastnear.com
       "required": false,
       "schema": {
         "type": "string",
+        "description": "Opaque pagination token returned as `resume_token` on a prior page; omit for the first page.",
         "default": null
       }
     },
@@ -19923,6 +19981,7 @@ https://tx.test.fastnear.com
       "required": false,
       "schema": {
         "type": "integer",
+        "description": "Exclusive upper bound on block timestamp in milliseconds since the Unix epoch.",
         "format": "uint64"
       }
     }

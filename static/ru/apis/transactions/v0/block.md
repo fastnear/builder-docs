@@ -42,9 +42,9 @@
 }
 ```
 ### Входные данные
-- `block_id` (body, обязательный, integer | string)
-- `with_receipts` (body, boolean)
-- `with_transactions` (body, boolean)
+- `block_id` (body, обязательный, integer | string): Block height (integer) or base58-encoded block hash (string) to fetch.
+- `with_receipts` (body, boolean): Include the block's receipts in the response when true.
+- `with_transactions` (body, boolean): Include the block's transactions in the response when true.
 ### Схема запроса
 ```json
 {
@@ -58,6 +58,7 @@
       "name": "block_id",
       "required": true,
       "schema": {
+        "description": "Block height (integer) or base58-encoded block hash (string) to fetch.",
         "oneOf": [
           {
             "type": "integer"
@@ -72,14 +73,16 @@
       "name": "with_receipts",
       "required": false,
       "schema": {
-        "type": "boolean"
+        "type": "boolean",
+        "description": "Include the block's receipts in the response when true."
       }
     },
     {
       "name": "with_transactions",
       "required": false,
       "schema": {
-        "type": "boolean"
+        "type": "boolean",
+        "description": "Include the block's transactions in the response when true."
       }
     }
   ],

@@ -20,6 +20,16 @@ This folder collects longer-form reference chapters that are useful while evolvi
 - [FastNear Algolia Search Runbook](/Users/mikepurvis/near/fn/builder-docs/md-CLAUDE-chapters/algolia_search_runbook.md)
   - Operator-oriented runbook for env setup, sync flow, reindexing, verification, and troubleshooting.
 
+### Interactive operation URLs
+
+- [Builder Docs Operation URL State and Shareable Example URLs](/Users/mikepurvis/near/fn/builder-docs/md-CLAUDE-chapters/operation_url_state_and_shareable_examples.md)
+  - Architecture and testing chapter for URL-prefilled live examples, implicit execution for stateful URLs, expanded response inspection, find-in-response, public URL sanitization, and future compatibility constraints.
+
+### Auth semantics
+
+- [Builder Docs Auth Contract and Page-Model Semantics](/Users/mikepurvis/.codex/worktrees/3973/builder-docs/md-CLAUDE-chapters/auth_contract_and_page_model_semantics.md)
+  - Source-of-truth chapter for what `authTransport` does and does not mean today, how auth metadata flows from `mike-docs`, and what an idiomatic future `auth required` contract should look like.
+
 ### i18n translation guidance
 
 - [Translating API and RPC documentation into Russian](/Users/mikepurvis/near/fn/builder-docs/md-CLAUDE-chapters/i18n_translating_russian.md)

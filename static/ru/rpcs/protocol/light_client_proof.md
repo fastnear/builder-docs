@@ -27,7 +27,7 @@
   "id": "fastnear",
   "method": "light_client_proof",
   "params": {
-    "type": "транзакция",
+    "type": "квитанция",
     "transaction_hash": "34E7weKCDqXh3xPKdBgSWRqo44yTWjbka9deMK8JbAxx",
     "sender_id": "escrow.ai.near",
     "light_client_head": "9XN7MtDywZvfGx6TKy1MT2iCZkKuHikJXmNazxdZ4x6T"
@@ -43,7 +43,7 @@
     "id": "fastnear",
     "method": "light_client_proof",
     "params": {
-      "type": "транзакция",
+      "type": "квитанция",
       "transaction_hash": "34E7weKCDqXh3xPKdBgSWRqo44yTWjbka9deMK8JbAxx",
       "sender_id": "escrow.ai.near",
       "light_client_head": "9XN7MtDywZvfGx6TKy1MT2iCZkKuHikJXmNazxdZ4x6T"
@@ -138,9 +138,8 @@
             "required": false,
             "schema": {
               "type": "string",
-              "description": "Предмет доказательства — `transaction` подтверждает включение транзакции верхнего уровня, `receipt` подтверждает включение конкретной квитанции, сформированной в ходе исполнения.",
+              "description": "Proof subject — `receipt` proves inclusion of a specific receipt produced during execution.",
               "enum": [
-                "транзакция",
                 "квитанция"
               ]
             }

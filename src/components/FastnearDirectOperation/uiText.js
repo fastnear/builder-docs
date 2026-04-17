@@ -14,13 +14,54 @@ export function getFastnearOperationUiText() {
       id: 'fastnear.operationUi.copyCurlCommand',
       message: 'Copy curl command',
     }),
+    copyGroupLabel: translate({
+      id: 'fastnear.operationUi.copyGroupLabel',
+      message: 'Copy',
+    }),
     copiedCurlCommand: translate({
       id: 'fastnear.operationUi.copiedCurlCommand',
       message: 'Copied curl command',
     }),
+    copiedExampleUrl: translate({
+      id: 'fastnear.operationUi.copiedExampleUrl',
+      message: 'Copied example URL',
+    }),
+    copiedViewUrl: translate({
+      id: 'fastnear.operationUi.copiedViewUrl',
+      message: 'Copied URL for this view',
+    }),
     copiedMarkdown: translate({
       id: 'fastnear.operationUi.copyMarkdown.completed',
       message: 'Copied',
+    }),
+    copyExampleUrl: translate({
+      id: 'fastnear.operationUi.copyExampleUrl',
+      message: 'Copy example URL',
+    }),
+    copyExampleUrlButtonLabel: translate({
+      id: 'fastnear.operationUi.copyExampleUrlButtonLabel',
+      message: 'Example URL',
+    }),
+    copyViewUrl: translate({
+      id: 'fastnear.operationUi.copyViewUrl',
+      message: 'Copy URL for this view',
+    }),
+    copyViewUrlButtonLabel: translate({
+      id: 'fastnear.operationUi.copyViewUrlButtonLabel',
+      message: 'URL for this view',
+    }),
+    copyExampleUrlHelpAriaLabel: translate({
+      id: 'fastnear.operationUi.copyExampleUrlHelpAriaLabel',
+      message: 'About example URLs',
+    }),
+    copyExampleUrlHelpBody: translate({
+      id: 'fastnear.operationUi.copyExampleUrlHelpBody',
+      message:
+        'Share a docs URL that reloads this example with the selected network, request example, finality, and any filled inputs preloaded. URLs with operation state run automatically on load. Saved API keys and tokens are never included.',
+    }),
+    copyCurlCommandButtonLabel: translate({
+      id: 'fastnear.operationUi.copyCurlCommandButtonLabel',
+      message: 'cURL',
     }),
     copyMarkdown: translate({
       id: 'fastnear.operationUi.copyMarkdown',
@@ -33,6 +74,10 @@ export function getFastnearOperationUiText() {
     copyResponse: translate({
       id: 'fastnear.operationUi.copyResponse',
       message: 'Copy response',
+    }),
+    expandResponse: translate({
+      id: 'fastnear.operationUi.expandResponse',
+      message: 'Expand response',
     }),
     endpoint: translate({
       id: 'fastnear.operationUi.endpoint',
@@ -162,6 +207,46 @@ export function getFastnearOperationUiText() {
       id: 'fastnear.operationUi.responseCopied',
       message: 'Response copied',
     }),
+    closeExpandedResponse: translate({
+      id: 'fastnear.operationUi.closeExpandedResponse',
+      message: 'Close expanded response',
+    }),
+    expandedResponseTitle: translate({
+      id: 'fastnear.operationUi.expandedResponseTitle',
+      message: 'Expanded response',
+    }),
+    expandedResponseHint: translate({
+      id: 'fastnear.operationUi.expandedResponseHint',
+      message: 'Search and inspect the formatted live response.',
+    }),
+    findInResponse: translate({
+      id: 'fastnear.operationUi.findInResponse',
+      message: 'Find in response',
+    }),
+    findInResponsePlaceholder: translate({
+      id: 'fastnear.operationUi.findInResponsePlaceholder',
+      message: 'Find in response',
+    }),
+    nextResponseMatch: translate({
+      id: 'fastnear.operationUi.nextResponseMatch',
+      message: 'Next match',
+    }),
+    previousResponseMatch: translate({
+      id: 'fastnear.operationUi.previousResponseMatch',
+      message: 'Previous match',
+    }),
+    responseFindNoResults: translate({
+      id: 'fastnear.operationUi.responseFindNoResults',
+      message: '0 results',
+    }),
+    responseFindResults: ({ active, total }) =>
+      translate(
+        {
+          id: 'fastnear.operationUi.responseFindResults',
+          message: '{active} of {total}',
+        },
+        { active, total }
+      ),
     responseFormattingPending: translate({
       id: 'fastnear.operationUi.responseFormattingPending',
       message: 'Formatting response output...',
