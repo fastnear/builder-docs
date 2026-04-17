@@ -281,7 +281,7 @@
   {
     "canonicalPath": "/rpcs/validators/validators_by_epoch",
     "info": {
-      "description": "Fetch the validator set for a chosen past epoch, selected by epoch-start block height or hash.",
+      "description": "Fetch the validator set for a chosen past epoch, selected by epoch-start block height or Base58 epoch-id hash.",
       "operationId": "validators_by_epoch",
       "summary": "Get validators by epoch",
       "title": "NEAR Protocol RPC: Get validators by epoch",

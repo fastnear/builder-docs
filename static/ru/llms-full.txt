@@ -11969,7 +11969,7 @@ https://tx.test.fastnear.com
 
 # RPC протокола NEAR: Отправка транзакции (с подтверждением)
 Отправить транзакцию и дождаться подтверждения
-Отправьте подписанную транзакцию и дождитесь её подтверждения — устаревший синхронный способ, заменён на `send_tx`.
+Отправьте подписанную транзакцию в кодировке Base64 и дождитесь её подтверждения — устаревший синхронный способ, заменён на `send_tx`.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/rpcs/transaction/broadcast_tx_commit
 - https://docs.fastnear.com/ru/rpcs/transaction/broadcast_tx_commit/other/broadcast_tx_commit
@@ -12254,7 +12254,7 @@ https://tx.test.fastnear.com
 
 # RPC протокола NEAR: Квитанция по ID
 Получить квитанцию по ID
-Получите одну квитанцию по её ID — межшардовую единицу исполнения, производимую транзакцией.
+Получите одну квитанцию по её ID в кодировке Base58 — межшардовую единицу исполнения, производимую транзакцией.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/rpcs/transaction/EXPERIMENTAL_receipt
 - https://docs.fastnear.com/ru/rpcs/transaction/EXPERIMENTAL_receipt/other/EXPERIMENTAL_receipt
@@ -12808,7 +12808,7 @@ https://tx.test.fastnear.com
 
 # RPC протокола NEAR: Отправить транзакцию
 Отправить транзакцию
-Отправьте подписанную транзакцию и дождитесь её итогового результата исполнения — текущий синхронный способ.
+Отправьте подписанную транзакцию в кодировке Base64 и дождитесь её итогового результата исполнения — текущий синхронный способ.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/rpcs/transaction/send_tx
 - https://docs.fastnear.com/ru/rpcs/transaction/send_tx/other/send_tx
@@ -13610,7 +13610,7 @@ https://tx.test.fastnear.com
 
 # RPC протокола NEAR: Валидаторы по эпохе
 Получить валидаторов по эпохе
-Получите набор валидаторов выбранной прошлой эпохи по высоте или хешу её начального блока.
+Получите набор валидаторов выбранной прошлой эпохи по высоте начального блока или хеш-идентификатору эпохи в кодировке Base58.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/rpcs/validators/validators_by_epoch
 - https://docs.fastnear.com/ru/rpcs/validators/validators_by_epoch/other/validators_by_epoch

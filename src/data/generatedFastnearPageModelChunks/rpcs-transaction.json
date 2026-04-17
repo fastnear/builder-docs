@@ -2,7 +2,7 @@
   {
     "canonicalPath": "/rpcs/transaction/EXPERIMENTAL_receipt",
     "info": {
-      "description": "Fetch a single receipt by ID — the cross-shard execution unit a transaction produces.",
+      "description": "Fetch a single receipt by Base58 ID — the cross-shard execution unit a transaction produces.",
       "operationId": "EXPERIMENTAL_receipt",
       "summary": "Get receipt by ID",
       "title": "NEAR Protocol RPC: Get receipt by ID",
@@ -999,7 +999,7 @@
   {
     "canonicalPath": "/rpcs/transaction/broadcast_tx_commit",
     "info": {
-      "description": "Submit a signed transaction and wait for its commit — the legacy synchronous send, superseded by `send_tx`.",
+      "description": "Submit a Base64-encoded signed transaction and wait for its commit — the legacy synchronous send, superseded by `send_tx`.",
       "operationId": "broadcast_tx_commit",
       "summary": "Send transaction and wait",
       "title": "NEAR Protocol RPC: Send transaction and wait",
@@ -1357,7 +1357,7 @@
   {
     "canonicalPath": "/rpcs/transaction/send_tx",
     "info": {
-      "description": "Submit a signed transaction and wait for its final execution outcome — the current synchronous send.",
+      "description": "Submit a Base64-encoded signed transaction and wait for its final execution outcome — the current synchronous send.",
       "operationId": "send_tx",
       "summary": "Send transaction",
       "title": "NEAR Protocol RPC: Send transaction",

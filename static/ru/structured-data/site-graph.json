@@ -3415,7 +3415,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/ru/rpcs/transaction/broadcast_tx_commit",
-      "description": "Отправьте подписанную транзакцию и дождитесь её подтверждения — устаревший синхронный способ, заменён на `send_tx`.",
+      "description": "Отправьте подписанную транзакцию в кодировке Base64 и дождитесь её подтверждения — устаревший синхронный способ, заменён на `send_tx`.",
       "docsPath": "/ru/rpc/transaction/broadcast-tx-commit",
       "familyId": "rpc-transaction",
       "headline": "NEAR Protocol RPC: Send transaction and wait",
@@ -3462,7 +3462,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/ru/rpcs/transaction/EXPERIMENTAL_receipt",
-      "description": "Получите одну квитанцию по её ID — межшардовую единицу исполнения, производимую транзакцией.",
+      "description": "Получите одну квитанцию по её ID в кодировке Base58 — межшардовую единицу исполнения, производимую транзакцией.",
       "docsPath": "/ru/rpc/transaction/experimental-receipt",
       "familyId": "rpc-transaction",
       "headline": "NEAR Protocol RPC: квитанция по ID",
@@ -3556,7 +3556,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/ru/rpcs/transaction/send_tx",
-      "description": "Отправьте подписанную транзакцию и дождитесь её итогового результата исполнения — текущий синхронный способ.",
+      "description": "Отправьте подписанную транзакцию в кодировке Base64 и дождитесь её итогового результата исполнения — текущий синхронный способ.",
       "docsPath": "/ru/rpc/transaction/send-tx",
       "familyId": "rpc-transaction",
       "headline": "NEAR Protocol RPC: отправка транзакции",
@@ -3697,7 +3697,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/ru/rpcs/validators/validators_by_epoch",
-      "description": "Получите набор валидаторов выбранной прошлой эпохи по высоте или хешу её начального блока.",
+      "description": "Получите набор валидаторов выбранной прошлой эпохи по высоте начального блока или хеш-идентификатору эпохи в кодировке Base58.",
       "docsPath": "/ru/rpc/validators/validators-by-epoch",
       "familyId": "rpc-validators",
       "headline": "NEAR Protocol RPC: Get validators by epoch",
