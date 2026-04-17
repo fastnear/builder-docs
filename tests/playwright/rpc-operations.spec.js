@@ -13,6 +13,35 @@ test('RPC operation pages live under /rpc', async ({ page }) => {
   await expect(page.getByRole('button', { name: 'Copy Markdown' })).toBeVisible();
 });
 
+test('RPC pages focus Send request on load so Enter runs the default example', async ({ page }) => {
+  await page.route('https://rpc.mainnet.fastnear.com/**', async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        jsonrpc: '2.0',
+        id: 'fastnear',
+        result: { amount: '1' },
+      }),
+    });
+  });
+
+  await page.goto('/rpc/account/view-account');
+
+  const sendButton = page.getByRole('button', { name: 'Send request' });
+  await expect(sendButton).toBeFocused();
+
+  const requestPromise = waitForRpcRequest(
+    page,
+    'https://rpc.mainnet.fastnear.com',
+    (payload) => payload?.id !== 'fastnear-docs'
+  );
+  await page.keyboard.press('Enter');
+
+  const sentPayload = getRequestPayload(await requestPromise);
+  expect(sentPayload?.params?.account_id).toBe('root.near');
+});
+
 test('RPC operation pages prefill request fields from matching URL params', async ({ page }) => {
   await page.route('https://rpc.mainnet.fastnear.com/**', async (route) => {
     await route.fulfill({
@@ -100,6 +129,39 @@ test('operation-state URLs execute RPC requests on load when inputs are ready', 
   const sentPayload = getRequestPayload(await requestPromise);
   expect(sentPayload?.params?.account_id).toBe('near');
   await expect(page.locator('.fastnear-interaction__text-response')).toContainText('"amount": "1"');
+});
+
+test('RPC response metadata shows the executed RPC target in inline and expanded views', async ({ page }) => {
+  await page.route('https://rpc.mainnet.fastnear.com/**', async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        jsonrpc: '2.0',
+        id: 'fastnear',
+        result: { amount: '1' },
+      }),
+    });
+  });
+
+  await page.goto('/rpc/account/view-account?account_id=near');
+
+  const requestPromise = waitForRpcRequest(
+    page,
+    'https://rpc.mainnet.fastnear.com',
+    (payload) => payload?.id !== 'fastnear-docs'
+  );
+  await page.getByRole('button', { name: 'Send request' }).click();
+  await requestPromise;
+
+  const expectedTarget = 'https://rpc.mainnet.fastnear.com/query/view_account';
+  await expect(page.locator('.fastnear-interaction__result-meta .fastnear-interaction__result-url')).toHaveText(
+    expectedTarget
+  );
+
+  await page.getByRole('button', { name: 'Expand response' }).click();
+  const dialog = page.getByRole('dialog', { name: 'Expanded response' });
+  await expect(dialog.locator('.fastnear-interaction__result-url')).toHaveText(expectedTarget);
 });
 
 test('apiKey-only URLs do not auto-run RPC requests', async ({ page }) => {

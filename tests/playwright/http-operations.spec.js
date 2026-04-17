@@ -59,6 +59,29 @@ test('API operation pages live under the short docs prefixes', async ({ page }) 
   await expect(page.getByRole('button', { name: 'Copy Markdown' })).toBeVisible();
 });
 
+test('HTTP pages focus Send request on load so Enter runs the default example', async ({ page }) => {
+  await page.route('https://api.fastnear.com/**', async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        account_id: 'root.near',
+      }),
+    });
+  });
+
+  await page.goto('/api/v1/account-full');
+
+  const sendButton = page.getByRole('button', { name: 'Send request' });
+  await expect(sendButton).toBeFocused();
+
+  const requestPromise = waitForHttpRequest(page, 'https://api.fastnear.com');
+  await page.keyboard.press('Enter');
+
+  const request = await requestPromise;
+  expect(request.url()).toBe('https://api.fastnear.com/v1/account/root.near/full');
+});
+
 test('HTTP operation pages prefill path fields from matching URL params', async ({ page }) => {
   await page.route('https://api.fastnear.com/**', async (route) => {
     await route.fulfill({
@@ -99,6 +122,33 @@ test('operation-state URLs execute HTTP requests on load when inputs are ready',
   const request = await requestPromise;
   expect(request.url()).toBe('https://api.fastnear.com/v1/account/near/full');
   await expect(page.locator('.fastnear-interaction__text-response')).toContainText('"account_id": "near"');
+});
+
+test('HTTP response metadata shows the full request URL in inline and expanded views', async ({ page }) => {
+  await page.route('https://api.fastnear.com/**', async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        account_id: 'near',
+      }),
+    });
+  });
+
+  await page.goto('/api/v1/account-full?account_id=near');
+
+  const requestPromise = waitForHttpRequest(page, 'https://api.fastnear.com');
+  await page.getByRole('button', { name: 'Send request' }).click();
+  await requestPromise;
+
+  const expectedUrl = 'https://api.fastnear.com/v1/account/near/full';
+  await expect(page.locator('.fastnear-interaction__result-meta .fastnear-interaction__result-url')).toHaveText(
+    expectedUrl
+  );
+
+  await page.getByRole('button', { name: 'Expand response' }).click();
+  const dialog = page.getByRole('dialog', { name: 'Expanded response' });
+  await expect(dialog.locator('.fastnear-interaction__result-url')).toHaveText(expectedUrl);
 });
 
 test('colorSchema-only hosted URLs do not auto-run HTTP requests', async ({ page }) => {

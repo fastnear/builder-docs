@@ -476,6 +476,43 @@ function buildHttpRequestBody(pageModel, fieldValues) {
   return Object.fromEntries(bodyEntries);
 }
 
+function buildExecutedRequestTargetLabel(pageModel, { networkUrl, requestUrl, rpcPayload }) {
+  if (!pageModel) {
+    return "";
+  }
+
+  if (pageModel.route?.transport === "http") {
+    return requestUrl?.toString() || "";
+  }
+
+  if (!networkUrl) {
+    return "";
+  }
+
+  let resolvedUrl = networkUrl;
+  try {
+    resolvedUrl = new URL(pageModel.route?.path || "/", networkUrl).toString();
+  } catch (_error) {
+    resolvedUrl = networkUrl;
+  }
+
+  const requestMethod =
+    rpcPayload?.method || pageModel.interaction?.requestMethod || pageModel.info?.operationId || "";
+  const requestType =
+    rpcPayload?.params?.request_type || pageModel.interaction?.requestType || "";
+
+  const normalizedBaseUrl = resolvedUrl.endsWith("/") ? resolvedUrl : `${resolvedUrl}/`;
+  if (requestMethod && requestType) {
+    return `${normalizedBaseUrl}${encodeURIComponent(requestMethod)}/${encodeURIComponent(requestType)}`;
+  }
+
+  if (requestMethod) {
+    return `${normalizedBaseUrl}${encodeURIComponent(requestMethod)}`;
+  }
+
+  return resolvedUrl;
+}
+
 function getApiKeyStatus(auth) {
   return getFastnearApiKeyStatusText(auth);
 }
@@ -1247,6 +1284,7 @@ function FastnearOperationPage({ pageModel }) {
   const expandedResponseTitleId = useId();
   const responseFindInputRef = useRef(null);
   const inlineExpandResponseButtonRef = useRef(null);
+  const sendRequestButtonRef = useRef(null);
   const selectedFinalityDetails =
     FINALITY_OPTIONS.find((option) => option.value === selectedFinality) || FINALITY_OPTIONS[2];
   const selectedNetworkDetails =
@@ -1260,6 +1298,36 @@ function FastnearOperationPage({ pageModel }) {
   useEffect(() => {
     setApiKeyDraft(auth.storedApiKey || "");
   }, [auth.storedApiKey]);
+
+  useEffect(() => {
+    if (typeof document === "undefined" || initialOperationState.shouldOpenResponseModal) {
+      return undefined;
+    }
+
+    const activeElement = document.activeElement;
+    if (
+      activeElement &&
+      activeElement !== document.body &&
+      activeElement !== document.documentElement
+    ) {
+      return undefined;
+    }
+
+    const focusHandle =
+      typeof window !== "undefined"
+        ? window.setTimeout(() => {
+            if (!sendRequestButtonRef.current?.disabled) {
+              sendRequestButtonRef.current.focus();
+            }
+          }, 0)
+        : null;
+
+    return () => {
+      if (focusHandle !== null && typeof window !== "undefined") {
+        window.clearTimeout(focusHandle);
+      }
+    };
+  }, [initialOperationState.shouldOpenResponseModal, pageModel.pageModelId]);
 
   useEffect(() => {
     protectedHydrationFieldsRef.current = initialOperationState.protectedFieldNames;
@@ -1374,6 +1442,15 @@ function FastnearOperationPage({ pageModel }) {
     pageModel.route.transport === "json-rpc"
       ? buildRpcPayload(pageModel, trimmedFieldValues, selectedFinality, selectedExample?.request?.body)
       : undefined;
+  const requestTargetLabel = useMemo(
+    () =>
+      buildExecutedRequestTargetLabel(pageModel, {
+        networkUrl: selectedNetworkDetails?.url,
+        requestUrl,
+        rpcPayload,
+      }),
+    [pageModel, requestUrl, rpcPayload, selectedNetworkDetails?.url]
+  );
   const missingField = pageModel.interaction.fields.find(
     (field) => field.required && !trimmedFieldValues[field.name]
   );
@@ -1758,6 +1835,7 @@ function FastnearOperationPage({ pageModel }) {
         let nextRunResult;
         try {
           nextRunResult = {
+            displayUrl: requestTargetLabel,
             kind: "json",
             ok: response.ok,
             status: response.status,
@@ -1766,6 +1844,7 @@ function FastnearOperationPage({ pageModel }) {
           };
         } catch (_error) {
           nextRunResult = {
+            displayUrl: requestTargetLabel,
             kind: "text",
             ok: response.ok,
             status: response.status,
@@ -1802,6 +1881,7 @@ function FastnearOperationPage({ pageModel }) {
       let nextRunResult;
       try {
         nextRunResult = {
+          displayUrl: requestTargetLabel,
           kind: "json",
           ok: response.ok,
           status: response.status,
@@ -1810,6 +1890,7 @@ function FastnearOperationPage({ pageModel }) {
         };
       } catch (_error) {
         nextRunResult = {
+          displayUrl: requestTargetLabel,
           kind: "text",
           ok: response.ok,
           status: response.status,
@@ -2096,6 +2177,7 @@ function FastnearOperationPage({ pageModel }) {
             <div className="fastnear-interaction__actions">
               <div className="fastnear-interaction__primary-actions">
                 <button
+                  ref={sendRequestButtonRef}
                   type="button"
                   className="fastnear-button fastnear-button--primary"
                   onClick={handleRun}
@@ -2179,11 +2261,7 @@ function FastnearOperationPage({ pageModel }) {
             <div className="fastnear-interaction__meta">
               <div className="fastnear-interaction__meta-item">
                 <span className="fastnear-interaction__meta-label">{uiText.endpoint}</span>
-                <code>
-                  {pageModel.route.transport === "json-rpc"
-                    ? selectedNetworkDetails?.url
-                    : requestUrl?.origin || selectedNetworkDetails?.url}
-                </code>
+                <code>{requestTargetLabel || selectedNetworkDetails?.url}</code>
               </div>
               {pageModel.interaction.supportsFinality ? (
                 <div className="fastnear-interaction__meta-item fastnear-interaction__meta-item--finality">
@@ -2243,7 +2321,9 @@ function FastnearOperationPage({ pageModel }) {
                       {runResult.ok && !hasRpcError ? uiText.success : uiText.error}
                     </span>
                     <span>{uiText.httpStatus} {runResult.status}</span>
-                    <code className="fastnear-interaction__result-url">{runResult.url}</code>
+                    <code className="fastnear-interaction__result-url">
+                      {runResult.displayUrl || runResult.url}
+                    </code>
                   </div>
 
                   <div
@@ -2377,7 +2457,9 @@ function FastnearOperationPage({ pageModel }) {
                   {runResult.ok && !hasRpcError ? uiText.success : uiText.error}
                 </span>
                 <span>{uiText.httpStatus} {runResult.status}</span>
-                <code className="fastnear-interaction__result-url">{runResult.url}</code>
+                <code className="fastnear-interaction__result-url">
+                  {runResult.displayUrl || runResult.url}
+                </code>
               </div>
             ) : null}
 
