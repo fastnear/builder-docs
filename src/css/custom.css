@@ -417,6 +417,44 @@ pre code {
   color: rgba(243, 245, 255, 0.62);
 }
 
+.theme-doc-sidebar-item-link.fastnear-sidebar-release-link,
+.navbar-sidebar .fastnear-sidebar-release-link {
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.75rem;
+  position: relative;
+}
+
+.theme-doc-sidebar-item-link.fastnear-sidebar-release-link::after,
+.navbar-sidebar .fastnear-sidebar-release-link::after {
+  background: rgba(17, 17, 17, 0.08);
+  bottom: 0;
+  content: '';
+  height: 1px;
+  left: 0;
+  position: absolute;
+  right: 0;
+}
+
+.theme-doc-sidebar-item-link.fastnear-sidebar-release-link .menu__link,
+.navbar-sidebar .fastnear-sidebar-release-link .menu__link {
+  color: var(--ifm-color-emphasis-700);
+  font-size: 0.88rem;
+  font-weight: 500;
+  opacity: 0.78;
+}
+
+.theme-doc-sidebar-item-link.fastnear-sidebar-release-link .menu__link:hover,
+.theme-doc-sidebar-item-link.fastnear-sidebar-release-link .menu__link:focus-visible,
+.navbar-sidebar .fastnear-sidebar-release-link .menu__link:hover,
+.navbar-sidebar .fastnear-sidebar-release-link .menu__link:focus-visible {
+  opacity: 1;
+}
+
+[data-theme='dark'] .theme-doc-sidebar-item-link.fastnear-sidebar-release-link::after,
+[data-theme='dark'] .navbar-sidebar .fastnear-sidebar-release-link::after {
+  background: rgba(243, 245, 255, 0.12);
+}
+
 /* Swap toggle icons: show destination mode instead of current mode */
 [data-theme-choice='light'] [class*='lightToggleIcon'] {
   display: none !important;

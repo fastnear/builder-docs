@@ -4,11 +4,45 @@
  * @type {import('@docusaurus/plugin-content-docs').SidebarsConfig}
  */
 
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const configDir = path.dirname(fileURLToPath(import.meta.url));
 const hideEarlyApiFamilies = /^(1|true|yes|on)$/i.test(
   process.env.HIDE_EARLY_API_FAMILIES || ''
 );
 
+function loadNearcoreSource() {
+  try {
+    const structuredGraphPath = path.join(
+      configDir,
+      'src',
+      'data',
+      'generatedFastnearStructuredGraph.json'
+    );
+    const structuredGraph = JSON.parse(fs.readFileSync(structuredGraphPath, 'utf8'));
+    return structuredGraph?.metadata?.nearcoreSource || null;
+  } catch (_error) {
+    return null;
+  }
+}
+
+const nearcoreSource = loadNearcoreSource();
+const nearcoreReleaseSidebarItems =
+  nearcoreSource?.tag && nearcoreSource?.releaseUrl
+    ? [
+        {
+          type: 'link',
+          href: nearcoreSource.releaseUrl,
+          label: `nearcore ${nearcoreSource.tag}`,
+          className: 'fastnear-sidebar-release-link',
+        },
+      ]
+    : [];
+
 const rpcSidebar = [
+  ...nearcoreReleaseSidebarItems,
   'rpc/index',
   'auth/index',
   {

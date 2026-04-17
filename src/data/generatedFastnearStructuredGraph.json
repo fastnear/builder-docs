@@ -1205,6 +1205,20 @@
       "schemaType": "WebAPI"
     }
   ],
+  "metadata": {
+    "nearcoreSource": {
+      "branch": "HEAD",
+      "commitSha": "72dbd0f789a427bed7e7552070b1828794f122b9",
+      "dirty": true,
+      "generatedAt": "2026-04-17T13:39:55.482Z",
+      "releaseUrl": "https://github.com/near/nearcore/releases/tag/2.11.0",
+      "repoRoot": "../nearcore",
+      "repoUrl": "https://github.com/near/nearcore",
+      "specPath": "../nearcore/chain/jsonrpc/openapi/openapi.json",
+      "tag": "2.11.0",
+      "tagSource": "exact"
+    }
+  },
   "operations": [
     {
       "authSummary": "API key via query apiKey",
