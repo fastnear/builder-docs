@@ -125,6 +125,39 @@ test('apiKey-only URLs do not auto-run RPC requests', async ({ page }) => {
   expect(requestCount).toBe(0);
 });
 
+test('live and expanded responses show the RPC endpoint URL', async ({ page }) => {
+  await page.route('https://rpc.mainnet.fastnear.com/**', async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        jsonrpc: '2.0',
+        id: 'fastnear',
+        result: { amount: '1' },
+      }),
+    });
+  });
+
+  await page.goto('/rpc/account/view-account?account_id=near');
+
+  const requestPromise = waitForRpcRequest(
+    page,
+    'https://rpc.mainnet.fastnear.com',
+    (payload) => payload?.id !== 'fastnear-docs'
+  );
+  await page.getByRole('button', { name: 'Send request' }).click();
+  await requestPromise;
+
+  const inlineRequestTarget = page.locator('.fastnear-interaction__result-url').first();
+  await expect(inlineRequestTarget).toHaveText('https://rpc.mainnet.fastnear.com/account/view_account');
+
+  await page.getByRole('button', { name: 'Expand response' }).click();
+  const expandedRequestTarget = page
+    .getByRole('dialog', { name: 'Expanded response' })
+    .locator('.fastnear-interaction__result-url');
+  await expect(expandedRequestTarget).toHaveText('https://rpc.mainnet.fastnear.com/account/view_account');
+});
+
 test('expanded response modal supports find, next, previous, and keyboard navigation', async ({ page }) => {
   await page.route('https://rpc.mainnet.fastnear.com/**', async (route) => {
     await route.fulfill({

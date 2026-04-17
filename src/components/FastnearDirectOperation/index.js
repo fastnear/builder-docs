@@ -547,6 +547,33 @@ function buildHttpExample(pageModel, example) {
   return `${pageModel.route.method} ${renderedPath}${renderedSearch}`;
 }
 
+function buildRpcEndpointUrl(pageModel, networkUrl) {
+  if (!networkUrl) {
+    return "";
+  }
+
+  let endpointPath = "";
+  if (typeof pageModel?.canonicalPath === "string" && pageModel.canonicalPath.startsWith("/rpcs/")) {
+    endpointPath = pageModel.canonicalPath.slice("/rpcs".length);
+  } else if (
+    typeof pageModel?.sourceSpec === "string" &&
+    pageModel.sourceSpec.startsWith("rpcs/") &&
+    pageModel.sourceSpec.endsWith(".yaml")
+  ) {
+    endpointPath = `/${pageModel.sourceSpec.slice("rpcs/".length, -".yaml".length)}`;
+  }
+
+  if (!endpointPath) {
+    endpointPath = pageModel?.route?.path || "/";
+  }
+
+  try {
+    return new URL(endpointPath, networkUrl).toString();
+  } catch (_error) {
+    return networkUrl;
+  }
+}
+
 function buildOperationExampleUrl(
   pageModel,
   currentHref,
@@ -1750,6 +1777,7 @@ function FastnearOperationPage({ pageModel }) {
           throw new Error(uiText.noRpcServer);
         }
 
+        const rpcEndpointUrl = buildRpcEndpointUrl(pageModel, selectedNetworkDetails.url);
         const headers = {
           Accept: "application/json",
           "Content-Type": "application/json",
@@ -1770,7 +1798,7 @@ function FastnearOperationPage({ pageModel }) {
             kind: "json",
             ok: response.ok,
             status: response.status,
-            url: selectedNetworkDetails.url,
+            url: rpcEndpointUrl || selectedNetworkDetails.url,
             value: JSON.parse(responseText),
           };
         } catch (_error) {
@@ -1778,7 +1806,7 @@ function FastnearOperationPage({ pageModel }) {
             kind: "text",
             ok: response.ok,
             status: response.status,
-            url: selectedNetworkDetails.url,
+            url: rpcEndpointUrl || selectedNetworkDetails.url,
             value: responseText,
           };
         }
@@ -1814,7 +1842,7 @@ function FastnearOperationPage({ pageModel }) {
           kind: "json",
           ok: response.ok,
           status: response.status,
-          url: requestUrl.toString(),
+          url: response.url || requestUrl.toString(),
           value: JSON.parse(responseText),
         };
       } catch (_error) {
@@ -1822,7 +1850,7 @@ function FastnearOperationPage({ pageModel }) {
           kind: "text",
           ok: response.ok,
           status: response.status,
-          url: requestUrl.toString(),
+          url: response.url || requestUrl.toString(),
           value: responseText,
         };
       }
