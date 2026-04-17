@@ -1241,7 +1241,7 @@
   {
     "canonicalPath": "/rpcs/block/block_by_id",
     "info": {
-      "description": "Fetch a block's header and chunk summaries by its SHA-256 hash.",
+      "description": "Fetch a block's header and chunk summaries by its Base58-encoded SHA-256 hash.",
       "operationId": "block_by_id",
       "summary": "Get block by hash",
       "title": "NEAR Protocol RPC: Get block by hash",
@@ -2458,7 +2458,7 @@
   {
     "canonicalPath": "/rpcs/contract/view_global_contract_code",
     "info": {
-      "description": "Look up a global contract's WebAssembly bytes by its SHA-256 code hash.",
+      "description": "Look up a global contract's WebAssembly bytes by its Base58-encoded SHA-256 code hash.",
       "operationId": "view_global_contract_code",
       "summary": "View global contract code",
       "title": "NEAR Protocol RPC: View global contract code",
@@ -3734,7 +3734,7 @@
   {
     "canonicalPath": "/rpcs/protocol/EXPERIMENTAL_light_client_block_proof",
     "info": {
-      "description": "Fetch a Merkle proof that a block is included in the light client's verified chain.",
+      "description": "Fetch a Merkle proof — by Base58 block and light-client-head hashes — that the block is included in the light client's verified chain.",
       "operationId": "EXPERIMENTAL_light_client_block_proof",
       "summary": "Get light client block proof",
       "title": "NEAR Protocol RPC: Get light client block proof",
@@ -4066,7 +4066,7 @@
   {
     "canonicalPath": "/rpcs/protocol/EXPERIMENTAL_light_client_proof",
     "info": {
-      "description": "Fetch a Merkle proof of transaction or receipt inclusion — the EXPERIMENTAL alias of `light_client_proof`.",
+      "description": "Fetch a Merkle proof of transaction or receipt inclusion by Base58 ID — the EXPERIMENTAL alias of `light_client_proof`.",
       "operationId": "EXPERIMENTAL_light_client_proof",
       "summary": "Get light client execution proof",
       "title": "NEAR Protocol RPC: Get light client execution proof",
@@ -6197,7 +6197,7 @@
   {
     "canonicalPath": "/rpcs/protocol/chunk_by_hash",
     "info": {
-      "description": "Fetch a single chunk's transactions and receipts by its content hash.",
+      "description": "Fetch a single chunk's transactions and receipts by its Base58 content hash.",
       "operationId": "chunk_by_hash",
       "summary": "Get chunk by hash",
       "title": "NEAR Protocol RPC: Get chunk by hash",
@@ -9411,7 +9411,7 @@
   {
     "canonicalPath": "/rpcs/protocol/light_client_proof",
     "info": {
-      "description": "Fetch a Merkle proof that a transaction or receipt was included and executed, suitable for light-client verification.",
+      "description": "Fetch a Merkle proof — by Base58 transaction or receipt ID — that the item was included and executed, suitable for light-client verification.",
       "operationId": "light_client_proof",
       "summary": "Get light client proof",
       "title": "NEAR Protocol RPC: Get light client proof",
@@ -10543,7 +10543,7 @@
   {
     "canonicalPath": "/rpcs/protocol/next_light_client_block",
     "info": {
-      "description": "Advance a light client's verified chain by fetching the next block header after a known head.",
+      "description": "Advance a light client's verified chain by fetching the next block header after a known Base58 head hash.",
       "operationId": "next_light_client_block",
       "summary": "Get next light client block",
       "title": "NEAR Protocol RPC: Get next light client block",
@@ -11483,7 +11483,7 @@
   {
     "canonicalPath": "/rpcs/transaction/EXPERIMENTAL_receipt",
     "info": {
-      "description": "Fetch a single receipt by ID — the cross-shard execution unit a transaction produces.",
+      "description": "Fetch a single receipt by Base58 ID — the cross-shard execution unit a transaction produces.",
       "operationId": "EXPERIMENTAL_receipt",
       "summary": "Get receipt by ID",
       "title": "NEAR Protocol RPC: Get receipt by ID",
@@ -11787,7 +11787,7 @@
   {
     "canonicalPath": "/rpcs/transaction/EXPERIMENTAL_tx_status",
     "info": {
-      "description": "Fetch a transaction's full receipt tree and per-receipt outcomes — richer than `tx_status`.",
+      "description": "Fetch a transaction's full receipt tree and per-receipt outcomes by Base58 hash — richer than `tx_status`.",
       "operationId": "EXPERIMENTAL_tx_status",
       "summary": "Get detailed transaction status",
       "title": "NEAR Protocol RPC: Get detailed transaction status",
@@ -12188,7 +12188,7 @@
   {
     "canonicalPath": "/rpcs/transaction/broadcast_tx_async",
     "info": {
-      "description": "Submit a signed transaction and immediately get its hash — no wait for execution.",
+      "description": "Submit a Base64-encoded signed transaction and immediately get its hash — no wait for execution.",
       "operationId": "broadcast_tx_async",
       "summary": "Send transaction asynchronously",
       "title": "NEAR Protocol RPC: Send transaction asynchronously",
@@ -12480,7 +12480,7 @@
   {
     "canonicalPath": "/rpcs/transaction/broadcast_tx_commit",
     "info": {
-      "description": "Submit a signed transaction and wait for its commit — the legacy synchronous send, superseded by `send_tx`.",
+      "description": "Submit a Base64-encoded signed transaction and wait for its commit — the legacy synchronous send, superseded by `send_tx`.",
       "operationId": "broadcast_tx_commit",
       "summary": "Send transaction and wait",
       "title": "NEAR Protocol RPC: Send transaction and wait",
@@ -12838,7 +12838,7 @@
   {
     "canonicalPath": "/rpcs/transaction/send_tx",
     "info": {
-      "description": "Submit a signed transaction and wait for its final execution outcome — the current synchronous send.",
+      "description": "Submit a Base64-encoded signed transaction and wait for its final execution outcome — the current synchronous send.",
       "operationId": "send_tx",
       "summary": "Send transaction",
       "title": "NEAR Protocol RPC: Send transaction",
@@ -13200,7 +13200,7 @@
   {
     "canonicalPath": "/rpcs/transaction/tx_status",
     "info": {
-      "description": "Check a transaction's final outcome by hash — succeeded, failed, or still unresolved.",
+      "description": "Check a transaction's final outcome by Base58 hash — succeeded, failed, or still unresolved.",
       "operationId": "tx_status",
       "summary": "Get transaction status",
       "title": "NEAR Protocol RPC: Get transaction status",
@@ -13876,7 +13876,7 @@
   {
     "canonicalPath": "/rpcs/validators/validators_by_epoch",
     "info": {
-      "description": "Fetch the validator set for a chosen past epoch, selected by epoch-start block height or hash.",
+      "description": "Fetch the validator set for a chosen past epoch, selected by epoch-start block height or Base58 epoch-id hash.",
       "operationId": "validators_by_epoch",
       "summary": "Get validators by epoch",
       "title": "NEAR Protocol RPC: Get validators by epoch",

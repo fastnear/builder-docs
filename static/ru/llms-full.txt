@@ -3057,7 +3057,7 @@ https://tx.test.fastnear.com
 
 # RPC протокола NEAR: Блок по хешу
 Получить блок по хешу
-Получите заголовок и сводку по чанкам блока по его SHA-256-хешу.
+Получите заголовок и сводку по чанкам блока по его SHA-256-хешу в кодировке Base58.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/rpcs/block/block_by_id
 - https://docs.fastnear.com/ru/rpcs/block/block_by_id/other/block_by_id
@@ -4023,7 +4023,7 @@ https://tx.test.fastnear.com
 
 # RPC протокола NEAR: Глобальный код контракта
 Получить глобальный код контракта
-Найдите WebAssembly-байткод глобального контракта по SHA-256-хешу его кода.
+Найдите WebAssembly-байткод глобального контракта по SHA-256-хешу его кода в кодировке Base58.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/rpcs/contract/view_global_contract_code
 - https://docs.fastnear.com/ru/rpcs/contract/view_global_contract_code/other/view_global_contract_code
@@ -5484,7 +5484,7 @@ https://tx.test.fastnear.com
 
 # RPC протокола NEAR: Чанк по хешу
 Получить чанк по хешу
-Получите транзакции и квитанции одного чанка по его хешу содержимого.
+Получите транзакции и квитанции одного чанка по его хешу содержимого в кодировке Base58.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/rpcs/protocol/chunk_by_hash
 - https://docs.fastnear.com/ru/rpcs/protocol/chunk_by_hash/other/chunk_by_hash
@@ -7186,7 +7186,7 @@ https://tx.test.fastnear.com
 
 # RPC протокола NEAR: Доказательство блока для лайт-клиента
 Получить доказательство блока для лайт-клиента
-Получите Merkle-доказательство того, что блок включён в верифицированную цепочку лайт-клиента.
+Получите Merkle-доказательство — по хешам блока и вершины лайт-клиента в кодировке Base58 — того, что блок включён в верифицированную цепочку лайт-клиента.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/rpcs/protocol/EXPERIMENTAL_light_client_block_proof
 - https://docs.fastnear.com/ru/rpcs/protocol/EXPERIMENTAL_light_client_block_proof/other/EXPERIMENTAL_light_client_block_proof
@@ -7452,7 +7452,7 @@ https://tx.test.fastnear.com
 
 # RPC протокола NEAR: Доказательство исполнения для лайт-клиента
 Получить доказательство исполнения для лайт-клиента
-Получите Merkle-доказательство включения транзакции или квитанции — EXPERIMENTAL-вариант метода `light_client_proof`.
+Получите Merkle-доказательство включения транзакции или квитанции по ID в кодировке Base58 — EXPERIMENTAL-вариант метода `light_client_proof`.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/rpcs/protocol/EXPERIMENTAL_light_client_proof
 - https://docs.fastnear.com/ru/rpcs/protocol/EXPERIMENTAL_light_client_proof/other/EXPERIMENTAL_light_client_proof
@@ -10013,7 +10013,7 @@ https://tx.test.fastnear.com
 
 # RPC протокола NEAR: Доказательство для лайт-клиента
 Получить доказательство для лайт-клиента
-Получите Merkle-доказательство того, что транзакция или квитанция была включена и исполнена — для верификации лайт-клиентом.
+Получите Merkle-доказательство — по ID транзакции или квитанции в кодировке Base58 — того, что элемент был включён и исполнен, для верификации лайт-клиентом.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/rpcs/protocol/light_client_proof
 - https://docs.fastnear.com/ru/rpcs/protocol/light_client_proof/other/light_client_proof
@@ -10904,7 +10904,7 @@ https://tx.test.fastnear.com
 
 # RPC протокола NEAR: Следующий блок для лайт-клиента
 Получить следующий блок для лайт-клиента
-Получите следующий заголовок блока для лайт-клиента после известной вершины его верифицированной цепочки.
+Получите следующий заголовок блока для лайт-клиента после известного хеша вершины его верифицированной цепочки в кодировке Base58.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/rpcs/protocol/next_light_client_block
 - https://docs.fastnear.com/ru/rpcs/protocol/next_light_client_block/other/next_light_client_block
@@ -11750,7 +11750,7 @@ https://tx.test.fastnear.com
 
 # RPC протокола NEAR: Отправка транзакции (асинхронно)
 Отправить транзакцию асинхронно
-Отправьте подписанную транзакцию и сразу получите её хеш — без ожидания исполнения.
+Отправьте подписанную транзакцию в кодировке Base64 и сразу получите её хеш — без ожидания исполнения.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/rpcs/transaction/broadcast_tx_async
 - https://docs.fastnear.com/ru/rpcs/transaction/broadcast_tx_async/other/broadcast_tx_async
@@ -11969,7 +11969,7 @@ https://tx.test.fastnear.com
 
 # RPC протокола NEAR: Отправка транзакции (с подтверждением)
 Отправить транзакцию и дождаться подтверждения
-Отправьте подписанную транзакцию и дождитесь её подтверждения — устаревший синхронный способ, заменён на `send_tx`.
+Отправьте подписанную транзакцию в кодировке Base64 и дождитесь её подтверждения — устаревший синхронный способ, заменён на `send_tx`.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/rpcs/transaction/broadcast_tx_commit
 - https://docs.fastnear.com/ru/rpcs/transaction/broadcast_tx_commit/other/broadcast_tx_commit
@@ -12254,7 +12254,7 @@ https://tx.test.fastnear.com
 
 # RPC протокола NEAR: Квитанция по ID
 Получить квитанцию по ID
-Получите одну квитанцию по её ID — межшардовую единицу исполнения, производимую транзакцией.
+Получите одну квитанцию по её ID в кодировке Base58 — межшардовую единицу исполнения, производимую транзакцией.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/rpcs/transaction/EXPERIMENTAL_receipt
 - https://docs.fastnear.com/ru/rpcs/transaction/EXPERIMENTAL_receipt/other/EXPERIMENTAL_receipt
@@ -12504,7 +12504,7 @@ https://tx.test.fastnear.com
 
 # RPC протокола NEAR: Подробный статус транзакции
 Получить подробный статус транзакции
-Получите полное дерево квитанций и результаты исполнения каждой квитанции — богаче, чем `tx_status`.
+Получите полное дерево квитанций и результаты исполнения каждой квитанции по хешу в кодировке Base58 — богаче, чем `tx_status`.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/rpcs/transaction/EXPERIMENTAL_tx_status
 - https://docs.fastnear.com/ru/rpcs/transaction/EXPERIMENTAL_tx_status/other/EXPERIMENTAL_tx_status
@@ -12808,7 +12808,7 @@ https://tx.test.fastnear.com
 
 # RPC протокола NEAR: Отправить транзакцию
 Отправить транзакцию
-Отправьте подписанную транзакцию и дождитесь её итогового результата исполнения — текущий синхронный способ.
+Отправьте подписанную транзакцию в кодировке Base64 и дождитесь её итогового результата исполнения — текущий синхронный способ.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/rpcs/transaction/send_tx
 - https://docs.fastnear.com/ru/rpcs/transaction/send_tx/other/send_tx
@@ -13095,7 +13095,7 @@ https://tx.test.fastnear.com
 
 # RPC протокола NEAR: Статус транзакции
 Проверить статус транзакции
-Проверьте итоговый результат транзакции по её хешу — успех, сбой или ещё не завершена.
+Проверьте итоговый результат транзакции по её хешу в кодировке Base58 — успех, сбой или ещё не завершена.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/rpcs/transaction/tx_status
 - https://docs.fastnear.com/ru/rpcs/transaction/tx_status/other/tx_status
@@ -13610,7 +13610,7 @@ https://tx.test.fastnear.com
 
 # RPC протокола NEAR: Валидаторы по эпохе
 Получить валидаторов по эпохе
-Получите набор валидаторов выбранной прошлой эпохи по высоте или хешу её начального блока.
+Получите набор валидаторов выбранной прошлой эпохи по высоте начального блока или хеш-идентификатору эпохи в кодировке Base58.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/rpcs/validators/validators_by_epoch
 - https://docs.fastnear.com/ru/rpcs/validators/validators_by_epoch/other/validators_by_epoch

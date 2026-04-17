@@ -1,6 +1,6 @@
 # RPC протокола NEAR: Подробный статус транзакции
 Получить подробный статус транзакции
-Получите полное дерево квитанций и результаты исполнения каждой квитанции — богаче, чем `tx_status`.
+Получите полное дерево квитанций и результаты исполнения каждой квитанции по хешу в кодировке Base58 — богаче, чем `tx_status`.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/rpcs/transaction/EXPERIMENTAL_tx_status
 - https://docs.fastnear.com/ru/rpcs/transaction/EXPERIMENTAL_tx_status/other/EXPERIMENTAL_tx_status

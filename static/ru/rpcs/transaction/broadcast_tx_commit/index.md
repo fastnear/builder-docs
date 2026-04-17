@@ -1,6 +1,6 @@
 # RPC протокола NEAR: Отправка транзакции (с подтверждением)
 Отправить транзакцию и дождаться подтверждения
-Отправьте подписанную транзакцию и дождитесь её подтверждения — устаревший синхронный способ, заменён на `send_tx`.
+Отправьте подписанную транзакцию в кодировке Base64 и дождитесь её подтверждения — устаревший синхронный способ, заменён на `send_tx`.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/rpcs/transaction/broadcast_tx_commit
 - https://docs.fastnear.com/ru/rpcs/transaction/broadcast_tx_commit/other/broadcast_tx_commit

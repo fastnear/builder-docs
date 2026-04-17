@@ -2097,7 +2097,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/ru/rpcs/block/block_by_id",
-      "description": "Получите заголовок и сводку по чанкам блока по его SHA-256-хешу.",
+      "description": "Получите заголовок и сводку по чанкам блока по его SHA-256-хешу в кодировке Base58.",
       "docsPath": "/ru/rpc/block/block-by-id",
       "familyId": "rpc-block",
       "headline": "NEAR Protocol RPC: Get block by hash",
@@ -2285,7 +2285,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/ru/rpcs/contract/view_global_contract_code",
-      "description": "Найдите WebAssembly-байткод глобального контракта по SHA-256-хешу его кода.",
+      "description": "Найдите WebAssembly-байткод глобального контракта по SHA-256-хешу его кода в кодировке Base58.",
       "docsPath": "/ru/rpc/contract/view-global-contract-code",
       "familyId": "rpc-contract",
       "headline": "NEAR Protocol RPC: просмотр глобального кода контракта",
@@ -2520,7 +2520,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/ru/rpcs/protocol/chunk_by_hash",
-      "description": "Получите транзакции и квитанции одного чанка по его хешу содержимого.",
+      "description": "Получите транзакции и квитанции одного чанка по его хешу содержимого в кодировке Base58.",
       "docsPath": "/ru/rpc/protocol/chunk-by-hash",
       "familyId": "rpc-protocol",
       "headline": "NEAR Protocol RPC: Get chunk by hash",
@@ -2661,7 +2661,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/ru/rpcs/protocol/EXPERIMENTAL_light_client_block_proof",
-      "description": "Получите Merkle-доказательство того, что блок включён в верифицированную цепочку лайт-клиента.",
+      "description": "Получите Merkle-доказательство — по хешам блока и вершины лайт-клиента в кодировке Base58 — того, что блок включён в верифицированную цепочку лайт-клиента.",
       "docsPath": "/ru/rpc/protocol/experimental-light-client-block-proof",
       "familyId": "rpc-protocol",
       "headline": "NEAR Protocol RPC: доказательство блока для лёгкого клиента",
@@ -2708,7 +2708,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/ru/rpcs/protocol/EXPERIMENTAL_light_client_proof",
-      "description": "Получите Merkle-доказательство включения транзакции или квитанции — EXPERIMENTAL-вариант метода `light_client_proof`.",
+      "description": "Получите Merkle-доказательство включения транзакции или квитанции по ID в кодировке Base58 — EXPERIMENTAL-вариант метода `light_client_proof`.",
       "docsPath": "/ru/rpc/protocol/experimental-light-client-proof",
       "familyId": "rpc-protocol",
       "headline": "NEAR Protocol RPC: доказательство исполнения для лёгкого клиента",
@@ -3086,7 +3086,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/ru/rpcs/protocol/light_client_proof",
-      "description": "Получите Merkle-доказательство того, что транзакция или квитанция была включена и исполнена — для верификации лайт-клиентом.",
+      "description": "Получите Merkle-доказательство — по ID транзакции или квитанции в кодировке Base58 — того, что элемент был включён и исполнен, для верификации лайт-клиентом.",
       "docsPath": "/ru/rpc/protocol/light-client-proof",
       "familyId": "rpc-protocol",
       "headline": "NEAR Protocol RPC: Get light client proof",
@@ -3274,7 +3274,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/ru/rpcs/protocol/next_light_client_block",
-      "description": "Получите следующий заголовок блока для лайт-клиента после известной вершины его верифицированной цепочки.",
+      "description": "Получите следующий заголовок блока для лайт-клиента после известного хеша вершины его верифицированной цепочки в кодировке Base58.",
       "docsPath": "/ru/rpc/protocol/next-light-client-block",
       "familyId": "rpc-protocol",
       "headline": "NEAR Protocol RPC: следующий блок для лёгкого клиента",
@@ -3368,7 +3368,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/ru/rpcs/transaction/broadcast_tx_async",
-      "description": "Отправьте подписанную транзакцию и сразу получите её хеш — без ожидания исполнения.",
+      "description": "Отправьте подписанную транзакцию в кодировке Base64 и сразу получите её хеш — без ожидания исполнения.",
       "docsPath": "/ru/rpc/transaction/broadcast-tx-async",
       "familyId": "rpc-transaction",
       "headline": "NEAR Protocol RPC: Send transaction asynchronously",
@@ -3415,7 +3415,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/ru/rpcs/transaction/broadcast_tx_commit",
-      "description": "Отправьте подписанную транзакцию и дождитесь её подтверждения — устаревший синхронный способ, заменён на `send_tx`.",
+      "description": "Отправьте подписанную транзакцию в кодировке Base64 и дождитесь её подтверждения — устаревший синхронный способ, заменён на `send_tx`.",
       "docsPath": "/ru/rpc/transaction/broadcast-tx-commit",
       "familyId": "rpc-transaction",
       "headline": "NEAR Protocol RPC: Send transaction and wait",
@@ -3462,7 +3462,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/ru/rpcs/transaction/EXPERIMENTAL_receipt",
-      "description": "Получите одну квитанцию по её ID — межшардовую единицу исполнения, производимую транзакцией.",
+      "description": "Получите одну квитанцию по её ID в кодировке Base58 — межшардовую единицу исполнения, производимую транзакцией.",
       "docsPath": "/ru/rpc/transaction/experimental-receipt",
       "familyId": "rpc-transaction",
       "headline": "NEAR Protocol RPC: квитанция по ID",
@@ -3509,7 +3509,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/ru/rpcs/transaction/EXPERIMENTAL_tx_status",
-      "description": "Получите полное дерево квитанций и результаты исполнения каждой квитанции — богаче, чем `tx_status`.",
+      "description": "Получите полное дерево квитанций и результаты исполнения каждой квитанции по хешу в кодировке Base58 — богаче, чем `tx_status`.",
       "docsPath": "/ru/rpc/transaction/experimental-tx-status",
       "familyId": "rpc-transaction",
       "headline": "NEAR Protocol RPC: подробный статус транзакции",
@@ -3556,7 +3556,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/ru/rpcs/transaction/send_tx",
-      "description": "Отправьте подписанную транзакцию и дождитесь её итогового результата исполнения — текущий синхронный способ.",
+      "description": "Отправьте подписанную транзакцию в кодировке Base64 и дождитесь её итогового результата исполнения — текущий синхронный способ.",
       "docsPath": "/ru/rpc/transaction/send-tx",
       "familyId": "rpc-transaction",
       "headline": "NEAR Protocol RPC: отправка транзакции",
@@ -3603,7 +3603,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/ru/rpcs/transaction/tx_status",
-      "description": "Проверьте итоговый результат транзакции по её хешу — успех, сбой или ещё не завершена.",
+      "description": "Проверьте итоговый результат транзакции по её хешу в кодировке Base58 — успех, сбой или ещё не завершена.",
       "docsPath": "/ru/rpc/transaction/tx-status",
       "familyId": "rpc-transaction",
       "headline": "NEAR Protocol RPC: Get transaction status",
@@ -3697,7 +3697,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/ru/rpcs/validators/validators_by_epoch",
-      "description": "Получите набор валидаторов выбранной прошлой эпохи по высоте или хешу её начального блока.",
+      "description": "Получите набор валидаторов выбранной прошлой эпохи по высоте начального блока или хеш-идентификатору эпохи в кодировке Base58.",
       "docsPath": "/ru/rpc/validators/validators-by-epoch",
       "familyId": "rpc-validators",
       "headline": "NEAR Protocol RPC: Get validators by epoch",

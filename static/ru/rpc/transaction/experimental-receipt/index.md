@@ -1,6 +1,6 @@
 # RPC протокола NEAR: Квитанция по ID
 Получить квитанцию по ID
-Получите одну квитанцию по её ID — межшардовую единицу исполнения, производимую транзакцией.
+Получите одну квитанцию по её ID в кодировке Base58 — межшардовую единицу исполнения, производимую транзакцией.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/rpc/transaction/experimental-receipt
 - https://docs.fastnear.com/ru/rpcs/transaction/EXPERIMENTAL_receipt

@@ -2,7 +2,7 @@
   {
     "canonicalPath": "/rpcs/transaction/EXPERIMENTAL_receipt",
     "info": {
-      "description": "Fetch a single receipt by ID — the cross-shard execution unit a transaction produces.",
+      "description": "Fetch a single receipt by Base58 ID — the cross-shard execution unit a transaction produces.",
       "operationId": "EXPERIMENTAL_receipt",
       "summary": "Get receipt by ID",
       "title": "NEAR Protocol RPC: Get receipt by ID",
@@ -306,7 +306,7 @@
   {
     "canonicalPath": "/rpcs/transaction/EXPERIMENTAL_tx_status",
     "info": {
-      "description": "Fetch a transaction's full receipt tree and per-receipt outcomes — richer than `tx_status`.",
+      "description": "Fetch a transaction's full receipt tree and per-receipt outcomes by Base58 hash — richer than `tx_status`.",
       "operationId": "EXPERIMENTAL_tx_status",
       "summary": "Get detailed transaction status",
       "title": "NEAR Protocol RPC: Get detailed transaction status",
@@ -707,7 +707,7 @@
   {
     "canonicalPath": "/rpcs/transaction/broadcast_tx_async",
     "info": {
-      "description": "Submit a signed transaction and immediately get its hash — no wait for execution.",
+      "description": "Submit a Base64-encoded signed transaction and immediately get its hash — no wait for execution.",
       "operationId": "broadcast_tx_async",
       "summary": "Send transaction asynchronously",
       "title": "NEAR Protocol RPC: Send transaction asynchronously",
@@ -999,7 +999,7 @@
   {
     "canonicalPath": "/rpcs/transaction/broadcast_tx_commit",
     "info": {
-      "description": "Submit a signed transaction and wait for its commit — the legacy synchronous send, superseded by `send_tx`.",
+      "description": "Submit a Base64-encoded signed transaction and wait for its commit — the legacy synchronous send, superseded by `send_tx`.",
       "operationId": "broadcast_tx_commit",
       "summary": "Send transaction and wait",
       "title": "NEAR Protocol RPC: Send transaction and wait",
@@ -1357,7 +1357,7 @@
   {
     "canonicalPath": "/rpcs/transaction/send_tx",
     "info": {
-      "description": "Submit a signed transaction and wait for its final execution outcome — the current synchronous send.",
+      "description": "Submit a Base64-encoded signed transaction and wait for its final execution outcome — the current synchronous send.",
       "operationId": "send_tx",
       "summary": "Send transaction",
       "title": "NEAR Protocol RPC: Send transaction",
@@ -1719,7 +1719,7 @@
   {
     "canonicalPath": "/rpcs/transaction/tx_status",
     "info": {
-      "description": "Check a transaction's final outcome by hash — succeeded, failed, or still unresolved.",
+      "description": "Check a transaction's final outcome by Base58 hash — succeeded, failed, or still unresolved.",
       "operationId": "tx_status",
       "summary": "Get transaction status",
       "title": "NEAR Protocol RPC: Get transaction status",

@@ -312,7 +312,7 @@
   {
     "canonicalPath": "/rpcs/protocol/EXPERIMENTAL_light_client_block_proof",
     "info": {
-      "description": "Fetch a Merkle proof that a block is included in the light client's verified chain.",
+      "description": "Fetch a Merkle proof — by Base58 block and light-client-head hashes — that the block is included in the light client's verified chain.",
       "operationId": "EXPERIMENTAL_light_client_block_proof",
       "summary": "Get light client block proof",
       "title": "NEAR Protocol RPC: Get light client block proof",
@@ -644,7 +644,7 @@
   {
     "canonicalPath": "/rpcs/protocol/EXPERIMENTAL_light_client_proof",
     "info": {
-      "description": "Fetch a Merkle proof of transaction or receipt inclusion — the EXPERIMENTAL alias of `light_client_proof`.",
+      "description": "Fetch a Merkle proof of transaction or receipt inclusion by Base58 ID — the EXPERIMENTAL alias of `light_client_proof`.",
       "operationId": "EXPERIMENTAL_light_client_proof",
       "summary": "Get light client execution proof",
       "title": "NEAR Protocol RPC: Get light client execution proof",
@@ -2775,7 +2775,7 @@
   {
     "canonicalPath": "/rpcs/protocol/chunk_by_hash",
     "info": {
-      "description": "Fetch a single chunk's transactions and receipts by its content hash.",
+      "description": "Fetch a single chunk's transactions and receipts by its Base58 content hash.",
       "operationId": "chunk_by_hash",
       "summary": "Get chunk by hash",
       "title": "NEAR Protocol RPC: Get chunk by hash",
@@ -5989,7 +5989,7 @@
   {
     "canonicalPath": "/rpcs/protocol/light_client_proof",
     "info": {
-      "description": "Fetch a Merkle proof that a transaction or receipt was included and executed, suitable for light-client verification.",
+      "description": "Fetch a Merkle proof — by Base58 transaction or receipt ID — that the item was included and executed, suitable for light-client verification.",
       "operationId": "light_client_proof",
       "summary": "Get light client proof",
       "title": "NEAR Protocol RPC: Get light client proof",
@@ -7121,7 +7121,7 @@
   {
     "canonicalPath": "/rpcs/protocol/next_light_client_block",
     "info": {
-      "description": "Advance a light client's verified chain by fetching the next block header after a known head.",
+      "description": "Advance a light client's verified chain by fetching the next block header after a known Base58 head hash.",
       "operationId": "next_light_client_block",
       "summary": "Get next light client block",
       "title": "NEAR Protocol RPC: Get next light client block",
