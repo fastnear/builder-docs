@@ -360,7 +360,7 @@
             "label": "ID аккаунта"
           },
           "args_base64": {
-            "description": "Аргументы метода в кодировке Base64.",
+            "description": "Сырые аргументы метода в кодировке Base64. Контракты, работающие с JSON, обычно ожидают UTF-8-байты JSON-полезной нагрузки; пример `e30=` соответствует `{}`.",
             "label": "Аргументы (Base64)"
           },
           "method_name": {
@@ -1610,7 +1610,7 @@
             "label": "Ждать до"
           },
           "signed_tx_base64": {
-            "description": "Подписанная транзакция в кодировке Base64.",
+            "description": "Подписанная транзакция в кодировке Base64. Сгенерируйте свежеподписанный payload для подписывающего аккаунта непосредственно перед отправкой или запросом статуса.",
             "label": "Подписанная транзакция (Base64)"
           },
           "sender_account_id": {
@@ -1659,14 +1659,14 @@
         }
       },
       "info": {
-        "description": "Отправьте подписанную транзакцию в кодировке Base64 и сразу получите её хеш — без ожидания исполнения.",
+        "description": "Отправьте свежеподписанную транзакцию и сразу получите её хеш, без ожидания исполнения. Примеры по умолчанию служат только для иллюстрации и не являются повторно используемыми подписанными payload-ами.",
         "summary": "Отправить транзакцию асинхронно",
         "title": "RPC протокола NEAR: Отправка транзакции (асинхронно)"
       },
       "interaction": {
         "fields": {
           "signed_tx_base64": {
-            "description": "Подписанная транзакция в кодировке Base64. Её нужно сформировать для аккаунта подписи непосредственно перед отправкой.",
+            "description": "Подписанная транзакция в кодировке Base64. Сгенерируйте свежеподписанный payload для подписывающего аккаунта непосредственно перед отправкой или запросом статуса.",
             "label": "Подписанная транзакция (Base64)"
           },
           "wait_until": {
@@ -1711,14 +1711,14 @@
         }
       },
       "info": {
-        "description": "Отправьте подписанную транзакцию в кодировке Base64 и дождитесь её подтверждения — устаревший синхронный способ, заменён на `send_tx`.",
+        "description": "Отправьте свежеподписанную транзакцию и дождитесь её коммита — это устаревший синхронный способ отправки, который заменён `send_tx`. Примеры по умолчанию служат только для иллюстрации и не являются повторно используемыми подписанными payload-ами.",
         "summary": "Отправить транзакцию и дождаться подтверждения",
         "title": "RPC протокола NEAR: Отправка транзакции (с подтверждением)"
       },
       "interaction": {
         "fields": {
           "signed_tx_base64": {
-            "description": "Подписанная транзакция в кодировке Base64. Её нужно сформировать для аккаунта подписи непосредственно перед отправкой.",
+            "description": "Подписанная транзакция в кодировке Base64. Сгенерируйте свежеподписанный payload для подписывающего аккаунта непосредственно перед отправкой или запросом статуса.",
             "label": "Подписанная транзакция (Base64)"
           },
           "wait_until": {
@@ -1763,14 +1763,14 @@
         }
       },
       "info": {
-        "description": "Отправьте подписанную транзакцию в кодировке Base64 и дождитесь её итогового результата исполнения — текущий синхронный способ.",
+        "description": "Отправьте свежеподписанную транзакцию и дождитесь её итогового результата исполнения — это текущий синхронный способ отправки. Примеры по умолчанию служат только для иллюстрации и не являются повторно используемыми подписанными payload-ами.",
         "summary": "Отправить транзакцию",
         "title": "RPC протокола NEAR: Отправить транзакцию"
       },
       "interaction": {
         "fields": {
           "signed_tx_base64": {
-            "description": "Подписанная транзакция в кодировке Base64. Её нужно сформировать для аккаунта подписи непосредственно перед отправкой.",
+            "description": "Подписанная транзакция в кодировке Base64. Сгенерируйте свежеподписанный payload для подписывающего аккаунта непосредственно перед отправкой или запросом статуса.",
             "label": "Подписанная транзакция (Base64)"
           },
           "wait_until": {
@@ -1826,7 +1826,7 @@
             "label": "Ждать до"
           },
           "signed_tx_base64": {
-            "description": "Подписанная транзакция в кодировке Base64.",
+            "description": "Подписанная транзакция в кодировке Base64. Сгенерируйте свежеподписанный payload для подписывающего аккаунта непосредственно перед отправкой или запросом статуса.",
             "label": "Подписанная транзакция (Base64)"
           },
           "sender_account_id": {
@@ -4866,6 +4866,7 @@
     "NEAR Protocol RPC: Get detailed transaction status": "NEAR Protocol RPC: подробный статус транзакции",
     "Desired level of execution status guarantee": "Желаемый уровень гарантии статуса исполнения",
     "Base64-encoded signed transaction": "Подписанная транзакция в кодировке Base64",
+    "Base64-encoded signed transaction. Generate a fresh signed payload for the signing account immediately before submission or status lookup.": "Подписанная транзакция в кодировке Base64. Сгенерируйте свежеподписанный payload для подписывающего аккаунта непосредственно перед отправкой или запросом статуса.",
     "Sender Account Id": "Идентификатор аккаунта отправителя",
     "Get detailed transaction status (Mainnet)": "Получить подробный статус транзакции (Mainnet)",
     "Get detailed transaction status (Testnet)": "Получить подробный статус транзакции (Testnet)",
@@ -4876,17 +4877,21 @@
     "Signed Transaction": "Подписанная транзакция",
     "The execution outcome of the signed transaction.": "Результат исполнения подписанной транзакции.",
     "Submits a transaction to the network without waiting for its execution. Requires a freshly signed transaction; the default example is illustrative and is not part of the live audit.": "Отправляет транзакцию в сеть, не дожидаясь её исполнения. Требует свежеподписанную транзакцию; пример по умолчанию — иллюстративный и не участвует в аудите живых вызовов.",
+    "Submit a freshly signed transaction and immediately get its hash — no wait for execution. Default examples are illustrative only and are not reusable signed payloads.": "Отправляет свежеподписанную транзакцию и сразу возвращает её хеш, без ожидания исполнения. Примеры по умолчанию служат только для иллюстрации и не являются повторно используемыми подписанными payload-ами.",
     "Send transaction asynchronously": "Отправить транзакцию асинхронно",
     "NEAR Protocol RPC: Broadcast Transaction Async": "NEAR Protocol RPC: асинхронная отправка транзакции",
     "Base64-encoded signed transaction. This must be generated for the signing account just before submission.": "Подписанная транзакция в кодировке Base64. Её нужно сгенерировать для подписывающего аккаунта непосредственно перед отправкой.",
     "Submits a transaction and waits until it's fully committed to the blockchain. Requires a freshly signed transaction; the default example is illustrative and is not part of the live audit.": "Отправляет транзакцию и ждёт, пока она будет полностью закоммичена в блокчейн. Требует свежеподписанную транзакцию; пример по умолчанию — иллюстративный и не участвует в аудите живых вызовов.",
+    "Submit a freshly signed transaction and wait for its commit — the legacy synchronous send, superseded by `send_tx`. Default examples are illustrative only and are not reusable signed payloads.": "Отправляет свежеподписанную транзакцию и ждёт её коммита — это устаревший синхронный способ отправки, который заменён `send_tx`. Примеры по умолчанию служат только для иллюстрации и не являются повторно используемыми подписанными payload-ами.",
     "Send transaction and wait for commit": "Отправить транзакцию и дождаться коммита",
     "NEAR Protocol RPC: Broadcast Transaction Commit": "NEAR Protocol RPC: отправка транзакции с ожиданием коммита",
     "Sends transaction and returns the guaranteed execution status and results. Requires a freshly signed transaction; the default example is illustrative and is not part of the live audit.": "Отправляет транзакцию и возвращает гарантированный статус и результаты исполнения. Требует свежеподписанную транзакцию; пример по умолчанию — иллюстративный и не участвует в аудите живых вызовов.",
+    "Submit a freshly signed transaction and wait for its final execution outcome — the current synchronous send. Default examples are illustrative only and are not reusable signed payloads.": "Отправляет свежеподписанную транзакцию и ждёт её итогового результата исполнения — это текущий синхронный способ отправки. Примеры по умолчанию служат только для иллюстрации и не являются повторно используемыми подписанными payload-ами.",
     "Send transaction": "Отправить транзакцию",
     "NEAR Protocol RPC: Send transaction": "NEAR Protocol RPC: отправка транзакции",
     "Send transaction (Mainnet)": "Отправить транзакцию (Mainnet)",
     "Send transaction (Testnet)": "Отправить транзакцию (Testnet)",
+    "Base64-encoded raw method arguments. JSON-based contracts typically expect UTF-8 bytes of the JSON payload; the example `e30=` is `{}`.": "Base64-кодированные сырые аргументы метода. Контракты, работающие с JSON, обычно ожидают UTF-8-байты JSON-полезной нагрузки; пример `e30=` соответствует `{}`.",
     "Get the status and details of a transaction": "Получить статус и детали транзакции",
     "Check transaction status": "Проверить статус транзакции",
     "NEAR Protocol RPC: Transaction Status": "NEAR Protocol RPC: статус транзакции",

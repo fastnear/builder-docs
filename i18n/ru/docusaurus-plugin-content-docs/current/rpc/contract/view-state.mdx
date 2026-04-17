@@ -12,5 +12,8 @@ import FastnearDirectOperation from '@site/src/components/FastnearDirectOperatio
 
 `view_state` — тип запроса.
 
+Используйте `prefix_base64`, когда хотите отфильтровать состояние по префиксу ключа хранилища.
+
+Установите `prefix_base64` в `""`, чтобы убрать фильтр по префиксу и вернуть все совпадающие значения состояния. На крупных контрактах это может дать очень большой пэйлоад, поэтому по возможности используйте более узкий префикс.
 
 <FastnearDirectOperation pageModelId="rpc-view-state" renderDescription />

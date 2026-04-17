@@ -337,14 +337,14 @@
           }
         },
         {
-          "description": "Base64-encoded signed transaction",
+          "description": "Base64-encoded signed transaction. Generate a fresh signed payload for the signing account immediately before submission or status lookup.",
           "label": "Signed Tx Base64",
           "location": "body",
           "name": "signed_tx_base64",
           "required": false,
           "schema": {
             "type": "string",
-            "description": "Base64-encoded signed transaction"
+            "description": "Base64-encoded signed transaction. Generate a fresh signed payload for the signing account immediately before submission or status lookup."
           }
         },
         {
@@ -465,7 +465,7 @@
                   "required": false,
                   "schema": {
                     "type": "string",
-                    "description": "Base64-encoded signed transaction"
+                    "description": "Base64-encoded signed transaction. Generate a fresh signed payload for the signing account immediately before submission or status lookup."
                   }
                 },
                 {
@@ -707,7 +707,7 @@
   {
     "canonicalPath": "/rpcs/transaction/broadcast_tx_async",
     "info": {
-      "description": "Submit a Base64-encoded signed transaction and immediately get its hash — no wait for execution.",
+      "description": "Submit a freshly signed transaction and immediately get its hash — no wait for execution. Default examples are illustrative only and are not reusable signed payloads.",
       "operationId": "broadcast_tx_async",
       "summary": "Send transaction asynchronously",
       "title": "NEAR Protocol RPC: Send transaction asynchronously",
@@ -718,14 +718,14 @@
       "defaultId": "fastnear",
       "fields": [
         {
-          "description": "Base64-encoded signed transaction",
+          "description": "Base64-encoded signed transaction. Generate a fresh signed payload for the signing account immediately before submission or status lookup.",
           "label": "Signed Tx Base64",
           "location": "body",
           "name": "signed_tx_base64",
           "required": true,
           "schema": {
             "type": "string",
-            "description": "Base64-encoded signed transaction"
+            "description": "Base64-encoded signed transaction. Generate a fresh signed payload for the signing account immediately before submission or status lookup."
           }
         },
         {
@@ -826,7 +826,7 @@
                   "required": true,
                   "schema": {
                     "type": "string",
-                    "description": "Base64-encoded signed transaction"
+                    "description": "Base64-encoded signed transaction. Generate a fresh signed payload for the signing account immediately before submission or status lookup."
                   }
                 },
                 {
@@ -999,7 +999,7 @@
   {
     "canonicalPath": "/rpcs/transaction/broadcast_tx_commit",
     "info": {
-      "description": "Submit a Base64-encoded signed transaction and wait for its commit — the legacy synchronous send, superseded by `send_tx`.",
+      "description": "Submit a freshly signed transaction and wait for its commit — the legacy synchronous send, superseded by `send_tx`. Default examples are illustrative only and are not reusable signed payloads.",
       "operationId": "broadcast_tx_commit",
       "summary": "Send transaction and wait",
       "title": "NEAR Protocol RPC: Send transaction and wait",
@@ -1010,14 +1010,14 @@
       "defaultId": "fastnear",
       "fields": [
         {
-          "description": "Base64-encoded signed transaction",
+          "description": "Base64-encoded signed transaction. Generate a fresh signed payload for the signing account immediately before submission or status lookup.",
           "label": "Signed Tx Base64",
           "location": "body",
           "name": "signed_tx_base64",
           "required": true,
           "schema": {
             "type": "string",
-            "description": "Base64-encoded signed transaction"
+            "description": "Base64-encoded signed transaction. Generate a fresh signed payload for the signing account immediately before submission or status lookup."
           }
         },
         {
@@ -1118,7 +1118,7 @@
                   "required": true,
                   "schema": {
                     "type": "string",
-                    "description": "Base64-encoded signed transaction"
+                    "description": "Base64-encoded signed transaction. Generate a fresh signed payload for the signing account immediately before submission or status lookup."
                   }
                 },
                 {
@@ -1357,7 +1357,7 @@
   {
     "canonicalPath": "/rpcs/transaction/send_tx",
     "info": {
-      "description": "Submit a Base64-encoded signed transaction and wait for its final execution outcome — the current synchronous send.",
+      "description": "Submit a freshly signed transaction and wait for its final execution outcome — the current synchronous send. Default examples are illustrative only and are not reusable signed payloads.",
       "operationId": "send_tx",
       "summary": "Send transaction",
       "title": "NEAR Protocol RPC: Send transaction",
@@ -1368,14 +1368,14 @@
       "defaultId": "fastnear",
       "fields": [
         {
-          "description": "Base64-encoded signed transaction",
+          "description": "Base64-encoded signed transaction. Generate a fresh signed payload for the signing account immediately before submission or status lookup.",
           "label": "Signed Tx Base64",
           "location": "body",
           "name": "signed_tx_base64",
           "required": true,
           "schema": {
             "type": "string",
-            "description": "Base64-encoded signed transaction"
+            "description": "Base64-encoded signed transaction. Generate a fresh signed payload for the signing account immediately before submission or status lookup."
           }
         },
         {
@@ -1478,7 +1478,7 @@
                   "required": true,
                   "schema": {
                     "type": "string",
-                    "description": "Base64-encoded signed transaction"
+                    "description": "Base64-encoded signed transaction. Generate a fresh signed payload for the signing account immediately before submission or status lookup."
                   }
                 },
                 {
@@ -1750,14 +1750,14 @@
           }
         },
         {
-          "description": "Base64-encoded signed transaction",
+          "description": "Base64-encoded signed transaction. Generate a fresh signed payload for the signing account immediately before submission or status lookup.",
           "label": "Signed Tx Base64",
           "location": "body",
           "name": "signed_tx_base64",
           "required": false,
           "schema": {
             "type": "string",
-            "description": "Base64-encoded signed transaction"
+            "description": "Base64-encoded signed transaction. Generate a fresh signed payload for the signing account immediately before submission or status lookup."
           }
         },
         {
@@ -1876,7 +1876,7 @@
                   "required": false,
                   "schema": {
                     "type": "string",
-                    "description": "Base64-encoded signed transaction"
+                    "description": "Base64-encoded signed transaction. Generate a fresh signed payload for the signing account immediately before submission or status lookup."
                   }
                 },
                 {

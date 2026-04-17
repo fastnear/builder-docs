@@ -24,14 +24,14 @@
           }
         },
         {
-          "description": "Base64-encoded method arguments",
+          "description": "Base64-encoded raw method arguments. JSON-based contracts typically expect UTF-8 bytes of the JSON payload; the example `e30=` is `{}`.",
           "label": "Args Base64",
           "location": "body",
           "name": "args_base64",
           "required": true,
           "schema": {
             "type": "string",
-            "description": "Base64-encoded method arguments"
+            "description": "Base64-encoded raw method arguments. JSON-based contracts typically expect UTF-8 bytes of the JSON payload; the example `e30=` is `{}`."
           }
         },
         {
@@ -140,7 +140,7 @@
                   "required": true,
                   "schema": {
                     "type": "string",
-                    "description": "Base64-encoded method arguments"
+                    "description": "Base64-encoded raw method arguments. JSON-based contracts typically expect UTF-8 bytes of the JSON payload; the example `e30=` is `{}`."
                   }
                 },
                 {
@@ -1313,14 +1313,14 @@
           }
         },
         {
-          "description": "Base64-encoded storage key",
+          "description": "Base64-encoded storage key prefix. Use an empty string (`\"\"`) to remove the prefix filter and return all matching contract state values. Large contracts can produce very large responses when no prefix is set.",
           "label": "Prefix Base64",
           "location": "body",
           "name": "prefix_base64",
           "required": true,
           "schema": {
             "type": "string",
-            "description": "Base64-encoded storage key"
+            "description": "Base64-encoded storage key prefix. Use an empty string (`\"\"`) to remove the prefix filter and return all matching contract state values. Large contracts can produce very large responses when no prefix is set."
           }
         }
       ],
@@ -1423,7 +1423,7 @@
                   "required": true,
                   "schema": {
                     "type": "string",
-                    "description": "Base64-encoded storage key"
+                    "description": "Base64-encoded storage key prefix. Use an empty string (`\"\"`) to remove the prefix filter and return all matching contract state values. Large contracts can produce very large responses when no prefix is set."
                   }
                 },
                 {

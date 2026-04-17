@@ -131,7 +131,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "description": "Ключ хранилища в кодировке Base64"
+              "description": "Base64-encoded storage key prefix. Use an empty string (`\"\"`) to remove the prefix filter and return all matching contract state values. Large contracts can produce very large responses when no prefix is set."
             }
           },
           {

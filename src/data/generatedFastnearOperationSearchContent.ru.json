@@ -529,7 +529,81 @@
         "description": "Необязательный API-ключ подписки FastNear. Неверные значения могут вернуть `401` до обработки перенаправления."
       }
     ],
-    "response": "Запрошенный документ или `null`, если выбранный срез отсутствует Перенаправление на канонический архивный или финализированный URL блока Неверный или неавторизованный API-ключ Структурированная ошибка по высоте блока Ошибка кэша или внутренней обработки данных"
+    "response": "Запрошенный документ или `null`, если выбранный срез отсутствует Перенаправление на канонический архивный или финализированный URL блока Неверный или неавторизованный API-ключ Структурированная ошибка по высоте блока Ошибка кэша или внутренней обработки данных",
+    "schema": [
+      {
+        "name": "BlockDocument",
+        "description": "Full block document as served by neardata, including the block envelope and per-shard payloads."
+      },
+      {
+        "name": "блок",
+        "description": "Block-level payload returned by neardata."
+      },
+      {
+        "name": "BlockEnvelope",
+        "description": "Block-level payload returned by neardata."
+      },
+      {
+        "name": "author",
+        "description": "Block producer account ID."
+      },
+      {
+        "name": "ChunkHeader",
+        "description": "Chunk header object as served by neardata."
+      },
+      {
+        "name": "header",
+        "description": "Block header object as served by neardata."
+      },
+      {
+        "name": "BlockHeader",
+        "description": "Block header object as served by neardata."
+      },
+      {
+        "name": "ShardDocument",
+        "description": "Per-shard payload returned by neardata for a block."
+      },
+      {
+        "name": "chunk",
+        "description": "Chunk payload returned by neardata for a single shard in a selected block."
+      },
+      {
+        "name": "ChunkDocument",
+        "description": "Chunk payload returned by neardata for a single shard in a selected block."
+      },
+      {
+        "name": "author",
+        "description": "Chunk producer account ID."
+      },
+      {
+        "name": "header",
+        "description": "Chunk header object as served by neardata."
+      },
+      {
+        "name": "ReceiptDocument",
+        "description": "Receipt object as served by neardata inside a chunk payload."
+      },
+      {
+        "name": "ChunkTransactionWrapper",
+        "description": "Transaction entry returned inside a neardata chunk."
+      },
+      {
+        "name": "outcome",
+        "description": "Execution result paired with an optional receipt object."
+      },
+      {
+        "name": "ExecutionWithReceipt",
+        "description": "Execution result paired with an optional receipt object."
+      },
+      {
+        "name": "квитанция",
+        "description": "Receipt payload when neardata includes it for this entry."
+      },
+      {
+        "name": "StateChangeItem",
+        "description": "State change entry returned by neardata for a shard."
+      }
+    ]
   },
   "neardata-v0-block-chunk": {
     "description": "Получите один чанк — транзакции и входящие квитанции одного шарда — на выбранной высоте блока.",
@@ -547,7 +621,45 @@
         "description": "Необязательный API-ключ подписки FastNear. Неверные значения могут вернуть `401` до обработки перенаправления."
       }
     ],
-    "response": "Запрошенный документ или `null`, если выбранный срез отсутствует Перенаправление на канонический архивный или финализированный URL блока Неверный или неавторизованный API-ключ Структурированная ошибка по высоте блока Ошибка кэша или внутренней обработки данных"
+    "response": "Запрошенный документ или `null`, если выбранный срез отсутствует Перенаправление на канонический архивный или финализированный URL блока Неверный или неавторизованный API-ключ Структурированная ошибка по высоте блока Ошибка кэша или внутренней обработки данных",
+    "schema": [
+      {
+        "name": "ChunkDocument",
+        "description": "Chunk payload returned by neardata for a single shard in a selected block."
+      },
+      {
+        "name": "author",
+        "description": "Chunk producer account ID."
+      },
+      {
+        "name": "header",
+        "description": "Chunk header object as served by neardata."
+      },
+      {
+        "name": "ChunkHeader",
+        "description": "Chunk header object as served by neardata."
+      },
+      {
+        "name": "ReceiptDocument",
+        "description": "Receipt object as served by neardata inside a chunk payload."
+      },
+      {
+        "name": "ChunkTransactionWrapper",
+        "description": "Transaction entry returned inside a neardata chunk."
+      },
+      {
+        "name": "outcome",
+        "description": "Execution result paired with an optional receipt object."
+      },
+      {
+        "name": "ExecutionWithReceipt",
+        "description": "Execution result paired with an optional receipt object."
+      },
+      {
+        "name": "квитанция",
+        "description": "Receipt payload when neardata includes it for this entry."
+      }
+    ]
   },
   "neardata-v0-block-headers": {
     "description": "Получите только заголовок финализированного блока и сводку по чанкам — без содержимого отдельных шардов.",
@@ -561,7 +673,29 @@
         "description": "Необязательный API-ключ подписки FastNear. Неверные значения могут вернуть `401` до обработки перенаправления."
       }
     ],
-    "response": "Запрошенный документ или `null`, если выбранный срез отсутствует Перенаправление на канонический архивный или финализированный URL блока Неверный или неавторизованный API-ключ Структурированная ошибка по высоте блока Ошибка кэша или внутренней обработки данных"
+    "response": "Запрошенный документ или `null`, если выбранный срез отсутствует Перенаправление на канонический архивный или финализированный URL блока Неверный или неавторизованный API-ключ Структурированная ошибка по высоте блока Ошибка кэша или внутренней обработки данных",
+    "schema": [
+      {
+        "name": "BlockEnvelope",
+        "description": "Block-level payload returned by neardata."
+      },
+      {
+        "name": "author",
+        "description": "Block producer account ID."
+      },
+      {
+        "name": "ChunkHeader",
+        "description": "Chunk header object as served by neardata."
+      },
+      {
+        "name": "header",
+        "description": "Block header object as served by neardata."
+      },
+      {
+        "name": "BlockHeader",
+        "description": "Block header object as served by neardata."
+      }
+    ]
   },
   "neardata-v0-block-optimistic": {
     "description": "Получите оптимистичный (ещё не финализированный) блок на выбранной высоте — может перенаправить на финализированные данные, когда окно оптимистичности закрылось.",
@@ -575,7 +709,81 @@
         "description": "Необязательный API-ключ подписки FastNear. Неверные значения могут вернуть `401` до обработки перенаправления."
       }
     ],
-    "response": "Запрошенный документ или `null`, если выбранный срез отсутствует Перенаправление на канонический архивный или финализированный URL блока Неверный или неавторизованный API-ключ Структурированная ошибка по высоте блока Ошибка кэша или внутренней обработки данных"
+    "response": "Запрошенный документ или `null`, если выбранный срез отсутствует Перенаправление на канонический архивный или финализированный URL блока Неверный или неавторизованный API-ключ Структурированная ошибка по высоте блока Ошибка кэша или внутренней обработки данных",
+    "schema": [
+      {
+        "name": "BlockDocument",
+        "description": "Full block document as served by neardata, including the block envelope and per-shard payloads."
+      },
+      {
+        "name": "блок",
+        "description": "Block-level payload returned by neardata."
+      },
+      {
+        "name": "BlockEnvelope",
+        "description": "Block-level payload returned by neardata."
+      },
+      {
+        "name": "author",
+        "description": "Block producer account ID."
+      },
+      {
+        "name": "ChunkHeader",
+        "description": "Chunk header object as served by neardata."
+      },
+      {
+        "name": "header",
+        "description": "Block header object as served by neardata."
+      },
+      {
+        "name": "BlockHeader",
+        "description": "Block header object as served by neardata."
+      },
+      {
+        "name": "ShardDocument",
+        "description": "Per-shard payload returned by neardata for a block."
+      },
+      {
+        "name": "chunk",
+        "description": "Chunk payload returned by neardata for a single shard in a selected block."
+      },
+      {
+        "name": "ChunkDocument",
+        "description": "Chunk payload returned by neardata for a single shard in a selected block."
+      },
+      {
+        "name": "author",
+        "description": "Chunk producer account ID."
+      },
+      {
+        "name": "header",
+        "description": "Chunk header object as served by neardata."
+      },
+      {
+        "name": "ReceiptDocument",
+        "description": "Receipt object as served by neardata inside a chunk payload."
+      },
+      {
+        "name": "ChunkTransactionWrapper",
+        "description": "Transaction entry returned inside a neardata chunk."
+      },
+      {
+        "name": "outcome",
+        "description": "Execution result paired with an optional receipt object."
+      },
+      {
+        "name": "ExecutionWithReceipt",
+        "description": "Execution result paired with an optional receipt object."
+      },
+      {
+        "name": "квитанция",
+        "description": "Receipt payload when neardata includes it for this entry."
+      },
+      {
+        "name": "StateChangeItem",
+        "description": "State change entry returned by neardata for a shard."
+      }
+    ]
   },
   "neardata-v0-block-shard": {
     "description": "Получите полное содержимое одного шарда на выбранном блоке — чанк плюс изменения состояния и произведённые квитанции.",
@@ -593,7 +801,57 @@
         "description": "Необязательный API-ключ подписки FastNear. Неверные значения могут вернуть `401` до обработки перенаправления."
       }
     ],
-    "response": "Запрошенный документ или `null`, если выбранный срез отсутствует Перенаправление на канонический архивный или финализированный URL блока Неверный или неавторизованный API-ключ Структурированная ошибка по высоте блока Ошибка кэша или внутренней обработки данных"
+    "response": "Запрошенный документ или `null`, если выбранный срез отсутствует Перенаправление на канонический архивный или финализированный URL блока Неверный или неавторизованный API-ключ Структурированная ошибка по высоте блока Ошибка кэша или внутренней обработки данных",
+    "schema": [
+      {
+        "name": "ShardDocument",
+        "description": "Per-shard payload returned by neardata for a block."
+      },
+      {
+        "name": "chunk",
+        "description": "Chunk payload returned by neardata for a single shard in a selected block."
+      },
+      {
+        "name": "ChunkDocument",
+        "description": "Chunk payload returned by neardata for a single shard in a selected block."
+      },
+      {
+        "name": "author",
+        "description": "Chunk producer account ID."
+      },
+      {
+        "name": "header",
+        "description": "Chunk header object as served by neardata."
+      },
+      {
+        "name": "ChunkHeader",
+        "description": "Chunk header object as served by neardata."
+      },
+      {
+        "name": "ReceiptDocument",
+        "description": "Receipt object as served by neardata inside a chunk payload."
+      },
+      {
+        "name": "ChunkTransactionWrapper",
+        "description": "Transaction entry returned inside a neardata chunk."
+      },
+      {
+        "name": "outcome",
+        "description": "Execution result paired with an optional receipt object."
+      },
+      {
+        "name": "ExecutionWithReceipt",
+        "description": "Execution result paired with an optional receipt object."
+      },
+      {
+        "name": "квитанция",
+        "description": "Receipt payload when neardata includes it for this entry."
+      },
+      {
+        "name": "StateChangeItem",
+        "description": "State change entry returned by neardata for a shard."
+      }
+    ]
   },
   "neardata-v0-first-block": {
     "description": "Перенаправление на первый блок цепочки после генезиса — стартовый курсор для индексаторов, обходящих цепочку с начала.",
@@ -603,7 +861,81 @@
         "description": "Необязательный API-ключ подписки FastNear. Неверные значения могут вернуть `401` до обработки перенаправления."
       }
     ],
-    "response": "Полный документ блока после автоматического прохождения перенаправления Перенаправление на канонический URL первого блока Неверный или неавторизованный API-ключ"
+    "response": "Полный документ блока после автоматического прохождения перенаправления Перенаправление на канонический URL первого блока Неверный или неавторизованный API-ключ",
+    "schema": [
+      {
+        "name": "BlockDocument",
+        "description": "Full block document as served by neardata, including the block envelope and per-shard payloads."
+      },
+      {
+        "name": "блок",
+        "description": "Block-level payload returned by neardata."
+      },
+      {
+        "name": "BlockEnvelope",
+        "description": "Block-level payload returned by neardata."
+      },
+      {
+        "name": "author",
+        "description": "Block producer account ID."
+      },
+      {
+        "name": "ChunkHeader",
+        "description": "Chunk header object as served by neardata."
+      },
+      {
+        "name": "header",
+        "description": "Block header object as served by neardata."
+      },
+      {
+        "name": "BlockHeader",
+        "description": "Block header object as served by neardata."
+      },
+      {
+        "name": "ShardDocument",
+        "description": "Per-shard payload returned by neardata for a block."
+      },
+      {
+        "name": "chunk",
+        "description": "Chunk payload returned by neardata for a single shard in a selected block."
+      },
+      {
+        "name": "ChunkDocument",
+        "description": "Chunk payload returned by neardata for a single shard in a selected block."
+      },
+      {
+        "name": "author",
+        "description": "Chunk producer account ID."
+      },
+      {
+        "name": "header",
+        "description": "Chunk header object as served by neardata."
+      },
+      {
+        "name": "ReceiptDocument",
+        "description": "Receipt object as served by neardata inside a chunk payload."
+      },
+      {
+        "name": "ChunkTransactionWrapper",
+        "description": "Transaction entry returned inside a neardata chunk."
+      },
+      {
+        "name": "outcome",
+        "description": "Execution result paired with an optional receipt object."
+      },
+      {
+        "name": "ExecutionWithReceipt",
+        "description": "Execution result paired with an optional receipt object."
+      },
+      {
+        "name": "квитанция",
+        "description": "Receipt payload when neardata includes it for this entry."
+      },
+      {
+        "name": "StateChangeItem",
+        "description": "State change entry returned by neardata for a shard."
+      }
+    ]
   },
   "neardata-v0-last-block-final": {
     "description": "Перенаправление на самый свежий финализированный блок — курсор вершины цепочки после достижения консенсуса.",
@@ -613,7 +945,81 @@
         "description": "Необязательный API-ключ подписки FastNear. Неверные значения могут вернуть `401` до обработки перенаправления."
       }
     ],
-    "response": "Полный документ блока после автоматического прохождения перенаправления Перенаправление на URL последнего финализированного блока Неверный или неавторизованный API-ключ Ошибка кэша или внутренней обработки данных"
+    "response": "Полный документ блока после автоматического прохождения перенаправления Перенаправление на URL последнего финализированного блока Неверный или неавторизованный API-ключ Ошибка кэша или внутренней обработки данных",
+    "schema": [
+      {
+        "name": "BlockDocument",
+        "description": "Full block document as served by neardata, including the block envelope and per-shard payloads."
+      },
+      {
+        "name": "блок",
+        "description": "Block-level payload returned by neardata."
+      },
+      {
+        "name": "BlockEnvelope",
+        "description": "Block-level payload returned by neardata."
+      },
+      {
+        "name": "author",
+        "description": "Block producer account ID."
+      },
+      {
+        "name": "ChunkHeader",
+        "description": "Chunk header object as served by neardata."
+      },
+      {
+        "name": "header",
+        "description": "Block header object as served by neardata."
+      },
+      {
+        "name": "BlockHeader",
+        "description": "Block header object as served by neardata."
+      },
+      {
+        "name": "ShardDocument",
+        "description": "Per-shard payload returned by neardata for a block."
+      },
+      {
+        "name": "chunk",
+        "description": "Chunk payload returned by neardata for a single shard in a selected block."
+      },
+      {
+        "name": "ChunkDocument",
+        "description": "Chunk payload returned by neardata for a single shard in a selected block."
+      },
+      {
+        "name": "author",
+        "description": "Chunk producer account ID."
+      },
+      {
+        "name": "header",
+        "description": "Chunk header object as served by neardata."
+      },
+      {
+        "name": "ReceiptDocument",
+        "description": "Receipt object as served by neardata inside a chunk payload."
+      },
+      {
+        "name": "ChunkTransactionWrapper",
+        "description": "Transaction entry returned inside a neardata chunk."
+      },
+      {
+        "name": "outcome",
+        "description": "Execution result paired with an optional receipt object."
+      },
+      {
+        "name": "ExecutionWithReceipt",
+        "description": "Execution result paired with an optional receipt object."
+      },
+      {
+        "name": "квитанция",
+        "description": "Receipt payload when neardata includes it for this entry."
+      },
+      {
+        "name": "StateChangeItem",
+        "description": "State change entry returned by neardata for a shard."
+      }
+    ]
   },
   "neardata-v0-last-block-optimistic": {
     "description": "Перенаправление на самый свежий оптимистичный блок — максимально свежая вершина, до финализации.",
@@ -623,7 +1029,81 @@
         "description": "Необязательный API-ключ подписки FastNear. Неверные значения могут вернуть `401` до обработки перенаправления."
       }
     ],
-    "response": "Полный документ блока после автоматического прохождения перенаправления Перенаправление на URL последнего оптимистичного блока Неверный или неавторизованный API-ключ Ошибка кэша или внутренней обработки данных"
+    "response": "Полный документ блока после автоматического прохождения перенаправления Перенаправление на URL последнего оптимистичного блока Неверный или неавторизованный API-ключ Ошибка кэша или внутренней обработки данных",
+    "schema": [
+      {
+        "name": "BlockDocument",
+        "description": "Full block document as served by neardata, including the block envelope and per-shard payloads."
+      },
+      {
+        "name": "блок",
+        "description": "Block-level payload returned by neardata."
+      },
+      {
+        "name": "BlockEnvelope",
+        "description": "Block-level payload returned by neardata."
+      },
+      {
+        "name": "author",
+        "description": "Block producer account ID."
+      },
+      {
+        "name": "ChunkHeader",
+        "description": "Chunk header object as served by neardata."
+      },
+      {
+        "name": "header",
+        "description": "Block header object as served by neardata."
+      },
+      {
+        "name": "BlockHeader",
+        "description": "Block header object as served by neardata."
+      },
+      {
+        "name": "ShardDocument",
+        "description": "Per-shard payload returned by neardata for a block."
+      },
+      {
+        "name": "chunk",
+        "description": "Chunk payload returned by neardata for a single shard in a selected block."
+      },
+      {
+        "name": "ChunkDocument",
+        "description": "Chunk payload returned by neardata for a single shard in a selected block."
+      },
+      {
+        "name": "author",
+        "description": "Chunk producer account ID."
+      },
+      {
+        "name": "header",
+        "description": "Chunk header object as served by neardata."
+      },
+      {
+        "name": "ReceiptDocument",
+        "description": "Receipt object as served by neardata inside a chunk payload."
+      },
+      {
+        "name": "ChunkTransactionWrapper",
+        "description": "Transaction entry returned inside a neardata chunk."
+      },
+      {
+        "name": "outcome",
+        "description": "Execution result paired with an optional receipt object."
+      },
+      {
+        "name": "ExecutionWithReceipt",
+        "description": "Execution result paired with an optional receipt object."
+      },
+      {
+        "name": "квитанция",
+        "description": "Receipt payload when neardata includes it for this entry."
+      },
+      {
+        "name": "StateChangeItem",
+        "description": "State change entry returned by neardata for a shard."
+      }
+    ]
   },
   "rpc-block-by-height": {
     "description": "Получите заголовок и сводку по чанкам блока по его высоте в цепочке.",
@@ -662,11 +1142,11 @@
     ]
   },
   "rpc-broadcast-tx-async": {
-    "description": "Отправьте подписанную транзакцию в кодировке Base64 и сразу получите её хеш — без ожидания исполнения.",
+    "description": "Отправьте свежеподписанную транзакцию и сразу получите её хеш, без ожидания исполнения. Примеры по умолчанию служат только для иллюстрации и не являются повторно используемыми подписанными payload-ами.",
     "parameters": [
       {
         "name": "signed_tx_base64",
-        "description": "Подписанная транзакция в кодировке Base64. Её нужно сформировать для аккаунта подписи непосредственно перед отправкой."
+        "description": "Подписанная транзакция в кодировке Base64. Сгенерируйте свежеподписанный payload для подписывающего аккаунта непосредственно перед отправкой или запросом статуса."
       },
       {
         "name": "wait_until",
@@ -682,11 +1162,11 @@
     ]
   },
   "rpc-broadcast-tx-commit": {
-    "description": "Отправьте подписанную транзакцию в кодировке Base64 и дождитесь её подтверждения — устаревший синхронный способ, заменён на `send_tx`.",
+    "description": "Отправьте свежеподписанную транзакцию и дождитесь её коммита — это устаревший синхронный способ отправки, который заменён `send_tx`. Примеры по умолчанию служат только для иллюстрации и не являются повторно используемыми подписанными payload-ами.",
     "parameters": [
       {
         "name": "signed_tx_base64",
-        "description": "Подписанная транзакция в кодировке Base64. Её нужно сформировать для аккаунта подписи непосредственно перед отправкой."
+        "description": "Подписанная транзакция в кодировке Base64. Сгенерируйте свежеподписанный payload для подписывающего аккаунта непосредственно перед отправкой или запросом статуса."
       },
       {
         "name": "wait_until",
@@ -730,7 +1210,7 @@
       },
       {
         "name": "args_base64",
-        "description": "Аргументы метода в кодировке Base64."
+        "description": "Сырые аргументы метода в кодировке Base64. Контракты, работающие с JSON, обычно ожидают UTF-8-байты JSON-полезной нагрузки; пример `e30=` соответствует `{}`."
       },
       {
         "name": "method_name",
@@ -1564,7 +2044,7 @@
       },
       {
         "name": "signed_tx_base64",
-        "description": "Подписанная транзакция в кодировке Base64."
+        "description": "Подписанная транзакция в кодировке Base64. Сгенерируйте свежеподписанный payload для подписывающего аккаунта непосредственно перед отправкой или запросом статуса."
       },
       {
         "name": "sender_account_id",
@@ -1948,11 +2428,11 @@
     ]
   },
   "rpc-send-tx": {
-    "description": "Отправьте подписанную транзакцию в кодировке Base64 и дождитесь её итогового результата исполнения — текущий синхронный способ.",
+    "description": "Отправьте свежеподписанную транзакцию и дождитесь её итогового результата исполнения — это текущий синхронный способ отправки. Примеры по умолчанию служат только для иллюстрации и не являются повторно используемыми подписанными payload-ами.",
     "parameters": [
       {
         "name": "signed_tx_base64",
-        "description": "Подписанная транзакция в кодировке Base64. Её нужно сформировать для аккаунта подписи непосредственно перед отправкой."
+        "description": "Подписанная транзакция в кодировке Base64. Сгенерируйте свежеподписанный payload для подписывающего аккаунта непосредственно перед отправкой или запросом статуса."
       },
       {
         "name": "wait_until",
@@ -2078,7 +2558,7 @@
       },
       {
         "name": "signed_tx_base64",
-        "description": "Подписанная транзакция в кодировке Base64."
+        "description": "Подписанная транзакция в кодировке Base64. Сгенерируйте свежеподписанный payload для подписывающего аккаунта непосредственно перед отправкой или запросом статуса."
       },
       {
         "name": "sender_account_id",

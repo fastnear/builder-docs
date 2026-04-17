@@ -39,8 +39,8 @@ https://test.api.fastnear.com
 
 ## Auth and network availability
 
-- FastNear public REST endpoints do not require an API key.
-- The docs UI can still forward an optional FastNear key when you want authenticated behavior or higher limits on supported surfaces.
+- FastNear public REST endpoints often work without an API key.
+- The same FastNear key format still works across API endpoints when you want a consistent authenticated posture or higher limits, and the docs UI can forward it for interactive examples.
 - Add `?network=testnet` to move compatible pages to the testnet backend and seeded testnet defaults.
 
 ## Shareable live examples

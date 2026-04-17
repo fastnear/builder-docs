@@ -12,13 +12,14 @@ page_actions:
 
 Agents should authenticate to FastNear the same way production backends do. Do not copy the browser-demo posture used by the docs UI into an agent, worker, or automation runtime.
 
-One FastNear API key works across the RPC and REST APIs that accept authenticated traffic. For agents, the important question is not whether auth exists. It is where the credential lives, how it gets attached to requests, and how to avoid leaking it into prompts, logs, or browser state.
+One FastNear API key works across the RPC and API endpoints. Many public reads still work without a key. For agents, the important question is not whether auth exists. It is where the credential lives, how it gets attached to requests, and how to avoid leaking it into prompts, logs, or browser state.
 
 ## If you only need the rule
 
 - Store the key in an env var or secret manager.
 - Inject it server-side or from the worker runtime.
 - Prefer the `Authorization: Bearer ...` header.
+- Apply the same key and transport rules to both regular and archival RPC hosts.
 - Never ask a user to paste a FastNear key into chat, a prompt, or a browser-only agent.
 
 ## Recommended runtime patterns

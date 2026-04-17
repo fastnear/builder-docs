@@ -51,7 +51,203 @@
 ```json
 {
   "type": "object",
-  "description": "Объект уровня блока, возвращаемый `/headers`; соответствует полю `block` полного ответа.",
-  "additionalProperties": true
+  "description": "Block-level payload returned by neardata.",
+  "required": [
+    "author",
+    "chunks",
+    "header"
+  ],
+  "additionalProperties": false,
+  "properties": [
+    {
+      "name": "author",
+      "required": true,
+      "schema": {
+        "type": "string",
+        "description": "Block producer account ID."
+      }
+    },
+    {
+      "name": "chunks",
+      "required": true,
+      "schema": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "description": "Chunk header object as served by neardata.",
+          "additionalProperties": true,
+          "properties": [
+            {
+              "name": "chunk_hash",
+              "required": false,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "gas_limit",
+              "required": false,
+              "schema": {
+                "type": "integer"
+              }
+            },
+            {
+              "name": "gas_used",
+              "required": false,
+              "schema": {
+                "type": "integer"
+              }
+            },
+            {
+              "name": "height_created",
+              "required": false,
+              "schema": {
+                "type": "integer",
+                "format": "uint64"
+              }
+            },
+            {
+              "name": "height_included",
+              "required": false,
+              "schema": {
+                "type": "integer",
+                "format": "uint64"
+              }
+            },
+            {
+              "name": "outcome_root",
+              "required": false,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "outgoing_receipts_root",
+              "required": false,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "prev_block_hash",
+              "required": false,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "shard_id",
+              "required": false,
+              "schema": {
+                "type": "integer",
+                "format": "uint64"
+              }
+            },
+            {
+              "name": "tx_root",
+              "required": false,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "refName": "ChunkHeader"
+        }
+      }
+    },
+    {
+      "name": "header",
+      "required": true,
+      "schema": {
+        "type": "object",
+        "description": "Block header object as served by neardata.",
+        "additionalProperties": true,
+        "properties": [
+          {
+            "name": "chunks_included",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "uint64"
+            }
+          },
+          {
+            "name": "epoch_id",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "gas_price",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "hash",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "height",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "uint64"
+            }
+          },
+          {
+            "name": "next_epoch_id",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "prev_hash",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "prev_height",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "uint64"
+            }
+          },
+          {
+            "name": "timestamp",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "timestamp_nanosec",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "total_supply",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "refName": "BlockHeader"
+      }
+    }
+  ],
+  "refName": "BlockEnvelope"
 }
 ```

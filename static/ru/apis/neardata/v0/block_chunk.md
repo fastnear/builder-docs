@@ -53,7 +53,855 @@
 ```json
 {
   "type": "object",
-  "description": "Объект чанка для указанного ID шарда.",
-  "additionalProperties": true
+  "description": "Chunk payload returned by neardata for a single shard in a selected block.",
+  "required": [
+    "author",
+    "header",
+    "квитанции",
+    "транзакции"
+  ],
+  "additionalProperties": false,
+  "properties": [
+    {
+      "name": "author",
+      "required": true,
+      "schema": {
+        "type": "string",
+        "description": "Chunk producer account ID."
+      }
+    },
+    {
+      "name": "header",
+      "required": true,
+      "schema": {
+        "type": "object",
+        "description": "Chunk header object as served by neardata.",
+        "additionalProperties": true,
+        "properties": [
+          {
+            "name": "chunk_hash",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "gas_limit",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "gas_used",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "height_created",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "uint64"
+            }
+          },
+          {
+            "name": "height_included",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "uint64"
+            }
+          },
+          {
+            "name": "outcome_root",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "outgoing_receipts_root",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "prev_block_hash",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "shard_id",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "uint64"
+            }
+          },
+          {
+            "name": "tx_root",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "refName": "ChunkHeader"
+      }
+    },
+    {
+      "name": "квитанции",
+      "required": true,
+      "schema": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "description": "Receipt object as served by neardata inside a chunk payload.",
+          "required": [
+            "predecessor_id",
+            "priority",
+            "квитанция",
+            "receipt_id",
+            "receiver_id"
+          ],
+          "additionalProperties": false,
+          "properties": [
+            {
+              "name": "predecessor_id",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "priority",
+              "required": true,
+              "schema": {
+                "type": "integer",
+                "format": "uint64"
+              }
+            },
+            {
+              "name": "квитанция",
+              "required": true,
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "required": [
+                      "Action"
+                    ],
+                    "additionalProperties": false,
+                    "properties": [
+                      {
+                        "name": "Action",
+                        "required": true,
+                        "schema": {
+                          "type": "object",
+                          "required": [
+                            "actions",
+                            "gas_price",
+                            "input_data_ids",
+                            "is_promise_yield",
+                            "output_data_receivers",
+                            "signer_id",
+                            "signer_public_key"
+                          ],
+                          "additionalProperties": false,
+                          "properties": [
+                            {
+                              "name": "actions",
+                              "required": true,
+                              "schema": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "additionalProperties": true,
+                                  "refName": "ActionDocument"
+                                }
+                              }
+                            },
+                            {
+                              "name": "gas_price",
+                              "required": true,
+                              "schema": {
+                                "type": "string"
+                              }
+                            },
+                            {
+                              "name": "input_data_ids",
+                              "required": true,
+                              "schema": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
+                              }
+                            },
+                            {
+                              "name": "is_promise_yield",
+                              "required": true,
+                              "schema": {
+                                "type": "boolean"
+                              }
+                            },
+                            {
+                              "name": "output_data_receivers",
+                              "required": true,
+                              "schema": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "required": [
+                                    "data_id",
+                                    "receiver_id"
+                                  ],
+                                  "additionalProperties": false,
+                                  "properties": [
+                                    {
+                                      "name": "data_id",
+                                      "required": true,
+                                      "schema": {
+                                        "type": "string"
+                                      }
+                                    },
+                                    {
+                                      "name": "receiver_id",
+                                      "required": true,
+                                      "schema": {
+                                        "type": "string"
+                                      }
+                                    }
+                                  ],
+                                  "refName": "OutputDataReceiverDocument"
+                                }
+                              }
+                            },
+                            {
+                              "name": "signer_id",
+                              "required": true,
+                              "schema": {
+                                "type": "string"
+                              }
+                            },
+                            {
+                              "name": "signer_public_key",
+                              "required": true,
+                              "schema": {
+                                "type": "string"
+                              }
+                            }
+                          ],
+                          "refName": "ActionReceiptDocument"
+                        }
+                      }
+                    ],
+                    "refName": "ActionReceiptBody"
+                  },
+                  {
+                    "type": "object",
+                    "required": [
+                      "Data"
+                    ],
+                    "additionalProperties": false,
+                    "properties": [
+                      {
+                        "name": "Data",
+                        "required": true,
+                        "schema": {
+                          "type": "object",
+                          "required": [
+                            "data",
+                            "data_id",
+                            "is_promise_resume"
+                          ],
+                          "additionalProperties": false,
+                          "properties": [
+                            {
+                              "name": "data",
+                              "required": true,
+                              "schema": {
+                                "type": "string"
+                              }
+                            },
+                            {
+                              "name": "data_id",
+                              "required": true,
+                              "schema": {
+                                "type": "string"
+                              }
+                            },
+                            {
+                              "name": "is_promise_resume",
+                              "required": true,
+                              "schema": {
+                                "type": "boolean"
+                              }
+                            }
+                          ],
+                          "refName": "DataReceiptDocument"
+                        }
+                      }
+                    ],
+                    "refName": "DataReceiptBody"
+                  }
+                ],
+                "refName": "ReceiptBody"
+              }
+            },
+            {
+              "name": "receipt_id",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "receiver_id",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "refName": "ReceiptDocument"
+        }
+      }
+    },
+    {
+      "name": "транзакции",
+      "required": true,
+      "schema": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "description": "Transaction entry returned inside a neardata chunk.",
+          "required": [
+            "outcome",
+            "транзакция"
+          ],
+          "additionalProperties": false,
+          "properties": [
+            {
+              "name": "outcome",
+              "required": true,
+              "schema": {
+                "type": "object",
+                "description": "Execution result paired with an optional receipt object.",
+                "required": [
+                  "execution_outcome",
+                  "квитанция"
+                ],
+                "additionalProperties": false,
+                "properties": [
+                  {
+                    "name": "execution_outcome",
+                    "required": true,
+                    "schema": {
+                      "type": "object",
+                      "required": [
+                        "block_hash",
+                        "id",
+                        "outcome",
+                        "доказательство"
+                      ],
+                      "additionalProperties": false,
+                      "properties": [
+                        {
+                          "name": "block_hash",
+                          "required": true,
+                          "schema": {
+                            "type": "string"
+                          }
+                        },
+                        {
+                          "name": "id",
+                          "required": true,
+                          "schema": {
+                            "type": "string"
+                          }
+                        },
+                        {
+                          "name": "outcome",
+                          "required": true,
+                          "schema": {
+                            "type": "object",
+                            "required": [
+                              "executor_id",
+                              "gas_burnt",
+                              "logs",
+                              "metadata",
+                              "receipt_ids",
+                              "статус",
+                              "tokens_burnt"
+                            ],
+                            "additionalProperties": false,
+                            "properties": [
+                              {
+                                "name": "executor_id",
+                                "required": true,
+                                "schema": {
+                                  "type": "string"
+                                }
+                              },
+                              {
+                                "name": "gas_burnt",
+                                "required": true,
+                                "schema": {
+                                  "type": "integer",
+                                  "format": "uint64"
+                                }
+                              },
+                              {
+                                "name": "logs",
+                                "required": true,
+                                "schema": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string"
+                                  }
+                                }
+                              },
+                              {
+                                "name": "metadata",
+                                "required": true,
+                                "schema": {
+                                  "type": "object",
+                                  "additionalProperties": true
+                                }
+                              },
+                              {
+                                "name": "receipt_ids",
+                                "required": true,
+                                "schema": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string"
+                                  }
+                                }
+                              },
+                              {
+                                "name": "статус",
+                                "required": true,
+                                "schema": {
+                                  "oneOf": [
+                                    {
+                                      "type": "object",
+                                      "required": [
+                                        "SuccessReceiptId"
+                                      ],
+                                      "additionalProperties": false,
+                                      "properties": [
+                                        {
+                                          "name": "SuccessReceiptId",
+                                          "required": true,
+                                          "schema": {
+                                            "type": "string"
+                                          }
+                                        }
+                                      ],
+                                      "refName": "ExecutionOutcomeStatusSuccessReceiptId"
+                                    },
+                                    {
+                                      "type": "object",
+                                      "required": [
+                                        "SuccessValue"
+                                      ],
+                                      "additionalProperties": false,
+                                      "properties": [
+                                        {
+                                          "name": "SuccessValue",
+                                          "required": true,
+                                          "schema": {
+                                            "type": "string"
+                                          }
+                                        }
+                                      ],
+                                      "refName": "ExecutionOutcomeStatusSuccessValue"
+                                    },
+                                    {
+                                      "type": "object",
+                                      "required": [
+                                        "Failure"
+                                      ],
+                                      "additionalProperties": false,
+                                      "properties": [
+                                        {
+                                          "name": "Failure",
+                                          "required": true,
+                                          "schema": {
+                                            "type": "object",
+                                            "additionalProperties": true
+                                          }
+                                        }
+                                      ],
+                                      "refName": "ExecutionOutcomeStatusFailure"
+                                    }
+                                  ],
+                                  "refName": "ExecutionOutcomeStatus"
+                                }
+                              },
+                              {
+                                "name": "tokens_burnt",
+                                "required": true,
+                                "schema": {
+                                  "type": "string"
+                                }
+                              }
+                            ],
+                            "refName": "ExecutionOutcomeSummary"
+                          }
+                        },
+                        {
+                          "name": "доказательство",
+                          "required": true,
+                          "schema": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "additionalProperties": true,
+                              "refName": "ExecutionProofItem"
+                            }
+                          }
+                        }
+                      ],
+                      "refName": "ExecutionOutcomeDocument"
+                    }
+                  },
+                  {
+                    "name": "квитанция",
+                    "required": true,
+                    "schema": {
+                      "type": "object",
+                      "description": "Receipt payload when neardata includes it for this entry.",
+                      "oneOf": [
+                        {
+                          "type": "object",
+                          "description": "Receipt object as served by neardata inside a chunk payload.",
+                          "required": [
+                            "predecessor_id",
+                            "priority",
+                            "квитанция",
+                            "receipt_id",
+                            "receiver_id"
+                          ],
+                          "additionalProperties": false,
+                          "properties": [
+                            {
+                              "name": "predecessor_id",
+                              "required": true,
+                              "schema": {
+                                "type": "string"
+                              }
+                            },
+                            {
+                              "name": "priority",
+                              "required": true,
+                              "schema": {
+                                "type": "integer",
+                                "format": "uint64"
+                              }
+                            },
+                            {
+                              "name": "квитанция",
+                              "required": true,
+                              "schema": {
+                                "oneOf": [
+                                  {
+                                    "type": "object",
+                                    "required": [
+                                      "Action"
+                                    ],
+                                    "additionalProperties": false,
+                                    "properties": [
+                                      {
+                                        "name": "Action",
+                                        "required": true,
+                                        "schema": {
+                                          "type": "object",
+                                          "required": [
+                                            "actions",
+                                            "gas_price",
+                                            "input_data_ids",
+                                            "is_promise_yield",
+                                            "output_data_receivers",
+                                            "signer_id",
+                                            "signer_public_key"
+                                          ],
+                                          "additionalProperties": false,
+                                          "properties": [
+                                            {
+                                              "name": "actions",
+                                              "required": true,
+                                              "schema": {
+                                                "type": "array",
+                                                "items": {
+                                                  "type": "object",
+                                                  "additionalProperties": true,
+                                                  "refName": "ActionDocument"
+                                                }
+                                              }
+                                            },
+                                            {
+                                              "name": "gas_price",
+                                              "required": true,
+                                              "schema": {
+                                                "type": "string"
+                                              }
+                                            },
+                                            {
+                                              "name": "input_data_ids",
+                                              "required": true,
+                                              "schema": {
+                                                "type": "array",
+                                                "items": {
+                                                  "type": "string"
+                                                }
+                                              }
+                                            },
+                                            {
+                                              "name": "is_promise_yield",
+                                              "required": true,
+                                              "schema": {
+                                                "type": "boolean"
+                                              }
+                                            },
+                                            {
+                                              "name": "output_data_receivers",
+                                              "required": true,
+                                              "schema": {
+                                                "type": "array",
+                                                "items": {
+                                                  "type": "object",
+                                                  "required": [
+                                                    "data_id",
+                                                    "receiver_id"
+                                                  ],
+                                                  "additionalProperties": false,
+                                                  "properties": [
+                                                    {
+                                                      "name": "data_id",
+                                                      "required": true,
+                                                      "schema": {
+                                                        "type": "string"
+                                                      }
+                                                    },
+                                                    {
+                                                      "name": "receiver_id",
+                                                      "required": true,
+                                                      "schema": {
+                                                        "type": "string"
+                                                      }
+                                                    }
+                                                  ],
+                                                  "refName": "OutputDataReceiverDocument"
+                                                }
+                                              }
+                                            },
+                                            {
+                                              "name": "signer_id",
+                                              "required": true,
+                                              "schema": {
+                                                "type": "string"
+                                              }
+                                            },
+                                            {
+                                              "name": "signer_public_key",
+                                              "required": true,
+                                              "schema": {
+                                                "type": "string"
+                                              }
+                                            }
+                                          ],
+                                          "refName": "ActionReceiptDocument"
+                                        }
+                                      }
+                                    ],
+                                    "refName": "ActionReceiptBody"
+                                  },
+                                  {
+                                    "type": "object",
+                                    "required": [
+                                      "Data"
+                                    ],
+                                    "additionalProperties": false,
+                                    "properties": [
+                                      {
+                                        "name": "Data",
+                                        "required": true,
+                                        "schema": {
+                                          "type": "object",
+                                          "required": [
+                                            "data",
+                                            "data_id",
+                                            "is_promise_resume"
+                                          ],
+                                          "additionalProperties": false,
+                                          "properties": [
+                                            {
+                                              "name": "data",
+                                              "required": true,
+                                              "schema": {
+                                                "type": "string"
+                                              }
+                                            },
+                                            {
+                                              "name": "data_id",
+                                              "required": true,
+                                              "schema": {
+                                                "type": "string"
+                                              }
+                                            },
+                                            {
+                                              "name": "is_promise_resume",
+                                              "required": true,
+                                              "schema": {
+                                                "type": "boolean"
+                                              }
+                                            }
+                                          ],
+                                          "refName": "DataReceiptDocument"
+                                        }
+                                      }
+                                    ],
+                                    "refName": "DataReceiptBody"
+                                  }
+                                ],
+                                "refName": "ReceiptBody"
+                              }
+                            },
+                            {
+                              "name": "receipt_id",
+                              "required": true,
+                              "schema": {
+                                "type": "string"
+                              }
+                            },
+                            {
+                              "name": "receiver_id",
+                              "required": true,
+                              "schema": {
+                                "type": "string"
+                              }
+                            }
+                          ],
+                          "refName": "ReceiptDocument"
+                        },
+                        {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "refName": "OmittedReceiptDocument"
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "name": "tx_hash",
+                    "required": false,
+                    "schema": {
+                      "type": "string"
+                    }
+                  }
+                ],
+                "refName": "ExecutionWithReceipt"
+              }
+            },
+            {
+              "name": "транзакция",
+              "required": true,
+              "schema": {
+                "type": "object",
+                "required": [
+                  "actions",
+                  "hash",
+                  "nonce",
+                  "priority_fee",
+                  "public_key",
+                  "receiver_id",
+                  "signature",
+                  "signer_id"
+                ],
+                "additionalProperties": false,
+                "properties": [
+                  {
+                    "name": "actions",
+                    "required": true,
+                    "schema": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": true,
+                        "refName": "ActionDocument"
+                      }
+                    }
+                  },
+                  {
+                    "name": "hash",
+                    "required": true,
+                    "schema": {
+                      "type": "string"
+                    }
+                  },
+                  {
+                    "name": "nonce",
+                    "required": true,
+                    "schema": {
+                      "type": "integer",
+                      "format": "uint64"
+                    }
+                  },
+                  {
+                    "name": "priority_fee",
+                    "required": true,
+                    "schema": {
+                      "type": "integer",
+                      "format": "uint64"
+                    }
+                  },
+                  {
+                    "name": "public_key",
+                    "required": true,
+                    "schema": {
+                      "type": "string"
+                    }
+                  },
+                  {
+                    "name": "receiver_id",
+                    "required": true,
+                    "schema": {
+                      "type": "string"
+                    }
+                  },
+                  {
+                    "name": "signature",
+                    "required": true,
+                    "schema": {
+                      "type": "string"
+                    }
+                  },
+                  {
+                    "name": "signer_id",
+                    "required": true,
+                    "schema": {
+                      "type": "string"
+                    }
+                  }
+                ],
+                "refName": "SignedTransactionDocument"
+              }
+            }
+          ],
+          "refName": "ChunkTransactionWrapper"
+        }
+      }
+    }
+  ],
+  "refName": "ChunkDocument"
 }
 ```
