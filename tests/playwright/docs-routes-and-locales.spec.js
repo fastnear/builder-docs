@@ -115,7 +115,7 @@ test('Russian expanded response modal exposes translated find controls', async (
     'https://rpc.mainnet.fastnear.com',
     (payload) => payload?.id !== 'fastnear-docs'
   );
-  await page.goto('/ru/rpc/account/view-account?account_id=near&autorun=1&responseView=expanded&responseFind=amount');
+  await page.goto('/ru/rpc/account/view-account?account_id=near&responseView=expanded&responseFind=amount');
 
   const dialog = page.getByRole('dialog', { name: 'Развернутый ответ' });
   await expect(dialog).toBeVisible();
@@ -130,13 +130,13 @@ test('auth and agent guides live under clean docs prefixes', async ({ page }) =>
 
   await expect(page).toHaveURL(/\/auth\/?$/);
   await expect(page.getByRole('heading', { name: 'Auth & Access' })).toBeVisible();
-  await expect(page.getByText('Copy auto-run URL')).toBeVisible();
+  await expect(page.getByText('Shared example URLs run automatically on load', { exact: false })).toBeVisible();
 
   await page.goto('/ru/auth');
 
   await expect(page).toHaveURL(/\/ru\/auth\/?$/);
   await expect(page.getByRole('heading', { name: 'Аутентификация и доступ' })).toBeVisible();
-  await expect(page.getByText('Copy auto-run URL')).toBeVisible();
+  await expect(page.getByText('Общие URL примеров выполняются автоматически при загрузке', { exact: false })).toBeVisible();
 
   await page.goto('/agents/choosing-surfaces');
 

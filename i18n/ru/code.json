@@ -431,14 +431,8 @@
   "fastnear.operationUi.copiedExampleUrl": {
     "message": "URL примера скопирован"
   },
-  "fastnear.operationUi.copyAutorunUrl": {
-    "message": "Скопировать auto-run URL"
-  },
-  "fastnear.operationUi.copiedAutorunUrl": {
-    "message": "Auto-run URL скопирован"
-  },
-  "fastnear.operationUi.copyAutorunUrlButtonLabel": {
-    "message": "Auto-run URL"
+  "fastnear.operationUi.copiedViewUrl": {
+    "message": "URL для этого вида скопирован"
   },
   "fastnear.operationUi.copyMarkdown.completed": {
     "message": "Скопировано"
@@ -449,11 +443,17 @@
   "fastnear.operationUi.copyExampleUrlButtonLabel": {
     "message": "URL примера"
   },
+  "fastnear.operationUi.copyViewUrl": {
+    "message": "Скопировать URL для этого вида"
+  },
+  "fastnear.operationUi.copyViewUrlButtonLabel": {
+    "message": "URL для этого вида"
+  },
   "fastnear.operationUi.copyExampleUrlHelpAriaLabel": {
     "message": "О URL примера"
   },
   "fastnear.operationUi.copyExampleUrlHelpBody": {
-    "message": "Поделитесь URL документации, который заново откроет этот пример с выбранной сетью, примером запроса, финальностью и заполненными входными данными. Используйте Auto-run URL, если нужно выполнить запрос сразу при загрузке. Сохранённые API-ключи и токены никогда не включаются."
+    "message": "Поделитесь URL документации, который заново откроет этот пример с выбранной сетью, примером запроса, финальностью и заполненными входными данными. URL с состоянием операции выполняется автоматически при загрузке. Сохранённые API-ключи и токены никогда не включаются."
   },
   "fastnear.operationUi.copyCurlCommandButtonLabel": {
     "message": "cURL"

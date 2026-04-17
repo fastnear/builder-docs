@@ -8,7 +8,7 @@ This is an internal continuity chapter, not end-user docs copy.
 
 ## Why this chapter exists
 
-While hardening shareable operation URLs and `autorun=1`, we ran into a subtle but important modeling issue:
+While hardening shareable operation URLs and implicit load-time execution, we ran into a subtle but important modeling issue:
 
 - many page models say `interaction.authTransport = "bearer"`
 - some of those same operations are described elsewhere as publicly callable without a key
@@ -114,7 +114,7 @@ But the authored docs and actual product posture say:
 If we had interpreted `bearer` as "do not run without auth", we would have introduced a real regression:
 
 - the normal `Send request` behavior would have become stricter than the rest of the docs
-- `autorun=1` links would have silently refused to run for public operations
+- shared operation URLs would have silently refused to run for public operations
 
 That would have been the wrong behavior.
 
@@ -131,7 +131,7 @@ That leads to the current safe behavior:
 
 - requests still run without a key when required inputs are present
 - copied cURL commands include auth only when a key exists
-- `autorun=1` mirrors normal `Send request` behavior instead of inventing a stricter policy
+- implicit URL-driven execution mirrors normal `Send request` behavior instead of inventing a stricter policy
 
 This rule is intentionally conservative.
 

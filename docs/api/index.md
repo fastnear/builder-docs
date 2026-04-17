@@ -46,7 +46,7 @@ https://test.api.fastnear.com
 ## Shareable live examples
 
 - Use `Copy example URL` on any interactive API page to share the selected network and filled request state.
-- Use `Copy auto-run URL` when the recipient should open the page and have the request execute right away.
+- Shared example URLs run automatically on load whenever they include operation state.
 - Saved API keys and tokens are never included in those shared docs URLs.
 
 ## Common starting points

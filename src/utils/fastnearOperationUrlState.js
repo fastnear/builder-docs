@@ -1,6 +1,5 @@
 const OPERATION_QUERY_PARAMS = Object.freeze({
   apiKey: "apiKey",
-  autorun: "autorun",
   colorSchema: "colorSchema",
   network: "network",
   responseFind: "responseFind",
@@ -16,7 +15,6 @@ const PRIVILEGED_OPERATION_QUERY_PARAMS = Object.freeze({
   useArchival: "useArchival",
 });
 
-const ENABLED_BOOLEAN_QUERY_VALUES = new Set(["1", "true", "yes"]);
 const EXPANDED_RESPONSE_VIEW = "expanded";
 const RESERVED_OPERATION_QUERY_PARAM_KEYS = new Set([
   ...Object.values(OPERATION_QUERY_PARAMS),
@@ -62,20 +60,6 @@ function getOperationRequestedFinality(searchParams) {
   return searchParams.get(OPERATION_QUERY_PARAMS.requestFinality);
 }
 
-function getOperationRequestedAutorun(searchParams) {
-  const value = searchParams.get(OPERATION_QUERY_PARAMS.autorun)?.trim().toLowerCase();
-  return Boolean(value && ENABLED_BOOLEAN_QUERY_VALUES.has(value));
-}
-
-function setOperationRequestedAutorun(searchParams, shouldAutorun) {
-  if (shouldAutorun) {
-    searchParams.set(OPERATION_QUERY_PARAMS.autorun, "1");
-    return;
-  }
-
-  searchParams.delete(OPERATION_QUERY_PARAMS.autorun);
-}
-
 function getOperationRequestedResponseView(searchParams) {
   const value = searchParams.get(OPERATION_QUERY_PARAMS.responseView)?.trim().toLowerCase();
   return value === EXPANDED_RESPONSE_VIEW ? EXPANDED_RESPONSE_VIEW : "";
@@ -114,6 +98,24 @@ function collectOperationFieldPrefills(pageModel, searchParams) {
   );
 }
 
+function hasRecognizedOperationQueryState(pageModel, searchParams) {
+  if (
+    searchParams.has(OPERATION_QUERY_PARAMS.network) ||
+    searchParams.has(OPERATION_QUERY_PARAMS.requestExample) ||
+    searchParams.has(OPERATION_QUERY_PARAMS.requestFinality) ||
+    getOperationRequestedResponseView(searchParams) ||
+    getOperationRequestedResponseFind(searchParams)
+  ) {
+    return true;
+  }
+
+  return Object.keys(collectOperationFieldPrefills(pageModel, searchParams)).length > 0;
+}
+
+function shouldAutorunOperationOnLoad(pageModel, searchParams) {
+  return hasRecognizedOperationQueryState(pageModel, searchParams);
+}
+
 function getShareableOperationWrapperQueryEntries(searchParams) {
   const colorSchema = searchParams.get(OPERATION_QUERY_PARAMS.colorSchema);
   if (!SHAREABLE_COLOR_SCHEMA_VALUES.has(colorSchema)) {
@@ -128,17 +130,17 @@ module.exports = {
   PRIVILEGED_OPERATION_QUERY_PARAMS,
   SECRET_QUERY_PARAM_PATTERNS,
   collectOperationFieldPrefills,
-  getOperationRequestedAutorun,
   getOperationRequestedExampleId,
   getOperationRequestedFinality,
   getOperationRequestedNetworkKey,
   getOperationRequestedResponseFind,
   getOperationRequestedResponseView,
   getShareableOperationWrapperQueryEntries,
+  hasRecognizedOperationQueryState,
   isNonShareableOperationQueryParam,
   isPrivilegedOperationQueryParam,
   isReservedOperationQueryParam,
   isSecretQueryParam,
-  setOperationRequestedAutorun,
   setOperationRequestedResponseState,
+  shouldAutorunOperationOnLoad,
 };

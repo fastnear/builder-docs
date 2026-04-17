@@ -14,15 +14,14 @@ import {
 import {
   OPERATION_QUERY_PARAMS,
   collectOperationFieldPrefills,
-  getOperationRequestedAutorun,
   getOperationRequestedExampleId,
   getOperationRequestedFinality,
   getOperationRequestedNetworkKey,
   getOperationRequestedResponseFind,
   getOperationRequestedResponseView,
   getShareableOperationWrapperQueryEntries,
-  setOperationRequestedAutorun,
   setOperationRequestedResponseState,
+  shouldAutorunOperationOnLoad,
 } from "@site/src/utils/fastnearOperationUrlState";
 import {
   buildOperationSelectionState,
@@ -220,7 +219,7 @@ function buildInitialOperationState(pageModel, search) {
     protectedFieldNames: new Set(Object.keys(urlFieldPrefills)),
     responseFind: requestedResponseState.responseFind,
     shouldOpenResponseModal: requestedResponseState.isExpanded,
-    shouldAutorun: getOperationRequestedAutorun(resolvedSearch),
+    shouldAutorun: shouldAutorunOperationOnLoad(pageModel, resolvedSearch),
     selectedFinality: getInitialFinality(pageModel, resolvedSearch),
     selectedNetwork,
   };
@@ -568,10 +567,6 @@ function buildOperationExampleUrl(
     nextUrl.searchParams.set(OPERATION_QUERY_PARAMS.network, selectedNetwork);
   }
 
-  setOperationRequestedAutorun(
-    nextUrl.searchParams,
-    Boolean(options.forceAutorun || getOperationRequestedAutorun(currentSearch))
-  );
   setOperationRequestedResponseState(nextUrl.searchParams, {
     isExpanded: Boolean(options.isResponseExpanded),
     responseFind: options.responseFind || "",
@@ -725,6 +720,34 @@ function getResponseFindResultsLabel(uiText, searchTerm, matches, activeMatchInd
   });
 }
 
+function scrollResponseMatchIntoView(activeMatchElement) {
+  if (!activeMatchElement) {
+    return;
+  }
+
+  const scrollContainer = activeMatchElement.closest("[data-fastnear-response-scroll-container]");
+  if (!scrollContainer) {
+    activeMatchElement.scrollIntoView({
+      block: "center",
+      inline: "nearest",
+    });
+    return;
+  }
+
+  const containerRect = scrollContainer.getBoundingClientRect();
+  const matchRect = activeMatchElement.getBoundingClientRect();
+  const nextTop =
+    scrollContainer.scrollTop +
+    (matchRect.top - containerRect.top) -
+    scrollContainer.clientHeight / 2 +
+    matchRect.height / 2;
+
+  scrollContainer.scrollTo({
+    top: Math.max(0, nextTop),
+    behavior: "auto",
+  });
+}
+
 function FastnearOperationResponseText({
   text,
   matches = [],
@@ -738,10 +761,7 @@ function FastnearOperationResponseText({
       return;
     }
 
-    activeMatchRefs.current[activeMatchIndex]?.scrollIntoView({
-      block: "nearest",
-      inline: "nearest",
-    });
+    scrollResponseMatchIntoView(activeMatchRefs.current[activeMatchIndex]);
   }, [activeMatchIndex, matches.length]);
 
   if (!matches.length) {
@@ -1163,7 +1183,7 @@ function FastnearOperationPage({ pageModel }) {
   const [apiKeyDraft, setApiKeyDraft] = useState("");
   const [copiedCurl, setCopiedCurl] = useState(false);
   const [copiedExampleUrl, setCopiedExampleUrl] = useState(false);
-  const [copiedAutorunUrl, setCopiedAutorunUrl] = useState(false);
+  const [copiedViewUrl, setCopiedViewUrl] = useState(false);
   const [copiedResponse, setCopiedResponse] = useState(false);
   const [isExampleUrlHelpOpen, setIsExampleUrlHelpOpen] = useState(false);
   const [isResponseModalOpen, setIsResponseModalOpen] = useState(
@@ -1208,7 +1228,7 @@ function FastnearOperationPage({ pageModel }) {
     setRunError(null);
     setRunResult(null);
     setCopiedExampleUrl(false);
-    setCopiedAutorunUrl(false);
+    setCopiedViewUrl(false);
     setCopiedResponse(false);
     setIsExampleUrlHelpOpen(false);
   }, [initialOperationState]);
@@ -1272,13 +1292,13 @@ function FastnearOperationPage({ pageModel }) {
   }, [copiedExampleUrl]);
 
   useEffect(() => {
-    if (!copiedAutorunUrl || typeof window === "undefined") {
+    if (!copiedViewUrl || typeof window === "undefined") {
       return undefined;
     }
 
-    const timeout = window.setTimeout(() => setCopiedAutorunUrl(false), 2000);
+    const timeout = window.setTimeout(() => setCopiedViewUrl(false), 2000);
     return () => window.clearTimeout(timeout);
-  }, [copiedAutorunUrl]);
+  }, [copiedViewUrl]);
 
   useEffect(() => {
     if (!copiedResponse || typeof window === "undefined") {
@@ -1404,32 +1424,6 @@ function FastnearOperationPage({ pageModel }) {
       trimmedFieldValues,
     ]
   );
-  const autorunExampleUrl = useMemo(
-    () =>
-      buildOperationExampleUrl(
-        pageModel,
-        currentUrl,
-        selectedNetwork,
-        selectedExample?.id || "",
-        selectedFinality,
-        trimmedFieldValues,
-        {
-          forceAutorun: true,
-          isResponseExpanded: isResponseModalOpen,
-          responseFind: normalizedResponseFind,
-        }
-      ),
-    [
-      currentUrl,
-      isResponseModalOpen,
-      normalizedResponseFind,
-      pageModel,
-      selectedExample?.id,
-      selectedFinality,
-      selectedNetwork,
-      trimmedFieldValues,
-    ]
-  );
   const operationMarkdown = useMemo(
     () =>
       buildOperationMarkdown({
@@ -1513,7 +1507,7 @@ function FastnearOperationPage({ pageModel }) {
     await copyTextToClipboard(curlCommand);
     setCopiedCurl(true);
     setCopiedExampleUrl(false);
-    setCopiedAutorunUrl(false);
+    setCopiedViewUrl(false);
   };
   const handleCopyExampleUrl = async () => {
     if (!exampleUrl) {
@@ -1522,15 +1516,15 @@ function FastnearOperationPage({ pageModel }) {
 
     await copyTextToClipboard(exampleUrl);
     setCopiedExampleUrl(true);
-    setCopiedAutorunUrl(false);
+    setCopiedViewUrl(false);
   };
-  const handleCopyAutorunUrl = async () => {
-    if (!autorunExampleUrl) {
+  const handleCopyViewUrl = async () => {
+    if (!exampleUrl) {
       return;
     }
 
-    await copyTextToClipboard(autorunExampleUrl);
-    setCopiedAutorunUrl(true);
+    await copyTextToClipboard(exampleUrl);
+    setCopiedViewUrl(true);
     setCopiedExampleUrl(false);
   };
   const handleCopyResponse = async () => {
@@ -1546,11 +1540,13 @@ function FastnearOperationPage({ pageModel }) {
     setIsResponseModalOpen(true);
     setResponseFindDraft(nextSearchTerm);
     setActiveResponseFindIndex(nextSearchTerm ? 0 : -1);
+    setCopiedViewUrl(false);
   };
   const closeResponseModal = () => {
     setIsResponseModalOpen(false);
     setResponseFindDraft("");
     setActiveResponseFindIndex(-1);
+    setCopiedViewUrl(false);
 
     if (typeof window !== "undefined") {
       window.setTimeout(() => {
@@ -1627,7 +1623,7 @@ function FastnearOperationPage({ pageModel }) {
     setSelectedExampleId(nextSelectionState.selectedExampleId);
     setFieldValues(nextSelectionState.fieldValues);
     setCopiedExampleUrl(false);
-    setCopiedAutorunUrl(false);
+    setCopiedViewUrl(false);
     setRunError(null);
     setRunResult(null);
     setCopiedResponse(false);
@@ -1636,7 +1632,7 @@ function FastnearOperationPage({ pageModel }) {
   const handleFinalityChange = (finality) => {
     setSelectedFinality(finality);
     setCopiedExampleUrl(false);
-    setCopiedAutorunUrl(false);
+    setCopiedViewUrl(false);
     setRunError(null);
     setRunResult(null);
     setCopiedResponse(false);
@@ -1649,7 +1645,7 @@ function FastnearOperationPage({ pageModel }) {
       [fieldName]: value,
     }));
     setCopiedExampleUrl(false);
-    setCopiedAutorunUrl(false);
+    setCopiedViewUrl(false);
     setRunError(null);
     setRunResult(null);
     setCopiedResponse(false);
@@ -1668,7 +1664,7 @@ function FastnearOperationPage({ pageModel }) {
     setSelectedNetwork(nextNetwork);
     setFieldValues(nextSelectionState.fieldValues);
     setCopiedExampleUrl(false);
-    setCopiedAutorunUrl(false);
+    setCopiedViewUrl(false);
   };
 
   const handleRun = async () => {
@@ -2120,23 +2116,6 @@ function FastnearOperationPage({ pageModel }) {
                     )}
                     <span>{uiText.copyExampleUrlButtonLabel}</span>
                   </button>
-                  <button
-                    type="button"
-                    className="fastnear-button fastnear-button--secondary"
-                    aria-label={copiedAutorunUrl ? uiText.copiedAutorunUrl : uiText.copyAutorunUrl}
-                    title={copiedAutorunUrl ? uiText.copiedAutorunUrl : uiText.copyAutorunUrl}
-                    onClick={() => {
-                      void handleCopyAutorunUrl();
-                    }}
-                    disabled={!autorunExampleUrl}
-                  >
-                    {copiedAutorunUrl ? (
-                      <CheckGlyph className="fastnear-button__icon" />
-                    ) : (
-                      <CopyGlyph className="fastnear-button__icon" />
-                    )}
-                    <span>{uiText.copyAutorunUrlButtonLabel}</span>
-                  </button>
                 </div>
               </div>
             </div>
@@ -2213,38 +2192,41 @@ function FastnearOperationPage({ pageModel }) {
 
                   <div
                     className="fastnear-interaction__result-shell"
+                    data-fastnear-response-scroll-container
                     aria-busy={isRunResultTextPending ? "true" : "false"}
                   >
-                    <div className="fastnear-interaction__result-actions">
-                      <button
-                        type="button"
-                        className={`fastnear-interaction__copy-button ${
-                          copiedResponse ? "is-copied" : ""
-                        }`}
-                        onClick={() => {
-                          void handleCopyResponse();
-                        }}
-                        disabled={!canCopyResponse}
-                        aria-label={copiedResponse ? uiText.responseCopied : uiText.copyResponse}
-                        title={copiedResponse ? uiText.responseCopied : uiText.copyResponse}
-                      >
-                        {copiedResponse ? (
-                          <CheckGlyph className="fastnear-interaction__copy-icon" />
-                        ) : (
-                          <CopyGlyph className="fastnear-interaction__copy-icon" />
-                        )}
-                      </button>
-                      <button
-                        ref={inlineExpandResponseButtonRef}
-                        type="button"
-                        className="fastnear-interaction__copy-button"
-                        onClick={() => openResponseModal()}
-                        disabled={!runResultText || isRunResultTextPending}
-                        aria-label={uiText.expandResponse}
-                        title={uiText.expandResponse}
-                      >
-                        <ExpandGlyph className="fastnear-interaction__copy-icon" />
-                      </button>
+                    <div className="fastnear-interaction__result-action-rail">
+                      <div className="fastnear-interaction__result-actions">
+                        <button
+                          type="button"
+                          className={`fastnear-interaction__copy-button ${
+                            copiedResponse ? "is-copied" : ""
+                          }`}
+                          onClick={() => {
+                            void handleCopyResponse();
+                          }}
+                          disabled={!canCopyResponse}
+                          aria-label={copiedResponse ? uiText.responseCopied : uiText.copyResponse}
+                          title={copiedResponse ? uiText.responseCopied : uiText.copyResponse}
+                        >
+                          {copiedResponse ? (
+                            <CheckGlyph className="fastnear-interaction__copy-icon" />
+                          ) : (
+                            <CopyGlyph className="fastnear-interaction__copy-icon" />
+                          )}
+                        </button>
+                        <button
+                          ref={inlineExpandResponseButtonRef}
+                          type="button"
+                          className="fastnear-interaction__copy-button"
+                          onClick={() => openResponseModal()}
+                          disabled={!runResultText || isRunResultTextPending}
+                          aria-label={uiText.expandResponse}
+                          title={uiText.expandResponse}
+                        >
+                          <ExpandGlyph className="fastnear-interaction__copy-icon" />
+                        </button>
+                      </div>
                     </div>
                     {isRunResultTextPending ? (
                       <p className="fastnear-interaction__placeholder fastnear-interaction__placeholder--panel fastnear-interaction__placeholder--pending">
@@ -2297,70 +2279,15 @@ function FastnearOperationPage({ pageModel }) {
                   {uiText.expandedResponseHint}
                 </p>
               </div>
-
-              <div className="fastnear-response-modal__header-actions">
-                <button
-                  type="button"
-                  className="fastnear-button fastnear-button--secondary"
-                  aria-label={copiedExampleUrl ? uiText.copiedExampleUrl : uiText.copyExampleUrl}
-                  title={copiedExampleUrl ? uiText.copiedExampleUrl : uiText.copyExampleUrl}
-                  onClick={() => {
-                    void handleCopyExampleUrl();
-                  }}
-                  disabled={!exampleUrl}
-                >
-                  {copiedExampleUrl ? (
-                    <CheckGlyph className="fastnear-button__icon" />
-                  ) : (
-                    <CopyGlyph className="fastnear-button__icon" />
-                  )}
-                  <span>{uiText.copyExampleUrlButtonLabel}</span>
-                </button>
-                <button
-                  type="button"
-                  className="fastnear-button fastnear-button--secondary"
-                  aria-label={copiedAutorunUrl ? uiText.copiedAutorunUrl : uiText.copyAutorunUrl}
-                  title={copiedAutorunUrl ? uiText.copiedAutorunUrl : uiText.copyAutorunUrl}
-                  onClick={() => {
-                    void handleCopyAutorunUrl();
-                  }}
-                  disabled={!autorunExampleUrl}
-                >
-                  {copiedAutorunUrl ? (
-                    <CheckGlyph className="fastnear-button__icon" />
-                  ) : (
-                    <CopyGlyph className="fastnear-button__icon" />
-                  )}
-                  <span>{uiText.copyAutorunUrlButtonLabel}</span>
-                </button>
-                <button
-                  type="button"
-                  className={`fastnear-interaction__copy-button ${
-                    copiedResponse ? "is-copied" : ""
-                  }`}
-                  onClick={() => {
-                    void handleCopyResponse();
-                  }}
-                  disabled={!canCopyResponse}
-                  aria-label={copiedResponse ? uiText.responseCopied : uiText.copyResponse}
-                  title={copiedResponse ? uiText.responseCopied : uiText.copyResponse}
-                >
-                  {copiedResponse ? (
-                    <CheckGlyph className="fastnear-interaction__copy-icon" />
-                  ) : (
-                    <CopyGlyph className="fastnear-interaction__copy-icon" />
-                  )}
-                </button>
-                <button
-                  type="button"
-                  className="fastnear-interaction__copy-button fastnear-response-modal__close-button"
-                  onClick={() => closeResponseModal()}
-                  aria-label={uiText.closeExpandedResponse}
-                  title={uiText.closeExpandedResponse}
-                >
-                  <CloseGlyph className="fastnear-interaction__copy-icon" />
-                </button>
-              </div>
+              <button
+                type="button"
+                className="fastnear-interaction__copy-button fastnear-response-modal__close-button"
+                onClick={() => closeResponseModal()}
+                aria-label={uiText.closeExpandedResponse}
+                title={uiText.closeExpandedResponse}
+              >
+                <CloseGlyph className="fastnear-interaction__copy-icon" />
+              </button>
             </div>
 
             {runResult ? (
@@ -2438,8 +2365,48 @@ function FastnearOperationPage({ pageModel }) {
 
             <div
               className="fastnear-response-modal__viewer"
+              data-fastnear-response-scroll-container
               aria-busy={isRunResultTextPending ? "true" : "false"}
             >
+              <div className="fastnear-interaction__result-action-rail fastnear-response-modal__viewer-rail">
+                <div className="fastnear-interaction__result-actions fastnear-response-modal__viewer-actions">
+                  <button
+                    type="button"
+                    className="fastnear-button fastnear-button--secondary fastnear-response-modal__viewer-share-button"
+                    aria-label={copiedViewUrl ? uiText.copiedViewUrl : uiText.copyViewUrl}
+                    title={copiedViewUrl ? uiText.copiedViewUrl : uiText.copyViewUrl}
+                    onClick={() => {
+                      void handleCopyViewUrl();
+                    }}
+                    disabled={!exampleUrl}
+                  >
+                    {copiedViewUrl ? (
+                      <CheckGlyph className="fastnear-button__icon" />
+                    ) : (
+                      <CopyGlyph className="fastnear-button__icon" />
+                    )}
+                    <span>{uiText.copyViewUrlButtonLabel}</span>
+                  </button>
+                  <button
+                    type="button"
+                    className={`fastnear-interaction__copy-button ${
+                      copiedResponse ? "is-copied" : ""
+                    }`}
+                    onClick={() => {
+                      void handleCopyResponse();
+                    }}
+                    disabled={!canCopyResponse}
+                    aria-label={copiedResponse ? uiText.responseCopied : uiText.copyResponse}
+                    title={copiedResponse ? uiText.responseCopied : uiText.copyResponse}
+                  >
+                    {copiedResponse ? (
+                      <CheckGlyph className="fastnear-interaction__copy-icon" />
+                    ) : (
+                      <CopyGlyph className="fastnear-interaction__copy-icon" />
+                    )}
+                  </button>
+                </div>
+              </div>
               {runError ? (
                 <p className="fastnear-interaction__error">{runError}</p>
               ) : runResult ? (

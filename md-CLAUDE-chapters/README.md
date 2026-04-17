@@ -14,7 +14,7 @@ This folder collects longer-form reference chapters that are useful while evolvi
 ### Interactive operation URLs
 
 - [Builder Docs Operation URL State and Shareable Example URLs](/Users/mikepurvis/near/fn/builder-docs/md-CLAUDE-chapters/operation_url_state_and_shareable_examples.md)
-  - Architecture and testing chapter for URL-prefilled live examples, auto-run links, expanded response inspection, find-in-response, public URL sanitization, and future compatibility constraints.
+  - Architecture and testing chapter for URL-prefilled live examples, implicit execution for stateful URLs, expanded response inspection, find-in-response, public URL sanitization, and future compatibility constraints.
 
 ### Auth semantics
 

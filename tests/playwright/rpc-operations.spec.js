@@ -77,7 +77,7 @@ test('apiKey URL params preload the auth input and bearer header for RPC request
   expect(authorizationHeader).toBe('Bearer test-key-123');
 });
 
-test('autorun query params execute RPC requests on load when inputs are ready', async ({ page }) => {
+test('operation-state URLs execute RPC requests on load when inputs are ready', async ({ page }) => {
   await page.route('https://rpc.mainnet.fastnear.com/**', async (route) => {
     await route.fulfill({
       status: 200,
@@ -95,11 +95,34 @@ test('autorun query params execute RPC requests on load when inputs are ready', 
     'https://rpc.mainnet.fastnear.com',
     (payload) => payload?.id !== 'fastnear-docs'
   );
-  await page.goto('/rpc/account/view-account?account_id=near&autorun=1');
+  await page.goto('/rpc/account/view-account?account_id=near');
 
   const sentPayload = getRequestPayload(await requestPromise);
   expect(sentPayload?.params?.account_id).toBe('near');
   await expect(page.locator('.fastnear-interaction__text-response')).toContainText('"amount": "1"');
+});
+
+test('apiKey-only URLs do not auto-run RPC requests', async ({ page }) => {
+  let requestCount = 0;
+
+  await page.route('https://rpc.mainnet.fastnear.com/**', async (route) => {
+    requestCount += 1;
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        jsonrpc: '2.0',
+        id: 'fastnear',
+        result: { amount: '1' },
+      }),
+    });
+  });
+
+  await page.goto('/rpc/account/view-account?apiKey=test-key-123');
+
+  await expect(page.locator('.fastnear-interaction__auth input')).toHaveValue('test-key-123');
+  await page.waitForTimeout(350);
+  expect(requestCount).toBe(0);
 });
 
 test('expanded response modal supports find, next, previous, and keyboard navigation', async ({ page }) => {
@@ -161,7 +184,65 @@ test('expanded response modal supports find, next, previous, and keyboard naviga
   await expect(dialog.locator('.fastnear-response-modal__find-results')).toHaveText('1 of 3');
 });
 
-test('expanded response URL state opens the modal immediately during autorun', async ({ page }) => {
+test('expanded response modal stays within the viewport on large protocol responses', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+
+  await page.route('https://rpc.mainnet.fastnear.com/**', async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        jsonrpc: '2.0',
+        id: 'fastnear',
+        result: {
+          active_peers: Array.from({ length: 80 }, (_, index) => ({
+            id: `peer-${index}`,
+            height: 100000 + index,
+            addr: `127.0.0.1:${24567 + index}`,
+          })),
+          known_producers: Array.from({ length: 40 }, (_, index) => `validator-${index}`),
+        },
+      }),
+    });
+  });
+
+  await page.goto('/rpc/protocol/network-info?responseView=expanded');
+
+  const dialog = page.getByRole('dialog', { name: 'Expanded response' });
+  const closeButton = dialog.getByRole('button', { name: 'Close expanded response' });
+  await expect(dialog).toBeVisible();
+  await expect(closeButton).toBeVisible();
+
+  const metrics = await page.evaluate(() => {
+    const dialogElement = document.querySelector('.fastnear-response-modal__dialog');
+    const closeElement = document.querySelector('.fastnear-response-modal__close-button');
+    if (!dialogElement || !closeElement) {
+      return null;
+    }
+
+    const dialogRect = dialogElement.getBoundingClientRect();
+    const closeRect = closeElement.getBoundingClientRect();
+    return {
+      dialogBottom: dialogRect.bottom,
+      dialogTop: dialogRect.top,
+      closeRight: closeRect.right,
+      closeTop: closeRect.top,
+      viewportHeight: window.innerHeight,
+      viewportWidth: window.innerWidth,
+    };
+  });
+
+  expect(metrics).not.toBeNull();
+  expect(metrics.dialogTop).toBeGreaterThanOrEqual(0);
+  expect(metrics.dialogBottom).toBeLessThanOrEqual(metrics.viewportHeight);
+  expect(metrics.closeTop).toBeGreaterThanOrEqual(0);
+  expect(metrics.closeRight).toBeLessThanOrEqual(metrics.viewportWidth);
+
+  await closeButton.click();
+  await expect(dialog).toBeHidden();
+});
+
+test('expanded response URL state opens the modal immediately during implicit auto-run', async ({ page }) => {
   await page.route('https://rpc.mainnet.fastnear.com/**', async (route) => {
     await new Promise((resolve) => setTimeout(resolve, 250));
     await route.fulfill({
@@ -180,7 +261,7 @@ test('expanded response URL state opens the modal immediately during autorun', a
     'https://rpc.mainnet.fastnear.com',
     (payload) => payload?.id !== 'fastnear-docs'
   );
-  await page.goto('/rpc/account/view-account?account_id=near&autorun=1&responseView=expanded');
+  await page.goto('/rpc/account/view-account?account_id=near&responseView=expanded');
 
   const dialog = page.getByRole('dialog', { name: 'Expanded response' });
   await expect(dialog).toBeVisible();
@@ -191,7 +272,7 @@ test('expanded response URL state opens the modal immediately during autorun', a
   await expect(dialog).toContainText('"amount": "1"');
 });
 
-test('responseFind URL params prefill modal search and activate the first result after autorun', async ({ page }) => {
+test('responseFind URL params prefill modal search and activate the first result after implicit auto-run', async ({ page }) => {
   await page.route('https://rpc.mainnet.fastnear.com/**', async (route) => {
     await route.fulfill({
       status: 200,
@@ -200,11 +281,17 @@ test('responseFind URL params prefill modal search and activate the first result
         jsonrpc: '2.0',
         id: 'fastnear',
         result: {
-          amount: '1',
-          nested: {
-            amount: '2',
-          },
-          note: 'amount',
+          sections: Array.from({ length: 75 }, (_, index) => ({
+            index,
+            text:
+              index === 8
+                ? `needle first ${'a'.repeat(120)}`
+                : index === 36
+                  ? `needle second ${'b'.repeat(120)}`
+                  : index === 64
+                    ? `needle third ${'c'.repeat(120)}`
+                    : `${'filler '.repeat(12)}${index}`,
+          })),
         },
       }),
     });
@@ -215,13 +302,11 @@ test('responseFind URL params prefill modal search and activate the first result
     'https://rpc.mainnet.fastnear.com',
     (payload) => payload?.id !== 'fastnear-docs'
   );
-  await page.goto(
-    '/rpc/account/view-account?account_id=near&autorun=1&responseView=expanded&responseFind=amount'
-  );
+  await page.goto('/rpc/account/view-account?account_id=near&responseView=expanded&responseFind=needle');
 
   const dialog = page.getByRole('dialog', { name: 'Expanded response' });
   await expect(dialog).toBeVisible();
-  await expect(dialog.getByRole('textbox', { name: 'Find in response' })).toHaveValue('amount');
+  await expect(dialog.getByRole('textbox', { name: 'Find in response' })).toHaveValue('needle');
 
   const sentPayload = getRequestPayload(await requestPromise);
   expect(sentPayload?.params?.account_id).toBe('near');
@@ -230,6 +315,96 @@ test('responseFind URL params prefill modal search and activate the first result
     'data-fastnear-response-match-index',
     '0'
   );
+
+  await dialog.getByRole('button', { name: 'Next match' }).click();
+  await expect(dialog.locator('.fastnear-response-modal__find-results')).toHaveText('2 of 3');
+
+  const centering = await page.evaluate(() => {
+    const viewer = document.querySelector('.fastnear-response-modal__viewer');
+    const activeMatch = document.querySelector('[data-fastnear-response-match-active="true"]');
+    if (!viewer || !activeMatch) {
+      return null;
+    }
+
+    const viewerRect = viewer.getBoundingClientRect();
+    const matchRect = activeMatch.getBoundingClientRect();
+    const viewerMiddle = viewerRect.top + viewerRect.height / 2;
+    const matchMiddle = matchRect.top + matchRect.height / 2;
+
+    return {
+      delta: Math.abs(matchMiddle - viewerMiddle),
+      viewerHeight: viewerRect.height,
+    };
+  });
+
+  expect(centering).not.toBeNull();
+  expect(centering.delta).toBeLessThan(centering.viewerHeight * 0.3);
+});
+
+test('response action rails stay visible while scrolling inline and expanded responses', async ({ page }) => {
+  await page.route('https://rpc.mainnet.fastnear.com/**', async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        jsonrpc: '2.0',
+        id: 'fastnear',
+        result: {
+          rows: Array.from({ length: 160 }, (_, index) => ({
+            index,
+            text: `row-${index} ${'payload '.repeat(10)}`,
+          })),
+        },
+      }),
+    });
+  });
+
+  await page.goto('/rpc/account/view-account?account_id=near');
+  await expect(page.locator('.fastnear-interaction__text-response')).toContainText('"row-159');
+
+  const inlineMetrics = await page.evaluate(() => {
+    const shell = document.querySelector('.fastnear-interaction__result-shell');
+    const rail = document.querySelector('.fastnear-interaction__result-action-rail');
+    if (!shell || !rail) {
+      return null;
+    }
+
+    shell.scrollTop = shell.scrollHeight;
+    const shellRect = shell.getBoundingClientRect();
+    const railRect = rail.getBoundingClientRect();
+
+    return {
+      shellTop: shellRect.top,
+      railTop: railRect.top,
+    };
+  });
+
+  expect(inlineMetrics).not.toBeNull();
+  expect(Math.abs(inlineMetrics.railTop - inlineMetrics.shellTop)).toBeLessThan(28);
+
+  await page.getByRole('button', { name: 'Expand response' }).click();
+  const dialog = page.getByRole('dialog', { name: 'Expanded response' });
+  await expect(dialog).toBeVisible();
+
+  const modalMetrics = await page.evaluate(() => {
+    const viewer = document.querySelector('.fastnear-response-modal__viewer');
+    const rail = document.querySelector('.fastnear-response-modal__viewer-rail');
+    if (!viewer || !rail) {
+      return null;
+    }
+
+    viewer.scrollTop = viewer.scrollHeight;
+    const viewerRect = viewer.getBoundingClientRect();
+    const railRect = rail.getBoundingClientRect();
+
+    return {
+      railTop: railRect.top,
+      viewerTop: viewerRect.top,
+    };
+  });
+
+  expect(modalMetrics).not.toBeNull();
+  expect(Math.abs(modalMetrics.railTop - modalMetrics.viewerTop)).toBeLessThan(36);
 });
 
 test('request example and finality URL params restore extra UI state on load', async ({ page }) => {

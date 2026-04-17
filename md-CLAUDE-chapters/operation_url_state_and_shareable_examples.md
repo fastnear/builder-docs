@@ -6,7 +6,7 @@ It now covers the full user-facing loop:
 
 - URL-prefilled operation inputs
 - shareable example URLs
-- deliberate auto-run URLs
+- implicit load-time execution for stateful URLs
 - expanded live-response inspection
 - find-in-response and response-view URL state
 - the current future-proofing seam for privileged URL params
@@ -24,7 +24,7 @@ The docs runtime could hydrate certain fields with recent values so a request wo
 - a user wants a docs link pre-filled for their account
 - a teammate wants to send a runnable example URL to another teammate
 - an internal guide wants to deep-link directly into a valid request state
-- a support workflow wants to say "open this URL and click `Send request`"
+- a support workflow wants to say "open this URL"
 - a technical user wants to inspect a large response in a roomier view than the inline panel
 - a technical user wants to search a response and share that inspection state too
 
@@ -52,7 +52,7 @@ The completed feature set now includes:
 - support for both docs routes and hosted canonical routes
 - locale-safe behavior on Russian routes
 - shareable example URLs generated from current page state
-- explicit auto-run URLs
+- implicit auto-run for shareable URLs that contain operation state
 - extra UI-state round-trip for selected network, example tab, and finality
 - protection against runtime hydration overwriting explicit URL-provided values
 - an expanded response modal
@@ -103,7 +103,6 @@ Unknown params are ignored silently.
 The runtime reserves these active keys:
 
 - `network`
-- `autorun`
 - `requestExample`
 - `requestFinality`
 - `responseView`
@@ -145,13 +144,10 @@ This was an intentional design choice to keep the feature sharp and low-complexi
 
 `Copy example URL` serializes the current operation state into a public URL.
 
-`Copy auto-run URL` does the same thing, but always includes `autorun=1`.
-
 That URL can include:
 
 - the current route
 - the selected network
-- `autorun=1`
 - the selected request example when it differs from the default example for the selected network
 - selected finality when the page supports finality
 - all non-empty field draft values
@@ -268,7 +264,6 @@ The key behavior is that URL-prefilled field values are an overlay on top of exa
 That means the same contract now applies across:
 
 - copied example URLs
-- copied auto-run URLs
 - markdown exports
 - source links and related sanitized URLs
 
@@ -291,30 +286,31 @@ When the user clicks `Copy example URL`, the runtime:
 
 This keeps the copied link faithful to the visible example while still removing secrets and non-shareable future state.
 
-### Copy auto-run URL flow
+### Implicit auto-run model
 
-`Copy auto-run URL` reuses the same serializer, but forces `autorun=1`.
+Shared operation URLs auto-run by default when they contain recognized operation state.
 
-This means it composes cleanly with:
+That includes:
 
-- request field prefills
+- request field params
+- `network`
 - `requestExample`
 - `requestFinality`
 - `responseView=expanded`
 - `responseFind=<term>`
 
-### Deliberate rather than default auto-run
+That does not include:
 
-`autorun=1` is an explicit opt-in for load-time execution.
+- `apiKey`
+- `token`
+- wrapper-only params such as `colorSchema`
+- future privileged params
 
-That is why:
+This keeps the mental model simple:
 
-- normal shared links restore a runnable state but still wait for the user to press `Send request`
-- a user can append `autorun=1` when they want the page to immediately execute on load
-- a user can click `Copy auto-run URL` when they want that variant explicitly
-- `Copy example URL` preserves `autorun=1` if the current page was already explicitly opened that way
-
-This keeps automatic execution explicit while still making fully self-running examples easy to share.
+- if a URL only carries docs chrome or auth decoration, it does not auto-run
+- if a URL carries actual operation state, it opens in a runnable state and executes on load
+- copied example URLs are therefore self-running by default when they contain request state
 
 ---
 

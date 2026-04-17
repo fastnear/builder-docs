@@ -82,7 +82,7 @@ test('HTTP operation pages prefill path fields from matching URL params', async 
   expect(request.url()).toBe('https://api.fastnear.com/v1/account/near/full');
 });
 
-test('autorun query params execute HTTP requests on load when inputs are ready', async ({ page }) => {
+test('operation-state URLs execute HTTP requests on load when inputs are ready', async ({ page }) => {
   await page.route('https://api.fastnear.com/**', async (route) => {
     await route.fulfill({
       status: 200,
@@ -94,11 +94,32 @@ test('autorun query params execute HTTP requests on load when inputs are ready',
   });
 
   const requestPromise = waitForHttpRequest(page, 'https://api.fastnear.com');
-  await page.goto('/api/v1/account-full?account_id=near&autorun=1');
+  await page.goto('/api/v1/account-full?account_id=near');
 
   const request = await requestPromise;
   expect(request.url()).toBe('https://api.fastnear.com/v1/account/near/full');
   await expect(page.locator('.fastnear-interaction__text-response')).toContainText('"account_id": "near"');
+});
+
+test('colorSchema-only hosted URLs do not auto-run HTTP requests', async ({ page }) => {
+  let requestCount = 0;
+
+  await page.route('https://api.fastnear.com/**', async (route) => {
+    requestCount += 1;
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        account_id: 'near',
+      }),
+    });
+  });
+
+  await page.goto('/apis/fastnear/v1/account_full?colorSchema=dark');
+
+  await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', 'noindex');
+  await page.waitForTimeout(350);
+  expect(requestCount).toBe(0);
 });
 
 test('FastData operation pages prefill path and body fields from matching URL params', async ({ page }) => {

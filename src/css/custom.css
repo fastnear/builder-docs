@@ -901,6 +901,7 @@ pre code {
   min-height: clamp(240px, 34vh, 440px);
   max-height: none;
   overflow: auto;
+  scroll-padding-top: 88px;
   border: 1px solid var(--fastnear-border);
   border-radius: 10px;
   background: transparent;
@@ -1225,13 +1226,33 @@ pre code {
   }
 }
 
-.builder-fastnear-direct .fastnear-interaction__result-actions {
-  position: absolute;
+.builder-fastnear-direct .fastnear-interaction__result-action-rail {
+  position: sticky;
   top: 10px;
-  right: 10px;
-  z-index: 1;
+  z-index: 2;
+  display: flex;
+  justify-content: flex-end;
+  padding: 10px 10px 0;
+  pointer-events: none;
+}
+
+.builder-fastnear-direct .fastnear-interaction__result-actions {
   display: inline-flex;
   gap: 8px;
+  align-items: center;
+  padding: 6px;
+  border: 1px solid rgb(148 163 184 / 24%);
+  border-radius: 12px;
+  background: rgb(255 255 255 / 88%);
+  box-shadow: 0 12px 28px rgb(15 23 42 / 12%);
+  backdrop-filter: blur(10px);
+  pointer-events: auto;
+}
+
+[data-theme='dark'] .builder-fastnear-direct .fastnear-interaction__result-actions {
+  border-color: rgb(148 163 184 / 22%);
+  background: rgb(15 23 42 / 78%);
+  box-shadow: 0 14px 30px rgb(0 0 0 / 28%);
 }
 
 .builder-fastnear-direct .fastnear-interaction__copy-button {
@@ -1280,8 +1301,7 @@ pre code {
 
 .builder-fastnear-direct .fastnear-interaction__text-response {
   margin: 0;
-  padding: 14px;
-  padding-right: 86px;
+  padding: 60px 14px 14px;
   min-height: 0;
   border-radius: inherit;
   background: var(--fastnear-code-bg);
@@ -1333,11 +1353,11 @@ pre code {
 .builder-fastnear-direct .fastnear-response-modal {
   position: fixed;
   inset: 0;
-  z-index: 70;
+  z-index: calc(var(--ifm-z-index-fixed) + 1);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: clamp(18px, 3vw, 36px);
+  padding: clamp(16px, 2.5vw, 28px);
   background: rgb(15 23 42 / 32%);
   backdrop-filter: blur(8px);
 }
@@ -1350,12 +1370,12 @@ pre code {
   display: flex;
   flex-direction: column;
   gap: 14px;
-  width: min(78rem, 100%);
-  min-height: min(78dvh, 58rem);
-  max-height: min(90dvh, 62rem);
+  width: min(82rem, 100%);
+  min-height: min(74dvh, 56rem);
+  max-height: min(88dvh, 60rem);
   padding: 18px;
   border: 1px solid var(--fastnear-border-strong);
-  border-radius: 0.8rem;
+  border-radius: 1rem;
   background: var(--fastnear-panel-bg);
   box-shadow: 0 28px 60px rgb(15 23 42 / 18%);
   overflow: hidden;
@@ -1366,11 +1386,11 @@ pre code {
 }
 
 .builder-fastnear-direct .fastnear-response-modal__header {
+  position: relative;
   display: flex;
-  flex-wrap: wrap;
   align-items: flex-start;
-  justify-content: space-between;
   gap: 12px;
+  padding-right: 48px;
   padding-bottom: 14px;
   border-bottom: 1px solid var(--fastnear-border);
 }
@@ -1386,17 +1406,6 @@ pre code {
   margin: 0;
   color: var(--fastnear-text-muted);
   line-height: 1.55;
-}
-
-.builder-fastnear-direct .fastnear-response-modal__header-actions {
-  display: flex;
-  flex: 1 1 22rem;
-  flex-wrap: wrap;
-  gap: 8px;
-  align-items: center;
-  justify-content: flex-end;
-  position: relative;
-  padding-right: 42px;
 }
 
 .builder-fastnear-direct .fastnear-response-modal__find-actions {
@@ -1474,17 +1483,32 @@ pre code {
 }
 
 .builder-fastnear-direct .fastnear-response-modal__viewer {
+  position: relative;
   flex: 1 1 auto;
   min-height: 0;
   overflow: auto;
+  scroll-padding-top: 110px;
   border: 1px solid var(--fastnear-border);
   border-radius: 12px;
   background: var(--fastnear-code-bg);
 }
 
+.builder-fastnear-direct .fastnear-response-modal__viewer-rail {
+  top: 12px;
+  padding: 12px 12px 0;
+}
+
+.builder-fastnear-direct .fastnear-response-modal__viewer-actions {
+  gap: 10px;
+}
+
+.builder-fastnear-direct .fastnear-response-modal__viewer-share-button {
+  min-height: 32px;
+}
+
 .builder-fastnear-direct .fastnear-response-modal__text-response {
   min-height: 100%;
-  padding-right: 14px;
+  padding-top: 68px;
 }
 
 .builder-fastnear-direct .fastnear-interaction__error {
@@ -1792,16 +1816,20 @@ pre code {
     text-align: left;
   }
 
-  .builder-fastnear-direct .fastnear-response-modal__header-actions {
+  .builder-fastnear-direct .fastnear-response-modal__viewer-actions {
     width: 100%;
-    justify-content: flex-start;
-    padding-top: 4px;
+    justify-content: flex-end;
+    flex-wrap: wrap;
   }
 
   .builder-fastnear-direct .fastnear-response-modal__find-input-shell,
   .builder-fastnear-direct .fastnear-response-modal__find-results,
   .builder-fastnear-direct .fastnear-response-modal__find-actions {
     width: 100%;
+  }
+
+  .builder-fastnear-direct .fastnear-response-modal__viewer-share-button {
+    flex: 1 1 auto;
   }
 }
 

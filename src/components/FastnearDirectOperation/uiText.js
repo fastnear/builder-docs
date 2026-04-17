@@ -26,6 +26,10 @@ export function getFastnearOperationUiText() {
       id: 'fastnear.operationUi.copiedExampleUrl',
       message: 'Copied example URL',
     }),
+    copiedViewUrl: translate({
+      id: 'fastnear.operationUi.copiedViewUrl',
+      message: 'Copied URL for this view',
+    }),
     copiedMarkdown: translate({
       id: 'fastnear.operationUi.copyMarkdown.completed',
       message: 'Copied',
@@ -34,21 +38,17 @@ export function getFastnearOperationUiText() {
       id: 'fastnear.operationUi.copyExampleUrl',
       message: 'Copy example URL',
     }),
-    copyAutorunUrl: translate({
-      id: 'fastnear.operationUi.copyAutorunUrl',
-      message: 'Copy auto-run URL',
-    }),
-    copiedAutorunUrl: translate({
-      id: 'fastnear.operationUi.copiedAutorunUrl',
-      message: 'Copied auto-run URL',
-    }),
-    copyAutorunUrlButtonLabel: translate({
-      id: 'fastnear.operationUi.copyAutorunUrlButtonLabel',
-      message: 'Auto-run URL',
-    }),
     copyExampleUrlButtonLabel: translate({
       id: 'fastnear.operationUi.copyExampleUrlButtonLabel',
       message: 'Example URL',
+    }),
+    copyViewUrl: translate({
+      id: 'fastnear.operationUi.copyViewUrl',
+      message: 'Copy URL for this view',
+    }),
+    copyViewUrlButtonLabel: translate({
+      id: 'fastnear.operationUi.copyViewUrlButtonLabel',
+      message: 'URL for this view',
     }),
     copyExampleUrlHelpAriaLabel: translate({
       id: 'fastnear.operationUi.copyExampleUrlHelpAriaLabel',
@@ -57,7 +57,7 @@ export function getFastnearOperationUiText() {
     copyExampleUrlHelpBody: translate({
       id: 'fastnear.operationUi.copyExampleUrlHelpBody',
       message:
-        'Share a docs URL that reloads this example with the selected network, request example, finality, and any filled inputs preloaded. Use Auto-run URL when you want it to execute on load. Saved API keys and tokens are never included.',
+        'Share a docs URL that reloads this example with the selected network, request example, finality, and any filled inputs preloaded. URLs with operation state run automatically on load. Saved API keys and tokens are never included.',
     }),
     copyCurlCommandButtonLabel: translate({
       id: 'fastnear.operationUi.copyCurlCommandButtonLabel',

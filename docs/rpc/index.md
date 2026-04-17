@@ -67,7 +67,7 @@ In those cases, move to the indexed REST families such as [FastNear API](/api), 
 ## Shareable live examples
 
 - Use `Copy example URL` on any interactive RPC page to share the selected network, example tab, finality, and filled inputs.
-- Use `Copy auto-run URL` when you want the page to execute immediately after it opens.
+- Shared example URLs run automatically on load whenever they include operation state.
 - Saved API keys and tokens are never included in those shared docs URLs.
 
 ## Troubleshooting
