@@ -13,6 +13,7 @@ import Head from "@docusaurus/Head";
 import { translate } from "@docusaurus/Translate";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 
+import FastnearOperationSearchContent from "@site/src/components/FastnearDirectOperation/SearchContent";
 import PageActions from "@site/src/components/PageActions";
 import { copyTextToClipboard } from "@site/src/utils/clipboard";
 import {
@@ -2723,11 +2724,17 @@ export default function FastnearDirectOperation({ pageModelId, renderDescription
 
   return (
     <FastnearOperationErrorBoundary>
+      {renderDescription ? (
+        <FastnearOperationSearchContent
+          pageModelId={pageModelId}
+          locale={currentLocale}
+        />
+      ) : null}
       <Suspense fallback={<FastnearOperationLoading />}>
         <ResolvedFastnearDirectOperation
           currentLocale={currentLocale}
           pageModelId={pageModelId}
-          renderDescription={renderDescription}
+          renderDescription={false}
         />
       </Suspense>
     </FastnearOperationErrorBoundary>

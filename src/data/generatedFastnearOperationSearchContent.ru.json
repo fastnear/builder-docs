@@ -1,0 +1,2566 @@
+{
+  "fastnear-system-health": {
+    "description": "Пинг FastNEAR API для проверки доступности — возвращает `{status: ok}` при успехе.",
+    "parameters": [
+      {
+        "name": "apiKey",
+        "description": "Необязательный API-ключ, который могут передавать встроенные клиенты портала. Публичный FastNear API не требует его."
+      }
+    ],
+    "response": "Строка состояния сервиса Внутренняя ошибка сервера"
+  },
+  "fastnear-system-status": {
+    "description": "Проверьте текущую индексированную высоту блока, задержку и версию развёрнутого сервиса.",
+    "parameters": [
+      {
+        "name": "apiKey",
+        "description": "Необязательный API-ключ, который могут передавать встроенные клиенты портала. Публичный FastNear API не требует его."
+      }
+    ],
+    "response": "Текущий статус синхронизации FastNear API Внутренняя ошибка сервера"
+  },
+  "fastnear-v0-account-ft": {
+    "description": "Получите ID FT-контрактов, которых касался аккаунт — только ID, без балансов.",
+    "parameters": [
+      {
+        "name": "account_id",
+        "description": "ID аккаунта NEAR для проверки."
+      },
+      {
+        "name": "apiKey",
+        "description": "Необязательный API-ключ, который передают встроенные клиенты портала. Публичный FastNear API его не требует."
+      }
+    ],
+    "response": "ID FT-контрактов для запрошенного аккаунта Некорректный запрос Внутренняя ошибка сервера"
+  },
+  "fastnear-v0-account-nft": {
+    "description": "Получите ID NFT-контрактов, которых касался аккаунт — только ID, без метаданных по высоте блока.",
+    "parameters": [
+      {
+        "name": "account_id",
+        "description": "ID аккаунта NEAR для проверки."
+      },
+      {
+        "name": "apiKey",
+        "description": "Необязательный API-ключ, который передают встроенные клиенты портала. Публичный FastNear API его не требует."
+      }
+    ],
+    "response": "ID NFT-контрактов для запрошенного аккаунта Некорректный запрос Внутренняя ошибка сервера"
+  },
+  "fastnear-v0-account-staking": {
+    "description": "Получите ID стейкинг-пулов для одного аккаунта — только ID пулов, без метаданных по высоте блока.",
+    "parameters": [
+      {
+        "name": "account_id",
+        "description": "ID аккаунта NEAR для проверки."
+      },
+      {
+        "name": "apiKey",
+        "description": "Необязательный API-ключ, который передают встроенные клиенты портала. Публичный FastNear API его не требует."
+      }
+    ],
+    "response": "ID стейкинг-пулов для запрошенного аккаунта Некорректный запрос Внутренняя ошибка сервера"
+  },
+  "fastnear-v0-public-key-lookup": {
+    "description": "Получите индексированные ID аккаунтов, связанные с публичным ключом полного доступа.",
+    "parameters": [
+      {
+        "name": "public_key",
+        "description": "Публичный ключ NEAR в формате `ed25519:...` или `secp256k1:...`."
+      },
+      {
+        "name": "apiKey",
+        "description": "Необязательный API-ключ, который могут передавать встроенные клиенты портала. Публичный FastNear API не требует его."
+      }
+    ],
+    "response": "Подходящие ID аккаунтов для переданного публичного ключа полного доступа Некорректный запрос Внутренняя ошибка сервера"
+  },
+  "fastnear-v0-public-key-lookup-all": {
+    "description": "Получите все аккаунты, связанные с публичным ключом — ключи полного доступа и ключи с ограничениями вместе.",
+    "parameters": [
+      {
+        "name": "public_key",
+        "description": "Публичный ключ NEAR в формате `ed25519:...` или `secp256k1:...`."
+      },
+      {
+        "name": "apiKey",
+        "description": "Необязательный API-ключ, который могут передавать встроенные клиенты портала. Публичный FastNear API не требует его."
+      }
+    ],
+    "response": "Подходящие ID аккаунтов для переданного публичного ключа, включая ключи ограниченного доступа Некорректный запрос Внутренняя ошибка сервера"
+  },
+  "fastnear-v1-account-ft": {
+    "description": "Получите строки балансов FT-токенов аккаунта — каждая с ID контракта, балансом и высотой последнего обновления.",
+    "parameters": [
+      {
+        "name": "account_id",
+        "description": "ID аккаунта NEAR для проверки."
+      },
+      {
+        "name": "apiKey",
+        "description": "Необязательный API-ключ, который могут передавать встроенные клиенты портала. Публичный FastNear API не требует его."
+      }
+    ],
+    "response": "Индексированные строки FT-токенов для указанного аккаунта Некорректный запрос Внутренняя ошибка сервера"
+  },
+  "fastnear-v1-account-full": {
+    "description": "Получите объединённое индексированное представление аккаунта, включая стейкинг-пулы, FT-балансы, NFT и состояние аккаунта.",
+    "parameters": [
+      {
+        "name": "account_id",
+        "description": "ID аккаунта NEAR для проверки."
+      },
+      {
+        "name": "apiKey",
+        "description": "Необязательный API-ключ, который могут передавать встроенные клиенты портала. Публичный FastNear API не требует его."
+      }
+    ],
+    "response": "Полный индексированный снимок указанного аккаунта Некорректный запрос Внутренняя ошибка сервера"
+  },
+  "fastnear-v1-account-nft": {
+    "description": "Получите строки NFT-контрактов для аккаунта, каждая с метаданными по высоте блока.",
+    "parameters": [
+      {
+        "name": "account_id",
+        "description": "ID аккаунта NEAR для проверки."
+      },
+      {
+        "name": "apiKey",
+        "description": "Необязательный API-ключ, который могут передавать встроенные клиенты портала. Публичный FastNear API не требует его."
+      }
+    ],
+    "response": "Индексированные строки NFT-контрактов для указанного аккаунта Некорректный запрос Внутренняя ошибка сервера"
+  },
+  "fastnear-v1-account-staking": {
+    "description": "Получите строки по стейкинг-пулам для аккаунта, каждая с метаданными по высоте блока.",
+    "parameters": [
+      {
+        "name": "account_id",
+        "description": "ID аккаунта NEAR для проверки."
+      },
+      {
+        "name": "apiKey",
+        "description": "Необязательный API-ключ, передаваемый встраиваемыми клиентами портала. Публичный FastNEAR API его не требует."
+      }
+    ],
+    "response": "Индексированные записи стейкинг-пулов для указанного аккаунта Некорректный запрос Внутренняя ошибка сервера"
+  },
+  "fastnear-v1-ft-top": {
+    "description": "Получите список держателей с наибольшим балансом для FT-контракта, отсортированный по убыванию баланса.",
+    "parameters": [
+      {
+        "name": "token_id",
+        "description": "ID аккаунта контракта FT-токена."
+      },
+      {
+        "name": "apiKey",
+        "description": "Необязательный API-ключ, передаваемый встраиваемыми клиентами портала. Публичный FastNEAR API его не требует."
+      }
+    ],
+    "response": "Индексированные топ-держатели указанного FT-токена Некорректный запрос Внутренняя ошибка сервера"
+  },
+  "fastnear-v1-public-key-lookup": {
+    "description": "Получите индексированные ID аккаунтов, связанные с публичным ключом полного доступа.",
+    "parameters": [
+      {
+        "name": "public_key",
+        "description": "Публичный ключ NEAR в формате `ed25519:...` или `secp256k1:...`."
+      },
+      {
+        "name": "apiKey",
+        "description": "Необязательный API-ключ, который могут передавать встроенные клиенты портала. Публичный FastNear API не требует его."
+      }
+    ],
+    "response": "Подходящие ID аккаунтов для переданного публичного ключа полного доступа Некорректный запрос Внутренняя ошибка сервера"
+  },
+  "fastnear-v1-public-key-lookup-all": {
+    "description": "Получите все аккаунты, связанные с публичным ключом — ключи полного доступа и ключи с ограничениями вместе.",
+    "parameters": [
+      {
+        "name": "public_key",
+        "description": "Публичный ключ NEAR в формате `ed25519:...` или `secp256k1:...`."
+      },
+      {
+        "name": "apiKey",
+        "description": "Необязательный API-ключ, который могут передавать встроенные клиенты портала. Публичный FastNear API не требует его."
+      }
+    ],
+    "response": "Подходящие ID аккаунтов для переданного публичного ключа, включая ключи ограниченного доступа Некорректный запрос Внутренняя ошибка сервера"
+  },
+  "kv-fastdata-v0-all-by-predecessor": {
+    "description": "Получите последние значения для всех контрактов, к которым обращался один вызывающий аккаунт.",
+    "parameters": [
+      {
+        "name": "predecessor_id",
+        "description": "Вызывающий аккаунт, который записал ключи FastData."
+      },
+      {
+        "name": "include_metadata",
+        "description": "Добавить в каждую запись метаданные квитанции и подписанта."
+      },
+      {
+        "name": "limit",
+        "description": "Maximum number of entries to return in one page (1–200, default 50)."
+      },
+      {
+        "name": "page_token",
+        "description": "Непрозрачный токен страницы из предыдущего ответа `/v0/all/{predecessor_id}`."
+      }
+    ],
+    "response": "Последние строки для выбранного вызывающего аккаунта Некорректный фильтр ключа или токен страницы Ошибка запроса Scylla",
+    "schema": [
+      {
+        "name": "value",
+        "description": "Raw JSON value as stored in FastData."
+      },
+      {
+        "name": "page_token",
+        "description": "Opaque pagination cursor for the next page. Absent when there are no more results."
+      }
+    ]
+  },
+  "kv-fastdata-v0-get-history-key": {
+    "description": "Получите каждую историческую запись для одного точного ключа под одним вызывающим аккаунтом и контрактом.",
+    "parameters": [
+      {
+        "name": "current_account_id",
+        "description": "Аккаунт контракта, для которого были записаны ключи FastData."
+      },
+      {
+        "name": "predecessor_id",
+        "description": "Вызывающий аккаунт, который записал ключи FastData."
+      },
+      {
+        "name": "ключ",
+        "description": "Точный ключ FastData, который нужно вернуть."
+      }
+    ],
+    "response": "Исторические строки для выбранного вызывающего аккаунта, контракта и ключа Ошибка запроса Scylla",
+    "schema": [
+      {
+        "name": "value",
+        "description": "Raw JSON value as stored in FastData."
+      },
+      {
+        "name": "page_token",
+        "description": "Opaque pagination cursor for the next page. Absent when there are no more results."
+      }
+    ]
+  },
+  "kv-fastdata-v0-get-latest-key": {
+    "description": "Получите последнее значение для одного точного ключа под одним вызывающим аккаунтом и контрактом.",
+    "parameters": [
+      {
+        "name": "current_account_id",
+        "description": "Аккаунт контракта, для которого были записаны ключи FastData."
+      },
+      {
+        "name": "predecessor_id",
+        "description": "Вызывающий аккаунт, который записал ключи FastData."
+      },
+      {
+        "name": "ключ",
+        "description": "Точный ключ FastData, который нужно вернуть."
+      }
+    ],
+    "response": "Последняя строка для выбранного вызывающего аккаунта, контракта и ключа Ошибка запроса Scylla",
+    "schema": [
+      {
+        "name": "value",
+        "description": "Raw JSON value as stored in FastData."
+      },
+      {
+        "name": "page_token",
+        "description": "Opaque pagination cursor for the next page. Absent when there are no more results."
+      }
+    ]
+  },
+  "kv-fastdata-v0-history-by-account": {
+    "description": "Получите исторические строки FastData для одного целевого аккаунта по всем вызывающим аккаунтам.",
+    "parameters": [
+      {
+        "name": "current_account_id",
+        "description": "Аккаунт контракта, для которого были записаны ключи FastData."
+      },
+      {
+        "name": "asc",
+        "description": "Сортировать результаты истории по возрастанию. По умолчанию сначала идут новые записи."
+      },
+      {
+        "name": "include_metadata",
+        "description": "Добавить в каждую запись метаданные квитанции и подписанта."
+      },
+      {
+        "name": "ключ",
+        "description": "Фильтр по точному ключу. Взаимно исключающий с `key_prefix`."
+      },
+      {
+        "name": "key_prefix",
+        "description": "Фильтр по префиксу для совпадения пространств имён ключей."
+      },
+      {
+        "name": "limit",
+        "description": "Maximum number of entries to return in one page (1–200, default 50)."
+      },
+      {
+        "name": "page_token",
+        "description": "Непрозрачный токен страницы из предыдущего ответа с тем же эндпоинтом и набором фильтров."
+      }
+    ],
+    "response": "Исторические строки для выбранного контракта Некорректный фильтр ключа или токен страницы Ошибка запроса Scylla",
+    "schema": [
+      {
+        "name": "value",
+        "description": "Raw JSON value as stored in FastData."
+      },
+      {
+        "name": "page_token",
+        "description": "Opaque pagination cursor for the next page. Absent when there are no more results."
+      }
+    ]
+  },
+  "kv-fastdata-v0-history-by-key": {
+    "description": "Получите исторические значения выбранного ключа по аккаунтам и вызывающим аккаунтам.",
+    "parameters": [
+      {
+        "name": "asc",
+        "description": "Сортировать результаты истории по возрастанию. По умолчанию сначала идут новые записи."
+      },
+      {
+        "name": "include_metadata",
+        "description": "Добавить в каждую запись метаданные квитанции и подписанта."
+      },
+      {
+        "name": "ключ",
+        "description": "Точное имя ключа для сопоставления по всем аккаунтам и предшественникам."
+      },
+      {
+        "name": "limit",
+        "description": "Maximum number of entries to return in one page (1–200, default 50)."
+      },
+      {
+        "name": "page_token",
+        "description": "Непрозрачный токен страницы из предыдущего ответа с тем же эндпоинтом и набором фильтров."
+      }
+    ],
+    "response": "Исторические строки для выбранного ключа Некорректный фильтр ключа или токен страницы Ошибка запроса Scylla",
+    "schema": [
+      {
+        "name": "value",
+        "description": "Raw JSON value as stored in FastData."
+      },
+      {
+        "name": "page_token",
+        "description": "Opaque pagination cursor for the next page. Absent when there are no more results."
+      }
+    ]
+  },
+  "kv-fastdata-v0-history-by-predecessor": {
+    "description": "Получите исторические строки FastData для одного вызывающего аккаунта и целевого аккаунта.",
+    "parameters": [
+      {
+        "name": "current_account_id",
+        "description": "Аккаунт контракта, для которого были записаны ключи FastData."
+      },
+      {
+        "name": "predecessor_id",
+        "description": "Вызывающий аккаунт, который записал ключи FastData."
+      },
+      {
+        "name": "asc",
+        "description": "Сортировать результаты истории по возрастанию. По умолчанию сначала идут новые записи."
+      },
+      {
+        "name": "include_metadata",
+        "description": "Добавить в каждую запись метаданные квитанции и подписанта."
+      },
+      {
+        "name": "ключ",
+        "description": "Фильтр по точному ключу. Взаимно исключающий с `key_prefix`."
+      },
+      {
+        "name": "key_prefix",
+        "description": "Фильтр по префиксу для совпадения пространств имён ключей."
+      },
+      {
+        "name": "limit",
+        "description": "Maximum number of entries to return in one page (1–200, default 50)."
+      },
+      {
+        "name": "page_token",
+        "description": "Непрозрачный токен страницы из предыдущего ответа с тем же эндпоинтом и набором фильтров."
+      }
+    ],
+    "response": "Исторические строки для выбранного вызывающего аккаунта и аккаунта контракта Некорректный фильтр ключа или токен страницы Ошибка запроса Scylla",
+    "schema": [
+      {
+        "name": "value",
+        "description": "Raw JSON value as stored in FastData."
+      },
+      {
+        "name": "page_token",
+        "description": "Opaque pagination cursor for the next page. Absent when there are no more results."
+      }
+    ]
+  },
+  "kv-fastdata-v0-latest-by-account": {
+    "description": "Получите последние строки FastData для одного целевого аккаунта по всем вызывающим аккаунтам.",
+    "parameters": [
+      {
+        "name": "current_account_id",
+        "description": "Аккаунт контракта, для которого были записаны ключи FastData."
+      },
+      {
+        "name": "include_metadata",
+        "description": "Добавить в каждую запись метаданные квитанции и подписанта."
+      },
+      {
+        "name": "ключ",
+        "description": "Фильтр по точному ключу. Взаимно исключающий с `key_prefix`."
+      },
+      {
+        "name": "key_prefix",
+        "description": "Фильтр по префиксу для совпадения пространств имён ключей."
+      },
+      {
+        "name": "limit",
+        "description": "Maximum number of entries to return in one page (1–200, default 50)."
+      },
+      {
+        "name": "page_token",
+        "description": "Непрозрачный токен страницы из предыдущего ответа с тем же эндпоинтом и набором фильтров."
+      }
+    ],
+    "response": "Последние строки для выбранного контракта Некорректный фильтр ключа или токен страницы Ошибка запроса Scylla",
+    "schema": [
+      {
+        "name": "value",
+        "description": "Raw JSON value as stored in FastData."
+      },
+      {
+        "name": "page_token",
+        "description": "Opaque pagination cursor for the next page. Absent when there are no more results."
+      }
+    ]
+  },
+  "kv-fastdata-v0-latest-by-predecessor": {
+    "description": "Получите последние строки FastData для одного вызывающего аккаунта и целевого аккаунта.",
+    "parameters": [
+      {
+        "name": "current_account_id",
+        "description": "Аккаунт контракта, для которого были записаны ключи FastData."
+      },
+      {
+        "name": "predecessor_id",
+        "description": "Вызывающий аккаунт, который записал ключи FastData."
+      },
+      {
+        "name": "include_metadata",
+        "description": "Добавить в каждую запись метаданные квитанции и подписанта."
+      },
+      {
+        "name": "ключ",
+        "description": "Фильтр по точному ключу. Взаимно исключающий с `key_prefix`."
+      },
+      {
+        "name": "key_prefix",
+        "description": "Фильтр по префиксу для совпадения пространств имён ключей."
+      },
+      {
+        "name": "limit",
+        "description": "Maximum number of entries to return in one page (1–200, default 50)."
+      },
+      {
+        "name": "page_token",
+        "description": "Непрозрачный токен страницы из предыдущего ответа с тем же эндпоинтом и набором фильтров."
+      }
+    ],
+    "response": "Последние строки для выбранного вызывающего аккаунта и аккаунта контракта Некорректный фильтр ключа или токен страницы Ошибка запроса Scylla",
+    "schema": [
+      {
+        "name": "value",
+        "description": "Raw JSON value as stored in FastData."
+      },
+      {
+        "name": "page_token",
+        "description": "Opaque pagination cursor for the next page. Absent when there are no more results."
+      }
+    ]
+  },
+  "kv-fastdata-v0-multi": {
+    "description": "Получите последнюю строку FastData сразу для 100 ключей в одном запросе.",
+    "parameters": [
+      {
+        "name": "include_metadata",
+        "description": "Добавить в каждую запись метаданные квитанции и подписанта."
+      },
+      {
+        "name": "ключи",
+        "description": "Полноквалифицированные ключи в форме current_account_id/predecessor_id/key."
+      }
+    ],
+    "response": "Последние строки для запрошенных ключей Некорректный фильтр ключа или токен страницы Ошибка запроса Scylla",
+    "schema": [
+      {
+        "name": "value",
+        "description": "Raw JSON value as stored in FastData."
+      }
+    ]
+  },
+  "neardata-system-health": {
+    "description": "Проверьте работоспособность сервиса NEAR Data — возвращает `{status: ok}` при успехе, ошибку при проблемах.",
+    "parameters": [
+      {
+        "name": "apiKey",
+        "description": "Необязательный API-ключ подписки FastNear. Неверные значения могут вернуть `401` до обработки перенаправления."
+      }
+    ],
+    "response": "Поле состояния сервиса Неверный или неавторизованный API-ключ Ошибка кэша или внутренней обработки данных"
+  },
+  "neardata-v0-block": {
+    "description": "Получите полный документ финализированного блока на выбранной высоте — заголовок плюс каждый чанк и данные шарда.",
+    "parameters": [
+      {
+        "name": "block_height",
+        "description": "Высота блока NEAR для запроса."
+      },
+      {
+        "name": "apiKey",
+        "description": "Необязательный API-ключ подписки FastNear. Неверные значения могут вернуть `401` до обработки перенаправления."
+      }
+    ],
+    "response": "Запрошенный документ или `null`, если выбранный срез отсутствует Перенаправление на канонический архивный или финализированный URL блока Неверный или неавторизованный API-ключ Структурированная ошибка по высоте блока Ошибка кэша или внутренней обработки данных"
+  },
+  "neardata-v0-block-chunk": {
+    "description": "Получите один чанк — транзакции и входящие квитанции одного шарда — на выбранной высоте блока.",
+    "parameters": [
+      {
+        "name": "block_height",
+        "description": "Высота блока NEAR для запроса."
+      },
+      {
+        "name": "shard_id",
+        "description": "Идентификатор шарда, чанк которого нужно вернуть."
+      },
+      {
+        "name": "apiKey",
+        "description": "Необязательный API-ключ подписки FastNear. Неверные значения могут вернуть `401` до обработки перенаправления."
+      }
+    ],
+    "response": "Запрошенный документ или `null`, если выбранный срез отсутствует Перенаправление на канонический архивный или финализированный URL блока Неверный или неавторизованный API-ключ Структурированная ошибка по высоте блока Ошибка кэша или внутренней обработки данных"
+  },
+  "neardata-v0-block-headers": {
+    "description": "Получите только заголовок финализированного блока и сводку по чанкам — без содержимого отдельных шардов.",
+    "parameters": [
+      {
+        "name": "block_height",
+        "description": "Высота блока NEAR для запроса."
+      },
+      {
+        "name": "apiKey",
+        "description": "Необязательный API-ключ подписки FastNear. Неверные значения могут вернуть `401` до обработки перенаправления."
+      }
+    ],
+    "response": "Запрошенный документ или `null`, если выбранный срез отсутствует Перенаправление на канонический архивный или финализированный URL блока Неверный или неавторизованный API-ключ Структурированная ошибка по высоте блока Ошибка кэша или внутренней обработки данных"
+  },
+  "neardata-v0-block-optimistic": {
+    "description": "Получите оптимистичный (ещё не финализированный) блок на выбранной высоте — может перенаправить на финализированные данные, когда окно оптимистичности закрылось.",
+    "parameters": [
+      {
+        "name": "block_height",
+        "description": "Высота блока NEAR для запроса."
+      },
+      {
+        "name": "apiKey",
+        "description": "Необязательный API-ключ подписки FastNear. Неверные значения могут вернуть `401` до обработки перенаправления."
+      }
+    ],
+    "response": "Запрошенный документ или `null`, если выбранный срез отсутствует Перенаправление на канонический архивный или финализированный URL блока Неверный или неавторизованный API-ключ Структурированная ошибка по высоте блока Ошибка кэша или внутренней обработки данных"
+  },
+  "neardata-v0-block-shard": {
+    "description": "Получите полное содержимое одного шарда на выбранном блоке — чанк плюс изменения состояния и произведённые квитанции.",
+    "parameters": [
+      {
+        "name": "block_height",
+        "description": "Высота блока NEAR для запроса."
+      },
+      {
+        "name": "shard_id",
+        "description": "Идентификатор шарда, который нужно вернуть."
+      },
+      {
+        "name": "apiKey",
+        "description": "Необязательный API-ключ подписки FastNear. Неверные значения могут вернуть `401` до обработки перенаправления."
+      }
+    ],
+    "response": "Запрошенный документ или `null`, если выбранный срез отсутствует Перенаправление на канонический архивный или финализированный URL блока Неверный или неавторизованный API-ключ Структурированная ошибка по высоте блока Ошибка кэша или внутренней обработки данных"
+  },
+  "neardata-v0-first-block": {
+    "description": "Перенаправление на первый блок цепочки после генезиса — стартовый курсор для индексаторов, обходящих цепочку с начала.",
+    "parameters": [
+      {
+        "name": "apiKey",
+        "description": "Необязательный API-ключ подписки FastNear. Неверные значения могут вернуть `401` до обработки перенаправления."
+      }
+    ],
+    "response": "Полный документ блока после автоматического прохождения перенаправления Перенаправление на канонический URL первого блока Неверный или неавторизованный API-ключ"
+  },
+  "neardata-v0-last-block-final": {
+    "description": "Перенаправление на самый свежий финализированный блок — курсор вершины цепочки после достижения консенсуса.",
+    "parameters": [
+      {
+        "name": "apiKey",
+        "description": "Необязательный API-ключ подписки FastNear. Неверные значения могут вернуть `401` до обработки перенаправления."
+      }
+    ],
+    "response": "Полный документ блока после автоматического прохождения перенаправления Перенаправление на URL последнего финализированного блока Неверный или неавторизованный API-ключ Ошибка кэша или внутренней обработки данных"
+  },
+  "neardata-v0-last-block-optimistic": {
+    "description": "Перенаправление на самый свежий оптимистичный блок — максимально свежая вершина, до финализации.",
+    "parameters": [
+      {
+        "name": "apiKey",
+        "description": "Необязательный API-ключ подписки FastNear. Неверные значения могут вернуть `401` до обработки перенаправления."
+      }
+    ],
+    "response": "Полный документ блока после автоматического прохождения перенаправления Перенаправление на URL последнего оптимистичного блока Неверный или неавторизованный API-ключ Ошибка кэша или внутренней обработки данных"
+  },
+  "rpc-block-by-height": {
+    "description": "Получите заголовок и сводку по чанкам блока по его высоте в цепочке.",
+    "parameters": [
+      {
+        "name": "block_id",
+        "description": "Высота блока NEAR для запроса."
+      }
+    ],
+    "response": "Успешный ответ"
+  },
+  "rpc-block-by-id": {
+    "description": "Получите заголовок и сводку по чанкам блока по его SHA-256-хешу в кодировке Base58.",
+    "parameters": [
+      {
+        "name": "block_id",
+        "description": "Хеш блока в кодировке Base58."
+      }
+    ],
+    "response": "Успешный ответ"
+  },
+  "rpc-block-effects": {
+    "description": "Получите сводку всех изменений состояния в одном блоке — какие аккаунты, ключи и записи состояния контрактов были затронуты.",
+    "parameters": [
+      {
+        "name": "block_id",
+        "description": "Высота блока (целое число) или хеш блока (строка)."
+      }
+    ],
+    "response": "Успешный ответ",
+    "schema": [
+      {
+        "name": "block_hash",
+        "description": "Base58-encoded hash"
+      }
+    ]
+  },
+  "rpc-broadcast-tx-async": {
+    "description": "Отправьте подписанную транзакцию в кодировке Base64 и сразу получите её хеш — без ожидания исполнения.",
+    "parameters": [
+      {
+        "name": "signed_tx_base64",
+        "description": "Подписанная транзакция в кодировке Base64. Её нужно сформировать для аккаунта подписи непосредственно перед отправкой."
+      },
+      {
+        "name": "wait_until",
+        "description": "Желаемый уровень гарантии статуса исполнения."
+      }
+    ],
+    "response": "Успешный ответ",
+    "schema": [
+      {
+        "name": "result",
+        "description": "Base58-encoded hash"
+      }
+    ]
+  },
+  "rpc-broadcast-tx-commit": {
+    "description": "Отправьте подписанную транзакцию в кодировке Base64 и дождитесь её подтверждения — устаревший синхронный способ, заменён на `send_tx`.",
+    "parameters": [
+      {
+        "name": "signed_tx_base64",
+        "description": "Подписанная транзакция в кодировке Base64. Её нужно сформировать для аккаунта подписи непосредственно перед отправкой."
+      },
+      {
+        "name": "wait_until",
+        "description": "Желаемый уровень гарантии статуса исполнения."
+      }
+    ],
+    "response": "Успешный ответ",
+    "schema": [
+      {
+        "name": "final_execution_status",
+        "description": "Желаемый уровень гарантии статуса исполнения"
+      },
+      {
+        "name": "квитанции",
+        "description": "Квитанции, порождённые транзакцией"
+      },
+      {
+        "name": "receipts_outcome",
+        "description": "Результаты исполнения квитанций."
+      },
+      {
+        "name": "статус",
+        "description": "One of multiple possible types"
+      },
+      {
+        "name": "транзакция",
+        "description": "Подписанная транзакция"
+      },
+      {
+        "name": "transaction_outcome",
+        "description": "Результат исполнения подписанной транзакции."
+      }
+    ]
+  },
+  "rpc-call-function": {
+    "description": "Вызовите view-метод контракта без газа и изменений состояния — чтение вычисляемых значений из логики контракта.",
+    "parameters": [
+      {
+        "name": "account_id",
+        "description": "ID аккаунта NEAR."
+      },
+      {
+        "name": "args_base64",
+        "description": "Аргументы метода в кодировке Base64."
+      },
+      {
+        "name": "method_name",
+        "description": "Имя view-метода контракта."
+      }
+    ],
+    "response": "Успешный ответ",
+    "schema": [
+      {
+        "name": "result",
+        "description": "Результат, возвращённый методом контракта"
+      }
+    ]
+  },
+  "rpc-changes": {
+    "description": "Получите подробные изменения состояния в блоке — с фильтром по аккаунту, префиксу ключа или типу изменения.",
+    "response": "Успешный ответ",
+    "schema": [
+      {
+        "name": "block_hash",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "cause",
+        "description": "One of multiple possible types"
+      }
+    ]
+  },
+  "rpc-chunk-by-block-shard": {
+    "description": "Получите транзакции и квитанции одного чанка по родительскому блоку и индексу шарда.",
+    "parameters": [
+      {
+        "name": "block_id",
+        "description": "Высота блока (целое число) или хеш блока (строка)."
+      },
+      {
+        "name": "shard_id",
+        "description": "Идентификатор шарда."
+      }
+    ],
+    "response": "Успешный ответ",
+    "schema": [
+      {
+        "name": "author",
+        "description": "ID аккаунта NEAR"
+      },
+      {
+        "name": "header",
+        "description": "Contains main info about the chunk."
+      },
+      {
+        "name": "balance_burnt",
+        "description": "Amount in yoctoNEAR"
+      },
+      {
+        "name": "bandwidth_requests",
+        "description": "One of multiple possible types"
+      },
+      {
+        "name": "chunk_hash",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "congestion_info",
+        "description": "Хранит уровень перегрузки шарда. Подробнее о перегрузке [здесь](https://near.github.io/nearcore/architecture/how/receipt-congestion.html?highlight=congestion#receipt-congestion)"
+      },
+      {
+        "name": "encoded_merkle_root",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "gas_limit",
+        "description": "Количество газа"
+      },
+      {
+        "name": "gas_used",
+        "description": "Количество газа"
+      },
+      {
+        "name": "outcome_root",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "outgoing_receipts_root",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "prev_block_hash",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "prev_state_root",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "rent_paid",
+        "description": "Amount in yoctoNEAR"
+      },
+      {
+        "name": "shard_id",
+        "description": "Shard identifier"
+      },
+      {
+        "name": "signature",
+        "description": "Base58-encoded cryptographic signature"
+      },
+      {
+        "name": "tx_root",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "validator_reward",
+        "description": "Amount in yoctoNEAR"
+      }
+    ]
+  },
+  "rpc-chunk-by-hash": {
+    "description": "Получите транзакции и квитанции одного чанка по его хешу содержимого в кодировке Base58.",
+    "parameters": [
+      {
+        "name": "chunk_id",
+        "description": "Хеш чанка в кодировке Base58."
+      }
+    ],
+    "response": "Успешный ответ",
+    "schema": [
+      {
+        "name": "author",
+        "description": "ID аккаунта NEAR"
+      },
+      {
+        "name": "header",
+        "description": "Contains main info about the chunk."
+      },
+      {
+        "name": "balance_burnt",
+        "description": "Amount in yoctoNEAR"
+      },
+      {
+        "name": "bandwidth_requests",
+        "description": "One of multiple possible types"
+      },
+      {
+        "name": "chunk_hash",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "congestion_info",
+        "description": "Хранит уровень перегрузки шарда. Подробнее о перегрузке [здесь](https://near.github.io/nearcore/architecture/how/receipt-congestion.html?highlight=congestion#receipt-congestion)"
+      },
+      {
+        "name": "encoded_merkle_root",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "gas_limit",
+        "description": "Количество газа"
+      },
+      {
+        "name": "gas_used",
+        "description": "Количество газа"
+      },
+      {
+        "name": "outcome_root",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "outgoing_receipts_root",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "prev_block_hash",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "prev_state_root",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "rent_paid",
+        "description": "Amount in yoctoNEAR"
+      },
+      {
+        "name": "shard_id",
+        "description": "Shard identifier"
+      },
+      {
+        "name": "signature",
+        "description": "Base58-encoded cryptographic signature"
+      },
+      {
+        "name": "tx_root",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "validator_reward",
+        "description": "Amount in yoctoNEAR"
+      }
+    ]
+  },
+  "rpc-client-config": {
+    "description": "Получите локальную клиентскую конфигурацию узла — таймауты, настройки повторов и параметры оператора.",
+    "response": "Успешный ответ",
+    "schema": [
+      {
+        "name": "result",
+        "description": "ClientConfig where some fields can be updated at runtime."
+      },
+      {
+        "name": "archive",
+        "description": "Not clear old data, set `true` for archive nodes."
+      },
+      {
+        "name": "block_fetch_horizon",
+        "description": "Горизонт, после которого вместо получения блока извлекается полное состояние."
+      },
+      {
+        "name": "block_header_fetch_horizon",
+        "description": "Behind this horizon header fetch kicks in."
+      },
+      {
+        "name": "block_production_tracking_delay",
+        "description": "Интервал проверки необходимости выпустить или пропустить блок."
+      },
+      {
+        "name": "catchup_step_period",
+        "description": "Time between check to perform catchup."
+      },
+      {
+        "name": "chain_id",
+        "description": "ID цепочки для статуса."
+      },
+      {
+        "name": "chunk_distribution_network",
+        "description": "Конфигурация функции Chunk Distribution Network. Она позволяет узлам отправлять и получать чанки через центральный поток. Преимущества такого подхода: (1) меньше трафика запросов и ответов в одноранговой сети и (2) меньшая задержка для RPC-узлов, индексирующих цепочку."
+      },
+      {
+        "name": "uris",
+        "description": "URI для функции Chunk Distribution Network."
+      },
+      {
+        "name": "chunk_request_retry_period",
+        "description": "Время между проверками на повторный запрос чанков."
+      },
+      {
+        "name": "chunk_validation_threads",
+        "description": "Number of threads for ChunkValidationActor pool."
+      },
+      {
+        "name": "chunk_wait_mult",
+        "description": "Multiplier for the wait time for all chunks to be received."
+      },
+      {
+        "name": "chunks_cache_height_horizon",
+        "description": "Height horizon for the chunk cache. A chunk is removed from the cache if its height + chunks_cache_height_horizon < largest_seen_height. The default value is DEFAULT_CHUNKS_CACHE_HEIGHT_HORIZON."
+      },
+      {
+        "name": "client_background_migration_threads",
+        "description": "Количество потоков, выполняющих фоновые миграционные работы в клиенте."
+      },
+      {
+        "name": "cloud_archival_writer",
+        "description": "Конфигурация облачного компонента записи архивных данных. Если эта конфигурация задана, компонент включается и записывает данные, связанные с чанками, на основе отслеживаемых шардов. Эта конфигурация также управляет дополнительным архивным поведением, например записью данных блоков и интервалом опроса."
+      },
+      {
+        "name": "archive_block_data",
+        "description": "Определяет, должны ли данные, связанные с блоками, записываться в облачное хранилище."
+      },
+      {
+        "name": "polling_interval",
+        "description": "Интервал, с которым система проверяет новые блоки или чанки для архивации."
+      },
+      {
+        "name": "disable_tx_routing",
+        "description": "Если значение `true`, узел не будет пересылать транзакции следующим производителям чанков."
+      },
+      {
+        "name": "doomslug_step_period",
+        "description": "Time between running doomslug timer."
+      },
+      {
+        "name": "enable_early_prepare_transactions",
+        "description": "Если значение `true`, транзакции для следующего чанка будут подготавливаться заранее, сразу после того, как будет готово post-state предыдущего чанка. Это помогает быстрее выпускать чанки в сетях с высокой пропускной способностью. Текущая реализация увеличивает задержку в сетях с низкой нагрузкой; это будет исправлено позже. По умолчанию параметр отключён."
+      },
+      {
+        "name": "enable_statistics_export",
+        "description": "Re-export storage layer statistics as prometheus metrics."
+      },
+      {
+        "name": "epoch_length",
+        "description": "Epoch length."
+      },
+      {
+        "name": "epoch_sync",
+        "description": "Options for epoch sync."
+      },
+      {
+        "name": "epoch_sync_horizon_num_epochs",
+        "description": "Количество эпох от головы сети, за пределами которого узел переключится с header-синхронизации на epoch-синхронизацию. На стороне потребителя это значение умножается на epoch_length, чтобы получить горизонт в блоках."
+      },
+      {
+        "name": "timeout_for_epoch_sync",
+        "description": "Timeout for epoch sync requests. The node will continue retrying indefinitely even if this timeout is exceeded."
+      },
+      {
+        "name": "expected_shutdown",
+        "description": "Корректное завершение работы на ожидаемой высоте блока."
+      },
+      {
+        "name": "gc",
+        "description": "Configuration for garbage collection."
+      },
+      {
+        "name": "gc_blocks_limit",
+        "description": "Максимальное количество блоков, собираемых сборщиком мусора за один вызов."
+      },
+      {
+        "name": "gc_fork_clean_step",
+        "description": "Maximum number of height to go through at each garbage collection step when cleaning forks during garbage collection."
+      },
+      {
+        "name": "gc_num_epochs_to_keep",
+        "description": "Number of epochs for which we keep store data."
+      },
+      {
+        "name": "gc_step_period",
+        "description": "How often gc should be run"
+      },
+      {
+        "name": "header_sync_expected_height_per_second",
+        "description": "Expected increase of header head height per second during header sync"
+      },
+      {
+        "name": "header_sync_initial_timeout",
+        "description": "How much time to wait after initial header sync"
+      },
+      {
+        "name": "header_sync_progress_timeout",
+        "description": "How much time to wait after some progress is made in header sync"
+      },
+      {
+        "name": "header_sync_stall_ban_timeout",
+        "description": "How much time to wait before banning a peer in header sync if sync is too slow"
+      },
+      {
+        "name": "log_summary_period",
+        "description": "Period between logging summary information."
+      },
+      {
+        "name": "log_summary_style",
+        "description": "Enable coloring of the logs"
+      },
+      {
+        "name": "max_block_production_delay",
+        "description": "Максимальное время ожидания подтверждений перед выпуском блока."
+      },
+      {
+        "name": "max_block_wait_delay",
+        "description": "Maximum duration before skipping given height."
+      },
+      {
+        "name": "max_gas_burnt_view",
+        "description": "Количество газа"
+      },
+      {
+        "name": "min_block_production_delay",
+        "description": "Минимальная длительность перед выпуском блока."
+      },
+      {
+        "name": "min_num_peers",
+        "description": "Minimum number of peers to start syncing."
+      },
+      {
+        "name": "num_block_producer_seats",
+        "description": "Количество мест для производителей блоков"
+      },
+      {
+        "name": "orphan_state_witness_max_size",
+        "description": "Максимальный размер state witness в OrphanStateWitnessPool. В пуле сохраняются только orphan-witness, размер которых меньше этого значения. Это ограничивает максимальное потребление памяти пулом OrphanStateWitnessPool."
+      },
+      {
+        "name": "orphan_state_witness_pool_size",
+        "description": "OrphanStateWitnessPool хранит экземпляры ChunkStateWitness, которые нельзя обработать, потому что предыдущий блок недоступен. Эти witness остаются в пуле, пока не появится нужный блок. Эта переменная определяет, сколько witness можно хранить в пуле."
+      },
+      {
+        "name": "produce_chunk_add_transactions_time_limit",
+        "description": "Ограничивает время добавления транзакций в чанк. Нода формирует чанк, добавляя транзакции из пула транзакций, пока не будет достигнут один из лимитов. Этот лимит по времени гарантирует, что добавление транзакций не займёт дольше указанной длительности и поможет быстрее выпустить чанк."
+      },
+      {
+        "name": "produce_empty_blocks",
+        "description": "Выпускать пустые блоки; значение `false` используется для тестирования."
+      },
+      {
+        "name": "protocol_version_check",
+        "description": "Определяет, проверяет ли узел совместимость версии сети для следующей или через одну эпохи."
+      },
+      {
+        "name": "rpc_addr",
+        "description": "Порт RPC для статуса, на котором слушает узел."
+      },
+      {
+        "name": "save_invalid_witnesses",
+        "description": "Save observed instances of invalid ChunkStateWitness to the database in DBCol::InvalidChunkStateWitnesses. Saving invalid witnesses is useful for analysis and debugging. This option can cause extra load on the database and is not recommended for production use."
+      },
+      {
+        "name": "save_latest_witnesses",
+        "description": "Сохраняет наблюдаемые экземпляры ChunkStateWitness в базу данных DBCol::LatestChunkStateWitnesses. Сохранение последних экземпляров ChunkStateWitness полезно для анализа и отладки. Эта опция может создавать дополнительную нагрузку на базу данных и не рекомендуется для продового контура."
+      },
+      {
+        "name": "save_state_changes",
+        "description": "Нужно ли сохранять изменения состояния на диск."
+      },
+      {
+        "name": "save_trie_changes",
+        "description": "save_trie_changes should be set to true iff - archive if false - non-archival nodes need trie changes to perform garbage collection - archive is true, cold_store is configured and migration to split_storage is finished - node working in split storage mode needs trie changes in order to do garbage collection on hot."
+      },
+      {
+        "name": "save_tx_outcomes",
+        "description": "Нужно ли сохранять результаты транзакций на диск."
+      },
+      {
+        "name": "save_untracked_partial_chunks_parts",
+        "description": "Whether to persist partial chunk parts for untracked shards or not."
+      },
+      {
+        "name": "skip_sync_wait",
+        "description": "Skip waiting for sync (for testing or single node testnet)."
+      },
+      {
+        "name": "state_request_server_threads",
+        "description": "Number of threads for StateRequestActor pool."
+      },
+      {
+        "name": "state_request_throttle_period",
+        "description": "Количество секунд между запросами состояния для view-клиента. Окно троттлинга для запросов состояния (заголовки и части)."
+      },
+      {
+        "name": "state_requests_per_throttle_period",
+        "description": "Максимальное количество запросов состояния, обслуживаемых за период троттлинга"
+      },
+      {
+        "name": "state_sync",
+        "description": "Параметры синхронизации состояния."
+      },
+      {
+        "name": "dump",
+        "description": "Настраивает способ выгрузки состояния во внешнее хранилище."
+      },
+      {
+        "name": "parts_compression_lvl",
+        "description": "Уровень сжатия Zstd для частей состояния."
+      },
+      {
+        "name": "sync",
+        "description": "Синхронизирует состояние от пиров, не читая ничего из внешнего хранилища."
+      },
+      {
+        "name": "state_sync_enabled",
+        "description": "Использовать ли механизм State Sync. Если отключён, узел будет выполнять Block Sync вместо State Sync."
+      },
+      {
+        "name": "state_sync_external_backoff",
+        "description": "Дополнительное время ожидания после неудачного запроса к внешнему хранилищу"
+      },
+      {
+        "name": "state_sync_external_timeout",
+        "description": "Как долго ждать ответа от централизованной синхронизации состояния"
+      },
+      {
+        "name": "state_sync_p2p_timeout",
+        "description": "Как долго ждать ответа от p2p-синхронизации состояния"
+      },
+      {
+        "name": "state_sync_retry_backoff",
+        "description": "Как долго ждать после неудачного запроса синхронизации состояния"
+      },
+      {
+        "name": "sync_check_period",
+        "description": "How often to check that we are not out of sync."
+      },
+      {
+        "name": "sync_height_threshold",
+        "description": "Sync height threshold: below this difference in height don't start syncing."
+      },
+      {
+        "name": "sync_max_block_requests",
+        "description": "Максимальное количество запросов блоков, отправляемых пирам для синхронизации"
+      },
+      {
+        "name": "sync_step_period",
+        "description": "While syncing, how long to check for each step."
+      },
+      {
+        "name": "tracked_shards_config",
+        "description": "One of multiple possible types"
+      },
+      {
+        "name": "transaction_pool_size_limit",
+        "description": "Ограничение размера пула транзакций одного шарда в байтах. Если не задано, размер не ограничен."
+      },
+      {
+        "name": "trie_viewer_state_size_limit",
+        "description": "Верхняя граница размера состояния контракта в байтах, при котором оно ещё доступно для просмотра. None — без ограничения"
+      },
+      {
+        "name": "ttl_account_id_router",
+        "description": "Time to persist Accounts Id in the router without removing them."
+      },
+      {
+        "name": "tx_routing_height_horizon",
+        "description": "Если узел не является производителем чанков в пределах этого числа блоков, маршрутизировать запросы к будущим производителям чанков."
+      },
+      {
+        "name": "version",
+        "description": "Data structure for semver version and github tag or commit."
+      },
+      {
+        "name": "view_client_threads",
+        "description": "Количество потоков для пула ViewClientActor."
+      },
+      {
+        "name": "dynamic_resharding_dry_run",
+        "description": "Если значение `true`, рантайм выполнит пробный динамический ресхардинг на последнем блоке каждой эпохи. Это означает вычисление предварительных граничных аккаунтов для разделения отслеживаемых шардов."
+      }
+    ]
+  },
+  "rpc-EXPERIMENTAL-congestion-level": {
+    "description": "Измерьте нагрузку одного шарда на выбранном блоке — оценка насыщения от 0.0 до 1.0.",
+    "parameters": [
+      {
+        "name": "block_id",
+        "description": "Высота блока (целое число) или хеш блока (строка)."
+      },
+      {
+        "name": "shard_id",
+        "description": "Идентификатор шарда."
+      }
+    ],
+    "response": "Успешный ответ"
+  },
+  "rpc-EXPERIMENTAL-light-client-block-proof": {
+    "description": "Получите Merkle-доказательство — по хешам блока и вершины лайт-клиента в кодировке Base58 — того, что блок включён в верифицированную цепочку лайт-клиента.",
+    "parameters": [
+      {
+        "name": "block_hash",
+        "description": "Хеш в кодировке Base58."
+      },
+      {
+        "name": "light_client_head",
+        "description": "Хеш в кодировке Base58."
+      }
+    ],
+    "response": "Успешный ответ",
+    "schema": [
+      {
+        "name": "inner_lite",
+        "description": "Часть состояния для текущей головы лёгкого клиента. Подробнее [здесь](https://nomicon.io/ChainSpec/LightClient)."
+      },
+      {
+        "name": "inner_rest_hash",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "prev_block_hash",
+        "description": "Base58-encoded hash"
+      }
+    ]
+  },
+  "rpc-EXPERIMENTAL-light-client-proof": {
+    "description": "Получите Merkle-доказательство включения транзакции или квитанции по ID в кодировке Base58 — EXPERIMENTAL-вариант метода `light_client_proof`.",
+    "parameters": [
+      {
+        "name": "light_client_head",
+        "description": "Хеш в кодировке Base58."
+      },
+      {
+        "name": "sender_id",
+        "description": "ID аккаунта NEAR."
+      },
+      {
+        "name": "transaction_hash",
+        "description": "Хеш в кодировке Base58."
+      },
+      {
+        "name": "type",
+        "description": "Предмет доказательства — `transaction` подтверждает включение транзакции верхнего уровня, `receipt` подтверждает включение конкретной квитанции, сформированной в ходе исполнения."
+      },
+      {
+        "name": "receipt_id",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "receiver_id",
+        "description": "ID аккаунта NEAR"
+      }
+    ],
+    "response": "Успешный ответ",
+    "schema": [
+      {
+        "name": "inner_lite",
+        "description": "Часть состояния для текущей головы лёгкого клиента. Подробнее [здесь](https://nomicon.io/ChainSpec/LightClient)."
+      },
+      {
+        "name": "inner_rest_hash",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "prev_block_hash",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "block_hash",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "id",
+        "description": "Base58-encoded hash"
+      }
+    ]
+  },
+  "rpc-EXPERIMENTAL-protocol-config": {
+    "description": "Получите рантайм-конфигурацию протокола на выбранном блоке — стоимость газа, цены хранилища и действующие лимиты.",
+    "response": "Успешный ответ",
+    "schema": [
+      {
+        "name": "avg_hidden_validator_seats_per_shard",
+        "description": "Ожидаемое количество скрытых валидаторов на шард."
+      },
+      {
+        "name": "block_producer_kickout_threshold",
+        "description": "Порог исключения производителей блоков, значение от 0 до 100."
+      },
+      {
+        "name": "chain_id",
+        "description": "ID блокчейна. Должен быть уникальным для каждого блокчейна. Если у ваших testnet-блокчейнов chain ID не уникальны, вас ждут проблемы."
+      },
+      {
+        "name": "chunk_producer_kickout_threshold",
+        "description": "Threshold for kicking out chunk producers, between 0 and 100."
+      },
+      {
+        "name": "chunk_validator_only_kickout_threshold",
+        "description": "Порог исключения нод, которые являются только валидаторами чанков, значение от 0 до 100."
+      },
+      {
+        "name": "dynamic_resharding",
+        "description": "Enable dynamic re-sharding."
+      },
+      {
+        "name": "epoch_length",
+        "description": "Длина эпохи, измеряемая в высотах блоков."
+      },
+      {
+        "name": "fishermen_threshold",
+        "description": "Amount in yoctoNEAR"
+      },
+      {
+        "name": "gas_limit",
+        "description": "Количество газа"
+      },
+      {
+        "name": "gas_price_adjustment_rate",
+        "description": "Коэффициент корректировки цены газа"
+      },
+      {
+        "name": "genesis_height",
+        "description": "Высота генезис-блока."
+      },
+      {
+        "name": "genesis_time",
+        "description": "Официальное время запуска блокчейна."
+      },
+      {
+        "name": "max_gas_price",
+        "description": "Amount in yoctoNEAR"
+      },
+      {
+        "name": "max_inflation_rate",
+        "description": "Maximum inflation on the total supply every epoch."
+      },
+      {
+        "name": "max_kickout_stake_perc",
+        "description": "Максимальный процент стейка валидаторов, которых будем исключать."
+      },
+      {
+        "name": "min_gas_price",
+        "description": "Amount in yoctoNEAR"
+      },
+      {
+        "name": "minimum_stake_divisor",
+        "description": "Минимальный стейк, необходимый для стейкинга, — это последняя цена места, делённая на это число."
+      },
+      {
+        "name": "minimum_stake_ratio",
+        "description": "Минимальное отношение s/s_total, которое может быть у производителя блоков. Подробнее см. <https://github.com/near/NEPs/pull/167>"
+      },
+      {
+        "name": "minimum_validators_per_shard",
+        "description": "Минимальное количество валидаторов, которое должно быть в каждом шарде"
+      },
+      {
+        "name": "num_block_producer_seats",
+        "description": "Количество мест для производителей блоков в генезисе."
+      },
+      {
+        "name": "num_block_producer_seats_per_shard",
+        "description": "Задаёт количество шардов и количество мест для производителей блоков на каждый шард в генезисе."
+      },
+      {
+        "name": "num_blocks_per_year",
+        "description": "Ожидаемое количество блоков в год"
+      },
+      {
+        "name": "online_max_threshold",
+        "description": "Максимальный порог онлайна, выше которого валидатор получает полную награду."
+      },
+      {
+        "name": "online_min_threshold",
+        "description": "Минимальный порог онлайна, ниже которого валидатор не получает награду."
+      },
+      {
+        "name": "protocol_reward_rate",
+        "description": "Ставка казны протокола"
+      },
+      {
+        "name": "protocol_treasury_account",
+        "description": "ID аккаунта NEAR"
+      },
+      {
+        "name": "protocol_upgrade_stake_threshold",
+        "description": "Threshold of stake that needs to indicate that they ready for upgrade."
+      },
+      {
+        "name": "protocol_version",
+        "description": "Текущая версия протокола"
+      },
+      {
+        "name": "runtime_config",
+        "description": "Представление, сохраняющее JSON-формат конфигурации рантайма."
+      },
+      {
+        "name": "account_creation_config",
+        "description": "Структура описывает конфигурацию создания новых аккаунтов."
+      },
+      {
+        "name": "congestion_control_config",
+        "description": "The configuration for congestion control. More info about congestion [here](https://near.github.io/nearcore/architecture/how/receipt-congestion.html?highlight=congestion#receipt-congestion)"
+      },
+      {
+        "name": "storage_amount_per_byte",
+        "description": "Amount in yoctoNEAR"
+      },
+      {
+        "name": "transaction_costs",
+        "description": "Describes different fees for the runtime"
+      },
+      {
+        "name": "wasm_config",
+        "description": "Конфигурация операций wasm."
+      },
+      {
+        "name": "witness_config",
+        "description": "Configuration specific to ChunkStateWitness."
+      },
+      {
+        "name": "shard_layout",
+        "description": "One of multiple possible types"
+      },
+      {
+        "name": "shuffle_shard_assignment_for_chunk_producers",
+        "description": "Если значение `true`, производители чанков перемешиваются между шардами. Иными словами, если распределение шардов было `[S_0, S_1, S_2, S_3]`, где `S_i` — множество производителей чанков для шарда `i`, то при включённом флаге распределение может стать, например, `[S_2, S_0, S_3, S_1]`."
+      },
+      {
+        "name": "target_validator_mandates_per_shard",
+        "description": "Целевое количество мандатов валидаторов чанков для каждого шарда."
+      },
+      {
+        "name": "transaction_validity_period",
+        "description": "Количество блоков, в течение которых заданная транзакция действительна"
+      }
+    ]
+  },
+  "rpc-EXPERIMENTAL-receipt": {
+    "description": "Получите одну квитанцию по её ID в кодировке Base58 — межшардовую единицу исполнения, производимую транзакцией.",
+    "parameters": [
+      {
+        "name": "receipt_id",
+        "description": "Хеш в кодировке Base58."
+      }
+    ],
+    "response": "Успешный ответ",
+    "schema": [
+      {
+        "name": "predecessor_id",
+        "description": "ID аккаунта NEAR"
+      },
+      {
+        "name": "priority",
+        "description": "Deprecated, retained for backward compatibility."
+      },
+      {
+        "name": "квитанция",
+        "description": "One of multiple possible types"
+      },
+      {
+        "name": "receipt_id",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "receiver_id",
+        "description": "ID аккаунта NEAR"
+      }
+    ]
+  },
+  "rpc-EXPERIMENTAL-split-storage-info": {
+    "description": "Изучите раскладку разделённого хранилища узла — границу между горячими недавними и холодными архивными данными.",
+    "response": "Успешный ответ",
+    "schema": [
+      {
+        "name": "result",
+        "description": "Contains the split storage information."
+      }
+    ]
+  },
+  "rpc-EXPERIMENTAL-tx-status": {
+    "description": "Получите полное дерево квитанций и результаты исполнения каждой квитанции по хешу в кодировке Base58 — богаче, чем `tx_status`.",
+    "parameters": [
+      {
+        "name": "wait_until",
+        "description": "Желаемый уровень гарантии статуса исполнения."
+      },
+      {
+        "name": "signed_tx_base64",
+        "description": "Подписанная транзакция в кодировке Base64."
+      },
+      {
+        "name": "sender_account_id",
+        "description": "ID аккаунта NEAR."
+      },
+      {
+        "name": "tx_hash",
+        "description": "Хеш в кодировке Base58."
+      }
+    ],
+    "response": "Успешный ответ",
+    "schema": [
+      {
+        "name": "final_execution_status",
+        "description": "Желаемый уровень гарантии статуса исполнения"
+      },
+      {
+        "name": "квитанции",
+        "description": "Квитанции, порождённые транзакцией"
+      },
+      {
+        "name": "receipts_outcome",
+        "description": "Результаты исполнения квитанций."
+      },
+      {
+        "name": "статус",
+        "description": "One of multiple possible types"
+      },
+      {
+        "name": "транзакция",
+        "description": "Подписанная транзакция"
+      },
+      {
+        "name": "transaction_outcome",
+        "description": "Результат исполнения подписанной транзакции."
+      }
+    ]
+  },
+  "rpc-EXPERIMENTAL-validators-ordered": {
+    "description": "Получите список валидаторов, упорядоченный по размеру стейка на выбранном блоке — шире, чем только активный набор.",
+    "parameters": [
+      {
+        "name": "block_id",
+        "description": "Высота блока (целое число) или хеш блока (строка)."
+      }
+    ],
+    "response": "Успешный ответ"
+  },
+  "rpc-gas-price": {
+    "description": "Получите текущую общесетевую цену газа для самого последнего блока.",
+    "response": "Успешный ответ",
+    "schema": [
+      {
+        "name": "gas_price",
+        "description": "Amount in yoctoNEAR"
+      }
+    ]
+  },
+  "rpc-gas-price-by-block": {
+    "description": "Получите общесетевую цену газа на выбранном историческом блоке — по высоте или хешу.",
+    "parameters": [
+      {
+        "name": "block_id",
+        "description": "Высота блока (целое число) или хеш блока (строка)."
+      }
+    ],
+    "response": "Успешный ответ",
+    "schema": [
+      {
+        "name": "gas_price",
+        "description": "Amount in yoctoNEAR"
+      }
+    ]
+  },
+  "rpc-genesis-config": {
+    "description": "Получите неизменяемую генезис-конфигурацию цепочки — начальные записи, настройки протокола и длину эпохи в блоке 0.",
+    "response": "Успешный ответ",
+    "schema": [
+      {
+        "name": "avg_hidden_validator_seats_per_shard",
+        "description": "Ожидаемое количество скрытых валидаторов на шард."
+      },
+      {
+        "name": "block_producer_kickout_threshold",
+        "description": "Порог исключения производителей блоков, значение от 0 до 100."
+      },
+      {
+        "name": "chain_id",
+        "description": "ID блокчейна. Должен быть уникальным для каждого блокчейна. Если у ваших testnet-блокчейнов chain ID не уникальны, вас ждут проблемы."
+      },
+      {
+        "name": "chunk_producer_assignment_changes_limit",
+        "description": "Ограничивает число изменений шардов в распределении производителей чанков, если алгоритм способен выбрать распределение с лучшим балансом числа производителей чанков по шардам."
+      },
+      {
+        "name": "chunk_producer_kickout_threshold",
+        "description": "Threshold for kicking out chunk producers, between 0 and 100."
+      },
+      {
+        "name": "chunk_validator_only_kickout_threshold",
+        "description": "Порог исключения нод, которые являются только валидаторами чанков, значение от 0 до 100."
+      },
+      {
+        "name": "dynamic_resharding",
+        "description": "Enable dynamic re-sharding."
+      },
+      {
+        "name": "epoch_length",
+        "description": "Длина эпохи, измеряемая в высотах блоков."
+      },
+      {
+        "name": "fishermen_threshold",
+        "description": "Amount in yoctoNEAR"
+      },
+      {
+        "name": "gas_limit",
+        "description": "Количество газа"
+      },
+      {
+        "name": "gas_price_adjustment_rate",
+        "description": "Коэффициент корректировки цены газа"
+      },
+      {
+        "name": "genesis_height",
+        "description": "Высота генезис-блока."
+      },
+      {
+        "name": "genesis_time",
+        "description": "Официальное время запуска блокчейна."
+      },
+      {
+        "name": "max_gas_price",
+        "description": "Amount in yoctoNEAR"
+      },
+      {
+        "name": "max_inflation_rate",
+        "description": "Maximum inflation on the total supply every epoch."
+      },
+      {
+        "name": "max_kickout_stake_perc",
+        "description": "Максимальный процент стейка валидаторов, которых будем исключать."
+      },
+      {
+        "name": "min_gas_price",
+        "description": "Amount in yoctoNEAR"
+      },
+      {
+        "name": "minimum_stake_divisor",
+        "description": "Минимальный стейк, необходимый для стейкинга, — это последняя цена места, делённая на это число."
+      },
+      {
+        "name": "minimum_stake_ratio",
+        "description": "Минимальное отношение s/s_total, которое может быть у производителя блоков. Подробнее см. <https://github.com/near/NEPs/pull/167>"
+      },
+      {
+        "name": "minimum_validators_per_shard",
+        "description": "Минимальное количество валидаторов, которое должно быть в каждом шарде"
+      },
+      {
+        "name": "num_block_producer_seats",
+        "description": "Количество мест для производителей блоков в генезисе."
+      },
+      {
+        "name": "num_block_producer_seats_per_shard",
+        "description": "Задаёт количество шардов и количество мест для производителей блоков на каждый шард в генезисе. Прим.: не используется с protocol_feature_chunk_only_producers — заменено на minimum_validators_per_shard. Прим.: раньше не использовалось, так как все производители блоков выпускали чанки для всех шардов."
+      },
+      {
+        "name": "num_blocks_per_year",
+        "description": "Ожидаемое количество блоков в год"
+      },
+      {
+        "name": "num_chunk_only_producer_seats",
+        "description": "Deprecated."
+      },
+      {
+        "name": "num_chunk_producer_seats",
+        "description": "Number of chunk producers. Don't mess it up with chunk-only producers feature which is deprecated."
+      },
+      {
+        "name": "online_max_threshold",
+        "description": "Максимальный порог онлайна, выше которого валидатор получает полную награду."
+      },
+      {
+        "name": "online_min_threshold",
+        "description": "Минимальный порог онлайна, ниже которого валидатор не получает награду."
+      },
+      {
+        "name": "protocol_reward_rate",
+        "description": "Ставка казны протокола"
+      },
+      {
+        "name": "protocol_treasury_account",
+        "description": "ID аккаунта NEAR"
+      },
+      {
+        "name": "protocol_upgrade_stake_threshold",
+        "description": "Threshold of stake that needs to indicate that they ready for upgrade."
+      },
+      {
+        "name": "protocol_version",
+        "description": "Версия протокола, для которой предназначен этот genesis."
+      },
+      {
+        "name": "shard_layout",
+        "description": "One of multiple possible types"
+      },
+      {
+        "name": "shuffle_shard_assignment_for_chunk_producers",
+        "description": "Если значение `true`, производители чанков перемешиваются между шардами. Иными словами, если распределение шардов было `[S_0, S_1, S_2, S_3]`, где `S_i` — множество производителей чанков для шарда `i`, то при включённом флаге распределение может стать, например, `[S_2, S_0, S_3, S_1]`."
+      },
+      {
+        "name": "target_validator_mandates_per_shard",
+        "description": "Целевое количество мандатов валидаторов чанков для каждого шарда."
+      },
+      {
+        "name": "total_supply",
+        "description": "Amount in yoctoNEAR"
+      },
+      {
+        "name": "transaction_validity_period",
+        "description": "Количество блоков, в течение которых заданная транзакция действительна"
+      },
+      {
+        "name": "use_production_config",
+        "description": "Используется только для тестов. Мы жёстко задаём часть конфигурации для mainnet и testnet в AllEpochConfig, и нам нужен способ протестировать этот путь в коде. Для этого и служит этот флаг. Если установить `true`, узел будет использовать тот же путь переопределения конфигурации, что и mainnet и testnet."
+      },
+      {
+        "name": "валидаторы",
+        "description": "Список начальных валидаторов."
+      }
+    ]
+  },
+  "rpc-health": {
+    "description": "Проверьте работоспособность узла — `null` при успехе, ошибка при проблемах.",
+    "response": "Успешный ответ",
+    "schema": [
+      {
+        "name": "result",
+        "description": "Статус состояния узла"
+      }
+    ]
+  },
+  "rpc-latest-block": {
+    "description": "Получите последний финализированный блок — финальность выбирается автоматически, ID блока не требуется.",
+    "response": "Успешный ответ"
+  },
+  "rpc-light-client-proof": {
+    "description": "Получите Merkle-доказательство — по ID транзакции или квитанции в кодировке Base58 — того, что элемент был включён и исполнен, для верификации лайт-клиентом.",
+    "parameters": [
+      {
+        "name": "light_client_head",
+        "description": "Хеш в кодировке Base58."
+      },
+      {
+        "name": "sender_id",
+        "description": "ID аккаунта NEAR."
+      },
+      {
+        "name": "transaction_hash",
+        "description": "Хеш в кодировке Base58."
+      },
+      {
+        "name": "type",
+        "description": "Предмет доказательства — `transaction` подтверждает включение транзакции верхнего уровня, `receipt` подтверждает включение конкретной квитанции, сформированной в ходе исполнения."
+      },
+      {
+        "name": "receipt_id",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "receiver_id",
+        "description": "ID аккаунта NEAR"
+      }
+    ],
+    "response": "Успешный ответ",
+    "schema": [
+      {
+        "name": "inner_lite",
+        "description": "Часть состояния для текущей головы лёгкого клиента. Подробнее [здесь](https://nomicon.io/ChainSpec/LightClient)."
+      },
+      {
+        "name": "inner_rest_hash",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "prev_block_hash",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "block_hash",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "id",
+        "description": "Base58-encoded hash"
+      }
+    ]
+  },
+  "rpc-maintenance-windows": {
+    "description": "Найдите предстоящие диапазоны блоков, когда валидатор может безопасно перезапуститься, не пропуская производство блоков.",
+    "parameters": [
+      {
+        "name": "account_id",
+        "description": "ID аккаунта NEAR."
+      }
+    ],
+    "response": "Успешный ответ"
+  },
+  "rpc-metrics": {
+    "description": "Соберите метрики узла в Prometheus-формате для мониторинга.",
+    "response": "Успешный ответ Отсутствует API-ключ или он недействителен"
+  },
+  "rpc-network-info": {
+    "description": "Получите список активных подключений к пирам узла и отслеживаемых им производителей блоков.",
+    "response": "Успешный ответ",
+    "schema": [
+      {
+        "name": "known_producers",
+        "description": "Аккаунты известных производителей блоков и чанков из таблицы маршрутизации."
+      }
+    ]
+  },
+  "rpc-next-light-client-block": {
+    "description": "Получите следующий заголовок блока для лайт-клиента после известного хеша вершины его верифицированной цепочки в кодировке Base58.",
+    "parameters": [
+      {
+        "name": "last_block_hash",
+        "description": "Хеш в кодировке Base58."
+      }
+    ],
+    "response": "Успешный ответ",
+    "schema": [
+      {
+        "name": "result",
+        "description": "Состояние для текущей головы лёгкого клиента. Подробнее [здесь](https://nomicon.io/ChainSpec/LightClient)."
+      },
+      {
+        "name": "inner_lite",
+        "description": "Часть состояния для текущей головы лёгкого клиента. Подробнее [здесь](https://nomicon.io/ChainSpec/LightClient)."
+      },
+      {
+        "name": "block_merkle_root",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "epoch_id",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "next_bp_hash",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "next_epoch_id",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "outcome_root",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "prev_state_root",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "timestamp",
+        "description": "Legacy json number. Should not be used."
+      },
+      {
+        "name": "inner_rest_hash",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "next_block_inner_hash",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "prev_block_hash",
+        "description": "Base58-encoded hash"
+      }
+    ]
+  },
+  "rpc-send-tx": {
+    "description": "Отправьте подписанную транзакцию в кодировке Base64 и дождитесь её итогового результата исполнения — текущий синхронный способ.",
+    "parameters": [
+      {
+        "name": "signed_tx_base64",
+        "description": "Подписанная транзакция в кодировке Base64. Её нужно сформировать для аккаунта подписи непосредственно перед отправкой."
+      },
+      {
+        "name": "wait_until",
+        "description": "Желаемый уровень гарантии статуса исполнения."
+      }
+    ],
+    "response": "Успешный ответ",
+    "schema": [
+      {
+        "name": "final_execution_status",
+        "description": "Желаемый уровень гарантии статуса исполнения"
+      },
+      {
+        "name": "квитанции",
+        "description": "Квитанции, порождённые транзакцией"
+      },
+      {
+        "name": "receipts_outcome",
+        "description": "Результаты исполнения квитанций."
+      },
+      {
+        "name": "статус",
+        "description": "One of multiple possible types"
+      },
+      {
+        "name": "транзакция",
+        "description": "Подписанная транзакция"
+      },
+      {
+        "name": "transaction_outcome",
+        "description": "Результат исполнения подписанной транзакции."
+      }
+    ]
+  },
+  "rpc-status": {
+    "description": "Получите версию узла, прогресс синхронизации и последний обработанный блок в одном ответе.",
+    "response": "Успешный ответ",
+    "schema": [
+      {
+        "name": "chain_id",
+        "description": "Unique chain id."
+      },
+      {
+        "name": "current_head_status",
+        "description": "Высота и хеш блока"
+      },
+      {
+        "name": "current_header_head_status",
+        "description": "Высота и хеш блока"
+      },
+      {
+        "name": "genesis_hash",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "latest_protocol_version",
+        "description": "Последняя версия протокола, поддерживаемая этим клиентом."
+      },
+      {
+        "name": "node_key",
+        "description": "Публичный ключ с префиксом ed25519: или secp256k1:"
+      },
+      {
+        "name": "node_public_key",
+        "description": "Публичный ключ с префиксом ed25519: или secp256k1:"
+      },
+      {
+        "name": "protocol_version",
+        "description": "Текущая активная версия протокола."
+      },
+      {
+        "name": "rpc_addr",
+        "description": "Адрес RPC-сервера. None, если у узла не включён RPC-эндпоинт."
+      },
+      {
+        "name": "sync_info",
+        "description": "Статус синхронизации узла."
+      },
+      {
+        "name": "earliest_block_hash",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "epoch_id",
+        "description": "Base58-encoded epoch identifier hash"
+      },
+      {
+        "name": "latest_block_hash",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "latest_state_root",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "uptime_sec",
+        "description": "Uptime of the node."
+      },
+      {
+        "name": "validator_account_id",
+        "description": "ID аккаунта NEAR"
+      },
+      {
+        "name": "validator_public_key",
+        "description": "Публичный ключ с префиксом ed25519: или secp256k1:"
+      },
+      {
+        "name": "валидаторы",
+        "description": "Валидаторы текущей эпохи."
+      },
+      {
+        "name": "version",
+        "description": "Data structure for semver version and github tag or commit."
+      }
+    ]
+  },
+  "rpc-tx-status": {
+    "description": "Проверьте итоговый результат транзакции по её хешу в кодировке Base58 — успех, сбой или ещё не завершена.",
+    "parameters": [
+      {
+        "name": "wait_until",
+        "description": "Желаемый уровень гарантии статуса исполнения."
+      },
+      {
+        "name": "signed_tx_base64",
+        "description": "Подписанная транзакция в кодировке Base64."
+      },
+      {
+        "name": "sender_account_id",
+        "description": "ID аккаунта NEAR."
+      },
+      {
+        "name": "tx_hash",
+        "description": "Хеш транзакции в кодировке Base58."
+      }
+    ],
+    "response": "Успешный ответ",
+    "schema": [
+      {
+        "name": "final_execution_status",
+        "description": "Желаемый уровень гарантии статуса исполнения"
+      },
+      {
+        "name": "квитанции",
+        "description": "Квитанции, порождённые транзакцией"
+      },
+      {
+        "name": "receipts_outcome",
+        "description": "Результаты исполнения квитанций."
+      },
+      {
+        "name": "статус",
+        "description": "One of multiple possible types"
+      },
+      {
+        "name": "транзакция",
+        "description": "Подписанная транзакция"
+      },
+      {
+        "name": "transaction_outcome",
+        "description": "Результат исполнения подписанной транзакции."
+      }
+    ]
+  },
+  "rpc-validators-by-epoch": {
+    "description": "Получите набор валидаторов выбранной прошлой эпохи по высоте начального блока или хеш-идентификатору эпохи в кодировке Base58.",
+    "parameters": [
+      {
+        "name": "epoch_id",
+        "description": "Хеш-идентификатор эпохи в кодировке Base58."
+      }
+    ],
+    "response": "Успешный ответ",
+    "schema": [
+      {
+        "name": "result",
+        "description": "Информация о валидаторах текущей и следующей эпохи"
+      },
+      {
+        "name": "current_fishermen",
+        "description": "Fishermen текущей эпохи"
+      },
+      {
+        "name": "current_proposals",
+        "description": "Заявки (proposals) в текущей эпохе"
+      },
+      {
+        "name": "current_validators",
+        "description": "Валидаторы текущей эпохи"
+      },
+      {
+        "name": "epoch_height",
+        "description": "Epoch height"
+      },
+      {
+        "name": "epoch_start_height",
+        "description": "Высота блока начала эпохи"
+      },
+      {
+        "name": "next_fishermen",
+        "description": "Fishermen for the next epoch"
+      },
+      {
+        "name": "next_validators",
+        "description": "Валидаторы следующей эпохи"
+      },
+      {
+        "name": "prev_epoch_kickout",
+        "description": "Kickout in the previous epoch"
+      }
+    ]
+  },
+  "rpc-validators-current": {
+    "description": "Получите активный набор валидаторов текущей эпохи со стейками и статистикой производительности.",
+    "response": "Успешный ответ",
+    "schema": [
+      {
+        "name": "result",
+        "description": "Информация о валидаторах текущей и следующей эпохи"
+      },
+      {
+        "name": "current_fishermen",
+        "description": "Fishermen текущей эпохи"
+      },
+      {
+        "name": "current_proposals",
+        "description": "Заявки (proposals) в текущей эпохе"
+      },
+      {
+        "name": "current_validators",
+        "description": "Валидаторы текущей эпохи"
+      },
+      {
+        "name": "epoch_height",
+        "description": "Epoch height"
+      },
+      {
+        "name": "epoch_start_height",
+        "description": "Высота блока начала эпохи"
+      },
+      {
+        "name": "next_fishermen",
+        "description": "Fishermen for the next epoch"
+      },
+      {
+        "name": "next_validators",
+        "description": "Валидаторы следующей эпохи"
+      },
+      {
+        "name": "prev_epoch_kickout",
+        "description": "Kickout in the previous epoch"
+      }
+    ]
+  },
+  "rpc-view-access-key": {
+    "description": "Получите права и nonce одного ключа доступа аккаунта по его публичному ключу.",
+    "parameters": [
+      {
+        "name": "account_id",
+        "description": "ID аккаунта NEAR."
+      },
+      {
+        "name": "public_key",
+        "description": "Публичный ключ в формате `ed25519:...` или `secp256k1:...`."
+      }
+    ],
+    "response": "Информация о ключе доступа",
+    "schema": [
+      {
+        "name": "result",
+        "description": "Описывает область действия ключа доступа и nonce."
+      },
+      {
+        "name": "permission",
+        "description": "One of multiple possible types"
+      }
+    ]
+  },
+  "rpc-view-access-key-list": {
+    "description": "Получите все ключи доступа аккаунта — каждый с правами и nonce.",
+    "parameters": [
+      {
+        "name": "account_id",
+        "description": "ID аккаунта NEAR."
+      }
+    ],
+    "response": "Список ключей доступа аккаунта",
+    "schema": [
+      {
+        "name": "result",
+        "description": "Список ключей доступа"
+      }
+    ]
+  },
+  "rpc-view-account": {
+    "description": "Получите баланс аккаунта, размер хранилища и хеш кода на выбранной высоте блока или финальности.",
+    "parameters": [
+      {
+        "name": "account_id",
+        "description": "ID аккаунта NEAR."
+      }
+    ],
+    "response": "Сведения об аккаунте",
+    "schema": [
+      {
+        "name": "result",
+        "description": "Представление аккаунта"
+      },
+      {
+        "name": "amount",
+        "description": "Amount in yoctoNEAR"
+      },
+      {
+        "name": "code_hash",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "global_contract_account_id",
+        "description": "ID аккаунта NEAR"
+      },
+      {
+        "name": "global_contract_hash",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "locked",
+        "description": "Amount in yoctoNEAR"
+      },
+      {
+        "name": "storage_paid_at",
+        "description": "TODO(2271): deprecated."
+      }
+    ]
+  },
+  "rpc-view-code": {
+    "description": "Получите скомпилированный WebAssembly-байткод, развёрнутый непосредственно на одном аккаунте.",
+    "parameters": [
+      {
+        "name": "account_id",
+        "description": "ID аккаунта NEAR."
+      }
+    ],
+    "response": "Успешный ответ",
+    "schema": [
+      {
+        "name": "result",
+        "description": "Представление кода контракта."
+      },
+      {
+        "name": "hash",
+        "description": "Base58-encoded hash"
+      }
+    ]
+  },
+  "rpc-view-global-contract-code": {
+    "description": "Найдите WebAssembly-байткод глобального контракта по SHA-256-хешу его кода в кодировке Base58.",
+    "parameters": [
+      {
+        "name": "code_hash",
+        "description": "Хеш в кодировке Base58."
+      }
+    ],
+    "response": "Успешный ответ",
+    "schema": [
+      {
+        "name": "result",
+        "description": "Представление кода контракта."
+      },
+      {
+        "name": "hash",
+        "description": "Base58-encoded hash"
+      }
+    ]
+  },
+  "rpc-view-global-contract-code-by-account-id": {
+    "description": "Найдите WebAssembly-байткод глобального контракта по ID аккаунта, который его зарегистрировал.",
+    "parameters": [
+      {
+        "name": "account_id",
+        "description": "ID аккаунта NEAR."
+      }
+    ],
+    "response": "Успешный ответ",
+    "schema": [
+      {
+        "name": "result",
+        "description": "Представление кода контракта."
+      },
+      {
+        "name": "hash",
+        "description": "Base58-encoded hash"
+      }
+    ]
+  },
+  "rpc-view-state": {
+    "description": "Получите сырое состояние «ключ-значение», записанное контрактом, с опциональным фильтром по префиксу ключа.",
+    "parameters": [
+      {
+        "name": "account_id",
+        "description": "ID аккаунта NEAR."
+      },
+      {
+        "name": "include_proof",
+        "description": "Добавить криптографическое доказательство к ответу."
+      },
+      {
+        "name": "prefix_base64",
+        "description": "Префикс ключа хранилища в кодировке Base64."
+      }
+    ],
+    "response": "Успешный ответ",
+    "schema": [
+      {
+        "name": "result",
+        "description": "Итоговые значения состояния для запроса просмотра состояния"
+      }
+    ]
+  },
+  "transactions-v0-account": {
+    "description": "Получите историю транзакций аккаунта с необязательными фильтрами по подписанту, статусу успеха и порядку сортировки.",
+    "parameters": [
+      {
+        "name": "account_id",
+        "description": "NEAR account to query transactions for (may be a signer, predecessor, receiver, or related party)."
+      },
+      {
+        "name": "desc",
+        "description": "Sort newest-first when true; oldest-first when false or omitted."
+      },
+      {
+        "name": "from_tx_block_height",
+        "description": "Inclusive lower bound on the transaction's block height."
+      },
+      {
+        "name": "is_action_arg",
+        "description": "Restrict to transactions where this account appeared in action arguments."
+      },
+      {
+        "name": "is_any_signer",
+        "description": "Restrict to transactions where this account signed either the top-level transaction or a delegated action."
+      },
+      {
+        "name": "is_delegated_signer",
+        "description": "Restrict to transactions where this account signed a delegated action."
+      },
+      {
+        "name": "is_event_log",
+        "description": "Restrict to transactions where this account appeared in a JSON event log."
+      },
+      {
+        "name": "is_explicit_refund_to",
+        "description": "Restrict to transactions where this account was the explicit `refund_to` target of an action receipt."
+      },
+      {
+        "name": "is_function_call",
+        "description": "Restrict to transactions where this account was the target of a function-call action."
+      },
+      {
+        "name": "is_predecessor",
+        "description": "Restrict to transactions where this account was the predecessor of a receipt."
+      },
+      {
+        "name": "is_real_receiver",
+        "description": "Restrict to transactions where this account was the real receiver — excluding relayer receivers and gas refunds."
+      },
+      {
+        "name": "is_real_signer",
+        "description": "Restrict to transactions where this account was the real signer — direct or delegated, excluding relayer signers."
+      },
+      {
+        "name": "is_receiver",
+        "description": "Restrict to transactions where this account received a receipt."
+      },
+      {
+        "name": "is_signer",
+        "description": "Restrict to transactions where this account signed the top-level transaction."
+      },
+      {
+        "name": "is_success",
+        "description": "Restrict to transactions whose execution succeeded (true) or failed/pending (false)."
+      },
+      {
+        "name": "limit",
+        "description": "Maximum rows to return in one page (1–200)."
+      },
+      {
+        "name": "resume_token",
+        "description": "Opaque pagination token returned on a prior page; omit for the first page."
+      },
+      {
+        "name": "to_tx_block_height",
+        "description": "Exclusive upper bound on the transaction's block height."
+      }
+    ],
+    "response": "Набор результатов по истории аккаунта Некорректный запрос Ошибка запроса ClickHouse"
+  },
+  "transactions-v0-block": {
+    "description": "Получите строку блока по высоте или хешу и при необходимости разверните связанные транзакции и квитанции.",
+    "parameters": [
+      {
+        "name": "block_id",
+        "description": "Block height (integer) or base58-encoded block hash (string) to fetch."
+      },
+      {
+        "name": "with_receipts",
+        "description": "Include the block's receipts in the response when true."
+      },
+      {
+        "name": "with_transactions",
+        "description": "Include the block's transactions in the response when true."
+      }
+    ],
+    "response": "Результат поиска блока Некорректный запрос Ошибка запроса ClickHouse"
+  },
+  "transactions-v0-blocks": {
+    "description": "Получите ограниченный список индексированных блоков, отсортированный по возрастанию или убыванию.",
+    "parameters": [
+      {
+        "name": "desc",
+        "description": "Sort newest-first when true; oldest-first when false or omitted."
+      },
+      {
+        "name": "from_block_height",
+        "description": "Inclusive lower bound on block height."
+      },
+      {
+        "name": "limit",
+        "description": "Maximum blocks to return in one page (1–100)."
+      },
+      {
+        "name": "to_block_height",
+        "description": "Exclusive upper bound on block height."
+      }
+    ],
+    "response": "Строки блоков Некорректный запрос Ошибка запроса ClickHouse"
+  },
+  "transactions-v0-receipt": {
+    "description": "Получите квитанцию по ID вместе с транзакцией, её создавшей.",
+    "parameters": [
+      {
+        "name": "receipt_id",
+        "description": "Base58-encoded receipt ID to look up."
+      }
+    ],
+    "response": "Результат поиска квитанции Некорректный запрос Ошибка запроса ClickHouse"
+  },
+  "transactions-v0-transactions": {
+    "description": "Получите до 20 индексированных транзакций по хешу в одном запросе.",
+    "parameters": [
+      {
+        "name": "tx_hashes",
+        "description": "Up to 20 base58-encoded transaction hashes to fetch in one request."
+      }
+    ],
+    "response": "Найденные транзакции Некорректный запрос Ошибка запроса ClickHouse"
+  },
+  "transfers-v0-transfers": {
+    "description": "Получите строки переводов для одного аккаунта с необязательными фильтрами по направлению, активу, сумме и времени.",
+    "parameters": [
+      {
+        "name": "account_id",
+        "description": "Идентификатор аккаунта NEAR, для которого нужно получить переводы."
+      },
+      {
+        "name": "asset_id",
+        "description": "Необязательный идентификатор актива, например `near` или ID FT-контракта."
+      },
+      {
+        "name": "desc",
+        "description": "Если `true`, сначала возвращаются более новые переводы."
+      },
+      {
+        "name": "direction",
+        "description": "Какие переводы вернуть: исходящие (`sender`) или входящие (`receiver`)."
+      },
+      {
+        "name": "from_timestamp_ms",
+        "description": "Нижняя граница времени в миллисекундах UNIX."
+      },
+      {
+        "name": "ignore_system",
+        "description": "Если `true`, исключает системные переводы."
+      },
+      {
+        "name": "limit",
+        "description": "Максимальное количество строк в ответе."
+      },
+      {
+        "name": "min_amount",
+        "description": "Минимальная сумма в базовых единицах актива."
+      },
+      {
+        "name": "min_human_amount",
+        "description": "Минимальная сумма в человекочитаемом виде."
+      },
+      {
+        "name": "min_usd_amount",
+        "description": "Минимальная сумма в долларах США."
+      },
+      {
+        "name": "resume_token",
+        "description": "Непрозрачный токен продолжения из предыдущего ответа."
+      },
+      {
+        "name": "to_timestamp_ms",
+        "description": "Верхняя граница времени в миллисекундах UNIX."
+      }
+    ],
+    "response": "Строки переводов для указанного аккаунта. Некорректное тело запроса. Ошибка запроса к ClickHouse."
+  }
+}

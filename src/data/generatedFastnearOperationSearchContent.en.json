@@ -1,0 +1,2566 @@
+{
+  "fastnear-system-health": {
+    "description": "Ping the FastNEAR API for liveness — returns `{status: ok}` when healthy.",
+    "parameters": [
+      {
+        "name": "apiKey",
+        "description": "Optional API key forwarded by embedded portal clients. The public FastNEAR API does not require it."
+      }
+    ],
+    "response": "Health status string Internal Server Error"
+  },
+  "fastnear-system-status": {
+    "description": "Check the current indexed block height, latency, and deployed service version.",
+    "parameters": [
+      {
+        "name": "apiKey",
+        "description": "Optional API key forwarded by embedded portal clients. The public FastNEAR API does not require it."
+      }
+    ],
+    "response": "Current FastNEAR API sync status Internal Server Error"
+  },
+  "fastnear-v0-account-ft": {
+    "description": "Fetch the fungible token contract IDs an account has held — contract IDs only, no balances.",
+    "parameters": [
+      {
+        "name": "account_id",
+        "description": "NEAR account ID to inspect."
+      },
+      {
+        "name": "apiKey",
+        "description": "Optional API key forwarded by embedded portal clients. The public FastNEAR API does not require it."
+      }
+    ],
+    "response": "Fungible token contract IDs for the requested account Bad Request Internal Server Error"
+  },
+  "fastnear-v0-account-nft": {
+    "description": "Fetch the NFT contract IDs an account has held — contract IDs only, no block-height metadata.",
+    "parameters": [
+      {
+        "name": "account_id",
+        "description": "NEAR account ID to inspect."
+      },
+      {
+        "name": "apiKey",
+        "description": "Optional API key forwarded by embedded portal clients. The public FastNEAR API does not require it."
+      }
+    ],
+    "response": "NFT contract IDs for the requested account Bad Request Internal Server Error"
+  },
+  "fastnear-v0-account-staking": {
+    "description": "Fetch staking pool account IDs for one account — pool IDs only, no block-height metadata.",
+    "parameters": [
+      {
+        "name": "account_id",
+        "description": "NEAR account ID to inspect."
+      },
+      {
+        "name": "apiKey",
+        "description": "Optional API key forwarded by embedded portal clients. The public FastNEAR API does not require it."
+      }
+    ],
+    "response": "Staking pool account IDs for the requested account Bad Request Internal Server Error"
+  },
+  "fastnear-v0-public-key-lookup": {
+    "description": "Fetch the account IDs that have registered a full-access public key, via the legacy V0 lookup path.",
+    "parameters": [
+      {
+        "name": "public_key",
+        "description": "NEAR public key in `ed25519:...` or `secp256k1:...` form."
+      },
+      {
+        "name": "apiKey",
+        "description": "Optional API key forwarded by embedded portal clients. The public FastNEAR API does not require it."
+      }
+    ],
+    "response": "Matching account IDs for the supplied full-access public key Bad Request Internal Server Error"
+  },
+  "fastnear-v0-public-key-lookup-all": {
+    "description": "List every account tied to a public key — full-access and limited-access keys together — via the legacy V0 lookup-all path.",
+    "parameters": [
+      {
+        "name": "public_key",
+        "description": "NEAR public key in `ed25519:...` or `secp256k1:...` form."
+      },
+      {
+        "name": "apiKey",
+        "description": "Optional API key forwarded by embedded portal clients. The public FastNEAR API does not require it."
+      }
+    ],
+    "response": "Matching account IDs for the supplied public key, including limited-access keys Bad Request Internal Server Error"
+  },
+  "fastnear-v1-account-ft": {
+    "description": "Fetch an account's fungible token balance rows, each with contract ID, balance, and last-update block height.",
+    "parameters": [
+      {
+        "name": "account_id",
+        "description": "NEAR account ID to inspect."
+      },
+      {
+        "name": "apiKey",
+        "description": "Optional API key forwarded by embedded portal clients. The public FastNEAR API does not require it."
+      }
+    ],
+    "response": "Indexed fungible token rows for the requested account Bad Request Internal Server Error"
+  },
+  "fastnear-v1-account-full": {
+    "description": "Fetch the combined indexed account view, including staking pools, FT balances, NFTs, and account state.",
+    "parameters": [
+      {
+        "name": "account_id",
+        "description": "NEAR account ID to inspect."
+      },
+      {
+        "name": "apiKey",
+        "description": "Optional API key forwarded by embedded portal clients. The public FastNEAR API does not require it."
+      }
+    ],
+    "response": "Full indexed account information for the requested account Bad Request Internal Server Error"
+  },
+  "fastnear-v1-account-nft": {
+    "description": "Fetch NFT contract rows for an account, including block-height metadata for each contract.",
+    "parameters": [
+      {
+        "name": "account_id",
+        "description": "NEAR account ID to inspect."
+      },
+      {
+        "name": "apiKey",
+        "description": "Optional API key forwarded by embedded portal clients. The public FastNEAR API does not require it."
+      }
+    ],
+    "response": "Indexed NFT contract rows for the requested account Bad Request Internal Server Error"
+  },
+  "fastnear-v1-account-staking": {
+    "description": "Retrieve staking pool rows for an account, including block-height metadata for each pool relationship.",
+    "parameters": [
+      {
+        "name": "account_id",
+        "description": "NEAR account ID to inspect."
+      },
+      {
+        "name": "apiKey",
+        "description": "Optional API key forwarded by embedded portal clients. The public FastNEAR API does not require it."
+      }
+    ],
+    "response": "Indexed staking pool rows for the requested account Bad Request Internal Server Error"
+  },
+  "fastnear-v1-ft-top": {
+    "description": "Fetch the top-balance holder list for a fungible token contract, ranked highest balance first.",
+    "parameters": [
+      {
+        "name": "token_id",
+        "description": "Fungible token contract account ID."
+      },
+      {
+        "name": "apiKey",
+        "description": "Optional API key forwarded by embedded portal clients. The public FastNEAR API does not require it."
+      }
+    ],
+    "response": "Indexed top holders for the requested fungible token Bad Request Internal Server Error"
+  },
+  "fastnear-v1-public-key-lookup": {
+    "description": "Resolve a full-access public key to the indexed NEAR accounts that have registered it — V1 canonical lookup path.",
+    "parameters": [
+      {
+        "name": "public_key",
+        "description": "NEAR public key in `ed25519:...` or `secp256k1:...` form."
+      },
+      {
+        "name": "apiKey",
+        "description": "Optional API key forwarded by embedded portal clients. The public FastNEAR API does not require it."
+      }
+    ],
+    "response": "Matching account IDs for the supplied full-access public key Bad Request Internal Server Error"
+  },
+  "fastnear-v1-public-key-lookup-all": {
+    "description": "Resolve a public key to every account that holds it — full-access and limited-access keys alike — via the V1 lookup-all path.",
+    "parameters": [
+      {
+        "name": "public_key",
+        "description": "NEAR public key in `ed25519:...` or `secp256k1:...` form."
+      },
+      {
+        "name": "apiKey",
+        "description": "Optional API key forwarded by embedded portal clients. The public FastNEAR API does not require it."
+      }
+    ],
+    "response": "Matching account IDs for the supplied public key, including limited-access keys Bad Request Internal Server Error"
+  },
+  "kv-fastdata-v0-all-by-predecessor": {
+    "description": "Fetch the latest values for all contracts touched by one predecessor account.",
+    "parameters": [
+      {
+        "name": "predecessor_id",
+        "description": "Calling account that wrote the FastData keys."
+      },
+      {
+        "name": "include_metadata",
+        "description": "Include receipt and signer metadata in each entry."
+      },
+      {
+        "name": "limit",
+        "description": "Maximum number of entries to return in one page (1–200, default 50)."
+      },
+      {
+        "name": "page_token",
+        "description": "Opaque pagination cursor from a previous `/v0/all/{predecessor_id}` response."
+      }
+    ],
+    "response": "Latest rows for the selected predecessor Invalid key filter or page token Scylla query failure",
+    "schema": [
+      {
+        "name": "value",
+        "description": "Raw JSON value as stored in FastData."
+      },
+      {
+        "name": "page_token",
+        "description": "Opaque pagination cursor for the next page. Absent when there are no more results."
+      }
+    ]
+  },
+  "kv-fastdata-v0-get-history-key": {
+    "description": "Fetch every historical write for one exact key under one predecessor and contract.",
+    "parameters": [
+      {
+        "name": "current_account_id",
+        "description": "Contract account whose FastData keys were written."
+      },
+      {
+        "name": "predecessor_id",
+        "description": "Calling account that wrote the FastData keys."
+      },
+      {
+        "name": "key",
+        "description": "Exact FastData key to return."
+      }
+    ],
+    "response": "Historical rows for the selected predecessor, account, and key Scylla query failure",
+    "schema": [
+      {
+        "name": "value",
+        "description": "Raw JSON value as stored in FastData."
+      },
+      {
+        "name": "page_token",
+        "description": "Opaque pagination cursor for the next page. Absent when there are no more results."
+      }
+    ]
+  },
+  "kv-fastdata-v0-get-latest-key": {
+    "description": "Fetch the latest value for one exact key under one predecessor and contract.",
+    "parameters": [
+      {
+        "name": "current_account_id",
+        "description": "Contract account whose FastData keys were written."
+      },
+      {
+        "name": "predecessor_id",
+        "description": "Calling account that wrote the FastData keys."
+      },
+      {
+        "name": "key",
+        "description": "Exact FastData key to return."
+      }
+    ],
+    "response": "Latest rows for the selected predecessor, account, and key Scylla query failure",
+    "schema": [
+      {
+        "name": "value",
+        "description": "Raw JSON value as stored in FastData."
+      },
+      {
+        "name": "page_token",
+        "description": "Opaque pagination cursor for the next page. Absent when there are no more results."
+      }
+    ]
+  },
+  "kv-fastdata-v0-history-by-account": {
+    "description": "Fetch historical FastData rows for one target account across all predecessor accounts.",
+    "parameters": [
+      {
+        "name": "current_account_id",
+        "description": "Contract account whose FastData keys were written."
+      },
+      {
+        "name": "asc",
+        "description": "Sort ascending for history endpoints. Defaults to newest-first."
+      },
+      {
+        "name": "include_metadata",
+        "description": "Include receipt and signer metadata in each entry."
+      },
+      {
+        "name": "key",
+        "description": "Exact key filter. Mutually exclusive with `key_prefix`."
+      },
+      {
+        "name": "key_prefix",
+        "description": "Prefix filter for matching key namespaces."
+      },
+      {
+        "name": "limit",
+        "description": "Maximum number of entries to return in one page (1–200, default 50)."
+      },
+      {
+        "name": "page_token",
+        "description": "Opaque pagination cursor from a previous response for the same endpoint and filter set."
+      }
+    ],
+    "response": "Historical rows for the selected contract Invalid key filter or page token Scylla query failure",
+    "schema": [
+      {
+        "name": "value",
+        "description": "Raw JSON value as stored in FastData."
+      },
+      {
+        "name": "page_token",
+        "description": "Opaque pagination cursor for the next page. Absent when there are no more results."
+      }
+    ]
+  },
+  "kv-fastdata-v0-history-by-key": {
+    "description": "Fetch the historical values for a selected key across accounts and predecessors.",
+    "parameters": [
+      {
+        "name": "asc",
+        "description": "Sort ascending for history results. Defaults to newest-first."
+      },
+      {
+        "name": "include_metadata",
+        "description": "Include receipt and signer metadata in each entry."
+      },
+      {
+        "name": "key",
+        "description": "Exact key name to match across all accounts and predecessors."
+      },
+      {
+        "name": "limit",
+        "description": "Maximum number of entries to return in one page (1–200, default 50)."
+      },
+      {
+        "name": "page_token",
+        "description": "Opaque pagination cursor from a previous response for the same endpoint and filter set."
+      }
+    ],
+    "response": "Historical rows for the selected key Invalid key filter or page token Scylla query failure",
+    "schema": [
+      {
+        "name": "value",
+        "description": "Raw JSON value as stored in FastData."
+      },
+      {
+        "name": "page_token",
+        "description": "Opaque pagination cursor for the next page. Absent when there are no more results."
+      }
+    ]
+  },
+  "kv-fastdata-v0-history-by-predecessor": {
+    "description": "Fetch historical FastData rows for a single predecessor and target account.",
+    "parameters": [
+      {
+        "name": "current_account_id",
+        "description": "Contract account whose FastData keys were written."
+      },
+      {
+        "name": "predecessor_id",
+        "description": "Calling account that wrote the FastData keys."
+      },
+      {
+        "name": "asc",
+        "description": "Sort ascending for history endpoints. Defaults to newest-first."
+      },
+      {
+        "name": "include_metadata",
+        "description": "Include receipt and signer metadata in each entry."
+      },
+      {
+        "name": "key",
+        "description": "Exact key filter. Mutually exclusive with `key_prefix`."
+      },
+      {
+        "name": "key_prefix",
+        "description": "Prefix filter for matching key namespaces."
+      },
+      {
+        "name": "limit",
+        "description": "Maximum number of entries to return in one page (1–200, default 50)."
+      },
+      {
+        "name": "page_token",
+        "description": "Opaque pagination cursor from a previous response for the same endpoint and filter set."
+      }
+    ],
+    "response": "Historical rows for the selected predecessor and account Invalid key filter or page token Scylla query failure",
+    "schema": [
+      {
+        "name": "value",
+        "description": "Raw JSON value as stored in FastData."
+      },
+      {
+        "name": "page_token",
+        "description": "Opaque pagination cursor for the next page. Absent when there are no more results."
+      }
+    ]
+  },
+  "kv-fastdata-v0-latest-by-account": {
+    "description": "Fetch the latest FastData rows for one target account across all predecessor accounts.",
+    "parameters": [
+      {
+        "name": "current_account_id",
+        "description": "Contract account whose FastData keys were written."
+      },
+      {
+        "name": "include_metadata",
+        "description": "Include receipt and signer metadata in each entry."
+      },
+      {
+        "name": "key",
+        "description": "Exact key filter. Mutually exclusive with `key_prefix`."
+      },
+      {
+        "name": "key_prefix",
+        "description": "Prefix filter for matching key namespaces."
+      },
+      {
+        "name": "limit",
+        "description": "Maximum number of entries to return in one page (1–200, default 50)."
+      },
+      {
+        "name": "page_token",
+        "description": "Opaque pagination cursor from a previous response for the same endpoint and filter set."
+      }
+    ],
+    "response": "Latest rows for the selected contract Invalid key filter or page token Scylla query failure",
+    "schema": [
+      {
+        "name": "value",
+        "description": "Raw JSON value as stored in FastData."
+      },
+      {
+        "name": "page_token",
+        "description": "Opaque pagination cursor for the next page. Absent when there are no more results."
+      }
+    ]
+  },
+  "kv-fastdata-v0-latest-by-predecessor": {
+    "description": "Fetch the latest FastData rows for a single predecessor and target account.",
+    "parameters": [
+      {
+        "name": "current_account_id",
+        "description": "Contract account whose FastData keys were written."
+      },
+      {
+        "name": "predecessor_id",
+        "description": "Calling account that wrote the FastData keys."
+      },
+      {
+        "name": "include_metadata",
+        "description": "Include receipt and signer metadata in each entry."
+      },
+      {
+        "name": "key",
+        "description": "Exact key filter. Mutually exclusive with `key_prefix`."
+      },
+      {
+        "name": "key_prefix",
+        "description": "Prefix filter for matching key namespaces."
+      },
+      {
+        "name": "limit",
+        "description": "Maximum number of entries to return in one page (1–200, default 50)."
+      },
+      {
+        "name": "page_token",
+        "description": "Opaque pagination cursor from a previous response for the same endpoint and filter set."
+      }
+    ],
+    "response": "Latest rows for the selected predecessor and account Invalid key filter or page token Scylla query failure",
+    "schema": [
+      {
+        "name": "value",
+        "description": "Raw JSON value as stored in FastData."
+      },
+      {
+        "name": "page_token",
+        "description": "Opaque pagination cursor for the next page. Absent when there are no more results."
+      }
+    ]
+  },
+  "kv-fastdata-v0-multi": {
+    "description": "Fetch the latest FastData row for up to 100 keys in a single request.",
+    "parameters": [
+      {
+        "name": "include_metadata",
+        "description": "Include receipt and signer metadata in each entry."
+      },
+      {
+        "name": "keys",
+        "description": "Fully qualified keys in current_account_id/predecessor_id/key form."
+      }
+    ],
+    "response": "Latest rows for the requested keys Invalid key filter or page token Scylla query failure",
+    "schema": [
+      {
+        "name": "value",
+        "description": "Raw JSON value as stored in FastData."
+      }
+    ]
+  },
+  "neardata-system-health": {
+    "description": "Ping the neardata service for liveness — returns `{status: ok}` when healthy, errors otherwise.",
+    "parameters": [
+      {
+        "name": "apiKey",
+        "description": "Optional FastNEAR subscription API key. Invalid values may return `401` before redirect handling."
+      }
+    ],
+    "response": "Health payload Invalid or unauthorized API key Cache or internal data error"
+  },
+  "neardata-v0-block": {
+    "description": "Fetch a finalized block's full document at a chosen height — header plus every chunk and shard payload.",
+    "parameters": [
+      {
+        "name": "block_height",
+        "description": "NEAR block height to retrieve."
+      },
+      {
+        "name": "apiKey",
+        "description": "Optional FastNEAR subscription API key. Invalid values may return `401` before redirect handling."
+      }
+    ],
+    "response": "Requested document, or `null` when the selected slice is absent Redirect to a canonical archive or finalized block URL Invalid or unauthorized API key Structured block-height error Cache or internal data error"
+  },
+  "neardata-v0-block-chunk": {
+    "description": "Fetch one chunk — a single shard's transactions and incoming receipts — at a chosen block height.",
+    "parameters": [
+      {
+        "name": "block_height",
+        "description": "NEAR block height to retrieve."
+      },
+      {
+        "name": "shard_id",
+        "description": "Shard ID whose chunk should be returned."
+      },
+      {
+        "name": "apiKey",
+        "description": "Optional FastNEAR subscription API key. Invalid values may return `401` before redirect handling."
+      }
+    ],
+    "response": "Requested document, or `null` when the selected slice is absent Redirect to a canonical archive or finalized block URL Invalid or unauthorized API key Structured block-height error Cache or internal data error"
+  },
+  "neardata-v0-block-headers": {
+    "description": "Fetch only a finalized block's header and chunk summaries — no per-shard payload.",
+    "parameters": [
+      {
+        "name": "block_height",
+        "description": "NEAR block height to retrieve."
+      },
+      {
+        "name": "apiKey",
+        "description": "Optional FastNEAR subscription API key. Invalid values may return `401` before redirect handling."
+      }
+    ],
+    "response": "Requested document, or `null` when the selected slice is absent Redirect to a canonical archive or finalized block URL Invalid or unauthorized API key Structured block-height error Cache or internal data error"
+  },
+  "neardata-v0-block-optimistic": {
+    "description": "Fetch an optimistic (not-yet-final) block at a chosen height — may redirect once the optimistic window has finalized.",
+    "parameters": [
+      {
+        "name": "block_height",
+        "description": "NEAR block height to retrieve."
+      },
+      {
+        "name": "apiKey",
+        "description": "Optional FastNEAR subscription API key. Invalid values may return `401` before redirect handling."
+      }
+    ],
+    "response": "Requested document, or `null` when the selected slice is absent Redirect to a canonical archive or finalized block URL Invalid or unauthorized API key Structured block-height error Cache or internal data error"
+  },
+  "neardata-v0-block-shard": {
+    "description": "Fetch one shard's full payload at a chosen block — chunk plus state changes and produced receipts.",
+    "parameters": [
+      {
+        "name": "block_height",
+        "description": "NEAR block height to retrieve."
+      },
+      {
+        "name": "shard_id",
+        "description": "Shard ID to return."
+      },
+      {
+        "name": "apiKey",
+        "description": "Optional FastNEAR subscription API key. Invalid values may return `401` before redirect handling."
+      }
+    ],
+    "response": "Requested document, or `null` when the selected slice is absent Redirect to a canonical archive or finalized block URL Invalid or unauthorized API key Structured block-height error Cache or internal data error"
+  },
+  "neardata-v0-first-block": {
+    "description": "Redirect to the chain's first post-genesis block — a starting cursor for indexers backfilling from the beginning.",
+    "parameters": [
+      {
+        "name": "apiKey",
+        "description": "Optional FastNEAR subscription API key. Invalid values may return `401` before redirect handling."
+      }
+    ],
+    "response": "Full block document returned after automatic redirect following Redirect to the canonical first block URL Invalid or unauthorized API key"
+  },
+  "neardata-v0-last-block-final": {
+    "description": "Redirect to the most recent finalized block — the chain-tip cursor once consensus has settled.",
+    "parameters": [
+      {
+        "name": "apiKey",
+        "description": "Optional FastNEAR subscription API key. Invalid values may return `401` before redirect handling."
+      }
+    ],
+    "response": "Full block document returned after automatic redirect following Redirect to the latest block block URL Invalid or unauthorized API key Cache or internal data error"
+  },
+  "neardata-v0-last-block-optimistic": {
+    "description": "Redirect to the most recent optimistic block — the freshest-possible tip, ahead of final settlement.",
+    "parameters": [
+      {
+        "name": "apiKey",
+        "description": "Optional FastNEAR subscription API key. Invalid values may return `401` before redirect handling."
+      }
+    ],
+    "response": "Full block document returned after automatic redirect following Redirect to the latest block block URL Invalid or unauthorized API key Cache or internal data error"
+  },
+  "rpc-block-by-height": {
+    "description": "Fetch a block's header and chunk summaries by its height in the chain.",
+    "parameters": [
+      {
+        "name": "block_id",
+        "description": "Block height to query"
+      }
+    ],
+    "response": "Successful response"
+  },
+  "rpc-block-by-id": {
+    "description": "Fetch a block's header and chunk summaries by its Base58-encoded SHA-256 hash.",
+    "parameters": [
+      {
+        "name": "block_id",
+        "description": "Base58-encoded block hash"
+      }
+    ],
+    "response": "Successful response"
+  },
+  "rpc-block-effects": {
+    "description": "Summarize every state change in a block — which accounts, keys, and contract-state entries were touched.",
+    "parameters": [
+      {
+        "name": "block_id",
+        "description": "Block height (integer) or block hash (string)"
+      }
+    ],
+    "response": "Successful response",
+    "schema": [
+      {
+        "name": "block_hash",
+        "description": "Base58-encoded hash"
+      }
+    ]
+  },
+  "rpc-broadcast-tx-async": {
+    "description": "Submit a Base64-encoded signed transaction and immediately get its hash — no wait for execution.",
+    "parameters": [
+      {
+        "name": "signed_tx_base64",
+        "description": "Base64-encoded signed transaction"
+      },
+      {
+        "name": "wait_until",
+        "description": "Desired level of execution status guarantee"
+      }
+    ],
+    "response": "Successful response",
+    "schema": [
+      {
+        "name": "result",
+        "description": "Base58-encoded hash"
+      }
+    ]
+  },
+  "rpc-broadcast-tx-commit": {
+    "description": "Submit a Base64-encoded signed transaction and wait for its commit — the legacy synchronous send, superseded by `send_tx`.",
+    "parameters": [
+      {
+        "name": "signed_tx_base64",
+        "description": "Base64-encoded signed transaction"
+      },
+      {
+        "name": "wait_until",
+        "description": "Desired level of execution status guarantee"
+      }
+    ],
+    "response": "Successful response",
+    "schema": [
+      {
+        "name": "final_execution_status",
+        "description": "Desired level of execution status guarantee"
+      },
+      {
+        "name": "receipts",
+        "description": "Receipts generated from the transaction"
+      },
+      {
+        "name": "receipts_outcome",
+        "description": "The execution outcome of receipts."
+      },
+      {
+        "name": "status",
+        "description": "One of multiple possible types"
+      },
+      {
+        "name": "transaction",
+        "description": "Signed Transaction"
+      },
+      {
+        "name": "transaction_outcome",
+        "description": "The execution outcome of the signed transaction."
+      }
+    ]
+  },
+  "rpc-call-function": {
+    "description": "Invoke a contract view method without gas or state changes — reads computed values from contract logic.",
+    "parameters": [
+      {
+        "name": "account_id",
+        "description": "NEAR account ID"
+      },
+      {
+        "name": "args_base64",
+        "description": "Base64-encoded method arguments"
+      },
+      {
+        "name": "method_name",
+        "description": "Name of the contract view method to invoke."
+      }
+    ],
+    "response": "Successful response",
+    "schema": [
+      {
+        "name": "result",
+        "description": "A result returned by contract method"
+      }
+    ]
+  },
+  "rpc-changes": {
+    "description": "Fetch detailed state changes in a block — filter by account, key prefix, or change type.",
+    "response": "Successful response",
+    "schema": [
+      {
+        "name": "block_hash",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "cause",
+        "description": "One of multiple possible types"
+      }
+    ]
+  },
+  "rpc-chunk-by-block-shard": {
+    "description": "Fetch a single chunk's transactions and receipts by its parent block plus shard index.",
+    "parameters": [
+      {
+        "name": "block_id",
+        "description": "Block height (integer) or block hash (string)"
+      },
+      {
+        "name": "shard_id",
+        "description": "Shard identifier"
+      }
+    ],
+    "response": "Successful response",
+    "schema": [
+      {
+        "name": "author",
+        "description": "NEAR account ID"
+      },
+      {
+        "name": "header",
+        "description": "Contains main info about the chunk."
+      },
+      {
+        "name": "balance_burnt",
+        "description": "Amount in yoctoNEAR"
+      },
+      {
+        "name": "bandwidth_requests",
+        "description": "One of multiple possible types"
+      },
+      {
+        "name": "chunk_hash",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "congestion_info",
+        "description": "Stores the congestion level of a shard. More info about congestion [here](https://near.github.io/nearcore/architecture/how/receipt-congestion.html?highlight=congestion#receipt-congestion)"
+      },
+      {
+        "name": "encoded_merkle_root",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "gas_limit",
+        "description": "Gas amount"
+      },
+      {
+        "name": "gas_used",
+        "description": "Gas amount"
+      },
+      {
+        "name": "outcome_root",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "outgoing_receipts_root",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "prev_block_hash",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "prev_state_root",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "rent_paid",
+        "description": "Amount in yoctoNEAR"
+      },
+      {
+        "name": "shard_id",
+        "description": "Shard identifier"
+      },
+      {
+        "name": "signature",
+        "description": "Base58-encoded cryptographic signature"
+      },
+      {
+        "name": "tx_root",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "validator_reward",
+        "description": "Amount in yoctoNEAR"
+      }
+    ]
+  },
+  "rpc-chunk-by-hash": {
+    "description": "Fetch a single chunk's transactions and receipts by its Base58 content hash.",
+    "parameters": [
+      {
+        "name": "chunk_id",
+        "description": "Base58-encoded chunk hash"
+      }
+    ],
+    "response": "Successful response",
+    "schema": [
+      {
+        "name": "author",
+        "description": "NEAR account ID"
+      },
+      {
+        "name": "header",
+        "description": "Contains main info about the chunk."
+      },
+      {
+        "name": "balance_burnt",
+        "description": "Amount in yoctoNEAR"
+      },
+      {
+        "name": "bandwidth_requests",
+        "description": "One of multiple possible types"
+      },
+      {
+        "name": "chunk_hash",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "congestion_info",
+        "description": "Stores the congestion level of a shard. More info about congestion [here](https://near.github.io/nearcore/architecture/how/receipt-congestion.html?highlight=congestion#receipt-congestion)"
+      },
+      {
+        "name": "encoded_merkle_root",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "gas_limit",
+        "description": "Gas amount"
+      },
+      {
+        "name": "gas_used",
+        "description": "Gas amount"
+      },
+      {
+        "name": "outcome_root",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "outgoing_receipts_root",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "prev_block_hash",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "prev_state_root",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "rent_paid",
+        "description": "Amount in yoctoNEAR"
+      },
+      {
+        "name": "shard_id",
+        "description": "Shard identifier"
+      },
+      {
+        "name": "signature",
+        "description": "Base58-encoded cryptographic signature"
+      },
+      {
+        "name": "tx_root",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "validator_reward",
+        "description": "Amount in yoctoNEAR"
+      }
+    ]
+  },
+  "rpc-client-config": {
+    "description": "Fetch the node's own local client config — timeouts, retry settings, and operator-chosen parameters.",
+    "response": "Successful response",
+    "schema": [
+      {
+        "name": "result",
+        "description": "ClientConfig where some fields can be updated at runtime."
+      },
+      {
+        "name": "archive",
+        "description": "Not clear old data, set `true` for archive nodes."
+      },
+      {
+        "name": "block_fetch_horizon",
+        "description": "Horizon at which instead of fetching block, fetch full state."
+      },
+      {
+        "name": "block_header_fetch_horizon",
+        "description": "Behind this horizon header fetch kicks in."
+      },
+      {
+        "name": "block_production_tracking_delay",
+        "description": "Duration to check for producing / skipping block."
+      },
+      {
+        "name": "catchup_step_period",
+        "description": "Time between check to perform catchup."
+      },
+      {
+        "name": "chain_id",
+        "description": "Chain id for status."
+      },
+      {
+        "name": "chunk_distribution_network",
+        "description": "Config for the Chunk Distribution Network feature. This allows nodes to push and pull chunks from a central stream. The two benefits of this approach are: (1) less request/response traffic on the peer-to-peer network and (2) lower latency for RPC nodes indexing the chain."
+      },
+      {
+        "name": "uris",
+        "description": "URIs for the Chunk Distribution Network feature."
+      },
+      {
+        "name": "chunk_request_retry_period",
+        "description": "Time between checking to re-request chunks."
+      },
+      {
+        "name": "chunk_validation_threads",
+        "description": "Number of threads for ChunkValidationActor pool."
+      },
+      {
+        "name": "chunk_wait_mult",
+        "description": "Multiplier for the wait time for all chunks to be received."
+      },
+      {
+        "name": "chunks_cache_height_horizon",
+        "description": "Height horizon for the chunk cache. A chunk is removed from the cache if its height + chunks_cache_height_horizon < largest_seen_height. The default value is DEFAULT_CHUNKS_CACHE_HEIGHT_HORIZON."
+      },
+      {
+        "name": "client_background_migration_threads",
+        "description": "Number of threads to execute background migration work in client."
+      },
+      {
+        "name": "cloud_archival_writer",
+        "description": "Configuration for a cloud-based archival writer. If this config is present, the writer is enabled and writes chunk-related data based on the tracked shards. This config also controls additional archival behavior such as block data and polling interval."
+      },
+      {
+        "name": "archive_block_data",
+        "description": "Determines whether block-related data should be written to cloud storage."
+      },
+      {
+        "name": "polling_interval",
+        "description": "Interval at which the system checks for new blocks or chunks to archive."
+      },
+      {
+        "name": "disable_tx_routing",
+        "description": "If true, the node won't forward transactions to next the chunk producers."
+      },
+      {
+        "name": "doomslug_step_period",
+        "description": "Time between running doomslug timer."
+      },
+      {
+        "name": "enable_early_prepare_transactions",
+        "description": "If true, transactions for the next chunk will be prepared early, right after the previous chunk's post-state is ready. This can help produce chunks faster, for high-throughput chains. The current implementation increases latency on low-load chains, which will be fixed in the future. The default is disabled."
+      },
+      {
+        "name": "enable_statistics_export",
+        "description": "Re-export storage layer statistics as prometheus metrics."
+      },
+      {
+        "name": "epoch_length",
+        "description": "Epoch length."
+      },
+      {
+        "name": "epoch_sync",
+        "description": "Options for epoch sync."
+      },
+      {
+        "name": "epoch_sync_horizon_num_epochs",
+        "description": "Number of epochs behind the network head beyond which the node will use epoch sync instead of header sync. At the consumption site, this is multiplied by epoch_length to get the horizon in blocks."
+      },
+      {
+        "name": "timeout_for_epoch_sync",
+        "description": "Timeout for epoch sync requests. The node will continue retrying indefinitely even if this timeout is exceeded."
+      },
+      {
+        "name": "expected_shutdown",
+        "description": "Graceful shutdown at expected block height."
+      },
+      {
+        "name": "gc",
+        "description": "Configuration for garbage collection."
+      },
+      {
+        "name": "gc_blocks_limit",
+        "description": "Maximum number of blocks to garbage collect at every garbage collection call."
+      },
+      {
+        "name": "gc_fork_clean_step",
+        "description": "Maximum number of height to go through at each garbage collection step when cleaning forks during garbage collection."
+      },
+      {
+        "name": "gc_num_epochs_to_keep",
+        "description": "Number of epochs for which we keep store data."
+      },
+      {
+        "name": "gc_step_period",
+        "description": "How often gc should be run"
+      },
+      {
+        "name": "header_sync_expected_height_per_second",
+        "description": "Expected increase of header head height per second during header sync"
+      },
+      {
+        "name": "header_sync_initial_timeout",
+        "description": "How much time to wait after initial header sync"
+      },
+      {
+        "name": "header_sync_progress_timeout",
+        "description": "How much time to wait after some progress is made in header sync"
+      },
+      {
+        "name": "header_sync_stall_ban_timeout",
+        "description": "How much time to wait before banning a peer in header sync if sync is too slow"
+      },
+      {
+        "name": "log_summary_period",
+        "description": "Period between logging summary information."
+      },
+      {
+        "name": "log_summary_style",
+        "description": "Enable coloring of the logs"
+      },
+      {
+        "name": "max_block_production_delay",
+        "description": "Maximum wait for approvals before producing block."
+      },
+      {
+        "name": "max_block_wait_delay",
+        "description": "Maximum duration before skipping given height."
+      },
+      {
+        "name": "max_gas_burnt_view",
+        "description": "Gas amount"
+      },
+      {
+        "name": "min_block_production_delay",
+        "description": "Minimum duration before producing block."
+      },
+      {
+        "name": "min_num_peers",
+        "description": "Minimum number of peers to start syncing."
+      },
+      {
+        "name": "num_block_producer_seats",
+        "description": "Number of block producer seats"
+      },
+      {
+        "name": "orphan_state_witness_max_size",
+        "description": "Maximum size of state witnesses in the OrphanStateWitnessPool. We keep only orphan witnesses which are smaller than this size. This limits the maximum memory usage of OrphanStateWitnessPool."
+      },
+      {
+        "name": "orphan_state_witness_pool_size",
+        "description": "OrphanStateWitnessPool keeps instances of ChunkStateWitness which can't be processed because the previous block isn't available. The witnesses wait in the pool until the required block appears. This variable controls how many witnesses can be stored in the pool."
+      },
+      {
+        "name": "produce_chunk_add_transactions_time_limit",
+        "description": "Limit the time of adding transactions to a chunk. A node produces a chunk by adding transactions from the transaction pool until some limit is reached. This time limit ensures that adding transactions won't take longer than the specified duration, which helps to produce the chunk quickly."
+      },
+      {
+        "name": "produce_empty_blocks",
+        "description": "Produce empty blocks, use `false` for testing."
+      },
+      {
+        "name": "protocol_version_check",
+        "description": "Configures whether the node checks the next or the next next epoch for network version compatibility."
+      },
+      {
+        "name": "rpc_addr",
+        "description": "Listening rpc port for status."
+      },
+      {
+        "name": "save_invalid_witnesses",
+        "description": "Save observed instances of invalid ChunkStateWitness to the database in DBCol::InvalidChunkStateWitnesses. Saving invalid witnesses is useful for analysis and debugging. This option can cause extra load on the database and is not recommended for production use."
+      },
+      {
+        "name": "save_latest_witnesses",
+        "description": "Save observed instances of ChunkStateWitness to the database in DBCol::LatestChunkStateWitnesses. Saving the latest witnesses is useful for analysis and debugging. This option can cause extra load on the database and is not recommended for production use."
+      },
+      {
+        "name": "save_state_changes",
+        "description": "Whether to persist state changes on disk or not."
+      },
+      {
+        "name": "save_trie_changes",
+        "description": "save_trie_changes should be set to true iff - archive if false - non-archival nodes need trie changes to perform garbage collection - archive is true, cold_store is configured and migration to split_storage is finished - node working in split storage mode needs trie changes in order to do garbage collection on hot."
+      },
+      {
+        "name": "save_tx_outcomes",
+        "description": "Whether to persist transaction outcomes to disk or not."
+      },
+      {
+        "name": "save_untracked_partial_chunks_parts",
+        "description": "Whether to persist partial chunk parts for untracked shards or not."
+      },
+      {
+        "name": "skip_sync_wait",
+        "description": "Skip waiting for sync (for testing or single node testnet)."
+      },
+      {
+        "name": "state_request_server_threads",
+        "description": "Number of threads for StateRequestActor pool."
+      },
+      {
+        "name": "state_request_throttle_period",
+        "description": "Number of seconds between state requests for view client. Throttling window for state requests (headers and parts)."
+      },
+      {
+        "name": "state_requests_per_throttle_period",
+        "description": "Maximum number of state requests served per throttle period"
+      },
+      {
+        "name": "state_sync",
+        "description": "Options for syncing state."
+      },
+      {
+        "name": "dump",
+        "description": "Configures how to dump state to external storage."
+      },
+      {
+        "name": "parts_compression_lvl",
+        "description": "Zstd compression level for state parts."
+      },
+      {
+        "name": "sync",
+        "description": "Syncs state from the peers without reading anything from external storage."
+      },
+      {
+        "name": "state_sync_enabled",
+        "description": "Whether to use the State Sync mechanism. If disabled, the node will do Block Sync instead of State Sync."
+      },
+      {
+        "name": "state_sync_external_backoff",
+        "description": "Additional waiting period after a failed request to external storage"
+      },
+      {
+        "name": "state_sync_external_timeout",
+        "description": "How long to wait for a response from centralized state sync"
+      },
+      {
+        "name": "state_sync_p2p_timeout",
+        "description": "How long to wait for a response from p2p state sync"
+      },
+      {
+        "name": "state_sync_retry_backoff",
+        "description": "How long to wait after a failed state sync request"
+      },
+      {
+        "name": "sync_check_period",
+        "description": "How often to check that we are not out of sync."
+      },
+      {
+        "name": "sync_height_threshold",
+        "description": "Sync height threshold: below this difference in height don't start syncing."
+      },
+      {
+        "name": "sync_max_block_requests",
+        "description": "Maximum number of block requests to send to peers to sync"
+      },
+      {
+        "name": "sync_step_period",
+        "description": "While syncing, how long to check for each step."
+      },
+      {
+        "name": "tracked_shards_config",
+        "description": "One of multiple possible types"
+      },
+      {
+        "name": "transaction_pool_size_limit",
+        "description": "Limit of the size of per-shard transaction pool measured in bytes. If not set, the size will be unbounded."
+      },
+      {
+        "name": "trie_viewer_state_size_limit",
+        "description": "Upper bound of the byte size of contract state that is still viewable. None is no limit"
+      },
+      {
+        "name": "ttl_account_id_router",
+        "description": "Time to persist Accounts Id in the router without removing them."
+      },
+      {
+        "name": "tx_routing_height_horizon",
+        "description": "If the node is not a chunk producer within that many blocks, then route to upcoming chunk producers."
+      },
+      {
+        "name": "version",
+        "description": "Data structure for semver version and github tag or commit."
+      },
+      {
+        "name": "view_client_threads",
+        "description": "Number of threads for ViewClientActor pool."
+      },
+      {
+        "name": "dynamic_resharding_dry_run",
+        "description": "If true, the runtime will do a dynamic resharding 'dry run' at the last block of each epoch. This means calculating tentative boundary accounts for splitting the tracked shards."
+      }
+    ]
+  },
+  "rpc-EXPERIMENTAL-congestion-level": {
+    "description": "Measure a single shard's congestion pressure at a chosen block — a 0.0-to-1.0 saturation score.",
+    "parameters": [
+      {
+        "name": "block_id",
+        "description": "Block height (integer) or block hash (string)"
+      },
+      {
+        "name": "shard_id",
+        "description": "Shard identifier"
+      }
+    ],
+    "response": "Successful response"
+  },
+  "rpc-EXPERIMENTAL-light-client-block-proof": {
+    "description": "Fetch a Merkle proof — by Base58 block and light-client-head hashes — that the block is included in the light client's verified chain.",
+    "parameters": [
+      {
+        "name": "block_hash",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "light_client_head",
+        "description": "Base58-encoded hash"
+      }
+    ],
+    "response": "Successful response",
+    "schema": [
+      {
+        "name": "inner_lite",
+        "description": "A part of a state for the current head of a light client. More info [here](https://nomicon.io/ChainSpec/LightClient)."
+      },
+      {
+        "name": "inner_rest_hash",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "prev_block_hash",
+        "description": "Base58-encoded hash"
+      }
+    ]
+  },
+  "rpc-EXPERIMENTAL-light-client-proof": {
+    "description": "Fetch a Merkle proof of transaction or receipt inclusion by Base58 ID — the EXPERIMENTAL alias of `light_client_proof`.",
+    "parameters": [
+      {
+        "name": "light_client_head",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "sender_id",
+        "description": "NEAR account ID"
+      },
+      {
+        "name": "transaction_hash",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "type",
+        "description": "Proof subject — `receipt` proves inclusion of a specific receipt produced during execution."
+      },
+      {
+        "name": "receipt_id",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "receiver_id",
+        "description": "NEAR account ID"
+      }
+    ],
+    "response": "Successful response",
+    "schema": [
+      {
+        "name": "inner_lite",
+        "description": "A part of a state for the current head of a light client. More info [here](https://nomicon.io/ChainSpec/LightClient)."
+      },
+      {
+        "name": "inner_rest_hash",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "prev_block_hash",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "block_hash",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "id",
+        "description": "Base58-encoded hash"
+      }
+    ]
+  },
+  "rpc-EXPERIMENTAL-protocol-config": {
+    "description": "Fetch the runtime protocol config at a chosen block — gas costs, storage prices, and limits currently in force.",
+    "response": "Successful response",
+    "schema": [
+      {
+        "name": "avg_hidden_validator_seats_per_shard",
+        "description": "Expected number of hidden validators per shard."
+      },
+      {
+        "name": "block_producer_kickout_threshold",
+        "description": "Threshold for kicking out block producers, between 0 and 100."
+      },
+      {
+        "name": "chain_id",
+        "description": "ID of the blockchain. This must be unique for every blockchain. If your testnet blockchains do not have unique chain IDs, you will have a bad time."
+      },
+      {
+        "name": "chunk_producer_kickout_threshold",
+        "description": "Threshold for kicking out chunk producers, between 0 and 100."
+      },
+      {
+        "name": "chunk_validator_only_kickout_threshold",
+        "description": "Threshold for kicking out nodes which are only chunk validators, between 0 and 100."
+      },
+      {
+        "name": "dynamic_resharding",
+        "description": "Enable dynamic re-sharding."
+      },
+      {
+        "name": "epoch_length",
+        "description": "Epoch length counted in block heights."
+      },
+      {
+        "name": "fishermen_threshold",
+        "description": "Amount in yoctoNEAR"
+      },
+      {
+        "name": "gas_limit",
+        "description": "Gas amount"
+      },
+      {
+        "name": "gas_price_adjustment_rate",
+        "description": "Gas price adjustment rate"
+      },
+      {
+        "name": "genesis_height",
+        "description": "Height of genesis block."
+      },
+      {
+        "name": "genesis_time",
+        "description": "Official time of blockchain start."
+      },
+      {
+        "name": "max_gas_price",
+        "description": "Amount in yoctoNEAR"
+      },
+      {
+        "name": "max_inflation_rate",
+        "description": "Maximum inflation on the total supply every epoch."
+      },
+      {
+        "name": "max_kickout_stake_perc",
+        "description": "Max stake percentage of the validators we will kick out."
+      },
+      {
+        "name": "min_gas_price",
+        "description": "Amount in yoctoNEAR"
+      },
+      {
+        "name": "minimum_stake_divisor",
+        "description": "The minimum stake required for staking is last seat price divided by this number."
+      },
+      {
+        "name": "minimum_stake_ratio",
+        "description": "The lowest ratio s/s_total any block producer can have. See <https://github.com/near/NEPs/pull/167> for details"
+      },
+      {
+        "name": "minimum_validators_per_shard",
+        "description": "The minimum number of validators each shard must have"
+      },
+      {
+        "name": "num_block_producer_seats",
+        "description": "Number of block producer seats at genesis."
+      },
+      {
+        "name": "num_block_producer_seats_per_shard",
+        "description": "Defines number of shards and number of block producer seats per each shard at genesis."
+      },
+      {
+        "name": "num_blocks_per_year",
+        "description": "Expected number of blocks per year"
+      },
+      {
+        "name": "online_max_threshold",
+        "description": "Online maximum threshold above which validator gets full reward."
+      },
+      {
+        "name": "online_min_threshold",
+        "description": "Online minimum threshold below which validator doesn't receive reward."
+      },
+      {
+        "name": "protocol_reward_rate",
+        "description": "Protocol treasury rate"
+      },
+      {
+        "name": "protocol_treasury_account",
+        "description": "NEAR account ID"
+      },
+      {
+        "name": "protocol_upgrade_stake_threshold",
+        "description": "Threshold of stake that needs to indicate that they ready for upgrade."
+      },
+      {
+        "name": "protocol_version",
+        "description": "Current Protocol Version"
+      },
+      {
+        "name": "runtime_config",
+        "description": "View that preserves JSON format of the runtime config."
+      },
+      {
+        "name": "account_creation_config",
+        "description": "The structure describes configuration for creation of new accounts."
+      },
+      {
+        "name": "congestion_control_config",
+        "description": "The configuration for congestion control. More info about congestion [here](https://near.github.io/nearcore/architecture/how/receipt-congestion.html?highlight=congestion#receipt-congestion)"
+      },
+      {
+        "name": "storage_amount_per_byte",
+        "description": "Amount in yoctoNEAR"
+      },
+      {
+        "name": "transaction_costs",
+        "description": "Describes different fees for the runtime"
+      },
+      {
+        "name": "wasm_config",
+        "description": "Config of wasm operations."
+      },
+      {
+        "name": "witness_config",
+        "description": "Configuration specific to ChunkStateWitness."
+      },
+      {
+        "name": "shard_layout",
+        "description": "One of multiple possible types"
+      },
+      {
+        "name": "shuffle_shard_assignment_for_chunk_producers",
+        "description": "If true, shuffle the chunk producers across shards. In other words, if the shard assignments were `[S_0, S_1, S_2, S_3]` where `S_i` represents the set of chunk producers for shard `i`, if this flag were true, the shard assignments might become, for example, `[S_2, S_0, S_3, S_1]`."
+      },
+      {
+        "name": "target_validator_mandates_per_shard",
+        "description": "Number of target chunk validator mandates for each shard."
+      },
+      {
+        "name": "transaction_validity_period",
+        "description": "Number of blocks for which a given transaction is valid"
+      }
+    ]
+  },
+  "rpc-EXPERIMENTAL-receipt": {
+    "description": "Fetch a single receipt by Base58 ID — the cross-shard execution unit a transaction produces.",
+    "parameters": [
+      {
+        "name": "receipt_id",
+        "description": "Base58-encoded hash"
+      }
+    ],
+    "response": "Successful response",
+    "schema": [
+      {
+        "name": "predecessor_id",
+        "description": "NEAR account ID"
+      },
+      {
+        "name": "priority",
+        "description": "Deprecated, retained for backward compatibility."
+      },
+      {
+        "name": "receipt",
+        "description": "One of multiple possible types"
+      },
+      {
+        "name": "receipt_id",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "receiver_id",
+        "description": "NEAR account ID"
+      }
+    ]
+  },
+  "rpc-EXPERIMENTAL-split-storage-info": {
+    "description": "Inspect a node's split-storage layout — the boundary between hot recent data and cold archival data.",
+    "response": "Successful response",
+    "schema": [
+      {
+        "name": "result",
+        "description": "Contains the split storage information."
+      }
+    ]
+  },
+  "rpc-EXPERIMENTAL-tx-status": {
+    "description": "Fetch a transaction's full receipt tree and per-receipt outcomes by Base58 hash — richer than `tx_status`.",
+    "parameters": [
+      {
+        "name": "wait_until",
+        "description": "Desired level of execution status guarantee"
+      },
+      {
+        "name": "signed_tx_base64",
+        "description": "Base64-encoded signed transaction"
+      },
+      {
+        "name": "sender_account_id",
+        "description": "NEAR account ID"
+      },
+      {
+        "name": "tx_hash",
+        "description": "Base58-encoded hash"
+      }
+    ],
+    "response": "Successful response",
+    "schema": [
+      {
+        "name": "final_execution_status",
+        "description": "Desired level of execution status guarantee"
+      },
+      {
+        "name": "receipts",
+        "description": "Receipts generated from the transaction"
+      },
+      {
+        "name": "receipts_outcome",
+        "description": "The execution outcome of receipts."
+      },
+      {
+        "name": "status",
+        "description": "One of multiple possible types"
+      },
+      {
+        "name": "transaction",
+        "description": "Signed Transaction"
+      },
+      {
+        "name": "transaction_outcome",
+        "description": "The execution outcome of the signed transaction."
+      }
+    ]
+  },
+  "rpc-EXPERIMENTAL-validators-ordered": {
+    "description": "List validators ordered by stake size at a chosen block — broader than just the current active set.",
+    "parameters": [
+      {
+        "name": "block_id",
+        "description": "Block height (integer) or block hash (string)"
+      }
+    ],
+    "response": "Successful response"
+  },
+  "rpc-gas-price": {
+    "description": "Fetch the current chain-wide gas price for the most recent block.",
+    "response": "Successful response",
+    "schema": [
+      {
+        "name": "gas_price",
+        "description": "Amount in yoctoNEAR"
+      }
+    ]
+  },
+  "rpc-gas-price-by-block": {
+    "description": "Fetch the chain-wide gas price at a chosen historical block, by height or hash.",
+    "parameters": [
+      {
+        "name": "block_id",
+        "description": "Block height (integer) or block hash (string)"
+      }
+    ],
+    "response": "Successful response",
+    "schema": [
+      {
+        "name": "gas_price",
+        "description": "Amount in yoctoNEAR"
+      }
+    ]
+  },
+  "rpc-genesis-config": {
+    "description": "Fetch the chain's immutable genesis config — initial records, protocol settings, and epoch length at block 0.",
+    "response": "Successful response",
+    "schema": [
+      {
+        "name": "avg_hidden_validator_seats_per_shard",
+        "description": "Expected number of hidden validators per shard."
+      },
+      {
+        "name": "block_producer_kickout_threshold",
+        "description": "Threshold for kicking out block producers, between 0 and 100."
+      },
+      {
+        "name": "chain_id",
+        "description": "ID of the blockchain. This must be unique for every blockchain. If your testnet blockchains do not have unique chain IDs, you will have a bad time."
+      },
+      {
+        "name": "chunk_producer_assignment_changes_limit",
+        "description": "Limits the number of shard changes in chunk producer assignments, if algorithm is able to choose assignment with better balance of number of chunk producers for shards."
+      },
+      {
+        "name": "chunk_producer_kickout_threshold",
+        "description": "Threshold for kicking out chunk producers, between 0 and 100."
+      },
+      {
+        "name": "chunk_validator_only_kickout_threshold",
+        "description": "Threshold for kicking out nodes which are only chunk validators, between 0 and 100."
+      },
+      {
+        "name": "dynamic_resharding",
+        "description": "Enable dynamic re-sharding."
+      },
+      {
+        "name": "epoch_length",
+        "description": "Epoch length counted in block heights."
+      },
+      {
+        "name": "fishermen_threshold",
+        "description": "Amount in yoctoNEAR"
+      },
+      {
+        "name": "gas_limit",
+        "description": "Gas amount"
+      },
+      {
+        "name": "gas_price_adjustment_rate",
+        "description": "Gas price adjustment rate"
+      },
+      {
+        "name": "genesis_height",
+        "description": "Height of genesis block."
+      },
+      {
+        "name": "genesis_time",
+        "description": "Official time of blockchain start."
+      },
+      {
+        "name": "max_gas_price",
+        "description": "Amount in yoctoNEAR"
+      },
+      {
+        "name": "max_inflation_rate",
+        "description": "Maximum inflation on the total supply every epoch."
+      },
+      {
+        "name": "max_kickout_stake_perc",
+        "description": "Max stake percentage of the validators we will kick out."
+      },
+      {
+        "name": "min_gas_price",
+        "description": "Amount in yoctoNEAR"
+      },
+      {
+        "name": "minimum_stake_divisor",
+        "description": "The minimum stake required for staking is last seat price divided by this number."
+      },
+      {
+        "name": "minimum_stake_ratio",
+        "description": "The lowest ratio s/s_total any block producer can have. See <https://github.com/near/NEPs/pull/167> for details"
+      },
+      {
+        "name": "minimum_validators_per_shard",
+        "description": "The minimum number of validators each shard must have"
+      },
+      {
+        "name": "num_block_producer_seats",
+        "description": "Number of block producer seats at genesis."
+      },
+      {
+        "name": "num_block_producer_seats_per_shard",
+        "description": "Defines number of shards and number of block producer seats per each shard at genesis. Note: not used with protocol_feature_chunk_only_producers -- replaced by minimum_validators_per_shard Note: not used before as all block producers produce chunks for all shards"
+      },
+      {
+        "name": "num_blocks_per_year",
+        "description": "Expected number of blocks per year"
+      },
+      {
+        "name": "num_chunk_only_producer_seats",
+        "description": "Deprecated."
+      },
+      {
+        "name": "num_chunk_producer_seats",
+        "description": "Number of chunk producers. Don't mess it up with chunk-only producers feature which is deprecated."
+      },
+      {
+        "name": "online_max_threshold",
+        "description": "Online maximum threshold above which validator gets full reward."
+      },
+      {
+        "name": "online_min_threshold",
+        "description": "Online minimum threshold below which validator doesn't receive reward."
+      },
+      {
+        "name": "protocol_reward_rate",
+        "description": "Protocol treasury rate"
+      },
+      {
+        "name": "protocol_treasury_account",
+        "description": "NEAR account ID"
+      },
+      {
+        "name": "protocol_upgrade_stake_threshold",
+        "description": "Threshold of stake that needs to indicate that they ready for upgrade."
+      },
+      {
+        "name": "protocol_version",
+        "description": "Protocol version that this genesis works with."
+      },
+      {
+        "name": "shard_layout",
+        "description": "One of multiple possible types"
+      },
+      {
+        "name": "shuffle_shard_assignment_for_chunk_producers",
+        "description": "If true, shuffle the chunk producers across shards. In other words, if the shard assignments were `[S_0, S_1, S_2, S_3]` where `S_i` represents the set of chunk producers for shard `i`, if this flag were true, the shard assignments might become, for example, `[S_2, S_0, S_3, S_1]`."
+      },
+      {
+        "name": "target_validator_mandates_per_shard",
+        "description": "Number of target chunk validator mandates for each shard."
+      },
+      {
+        "name": "total_supply",
+        "description": "Amount in yoctoNEAR"
+      },
+      {
+        "name": "transaction_validity_period",
+        "description": "Number of blocks for which a given transaction is valid"
+      },
+      {
+        "name": "use_production_config",
+        "description": "This is only for test purposes. We hard code some configs for mainnet and testnet in AllEpochConfig, and we want to have a way to test that code path. This flag is for that. If set to true, the node will use the same config override path as mainnet and testnet."
+      },
+      {
+        "name": "validators",
+        "description": "List of initial validators."
+      }
+    ]
+  },
+  "rpc-health": {
+    "description": "Ping a node for liveness — returns `null` on success, an error on unhealthy state.",
+    "response": "Successful response",
+    "schema": [
+      {
+        "name": "result",
+        "description": "Health status of the node"
+      }
+    ]
+  },
+  "rpc-latest-block": {
+    "description": "Fetch the latest final block — finality set automatically, no block ID needed.",
+    "response": "Successful response"
+  },
+  "rpc-light-client-proof": {
+    "description": "Fetch a Merkle proof — by Base58 transaction or receipt ID — that the item was included and executed, suitable for light-client verification.",
+    "parameters": [
+      {
+        "name": "light_client_head",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "sender_id",
+        "description": "NEAR account ID"
+      },
+      {
+        "name": "transaction_hash",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "type",
+        "description": "Proof subject — `receipt` proves inclusion of a specific receipt produced during execution."
+      },
+      {
+        "name": "receipt_id",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "receiver_id",
+        "description": "NEAR account ID"
+      }
+    ],
+    "response": "Successful response",
+    "schema": [
+      {
+        "name": "inner_lite",
+        "description": "A part of a state for the current head of a light client. More info [here](https://nomicon.io/ChainSpec/LightClient)."
+      },
+      {
+        "name": "inner_rest_hash",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "prev_block_hash",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "block_hash",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "id",
+        "description": "Base58-encoded hash"
+      }
+    ]
+  },
+  "rpc-maintenance-windows": {
+    "description": "Find upcoming block ranges where a validator can safely restart without missing block production.",
+    "parameters": [
+      {
+        "name": "account_id",
+        "description": "NEAR account ID"
+      }
+    ],
+    "response": "Successful response"
+  },
+  "rpc-metrics": {
+    "description": "Retrieves Prometheus-format node metrics from the HTTP `/metrics` endpoint. Requires an API key.",
+    "response": "Successful response Missing or invalid API key"
+  },
+  "rpc-network-info": {
+    "description": "List the node's active peer connections and the block producers it currently tracks.",
+    "response": "Successful response",
+    "schema": [
+      {
+        "name": "known_producers",
+        "description": "Accounts of known block and chunk producers from routing table."
+      }
+    ]
+  },
+  "rpc-next-light-client-block": {
+    "description": "Advance a light client's verified chain by fetching the next block header after a known Base58 head hash.",
+    "parameters": [
+      {
+        "name": "last_block_hash",
+        "description": "Base58-encoded hash"
+      }
+    ],
+    "response": "Successful response",
+    "schema": [
+      {
+        "name": "result",
+        "description": "A state for the current head of a light client. More info [here](https://nomicon.io/ChainSpec/LightClient)."
+      },
+      {
+        "name": "inner_lite",
+        "description": "A part of a state for the current head of a light client. More info [here](https://nomicon.io/ChainSpec/LightClient)."
+      },
+      {
+        "name": "block_merkle_root",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "epoch_id",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "next_bp_hash",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "next_epoch_id",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "outcome_root",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "prev_state_root",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "timestamp",
+        "description": "Legacy json number. Should not be used."
+      },
+      {
+        "name": "inner_rest_hash",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "next_block_inner_hash",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "prev_block_hash",
+        "description": "Base58-encoded hash"
+      }
+    ]
+  },
+  "rpc-send-tx": {
+    "description": "Submit a Base64-encoded signed transaction and wait for its final execution outcome — the current synchronous send.",
+    "parameters": [
+      {
+        "name": "signed_tx_base64",
+        "description": "Base64-encoded signed transaction"
+      },
+      {
+        "name": "wait_until",
+        "description": "Desired level of execution status guarantee"
+      }
+    ],
+    "response": "Successful response",
+    "schema": [
+      {
+        "name": "final_execution_status",
+        "description": "Desired level of execution status guarantee"
+      },
+      {
+        "name": "receipts",
+        "description": "Receipts generated from the transaction"
+      },
+      {
+        "name": "receipts_outcome",
+        "description": "The execution outcome of receipts."
+      },
+      {
+        "name": "status",
+        "description": "One of multiple possible types"
+      },
+      {
+        "name": "transaction",
+        "description": "Signed Transaction"
+      },
+      {
+        "name": "transaction_outcome",
+        "description": "The execution outcome of the signed transaction."
+      }
+    ]
+  },
+  "rpc-status": {
+    "description": "Fetch a node's binary version, sync progress, and head block in one snapshot.",
+    "response": "Successful response",
+    "schema": [
+      {
+        "name": "chain_id",
+        "description": "Unique chain id."
+      },
+      {
+        "name": "current_head_status",
+        "description": "Height and hash of a block"
+      },
+      {
+        "name": "current_header_head_status",
+        "description": "Height and hash of a block"
+      },
+      {
+        "name": "genesis_hash",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "latest_protocol_version",
+        "description": "Latest protocol version that this client supports."
+      },
+      {
+        "name": "node_key",
+        "description": "ed25519: or secp256k1: prefixed public key"
+      },
+      {
+        "name": "node_public_key",
+        "description": "ed25519: or secp256k1: prefixed public key"
+      },
+      {
+        "name": "protocol_version",
+        "description": "Currently active protocol version."
+      },
+      {
+        "name": "rpc_addr",
+        "description": "Address for RPC server. None if node doesn't have RPC endpoint enabled."
+      },
+      {
+        "name": "sync_info",
+        "description": "Sync status of the node."
+      },
+      {
+        "name": "earliest_block_hash",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "epoch_id",
+        "description": "Base58-encoded epoch identifier hash"
+      },
+      {
+        "name": "latest_block_hash",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "latest_state_root",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "uptime_sec",
+        "description": "Uptime of the node."
+      },
+      {
+        "name": "validator_account_id",
+        "description": "NEAR account ID"
+      },
+      {
+        "name": "validator_public_key",
+        "description": "ed25519: or secp256k1: prefixed public key"
+      },
+      {
+        "name": "validators",
+        "description": "Current epoch validators."
+      },
+      {
+        "name": "version",
+        "description": "Data structure for semver version and github tag or commit."
+      }
+    ]
+  },
+  "rpc-tx-status": {
+    "description": "Check a transaction's final outcome by Base58 hash — succeeded, failed, or still unresolved.",
+    "parameters": [
+      {
+        "name": "wait_until",
+        "description": "Desired level of execution status guarantee"
+      },
+      {
+        "name": "signed_tx_base64",
+        "description": "Base64-encoded signed transaction"
+      },
+      {
+        "name": "sender_account_id",
+        "description": "NEAR account ID"
+      },
+      {
+        "name": "tx_hash",
+        "description": "Base58-encoded hash"
+      }
+    ],
+    "response": "Successful response",
+    "schema": [
+      {
+        "name": "final_execution_status",
+        "description": "Desired level of execution status guarantee"
+      },
+      {
+        "name": "receipts",
+        "description": "Receipts generated from the transaction"
+      },
+      {
+        "name": "receipts_outcome",
+        "description": "The execution outcome of receipts."
+      },
+      {
+        "name": "status",
+        "description": "One of multiple possible types"
+      },
+      {
+        "name": "transaction",
+        "description": "Signed Transaction"
+      },
+      {
+        "name": "transaction_outcome",
+        "description": "The execution outcome of the signed transaction."
+      }
+    ]
+  },
+  "rpc-validators-by-epoch": {
+    "description": "Fetch the validator set for a chosen past epoch, selected by epoch-start block height or Base58 epoch-id hash.",
+    "parameters": [
+      {
+        "name": "epoch_id",
+        "description": "Base58-encoded epoch identifier hash"
+      }
+    ],
+    "response": "Successful response",
+    "schema": [
+      {
+        "name": "result",
+        "description": "Information about this epoch validators and next epoch validators"
+      },
+      {
+        "name": "current_fishermen",
+        "description": "Fishermen for the current epoch"
+      },
+      {
+        "name": "current_proposals",
+        "description": "Proposals in the current epoch"
+      },
+      {
+        "name": "current_validators",
+        "description": "Validators for the current epoch"
+      },
+      {
+        "name": "epoch_height",
+        "description": "Epoch height"
+      },
+      {
+        "name": "epoch_start_height",
+        "description": "Epoch start block height"
+      },
+      {
+        "name": "next_fishermen",
+        "description": "Fishermen for the next epoch"
+      },
+      {
+        "name": "next_validators",
+        "description": "Validators for the next epoch"
+      },
+      {
+        "name": "prev_epoch_kickout",
+        "description": "Kickout in the previous epoch"
+      }
+    ]
+  },
+  "rpc-validators-current": {
+    "description": "Fetch the active validator set for the current epoch, with stakes and performance stats.",
+    "response": "Successful response",
+    "schema": [
+      {
+        "name": "result",
+        "description": "Information about this epoch validators and next epoch validators"
+      },
+      {
+        "name": "current_fishermen",
+        "description": "Fishermen for the current epoch"
+      },
+      {
+        "name": "current_proposals",
+        "description": "Proposals in the current epoch"
+      },
+      {
+        "name": "current_validators",
+        "description": "Validators for the current epoch"
+      },
+      {
+        "name": "epoch_height",
+        "description": "Epoch height"
+      },
+      {
+        "name": "epoch_start_height",
+        "description": "Epoch start block height"
+      },
+      {
+        "name": "next_fishermen",
+        "description": "Fishermen for the next epoch"
+      },
+      {
+        "name": "next_validators",
+        "description": "Validators for the next epoch"
+      },
+      {
+        "name": "prev_epoch_kickout",
+        "description": "Kickout in the previous epoch"
+      }
+    ]
+  },
+  "rpc-view-access-key": {
+    "description": "Fetch one access key's permissions and nonce by public key on a given account.",
+    "parameters": [
+      {
+        "name": "account_id",
+        "description": "NEAR account ID"
+      },
+      {
+        "name": "public_key",
+        "description": "ed25519: or secp256k1: prefixed public key"
+      }
+    ],
+    "response": "Successful response",
+    "schema": [
+      {
+        "name": "result",
+        "description": "Describes access key permission scope and nonce."
+      },
+      {
+        "name": "permission",
+        "description": "One of multiple possible types"
+      }
+    ]
+  },
+  "rpc-view-access-key-list": {
+    "description": "Fetch every access key attached to an account, each with its permissions and nonce.",
+    "parameters": [
+      {
+        "name": "account_id",
+        "description": "NEAR account ID"
+      }
+    ],
+    "response": "Successful response",
+    "schema": [
+      {
+        "name": "result",
+        "description": "Lists access keys"
+      }
+    ]
+  },
+  "rpc-view-account": {
+    "description": "Fetch an account's balance, storage usage, and code hash at a chosen block or finality.",
+    "parameters": [
+      {
+        "name": "account_id",
+        "description": "NEAR account ID"
+      }
+    ],
+    "response": "Successful response",
+    "schema": [
+      {
+        "name": "result",
+        "description": "A view of the account"
+      },
+      {
+        "name": "amount",
+        "description": "Amount in yoctoNEAR"
+      },
+      {
+        "name": "code_hash",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "global_contract_account_id",
+        "description": "NEAR account ID"
+      },
+      {
+        "name": "global_contract_hash",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "locked",
+        "description": "Amount in yoctoNEAR"
+      },
+      {
+        "name": "storage_paid_at",
+        "description": "TODO(2271): deprecated."
+      }
+    ]
+  },
+  "rpc-view-code": {
+    "description": "Fetch the compiled WebAssembly bytes deployed directly to a single account.",
+    "parameters": [
+      {
+        "name": "account_id",
+        "description": "NEAR account ID"
+      }
+    ],
+    "response": "Successful response",
+    "schema": [
+      {
+        "name": "result",
+        "description": "A view of the contract code."
+      },
+      {
+        "name": "hash",
+        "description": "Base58-encoded hash"
+      }
+    ]
+  },
+  "rpc-view-global-contract-code": {
+    "description": "Look up a global contract's WebAssembly bytes by its Base58-encoded SHA-256 code hash.",
+    "parameters": [
+      {
+        "name": "code_hash",
+        "description": "Base58-encoded hash"
+      }
+    ],
+    "response": "Successful response",
+    "schema": [
+      {
+        "name": "result",
+        "description": "A view of the contract code."
+      },
+      {
+        "name": "hash",
+        "description": "Base58-encoded hash"
+      }
+    ]
+  },
+  "rpc-view-global-contract-code-by-account-id": {
+    "description": "Look up a global contract's WebAssembly bytes by the account that registered it.",
+    "parameters": [
+      {
+        "name": "account_id",
+        "description": "NEAR account ID"
+      }
+    ],
+    "response": "Successful response",
+    "schema": [
+      {
+        "name": "result",
+        "description": "A view of the contract code."
+      },
+      {
+        "name": "hash",
+        "description": "Base58-encoded hash"
+      }
+    ]
+  },
+  "rpc-view-state": {
+    "description": "Fetch the raw key-value state a contract has written, optionally filtered by key prefix.",
+    "parameters": [
+      {
+        "name": "account_id",
+        "description": "NEAR account ID"
+      },
+      {
+        "name": "include_proof",
+        "description": "Include a Merkle proof for the queried state alongside the values."
+      },
+      {
+        "name": "prefix_base64",
+        "description": "Base64-encoded storage key"
+      }
+    ],
+    "response": "Successful response",
+    "schema": [
+      {
+        "name": "result",
+        "description": "Resulting state values for a view state query request"
+      }
+    ]
+  },
+  "transactions-v0-account": {
+    "description": "Fetch account transaction history with optional filters for signer, success status, and sort order.",
+    "parameters": [
+      {
+        "name": "account_id",
+        "description": "NEAR account to query transactions for (may be a signer, predecessor, receiver, or related party)."
+      },
+      {
+        "name": "desc",
+        "description": "Sort newest-first when true; oldest-first when false or omitted."
+      },
+      {
+        "name": "from_tx_block_height",
+        "description": "Inclusive lower bound on the transaction's block height."
+      },
+      {
+        "name": "is_action_arg",
+        "description": "Restrict to transactions where this account appeared in action arguments."
+      },
+      {
+        "name": "is_any_signer",
+        "description": "Restrict to transactions where this account signed either the top-level transaction or a delegated action."
+      },
+      {
+        "name": "is_delegated_signer",
+        "description": "Restrict to transactions where this account signed a delegated action."
+      },
+      {
+        "name": "is_event_log",
+        "description": "Restrict to transactions where this account appeared in a JSON event log."
+      },
+      {
+        "name": "is_explicit_refund_to",
+        "description": "Restrict to transactions where this account was the explicit `refund_to` target of an action receipt."
+      },
+      {
+        "name": "is_function_call",
+        "description": "Restrict to transactions where this account was the target of a function-call action."
+      },
+      {
+        "name": "is_predecessor",
+        "description": "Restrict to transactions where this account was the predecessor of a receipt."
+      },
+      {
+        "name": "is_real_receiver",
+        "description": "Restrict to transactions where this account was the real receiver — excluding relayer receivers and gas refunds."
+      },
+      {
+        "name": "is_real_signer",
+        "description": "Restrict to transactions where this account was the real signer — direct or delegated, excluding relayer signers."
+      },
+      {
+        "name": "is_receiver",
+        "description": "Restrict to transactions where this account received a receipt."
+      },
+      {
+        "name": "is_signer",
+        "description": "Restrict to transactions where this account signed the top-level transaction."
+      },
+      {
+        "name": "is_success",
+        "description": "Restrict to transactions whose execution succeeded (true) or failed/pending (false)."
+      },
+      {
+        "name": "limit",
+        "description": "Maximum rows to return in one page (1–200)."
+      },
+      {
+        "name": "resume_token",
+        "description": "Opaque pagination token returned on a prior page; omit for the first page."
+      },
+      {
+        "name": "to_tx_block_height",
+        "description": "Exclusive upper bound on the transaction's block height."
+      }
+    ],
+    "response": "Account history result set Bad request ClickHouse query failure"
+  },
+  "transactions-v0-block": {
+    "description": "Fetch a block row by height or hash and optionally expand its transactions and receipts.",
+    "parameters": [
+      {
+        "name": "block_id",
+        "description": "Block height (integer) or base58-encoded block hash (string) to fetch."
+      },
+      {
+        "name": "with_receipts",
+        "description": "Include the block's receipts in the response when true."
+      },
+      {
+        "name": "with_transactions",
+        "description": "Include the block's transactions in the response when true."
+      }
+    ],
+    "response": "Block lookup result Bad request ClickHouse query failure"
+  },
+  "transactions-v0-blocks": {
+    "description": "Fetch a bounded list of indexed blocks ordered ascending or descending.",
+    "parameters": [
+      {
+        "name": "desc",
+        "description": "Sort newest-first when true; oldest-first when false or omitted."
+      },
+      {
+        "name": "from_block_height",
+        "description": "Inclusive lower bound on block height."
+      },
+      {
+        "name": "limit",
+        "description": "Maximum blocks to return in one page (1–100)."
+      },
+      {
+        "name": "to_block_height",
+        "description": "Exclusive upper bound on block height."
+      }
+    ],
+    "response": "Block rows Bad request ClickHouse query failure"
+  },
+  "transactions-v0-receipt": {
+    "description": "Fetch a receipt by ID along with the transaction that produced it.",
+    "parameters": [
+      {
+        "name": "receipt_id",
+        "description": "Base58-encoded receipt ID to look up."
+      }
+    ],
+    "response": "Receipt lookup result Bad request ClickHouse query failure"
+  },
+  "transactions-v0-transactions": {
+    "description": "Fetch up to 20 indexed transactions by hash in one request.",
+    "parameters": [
+      {
+        "name": "tx_hashes",
+        "description": "Up to 20 base58-encoded transaction hashes to fetch in one request."
+      }
+    ],
+    "response": "Matching transactions Bad request ClickHouse query failure"
+  },
+  "transfers-v0-transfers": {
+    "description": "Fetch transfer rows for one account with optional direction, asset, amount, and time filters.",
+    "parameters": [
+      {
+        "name": "account_id",
+        "description": "NEAR account to query transfers for (the signer or receiver, depending on `direction`)."
+      },
+      {
+        "name": "asset_id",
+        "description": "Asset identifier such as `native:near` for NEAR or `<contract_id>` for fungible tokens."
+      },
+      {
+        "name": "desc",
+        "description": "When true, sort newest-first; when false or omitted, sort oldest-first."
+      },
+      {
+        "name": "direction",
+        "description": "Restrict to transfers where the account acts as `sender` or `receiver`; omit for both sides."
+      },
+      {
+        "name": "from_timestamp_ms",
+        "description": "Inclusive lower bound on block timestamp in milliseconds since the Unix epoch."
+      },
+      {
+        "name": "ignore_system",
+        "description": "When true, hide system transfers (validator rewards, implicit account creation, refunds)."
+      },
+      {
+        "name": "limit",
+        "description": "Maximum number of transfer rows to return in one page (1–100)."
+      },
+      {
+        "name": "min_amount",
+        "description": "Minimum absolute transfer amount in the asset's base units (e.g. yoctoNEAR), stringified u128."
+      },
+      {
+        "name": "min_human_amount",
+        "description": "Minimum transfer amount in human-readable units (decimals already applied)."
+      },
+      {
+        "name": "min_usd_amount",
+        "description": "Minimum transfer amount in USD-equivalent at time of transfer."
+      },
+      {
+        "name": "resume_token",
+        "description": "Opaque pagination token returned as `resume_token` on a prior page; omit for the first page."
+      },
+      {
+        "name": "to_timestamp_ms",
+        "description": "Exclusive upper bound on block timestamp in milliseconds since the Unix epoch."
+      }
+    ],
+    "response": "Transfer rows for the requested account Invalid request body ClickHouse query failure"
+  }
+}
