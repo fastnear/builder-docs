@@ -40,7 +40,7 @@
         {
           "defaultFields": {
             "account_id": "root.near",
-            "public_key": "ed25519:CByX7HPjgSGFi5G26zwgZGDFCFyBHvSv1fe7AFzmVe3"
+            "public_key": "ed25519:6666666666666666666666666666666666666666666"
           },
           "key": "mainnet",
           "label": "Mainnet",
@@ -49,7 +49,7 @@
         {
           "defaultFields": {
             "account_id": "root.testnet",
-            "public_key": "ed25519:4eUPQ64CXPrKd3CBVzpjDHkvZeDmPZtoU5U6nTZozz1A"
+            "public_key": "ed25519:Bt6gx87fRm99KkkN1Q9UEA8vY9DBLkRSntqcLDuZt3S"
           },
           "key": "testnet",
           "label": "Testnet",
@@ -169,7 +169,7 @@
               "method": "query",
               "params": {
                 "account_id": "root.near",
-                "public_key": "ed25519:CByX7HPjgSGFi5G26zwgZGDFCFyBHvSv1fe7AFzmVe3",
+                "public_key": "ed25519:6666666666666666666666666666666666666666666",
                 "request_type": "view_access_key",
                 "finality": "final"
               }
@@ -190,7 +190,7 @@
               "method": "query",
               "params": {
                 "account_id": "root.testnet",
-                "public_key": "ed25519:4eUPQ64CXPrKd3CBVzpjDHkvZeDmPZtoU5U6nTZozz1A",
+                "public_key": "ed25519:Bt6gx87fRm99KkkN1Q9UEA8vY9DBLkRSntqcLDuZt3S",
                 "request_type": "view_access_key",
                 "finality": "final"
               }
@@ -1013,7 +1013,7 @@
       "networks": [
         {
           "defaultFields": {
-            "block_id": 194263739
+            "block_id": 9820210
           },
           "key": "mainnet",
           "label": "Mainnet",
@@ -1021,7 +1021,7 @@
         },
         {
           "defaultFields": {
-            "block_id": 246016197
+            "block_id": 245254793
           },
           "key": "testnet",
           "label": "Testnet",
@@ -1105,7 +1105,7 @@
               "id": "fastnear",
               "method": "block",
               "params": {
-                "block_id": 194263739
+                "block_id": 9820210
               }
             },
             "headers": {},
@@ -1123,7 +1123,7 @@
               "id": "fastnear",
               "method": "block",
               "params": {
-                "block_id": 246016197
+                "block_id": 245254793
               }
             },
             "headers": {},
@@ -1267,7 +1267,7 @@
       "networks": [
         {
           "defaultFields": {
-            "block_id": "9XN7MtDywZvfGx6TKy1MT2iCZkKuHikJXmNazxdZ4x6T"
+            "block_id": "EPnLgE7iEq9s7yTkos96M3cWymH5avBAPm3qx3NXqR8H"
           },
           "key": "mainnet",
           "label": "Mainnet",
@@ -1275,7 +1275,7 @@
         },
         {
           "defaultFields": {
-            "block_id": "6JYj6i1FaUCzdoqy41CqUcZJxa5n9EmLEENRDH2gLm5u"
+            "block_id": "CoPszhGFqcx9L1HQYM62g3UjxMpuZD8RiZL6QdpBZXA4"
           },
           "key": "testnet",
           "label": "Testnet",
@@ -1359,7 +1359,7 @@
               "id": "fastnear",
               "method": "block",
               "params": {
-                "block_id": "9XN7MtDywZvfGx6TKy1MT2iCZkKuHikJXmNazxdZ4x6T"
+                "block_id": "EPnLgE7iEq9s7yTkos96M3cWymH5avBAPm3qx3NXqR8H"
               }
             },
             "headers": {},
@@ -1377,7 +1377,7 @@
               "id": "fastnear",
               "method": "block",
               "params": {
-                "block_id": "6JYj6i1FaUCzdoqy41CqUcZJxa5n9EmLEENRDH2gLm5u"
+                "block_id": "CoPszhGFqcx9L1HQYM62g3UjxMpuZD8RiZL6QdpBZXA4"
               }
             },
             "headers": {},
@@ -1530,7 +1530,7 @@
       "networks": [
         {
           "defaultFields": {
-            "block_id": 194263739
+            "block_id": 9820210
           },
           "key": "mainnet",
           "label": "Mainnet",
@@ -1538,7 +1538,7 @@
         },
         {
           "defaultFields": {
-            "block_id": 246016197
+            "block_id": 245254793
           },
           "key": "testnet",
           "label": "Testnet",
@@ -1631,7 +1631,7 @@
               "id": "fastnear",
               "method": "block_effects",
               "params": {
-                "block_id": 194263739
+                "block_id": 9820210
               }
             },
             "headers": {},
@@ -1649,7 +1649,7 @@
               "id": "fastnear",
               "method": "block_effects",
               "params": {
-                "block_id": 246016197
+                "block_id": 245254793
               }
             },
             "headers": {},
@@ -1825,12 +1825,14 @@
           }
         },
         {
+          "description": "Name of the contract view method to invoke.",
           "label": "Method Name",
           "location": "body",
           "name": "method_name",
           "required": true,
           "schema": {
-            "type": "string"
+            "type": "string",
+            "description": "Name of the contract view method to invoke."
           }
         }
       ],
@@ -1935,7 +1937,8 @@
                   "name": "method_name",
                   "required": true,
                   "schema": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "Name of the contract view method to invoke."
                   }
                 },
                 {
@@ -3089,12 +3092,14 @@
           }
         },
         {
+          "description": "Include a Merkle proof for the queried state alongside the values.",
           "label": "Include Proof",
           "location": "body",
           "name": "include_proof",
           "required": false,
           "schema": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Include a Merkle proof for the queried state alongside the values."
           }
         },
         {
@@ -3199,7 +3204,8 @@
                   "name": "include_proof",
                   "required": false,
                   "schema": {
-                    "type": "boolean"
+                    "type": "boolean",
+                    "description": "Include a Merkle proof for the queried state alongside the values."
                   }
                 },
                 {
@@ -4104,16 +4110,15 @@
           }
         },
         {
-          "description": "Proof subject — `transaction` proves inclusion of the top-level transaction, `receipt` proves inclusion of a specific receipt produced during execution.",
+          "description": "Proof subject — `receipt` proves inclusion of a specific receipt produced during execution.",
           "label": "Type",
           "location": "body",
           "name": "type",
           "required": false,
           "schema": {
             "type": "string",
-            "description": "Proof subject — `transaction` proves inclusion of the top-level transaction, `receipt` proves inclusion of a specific receipt produced during execution.",
+            "description": "Proof subject — `receipt` proves inclusion of a specific receipt produced during execution.",
             "enum": [
-              "transaction",
               "receipt"
             ]
           }
@@ -4148,7 +4153,7 @@
             "light_client_head": "9XN7MtDywZvfGx6TKy1MT2iCZkKuHikJXmNazxdZ4x6T",
             "sender_id": "escrow.ai.near",
             "transaction_hash": "34E7weKCDqXh3xPKdBgSWRqo44yTWjbka9deMK8JbAxx",
-            "type": "transaction"
+            "type": "receipt"
           },
           "key": "mainnet",
           "label": "Mainnet",
@@ -4159,7 +4164,7 @@
             "light_client_head": "6JYj6i1FaUCzdoqy41CqUcZJxa5n9EmLEENRDH2gLm5u",
             "sender_id": "near-mpc-staking4all-01.testnet",
             "transaction_hash": "9LPbkwJ26HYgda7KHrURc6jozBcpdA1kUMSEzwm81JPx",
-            "type": "transaction"
+            "type": "receipt"
           },
           "key": "testnet",
           "label": "Testnet",
@@ -4248,9 +4253,8 @@
                   "required": false,
                   "schema": {
                     "type": "string",
-                    "description": "Proof subject — `transaction` proves inclusion of the top-level transaction, `receipt` proves inclusion of a specific receipt produced during execution.",
+                    "description": "Proof subject — `receipt` proves inclusion of a specific receipt produced during execution.",
                     "enum": [
-                      "transaction",
                       "receipt"
                     ]
                   }
@@ -4290,7 +4294,7 @@
                 "light_client_head": "9XN7MtDywZvfGx6TKy1MT2iCZkKuHikJXmNazxdZ4x6T",
                 "sender_id": "escrow.ai.near",
                 "transaction_hash": "34E7weKCDqXh3xPKdBgSWRqo44yTWjbka9deMK8JbAxx",
-                "type": "transaction"
+                "type": "receipt"
               }
             },
             "headers": {},
@@ -4311,7 +4315,7 @@
                 "light_client_head": "6JYj6i1FaUCzdoqy41CqUcZJxa5n9EmLEENRDH2gLm5u",
                 "sender_id": "near-mpc-staking4all-01.testnet",
                 "transaction_hash": "9LPbkwJ26HYgda7KHrURc6jozBcpdA1kUMSEzwm81JPx",
-                "type": "transaction"
+                "type": "receipt"
               }
             },
             "headers": {},
@@ -9451,16 +9455,15 @@
           }
         },
         {
-          "description": "Proof subject — `transaction` proves inclusion of the top-level transaction, `receipt` proves inclusion of a specific receipt produced during execution.",
+          "description": "Proof subject — `receipt` proves inclusion of a specific receipt produced during execution.",
           "label": "Type",
           "location": "body",
           "name": "type",
           "required": false,
           "schema": {
             "type": "string",
-            "description": "Proof subject — `transaction` proves inclusion of the top-level transaction, `receipt` proves inclusion of a specific receipt produced during execution.",
+            "description": "Proof subject — `receipt` proves inclusion of a specific receipt produced during execution.",
             "enum": [
-              "transaction",
               "receipt"
             ]
           }
@@ -9495,7 +9498,7 @@
             "light_client_head": "9XN7MtDywZvfGx6TKy1MT2iCZkKuHikJXmNazxdZ4x6T",
             "sender_id": "escrow.ai.near",
             "transaction_hash": "34E7weKCDqXh3xPKdBgSWRqo44yTWjbka9deMK8JbAxx",
-            "type": "transaction"
+            "type": "receipt"
           },
           "key": "mainnet",
           "label": "Mainnet",
@@ -9506,7 +9509,7 @@
             "light_client_head": "6JYj6i1FaUCzdoqy41CqUcZJxa5n9EmLEENRDH2gLm5u",
             "sender_id": "near-mpc-staking4all-01.testnet",
             "transaction_hash": "9LPbkwJ26HYgda7KHrURc6jozBcpdA1kUMSEzwm81JPx",
-            "type": "transaction"
+            "type": "receipt"
           },
           "key": "testnet",
           "label": "Testnet",
@@ -9595,9 +9598,8 @@
                   "required": false,
                   "schema": {
                     "type": "string",
-                    "description": "Proof subject — `transaction` proves inclusion of the top-level transaction, `receipt` proves inclusion of a specific receipt produced during execution.",
+                    "description": "Proof subject — `receipt` proves inclusion of a specific receipt produced during execution.",
                     "enum": [
-                      "transaction",
                       "receipt"
                     ]
                   }
@@ -9634,7 +9636,7 @@
               "id": "fastnear",
               "method": "light_client_proof",
               "params": {
-                "type": "transaction",
+                "type": "receipt",
                 "transaction_hash": "34E7weKCDqXh3xPKdBgSWRqo44yTWjbka9deMK8JbAxx",
                 "sender_id": "escrow.ai.near",
                 "light_client_head": "9XN7MtDywZvfGx6TKy1MT2iCZkKuHikJXmNazxdZ4x6T"
@@ -9655,7 +9657,7 @@
               "id": "fastnear",
               "method": "light_client_proof",
               "params": {
-                "type": "transaction",
+                "type": "receipt",
                 "transaction_hash": "9LPbkwJ26HYgda7KHrURc6jozBcpdA1kUMSEzwm81JPx",
                 "sender_id": "near-mpc-staking4all-01.testnet",
                 "light_client_head": "6JYj6i1FaUCzdoqy41CqUcZJxa5n9EmLEENRDH2gLm5u"
@@ -17228,12 +17230,14 @@
           }
         },
         {
+          "description": "Maximum number of entries to return in one page (1–200, default 50).",
           "label": "Limit",
           "location": "body",
           "name": "limit",
           "required": false,
           "schema": {
             "type": "integer",
+            "description": "Maximum number of entries to return in one page (1–200, default 50).",
             "format": "int32"
           }
         },
@@ -17299,6 +17303,7 @@
             "required": false,
             "schema": {
               "type": "integer",
+              "description": "Maximum number of entries to return in one page (1–200, default 50).",
               "format": "int32"
             }
           },
@@ -17592,12 +17597,14 @@
           }
         },
         {
+          "description": "Maximum number of entries to return in one page (1–200, default 50).",
           "label": "Limit",
           "location": "body",
           "name": "limit",
           "required": false,
           "schema": {
             "type": "integer",
+            "description": "Maximum number of entries to return in one page (1–200, default 50).",
             "format": "int32"
           }
         },
@@ -17685,6 +17692,7 @@
             "required": false,
             "schema": {
               "type": "integer",
+              "description": "Maximum number of entries to return in one page (1–200, default 50).",
               "format": "int32"
             }
           },
@@ -17989,12 +17997,14 @@
           }
         },
         {
+          "description": "Maximum number of entries to return in one page (1–200, default 50).",
           "label": "Limit",
           "location": "body",
           "name": "limit",
           "required": false,
           "schema": {
             "type": "integer",
+            "description": "Maximum number of entries to return in one page (1–200, default 50).",
             "format": "int32"
           }
         },
@@ -18091,6 +18101,7 @@
             "required": false,
             "schema": {
               "type": "integer",
+              "description": "Maximum number of entries to return in one page (1–200, default 50).",
               "format": "int32"
             }
           },
@@ -18421,12 +18432,14 @@
           }
         },
         {
+          "description": "Maximum number of entries to return in one page (1–200, default 50).",
           "label": "Limit",
           "location": "body",
           "name": "limit",
           "required": false,
           "schema": {
             "type": "integer",
+            "description": "Maximum number of entries to return in one page (1–200, default 50).",
             "format": "int32"
           }
         },
@@ -18525,6 +18538,7 @@
             "required": false,
             "schema": {
               "type": "integer",
+              "description": "Maximum number of entries to return in one page (1–200, default 50).",
               "format": "int32"
             }
           },
@@ -19144,12 +19158,14 @@
           }
         },
         {
+          "description": "Maximum number of entries to return in one page (1–200, default 50).",
           "label": "Limit",
           "location": "body",
           "name": "limit",
           "required": false,
           "schema": {
             "type": "integer",
+            "description": "Maximum number of entries to return in one page (1–200, default 50).",
             "format": "int32"
           }
         },
@@ -19235,6 +19251,7 @@
             "required": false,
             "schema": {
               "type": "integer",
+              "description": "Maximum number of entries to return in one page (1–200, default 50).",
               "format": "int32"
             }
           },
@@ -19550,12 +19567,14 @@
           }
         },
         {
+          "description": "Maximum number of entries to return in one page (1–200, default 50).",
           "label": "Limit",
           "location": "body",
           "name": "limit",
           "required": false,
           "schema": {
             "type": "integer",
+            "description": "Maximum number of entries to return in one page (1–200, default 50).",
             "format": "int32"
           }
         },
@@ -19643,6 +19662,7 @@
             "required": false,
             "schema": {
               "type": "integer",
+              "description": "Maximum number of entries to return in one page (1–200, default 50).",
               "format": "int32"
             }
           },
@@ -22083,169 +22103,205 @@
       "authTransport": "bearer",
       "fields": [
         {
+          "description": "NEAR account to query transactions for (may be a signer, predecessor, receiver, or related party).",
           "label": "Account ID",
           "location": "body",
           "name": "account_id",
           "required": true,
           "schema": {
-            "type": "string"
+            "type": "string",
+            "description": "NEAR account to query transactions for (may be a signer, predecessor, receiver, or related party)."
           }
         },
         {
+          "description": "Sort newest-first when true; oldest-first when false or omitted.",
           "label": "Desc",
           "location": "body",
           "name": "desc",
           "required": false,
           "schema": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Sort newest-first when true; oldest-first when false or omitted."
           }
         },
         {
+          "description": "Inclusive lower bound on the transaction's block height.",
           "label": "From Tx Block Height",
           "location": "body",
           "name": "from_tx_block_height",
           "required": false,
           "schema": {
             "type": "integer",
+            "description": "Inclusive lower bound on the transaction's block height.",
             "format": "uint64"
           }
         },
         {
+          "description": "Restrict to transactions where this account appeared in action arguments.",
           "label": "Is Action Arg",
           "location": "body",
           "name": "is_action_arg",
           "required": false,
           "schema": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Restrict to transactions where this account appeared in action arguments."
           }
         },
         {
+          "description": "Restrict to transactions where this account signed either the top-level transaction or a delegated action.",
           "label": "Is Any Signer",
           "location": "body",
           "name": "is_any_signer",
           "required": false,
           "schema": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Restrict to transactions where this account signed either the top-level transaction or a delegated action."
           }
         },
         {
+          "description": "Restrict to transactions where this account signed a delegated action.",
           "label": "Is Delegated Signer",
           "location": "body",
           "name": "is_delegated_signer",
           "required": false,
           "schema": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Restrict to transactions where this account signed a delegated action."
           }
         },
         {
+          "description": "Restrict to transactions where this account appeared in a JSON event log.",
           "label": "Is Event Log",
           "location": "body",
           "name": "is_event_log",
           "required": false,
           "schema": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Restrict to transactions where this account appeared in a JSON event log."
           }
         },
         {
+          "description": "Restrict to transactions where this account was the explicit `refund_to` target of an action receipt.",
           "label": "Is Explicit Refund To",
           "location": "body",
           "name": "is_explicit_refund_to",
           "required": false,
           "schema": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Restrict to transactions where this account was the explicit `refund_to` target of an action receipt."
           }
         },
         {
+          "description": "Restrict to transactions where this account was the target of a function-call action.",
           "label": "Is Function Call",
           "location": "body",
           "name": "is_function_call",
           "required": false,
           "schema": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Restrict to transactions where this account was the target of a function-call action."
           }
         },
         {
+          "description": "Restrict to transactions where this account was the predecessor of a receipt.",
           "label": "Is Predecessor",
           "location": "body",
           "name": "is_predecessor",
           "required": false,
           "schema": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Restrict to transactions where this account was the predecessor of a receipt."
           }
         },
         {
+          "description": "Restrict to transactions where this account was the real receiver — excluding relayer receivers and gas refunds.",
           "label": "Is Real Receiver",
           "location": "body",
           "name": "is_real_receiver",
           "required": false,
           "schema": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Restrict to transactions where this account was the real receiver — excluding relayer receivers and gas refunds."
           }
         },
         {
+          "description": "Restrict to transactions where this account was the real signer — direct or delegated, excluding relayer signers.",
           "label": "Is Real Signer",
           "location": "body",
           "name": "is_real_signer",
           "required": false,
           "schema": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Restrict to transactions where this account was the real signer — direct or delegated, excluding relayer signers."
           }
         },
         {
+          "description": "Restrict to transactions where this account received a receipt.",
           "label": "Is Receiver",
           "location": "body",
           "name": "is_receiver",
           "required": false,
           "schema": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Restrict to transactions where this account received a receipt."
           }
         },
         {
+          "description": "Restrict to transactions where this account signed the top-level transaction.",
           "label": "Is Signer",
           "location": "body",
           "name": "is_signer",
           "required": false,
           "schema": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Restrict to transactions where this account signed the top-level transaction."
           }
         },
         {
+          "description": "Restrict to transactions whose execution succeeded (true) or failed/pending (false).",
           "label": "Is Success",
           "location": "body",
           "name": "is_success",
           "required": false,
           "schema": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Restrict to transactions whose execution succeeded (true) or failed/pending (false)."
           }
         },
         {
+          "description": "Maximum rows to return in one page (1–200).",
           "label": "Limit",
           "location": "body",
           "name": "limit",
           "required": false,
           "schema": {
             "type": "integer",
+            "description": "Maximum rows to return in one page (1–200).",
             "format": "uint"
           }
         },
         {
           "default": null,
+          "description": "Opaque pagination token returned on a prior page; omit for the first page.",
           "label": "Resume Token",
           "location": "body",
           "name": "resume_token",
           "required": false,
           "schema": {
             "type": "string",
+            "description": "Opaque pagination token returned on a prior page; omit for the first page.",
             "default": null
           }
         },
         {
+          "description": "Exclusive upper bound on the transaction's block height.",
           "label": "To Tx Block Height",
           "location": "body",
           "name": "to_tx_block_height",
           "required": false,
           "schema": {
             "type": "integer",
+            "description": "Exclusive upper bound on the transaction's block height.",
             "format": "uint64"
           }
         }
@@ -22321,14 +22377,16 @@
             "name": "account_id",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "description": "NEAR account to query transactions for (may be a signer, predecessor, receiver, or related party)."
             }
           },
           {
             "name": "desc",
             "required": false,
             "schema": {
-              "type": "boolean"
+              "type": "boolean",
+              "description": "Sort newest-first when true; oldest-first when false or omitted."
             }
           },
           {
@@ -22336,6 +22394,7 @@
             "required": false,
             "schema": {
               "type": "integer",
+              "description": "Inclusive lower bound on the transaction's block height.",
               "format": "uint64"
             }
           },
@@ -22343,84 +22402,96 @@
             "name": "is_action_arg",
             "required": false,
             "schema": {
-              "type": "boolean"
+              "type": "boolean",
+              "description": "Restrict to transactions where this account appeared in action arguments."
             }
           },
           {
             "name": "is_any_signer",
             "required": false,
             "schema": {
-              "type": "boolean"
+              "type": "boolean",
+              "description": "Restrict to transactions where this account signed either the top-level transaction or a delegated action."
             }
           },
           {
             "name": "is_delegated_signer",
             "required": false,
             "schema": {
-              "type": "boolean"
+              "type": "boolean",
+              "description": "Restrict to transactions where this account signed a delegated action."
             }
           },
           {
             "name": "is_event_log",
             "required": false,
             "schema": {
-              "type": "boolean"
+              "type": "boolean",
+              "description": "Restrict to transactions where this account appeared in a JSON event log."
             }
           },
           {
             "name": "is_explicit_refund_to",
             "required": false,
             "schema": {
-              "type": "boolean"
+              "type": "boolean",
+              "description": "Restrict to transactions where this account was the explicit `refund_to` target of an action receipt."
             }
           },
           {
             "name": "is_function_call",
             "required": false,
             "schema": {
-              "type": "boolean"
+              "type": "boolean",
+              "description": "Restrict to transactions where this account was the target of a function-call action."
             }
           },
           {
             "name": "is_predecessor",
             "required": false,
             "schema": {
-              "type": "boolean"
+              "type": "boolean",
+              "description": "Restrict to transactions where this account was the predecessor of a receipt."
             }
           },
           {
             "name": "is_real_receiver",
             "required": false,
             "schema": {
-              "type": "boolean"
+              "type": "boolean",
+              "description": "Restrict to transactions where this account was the real receiver — excluding relayer receivers and gas refunds."
             }
           },
           {
             "name": "is_real_signer",
             "required": false,
             "schema": {
-              "type": "boolean"
+              "type": "boolean",
+              "description": "Restrict to transactions where this account was the real signer — direct or delegated, excluding relayer signers."
             }
           },
           {
             "name": "is_receiver",
             "required": false,
             "schema": {
-              "type": "boolean"
+              "type": "boolean",
+              "description": "Restrict to transactions where this account received a receipt."
             }
           },
           {
             "name": "is_signer",
             "required": false,
             "schema": {
-              "type": "boolean"
+              "type": "boolean",
+              "description": "Restrict to transactions where this account signed the top-level transaction."
             }
           },
           {
             "name": "is_success",
             "required": false,
             "schema": {
-              "type": "boolean"
+              "type": "boolean",
+              "description": "Restrict to transactions whose execution succeeded (true) or failed/pending (false)."
             }
           },
           {
@@ -22428,6 +22499,7 @@
             "required": false,
             "schema": {
               "type": "integer",
+              "description": "Maximum rows to return in one page (1–200).",
               "format": "uint"
             }
           },
@@ -22436,6 +22508,7 @@
             "required": false,
             "schema": {
               "type": "string",
+              "description": "Opaque pagination token returned on a prior page; omit for the first page.",
               "default": null
             }
           },
@@ -22444,6 +22517,7 @@
             "required": false,
             "schema": {
               "type": "integer",
+              "description": "Exclusive upper bound on the transaction's block height.",
               "format": "uint64"
             }
           }
@@ -22745,11 +22819,13 @@
       "authTransport": "bearer",
       "fields": [
         {
+          "description": "Block height (integer) or base58-encoded block hash (string) to fetch.",
           "label": "Block ID",
           "location": "body",
           "name": "block_id",
           "required": true,
           "schema": {
+            "description": "Block height (integer) or base58-encoded block hash (string) to fetch.",
             "oneOf": [
               {
                 "type": "integer"
@@ -22761,21 +22837,25 @@
           }
         },
         {
+          "description": "Include the block's receipts in the response when true.",
           "label": "With Receipts",
           "location": "body",
           "name": "with_receipts",
           "required": false,
           "schema": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Include the block's receipts in the response when true."
           }
         },
         {
+          "description": "Include the block's transactions in the response when true.",
           "label": "With Transactions",
           "location": "body",
           "name": "with_transactions",
           "required": false,
           "schema": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Include the block's transactions in the response when true."
           }
         }
       ],
@@ -22820,6 +22900,7 @@
             "name": "block_id",
             "required": true,
             "schema": {
+              "description": "Block height (integer) or base58-encoded block hash (string) to fetch.",
               "oneOf": [
                 {
                   "type": "integer"
@@ -22834,14 +22915,16 @@
             "name": "with_receipts",
             "required": false,
             "schema": {
-              "type": "boolean"
+              "type": "boolean",
+              "description": "Include the block's receipts in the response when true."
             }
           },
           {
             "name": "with_transactions",
             "required": false,
             "schema": {
-              "type": "boolean"
+              "type": "boolean",
+              "description": "Include the block's transactions in the response when true."
             }
           }
         ],
@@ -23449,41 +23532,49 @@
       "authTransport": "bearer",
       "fields": [
         {
+          "description": "Sort newest-first when true; oldest-first when false or omitted.",
           "label": "Desc",
           "location": "body",
           "name": "desc",
           "required": false,
           "schema": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Sort newest-first when true; oldest-first when false or omitted."
           }
         },
         {
+          "description": "Inclusive lower bound on block height.",
           "label": "From Block Height",
           "location": "body",
           "name": "from_block_height",
           "required": false,
           "schema": {
             "type": "integer",
+            "description": "Inclusive lower bound on block height.",
             "format": "uint64"
           }
         },
         {
+          "description": "Maximum blocks to return in one page (1–100).",
           "label": "Limit",
           "location": "body",
           "name": "limit",
           "required": false,
           "schema": {
             "type": "integer",
+            "description": "Maximum blocks to return in one page (1–100).",
             "format": "uint"
           }
         },
         {
+          "description": "Exclusive upper bound on block height.",
           "label": "To Block Height",
           "location": "body",
           "name": "to_block_height",
           "required": false,
           "schema": {
             "type": "integer",
+            "description": "Exclusive upper bound on block height.",
             "format": "uint64"
           }
         }
@@ -23528,7 +23619,8 @@
             "name": "desc",
             "required": false,
             "schema": {
-              "type": "boolean"
+              "type": "boolean",
+              "description": "Sort newest-first when true; oldest-first when false or omitted."
             }
           },
           {
@@ -23536,6 +23628,7 @@
             "required": false,
             "schema": {
               "type": "integer",
+              "description": "Inclusive lower bound on block height.",
               "format": "uint64"
             }
           },
@@ -23544,6 +23637,7 @@
             "required": false,
             "schema": {
               "type": "integer",
+              "description": "Maximum blocks to return in one page (1–100).",
               "format": "uint"
             }
           },
@@ -23552,6 +23646,7 @@
             "required": false,
             "schema": {
               "type": "integer",
+              "description": "Exclusive upper bound on block height.",
               "format": "uint64"
             }
           }
@@ -23837,12 +23932,14 @@
       "authTransport": "bearer",
       "fields": [
         {
+          "description": "Base58-encoded receipt ID to look up.",
           "label": "Receipt Id",
           "location": "body",
           "name": "receipt_id",
           "required": true,
           "schema": {
-            "type": "string"
+            "type": "string",
+            "description": "Base58-encoded receipt ID to look up."
           }
         }
       ],
@@ -23883,7 +23980,8 @@
             "name": "receipt_id",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "description": "Base58-encoded receipt ID to look up."
             }
           }
         ],
@@ -24162,12 +24260,14 @@
       "authTransport": "bearer",
       "fields": [
         {
+          "description": "Up to 20 base58-encoded transaction hashes to fetch in one request.",
           "label": "Tx Hashes",
           "location": "body",
           "name": "tx_hashes",
           "required": true,
           "schema": {
             "type": "array",
+            "description": "Up to 20 base58-encoded transaction hashes to fetch in one request.",
             "items": {
               "type": "string"
             }
@@ -24218,6 +24318,7 @@
             "required": true,
             "schema": {
               "type": "array",
+              "description": "Up to 20 base58-encoded transaction hashes to fetch in one request.",
               "items": {
                 "type": "string"
               }
@@ -24359,39 +24460,47 @@
       "authTransport": "bearer",
       "fields": [
         {
+          "description": "NEAR account to query transfers for (the signer or receiver, depending on `direction`).",
           "label": "Account ID",
           "location": "body",
           "name": "account_id",
           "required": true,
           "schema": {
-            "type": "string"
+            "type": "string",
+            "description": "NEAR account to query transfers for (the signer or receiver, depending on `direction`)."
           }
         },
         {
+          "description": "Asset identifier such as `native:near` for NEAR or `<contract_id>` for fungible tokens.",
           "label": "Asset Id",
           "location": "body",
           "name": "asset_id",
           "required": false,
           "schema": {
-            "type": "string"
+            "type": "string",
+            "description": "Asset identifier such as `native:near` for NEAR or `<contract_id>` for fungible tokens."
           }
         },
         {
+          "description": "When true, sort newest-first; when false or omitted, sort oldest-first.",
           "label": "Desc",
           "location": "body",
           "name": "desc",
           "required": false,
           "schema": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "When true, sort newest-first; when false or omitted, sort oldest-first."
           }
         },
         {
+          "description": "Restrict to transfers where the account acts as `sender` or `receiver`; omit for both sides.",
           "label": "Direction",
           "location": "body",
           "name": "direction",
           "required": true,
           "schema": {
             "type": "string",
+            "description": "Restrict to transfers where the account acts as `sender` or `receiver`; omit for both sides.",
             "enum": [
               "sender",
               "receiver"
@@ -24399,83 +24508,99 @@
           }
         },
         {
+          "description": "Inclusive lower bound on block timestamp in milliseconds since the Unix epoch.",
           "label": "From Timestamp Ms",
           "location": "body",
           "name": "from_timestamp_ms",
           "required": false,
           "schema": {
             "type": "integer",
+            "description": "Inclusive lower bound on block timestamp in milliseconds since the Unix epoch.",
             "format": "uint64"
           }
         },
         {
+          "description": "When true, hide system transfers (validator rewards, implicit account creation, refunds).",
           "label": "Ignore System",
           "location": "body",
           "name": "ignore_system",
           "required": false,
           "schema": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "When true, hide system transfers (validator rewards, implicit account creation, refunds)."
           }
         },
         {
+          "description": "Maximum number of transfer rows to return in one page (1–100).",
           "label": "Limit",
           "location": "body",
           "name": "limit",
           "required": false,
           "schema": {
             "type": "integer",
+            "description": "Maximum number of transfer rows to return in one page (1–100).",
             "format": "uint"
           }
         },
         {
           "default": null,
+          "description": "Minimum absolute transfer amount in the asset's base units (e.g. yoctoNEAR), stringified u128.",
           "label": "Min Amount",
           "location": "body",
           "name": "min_amount",
           "required": false,
           "schema": {
             "type": "string",
+            "description": "Minimum absolute transfer amount in the asset's base units (e.g. yoctoNEAR), stringified u128.",
             "default": null
           }
         },
         {
+          "description": "Minimum transfer amount in human-readable units (decimals already applied).",
           "label": "Min Human Amount",
           "location": "body",
           "name": "min_human_amount",
           "required": false,
           "schema": {
             "type": "number",
+            "description": "Minimum transfer amount in human-readable units (decimals already applied).",
             "format": "double"
           }
         },
         {
+          "description": "Minimum transfer amount in USD-equivalent at time of transfer.",
           "label": "Min Usd Amount",
           "location": "body",
           "name": "min_usd_amount",
           "required": false,
           "schema": {
             "type": "number",
+            "description": "Minimum transfer amount in USD-equivalent at time of transfer.",
             "format": "double"
           }
         },
         {
           "default": null,
+          "description": "Opaque pagination token returned as `resume_token` on a prior page; omit for the first page.",
           "label": "Resume Token",
           "location": "body",
           "name": "resume_token",
           "required": false,
           "schema": {
             "type": "string",
+            "description": "Opaque pagination token returned as `resume_token` on a prior page; omit for the first page.",
             "default": null
           }
         },
         {
+          "description": "Exclusive upper bound on block timestamp in milliseconds since the Unix epoch.",
           "label": "To Timestamp Ms",
           "location": "body",
           "name": "to_timestamp_ms",
           "required": false,
           "schema": {
             "type": "integer",
+            "description": "Exclusive upper bound on block timestamp in milliseconds since the Unix epoch.",
             "format": "uint64"
           }
         }
@@ -24521,21 +24646,24 @@
             "name": "account_id",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "description": "NEAR account to query transfers for (the signer or receiver, depending on `direction`)."
             }
           },
           {
             "name": "asset_id",
             "required": false,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "description": "Asset identifier such as `native:near` for NEAR or `<contract_id>` for fungible tokens."
             }
           },
           {
             "name": "desc",
             "required": false,
             "schema": {
-              "type": "boolean"
+              "type": "boolean",
+              "description": "When true, sort newest-first; when false or omitted, sort oldest-first."
             }
           },
           {
@@ -24543,6 +24671,7 @@
             "required": true,
             "schema": {
               "type": "string",
+              "description": "Restrict to transfers where the account acts as `sender` or `receiver`; omit for both sides.",
               "enum": [
                 "sender",
                 "receiver"
@@ -24554,6 +24683,7 @@
             "required": false,
             "schema": {
               "type": "integer",
+              "description": "Inclusive lower bound on block timestamp in milliseconds since the Unix epoch.",
               "format": "uint64"
             }
           },
@@ -24561,7 +24691,8 @@
             "name": "ignore_system",
             "required": false,
             "schema": {
-              "type": "boolean"
+              "type": "boolean",
+              "description": "When true, hide system transfers (validator rewards, implicit account creation, refunds)."
             }
           },
           {
@@ -24569,6 +24700,7 @@
             "required": false,
             "schema": {
               "type": "integer",
+              "description": "Maximum number of transfer rows to return in one page (1–100).",
               "format": "uint"
             }
           },
@@ -24577,6 +24709,7 @@
             "required": false,
             "schema": {
               "type": "string",
+              "description": "Minimum absolute transfer amount in the asset's base units (e.g. yoctoNEAR), stringified u128.",
               "default": null
             }
           },
@@ -24585,6 +24718,7 @@
             "required": false,
             "schema": {
               "type": "number",
+              "description": "Minimum transfer amount in human-readable units (decimals already applied).",
               "format": "double"
             }
           },
@@ -24593,6 +24727,7 @@
             "required": false,
             "schema": {
               "type": "number",
+              "description": "Minimum transfer amount in USD-equivalent at time of transfer.",
               "format": "double"
             }
           },
@@ -24601,6 +24736,7 @@
             "required": false,
             "schema": {
               "type": "string",
+              "description": "Opaque pagination token returned as `resume_token` on a prior page; omit for the first page.",
               "default": null
             }
           },
@@ -24609,6 +24745,7 @@
             "required": false,
             "schema": {
               "type": "integer",
+              "description": "Exclusive upper bound on block timestamp in milliseconds since the Unix epoch.",
               "format": "uint64"
             }
           }
