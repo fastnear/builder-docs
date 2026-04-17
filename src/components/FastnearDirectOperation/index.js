@@ -1,5 +1,6 @@
 import React, {
   Suspense,
+  lazy,
   startTransition,
   useDeferredValue,
   useEffect,
@@ -59,6 +60,8 @@ import {
   getFastnearSchemaOptionLabel,
   getFastnearSchemaShapeLabel,
 } from "./uiText";
+
+const FastnearJsonResponseText = lazy(() => import("./FastnearJsonResponseText"));
 
 function CopyGlyph(props) {
   return (
@@ -2428,12 +2431,32 @@ function FastnearOperationPage({ pageModel }) {
                     {uiText.responseFormattingPending}
                   </p>
                 ) : (
-                  <FastnearOperationResponseText
-                    activeMatchIndex={activeResponseFindIndex}
-                    className="fastnear-interaction__text-response fastnear-response-modal__text-response"
-                    matches={responseMatches}
-                    text={runResultText}
-                  />
+                  <Suspense
+                    fallback={
+                      <FastnearOperationResponseText
+                        activeMatchIndex={activeResponseFindIndex}
+                        className="fastnear-interaction__text-response fastnear-response-modal__text-response"
+                        matches={responseMatches}
+                        text={runResultText}
+                      />
+                    }
+                  >
+                    {deferredRunResult?.kind === "json" ? (
+                      <FastnearJsonResponseText
+                        activeMatchIndex={activeResponseFindIndex}
+                        className="fastnear-interaction__text-response fastnear-response-modal__text-response"
+                        matches={responseMatches}
+                        text={runResultText}
+                      />
+                    ) : (
+                      <FastnearOperationResponseText
+                        activeMatchIndex={activeResponseFindIndex}
+                        className="fastnear-interaction__text-response fastnear-response-modal__text-response"
+                        matches={responseMatches}
+                        text={runResultText}
+                      />
+                    )}
+                  </Suspense>
                 )
               ) : isRunning ? (
                 <p className="fastnear-interaction__placeholder fastnear-interaction__placeholder--panel fastnear-interaction__placeholder--pending">

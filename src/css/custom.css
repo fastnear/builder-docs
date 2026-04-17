@@ -449,6 +449,12 @@ pre code {
   --fastnear-input-bg: #ffffff;
   --fastnear-code-bg: #f4f6fb;
   --fastnear-code-text: #1a2238;
+  --fastnear-json-key: #3a54a3;
+  --fastnear-json-string: #1f6d64;
+  --fastnear-json-number: #8c5c1e;
+  --fastnear-json-boolean: #7a4ab3;
+  --fastnear-json-null: #9f516c;
+  --fastnear-json-punctuation: rgba(26, 34, 56, 0.56);
   --fastnear-border: rgba(35, 64, 138, 0.14);
   --fastnear-border-strong: rgba(35, 64, 138, 0.2);
   --fastnear-accent-border: rgba(47, 91, 209, 0.34);
@@ -483,6 +489,12 @@ pre code {
   --fastnear-input-bg: rgba(9, 13, 26, 0.92);
   --fastnear-code-bg: rgba(6, 10, 21, 0.96);
   --fastnear-code-text: #f3f5ff;
+  --fastnear-json-key: #b8c9ff;
+  --fastnear-json-string: #8bd9c5;
+  --fastnear-json-number: #f2c67f;
+  --fastnear-json-boolean: #d0b5ff;
+  --fastnear-json-null: #f2adc7;
+  --fastnear-json-punctuation: rgba(243, 245, 255, 0.6);
   --fastnear-border: rgba(166, 184, 255, 0.12);
   --fastnear-border-strong: rgba(166, 184, 255, 0.18);
   --fastnear-accent-border: rgba(119, 144, 255, 0.32);
@@ -2084,6 +2096,30 @@ html[data-theme='light'] .fastnear-home-button--primary:focus-visible {
   line-height: 1.55;
   white-space: pre-wrap;
   word-break: break-word;
+}
+
+.builder-fastnear-direct .fastnear-json-token--key {
+  color: var(--fastnear-json-key);
+}
+
+.builder-fastnear-direct .fastnear-json-token--string {
+  color: var(--fastnear-json-string);
+}
+
+.builder-fastnear-direct .fastnear-json-token--number {
+  color: var(--fastnear-json-number);
+}
+
+.builder-fastnear-direct .fastnear-json-token--boolean {
+  color: var(--fastnear-json-boolean);
+}
+
+.builder-fastnear-direct .fastnear-json-token--null {
+  color: var(--fastnear-json-null);
+}
+
+.builder-fastnear-direct .fastnear-json-token--punctuation {
+  color: var(--fastnear-json-punctuation);
 }
 
 .builder-fastnear-direct .fastnear-interaction__response-match {

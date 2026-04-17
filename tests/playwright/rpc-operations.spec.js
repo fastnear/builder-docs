@@ -158,6 +158,8 @@ test('expanded response modal supports find, next, previous, and keyboard naviga
   const dialog = page.getByRole('dialog', { name: 'Expanded response' });
   await expect(dialog).toBeVisible();
   await expect(dialog).toContainText('"amount": "1"');
+  await expect(dialog.locator('.fastnear-json-token--key').first()).toBeVisible();
+  await expect(dialog.locator('.fastnear-json-token--string').first()).toBeVisible();
 
   const findInput = dialog.getByRole('textbox', { name: 'Find in response' });
   await findInput.fill('amount');
