@@ -2015,13 +2015,12 @@ html[data-theme='light'] .fastnear-home-button--primary:focus-visible {
 
 .builder-fastnear-direct .fastnear-interaction__result-action-rail {
   position: sticky;
-  top: 12px;
+  top: 0;
   z-index: 2;
   display: flex;
   justify-content: flex-end;
-  height: 0;
-  padding-inline-start: 14px;
-  padding-inline-end: 22px;
+  padding: 14px 18px 0 14px;
+  margin-bottom: -44px;
   overflow: visible;
   pointer-events: none;
 }
@@ -2348,9 +2347,9 @@ html[data-theme='light'] .fastnear-home-button--primary:focus-visible {
 }
 
 .builder-fastnear-direct .fastnear-response-modal__viewer-rail {
-  top: 14px;
-  padding-inline-start: 14px;
-  padding-inline-end: 22px;
+  top: 0;
+  padding: 16px 20px 0 14px;
+  margin-bottom: -46px;
 }
 
 .builder-fastnear-direct .fastnear-response-modal__viewer-actions {
