@@ -1,0 +1,1628 @@
+[
+  {
+    "canonicalPath": "/rpcs/contract/call",
+    "info": {
+      "description": "Invoke a contract view method without gas or state changes — reads computed values from contract logic.",
+      "operationId": "call_function",
+      "summary": "Call contract function",
+      "title": "NEAR Protocol RPC: Call contract function",
+      "version": "1.0.0"
+    },
+    "interaction": {
+      "authTransport": "bearer",
+      "defaultId": "fastnear",
+      "fields": [
+        {
+          "description": "NEAR account ID",
+          "label": "Account ID",
+          "location": "body",
+          "name": "account_id",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "description": "NEAR account ID"
+          }
+        },
+        {
+          "description": "Base64-encoded method arguments",
+          "label": "Args Base64",
+          "location": "body",
+          "name": "args_base64",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "description": "Base64-encoded method arguments"
+          }
+        },
+        {
+          "label": "Method Name",
+          "location": "body",
+          "name": "method_name",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "kind": "rpc-call-function",
+      "networks": [
+        {
+          "defaultFields": {
+            "account_id": "contract.near",
+            "args_base64": "e30=",
+            "method_name": "get_info"
+          },
+          "key": "mainnet",
+          "label": "Mainnet",
+          "url": "https://rpc.mainnet.fastnear.com"
+        },
+        {
+          "defaultFields": {
+            "account_id": "contract.testnet",
+            "args_base64": "e30=",
+            "method_name": "get_info"
+          },
+          "key": "testnet",
+          "label": "Testnet",
+          "url": "https://rpc.testnet.fastnear.com"
+        }
+      ],
+      "requestMethod": "query",
+      "requestType": "call_function",
+      "supportsFinality": true,
+      "transport": "json-rpc"
+    },
+    "pageModelId": "rpc-call-function",
+    "replaceOperationPage": true,
+    "request": {
+      "bodySchema": {
+        "type": "object",
+        "required": [
+          "jsonrpc",
+          "id",
+          "method",
+          "params"
+        ],
+        "properties": [
+          {
+            "name": "jsonrpc",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "2.0"
+              ]
+            }
+          },
+          {
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "fastnear"
+            }
+          },
+          {
+            "name": "method",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "query"
+              ]
+            }
+          },
+          {
+            "name": "params",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "request_type",
+                "account_id",
+                "method_name",
+                "args_base64",
+                "finality"
+              ],
+              "properties": [
+                {
+                  "name": "account_id",
+                  "required": true,
+                  "schema": {
+                    "type": "string",
+                    "description": "NEAR account ID"
+                  }
+                },
+                {
+                  "name": "args_base64",
+                  "required": true,
+                  "schema": {
+                    "type": "string",
+                    "description": "Base64-encoded method arguments"
+                  }
+                },
+                {
+                  "name": "method_name",
+                  "required": true,
+                  "schema": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "name": "request_type",
+                  "required": true,
+                  "schema": {
+                    "type": "string",
+                    "enum": [
+                      "call_function"
+                    ]
+                  }
+                },
+                {
+                  "name": "finality",
+                  "required": true,
+                  "schema": {
+                    "type": "string",
+                    "description": "Block finality",
+                    "enum": [
+                      "final",
+                      "near-final",
+                      "optimistic"
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "examples": [
+        {
+          "id": "mainnet",
+          "label": "Call Mainnet Contract Function",
+          "network": "mainnet",
+          "request": {
+            "body": {
+              "jsonrpc": "2.0",
+              "id": "fastnear",
+              "method": "query",
+              "params": {
+                "request_type": "call_function",
+                "finality": "final",
+                "account_id": "contract.near",
+                "method_name": "get_info",
+                "args_base64": "e30="
+              }
+            },
+            "headers": {},
+            "path": {},
+            "query": {}
+          }
+        },
+        {
+          "id": "testnet",
+          "label": "Call Testnet Contract Function",
+          "network": "testnet",
+          "request": {
+            "body": {
+              "jsonrpc": "2.0",
+              "id": "fastnear",
+              "method": "query",
+              "params": {
+                "request_type": "call_function",
+                "finality": "final",
+                "account_id": "contract.testnet",
+                "method_name": "get_info",
+                "args_base64": "e30="
+              }
+            },
+            "headers": {},
+            "path": {},
+            "query": {}
+          }
+        }
+      ],
+      "mediaType": "application/json",
+      "parameters": {
+        "header": [],
+        "path": [],
+        "query": []
+      },
+      "required": true
+    },
+    "responses": [
+      {
+        "description": "Successful response",
+        "mediaType": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "jsonrpc",
+            "id"
+          ],
+          "properties": [
+            {
+              "name": "jsonrpc",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "enum": [
+                  "2.0"
+                ]
+              }
+            },
+            {
+              "name": "id",
+              "required": true,
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "number"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "result",
+              "required": false,
+              "schema": {
+                "type": "object",
+                "description": "A result returned by contract method",
+                "required": [
+                  "result",
+                  "logs"
+                ],
+                "properties": [
+                  {
+                    "name": "logs",
+                    "required": true,
+                    "schema": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  {
+                    "name": "result",
+                    "required": true,
+                    "schema": {
+                      "type": "array",
+                      "items": {
+                        "type": "integer",
+                        "format": "uint8"
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "name": "error",
+              "required": false,
+              "schema": {
+                "type": "object",
+                "properties": [
+                  {
+                    "name": "code",
+                    "required": false,
+                    "schema": {
+                      "type": "integer"
+                    }
+                  },
+                  {
+                    "name": "message",
+                    "required": false,
+                    "schema": {
+                      "type": "string"
+                    }
+                  },
+                  {
+                    "name": "data",
+                    "required": false,
+                    "schema": {
+                      "type": "object"
+                    }
+                  }
+                ]
+              }
+            }
+          ],
+          "refName": "JsonRpcResponse"
+        },
+        "status": "200"
+      }
+    ],
+    "route": {
+      "method": "POST",
+      "path": "/",
+      "transport": "json-rpc"
+    },
+    "routeAliases": [
+      "/rpcs/contract/call/other/call_function",
+      "/reference/operation/call_function"
+    ],
+    "securitySchemes": [
+      {
+        "description": "The OpenAPI contract describes the FastNEAR API key as a query parameter named apiKey.",
+        "id": "ApiKeyAuth",
+        "in": "query",
+        "name": "apiKey",
+        "type": "apiKey"
+      }
+    ],
+    "sourceSpec": "rpcs/contract/call.yaml"
+  },
+  {
+    "canonicalPath": "/rpcs/contract/view_code",
+    "info": {
+      "description": "Fetch the compiled WebAssembly bytes deployed directly to a single account.",
+      "operationId": "view_code",
+      "summary": "View contract code",
+      "title": "NEAR Protocol RPC: View contract code",
+      "version": "1.0.0"
+    },
+    "interaction": {
+      "authTransport": "bearer",
+      "defaultId": "fastnear",
+      "fields": [
+        {
+          "description": "NEAR account ID",
+          "label": "Account ID",
+          "location": "body",
+          "name": "account_id",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "description": "NEAR account ID"
+          }
+        }
+      ],
+      "kind": "rpc-view-code",
+      "networks": [
+        {
+          "defaultFields": {
+            "account_id": "intents.near"
+          },
+          "key": "mainnet",
+          "label": "Mainnet",
+          "url": "https://rpc.mainnet.fastnear.com"
+        },
+        {
+          "defaultFields": {
+            "account_id": "guest-book.testnet"
+          },
+          "key": "testnet",
+          "label": "Testnet",
+          "url": "https://rpc.testnet.fastnear.com"
+        }
+      ],
+      "requestMethod": "query",
+      "requestType": "view_code",
+      "supportsFinality": true,
+      "transport": "json-rpc"
+    },
+    "pageModelId": "rpc-view-code",
+    "replaceOperationPage": true,
+    "request": {
+      "bodySchema": {
+        "type": "object",
+        "required": [
+          "jsonrpc",
+          "id",
+          "method",
+          "params"
+        ],
+        "properties": [
+          {
+            "name": "jsonrpc",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "2.0"
+              ]
+            }
+          },
+          {
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "fastnear"
+            }
+          },
+          {
+            "name": "method",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "query"
+              ]
+            }
+          },
+          {
+            "name": "params",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "request_type",
+                "account_id",
+                "finality"
+              ],
+              "properties": [
+                {
+                  "name": "account_id",
+                  "required": true,
+                  "schema": {
+                    "type": "string",
+                    "description": "NEAR account ID"
+                  }
+                },
+                {
+                  "name": "request_type",
+                  "required": true,
+                  "schema": {
+                    "type": "string",
+                    "enum": [
+                      "view_code"
+                    ]
+                  }
+                },
+                {
+                  "name": "finality",
+                  "required": true,
+                  "schema": {
+                    "type": "string",
+                    "description": "Block finality",
+                    "enum": [
+                      "final",
+                      "near-final",
+                      "optimistic"
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "examples": [
+        {
+          "id": "mainnet",
+          "label": "View contract code (Mainnet)",
+          "network": "mainnet",
+          "request": {
+            "body": {
+              "jsonrpc": "2.0",
+              "id": "fastnear",
+              "method": "query",
+              "params": {
+                "account_id": "intents.near",
+                "request_type": "view_code",
+                "finality": "final"
+              }
+            },
+            "headers": {},
+            "path": {},
+            "query": {}
+          }
+        },
+        {
+          "id": "testnet",
+          "label": "View contract code (Testnet)",
+          "network": "testnet",
+          "request": {
+            "body": {
+              "jsonrpc": "2.0",
+              "id": "fastnear",
+              "method": "query",
+              "params": {
+                "account_id": "guest-book.testnet",
+                "request_type": "view_code",
+                "finality": "final"
+              }
+            },
+            "headers": {},
+            "path": {},
+            "query": {}
+          }
+        }
+      ],
+      "mediaType": "application/json",
+      "parameters": {
+        "header": [],
+        "path": [],
+        "query": []
+      },
+      "required": true
+    },
+    "responses": [
+      {
+        "description": "Successful response",
+        "mediaType": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "jsonrpc",
+            "id"
+          ],
+          "properties": [
+            {
+              "name": "jsonrpc",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "enum": [
+                  "2.0"
+                ]
+              }
+            },
+            {
+              "name": "id",
+              "required": true,
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "number"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "result",
+              "required": false,
+              "schema": {
+                "type": "object",
+                "description": "A view of the contract code.",
+                "required": [
+                  "code_base64",
+                  "hash"
+                ],
+                "properties": [
+                  {
+                    "name": "code_base64",
+                    "required": true,
+                    "schema": {
+                      "type": "string"
+                    }
+                  },
+                  {
+                    "name": "hash",
+                    "required": true,
+                    "schema": {
+                      "type": "string",
+                      "description": "Base58-encoded hash"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "name": "error",
+              "required": false,
+              "schema": {
+                "type": "object",
+                "properties": [
+                  {
+                    "name": "code",
+                    "required": false,
+                    "schema": {
+                      "type": "integer"
+                    }
+                  },
+                  {
+                    "name": "message",
+                    "required": false,
+                    "schema": {
+                      "type": "string"
+                    }
+                  },
+                  {
+                    "name": "data",
+                    "required": false,
+                    "schema": {
+                      "type": "object"
+                    }
+                  }
+                ]
+              }
+            }
+          ],
+          "refName": "JsonRpcResponse"
+        },
+        "status": "200"
+      }
+    ],
+    "route": {
+      "method": "POST",
+      "path": "/",
+      "transport": "json-rpc"
+    },
+    "routeAliases": [
+      "/rpcs/contract/view_code/other/view_code",
+      "/reference/operation/view_code"
+    ],
+    "securitySchemes": [
+      {
+        "description": "The OpenAPI contract describes the FastNEAR API key as a query parameter named apiKey.",
+        "id": "ApiKeyAuth",
+        "in": "query",
+        "name": "apiKey",
+        "type": "apiKey"
+      }
+    ],
+    "sourceSpec": "rpcs/contract/view_code.yaml"
+  },
+  {
+    "canonicalPath": "/rpcs/contract/view_global_contract_code",
+    "info": {
+      "description": "Look up a global contract's WebAssembly bytes by its SHA-256 code hash.",
+      "operationId": "view_global_contract_code",
+      "summary": "View global contract code",
+      "title": "NEAR Protocol RPC: View global contract code",
+      "version": "1.0.0"
+    },
+    "interaction": {
+      "authTransport": "bearer",
+      "defaultId": "fastnear",
+      "fields": [
+        {
+          "description": "Base58-encoded hash",
+          "label": "Code Hash",
+          "location": "body",
+          "name": "code_hash",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "description": "Base58-encoded hash"
+          }
+        }
+      ],
+      "kind": "rpc-view-global-contract-code",
+      "networks": [
+        {
+          "defaultFields": {
+            "code_hash": "A2VxywASqbnarBAfTWobhDZjMXobjnYyJmkjhoXAiYBz"
+          },
+          "key": "mainnet",
+          "label": "Mainnet",
+          "url": "https://rpc.mainnet.fastnear.com"
+        },
+        {
+          "defaultFields": {
+            "code_hash": "3vaopJ7aRoivvzZLngPQRBEd8VJr2zPLTxQfnRCoFgNX"
+          },
+          "key": "testnet",
+          "label": "Testnet",
+          "url": "https://rpc.testnet.fastnear.com"
+        }
+      ],
+      "requestMethod": "query",
+      "requestType": "view_global_contract_code",
+      "supportsFinality": true,
+      "transport": "json-rpc"
+    },
+    "pageModelId": "rpc-view-global-contract-code",
+    "replaceOperationPage": true,
+    "request": {
+      "bodySchema": {
+        "type": "object",
+        "required": [
+          "jsonrpc",
+          "id",
+          "method",
+          "params"
+        ],
+        "properties": [
+          {
+            "name": "jsonrpc",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "2.0"
+              ]
+            }
+          },
+          {
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "fastnear"
+            }
+          },
+          {
+            "name": "method",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "query"
+              ]
+            }
+          },
+          {
+            "name": "params",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "request_type",
+                "code_hash",
+                "finality"
+              ],
+              "properties": [
+                {
+                  "name": "code_hash",
+                  "required": true,
+                  "schema": {
+                    "type": "string",
+                    "description": "Base58-encoded hash"
+                  }
+                },
+                {
+                  "name": "request_type",
+                  "required": true,
+                  "schema": {
+                    "type": "string",
+                    "enum": [
+                      "view_global_contract_code"
+                    ]
+                  }
+                },
+                {
+                  "name": "finality",
+                  "required": true,
+                  "schema": {
+                    "type": "string",
+                    "description": "Block finality",
+                    "enum": [
+                      "final",
+                      "near-final",
+                      "optimistic"
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "examples": [
+        {
+          "id": "mainnet",
+          "label": "View global contract code (Mainnet)",
+          "network": "mainnet",
+          "request": {
+            "body": {
+              "jsonrpc": "2.0",
+              "id": "fastnear",
+              "method": "query",
+              "params": {
+                "code_hash": "A2VxywASqbnarBAfTWobhDZjMXobjnYyJmkjhoXAiYBz",
+                "request_type": "view_global_contract_code",
+                "finality": "final"
+              }
+            },
+            "headers": {},
+            "path": {},
+            "query": {}
+          }
+        },
+        {
+          "id": "testnet",
+          "label": "View global contract code (Testnet)",
+          "network": "testnet",
+          "request": {
+            "body": {
+              "jsonrpc": "2.0",
+              "id": "fastnear",
+              "method": "query",
+              "params": {
+                "code_hash": "3vaopJ7aRoivvzZLngPQRBEd8VJr2zPLTxQfnRCoFgNX",
+                "request_type": "view_global_contract_code",
+                "finality": "final"
+              }
+            },
+            "headers": {},
+            "path": {},
+            "query": {}
+          }
+        }
+      ],
+      "mediaType": "application/json",
+      "parameters": {
+        "header": [],
+        "path": [],
+        "query": []
+      },
+      "required": true
+    },
+    "responses": [
+      {
+        "description": "Successful response",
+        "mediaType": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "jsonrpc",
+            "id"
+          ],
+          "properties": [
+            {
+              "name": "jsonrpc",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "enum": [
+                  "2.0"
+                ]
+              }
+            },
+            {
+              "name": "id",
+              "required": true,
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "number"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "result",
+              "required": false,
+              "schema": {
+                "type": "object",
+                "description": "A view of the contract code.",
+                "required": [
+                  "code_base64",
+                  "hash"
+                ],
+                "properties": [
+                  {
+                    "name": "code_base64",
+                    "required": true,
+                    "schema": {
+                      "type": "string"
+                    }
+                  },
+                  {
+                    "name": "hash",
+                    "required": true,
+                    "schema": {
+                      "type": "string",
+                      "description": "Base58-encoded hash"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "name": "error",
+              "required": false,
+              "schema": {
+                "type": "object",
+                "properties": [
+                  {
+                    "name": "code",
+                    "required": false,
+                    "schema": {
+                      "type": "integer"
+                    }
+                  },
+                  {
+                    "name": "message",
+                    "required": false,
+                    "schema": {
+                      "type": "string"
+                    }
+                  },
+                  {
+                    "name": "data",
+                    "required": false,
+                    "schema": {
+                      "type": "object"
+                    }
+                  }
+                ]
+              }
+            }
+          ],
+          "refName": "JsonRpcResponse"
+        },
+        "status": "200"
+      }
+    ],
+    "route": {
+      "method": "POST",
+      "path": "/",
+      "transport": "json-rpc"
+    },
+    "routeAliases": [
+      "/rpcs/contract/view_global_contract_code/other/view_global_contract_code",
+      "/reference/operation/view_global_contract_code"
+    ],
+    "securitySchemes": [
+      {
+        "description": "The OpenAPI contract describes the FastNEAR API key as a query parameter named apiKey.",
+        "id": "ApiKeyAuth",
+        "in": "query",
+        "name": "apiKey",
+        "type": "apiKey"
+      }
+    ],
+    "sourceSpec": "rpcs/contract/view_global_contract_code.yaml"
+  },
+  {
+    "canonicalPath": "/rpcs/contract/view_global_contract_code_by_account_id",
+    "info": {
+      "description": "Look up a global contract's WebAssembly bytes by the account that registered it.",
+      "operationId": "view_global_contract_code_by_account_id",
+      "summary": "View global contract code by account",
+      "title": "NEAR Protocol RPC: View global contract code by account",
+      "version": "1.0.0"
+    },
+    "interaction": {
+      "authTransport": "bearer",
+      "defaultId": "fastnear",
+      "fields": [
+        {
+          "description": "NEAR account ID",
+          "label": "Account ID",
+          "location": "body",
+          "name": "account_id",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "description": "NEAR account ID"
+          }
+        }
+      ],
+      "kind": "rpc-view-global-contract-code-by-account-id",
+      "networks": [
+        {
+          "defaultFields": {
+            "account_id": "global-contract.nfts.tg"
+          },
+          "key": "mainnet",
+          "label": "Mainnet",
+          "url": "https://rpc.mainnet.fastnear.com"
+        },
+        {
+          "defaultFields": {
+            "account_id": "ft.globals.primitives.testnet"
+          },
+          "key": "testnet",
+          "label": "Testnet",
+          "url": "https://rpc.testnet.fastnear.com"
+        }
+      ],
+      "requestMethod": "query",
+      "requestType": "view_global_contract_code_by_account_id",
+      "supportsFinality": true,
+      "transport": "json-rpc"
+    },
+    "pageModelId": "rpc-view-global-contract-code-by-account-id",
+    "replaceOperationPage": true,
+    "request": {
+      "bodySchema": {
+        "type": "object",
+        "required": [
+          "jsonrpc",
+          "id",
+          "method",
+          "params"
+        ],
+        "properties": [
+          {
+            "name": "jsonrpc",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "2.0"
+              ]
+            }
+          },
+          {
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "fastnear"
+            }
+          },
+          {
+            "name": "method",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "query"
+              ]
+            }
+          },
+          {
+            "name": "params",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "request_type",
+                "account_id",
+                "finality"
+              ],
+              "properties": [
+                {
+                  "name": "account_id",
+                  "required": true,
+                  "schema": {
+                    "type": "string",
+                    "description": "NEAR account ID"
+                  }
+                },
+                {
+                  "name": "request_type",
+                  "required": true,
+                  "schema": {
+                    "type": "string",
+                    "enum": [
+                      "view_global_contract_code_by_account_id"
+                    ]
+                  }
+                },
+                {
+                  "name": "finality",
+                  "required": true,
+                  "schema": {
+                    "type": "string",
+                    "description": "Block finality",
+                    "enum": [
+                      "final",
+                      "near-final",
+                      "optimistic"
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "examples": [
+        {
+          "id": "mainnet",
+          "label": "View global contract code by account (Mainnet)",
+          "network": "mainnet",
+          "request": {
+            "body": {
+              "jsonrpc": "2.0",
+              "id": "fastnear",
+              "method": "query",
+              "params": {
+                "account_id": "global-contract.nfts.tg",
+                "request_type": "view_global_contract_code_by_account_id",
+                "finality": "final"
+              }
+            },
+            "headers": {},
+            "path": {},
+            "query": {}
+          }
+        },
+        {
+          "id": "testnet",
+          "label": "View global contract code by account (Testnet)",
+          "network": "testnet",
+          "request": {
+            "body": {
+              "jsonrpc": "2.0",
+              "id": "fastnear",
+              "method": "query",
+              "params": {
+                "account_id": "ft.globals.primitives.testnet",
+                "request_type": "view_global_contract_code_by_account_id",
+                "finality": "final"
+              }
+            },
+            "headers": {},
+            "path": {},
+            "query": {}
+          }
+        }
+      ],
+      "mediaType": "application/json",
+      "parameters": {
+        "header": [],
+        "path": [],
+        "query": []
+      },
+      "required": true
+    },
+    "responses": [
+      {
+        "description": "Successful response",
+        "mediaType": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "jsonrpc",
+            "id"
+          ],
+          "properties": [
+            {
+              "name": "jsonrpc",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "enum": [
+                  "2.0"
+                ]
+              }
+            },
+            {
+              "name": "id",
+              "required": true,
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "number"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "result",
+              "required": false,
+              "schema": {
+                "type": "object",
+                "description": "A view of the contract code.",
+                "required": [
+                  "code_base64",
+                  "hash"
+                ],
+                "properties": [
+                  {
+                    "name": "code_base64",
+                    "required": true,
+                    "schema": {
+                      "type": "string"
+                    }
+                  },
+                  {
+                    "name": "hash",
+                    "required": true,
+                    "schema": {
+                      "type": "string",
+                      "description": "Base58-encoded hash"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "name": "error",
+              "required": false,
+              "schema": {
+                "type": "object",
+                "properties": [
+                  {
+                    "name": "code",
+                    "required": false,
+                    "schema": {
+                      "type": "integer"
+                    }
+                  },
+                  {
+                    "name": "message",
+                    "required": false,
+                    "schema": {
+                      "type": "string"
+                    }
+                  },
+                  {
+                    "name": "data",
+                    "required": false,
+                    "schema": {
+                      "type": "object"
+                    }
+                  }
+                ]
+              }
+            }
+          ],
+          "refName": "JsonRpcResponse"
+        },
+        "status": "200"
+      }
+    ],
+    "route": {
+      "method": "POST",
+      "path": "/",
+      "transport": "json-rpc"
+    },
+    "routeAliases": [
+      "/rpcs/contract/view_global_contract_code_by_account_id/other/view_global_contract_code_by_account_id",
+      "/reference/operation/view_global_contract_code_by_account_id"
+    ],
+    "securitySchemes": [
+      {
+        "description": "The OpenAPI contract describes the FastNEAR API key as a query parameter named apiKey.",
+        "id": "ApiKeyAuth",
+        "in": "query",
+        "name": "apiKey",
+        "type": "apiKey"
+      }
+    ],
+    "sourceSpec": "rpcs/contract/view_global_contract_code_by_account_id.yaml"
+  },
+  {
+    "canonicalPath": "/rpcs/contract/view_state",
+    "info": {
+      "description": "Fetch the raw key-value state a contract has written, optionally filtered by key prefix.",
+      "operationId": "view_state",
+      "summary": "View contract state",
+      "title": "NEAR Protocol RPC: View contract state",
+      "version": "1.0.0"
+    },
+    "interaction": {
+      "authTransport": "bearer",
+      "defaultId": "fastnear",
+      "fields": [
+        {
+          "description": "NEAR account ID",
+          "label": "Account ID",
+          "location": "body",
+          "name": "account_id",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "description": "NEAR account ID"
+          }
+        },
+        {
+          "label": "Include Proof",
+          "location": "body",
+          "name": "include_proof",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          }
+        },
+        {
+          "description": "Base64-encoded storage key",
+          "label": "Prefix Base64",
+          "location": "body",
+          "name": "prefix_base64",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "description": "Base64-encoded storage key"
+          }
+        }
+      ],
+      "kind": "rpc-view-state",
+      "networks": [
+        {
+          "defaultFields": {
+            "account_id": "lockup.near",
+            "prefix_base64": "U1RBVEU="
+          },
+          "key": "mainnet",
+          "label": "Mainnet",
+          "url": "https://rpc.mainnet.fastnear.com"
+        },
+        {
+          "defaultFields": {
+            "account_id": "v1.signer-prod.testnet",
+            "prefix_base64": "U1RBVEU="
+          },
+          "key": "testnet",
+          "label": "Testnet",
+          "url": "https://rpc.testnet.fastnear.com"
+        }
+      ],
+      "requestMethod": "query",
+      "requestType": "view_state",
+      "supportsFinality": true,
+      "transport": "json-rpc"
+    },
+    "pageModelId": "rpc-view-state",
+    "replaceOperationPage": true,
+    "request": {
+      "bodySchema": {
+        "type": "object",
+        "required": [
+          "jsonrpc",
+          "id",
+          "method",
+          "params"
+        ],
+        "properties": [
+          {
+            "name": "jsonrpc",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "2.0"
+              ]
+            }
+          },
+          {
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "fastnear"
+            }
+          },
+          {
+            "name": "method",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "query"
+              ]
+            }
+          },
+          {
+            "name": "params",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "request_type",
+                "account_id",
+                "prefix_base64",
+                "finality"
+              ],
+              "properties": [
+                {
+                  "name": "account_id",
+                  "required": true,
+                  "schema": {
+                    "type": "string",
+                    "description": "NEAR account ID"
+                  }
+                },
+                {
+                  "name": "include_proof",
+                  "required": false,
+                  "schema": {
+                    "type": "boolean"
+                  }
+                },
+                {
+                  "name": "prefix_base64",
+                  "required": true,
+                  "schema": {
+                    "type": "string",
+                    "description": "Base64-encoded storage key"
+                  }
+                },
+                {
+                  "name": "request_type",
+                  "required": true,
+                  "schema": {
+                    "type": "string",
+                    "enum": [
+                      "view_state"
+                    ]
+                  }
+                },
+                {
+                  "name": "finality",
+                  "required": true,
+                  "schema": {
+                    "type": "string",
+                    "description": "Block finality",
+                    "enum": [
+                      "final",
+                      "near-final",
+                      "optimistic"
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "examples": [
+        {
+          "id": "mainnet",
+          "label": "View Mainnet Contract State",
+          "network": "mainnet",
+          "request": {
+            "body": {
+              "jsonrpc": "2.0",
+              "id": "fastnear",
+              "method": "query",
+              "params": {
+                "request_type": "view_state",
+                "finality": "final",
+                "account_id": "lockup.near",
+                "prefix_base64": "U1RBVEU="
+              }
+            },
+            "headers": {},
+            "path": {},
+            "query": {}
+          }
+        },
+        {
+          "id": "testnet",
+          "label": "View Testnet Contract State",
+          "network": "testnet",
+          "request": {
+            "body": {
+              "jsonrpc": "2.0",
+              "id": "fastnear",
+              "method": "query",
+              "params": {
+                "request_type": "view_state",
+                "finality": "final",
+                "account_id": "v1.signer-prod.testnet",
+                "prefix_base64": "U1RBVEU="
+              }
+            },
+            "headers": {},
+            "path": {},
+            "query": {}
+          }
+        }
+      ],
+      "mediaType": "application/json",
+      "parameters": {
+        "header": [],
+        "path": [],
+        "query": []
+      },
+      "required": true
+    },
+    "responses": [
+      {
+        "description": "Successful response",
+        "mediaType": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "jsonrpc",
+            "id"
+          ],
+          "properties": [
+            {
+              "name": "jsonrpc",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "enum": [
+                  "2.0"
+                ]
+              }
+            },
+            {
+              "name": "id",
+              "required": true,
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "number"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "result",
+              "required": false,
+              "schema": {
+                "type": "object",
+                "description": "Resulting state values for a view state query request",
+                "required": [
+                  "values"
+                ],
+                "properties": [
+                  {
+                    "name": "proof",
+                    "required": false,
+                    "schema": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  {
+                    "name": "values",
+                    "required": true,
+                    "schema": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "description": "Item of the state, key and value are serialized in base64 and proof for inclusion of given state item."
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "name": "error",
+              "required": false,
+              "schema": {
+                "type": "object",
+                "properties": [
+                  {
+                    "name": "code",
+                    "required": false,
+                    "schema": {
+                      "type": "integer"
+                    }
+                  },
+                  {
+                    "name": "message",
+                    "required": false,
+                    "schema": {
+                      "type": "string"
+                    }
+                  },
+                  {
+                    "name": "data",
+                    "required": false,
+                    "schema": {
+                      "type": "object"
+                    }
+                  }
+                ]
+              }
+            }
+          ],
+          "refName": "JsonRpcResponse"
+        },
+        "status": "200"
+      }
+    ],
+    "route": {
+      "method": "POST",
+      "path": "/",
+      "transport": "json-rpc"
+    },
+    "routeAliases": [
+      "/rpcs/contract/view_state/other/view_state",
+      "/reference/operation/view_state"
+    ],
+    "securitySchemes": [
+      {
+        "description": "The OpenAPI contract describes the FastNEAR API key as a query parameter named apiKey.",
+        "id": "ApiKeyAuth",
+        "in": "query",
+        "name": "apiKey",
+        "type": "apiKey"
+      }
+    ],
+    "sourceSpec": "rpcs/contract/view_state.yaml"
+  }
+]

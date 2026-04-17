@@ -275,26 +275,53 @@ function resolveMobileSidebarItem(item, locale) {
   return null;
 }
 
-const mobileSidebarItemsByLocaleCache = new Map();
+const MOBILE_SIDEBAR_NAVBAR_IDS = [
+  'rpcSidebar',
+  'fastnearApiSidebar',
+  'transactionsApiSidebar',
+  'transfersApiSidebar',
+  'nearDataApiSidebar',
+  'kvFastDataSidebar',
+];
 
-function getMobileSidebarItemsByLocale(sidebarId) {
-  if (!mobileSidebarItemsByLocaleCache.has(sidebarId)) {
-    const sidebarItems = sidebars[sidebarId] || [];
-    mobileSidebarItemsByLocaleCache.set(
-      sidebarId,
-      Object.fromEntries(
-        DOCS_LOCALES.map((locale) => [
-          locale,
-          sidebarItems
-            .map((item) => resolveMobileSidebarItem(item, locale))
-            .filter(Boolean),
-        ])
-      )
-    );
-  }
-
-  return mobileSidebarItemsByLocaleCache.get(sidebarId);
+function buildMobileSidebarItemsByLocale(sidebarId) {
+  const sidebarItems = sidebars[sidebarId] || [];
+  return Object.fromEntries(
+    DOCS_LOCALES.map((locale) => [
+      locale,
+      sidebarItems
+        .map((item) => resolveMobileSidebarItem(item, locale))
+        .filter(Boolean),
+    ])
+  );
 }
+
+function generateMobileSidebarItemsFile() {
+  const allSidebars = Object.fromEntries(
+    MOBILE_SIDEBAR_NAVBAR_IDS.filter((id) => sidebars[id]).map((sidebarId) => [
+      sidebarId,
+      buildMobileSidebarItemsByLocale(sidebarId),
+    ])
+  );
+  const targetPath = path.join(
+    configDir,
+    'src',
+    'data',
+    'generatedFastnearMobileSidebarItems.json'
+  );
+  const nextContent = `${JSON.stringify(allSidebars)}\n`;
+  let shouldWrite = true;
+  try {
+    shouldWrite = fs.readFileSync(targetPath, 'utf8') !== nextContent;
+  } catch (_error) {
+    shouldWrite = true;
+  }
+  if (shouldWrite) {
+    fs.writeFileSync(targetPath, nextContent);
+  }
+}
+
+generateMobileSidebarItemsFile();
 
 function readDocSlugs() {
   return walkDocsFiles(docsRoot)
@@ -509,7 +536,42 @@ const config = {
         },
       };
     },
+    function prismIncludeLanguagesNoopWebpackAlias(context) {
+      // `@docusaurus/theme-classic` registers `lib/prism-include-languages.js`
+      // as a clientModule that statically imports `{ Prism } from 'prism-react-renderer'`
+      // and then iterates `themeConfig.prism.additionalLanguages`. We don't
+      // configure any `additionalLanguages`, so the module is a no-op at
+      // runtime but still drags ~135 KB raw (~30 KB gz) of prism-react-renderer
+      // into main.js. Alias it to an empty module so main.js sheds that cost;
+      // `CodeBlock/Content` is swizzled to load Highlight from a lazy chunk.
+      const additionalLanguages =
+        context?.siteConfig?.themeConfig?.prism?.additionalLanguages;
+      if (Array.isArray(additionalLanguages) && additionalLanguages.length > 0) {
+        throw new Error(
+          `[fastnear-prism-include-languages-noop] themeConfig.prism.additionalLanguages is non-empty (${JSON.stringify(
+            additionalLanguages
+          )}), but this plugin aliases @docusaurus/theme-classic/lib/prism-include-languages to a no-op ` +
+            `to shed ~135 KB raw (~30 KB gz) from main.js. Additional languages would be silently dropped. ` +
+            `Either remove them from themeConfig.prism.additionalLanguages, or remove this plugin from ` +
+            `docusaurus.config.js to restore language registration.`
+        );
+      }
+      return {
+        name: 'fastnear-prism-include-languages-noop',
+        configureWebpack() {
+          return {
+            resolve: {
+              alias: {
+                [require.resolve('@docusaurus/theme-classic/lib/prism-include-languages')]:
+                  require.resolve('./src/clientModules/prismIncludeLanguagesNoop.js'),
+              },
+            },
+          };
+        },
+      };
+    },
     path.resolve(configDir, 'plugins/finalizeLocalizedStaticAssets.cjs'),
+    path.resolve(configDir, 'plugins/bundleAnalyzerStatic.cjs'),
     [
       '@docusaurus/plugin-client-redirects',
       {
@@ -559,21 +621,18 @@ const config = {
             type: 'docSidebar',
             sidebarId: 'rpcSidebar',
             label: 'RPC',
-            mobileSidebarItemsByLocale: getMobileSidebarItemsByLocale('rpcSidebar'),
             position: 'left',
           },
           {
             type: 'docSidebar',
             sidebarId: 'fastnearApiSidebar',
             label: 'API',
-            mobileSidebarItemsByLocale: getMobileSidebarItemsByLocale('fastnearApiSidebar'),
             position: 'left',
           },
           {
             type: 'docSidebar',
             sidebarId: 'transactionsApiSidebar',
             label: 'Transactions',
-            mobileSidebarItemsByLocale: getMobileSidebarItemsByLocale('transactionsApiSidebar'),
             position: 'left',
           },
           ...(!hideEarlyApiFamilies
@@ -582,7 +641,6 @@ const config = {
                   type: 'docSidebar',
                   sidebarId: 'transfersApiSidebar',
                   label: 'Transfers',
-                  mobileSidebarItemsByLocale: getMobileSidebarItemsByLocale('transfersApiSidebar'),
                   position: 'left',
                 },
               ]
@@ -591,7 +649,6 @@ const config = {
             type: 'docSidebar',
             sidebarId: 'nearDataApiSidebar',
             label: 'NEAR\u00A0Data',
-            mobileSidebarItemsByLocale: getMobileSidebarItemsByLocale('nearDataApiSidebar'),
             position: 'left',
           },
           ...(!hideEarlyApiFamilies
@@ -600,7 +657,6 @@ const config = {
                   type: 'docSidebar',
                   sidebarId: 'kvFastDataSidebar',
                   label: 'FastData',
-                  mobileSidebarItemsByLocale: getMobileSidebarItemsByLocale('kvFastDataSidebar'),
                   position: 'left',
                 },
               ]

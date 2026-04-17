@@ -1,0 +1,2278 @@
+[
+  {
+    "canonicalPath": "/apis/transactions/v0/account",
+    "info": {
+      "description": "Fetch account transaction history with optional filters for signer, success status, and sort order.",
+      "operationId": "get_account",
+      "summary": "Fetch account transaction history",
+      "title": "Transactions API - Account History",
+      "version": "3.0.3"
+    },
+    "interaction": {
+      "authTransport": "bearer",
+      "fields": [
+        {
+          "label": "Account ID",
+          "location": "body",
+          "name": "account_id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "label": "Desc",
+          "location": "body",
+          "name": "desc",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          }
+        },
+        {
+          "label": "From Tx Block Height",
+          "location": "body",
+          "name": "from_tx_block_height",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "format": "uint64"
+          }
+        },
+        {
+          "label": "Is Action Arg",
+          "location": "body",
+          "name": "is_action_arg",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          }
+        },
+        {
+          "label": "Is Any Signer",
+          "location": "body",
+          "name": "is_any_signer",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          }
+        },
+        {
+          "label": "Is Delegated Signer",
+          "location": "body",
+          "name": "is_delegated_signer",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          }
+        },
+        {
+          "label": "Is Event Log",
+          "location": "body",
+          "name": "is_event_log",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          }
+        },
+        {
+          "label": "Is Explicit Refund To",
+          "location": "body",
+          "name": "is_explicit_refund_to",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          }
+        },
+        {
+          "label": "Is Function Call",
+          "location": "body",
+          "name": "is_function_call",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          }
+        },
+        {
+          "label": "Is Predecessor",
+          "location": "body",
+          "name": "is_predecessor",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          }
+        },
+        {
+          "label": "Is Real Receiver",
+          "location": "body",
+          "name": "is_real_receiver",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          }
+        },
+        {
+          "label": "Is Real Signer",
+          "location": "body",
+          "name": "is_real_signer",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          }
+        },
+        {
+          "label": "Is Receiver",
+          "location": "body",
+          "name": "is_receiver",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          }
+        },
+        {
+          "label": "Is Signer",
+          "location": "body",
+          "name": "is_signer",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          }
+        },
+        {
+          "label": "Is Success",
+          "location": "body",
+          "name": "is_success",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          }
+        },
+        {
+          "label": "Limit",
+          "location": "body",
+          "name": "limit",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "format": "uint"
+          }
+        },
+        {
+          "default": null,
+          "label": "Resume Token",
+          "location": "body",
+          "name": "resume_token",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "default": null
+          }
+        },
+        {
+          "label": "To Tx Block Height",
+          "location": "body",
+          "name": "to_tx_block_height",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "format": "uint64"
+          }
+        }
+      ],
+      "kind": "fastnear-rest-body",
+      "networks": [
+        {
+          "defaultFields": {
+            "account_id": "intents.near",
+            "desc": true,
+            "from_tx_block_height": "",
+            "is_action_arg": "",
+            "is_any_signer": "",
+            "is_delegated_signer": "",
+            "is_event_log": "",
+            "is_explicit_refund_to": "",
+            "is_function_call": "",
+            "is_predecessor": "",
+            "is_real_receiver": "",
+            "is_real_signer": true,
+            "is_receiver": "",
+            "is_signer": "",
+            "is_success": true,
+            "limit": 50,
+            "resume_token": "",
+            "to_tx_block_height": ""
+          },
+          "key": "mainnet",
+          "label": "Mainnet",
+          "url": "https://tx.main.fastnear.com"
+        },
+        {
+          "defaultFields": {
+            "account_id": "root.testnet",
+            "desc": true,
+            "from_tx_block_height": "",
+            "is_action_arg": "",
+            "is_any_signer": "",
+            "is_delegated_signer": "",
+            "is_event_log": "",
+            "is_explicit_refund_to": "",
+            "is_function_call": "",
+            "is_predecessor": "",
+            "is_real_receiver": "",
+            "is_real_signer": true,
+            "is_receiver": "",
+            "is_signer": "",
+            "is_success": true,
+            "limit": 50,
+            "resume_token": "",
+            "to_tx_block_height": ""
+          },
+          "key": "testnet",
+          "label": "Testnet",
+          "url": "https://tx.test.fastnear.com"
+        }
+      ],
+      "requestMethod": "get_account",
+      "supportsFinality": false,
+      "transport": "http"
+    },
+    "pageModelId": "transactions-v0-account",
+    "replaceOperationPage": true,
+    "request": {
+      "bodySchema": {
+        "type": "object",
+        "required": [
+          "account_id"
+        ],
+        "additionalProperties": false,
+        "properties": [
+          {
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "desc",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "from_tx_block_height",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "uint64"
+            }
+          },
+          {
+            "name": "is_action_arg",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "is_any_signer",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "is_delegated_signer",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "is_event_log",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "is_explicit_refund_to",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "is_function_call",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "is_predecessor",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "is_real_receiver",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "is_real_signer",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "is_receiver",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "is_signer",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "is_success",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "uint"
+            }
+          },
+          {
+            "name": "resume_token",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": null
+            }
+          },
+          {
+            "name": "to_tx_block_height",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "uint64"
+            }
+          }
+        ],
+        "refName": "AccountInput"
+      },
+      "examples": [
+        {
+          "id": "mainnet",
+          "label": "Mainnet",
+          "network": "mainnet",
+          "request": {
+            "body": {
+              "account_id": "intents.near",
+              "desc": true,
+              "is_real_signer": true,
+              "is_success": true,
+              "limit": 50
+            },
+            "headers": {},
+            "path": {},
+            "query": {}
+          }
+        },
+        {
+          "id": "testnet",
+          "label": "Testnet",
+          "network": "testnet",
+          "request": {
+            "body": {
+              "account_id": "root.testnet",
+              "desc": true,
+              "is_real_signer": true,
+              "is_success": true,
+              "limit": 50
+            },
+            "headers": {},
+            "path": {},
+            "query": {}
+          }
+        }
+      ],
+      "mediaType": "application/json",
+      "parameters": {
+        "header": [],
+        "path": [],
+        "query": []
+      },
+      "required": true,
+      "supportsBody": true
+    },
+    "responses": [
+      {
+        "description": "Account history result set",
+        "mediaType": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "account_txs",
+            "resume_token",
+            "txs_count"
+          ],
+          "additionalProperties": false,
+          "properties": [
+            {
+              "name": "account_txs",
+              "required": true,
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "account_id",
+                    "transaction_hash",
+                    "tx_block_height",
+                    "tx_block_timestamp",
+                    "tx_index",
+                    "is_signer",
+                    "is_delegated_signer",
+                    "is_real_signer",
+                    "is_any_signer",
+                    "is_predecessor",
+                    "is_explicit_refund_to",
+                    "is_receiver",
+                    "is_real_receiver",
+                    "is_function_call",
+                    "is_action_arg",
+                    "is_event_log",
+                    "is_success"
+                  ],
+                  "additionalProperties": false,
+                  "properties": [
+                    {
+                      "name": "account_id",
+                      "required": true,
+                      "schema": {
+                        "type": "string"
+                      }
+                    },
+                    {
+                      "name": "is_action_arg",
+                      "required": true,
+                      "schema": {
+                        "type": "boolean"
+                      }
+                    },
+                    {
+                      "name": "is_any_signer",
+                      "required": true,
+                      "schema": {
+                        "type": "boolean"
+                      }
+                    },
+                    {
+                      "name": "is_delegated_signer",
+                      "required": true,
+                      "schema": {
+                        "type": "boolean"
+                      }
+                    },
+                    {
+                      "name": "is_event_log",
+                      "required": true,
+                      "schema": {
+                        "type": "boolean"
+                      }
+                    },
+                    {
+                      "name": "is_explicit_refund_to",
+                      "required": true,
+                      "schema": {
+                        "type": "boolean"
+                      }
+                    },
+                    {
+                      "name": "is_function_call",
+                      "required": true,
+                      "schema": {
+                        "type": "boolean"
+                      }
+                    },
+                    {
+                      "name": "is_predecessor",
+                      "required": true,
+                      "schema": {
+                        "type": "boolean"
+                      }
+                    },
+                    {
+                      "name": "is_real_receiver",
+                      "required": true,
+                      "schema": {
+                        "type": "boolean"
+                      }
+                    },
+                    {
+                      "name": "is_real_signer",
+                      "required": true,
+                      "schema": {
+                        "type": "boolean"
+                      }
+                    },
+                    {
+                      "name": "is_receiver",
+                      "required": true,
+                      "schema": {
+                        "type": "boolean"
+                      }
+                    },
+                    {
+                      "name": "is_signer",
+                      "required": true,
+                      "schema": {
+                        "type": "boolean"
+                      }
+                    },
+                    {
+                      "name": "is_success",
+                      "required": true,
+                      "schema": {
+                        "type": "boolean"
+                      }
+                    },
+                    {
+                      "name": "transaction_hash",
+                      "required": true,
+                      "schema": {
+                        "type": "string"
+                      }
+                    },
+                    {
+                      "name": "tx_block_height",
+                      "required": true,
+                      "schema": {
+                        "type": "integer",
+                        "format": "uint64"
+                      }
+                    },
+                    {
+                      "name": "tx_block_timestamp",
+                      "required": true,
+                      "schema": {
+                        "type": "string"
+                      }
+                    },
+                    {
+                      "name": "tx_index",
+                      "required": true,
+                      "schema": {
+                        "type": "integer",
+                        "format": "uint32"
+                      }
+                    }
+                  ],
+                  "refName": "AccountTxRow"
+                }
+              }
+            },
+            {
+              "name": "resume_token",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "txs_count",
+              "required": true,
+              "schema": {
+                "type": "integer",
+                "format": "uint64"
+              }
+            }
+          ],
+          "refName": "AccountResponse"
+        },
+        "status": "200"
+      },
+      {
+        "description": "Bad request",
+        "mediaType": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "error",
+            "message"
+          ],
+          "additionalProperties": false,
+          "properties": [
+            {
+              "name": "error",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "message",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "refName": "ApiError"
+        },
+        "status": "400"
+      },
+      {
+        "description": "ClickHouse query failure",
+        "mediaType": "application/json",
+        "schema": {
+          "type": "string"
+        },
+        "status": "500"
+      }
+    ],
+    "route": {
+      "method": "POST",
+      "path": "/v0/account",
+      "transport": "http"
+    },
+    "routeAliases": [
+      "/apis/transactions/openapi/account/get_account"
+    ],
+    "securitySchemes": [],
+    "sourceSpec": "apis/transactions/v0/account.yaml"
+  },
+  {
+    "canonicalPath": "/apis/transactions/v0/block",
+    "info": {
+      "description": "Fetch a block row by height or hash and optionally expand its transactions and receipts.",
+      "operationId": "get_block",
+      "summary": "Fetch a block by height or hash",
+      "title": "Transactions API - Block Lookup",
+      "version": "3.0.3"
+    },
+    "interaction": {
+      "authTransport": "bearer",
+      "fields": [
+        {
+          "label": "Block ID",
+          "location": "body",
+          "name": "block_id",
+          "required": true,
+          "schema": {
+            "oneOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          }
+        },
+        {
+          "label": "With Receipts",
+          "location": "body",
+          "name": "with_receipts",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          }
+        },
+        {
+          "label": "With Transactions",
+          "location": "body",
+          "name": "with_transactions",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          }
+        }
+      ],
+      "kind": "fastnear-rest-body",
+      "networks": [
+        {
+          "defaultFields": {
+            "block_id": 193916411,
+            "with_receipts": true,
+            "with_transactions": true
+          },
+          "key": "mainnet",
+          "label": "Mainnet",
+          "url": "https://tx.main.fastnear.com"
+        },
+        {
+          "defaultFields": {
+            "block_id": 46562457,
+            "with_receipts": true,
+            "with_transactions": true
+          },
+          "key": "testnet",
+          "label": "Testnet",
+          "url": "https://tx.test.fastnear.com"
+        }
+      ],
+      "requestMethod": "get_block",
+      "supportsFinality": false,
+      "transport": "http"
+    },
+    "pageModelId": "transactions-v0-block",
+    "replaceOperationPage": true,
+    "request": {
+      "bodySchema": {
+        "type": "object",
+        "required": [
+          "block_id"
+        ],
+        "additionalProperties": false,
+        "properties": [
+          {
+            "name": "block_id",
+            "required": true,
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          {
+            "name": "with_receipts",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "with_transactions",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "refName": "BlockInput"
+      },
+      "examples": [
+        {
+          "id": "mainnet",
+          "label": "Mainnet",
+          "network": "mainnet",
+          "request": {
+            "body": {
+              "block_id": 193916411,
+              "with_receipts": true,
+              "with_transactions": true
+            },
+            "headers": {},
+            "path": {},
+            "query": {}
+          }
+        },
+        {
+          "id": "testnet",
+          "label": "Testnet",
+          "network": "testnet",
+          "request": {
+            "body": {
+              "block_id": 46562457,
+              "with_receipts": true,
+              "with_transactions": true
+            },
+            "headers": {},
+            "path": {},
+            "query": {}
+          }
+        }
+      ],
+      "mediaType": "application/json",
+      "parameters": {
+        "header": [],
+        "path": [],
+        "query": []
+      },
+      "required": true,
+      "supportsBody": true
+    },
+    "responses": [
+      {
+        "description": "Block lookup result",
+        "mediaType": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "block",
+            "block_txs",
+            "block_receipts"
+          ],
+          "additionalProperties": false,
+          "properties": [
+            {
+              "name": "block",
+              "required": true,
+              "schema": {
+                "type": "object",
+                "required": [
+                  "block_height",
+                  "block_hash",
+                  "prev_block_hash",
+                  "block_timestamp",
+                  "epoch_id",
+                  "next_epoch_id",
+                  "chunks_included",
+                  "author_id",
+                  "protocol_version",
+                  "gas_price",
+                  "total_supply",
+                  "num_transactions",
+                  "num_receipts",
+                  "gas_burnt",
+                  "tokens_burnt"
+                ],
+                "additionalProperties": false,
+                "properties": [
+                  {
+                    "name": "author_id",
+                    "required": true,
+                    "schema": {
+                      "type": "string"
+                    }
+                  },
+                  {
+                    "name": "block_hash",
+                    "required": true,
+                    "schema": {
+                      "type": "string"
+                    }
+                  },
+                  {
+                    "name": "block_height",
+                    "required": true,
+                    "schema": {
+                      "type": "integer",
+                      "format": "uint64"
+                    }
+                  },
+                  {
+                    "name": "block_ordinal",
+                    "required": false,
+                    "schema": {
+                      "type": "integer",
+                      "format": "uint64"
+                    }
+                  },
+                  {
+                    "name": "block_timestamp",
+                    "required": true,
+                    "schema": {
+                      "type": "string"
+                    }
+                  },
+                  {
+                    "name": "chunks_included",
+                    "required": true,
+                    "schema": {
+                      "type": "integer",
+                      "format": "uint64"
+                    }
+                  },
+                  {
+                    "name": "epoch_id",
+                    "required": true,
+                    "schema": {
+                      "type": "string"
+                    }
+                  },
+                  {
+                    "name": "gas_burnt",
+                    "required": true,
+                    "schema": {
+                      "type": "string"
+                    }
+                  },
+                  {
+                    "name": "gas_price",
+                    "required": true,
+                    "schema": {
+                      "type": "string"
+                    }
+                  },
+                  {
+                    "name": "next_epoch_id",
+                    "required": true,
+                    "schema": {
+                      "type": "string"
+                    }
+                  },
+                  {
+                    "name": "num_receipts",
+                    "required": true,
+                    "schema": {
+                      "type": "integer",
+                      "format": "uint32"
+                    }
+                  },
+                  {
+                    "name": "num_transactions",
+                    "required": true,
+                    "schema": {
+                      "type": "integer",
+                      "format": "uint32"
+                    }
+                  },
+                  {
+                    "name": "prev_block_hash",
+                    "required": true,
+                    "schema": {
+                      "type": "string"
+                    }
+                  },
+                  {
+                    "name": "prev_block_height",
+                    "required": false,
+                    "schema": {
+                      "type": "integer",
+                      "format": "uint64"
+                    }
+                  },
+                  {
+                    "name": "protocol_version",
+                    "required": true,
+                    "schema": {
+                      "type": "integer",
+                      "format": "uint32"
+                    }
+                  },
+                  {
+                    "name": "tokens_burnt",
+                    "required": true,
+                    "schema": {
+                      "type": "string"
+                    }
+                  },
+                  {
+                    "name": "total_supply",
+                    "required": true,
+                    "schema": {
+                      "type": "string"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "name": "block_receipts",
+              "required": true,
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "receipt_id",
+                    "block_height",
+                    "block_timestamp",
+                    "receipt_index",
+                    "appear_block_height",
+                    "appear_receipt_index",
+                    "transaction_hash",
+                    "tx_block_height",
+                    "tx_block_timestamp",
+                    "tx_index",
+                    "predecessor_id",
+                    "receiver_id",
+                    "receipt_type",
+                    "priority",
+                    "shard_id",
+                    "is_success"
+                  ],
+                  "additionalProperties": false,
+                  "properties": [
+                    {
+                      "name": "appear_block_height",
+                      "required": true,
+                      "schema": {
+                        "type": "integer",
+                        "format": "uint64"
+                      }
+                    },
+                    {
+                      "name": "appear_receipt_index",
+                      "required": true,
+                      "schema": {
+                        "type": "integer",
+                        "format": "uint32"
+                      }
+                    },
+                    {
+                      "name": "block_height",
+                      "required": true,
+                      "schema": {
+                        "type": "integer",
+                        "format": "uint64"
+                      }
+                    },
+                    {
+                      "name": "block_timestamp",
+                      "required": true,
+                      "schema": {
+                        "type": "string"
+                      }
+                    },
+                    {
+                      "name": "is_success",
+                      "required": true,
+                      "schema": {
+                        "type": "boolean"
+                      }
+                    },
+                    {
+                      "name": "predecessor_id",
+                      "required": true,
+                      "schema": {
+                        "type": "string"
+                      }
+                    },
+                    {
+                      "name": "priority",
+                      "required": true,
+                      "schema": {
+                        "type": "integer",
+                        "format": "uint64"
+                      }
+                    },
+                    {
+                      "name": "receipt_id",
+                      "required": true,
+                      "schema": {
+                        "type": "string"
+                      }
+                    },
+                    {
+                      "name": "receipt_index",
+                      "required": true,
+                      "schema": {
+                        "type": "integer",
+                        "format": "uint32"
+                      }
+                    },
+                    {
+                      "name": "receipt_type",
+                      "required": true,
+                      "schema": {
+                        "type": "string"
+                      }
+                    },
+                    {
+                      "name": "receiver_id",
+                      "required": true,
+                      "schema": {
+                        "type": "string"
+                      }
+                    },
+                    {
+                      "name": "shard_id",
+                      "required": true,
+                      "schema": {
+                        "type": "integer",
+                        "format": "uint64"
+                      }
+                    },
+                    {
+                      "name": "transaction_hash",
+                      "required": true,
+                      "schema": {
+                        "type": "string"
+                      }
+                    },
+                    {
+                      "name": "tx_block_height",
+                      "required": true,
+                      "schema": {
+                        "type": "integer",
+                        "format": "uint64"
+                      }
+                    },
+                    {
+                      "name": "tx_block_timestamp",
+                      "required": true,
+                      "schema": {
+                        "type": "string"
+                      }
+                    },
+                    {
+                      "name": "tx_index",
+                      "required": true,
+                      "schema": {
+                        "type": "integer",
+                        "format": "uint32"
+                      }
+                    }
+                  ],
+                  "refName": "ReceiptTxRow"
+                }
+              }
+            },
+            {
+              "name": "block_txs",
+              "required": true,
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "transaction_hash",
+                    "signer_id",
+                    "tx_block_height",
+                    "tx_index",
+                    "tx_block_hash",
+                    "tx_block_timestamp",
+                    "last_block_height",
+                    "is_completed",
+                    "shard_id",
+                    "receiver_id",
+                    "signer_public_key",
+                    "priority_fee",
+                    "nonce",
+                    "is_relayed",
+                    "real_signer_id",
+                    "real_receiver_id",
+                    "is_success",
+                    "gas_burnt",
+                    "tokens_burnt"
+                  ],
+                  "additionalProperties": false,
+                  "properties": [
+                    {
+                      "name": "gas_burnt",
+                      "required": true,
+                      "schema": {
+                        "type": "integer",
+                        "format": "uint64"
+                      }
+                    },
+                    {
+                      "name": "is_completed",
+                      "required": true,
+                      "schema": {
+                        "type": "boolean"
+                      }
+                    },
+                    {
+                      "name": "is_relayed",
+                      "required": true,
+                      "schema": {
+                        "type": "boolean"
+                      }
+                    },
+                    {
+                      "name": "is_success",
+                      "required": true,
+                      "schema": {
+                        "type": "boolean"
+                      }
+                    },
+                    {
+                      "name": "last_block_height",
+                      "required": true,
+                      "schema": {
+                        "type": "integer",
+                        "format": "uint64"
+                      }
+                    },
+                    {
+                      "name": "nonce",
+                      "required": true,
+                      "schema": {
+                        "type": "integer",
+                        "format": "uint64"
+                      }
+                    },
+                    {
+                      "name": "priority_fee",
+                      "required": true,
+                      "schema": {
+                        "type": "integer",
+                        "format": "uint64"
+                      }
+                    },
+                    {
+                      "name": "real_receiver_id",
+                      "required": true,
+                      "schema": {
+                        "type": "string"
+                      }
+                    },
+                    {
+                      "name": "real_signer_id",
+                      "required": true,
+                      "schema": {
+                        "type": "string"
+                      }
+                    },
+                    {
+                      "name": "receiver_id",
+                      "required": true,
+                      "schema": {
+                        "type": "string"
+                      }
+                    },
+                    {
+                      "name": "shard_id",
+                      "required": true,
+                      "schema": {
+                        "type": "integer",
+                        "format": "uint64"
+                      }
+                    },
+                    {
+                      "name": "signer_id",
+                      "required": true,
+                      "schema": {
+                        "type": "string"
+                      }
+                    },
+                    {
+                      "name": "signer_public_key",
+                      "required": true,
+                      "schema": {
+                        "type": "string"
+                      }
+                    },
+                    {
+                      "name": "tokens_burnt",
+                      "required": true,
+                      "schema": {
+                        "type": "string"
+                      }
+                    },
+                    {
+                      "name": "transaction_hash",
+                      "required": true,
+                      "schema": {
+                        "type": "string"
+                      }
+                    },
+                    {
+                      "name": "tx_block_hash",
+                      "required": true,
+                      "schema": {
+                        "type": "string"
+                      }
+                    },
+                    {
+                      "name": "tx_block_height",
+                      "required": true,
+                      "schema": {
+                        "type": "integer",
+                        "format": "uint64"
+                      }
+                    },
+                    {
+                      "name": "tx_block_timestamp",
+                      "required": true,
+                      "schema": {
+                        "type": "string"
+                      }
+                    },
+                    {
+                      "name": "tx_index",
+                      "required": true,
+                      "schema": {
+                        "type": "integer",
+                        "format": "uint32"
+                      }
+                    }
+                  ],
+                  "refName": "BlockTxRow"
+                }
+              }
+            }
+          ],
+          "refName": "BlockResponse"
+        },
+        "status": "200"
+      },
+      {
+        "description": "Bad request",
+        "mediaType": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "error",
+            "message"
+          ],
+          "additionalProperties": false,
+          "properties": [
+            {
+              "name": "error",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "message",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "refName": "ApiError"
+        },
+        "status": "400"
+      },
+      {
+        "description": "ClickHouse query failure",
+        "mediaType": "application/json",
+        "schema": {
+          "type": "string"
+        },
+        "status": "500"
+      }
+    ],
+    "route": {
+      "method": "POST",
+      "path": "/v0/block",
+      "transport": "http"
+    },
+    "routeAliases": [
+      "/apis/transactions/openapi/blocks/get_block"
+    ],
+    "securitySchemes": [],
+    "sourceSpec": "apis/transactions/v0/block.yaml"
+  },
+  {
+    "canonicalPath": "/apis/transactions/v0/blocks",
+    "info": {
+      "description": "Fetch a bounded list of indexed blocks ordered ascending or descending.",
+      "operationId": "get_blocks",
+      "summary": "Fetch a list of blocks",
+      "title": "Transactions API - Block Range",
+      "version": "3.0.3"
+    },
+    "interaction": {
+      "authTransport": "bearer",
+      "fields": [
+        {
+          "label": "Desc",
+          "location": "body",
+          "name": "desc",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          }
+        },
+        {
+          "label": "From Block Height",
+          "location": "body",
+          "name": "from_block_height",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "format": "uint64"
+          }
+        },
+        {
+          "label": "Limit",
+          "location": "body",
+          "name": "limit",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "format": "uint"
+          }
+        },
+        {
+          "label": "To Block Height",
+          "location": "body",
+          "name": "to_block_height",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "format": "uint64"
+          }
+        }
+      ],
+      "kind": "fastnear-rest-body",
+      "networks": [
+        {
+          "defaultFields": {
+            "desc": false,
+            "from_block_height": 193916402,
+            "limit": 10,
+            "to_block_height": 193916411
+          },
+          "key": "mainnet",
+          "label": "Mainnet",
+          "url": "https://tx.main.fastnear.com"
+        },
+        {
+          "defaultFields": {
+            "desc": false,
+            "from_block_height": 46562448,
+            "limit": 10,
+            "to_block_height": 46562457
+          },
+          "key": "testnet",
+          "label": "Testnet",
+          "url": "https://tx.test.fastnear.com"
+        }
+      ],
+      "requestMethod": "get_blocks",
+      "supportsFinality": false,
+      "transport": "http"
+    },
+    "pageModelId": "transactions-v0-blocks",
+    "replaceOperationPage": true,
+    "request": {
+      "bodySchema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": [
+          {
+            "name": "desc",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "from_block_height",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "uint64"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "uint"
+            }
+          },
+          {
+            "name": "to_block_height",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "uint64"
+            }
+          }
+        ],
+        "refName": "BlocksInput"
+      },
+      "examples": [
+        {
+          "id": "mainnet",
+          "label": "Mainnet",
+          "network": "mainnet",
+          "request": {
+            "body": {
+              "desc": false,
+              "from_block_height": 193916402,
+              "limit": 10,
+              "to_block_height": 193916411
+            },
+            "headers": {},
+            "path": {},
+            "query": {}
+          }
+        },
+        {
+          "id": "testnet",
+          "label": "Testnet",
+          "network": "testnet",
+          "request": {
+            "body": {
+              "desc": false,
+              "from_block_height": 46562448,
+              "limit": 10,
+              "to_block_height": 46562457
+            },
+            "headers": {},
+            "path": {},
+            "query": {}
+          }
+        }
+      ],
+      "mediaType": "application/json",
+      "parameters": {
+        "header": [],
+        "path": [],
+        "query": []
+      },
+      "required": true,
+      "supportsBody": true
+    },
+    "responses": [
+      {
+        "description": "Block rows",
+        "mediaType": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "blocks"
+          ],
+          "additionalProperties": false,
+          "properties": [
+            {
+              "name": "blocks",
+              "required": true,
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "block_height",
+                    "block_hash",
+                    "prev_block_hash",
+                    "block_timestamp",
+                    "epoch_id",
+                    "next_epoch_id",
+                    "chunks_included",
+                    "author_id",
+                    "protocol_version",
+                    "gas_price",
+                    "total_supply",
+                    "num_transactions",
+                    "num_receipts",
+                    "gas_burnt",
+                    "tokens_burnt"
+                  ],
+                  "additionalProperties": false,
+                  "properties": [
+                    {
+                      "name": "author_id",
+                      "required": true,
+                      "schema": {
+                        "type": "string"
+                      }
+                    },
+                    {
+                      "name": "block_hash",
+                      "required": true,
+                      "schema": {
+                        "type": "string"
+                      }
+                    },
+                    {
+                      "name": "block_height",
+                      "required": true,
+                      "schema": {
+                        "type": "integer",
+                        "format": "uint64"
+                      }
+                    },
+                    {
+                      "name": "block_ordinal",
+                      "required": false,
+                      "schema": {
+                        "type": "integer",
+                        "format": "uint64"
+                      }
+                    },
+                    {
+                      "name": "block_timestamp",
+                      "required": true,
+                      "schema": {
+                        "type": "string"
+                      }
+                    },
+                    {
+                      "name": "chunks_included",
+                      "required": true,
+                      "schema": {
+                        "type": "integer",
+                        "format": "uint64"
+                      }
+                    },
+                    {
+                      "name": "epoch_id",
+                      "required": true,
+                      "schema": {
+                        "type": "string"
+                      }
+                    },
+                    {
+                      "name": "gas_burnt",
+                      "required": true,
+                      "schema": {
+                        "type": "string"
+                      }
+                    },
+                    {
+                      "name": "gas_price",
+                      "required": true,
+                      "schema": {
+                        "type": "string"
+                      }
+                    },
+                    {
+                      "name": "next_epoch_id",
+                      "required": true,
+                      "schema": {
+                        "type": "string"
+                      }
+                    },
+                    {
+                      "name": "num_receipts",
+                      "required": true,
+                      "schema": {
+                        "type": "integer",
+                        "format": "uint32"
+                      }
+                    },
+                    {
+                      "name": "num_transactions",
+                      "required": true,
+                      "schema": {
+                        "type": "integer",
+                        "format": "uint32"
+                      }
+                    },
+                    {
+                      "name": "prev_block_hash",
+                      "required": true,
+                      "schema": {
+                        "type": "string"
+                      }
+                    },
+                    {
+                      "name": "prev_block_height",
+                      "required": false,
+                      "schema": {
+                        "type": "integer",
+                        "format": "uint64"
+                      }
+                    },
+                    {
+                      "name": "protocol_version",
+                      "required": true,
+                      "schema": {
+                        "type": "integer",
+                        "format": "uint32"
+                      }
+                    },
+                    {
+                      "name": "tokens_burnt",
+                      "required": true,
+                      "schema": {
+                        "type": "string"
+                      }
+                    },
+                    {
+                      "name": "total_supply",
+                      "required": true,
+                      "schema": {
+                        "type": "string"
+                      }
+                    }
+                  ],
+                  "refName": "BlockRow"
+                }
+              }
+            }
+          ],
+          "refName": "BlocksResponse"
+        },
+        "status": "200"
+      },
+      {
+        "description": "Bad request",
+        "mediaType": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "error",
+            "message"
+          ],
+          "additionalProperties": false,
+          "properties": [
+            {
+              "name": "error",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "message",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "refName": "ApiError"
+        },
+        "status": "400"
+      },
+      {
+        "description": "ClickHouse query failure",
+        "mediaType": "application/json",
+        "schema": {
+          "type": "string"
+        },
+        "status": "500"
+      }
+    ],
+    "route": {
+      "method": "POST",
+      "path": "/v0/blocks",
+      "transport": "http"
+    },
+    "routeAliases": [
+      "/apis/transactions/openapi/blocks/get_blocks"
+    ],
+    "securitySchemes": [],
+    "sourceSpec": "apis/transactions/v0/blocks.yaml"
+  },
+  {
+    "canonicalPath": "/apis/transactions/v0/receipt",
+    "info": {
+      "description": "Fetch a receipt by ID along with the transaction that produced it.",
+      "operationId": "get_receipt",
+      "summary": "Fetch a receipt by ID",
+      "title": "Transactions API - Receipt Lookup",
+      "version": "3.0.3"
+    },
+    "interaction": {
+      "authTransport": "bearer",
+      "fields": [
+        {
+          "label": "Receipt Id",
+          "location": "body",
+          "name": "receipt_id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "kind": "fastnear-rest-body",
+      "networks": [
+        {
+          "defaultFields": {
+            "receipt_id": "gzqDSvd3ZMcVUWzBMP7j9KMWz89iZMkkEvW9g8QZjUP"
+          },
+          "key": "mainnet",
+          "label": "Mainnet",
+          "url": "https://tx.main.fastnear.com"
+        },
+        {
+          "defaultFields": {
+            "receipt_id": "8D3YiLcKYLAeNYmshj9cVwCTX6mgeWNXux4sJQ7FUTvV"
+          },
+          "key": "testnet",
+          "label": "Testnet",
+          "url": "https://tx.test.fastnear.com"
+        }
+      ],
+      "requestMethod": "get_receipt",
+      "supportsFinality": false,
+      "transport": "http"
+    },
+    "pageModelId": "transactions-v0-receipt",
+    "replaceOperationPage": true,
+    "request": {
+      "bodySchema": {
+        "type": "object",
+        "required": [
+          "receipt_id"
+        ],
+        "additionalProperties": false,
+        "properties": [
+          {
+            "name": "receipt_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "refName": "ReceiptInput"
+      },
+      "examples": [
+        {
+          "id": "mainnet",
+          "label": "Mainnet",
+          "network": "mainnet",
+          "request": {
+            "body": {
+              "receipt_id": "gzqDSvd3ZMcVUWzBMP7j9KMWz89iZMkkEvW9g8QZjUP"
+            },
+            "headers": {},
+            "path": {},
+            "query": {}
+          }
+        },
+        {
+          "id": "testnet",
+          "label": "Testnet",
+          "network": "testnet",
+          "request": {
+            "body": {
+              "receipt_id": "8D3YiLcKYLAeNYmshj9cVwCTX6mgeWNXux4sJQ7FUTvV"
+            },
+            "headers": {},
+            "path": {},
+            "query": {}
+          }
+        }
+      ],
+      "mediaType": "application/json",
+      "parameters": {
+        "header": [],
+        "path": [],
+        "query": []
+      },
+      "required": true,
+      "supportsBody": true
+    },
+    "responses": [
+      {
+        "description": "Receipt lookup result",
+        "mediaType": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "receipt",
+            "transaction"
+          ],
+          "additionalProperties": false,
+          "properties": [
+            {
+              "name": "receipt",
+              "required": true,
+              "schema": {
+                "type": "object",
+                "required": [
+                  "receipt_id",
+                  "block_height",
+                  "block_timestamp",
+                  "receipt_index",
+                  "appear_block_height",
+                  "appear_receipt_index",
+                  "transaction_hash",
+                  "tx_block_height",
+                  "tx_block_timestamp",
+                  "tx_index",
+                  "predecessor_id",
+                  "receiver_id",
+                  "receipt_type",
+                  "priority",
+                  "shard_id",
+                  "is_success"
+                ],
+                "additionalProperties": false,
+                "properties": [
+                  {
+                    "name": "appear_block_height",
+                    "required": true,
+                    "schema": {
+                      "type": "integer",
+                      "format": "uint64"
+                    }
+                  },
+                  {
+                    "name": "appear_receipt_index",
+                    "required": true,
+                    "schema": {
+                      "type": "integer",
+                      "format": "uint32"
+                    }
+                  },
+                  {
+                    "name": "block_height",
+                    "required": true,
+                    "schema": {
+                      "type": "integer",
+                      "format": "uint64"
+                    }
+                  },
+                  {
+                    "name": "block_timestamp",
+                    "required": true,
+                    "schema": {
+                      "type": "string"
+                    }
+                  },
+                  {
+                    "name": "is_success",
+                    "required": true,
+                    "schema": {
+                      "type": "boolean"
+                    }
+                  },
+                  {
+                    "name": "predecessor_id",
+                    "required": true,
+                    "schema": {
+                      "type": "string"
+                    }
+                  },
+                  {
+                    "name": "priority",
+                    "required": true,
+                    "schema": {
+                      "type": "integer",
+                      "format": "uint64"
+                    }
+                  },
+                  {
+                    "name": "receipt_id",
+                    "required": true,
+                    "schema": {
+                      "type": "string"
+                    }
+                  },
+                  {
+                    "name": "receipt_index",
+                    "required": true,
+                    "schema": {
+                      "type": "integer",
+                      "format": "uint32"
+                    }
+                  },
+                  {
+                    "name": "receipt_type",
+                    "required": true,
+                    "schema": {
+                      "type": "string"
+                    }
+                  },
+                  {
+                    "name": "receiver_id",
+                    "required": true,
+                    "schema": {
+                      "type": "string"
+                    }
+                  },
+                  {
+                    "name": "shard_id",
+                    "required": true,
+                    "schema": {
+                      "type": "integer",
+                      "format": "uint64"
+                    }
+                  },
+                  {
+                    "name": "transaction_hash",
+                    "required": true,
+                    "schema": {
+                      "type": "string"
+                    }
+                  },
+                  {
+                    "name": "tx_block_height",
+                    "required": true,
+                    "schema": {
+                      "type": "integer",
+                      "format": "uint64"
+                    }
+                  },
+                  {
+                    "name": "tx_block_timestamp",
+                    "required": true,
+                    "schema": {
+                      "type": "string"
+                    }
+                  },
+                  {
+                    "name": "tx_index",
+                    "required": true,
+                    "schema": {
+                      "type": "integer",
+                      "format": "uint32"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "name": "transaction",
+              "required": true,
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          ],
+          "refName": "ReceiptResponse"
+        },
+        "status": "200"
+      },
+      {
+        "description": "Bad request",
+        "mediaType": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "error",
+            "message"
+          ],
+          "additionalProperties": false,
+          "properties": [
+            {
+              "name": "error",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "message",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "refName": "ApiError"
+        },
+        "status": "400"
+      },
+      {
+        "description": "ClickHouse query failure",
+        "mediaType": "application/json",
+        "schema": {
+          "type": "string"
+        },
+        "status": "500"
+      }
+    ],
+    "route": {
+      "method": "POST",
+      "path": "/v0/receipt",
+      "transport": "http"
+    },
+    "routeAliases": [
+      "/apis/transactions/openapi/receipts/get_receipt"
+    ],
+    "securitySchemes": [],
+    "sourceSpec": "apis/transactions/v0/receipt.yaml"
+  },
+  {
+    "canonicalPath": "/apis/transactions/v0/transactions",
+    "info": {
+      "description": "Fetch up to 20 indexed transactions by hash in one request.",
+      "operationId": "get_transactions",
+      "summary": "Fetch transactions by hash",
+      "title": "Transactions API - Transactions by Hash",
+      "version": "3.0.3"
+    },
+    "interaction": {
+      "authTransport": "bearer",
+      "fields": [
+        {
+          "label": "Tx Hashes",
+          "location": "body",
+          "name": "tx_hashes",
+          "required": true,
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      ],
+      "kind": "fastnear-rest-body",
+      "networks": [
+        {
+          "defaultFields": {
+            "tx_hashes": [
+              "FDrh13CdfGPXsmwUpZLfkZCoXWfpQmaFGj4zYWc1qfh",
+              "Eq1a46bynaBAjoSxd2XGWdCxkZdrMvN9jMZVdZfPSjM5"
+            ]
+          },
+          "key": "mainnet",
+          "label": "Mainnet",
+          "url": "https://tx.main.fastnear.com"
+        },
+        {
+          "defaultFields": {
+            "tx_hashes": [
+              "Cb9GXbQVodeJsVLiK2YnBR28vkiD7y4pEFGhxMGuP33q",
+              "9ufyhaEEzmerQz1Fvt2N91ZwXCcNZVhJXhq3QzRJZgfW"
+            ]
+          },
+          "key": "testnet",
+          "label": "Testnet",
+          "url": "https://tx.test.fastnear.com"
+        }
+      ],
+      "requestMethod": "get_transactions",
+      "supportsFinality": false,
+      "transport": "http"
+    },
+    "pageModelId": "transactions-v0-transactions",
+    "replaceOperationPage": true,
+    "request": {
+      "bodySchema": {
+        "type": "object",
+        "required": [
+          "tx_hashes"
+        ],
+        "additionalProperties": false,
+        "properties": [
+          {
+            "name": "tx_hashes",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        ],
+        "refName": "TxInput"
+      },
+      "examples": [
+        {
+          "id": "mainnet",
+          "label": "Mainnet",
+          "network": "mainnet",
+          "request": {
+            "body": {
+              "tx_hashes": [
+                "FDrh13CdfGPXsmwUpZLfkZCoXWfpQmaFGj4zYWc1qfh",
+                "Eq1a46bynaBAjoSxd2XGWdCxkZdrMvN9jMZVdZfPSjM5"
+              ]
+            },
+            "headers": {},
+            "path": {},
+            "query": {}
+          }
+        },
+        {
+          "id": "testnet",
+          "label": "Testnet",
+          "network": "testnet",
+          "request": {
+            "body": {
+              "tx_hashes": [
+                "Cb9GXbQVodeJsVLiK2YnBR28vkiD7y4pEFGhxMGuP33q",
+                "9ufyhaEEzmerQz1Fvt2N91ZwXCcNZVhJXhq3QzRJZgfW"
+              ]
+            },
+            "headers": {},
+            "path": {},
+            "query": {}
+          }
+        }
+      ],
+      "mediaType": "application/json",
+      "parameters": {
+        "header": [],
+        "path": [],
+        "query": []
+      },
+      "required": true,
+      "supportsBody": true
+    },
+    "responses": [
+      {
+        "description": "Matching transactions",
+        "mediaType": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "transactions"
+          ],
+          "additionalProperties": false,
+          "properties": [
+            {
+              "name": "transactions",
+              "required": true,
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          ],
+          "refName": "TransactionsResponse"
+        },
+        "status": "200"
+      },
+      {
+        "description": "Bad request",
+        "mediaType": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "error",
+            "message"
+          ],
+          "additionalProperties": false,
+          "properties": [
+            {
+              "name": "error",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "message",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "refName": "ApiError"
+        },
+        "status": "400"
+      },
+      {
+        "description": "ClickHouse query failure",
+        "mediaType": "application/json",
+        "schema": {
+          "type": "string"
+        },
+        "status": "500"
+      }
+    ],
+    "route": {
+      "method": "POST",
+      "path": "/v0/transactions",
+      "transport": "http"
+    },
+    "routeAliases": [
+      "/apis/transactions/openapi/transactions/get_transactions"
+    ],
+    "securitySchemes": [],
+    "sourceSpec": "apis/transactions/v0/transactions.yaml"
+  }
+]

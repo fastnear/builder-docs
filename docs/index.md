@@ -2,7 +2,7 @@
 sidebar_position: 1
 slug: /
 title: RPC / API Reference
-description: Choose the right FastNear surface for raw RPC, indexed balances, transaction history, snapshots, higher limits, and near-realtime reads.
+description: Choose the right FastNear API, RPC reference, or operator guide for balances, transaction history, snapshots, higher limits, and near-realtime reads.
 sidebar_label: Endpoints
 displayed_sidebar: null
 hide_table_of_contents: true
@@ -18,110 +18,180 @@ keywords:
 ---
 
 import Link from '@site/src/components/LocalizedLink';
-import RpcApiServiceLinks from '@site/src/components/RpcApiServiceLinks';
-
-# FastNear RPC / APIs
 
 <!-- FASTNEAR_AI_DISCOVERY: Agent builders should start with /agents/choosing-surfaces, then use /agents/auth for secure credentials, and /agents/playbooks for common workflows. -->
 
-FastNear ships multiple docs surfaces because builders need different tradeoffs.
-Start from the job you need done, then drop into the detailed reference from there.
+<div className="fastnear-home">
+  <div className="fastnear-home-hero">
+    <div className="fastnear-home-hero__content">
+      <span className="fastnear-home-section-label">FastNear docs overview</span>
+      <p className="fastnear-home-hero__title">Choosing the FastNear API or reference.</p>
+      <p className="fastnear-home-hero__lede">
+        Use RPC for canonical JSON-RPC state reads, contract calls, and transaction submission. Use indexed APIs for balances, holdings, activity history, and recent block-family data.
+      </p>
+      <div className="fastnear-home-hero__actions">
+        <Link className="fastnear-home-button fastnear-home-button--primary" to="/api">Start with FastNear API</Link>
+        <Link className="fastnear-home-button fastnear-home-button--secondary" to="/rpc">Start with RPC</Link>
+        <Link className="fastnear-home-button fastnear-home-button--ghost" to="/auth">Get API key</Link>
+      </div>
+      <div className="fastnear-home-auth-callout">
+        <div className="fastnear-home-auth-callout__header">
+          <span className="fastnear-home-auth-callout__eyebrow">Authentication</span>
+          <p className="fastnear-home-auth-callout__title">FastNear API keys work across the RPC and APIs.</p>
+        </div>
+        <div className="fastnear-home-auth-callout__methods">
+          <div className="fastnear-home-auth-callout__method">
+            <span className="fastnear-home-auth-callout__method-label">Header</span>
+            <span className="fastnear-home-auth-callout__code">Authorization: Bearer ...</span>
+          </div>
+          <div className="fastnear-home-auth-callout__method">
+            <span className="fastnear-home-auth-callout__method-label">Query parameter</span>
+            <span className="fastnear-home-auth-callout__code">?apiKey=...</span>
+          </div>
+        </div>
+      </div>
+    </div>
 
-<div className="fastnear-doc-card-grid fastnear-doc-card-grid--surface">
-  <article className="fastnear-doc-card">
-    <span className="fastnear-doc-card__eyebrow">Canonical JSON-RPC</span>
-    <Link className="fastnear-doc-card__title" to="/rpc"><strong>RPC</strong></Link>
-    <span>Use canonical JSON-RPC methods for protocol-native reads, transaction submission, and protocol inspection.</span>
-    <span className="fastnear-doc-card__bestfor-label">Best for:</span>
-    <ul className="fastnear-doc-card__bestfor-list">
-      <li><Link to="/rpc/account/view-account">account state</Link></li>
-      <li><Link to="/rpc/block/block-by-id">block lookups</Link></li>
-      <li><Link to="/rpc/contract/call-function">contract view calls</Link></li>
-      <li><Link to="/rpc/validators/validators-current">validator data</Link></li>
-    </ul>
-  </article>
-  <article className="fastnear-doc-card">
-    <span className="fastnear-doc-card__eyebrow">Indexed balances</span>
-    <Link className="fastnear-doc-card__title" to="/api"><strong>FastNear API</strong></Link>
-    <span>Start here when you want wallet-friendly balances, NFTs, staking, or public-key lookups without raw JSON-RPC envelopes.</span>
-    <span className="fastnear-doc-card__bestfor-label">Best for:</span>
-    <ul className="fastnear-doc-card__bestfor-list">
-      <li><Link to="/api/v1/account-full">full account state</Link></li>
-      <li><Link to="/api/v1/account-ft">fungible token balances</Link></li>
-      <li><Link to="/api/v1/account-nft">NFT holdings</Link></li>
-      <li><Link to="/api/v1/public-key">public key lookups</Link></li>
-    </ul>
-  </article>
-  <article className="fastnear-doc-card">
-    <span className="fastnear-doc-card__eyebrow">Tx history</span>
-    <Link className="fastnear-doc-card__title" to="/tx"><strong>Transactions API</strong></Link>
-    <span>Query transaction history by account, receipt, block, or hash when you need a builder-facing history API instead of node polling.</span>
-    <span className="fastnear-doc-card__bestfor-label">Best for:</span>
-    <ul className="fastnear-doc-card__bestfor-list">
-      <li><Link to="/tx/account">account activity</Link></li>
-      <li><Link to="/tx/transactions">transaction lookups</Link></li>
-      <li><Link to="/tx/receipt">receipt tracing</Link></li>
-      <li><Link to="/tx/blocks">block transaction history</Link></li>
-    </ul>
-  </article>
-  <article className="fastnear-doc-card">
-    <span className="fastnear-doc-card__eyebrow">Snapshots</span>
-    <Link className="fastnear-doc-card__title" to="/snapshots/"><strong>Snapshots</strong></Link>
-    <span>Use curated snapshot flows when you need to stand up RPC or archival infrastructure without replaying the chain from scratch.</span>
-    <span className="fastnear-doc-card__bestfor-label">Best for:</span>
-    <ul className="fastnear-doc-card__bestfor-list">
-      <li><Link to="/snapshots/mainnet">mainnet snapshots</Link></li>
-      <li><Link to="/snapshots/testnet">testnet snapshots</Link></li>
-      <li><Link to="/snapshots/">snapshot workflow overview</Link></li>
-    </ul>
-  </article>
-  <article className="fastnear-doc-card">
-    <span className="fastnear-doc-card__eyebrow">Higher limits</span>
-    <Link className="fastnear-doc-card__title" to="/auth"><strong>Auth &amp; Access</strong></Link>
-    <span>One FastNear API key works across the RPC and REST APIs; send it as an Authorization Bearer header or as an apiKey URL parameter.</span>
-    <span className="fastnear-doc-card__bestfor-label">Best for:</span>
-    <ul className="fastnear-doc-card__bestfor-list">
-      <li><Link to="/auth">auth overview</Link></li>
-      <li><a href="https://dashboard.fastnear.com">get an API key</a></li>
-    </ul>
-  </article>
-  <article className="fastnear-doc-card">
-    <span className="fastnear-doc-card__eyebrow">Realtime</span>
-    <Link className="fastnear-doc-card__title" to="/neardata"><strong>NEAR Data API</strong></Link>
-    <span>Use NEAR Data when you need optimistic or recently finalized block-family reads without presenting it as a streaming product.</span>
-    <span className="fastnear-doc-card__bestfor-label">Best for:</span>
-    <ul className="fastnear-doc-card__bestfor-list">
-      <li><Link to="/neardata/block-optimistic">optimistic block reads</Link></li>
-      <li><Link to="/neardata/last-block-final">latest finalized block</Link></li>
-      <li><Link to="/neardata/block-headers">block header polling</Link></li>
-    </ul>
-  </article>
+    <div className="fastnear-home-hero__panel">
+      <span className="fastnear-home-section-label">Quick routing</span>
+      <div className="fastnear-home-route-stack">
+        <div className="fastnear-home-route-card fastnear-home-route-card--primary">
+          <span className="fastnear-home-route-card__tag">Most teams start here</span>
+          <Link className="fastnear-home-route-card__title" to="/api">FastNear API</Link>
+          <p>Indexed account, asset, staking, and public-key endpoints for account-centric application reads.</p>
+        </div>
+        <div className="fastnear-home-route-card">
+          <span className="fastnear-home-route-card__tag">Protocol-native</span>
+          <Link className="fastnear-home-route-card__title" to="/rpc">RPC Reference</Link>
+          <p>Canonical JSON-RPC methods for blocks, contract calls, validators, and transaction submission.</p>
+        </div>
+        <div className="fastnear-home-route-card">
+          <span className="fastnear-home-route-card__tag">Execution history</span>
+          <Link className="fastnear-home-route-card__title" to="/tx">Transactions API</Link>
+          <p>Account activity, receipts, transaction lookups, and block-scoped history from indexed execution data.</p>
+        </div>
+        <div className="fastnear-home-route-card">
+          <span className="fastnear-home-route-card__tag">Low-latency reads</span>
+          <Link className="fastnear-home-route-card__title" to="/neardata">NEAR Data API</Link>
+          <p>Recent optimistic and finalized blocks, headers, and redirect helpers for polling and lightweight monitoring.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div className="fastnear-home-section">
+    <div className="fastnear-home-section-heading">
+      <span className="fastnear-home-section-label">Main APIs and references</span>
+      <p className="fastnear-home-section-title">These are the main FastNear entry points.</p>
+      <p>
+        Start with the API or reference section that matches the data you need, then move into the detailed reference for the specific endpoint.
+      </p>
+    </div>
+
+    <div className="fastnear-home-surface-grid">
+      <div className="fastnear-home-surface-card fastnear-home-surface-card--api fastnear-home-surface-card--wide">
+        <span className="fastnear-home-surface-card__eyebrow">Indexed account views</span>
+        <Link className="fastnear-home-surface-card__title" to="/api">FastNear API</Link>
+        <p>
+          Use indexed REST endpoints for balances, NFTs, staking positions, and public-key lookups without raw JSON-RPC request and response envelopes.
+        </p>
+        <div className="fastnear-home-surface-links">
+          <span className="fastnear-home-surface-links__label">Try out</span>
+          <Link to="/api/v1/account-full">Full account state</Link>
+          <Link to="/api/v1/account-ft">Fungible token balances</Link>
+          <Link to="/api/v1/account-nft">NFT holdings</Link>
+          <Link to="/api/v1/public-key">Public key lookups</Link>
+        </div>
+      </div>
+
+      <div className="fastnear-home-surface-card fastnear-home-surface-card--rpc fastnear-home-surface-card--narrow">
+        <span className="fastnear-home-surface-card__eyebrow">Canonical JSON-RPC</span>
+        <Link className="fastnear-home-surface-card__title" to="/rpc">RPC Reference</Link>
+        <p>
+          Use protocol-native methods for direct state reads, transaction submission, contract calls, and chain inspection.
+        </p>
+        <div className="fastnear-home-surface-links">
+          <span className="fastnear-home-surface-links__label">Try out</span>
+          <Link to="/rpc/account/view-account">Account state</Link>
+          <Link to="/rpc/block/block-by-id">Block lookups</Link>
+          <Link to="/rpc/contract/call-function">Contract view calls</Link>
+          <Link to="/rpc/validators/validators-current">Validator data</Link>
+        </div>
+      </div>
+
+      <div className="fastnear-home-surface-card fastnear-home-surface-card--tx fastnear-home-surface-card--narrow">
+        <span className="fastnear-home-surface-card__eyebrow">Execution history</span>
+        <Link className="fastnear-home-surface-card__title" to="/tx">Transactions API</Link>
+        <p>
+          Use indexed endpoints for account activity, receipts, transaction lookups, and block-scoped execution history.
+        </p>
+        <div className="fastnear-home-surface-links">
+          <span className="fastnear-home-surface-links__label">Try out</span>
+          <Link to="/tx/account">Account activity</Link>
+          <Link to="/tx/transactions">Transaction lookups</Link>
+          <Link to="/tx/receipt">Receipt tracing</Link>
+          <Link to="/tx/blocks">Block transaction history</Link>
+        </div>
+      </div>
+
+      <div className="fastnear-home-surface-card fastnear-home-surface-card--data fastnear-home-surface-card--wide">
+        <span className="fastnear-home-surface-card__eyebrow">Recent block-family reads</span>
+        <Link className="fastnear-home-surface-card__title" to="/neardata">NEAR Data API</Link>
+        <p>
+          Use NEAR Data for recent optimistic and finalized blocks, block headers, and latest-block helper routes when you need near-realtime reads or lightweight monitoring.
+        </p>
+        <div className="fastnear-home-surface-links">
+          <span className="fastnear-home-surface-links__label">Try out</span>
+          <Link to="/neardata/block-optimistic">Optimistic block reads</Link>
+          <Link to="/neardata/last-block-final">Latest finalized block</Link>
+          <Link to="/neardata/block-headers">Block header polling</Link>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div className="fastnear-home-section">
+    <div className="fastnear-home-section-heading">
+      <span className="fastnear-home-section-label">Ops and access</span>
+      <p className="fastnear-home-section-title">What teams ask before going live.</p>
+      <p>Keep these close when you are moving from exploration to production.</p>
+    </div>
+
+    <div className="fastnear-home-utility-grid">
+      <div className="fastnear-home-utility-card">
+        <span className="fastnear-home-utility-card__eyebrow">Higher limits</span>
+        <Link className="fastnear-home-utility-card__title" to="/auth">Auth &amp; Access</Link>
+        <p>Use one FastNear API key across both the RPC and REST APIs.</p>
+      </div>
+      <div className="fastnear-home-utility-card">
+        <span className="fastnear-home-utility-card__eyebrow">Keys and billing</span>
+        <Link className="fastnear-home-utility-card__title" to="https://dashboard.fastnear.com">Dashboard</Link>
+        <p>Sign in, create keys, and move to higher-limit usage patterns when you need them.</p>
+      </div>
+      <div className="fastnear-home-utility-card">
+        <span className="fastnear-home-utility-card__eyebrow">Live operations</span>
+        <Link className="fastnear-home-utility-card__title" to="https://status.fastnear.com">Status</Link>
+        <p>Check incidents or degraded service before you start debugging application behavior.</p>
+      </div>
+      <div className="fastnear-home-utility-card">
+        <span className="fastnear-home-utility-card__eyebrow">Infra bootstrap</span>
+        <Link className="fastnear-home-utility-card__title" to="/snapshots/">Snapshots</Link>
+        <p>Stand up RPC or archival infrastructure faster without replaying the chain from scratch.</p>
+      </div>
+    </div>
+  </div>
+
+  <div className="fastnear-home-agent-callout">
+    <div>
+      <span className="fastnear-home-section-label">Agents and automation</span>
+      <p className="fastnear-home-agent-callout__title">Building with AI agents or background workers?</p>
+      <p>
+        Use the agent docs for credential posture, routing logic, and prompt-friendly markdown exports.
+      </p>
+    </div>
+    <div className="fastnear-home-agent-callout__actions">
+      <Link className="fastnear-home-button fastnear-home-button--secondary" to="/agents">Open Agents hub</Link>
+      <Link className="fastnear-home-button fastnear-home-button--ghost" to="/agents/choosing-surfaces">Routing guide</Link>
+    </div>
+  </div>
 </div>
-
-## Before you integrate
-
-These are the operational details technical teams usually want up front:
-
-- [Auth & Access](/auth): send a FastNear API key as an `Authorization: Bearer` header or `?apiKey=` URL parameter.
-- [Dashboard](https://dashboard.fastnear.com): manage API keys and move to higher-limit usage patterns.
-- [Status](https://status.fastnear.com): check incidents or degraded service before debugging application behavior.
-- [RPC Reference](/rpc): choose regular versus archival RPC depending on how much chain history you need.
-- [Snapshots](/snapshots/): bootstrap infra faster when you are standing up RPC or archival nodes.
-## Practical routing guidance
-
-- Start with [RPC Reference](/rpc) when you need canonical JSON-RPC requests, transaction submission, or protocol-native responses.
-- Start with [FastNear API](/api) when you are building wallet, explorer, or portfolio features and want indexed account views.
-- Start with [Transactions API](/tx) when you care about account-scoped activity, receipts, and execution history.
-- Start with [NEAR Data API](/neardata) when you are polling recent block-family data and do not need to present it as streaming infrastructure.
-## Other API families
-
-These complementary APIs stay useful once you know the core surfaces above:
-
-<RpcApiServiceLinks />
-## If you are building for AI or agents
-
-- Start at the [Agents hub](/agents) for an overview of routing, credentials, and playbook patterns.
-- Use [Choosing the Right Surface](/agents/choosing-surfaces) to map the agent's job to one FastNear surface.
-- Use [Auth for Agents](/agents/auth) when the caller is an automation, worker, or agent runtime.
-- Borrow from [Agent Playbooks](/agents/playbooks) when you want a concrete workflow pattern.
-- Use page-level `Copy as Markdown` actions to move clean docs context into prompts, notes, and agent runtimes.

@@ -1339,7 +1339,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/apis/fastnear/v0/public_key_lookup",
-      "description": "Fetch the indexed account IDs associated with a full-access public key.",
+      "description": "Fetch the account IDs that have registered a full-access public key, via the legacy V0 lookup path.",
       "docsPath": "/api/v0/public-key",
       "familyId": "api-fastnear",
       "headline": "FastNEAR API - V0 Public Key Lookup",
@@ -1365,7 +1365,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/apis/fastnear/v0/public_key_lookup_all",
-      "description": "Fetch every account tied to a public key — full-access and limited-access keys together.",
+      "description": "List every account tied to a public key — full-access and limited-access keys together — via the legacy V0 lookup-all path.",
       "docsPath": "/api/v0/public-key-all",
       "familyId": "api-fastnear",
       "headline": "FastNEAR API - V0 Public Key Lookup (All)",
@@ -1521,7 +1521,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/apis/fastnear/v1/public_key_lookup",
-      "description": "Fetch the indexed account IDs associated with a full-access public key.",
+      "description": "Resolve a full-access public key to the indexed NEAR accounts that have registered it — V1 canonical lookup path.",
       "docsPath": "/api/v1/public-key",
       "familyId": "api-fastnear",
       "headline": "FastNEAR API - V1 Public Key Lookup",
@@ -1547,7 +1547,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/apis/fastnear/v1/public_key_lookup_all",
-      "description": "Fetch every account tied to a public key — full-access and limited-access keys together.",
+      "description": "Resolve a public key to every account that holds it — full-access and limited-access keys alike — via the V1 lookup-all path.",
       "docsPath": "/api/v1/public-key-all",
       "familyId": "api-fastnear",
       "headline": "FastNEAR API - V1 Public Key Lookup (All)",
@@ -2844,7 +2844,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/rpcs/protocol/latest_block",
-      "description": "Retrieves the most recent block from the blockchain",
+      "description": "Fetch the latest final block — finality set automatically, no block ID needed.",
       "docsPath": "/rpc/protocol/latest-block",
       "familyId": "rpc-protocol",
       "headline": "NEAR Protocol RPC: Latest Block",

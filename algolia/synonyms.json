@@ -315,13 +315,6 @@
     ]
   },
   {
-    "objectID": "fastnear-op-changes",
-    "type": "synonym",
-    "synonyms": [
-      "changes"
-    ]
-  },
-  {
     "objectID": "fastnear-op-chunk_by_block_shard",
     "type": "synonym",
     "synonyms": [
@@ -538,13 +531,6 @@
     ]
   },
   {
-    "objectID": "fastnear-op-health",
-    "type": "synonym",
-    "synonyms": [
-      "health"
-    ]
-  },
-  {
     "objectID": "fastnear-op-history_by_account",
     "type": "synonym",
     "synonyms": [
@@ -653,20 +639,6 @@
     ]
   },
   {
-    "objectID": "fastnear-op-metrics",
-    "type": "synonym",
-    "synonyms": [
-      "metrics"
-    ]
-  },
-  {
-    "objectID": "fastnear-op-multi",
-    "type": "synonym",
-    "synonyms": [
-      "multi"
-    ]
-  },
-  {
     "objectID": "fastnear-op-network_info",
     "type": "synonym",
     "synonyms": [
@@ -691,13 +663,6 @@
       "send_tx",
       "send-tx",
       "send tx"
-    ]
-  },
-  {
-    "objectID": "fastnear-op-status",
-    "type": "synonym",
-    "synonyms": [
-      "status"
     ]
   },
   {

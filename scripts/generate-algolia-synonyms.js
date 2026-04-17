@@ -12,6 +12,10 @@
   rewrites every `fastnear-op-*` entry on each run and preserves any other
   hand-crafted conceptual entries (auth, bearer-token, api-key, etc.) in place.
 
+  Operation IDs without a `_` separator (e.g. `status`, `health`) collapse to
+  a single variant and are skipped — Algolia rejects synonym groups with
+  fewer than two members.
+
   Run:
       yarn generate:algolia-synonyms
 */
@@ -66,11 +70,13 @@ function variantsFor(operationId) {
 }
 
 function buildAutogenEntries(operationIds) {
-  return operationIds.map((operationId) => ({
-    objectID: `${AUTOGEN_PREFIX}${operationId}`,
-    type: "synonym",
-    synonyms: variantsFor(operationId),
-  }));
+  return operationIds
+    .map((operationId) => ({
+      objectID: `${AUTOGEN_PREFIX}${operationId}`,
+      type: "synonym",
+      synonyms: variantsFor(operationId),
+    }))
+    .filter((entry) => entry.synonyms.length >= 2);
 }
 
 function main() {

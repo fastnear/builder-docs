@@ -561,75 +561,6 @@ function stripInlineTags(value) {
     .trim();
 }
 
-function buildRpcApiServiceLinks(locale = DEFAULT_LOCALE) {
-  const labelSets = {
-    en: {
-      fastnearDescription:
-        "Indexed account views for balances, NFTs, staking, and public-key lookups.",
-      fastdataDescription:
-        "Indexed key-value history and latest-state lookups for contract storage analysis.",
-      neardataDescription:
-        "Recent finalized and optimistic block-family reads for low-latency polling workflows.",
-      transactionsDescription:
-        "Account, block, receipt, and transaction history from indexed execution data.",
-      transfersDescription:
-        "Purpose-built transfer history for account activity and pagination-heavy UIs.",
-    },
-    ru: {
-      fastnearDescription:
-        "Индексированные представления аккаунтов для балансов, NFT, стейкинга и поиска по публичным ключам.",
-      fastdataDescription:
-        "Индексированная история данных «ключ-значение» и выборки последнего состояния для анализа хранилища контрактов.",
-      neardataDescription:
-        "Недавние финализированные и оптимистичные чтения семейств блоков для низколатентного опроса.",
-      transactionsDescription:
-        "История аккаунтов, блоков, квитанций и транзакций из индексированных данных исполнения.",
-      transfersDescription:
-        "Специализированная история переводов для активности аккаунтов и интерфейсов с тяжёлой пагинацией.",
-    },
-  };
-  const labels = labelSets[locale] || labelSets[DEFAULT_LOCALE];
-  const links = [
-    {
-      href: localizeRoute("/api", locale),
-      label: "FastNear API",
-      description: labels.fastnearDescription,
-    },
-    {
-      href: localizeRoute("/tx", locale),
-      label: locale === "ru" ? "Транзакции API" : "Transactions API",
-      description: labels.transactionsDescription,
-    },
-    ...(!hideEarlyApiFamilies
-      ? [
-          {
-            href: localizeRoute("/transfers", locale),
-            label: locale === "ru" ? "API переводов" : "Transfers API",
-            description: labels.transfersDescription,
-          },
-        ]
-      : []),
-    ...(!hideEarlyApiFamilies
-      ? [
-          {
-            href: localizeRoute("/fastdata/kv", locale),
-            label: "KV FastData API",
-            description: labels.fastdataDescription,
-          },
-        ]
-      : []),
-    {
-      href: localizeRoute("/neardata", locale),
-      label: "NEAR Data API",
-      description: labels.neardataDescription,
-    },
-  ];
-
-  return links
-    .map((link) => `- [${link.label}](${link.href}): ${link.description}`)
-    .join("\n");
-}
-
 function transformCardGrid(markdown, locale = DEFAULT_LOCALE) {
   const labels = getAuthoredMarkdownLabels(locale);
   return markdown.replace(
@@ -732,13 +663,17 @@ function transformInlineLinks(markdown, locale = DEFAULT_LOCALE) {
     .replace(
       /<Link\b[^>]*to="([^"]+)"[^>]*>([\s\S]*?)<\/Link>/g,
       (_match, href, inner) => `[${stripInlineTags(inner)}](${localizeInternalHref(href.trim(), locale)})`
+    )
+    .replace(
+      /<Link\b[^>]*href="([^"]+)"[^>]*>([\s\S]*?)<\/Link>/g,
+      (_match, href, inner) => `[${stripInlineTags(inner)}](${href.trim()})`
     );
 }
 
 function transformSimpleJsx(markdown, locale = DEFAULT_LOCALE) {
   let transformed = markdown
-    .replace(/<RpcApiServiceLinks\s*\/>/g, buildRpcApiServiceLinks(locale))
     .replace(/<\/?React\.Fragment[^>]*>/g, "")
+    .replace(/<IconExternalLink\s*\/>/g, "")
     .replace(/<strong>([\s\S]*?)<\/strong>/g, "**$1**");
 
   let previous;

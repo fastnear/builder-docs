@@ -58,9 +58,10 @@ test('Russian FastNear API sidebar keeps locale during version switching', async
   await expect(page.getByText('Версия', { exact: true })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'V1 Поиск по публичному ключу' })).toBeVisible();
   await expect(
-    page.getByText('Получите индексированные ID аккаунтов, связанные с публичным ключом полного доступа.', {
-      exact: false,
-    })
+    page.getByText(
+      'Получите индексированные ID аккаунтов, связанные с публичным ключом полного доступа.',
+      { exact: false }
+    )
   ).toBeVisible();
   await expect(page.getByText('Use the v1 endpoint for the newer namespace.')).toHaveCount(0);
 

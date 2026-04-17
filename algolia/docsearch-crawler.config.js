@@ -243,18 +243,19 @@ new Crawler({
   initialIndexSettings: {
     YOUR_DOCSEARCH_INDEX_NAME: {
       attributesForFaceting: [
-        "type",
+        "audience",
+        "filterOnly(canonical_target)",
+        "category",
+        "family",
         "lang",
         "language",
-        "category",
         "method_type",
-        "surface",
-        "family",
-        "audience",
-        "page_type",
-        "transport",
         "operation_id",
-        "canonical_target"
+        "page_type",
+        "surface",
+        "transport",
+        "type",
+        "version"
       ],
       attributesToRetrieve: [
         "hierarchy",
@@ -287,7 +288,7 @@ new Crawler({
       ],
       searchableAttributes: [
         "unordered(operation_id)",
-        "unordered(canonical_target)",
+        "unordered(keywords)",
         "unordered(hierarchy.lvl1)",
         "unordered(hierarchy.lvl2)",
         "unordered(hierarchy.lvl3)",
@@ -295,7 +296,6 @@ new Crawler({
         "unordered(hierarchy.lvl5)",
         "unordered(hierarchy.lvl6)",
         "unordered(hierarchy.lvl0)",
-        "unordered(keywords)",
         "content"
       ],
       distinct: true,
@@ -320,7 +320,10 @@ new Crawler({
       minWordSizefor2Typos: 7,
       allowTyposOnNumericTokens: false,
       minProximity: 1,
-      ignorePlurals: true,
+      ignorePlurals: [
+        "en",
+        "ru"
+      ],
       advancedSyntax: true,
       attributeCriteriaComputedByMinProximity: true,
       removeWordsIfNoResults: "allOptional",
@@ -339,3 +342,4 @@ new Crawler({
     "https://docs.fastnear.com/ru/"
   ]
 });
+
