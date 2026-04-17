@@ -46,7 +46,7 @@
 - `asc` (body, boolean): Сортировать результаты истории по возрастанию. По умолчанию сначала идут новые записи.
 - `include_metadata` (body, boolean): Добавить в каждую запись метаданные квитанции и подписанта.
 - `ключ` (body, обязательный, string): Точное имя ключа для сопоставления по всем аккаунтам и предшественникам.
-- `limit` (body, integer)
+- `limit` (body, integer): Maximum number of entries to return in one page (1–200, default 50).
 - `page_token` (body, string): Непрозрачный токен страницы из предыдущего ответа с тем же эндпоинтом и набором фильтров.
 ### Схема запроса
 ```json
@@ -88,6 +88,7 @@
       "required": false,
       "schema": {
         "type": "integer",
+        "description": "Maximum number of entries to return in one page (1–200, default 50).",
         "format": "int32"
       }
     },

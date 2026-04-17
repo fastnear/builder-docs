@@ -12,169 +12,205 @@
       "authTransport": "bearer",
       "fields": [
         {
+          "description": "NEAR account to query transactions for (may be a signer, predecessor, receiver, or related party).",
           "label": "Account ID",
           "location": "body",
           "name": "account_id",
           "required": true,
           "schema": {
-            "type": "string"
+            "type": "string",
+            "description": "NEAR account to query transactions for (may be a signer, predecessor, receiver, or related party)."
           }
         },
         {
+          "description": "Sort newest-first when true; oldest-first when false or omitted.",
           "label": "Desc",
           "location": "body",
           "name": "desc",
           "required": false,
           "schema": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Sort newest-first when true; oldest-first when false or omitted."
           }
         },
         {
+          "description": "Inclusive lower bound on the transaction's block height.",
           "label": "From Tx Block Height",
           "location": "body",
           "name": "from_tx_block_height",
           "required": false,
           "schema": {
             "type": "integer",
+            "description": "Inclusive lower bound on the transaction's block height.",
             "format": "uint64"
           }
         },
         {
+          "description": "Restrict to transactions where this account appeared in action arguments.",
           "label": "Is Action Arg",
           "location": "body",
           "name": "is_action_arg",
           "required": false,
           "schema": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Restrict to transactions where this account appeared in action arguments."
           }
         },
         {
+          "description": "Restrict to transactions where this account signed either the top-level transaction or a delegated action.",
           "label": "Is Any Signer",
           "location": "body",
           "name": "is_any_signer",
           "required": false,
           "schema": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Restrict to transactions where this account signed either the top-level transaction or a delegated action."
           }
         },
         {
+          "description": "Restrict to transactions where this account signed a delegated action.",
           "label": "Is Delegated Signer",
           "location": "body",
           "name": "is_delegated_signer",
           "required": false,
           "schema": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Restrict to transactions where this account signed a delegated action."
           }
         },
         {
+          "description": "Restrict to transactions where this account appeared in a JSON event log.",
           "label": "Is Event Log",
           "location": "body",
           "name": "is_event_log",
           "required": false,
           "schema": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Restrict to transactions where this account appeared in a JSON event log."
           }
         },
         {
+          "description": "Restrict to transactions where this account was the explicit `refund_to` target of an action receipt.",
           "label": "Is Explicit Refund To",
           "location": "body",
           "name": "is_explicit_refund_to",
           "required": false,
           "schema": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Restrict to transactions where this account was the explicit `refund_to` target of an action receipt."
           }
         },
         {
+          "description": "Restrict to transactions where this account was the target of a function-call action.",
           "label": "Is Function Call",
           "location": "body",
           "name": "is_function_call",
           "required": false,
           "schema": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Restrict to transactions where this account was the target of a function-call action."
           }
         },
         {
+          "description": "Restrict to transactions where this account was the predecessor of a receipt.",
           "label": "Is Predecessor",
           "location": "body",
           "name": "is_predecessor",
           "required": false,
           "schema": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Restrict to transactions where this account was the predecessor of a receipt."
           }
         },
         {
+          "description": "Restrict to transactions where this account was the real receiver — excluding relayer receivers and gas refunds.",
           "label": "Is Real Receiver",
           "location": "body",
           "name": "is_real_receiver",
           "required": false,
           "schema": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Restrict to transactions where this account was the real receiver — excluding relayer receivers and gas refunds."
           }
         },
         {
+          "description": "Restrict to transactions where this account was the real signer — direct or delegated, excluding relayer signers.",
           "label": "Is Real Signer",
           "location": "body",
           "name": "is_real_signer",
           "required": false,
           "schema": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Restrict to transactions where this account was the real signer — direct or delegated, excluding relayer signers."
           }
         },
         {
+          "description": "Restrict to transactions where this account received a receipt.",
           "label": "Is Receiver",
           "location": "body",
           "name": "is_receiver",
           "required": false,
           "schema": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Restrict to transactions where this account received a receipt."
           }
         },
         {
+          "description": "Restrict to transactions where this account signed the top-level transaction.",
           "label": "Is Signer",
           "location": "body",
           "name": "is_signer",
           "required": false,
           "schema": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Restrict to transactions where this account signed the top-level transaction."
           }
         },
         {
+          "description": "Restrict to transactions whose execution succeeded (true) or failed/pending (false).",
           "label": "Is Success",
           "location": "body",
           "name": "is_success",
           "required": false,
           "schema": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Restrict to transactions whose execution succeeded (true) or failed/pending (false)."
           }
         },
         {
+          "description": "Maximum rows to return in one page (1–200).",
           "label": "Limit",
           "location": "body",
           "name": "limit",
           "required": false,
           "schema": {
             "type": "integer",
+            "description": "Maximum rows to return in one page (1–200).",
             "format": "uint"
           }
         },
         {
           "default": null,
+          "description": "Opaque pagination token returned on a prior page; omit for the first page.",
           "label": "Resume Token",
           "location": "body",
           "name": "resume_token",
           "required": false,
           "schema": {
             "type": "string",
+            "description": "Opaque pagination token returned on a prior page; omit for the first page.",
             "default": null
           }
         },
         {
+          "description": "Exclusive upper bound on the transaction's block height.",
           "label": "To Tx Block Height",
           "location": "body",
           "name": "to_tx_block_height",
           "required": false,
           "schema": {
             "type": "integer",
+            "description": "Exclusive upper bound on the transaction's block height.",
             "format": "uint64"
           }
         }
@@ -250,14 +286,16 @@
             "name": "account_id",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "description": "NEAR account to query transactions for (may be a signer, predecessor, receiver, or related party)."
             }
           },
           {
             "name": "desc",
             "required": false,
             "schema": {
-              "type": "boolean"
+              "type": "boolean",
+              "description": "Sort newest-first when true; oldest-first when false or omitted."
             }
           },
           {
@@ -265,6 +303,7 @@
             "required": false,
             "schema": {
               "type": "integer",
+              "description": "Inclusive lower bound on the transaction's block height.",
               "format": "uint64"
             }
           },
@@ -272,84 +311,96 @@
             "name": "is_action_arg",
             "required": false,
             "schema": {
-              "type": "boolean"
+              "type": "boolean",
+              "description": "Restrict to transactions where this account appeared in action arguments."
             }
           },
           {
             "name": "is_any_signer",
             "required": false,
             "schema": {
-              "type": "boolean"
+              "type": "boolean",
+              "description": "Restrict to transactions where this account signed either the top-level transaction or a delegated action."
             }
           },
           {
             "name": "is_delegated_signer",
             "required": false,
             "schema": {
-              "type": "boolean"
+              "type": "boolean",
+              "description": "Restrict to transactions where this account signed a delegated action."
             }
           },
           {
             "name": "is_event_log",
             "required": false,
             "schema": {
-              "type": "boolean"
+              "type": "boolean",
+              "description": "Restrict to transactions where this account appeared in a JSON event log."
             }
           },
           {
             "name": "is_explicit_refund_to",
             "required": false,
             "schema": {
-              "type": "boolean"
+              "type": "boolean",
+              "description": "Restrict to transactions where this account was the explicit `refund_to` target of an action receipt."
             }
           },
           {
             "name": "is_function_call",
             "required": false,
             "schema": {
-              "type": "boolean"
+              "type": "boolean",
+              "description": "Restrict to transactions where this account was the target of a function-call action."
             }
           },
           {
             "name": "is_predecessor",
             "required": false,
             "schema": {
-              "type": "boolean"
+              "type": "boolean",
+              "description": "Restrict to transactions where this account was the predecessor of a receipt."
             }
           },
           {
             "name": "is_real_receiver",
             "required": false,
             "schema": {
-              "type": "boolean"
+              "type": "boolean",
+              "description": "Restrict to transactions where this account was the real receiver — excluding relayer receivers and gas refunds."
             }
           },
           {
             "name": "is_real_signer",
             "required": false,
             "schema": {
-              "type": "boolean"
+              "type": "boolean",
+              "description": "Restrict to transactions where this account was the real signer — direct or delegated, excluding relayer signers."
             }
           },
           {
             "name": "is_receiver",
             "required": false,
             "schema": {
-              "type": "boolean"
+              "type": "boolean",
+              "description": "Restrict to transactions where this account received a receipt."
             }
           },
           {
             "name": "is_signer",
             "required": false,
             "schema": {
-              "type": "boolean"
+              "type": "boolean",
+              "description": "Restrict to transactions where this account signed the top-level transaction."
             }
           },
           {
             "name": "is_success",
             "required": false,
             "schema": {
-              "type": "boolean"
+              "type": "boolean",
+              "description": "Restrict to transactions whose execution succeeded (true) or failed/pending (false)."
             }
           },
           {
@@ -357,6 +408,7 @@
             "required": false,
             "schema": {
               "type": "integer",
+              "description": "Maximum rows to return in one page (1–200).",
               "format": "uint"
             }
           },
@@ -365,6 +417,7 @@
             "required": false,
             "schema": {
               "type": "string",
+              "description": "Opaque pagination token returned on a prior page; omit for the first page.",
               "default": null
             }
           },
@@ -373,6 +426,7 @@
             "required": false,
             "schema": {
               "type": "integer",
+              "description": "Exclusive upper bound on the transaction's block height.",
               "format": "uint64"
             }
           }
@@ -674,11 +728,13 @@
       "authTransport": "bearer",
       "fields": [
         {
+          "description": "Block height (integer) or base58-encoded block hash (string) to fetch.",
           "label": "Block ID",
           "location": "body",
           "name": "block_id",
           "required": true,
           "schema": {
+            "description": "Block height (integer) or base58-encoded block hash (string) to fetch.",
             "oneOf": [
               {
                 "type": "integer"
@@ -690,21 +746,25 @@
           }
         },
         {
+          "description": "Include the block's receipts in the response when true.",
           "label": "With Receipts",
           "location": "body",
           "name": "with_receipts",
           "required": false,
           "schema": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Include the block's receipts in the response when true."
           }
         },
         {
+          "description": "Include the block's transactions in the response when true.",
           "label": "With Transactions",
           "location": "body",
           "name": "with_transactions",
           "required": false,
           "schema": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Include the block's transactions in the response when true."
           }
         }
       ],
@@ -749,6 +809,7 @@
             "name": "block_id",
             "required": true,
             "schema": {
+              "description": "Block height (integer) or base58-encoded block hash (string) to fetch.",
               "oneOf": [
                 {
                   "type": "integer"
@@ -763,14 +824,16 @@
             "name": "with_receipts",
             "required": false,
             "schema": {
-              "type": "boolean"
+              "type": "boolean",
+              "description": "Include the block's receipts in the response when true."
             }
           },
           {
             "name": "with_transactions",
             "required": false,
             "schema": {
-              "type": "boolean"
+              "type": "boolean",
+              "description": "Include the block's transactions in the response when true."
             }
           }
         ],
@@ -1378,41 +1441,49 @@
       "authTransport": "bearer",
       "fields": [
         {
+          "description": "Sort newest-first when true; oldest-first when false or omitted.",
           "label": "Desc",
           "location": "body",
           "name": "desc",
           "required": false,
           "schema": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Sort newest-first when true; oldest-first when false or omitted."
           }
         },
         {
+          "description": "Inclusive lower bound on block height.",
           "label": "From Block Height",
           "location": "body",
           "name": "from_block_height",
           "required": false,
           "schema": {
             "type": "integer",
+            "description": "Inclusive lower bound on block height.",
             "format": "uint64"
           }
         },
         {
+          "description": "Maximum blocks to return in one page (1–100).",
           "label": "Limit",
           "location": "body",
           "name": "limit",
           "required": false,
           "schema": {
             "type": "integer",
+            "description": "Maximum blocks to return in one page (1–100).",
             "format": "uint"
           }
         },
         {
+          "description": "Exclusive upper bound on block height.",
           "label": "To Block Height",
           "location": "body",
           "name": "to_block_height",
           "required": false,
           "schema": {
             "type": "integer",
+            "description": "Exclusive upper bound on block height.",
             "format": "uint64"
           }
         }
@@ -1457,7 +1528,8 @@
             "name": "desc",
             "required": false,
             "schema": {
-              "type": "boolean"
+              "type": "boolean",
+              "description": "Sort newest-first when true; oldest-first when false or omitted."
             }
           },
           {
@@ -1465,6 +1537,7 @@
             "required": false,
             "schema": {
               "type": "integer",
+              "description": "Inclusive lower bound on block height.",
               "format": "uint64"
             }
           },
@@ -1473,6 +1546,7 @@
             "required": false,
             "schema": {
               "type": "integer",
+              "description": "Maximum blocks to return in one page (1–100).",
               "format": "uint"
             }
           },
@@ -1481,6 +1555,7 @@
             "required": false,
             "schema": {
               "type": "integer",
+              "description": "Exclusive upper bound on block height.",
               "format": "uint64"
             }
           }
@@ -1766,12 +1841,14 @@
       "authTransport": "bearer",
       "fields": [
         {
+          "description": "Base58-encoded receipt ID to look up.",
           "label": "Receipt Id",
           "location": "body",
           "name": "receipt_id",
           "required": true,
           "schema": {
-            "type": "string"
+            "type": "string",
+            "description": "Base58-encoded receipt ID to look up."
           }
         }
       ],
@@ -1812,7 +1889,8 @@
             "name": "receipt_id",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "description": "Base58-encoded receipt ID to look up."
             }
           }
         ],
@@ -2091,12 +2169,14 @@
       "authTransport": "bearer",
       "fields": [
         {
+          "description": "Up to 20 base58-encoded transaction hashes to fetch in one request.",
           "label": "Tx Hashes",
           "location": "body",
           "name": "tx_hashes",
           "required": true,
           "schema": {
             "type": "array",
+            "description": "Up to 20 base58-encoded transaction hashes to fetch in one request.",
             "items": {
               "type": "string"
             }
@@ -2147,6 +2227,7 @@
             "required": true,
             "schema": {
               "type": "array",
+              "description": "Up to 20 base58-encoded transaction hashes to fetch in one request.",
               "items": {
                 "type": "string"
               }

@@ -36,12 +36,14 @@
           }
         },
         {
+          "description": "Maximum number of entries to return in one page (1–200, default 50).",
           "label": "Limit",
           "location": "body",
           "name": "limit",
           "required": false,
           "schema": {
             "type": "integer",
+            "description": "Maximum number of entries to return in one page (1–200, default 50).",
             "format": "int32"
           }
         },
@@ -107,6 +109,7 @@
             "required": false,
             "schema": {
               "type": "integer",
+              "description": "Maximum number of entries to return in one page (1–200, default 50).",
               "format": "int32"
             }
           },
@@ -400,12 +403,14 @@
           }
         },
         {
+          "description": "Maximum number of entries to return in one page (1–200, default 50).",
           "label": "Limit",
           "location": "body",
           "name": "limit",
           "required": false,
           "schema": {
             "type": "integer",
+            "description": "Maximum number of entries to return in one page (1–200, default 50).",
             "format": "int32"
           }
         },
@@ -493,6 +498,7 @@
             "required": false,
             "schema": {
               "type": "integer",
+              "description": "Maximum number of entries to return in one page (1–200, default 50).",
               "format": "int32"
             }
           },
@@ -797,12 +803,14 @@
           }
         },
         {
+          "description": "Maximum number of entries to return in one page (1–200, default 50).",
           "label": "Limit",
           "location": "body",
           "name": "limit",
           "required": false,
           "schema": {
             "type": "integer",
+            "description": "Maximum number of entries to return in one page (1–200, default 50).",
             "format": "int32"
           }
         },
@@ -899,6 +907,7 @@
             "required": false,
             "schema": {
               "type": "integer",
+              "description": "Maximum number of entries to return in one page (1–200, default 50).",
               "format": "int32"
             }
           },
@@ -1229,12 +1238,14 @@
           }
         },
         {
+          "description": "Maximum number of entries to return in one page (1–200, default 50).",
           "label": "Limit",
           "location": "body",
           "name": "limit",
           "required": false,
           "schema": {
             "type": "integer",
+            "description": "Maximum number of entries to return in one page (1–200, default 50).",
             "format": "int32"
           }
         },
@@ -1333,6 +1344,7 @@
             "required": false,
             "schema": {
               "type": "integer",
+              "description": "Maximum number of entries to return in one page (1–200, default 50).",
               "format": "int32"
             }
           },
@@ -1952,12 +1964,14 @@
           }
         },
         {
+          "description": "Maximum number of entries to return in one page (1–200, default 50).",
           "label": "Limit",
           "location": "body",
           "name": "limit",
           "required": false,
           "schema": {
             "type": "integer",
+            "description": "Maximum number of entries to return in one page (1–200, default 50).",
             "format": "int32"
           }
         },
@@ -2043,6 +2057,7 @@
             "required": false,
             "schema": {
               "type": "integer",
+              "description": "Maximum number of entries to return in one page (1–200, default 50).",
               "format": "int32"
             }
           },
@@ -2358,12 +2373,14 @@
           }
         },
         {
+          "description": "Maximum number of entries to return in one page (1–200, default 50).",
           "label": "Limit",
           "location": "body",
           "name": "limit",
           "required": false,
           "schema": {
             "type": "integer",
+            "description": "Maximum number of entries to return in one page (1–200, default 50).",
             "format": "int32"
           }
         },
@@ -2451,6 +2468,7 @@
             "required": false,
             "schema": {
               "type": "integer",
+              "description": "Maximum number of entries to return in one page (1–200, default 50).",
               "format": "int32"
             }
           },

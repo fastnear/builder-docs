@@ -45,10 +45,10 @@
 }
 ```
 ### Входные данные
-- `desc` (body, boolean)
-- `from_block_height` (body, integer)
-- `limit` (body, integer)
-- `to_block_height` (body, integer)
+- `desc` (body, boolean): Sort newest-first when true; oldest-first when false or omitted.
+- `from_block_height` (body, integer): Inclusive lower bound on block height.
+- `limit` (body, integer): Maximum blocks to return in one page (1–100).
+- `to_block_height` (body, integer): Exclusive upper bound on block height.
 ### Схема запроса
 ```json
 {
@@ -59,7 +59,8 @@
       "name": "desc",
       "required": false,
       "schema": {
-        "type": "boolean"
+        "type": "boolean",
+        "description": "Sort newest-first when true; oldest-first when false or omitted."
       }
     },
     {
@@ -67,6 +68,7 @@
       "required": false,
       "schema": {
         "type": "integer",
+        "description": "Inclusive lower bound on block height.",
         "format": "uint64"
       }
     },
@@ -75,6 +77,7 @@
       "required": false,
       "schema": {
         "type": "integer",
+        "description": "Maximum blocks to return in one page (1–100).",
         "format": "uint"
       }
     },
@@ -83,6 +86,7 @@
       "required": false,
       "schema": {
         "type": "integer",
+        "description": "Exclusive upper bound on block height.",
         "format": "uint64"
       }
     }

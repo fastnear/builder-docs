@@ -45,7 +45,7 @@
 }
 ```
 ### Входные данные
-- `tx_hashes` (body, обязательный, array)
+- `tx_hashes` (body, обязательный, array): Up to 20 base58-encoded transaction hashes to fetch in one request.
 ### Схема запроса
 ```json
 {
@@ -60,6 +60,7 @@
       "required": true,
       "schema": {
         "type": "array",
+        "description": "Up to 20 base58-encoded transaction hashes to fetch in one request.",
         "items": {
           "type": "string"
         }

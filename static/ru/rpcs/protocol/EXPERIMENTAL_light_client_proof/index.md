@@ -30,7 +30,7 @@
     "light_client_head": "9XN7MtDywZvfGx6TKy1MT2iCZkKuHikJXmNazxdZ4x6T",
     "sender_id": "escrow.ai.near",
     "transaction_hash": "34E7weKCDqXh3xPKdBgSWRqo44yTWjbka9deMK8JbAxx",
-    "type": "транзакция"
+    "type": "квитанция"
   }
 }
 ```
@@ -46,7 +46,7 @@
       "light_client_head": "9XN7MtDywZvfGx6TKy1MT2iCZkKuHikJXmNazxdZ4x6T",
       "sender_id": "escrow.ai.near",
       "transaction_hash": "34E7weKCDqXh3xPKdBgSWRqo44yTWjbka9deMK8JbAxx",
-      "type": "транзакция"
+      "type": "квитанция"
     }
   },
   "headers": {},
@@ -138,9 +138,8 @@
             "required": false,
             "schema": {
               "type": "string",
-              "description": "Предмет доказательства — `transaction` подтверждает включение транзакции верхнего уровня, `receipt` подтверждает включение конкретной квитанции, сформированной в ходе исполнения.",
+              "description": "Proof subject — `receipt` proves inclusion of a specific receipt produced during execution.",
               "enum": [
-                "транзакция",
                 "квитанция"
               ]
             }

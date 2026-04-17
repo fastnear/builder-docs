@@ -54,7 +54,7 @@
 - `include_metadata` (body, boolean): Добавить в каждую запись метаданные квитанции и подписанта.
 - `ключ` (body, string): Фильтр по точному ключу. Взаимно исключающий с `key_prefix`.
 - `key_prefix` (body, string): Фильтр по префиксу для совпадения пространств имён ключей.
-- `limit` (body, integer)
+- `limit` (body, integer): Maximum number of entries to return in one page (1–200, default 50).
 - `page_token` (body, string): Непрозрачный токен страницы из предыдущего ответа с тем же эндпоинтом и набором фильтров.
 ### Схема запроса
 ```json
@@ -101,6 +101,7 @@
       "required": false,
       "schema": {
         "type": "integer",
+        "description": "Maximum number of entries to return in one page (1–200, default 50).",
         "format": "int32"
       }
     },

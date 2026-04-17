@@ -40,7 +40,7 @@
         {
           "defaultFields": {
             "account_id": "root.near",
-            "public_key": "ed25519:CByX7HPjgSGFi5G26zwgZGDFCFyBHvSv1fe7AFzmVe3"
+            "public_key": "ed25519:6666666666666666666666666666666666666666666"
           },
           "key": "mainnet",
           "label": "Mainnet",
@@ -49,7 +49,7 @@
         {
           "defaultFields": {
             "account_id": "root.testnet",
-            "public_key": "ed25519:4eUPQ64CXPrKd3CBVzpjDHkvZeDmPZtoU5U6nTZozz1A"
+            "public_key": "ed25519:Bt6gx87fRm99KkkN1Q9UEA8vY9DBLkRSntqcLDuZt3S"
           },
           "key": "testnet",
           "label": "Testnet",
@@ -169,7 +169,7 @@
               "method": "query",
               "params": {
                 "account_id": "root.near",
-                "public_key": "ed25519:CByX7HPjgSGFi5G26zwgZGDFCFyBHvSv1fe7AFzmVe3",
+                "public_key": "ed25519:6666666666666666666666666666666666666666666",
                 "request_type": "view_access_key",
                 "finality": "final"
               }
@@ -190,7 +190,7 @@
               "method": "query",
               "params": {
                 "account_id": "root.testnet",
-                "public_key": "ed25519:4eUPQ64CXPrKd3CBVzpjDHkvZeDmPZtoU5U6nTZozz1A",
+                "public_key": "ed25519:Bt6gx87fRm99KkkN1Q9UEA8vY9DBLkRSntqcLDuZt3S",
                 "request_type": "view_access_key",
                 "finality": "final"
               }

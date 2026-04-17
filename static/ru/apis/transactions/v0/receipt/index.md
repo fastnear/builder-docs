@@ -38,7 +38,7 @@
 }
 ```
 ### Входные данные
-- `receipt_id` (body, обязательный, string)
+- `receipt_id` (body, обязательный, string): Base58-encoded receipt ID to look up.
 ### Схема запроса
 ```json
 {
@@ -52,7 +52,8 @@
       "name": "receipt_id",
       "required": true,
       "schema": {
-        "type": "string"
+        "type": "string",
+        "description": "Base58-encoded receipt ID to look up."
       }
     }
   ],
