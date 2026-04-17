@@ -2020,7 +2020,8 @@ html[data-theme='light'] .fastnear-home-button--primary:focus-visible {
   display: flex;
   justify-content: flex-end;
   height: 0;
-  padding-inline: 14px;
+  padding-inline-start: 14px;
+  padding-inline-end: 22px;
   overflow: visible;
   pointer-events: none;
 }
@@ -2348,7 +2349,8 @@ html[data-theme='light'] .fastnear-home-button--primary:focus-visible {
 
 .builder-fastnear-direct .fastnear-response-modal__viewer-rail {
   top: 14px;
-  padding-inline: 14px;
+  padding-inline-start: 14px;
+  padding-inline-end: 22px;
 }
 
 .builder-fastnear-direct .fastnear-response-modal__viewer-actions {
