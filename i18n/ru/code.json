@@ -432,7 +432,7 @@
     "message": "URL примера скопирован"
   },
   "fastnear.operationUi.copiedViewUrl": {
-    "message": "URL для этого вида скопирован"
+    "message": "URL в этом виде скопирован"
   },
   "fastnear.operationUi.copyMarkdown.completed": {
     "message": "Скопировано"
@@ -444,19 +444,31 @@
     "message": "URL примера"
   },
   "fastnear.operationUi.copyViewUrl": {
-    "message": "Скопировать URL для этого вида"
+    "message": "Скопировать URL в этом виде"
   },
   "fastnear.operationUi.copyViewUrlButtonLabel": {
-    "message": "URL для этого вида"
+    "message": "URL в этом виде"
+  },
+  "fastnear.operationUi.copyViewUrlHelpAriaLabel": {
+    "message": "О URL в этом виде"
+  },
+  "fastnear.operationUi.copyViewUrlHelpBody": {
+    "message": "Копирует URL документации, который заново открывает этот развёрнутый ответ с текущими входными данными и строкой поиска по ответу. API-ключи и токены не включаются."
+  },
+  "fastnear.operationUi.copyCurlCommandHelpAriaLabel": {
+    "message": "О команде curl"
+  },
+  "fastnear.operationUi.copyCurlCommandHelpBody": {
+    "message": "Копирует команду curl для текущего запроса. Вывод передаётся в jq, поэтому предполагается, что jq установлен."
   },
   "fastnear.operationUi.copyExampleUrlHelpAriaLabel": {
     "message": "О URL примера"
   },
   "fastnear.operationUi.copyExampleUrlHelpBody": {
-    "message": "Поделитесь URL документации, который заново откроет этот пример с выбранной сетью, примером запроса, финальностью и заполненными входными данными. URL с состоянием операции выполняется автоматически при загрузке. Сохранённые API-ключи и токены никогда не включаются."
+    "message": "Заново открывает этот запрос с текущей сетью, примером, финальностью и заполненными входными данными. API-ключи и токены не включаются."
   },
   "fastnear.operationUi.copyCurlCommandButtonLabel": {
-    "message": "cURL"
+    "message": "команда curl"
   },
   "fastnear.operationUi.copyMarkdown": {
     "message": "Копировать Markdown"

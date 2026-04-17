@@ -81,6 +81,10 @@
 
   --ifm-code-background: #f0f0f0;
   --ifm-code-color: #333;
+  --fastnear-inline-code-bg: rgba(15, 86, 179, 0.07);
+  --fastnear-inline-code-border: rgba(15, 86, 179, 0.16);
+  --fastnear-inline-code-color: #12315f;
+  --fastnear-inline-code-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.82);
   --ifm-breadcrumb-item-background-active: transparent;
   --ifm-link-color: var(--ifm-color-primary);
   --ifm-link-hover-color: var(--ifm-color-primary-dark);
@@ -111,6 +115,10 @@
 [data-theme='dark'] {
   --ifm-code-background: #1e2340;
   --ifm-code-color: #e0e0e0;
+  --fastnear-inline-code-bg: rgba(96, 165, 250, 0.16);
+  --fastnear-inline-code-border: rgba(152, 199, 253, 0.2);
+  --fastnear-inline-code-color: #dbeafe;
+  --fastnear-inline-code-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
   --ifm-color-primary: #60a5fa;
   --ifm-color-primary-dark: #3b8ef8;
   --ifm-color-primary-darker: #2883f7;
@@ -333,6 +341,20 @@ pre code {
   border: none;
   background: transparent;
   padding: 0;
+}
+
+.theme-doc-markdown :not(pre) > code {
+  display: inline-block;
+  padding: 0.16em 0.46em;
+  border: 1px solid var(--fastnear-inline-code-border);
+  border-radius: 0.32rem;
+  background: var(--fastnear-inline-code-bg);
+  box-shadow: var(--fastnear-inline-code-shadow);
+  color: var(--fastnear-inline-code-color);
+  font-size: 0.92em;
+  font-weight: 500;
+  line-height: 1.15;
+  vertical-align: baseline;
 }
 
 @media (max-width: 996px) {
@@ -751,8 +773,8 @@ pre code {
 
 .builder-fastnear-direct .fastnear-interaction__copy-row {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-start;
   gap: 10px 14px;
   padding: 10px 12px;
   border: 1px solid var(--fastnear-border);
@@ -765,6 +787,8 @@ pre code {
   align-items: center;
   gap: 8px;
   min-height: 34px;
+  justify-content: flex-start;
+  text-align: left;
 }
 
 .builder-fastnear-direct .fastnear-interaction__copy-label {
@@ -777,12 +801,30 @@ pre code {
 }
 
 .builder-fastnear-direct .fastnear-interaction__copy-buttons {
-  flex: 1 1 24rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  width: 100%;
+  max-width: 100%;
+  gap: 10px 12px;
 }
 
-.builder-fastnear-direct .fastnear-interaction__copy-buttons > .fastnear-button {
-  flex: 1 1 8.75rem;
+.builder-fastnear-direct .fastnear-interaction__copy-action {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+  max-width: 100%;
+}
+
+.builder-fastnear-direct .fastnear-interaction__copy-action > .fastnear-button {
+  flex: 0 1 auto;
+  width: 100%;
+  max-width: 100%;
   min-width: 0;
+  min-height: 42px;
+  padding: 8px 12px;
+  font-size: 0.98rem;
 }
 
 .builder-fastnear-direct .fastnear-interaction__action-group {
@@ -792,6 +834,10 @@ pre code {
 }
 
 .builder-fastnear-direct .fastnear-interaction__action-group--help {
+  flex: 0 0 auto;
+}
+
+.builder-fastnear-direct .fastnear-interaction__action-group--copy-help {
   flex: 0 0 auto;
 }
 
@@ -863,22 +909,25 @@ pre code {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 34px;
-  min-height: 34px;
-  padding: 0;
-  border: 1px solid var(--fastnear-border-strong);
-  border-radius: 999px;
-  background: var(--fastnear-button-bg);
+  min-width: 24px;
+  min-height: 24px;
+  padding: 2px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
   color: var(--fastnear-text-soft);
   font: inherit;
   font-weight: 700;
+  font-size: 0.9rem;
   line-height: 1;
   cursor: pointer;
+  opacity: 0.78;
 }
 
 .builder-fastnear-direct .fastnear-interaction__action-help-button:hover {
   color: var(--fastnear-text);
-  border-color: var(--fastnear-accent-border);
+  background: color-mix(in srgb, var(--fastnear-accent-bg) 70%, transparent);
+  opacity: 1;
 }
 
 .builder-fastnear-direct .fastnear-interaction__action-help-button:focus-visible {
@@ -915,10 +964,23 @@ pre code {
   transform: rotate(45deg);
 }
 
+.builder-fastnear-direct .fastnear-interaction__action-group--copy-help .fastnear-interaction__action-tooltip {
+  left: auto;
+  right: 0;
+}
+
+.builder-fastnear-direct .fastnear-interaction__action-group--copy-help .fastnear-interaction__action-tooltip::before {
+  left: auto;
+  right: 10px;
+}
+
 .builder-fastnear-direct .fastnear-button--primary {
   border-color: var(--fastnear-accent-border);
   background: var(--fastnear-primary-bg);
   color: var(--fastnear-primary-text);
+  min-height: 40px;
+  padding: 8px 14px;
+  font-weight: 600;
 }
 
 .builder-fastnear-direct .fastnear-button--secondary {
@@ -960,7 +1022,13 @@ pre code {
   text-transform: uppercase;
 }
 
-.builder-fastnear-direct .fastnear-interaction__meta-item code,
+.builder-fastnear-direct .fastnear-interaction__meta-item code {
+  display: block;
+  padding: 0.32rem 0.62rem 0.32rem 0.68rem;
+  color: var(--fastnear-text);
+  word-break: break-all;
+}
+
 .builder-fastnear-direct .fastnear-interaction__meta-value {
   color: var(--fastnear-text);
   word-break: break-all;
@@ -1016,7 +1084,7 @@ pre code {
   flex: 1 1 100%;
   min-width: 0;
   max-width: 100%;
-  padding: 0.3rem 0.55rem 0.3rem 0.72rem;
+  padding: 0.3rem 0.55rem 0.3rem 0.62rem;
   overflow-wrap: anywhere;
   word-break: break-word;
 }
@@ -2297,8 +2365,24 @@ html[data-theme='light'] .fastnear-home-button--primary:focus-visible {
   gap: 10px;
 }
 
+.builder-fastnear-direct .fastnear-response-modal__header-share-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .builder-fastnear-direct .fastnear-response-modal__header-share-button {
   min-height: 32px;
+}
+
+.builder-fastnear-direct .fastnear-response-modal__header-help-group .fastnear-interaction__action-tooltip {
+  left: auto;
+  right: 0;
+}
+
+.builder-fastnear-direct .fastnear-response-modal__header-help-group .fastnear-interaction__action-tooltip::before {
+  left: auto;
+  right: 10px;
 }
 
 .builder-fastnear-direct .fastnear-response-modal__find-actions {
@@ -2740,16 +2824,22 @@ html[data-theme='light'] .fastnear-home-button--primary:focus-visible {
   }
 
   .builder-fastnear-direct .fastnear-interaction__copy-buttons {
+    grid-template-columns: minmax(0, 1fr);
     width: 100%;
   }
 
-  .builder-fastnear-direct .fastnear-interaction__copy-buttons > .fastnear-button {
-    flex: 1 1 calc(50% - 8px);
+  .builder-fastnear-direct .fastnear-interaction__copy-action > .fastnear-button {
+    flex: 0 1 auto;
   }
 
   .builder-fastnear-direct .fastnear-interaction__action-tooltip {
     left: 0;
     width: min(22rem, calc(100vw - 48px));
+  }
+
+  .builder-fastnear-direct .fastnear-interaction__action-group--copy-help .fastnear-interaction__action-tooltip {
+    left: auto;
+    right: 0;
   }
 
   .builder-fastnear-direct .fastnear-response-modal {

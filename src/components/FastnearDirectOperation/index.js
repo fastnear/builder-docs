@@ -1232,7 +1232,8 @@ function FastnearOperationPage({ pageModel }) {
   const [copiedExampleUrl, setCopiedExampleUrl] = useState(false);
   const [copiedViewUrl, setCopiedViewUrl] = useState(false);
   const [copiedResponse, setCopiedResponse] = useState(false);
-  const [isExampleUrlHelpOpen, setIsExampleUrlHelpOpen] = useState(false);
+  const [openCopyHelp, setOpenCopyHelp] = useState(null);
+  const [isViewUrlHelpOpen, setIsViewUrlHelpOpen] = useState(false);
   const [isResponseModalOpen, setIsResponseModalOpen] = useState(
     initialOperationState.shouldOpenResponseModal
   );
@@ -1244,7 +1245,9 @@ function FastnearOperationPage({ pageModel }) {
   const [runError, setRunError] = useState(null);
   const [runResult, setRunResult] = useState(null);
   const autorunKeyRef = useRef(null);
+  const curlCommandHelpId = useId();
   const exampleUrlHelpId = useId();
+  const viewUrlHelpId = useId();
   const expandedResponseTitleId = useId();
   const responseFindInputRef = useRef(null);
   const inlineExpandResponseButtonRef = useRef(null);
@@ -1279,7 +1282,8 @@ function FastnearOperationPage({ pageModel }) {
     setCopiedExampleUrl(false);
     setCopiedViewUrl(false);
     setCopiedResponse(false);
-    setIsExampleUrlHelpOpen(false);
+    setOpenCopyHelp(null);
+    setIsViewUrlHelpOpen(false);
   }, [initialOperationState]);
 
   useEffect(() => {
@@ -1597,12 +1601,14 @@ function FastnearOperationPage({ pageModel }) {
   const openResponseModal = (searchTerm = "") => {
     const nextSearchTerm = searchTerm.trim();
     setIsResponseModalOpen(true);
+    setIsViewUrlHelpOpen(false);
     setResponseFindDraft(nextSearchTerm);
     setActiveResponseFindIndex(nextSearchTerm ? 0 : -1);
     setCopiedViewUrl(false);
   };
   const closeResponseModal = () => {
     setIsResponseModalOpen(false);
+    setIsViewUrlHelpOpen(false);
     setResponseFindDraft("");
     setActiveResponseFindIndex(-1);
     setCopiedViewUrl(false);
@@ -2147,70 +2153,113 @@ function FastnearOperationPage({ pageModel }) {
               <div className="fastnear-interaction__copy-row">
                 <div className="fastnear-interaction__copy-heading">
                   <span className="fastnear-interaction__copy-label">{uiText.copyGroupLabel}</span>
-                  <div
-                    className="fastnear-interaction__action-group fastnear-interaction__action-group--help"
-                    onMouseEnter={() => setIsExampleUrlHelpOpen(true)}
-                    onMouseLeave={() => setIsExampleUrlHelpOpen(false)}
-                  >
-                    <button
-                      type="button"
-                      className="fastnear-interaction__action-help-button"
-                      aria-label={uiText.copyExampleUrlHelpAriaLabel}
-                      aria-expanded={isExampleUrlHelpOpen}
-                      aria-controls={exampleUrlHelpId}
-                      onClick={() => setIsExampleUrlHelpOpen(true)}
-                      onFocus={() => setIsExampleUrlHelpOpen(true)}
-                      onBlur={() => setIsExampleUrlHelpOpen(false)}
-                    >
-                      ?
-                    </button>
-                    {isExampleUrlHelpOpen ? (
-                      <div
-                        id={exampleUrlHelpId}
-                        role="tooltip"
-                        className="fastnear-interaction__action-tooltip"
-                      >
-                        {uiText.copyExampleUrlHelpBody}
-                      </div>
-                    ) : null}
-                  </div>
                 </div>
 
                 <div className="fastnear-interaction__copy-buttons">
-                  <button
-                    type="button"
-                    className="fastnear-button fastnear-button--secondary"
-                    aria-label={copiedCurl ? uiText.copiedCurlCommand : uiText.copyCurlCommand}
-                    title={copiedCurl ? uiText.copiedCurlCommand : uiText.copyCurlCommand}
-                    onClick={() => {
-                      void handleCopyCurl();
-                    }}
-                    disabled={!curlCommand}
+                  <div
+                    className="fastnear-interaction__copy-action"
                   >
-                    {copiedCurl ? (
-                      <CheckGlyph className="fastnear-button__icon" />
-                    ) : (
-                      <CopyGlyph className="fastnear-button__icon" />
-                    )}
-                    <span>{uiText.copyCurlCommandButtonLabel}</span>
-                  </button>
-                  <button
-                    type="button"
-                    className="fastnear-button fastnear-button--secondary"
-                    aria-label={copiedExampleUrl ? uiText.copiedExampleUrl : uiText.copyExampleUrl}
-                    title={copiedExampleUrl ? uiText.copiedExampleUrl : uiText.copyExampleUrl}
-                    onClick={() => {
-                      void handleCopyExampleUrl();
-                    }}
-                    disabled={!exampleUrl}
+                    <button
+                      type="button"
+                      className="fastnear-button fastnear-button--secondary"
+                      aria-label={copiedCurl ? uiText.copiedCurlCommand : uiText.copyCurlCommand}
+                      title={copiedCurl ? uiText.copiedCurlCommand : uiText.copyCurlCommand}
+                      onClick={() => {
+                        void handleCopyCurl();
+                      }}
+                      disabled={!curlCommand}
+                    >
+                      {copiedCurl ? (
+                        <CheckGlyph className="fastnear-button__icon" />
+                      ) : (
+                        <CopyGlyph className="fastnear-button__icon" />
+                      )}
+                      <span>{uiText.copyCurlCommandButtonLabel}</span>
+                    </button>
+                    <div
+                      className="fastnear-interaction__action-group fastnear-interaction__action-group--copy-help"
+                      onMouseEnter={() => setOpenCopyHelp("curl")}
+                      onMouseLeave={() => setOpenCopyHelp((currentHelp) => (
+                        currentHelp === "curl" ? null : currentHelp
+                      ))}
+                    >
+                      <button
+                        type="button"
+                        className="fastnear-interaction__action-help-button"
+                        aria-label={uiText.copyCurlCommandHelpAriaLabel}
+                        aria-expanded={openCopyHelp === "curl"}
+                        aria-controls={curlCommandHelpId}
+                        onClick={() => setOpenCopyHelp("curl")}
+                        onFocus={() => setOpenCopyHelp("curl")}
+                        onBlur={() => setOpenCopyHelp((currentHelp) => (
+                          currentHelp === "curl" ? null : currentHelp
+                        ))}
+                      >
+                        ?
+                      </button>
+                      {openCopyHelp === "curl" ? (
+                        <div
+                          id={curlCommandHelpId}
+                          role="tooltip"
+                          className="fastnear-interaction__action-tooltip"
+                        >
+                          {uiText.copyCurlCommandHelpBody}
+                        </div>
+                      ) : null}
+                    </div>
+                  </div>
+                  <div
+                    className="fastnear-interaction__copy-action"
                   >
-                    {copiedExampleUrl ? (
-                      <CheckGlyph className="fastnear-button__icon" />
-                    ) : (
-                      <CopyGlyph className="fastnear-button__icon" />
-                    )}
-                    <span>{uiText.copyExampleUrlButtonLabel}</span>
-                  </button>
+                    <button
+                      type="button"
+                      className="fastnear-button fastnear-button--secondary"
+                      aria-label={copiedExampleUrl ? uiText.copiedExampleUrl : uiText.copyExampleUrl}
+                      title={copiedExampleUrl ? uiText.copiedExampleUrl : uiText.copyExampleUrl}
+                      onClick={() => {
+                        void handleCopyExampleUrl();
+                      }}
+                      disabled={!exampleUrl}
+                    >
+                      {copiedExampleUrl ? (
+                        <CheckGlyph className="fastnear-button__icon" />
+                      ) : (
+                        <CopyGlyph className="fastnear-button__icon" />
+                      )}
+                      <span>{uiText.copyExampleUrlButtonLabel}</span>
+                    </button>
+                    <div
+                      className="fastnear-interaction__action-group fastnear-interaction__action-group--copy-help"
+                      onMouseEnter={() => setOpenCopyHelp("example")}
+                      onMouseLeave={() => setOpenCopyHelp((currentHelp) => (
+                        currentHelp === "example" ? null : currentHelp
+                      ))}
+                    >
+                      <button
+                        type="button"
+                        className="fastnear-interaction__action-help-button"
+                        aria-label={uiText.copyExampleUrlHelpAriaLabel}
+                        aria-expanded={openCopyHelp === "example"}
+                        aria-controls={exampleUrlHelpId}
+                        onClick={() => setOpenCopyHelp("example")}
+                        onFocus={() => setOpenCopyHelp("example")}
+                        onBlur={() => setOpenCopyHelp((currentHelp) => (
+                          currentHelp === "example" ? null : currentHelp
+                        ))}
+                      >
+                        ?
+                      </button>
+                      {openCopyHelp === "example" ? (
+                        <div
+                          id={exampleUrlHelpId}
+                          role="tooltip"
+                          className="fastnear-interaction__action-tooltip"
+                        >
+                          {uiText.copyExampleUrlHelpBody}
+                        </div>
+                      ) : null}
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -2375,23 +2424,52 @@ function FastnearOperationPage({ pageModel }) {
                 </p>
               </div>
               <div className="fastnear-response-modal__header-actions">
-                <button
-                  type="button"
-                  className="fastnear-button fastnear-button--secondary fastnear-response-modal__header-share-button"
-                  aria-label={copiedViewUrl ? uiText.copiedViewUrl : uiText.copyViewUrl}
-                  title={copiedViewUrl ? uiText.copiedViewUrl : uiText.copyViewUrl}
-                  onClick={() => {
-                    void handleCopyViewUrl();
-                  }}
-                  disabled={!exampleUrl}
-                >
-                  {copiedViewUrl ? (
-                    <CheckGlyph className="fastnear-button__icon" />
-                  ) : (
-                    <CopyGlyph className="fastnear-button__icon" />
-                  )}
-                  <span>{uiText.copyViewUrlButtonLabel}</span>
-                </button>
+                <div className="fastnear-response-modal__header-share-group">
+                  <button
+                    type="button"
+                    className="fastnear-button fastnear-button--secondary fastnear-response-modal__header-share-button"
+                    aria-label={copiedViewUrl ? uiText.copiedViewUrl : uiText.copyViewUrl}
+                    title={copiedViewUrl ? uiText.copiedViewUrl : uiText.copyViewUrl}
+                    onClick={() => {
+                      void handleCopyViewUrl();
+                    }}
+                    disabled={!exampleUrl}
+                  >
+                    {copiedViewUrl ? (
+                      <CheckGlyph className="fastnear-button__icon" />
+                    ) : (
+                      <CopyGlyph className="fastnear-button__icon" />
+                    )}
+                    <span>{uiText.copyViewUrlButtonLabel}</span>
+                  </button>
+                  <div
+                    className="fastnear-interaction__action-group fastnear-response-modal__header-help-group"
+                    onMouseEnter={() => setIsViewUrlHelpOpen(true)}
+                    onMouseLeave={() => setIsViewUrlHelpOpen(false)}
+                  >
+                    <button
+                      type="button"
+                      className="fastnear-interaction__action-help-button"
+                      aria-label={uiText.copyViewUrlHelpAriaLabel}
+                      aria-expanded={isViewUrlHelpOpen}
+                      aria-controls={viewUrlHelpId}
+                      onClick={() => setIsViewUrlHelpOpen(true)}
+                      onFocus={() => setIsViewUrlHelpOpen(true)}
+                      onBlur={() => setIsViewUrlHelpOpen(false)}
+                    >
+                      ?
+                    </button>
+                    {isViewUrlHelpOpen ? (
+                      <div
+                        id={viewUrlHelpId}
+                        role="tooltip"
+                        className="fastnear-interaction__action-tooltip"
+                      >
+                        {uiText.copyViewUrlHelpBody}
+                      </div>
+                    ) : null}
+                  </div>
+                </div>
                 <button
                   type="button"
                   className="fastnear-interaction__copy-button fastnear-response-modal__close-button"

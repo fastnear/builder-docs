@@ -91,10 +91,17 @@ test('Russian RPC operation pages live under /ru/rpc with translated controls', 
   await expect(page.getByText('Сведения об аккаунте')).toBeVisible();
   await expect(page.getByText('Successful ответ')).toHaveCount(0);
 
+  await page.getByRole('button', { name: 'О команде curl' }).click();
+  await expect(page.getByRole('tooltip')).toContainText(
+    'Копирует команду curl для текущего запроса'
+  );
+  await expect(page.getByRole('tooltip')).toContainText('jq');
+
   await page.getByRole('button', { name: 'О URL примера' }).click();
   await expect(page.getByRole('tooltip')).toContainText(
-    'выполняется автоматически при загрузке'
+    'Заново открывает этот запрос'
   );
+  await expect(page.getByRole('tooltip')).not.toContainText('jq');
 });
 
 test('Russian expanded response modal exposes translated find controls', async ({ page }) => {
@@ -125,8 +132,11 @@ test('Russian expanded response modal exposes translated find controls', async (
   const dialog = page.getByRole('dialog', { name: 'Развернутый ответ' });
   await expect(dialog).toBeVisible();
   await requestPromise;
-  await expect(dialog.getByRole('button', { name: 'Скопировать URL для этого вида' })).toBeVisible();
-  await expect(dialog.getByText('URL для этого вида', { exact: true })).toBeVisible();
+  await expect(dialog.getByRole('button', { name: 'Скопировать URL в этом виде' })).toBeVisible();
+  await expect(dialog.getByText('URL в этом виде', { exact: true })).toBeVisible();
+  await dialog.getByRole('button', { name: 'О URL в этом виде' }).click();
+  await expect(dialog.getByRole('tooltip')).toContainText('развёрнутый ответ');
+  await expect(dialog.getByRole('tooltip')).not.toContainText('jq');
   await expect(dialog.getByRole('textbox', { name: 'Найти в ответе' })).toHaveValue('amount');
   await expect(dialog.getByRole('button', { name: 'Предыдущее совпадение' })).toBeVisible();
   await expect(dialog.getByRole('button', { name: 'Следующее совпадение' })).toBeVisible();

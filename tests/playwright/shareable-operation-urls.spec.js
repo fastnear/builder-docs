@@ -11,7 +11,7 @@ const {
   waitForRpcRequest,
 } = require('./helpers/operation-page');
 
-test('Copy example URL copies a shareable docs URL and shows the help tooltip', async ({ page }) => {
+test('Copy example URL copies a shareable docs URL and shows button-specific help tooltips', async ({ page }) => {
   await installClipboardSpy(page);
   await page.goto('/rpc/account/view-account');
 
@@ -20,10 +20,17 @@ test('Copy example URL copies a shareable docs URL and shows the help tooltip', 
   await page.locator('.fastnear-interaction__field--account_id input').fill('alice.testnet');
   await page.getByLabel('Select finality').getByRole('button', { name: 'Near-final' }).click();
 
-  await page.getByRole('button', { name: 'About example URLs' }).click();
+  await page.getByRole('button', { name: 'About curl command' }).click();
   await expect(page.getByRole('tooltip')).toContainText(
-    'URLs with operation state run automatically on load'
+    'Copies a curl command for the current request'
   );
+  await expect(page.getByRole('tooltip')).toContainText('jq');
+
+  await page.getByRole('button', { name: 'About example URL' }).click();
+  await expect(page.getByRole('tooltip')).toContainText(
+    'Reloads this request with the current network'
+  );
+  await expect(page.getByRole('tooltip')).not.toContainText('jq');
 
   await page.getByRole('button', { name: 'Copy example URL' }).click();
   await expect(page.getByRole('button', { name: 'Copied example URL' })).toBeVisible();
@@ -38,6 +45,37 @@ test('Copy example URL copies a shareable docs URL and shows the help tooltip', 
   expect(copiedUrl.searchParams.get('account_id')).toBe('alice.testnet');
   expect(copiedUrl.searchParams.get('apiKey')).toBeNull();
   expect(copiedUrl.searchParams.get('token')).toBeNull();
+});
+
+test('copy actions stay side by side on laptop widths and stack on narrow screens', async ({ page }) => {
+  const curlButton = page.getByRole('button', { name: 'Copy curl command' });
+  const exampleUrlButton = page.getByRole('button', { name: 'Copy example URL' });
+
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.goto('/rpc/account/view-account');
+  await expect(curlButton).toBeVisible();
+  await expect(exampleUrlButton).toBeVisible();
+  await curlButton.scrollIntoViewIfNeeded();
+
+  const desktopCurlAction = await curlButton.boundingBox();
+  const desktopExampleAction = await exampleUrlButton.boundingBox();
+  expect(desktopCurlAction).not.toBeNull();
+  expect(desktopExampleAction).not.toBeNull();
+  expect(Math.abs(desktopCurlAction.y - desktopExampleAction.y)).toBeLessThan(8);
+  expect(desktopExampleAction.x).toBeGreaterThan(desktopCurlAction.x);
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/rpc/account/view-account');
+  await expect(curlButton).toBeVisible();
+  await expect(exampleUrlButton).toBeVisible();
+  await curlButton.scrollIntoViewIfNeeded();
+
+  const mobileCurlAction = await curlButton.boundingBox();
+  const mobileExampleAction = await exampleUrlButton.boundingBox();
+  expect(mobileCurlAction).not.toBeNull();
+  expect(mobileExampleAction).not.toBeNull();
+  expect(Math.abs(mobileCurlAction.x - mobileExampleAction.x)).toBeLessThan(8);
+  expect(mobileExampleAction.y).toBeGreaterThan(mobileCurlAction.y + 8);
 });
 
 test('Copy example URL round-trips RPC extra UI state and auto-runs on reopen', async ({ page }) => {
@@ -151,7 +189,7 @@ test('Copy example URL round-trips HTTP boolean body state on first paint and au
   });
 });
 
-test('Copy example URL in the expanded response modal preserves response view state', async ({ page }) => {
+test('URL in this view in the expanded response modal preserves response view state and exposes help', async ({ page }) => {
   await installClipboardSpy(page);
 
   await page.route('https://rpc.mainnet.fastnear.com/**', async (route) => {
@@ -189,7 +227,13 @@ test('Copy example URL in the expanded response modal preserves response view st
   await dialog.getByRole('textbox', { name: 'Find in response' }).fill('amount');
   await expect(dialog.locator('.fastnear-response-modal__find-results')).toHaveText('1 of 3');
 
-  await dialog.getByRole('button', { name: 'URL for this view' }).click();
+  await dialog.getByRole('button', { name: 'About URL in this view' }).click();
+  await expect(dialog.getByRole('tooltip')).toContainText(
+    'reopens this expanded response'
+  );
+  await expect(dialog.getByRole('tooltip')).not.toContainText('jq');
+
+  await dialog.getByRole('button', { name: 'Copy URL in this view' }).click();
 
   const copiedUrl = new URL(await getCopiedText(page));
   expect(copiedUrl.pathname).toBe('/rpc/account/view-account');
@@ -199,7 +243,7 @@ test('Copy example URL in the expanded response modal preserves response view st
   expect(copiedUrl.searchParams.get('account_id')).toBe('near');
 });
 
-test('URL for this view round-trips response view state, auto-runs on reopen, and strips secrets', async ({ page }) => {
+test('URL in this view round-trips response view state, auto-runs on reopen, and strips secrets', async ({ page }) => {
   await installClipboardSpy(page);
 
   await page.route('https://rpc.mainnet.fastnear.com/**', async (route) => {
@@ -237,7 +281,7 @@ test('URL for this view round-trips response view state, auto-runs on reopen, an
   await dialog.getByRole('textbox', { name: 'Find in response' }).fill('amount');
   await expect(dialog.locator('.fastnear-response-modal__find-results')).toHaveText('1 of 3');
 
-  await dialog.getByRole('button', { name: 'URL for this view' }).click();
+  await dialog.getByRole('button', { name: 'Copy URL in this view' }).click();
 
   const copiedUrl = new URL(await getCopiedText(page));
   expect(copiedUrl.pathname).toBe('/rpc/account/view-account');

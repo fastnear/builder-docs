@@ -28,7 +28,7 @@ export function getFastnearOperationUiText() {
     }),
     copiedViewUrl: translate({
       id: 'fastnear.operationUi.copiedViewUrl',
-      message: 'Copied URL for this view',
+      message: 'Copied URL in this view',
     }),
     copiedMarkdown: translate({
       id: 'fastnear.operationUi.copyMarkdown.completed',
@@ -44,24 +44,42 @@ export function getFastnearOperationUiText() {
     }),
     copyViewUrl: translate({
       id: 'fastnear.operationUi.copyViewUrl',
-      message: 'Copy URL for this view',
+      message: 'Copy URL in this view',
     }),
     copyViewUrlButtonLabel: translate({
       id: 'fastnear.operationUi.copyViewUrlButtonLabel',
-      message: 'URL for this view',
+      message: 'URL in this view',
+    }),
+    copyViewUrlHelpAriaLabel: translate({
+      id: 'fastnear.operationUi.copyViewUrlHelpAriaLabel',
+      message: 'About URL in this view',
+    }),
+    copyViewUrlHelpBody: translate({
+      id: 'fastnear.operationUi.copyViewUrlHelpBody',
+      message:
+        'Copies a docs URL that reopens this expanded response with the current inputs and response search state. Saved API keys and tokens are omitted.',
+    }),
+    copyCurlCommandHelpAriaLabel: translate({
+      id: 'fastnear.operationUi.copyCurlCommandHelpAriaLabel',
+      message: 'About curl command',
+    }),
+    copyCurlCommandHelpBody: translate({
+      id: 'fastnear.operationUi.copyCurlCommandHelpBody',
+      message:
+        'Copies a curl command for the current request. Output is piped to jq, so jq is expected to be installed.',
     }),
     copyExampleUrlHelpAriaLabel: translate({
       id: 'fastnear.operationUi.copyExampleUrlHelpAriaLabel',
-      message: 'About example URLs',
+      message: 'About example URL',
     }),
     copyExampleUrlHelpBody: translate({
       id: 'fastnear.operationUi.copyExampleUrlHelpBody',
       message:
-        'Share a docs URL that reloads this example with the selected network, request example, finality, and any filled inputs preloaded. URLs with operation state run automatically on load. Saved API keys and tokens are never included.',
+        'Reloads this request with the current network, example, finality, and filled inputs. Saved API keys and tokens are omitted.',
     }),
     copyCurlCommandButtonLabel: translate({
       id: 'fastnear.operationUi.copyCurlCommandButtonLabel',
-      message: 'cURL',
+      message: 'curl command',
     }),
     copyMarkdown: translate({
       id: 'fastnear.operationUi.copyMarkdown',
