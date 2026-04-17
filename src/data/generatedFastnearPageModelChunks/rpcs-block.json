@@ -256,7 +256,7 @@
   {
     "canonicalPath": "/rpcs/block/block_by_id",
     "info": {
-      "description": "Fetch a block's header and chunk summaries by its SHA-256 hash.",
+      "description": "Fetch a block's header and chunk summaries by its Base58-encoded SHA-256 hash.",
       "operationId": "block_by_id",
       "summary": "Get block by hash",
       "title": "NEAR Protocol RPC: Get block by hash",

@@ -2304,7 +2304,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/rpcs/block/block_by_id",
-      "description": "Fetch a block's header and chunk summaries by its SHA-256 hash.",
+      "description": "Fetch a block's header and chunk summaries by its Base58-encoded SHA-256 hash.",
       "docsPath": "/rpc/block/block-by-id",
       "familyId": "rpc-block",
       "headline": "NEAR Protocol RPC: Get block by hash",
@@ -2412,7 +2412,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/rpcs/contract/view_global_contract_code",
-      "description": "Look up a global contract's WebAssembly bytes by its SHA-256 code hash.",
+      "description": "Look up a global contract's WebAssembly bytes by its Base58-encoded SHA-256 code hash.",
       "docsPath": "/rpc/contract/view-global-contract-code",
       "familyId": "rpc-contract",
       "headline": "NEAR Protocol RPC: View global contract code",
@@ -2547,7 +2547,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/rpcs/protocol/chunk_by_hash",
-      "description": "Fetch a single chunk's transactions and receipts by its content hash.",
+      "description": "Fetch a single chunk's transactions and receipts by its Base58 content hash.",
       "docsPath": "/rpc/protocol/chunk-by-hash",
       "familyId": "rpc-protocol",
       "headline": "NEAR Protocol RPC: Get chunk by hash",
@@ -2628,7 +2628,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/rpcs/protocol/EXPERIMENTAL_light_client_block_proof",
-      "description": "Fetch a Merkle proof that a block is included in the light client's verified chain.",
+      "description": "Fetch a Merkle proof — by Base58 block and light-client-head hashes — that the block is included in the light client's verified chain.",
       "docsPath": "/rpc/protocol/experimental-light-client-block-proof",
       "familyId": "rpc-protocol",
       "headline": "NEAR Protocol RPC: Get light client block proof",
@@ -2655,7 +2655,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/rpcs/protocol/EXPERIMENTAL_light_client_proof",
-      "description": "Fetch a Merkle proof of transaction or receipt inclusion — the EXPERIMENTAL alias of `light_client_proof`.",
+      "description": "Fetch a Merkle proof of transaction or receipt inclusion by Base58 ID — the EXPERIMENTAL alias of `light_client_proof`.",
       "docsPath": "/rpc/protocol/experimental-light-client-proof",
       "familyId": "rpc-protocol",
       "headline": "NEAR Protocol RPC: Get light client execution proof",
@@ -2873,7 +2873,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/rpcs/protocol/light_client_proof",
-      "description": "Fetch a Merkle proof that a transaction or receipt was included and executed, suitable for light-client verification.",
+      "description": "Fetch a Merkle proof — by Base58 transaction or receipt ID — that the item was included and executed, suitable for light-client verification.",
       "docsPath": "/rpc/protocol/light-client-proof",
       "familyId": "rpc-protocol",
       "headline": "NEAR Protocol RPC: Get light client proof",
@@ -2981,7 +2981,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/rpcs/protocol/next_light_client_block",
-      "description": "Advance a light client's verified chain by fetching the next block header after a known head.",
+      "description": "Advance a light client's verified chain by fetching the next block header after a known Base58 head hash.",
       "docsPath": "/rpc/protocol/next-light-client-block",
       "familyId": "rpc-protocol",
       "headline": "NEAR Protocol RPC: Get next light client block",
@@ -3035,7 +3035,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/rpcs/transaction/broadcast_tx_async",
-      "description": "Submit a signed transaction and immediately get its hash — no wait for execution.",
+      "description": "Submit a Base64-encoded signed transaction and immediately get its hash — no wait for execution.",
       "docsPath": "/rpc/transaction/broadcast-tx-async",
       "familyId": "rpc-transaction",
       "headline": "NEAR Protocol RPC: Send transaction asynchronously",
@@ -3116,7 +3116,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/rpcs/transaction/EXPERIMENTAL_tx_status",
-      "description": "Fetch a transaction's full receipt tree and per-receipt outcomes — richer than `tx_status`.",
+      "description": "Fetch a transaction's full receipt tree and per-receipt outcomes by Base58 hash — richer than `tx_status`.",
       "docsPath": "/rpc/transaction/experimental-tx-status",
       "familyId": "rpc-transaction",
       "headline": "NEAR Protocol RPC: Get detailed transaction status",
@@ -3170,7 +3170,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/rpcs/transaction/tx_status",
-      "description": "Check a transaction's final outcome by hash — succeeded, failed, or still unresolved.",
+      "description": "Check a transaction's final outcome by Base58 hash — succeeded, failed, or still unresolved.",
       "docsPath": "/rpc/transaction/tx-status",
       "familyId": "rpc-transaction",
       "headline": "NEAR Protocol RPC: Get transaction status",

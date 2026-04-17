@@ -306,7 +306,7 @@
   {
     "canonicalPath": "/rpcs/transaction/EXPERIMENTAL_tx_status",
     "info": {
-      "description": "Fetch a transaction's full receipt tree and per-receipt outcomes — richer than `tx_status`.",
+      "description": "Fetch a transaction's full receipt tree and per-receipt outcomes by Base58 hash — richer than `tx_status`.",
       "operationId": "EXPERIMENTAL_tx_status",
       "summary": "Get detailed transaction status",
       "title": "NEAR Protocol RPC: Get detailed transaction status",
@@ -707,7 +707,7 @@
   {
     "canonicalPath": "/rpcs/transaction/broadcast_tx_async",
     "info": {
-      "description": "Submit a signed transaction and immediately get its hash — no wait for execution.",
+      "description": "Submit a Base64-encoded signed transaction and immediately get its hash — no wait for execution.",
       "operationId": "broadcast_tx_async",
       "summary": "Send transaction asynchronously",
       "title": "NEAR Protocol RPC: Send transaction asynchronously",
@@ -1719,7 +1719,7 @@
   {
     "canonicalPath": "/rpcs/transaction/tx_status",
     "info": {
-      "description": "Check a transaction's final outcome by hash — succeeded, failed, or still unresolved.",
+      "description": "Check a transaction's final outcome by Base58 hash — succeeded, failed, or still unresolved.",
       "operationId": "tx_status",
       "summary": "Get transaction status",
       "title": "NEAR Protocol RPC: Get transaction status",

@@ -1,6 +1,6 @@
 # RPC протокола NEAR: Доказательство исполнения для лайт-клиента
 Получить доказательство исполнения для лайт-клиента
-Получите Merkle-доказательство включения транзакции или квитанции — EXPERIMENTAL-вариант метода `light_client_proof`.
+Получите Merkle-доказательство включения транзакции или квитанции по ID в кодировке Base58 — EXPERIMENTAL-вариант метода `light_client_proof`.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/rpcs/protocol/EXPERIMENTAL_light_client_proof
 - https://docs.fastnear.com/ru/rpcs/protocol/EXPERIMENTAL_light_client_proof/other/EXPERIMENTAL_light_client_proof

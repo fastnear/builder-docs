@@ -1,6 +1,6 @@
 # RPC протокола NEAR: Отправка транзакции (асинхронно)
 Отправить транзакцию асинхронно
-Отправьте подписанную транзакцию и сразу получите её хеш — без ожидания исполнения.
+Отправьте подписанную транзакцию в кодировке Base64 и сразу получите её хеш — без ожидания исполнения.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/rpcs/transaction/broadcast_tx_async
 - https://docs.fastnear.com/ru/rpcs/transaction/broadcast_tx_async/other/broadcast_tx_async
