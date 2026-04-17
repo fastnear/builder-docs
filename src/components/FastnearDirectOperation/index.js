@@ -1248,6 +1248,8 @@ function FastnearOperationPage({ pageModel }) {
   const expandedResponseTitleId = useId();
   const responseFindInputRef = useRef(null);
   const inlineExpandResponseButtonRef = useRef(null);
+  const sendRequestButtonRef = useRef(null);
+  const hasAutoFocusedSendButtonRef = useRef(false);
   const selectedFinalityDetails =
     FINALITY_OPTIONS.find((option) => option.value === selectedFinality) || FINALITY_OPTIONS[2];
   const selectedNetworkDetails =
@@ -1838,6 +1840,33 @@ function FastnearOperationPage({ pageModel }) {
     void handleRun();
   }, [autorunRequestKey]);
 
+  useEffect(() => {
+    if (hasAutoFocusedSendButtonRef.current) {
+      return;
+    }
+    if (missingField || isRunning) {
+      return;
+    }
+    if (typeof document === "undefined") {
+      return;
+    }
+    const activeElement = document.activeElement;
+    if (activeElement && activeElement !== document.body && activeElement !== document.documentElement) {
+      hasAutoFocusedSendButtonRef.current = true;
+      return;
+    }
+    const button = sendRequestButtonRef.current;
+    if (!button) {
+      return;
+    }
+    try {
+      button.focus({ preventScroll: true });
+    } catch (error) {
+      button.focus();
+    }
+    hasAutoFocusedSendButtonRef.current = true;
+  }, [missingField, isRunning]);
+
   return (
     <div className="fastnear-operation-page" data-fastnear-operation-root data-fastnear-page-model-id={pageModel.pageModelId}>
       <div className="fastnear-operation-page__toolbar" data-fastnear-crawler-skip>
@@ -1846,7 +1875,16 @@ function FastnearOperationPage({ pageModel }) {
 
       <div className="fastnear-interaction" data-fastnear-crawler-skip>
         <div className="fastnear-interaction__layout">
-          <div className="fastnear-interaction__sidebar">
+          <form
+            className="fastnear-interaction__sidebar"
+            onSubmit={(event) => {
+              event.preventDefault();
+              if (isRunning || missingField) {
+                return;
+              }
+              void handleRun();
+            }}
+          >
             <div className="fastnear-interaction__controls">
               <div className="fastnear-interaction__field fastnear-interaction__field--network">
                 <span className="fastnear-interaction__label">{uiText.network}</span>
@@ -2097,9 +2135,9 @@ function FastnearOperationPage({ pageModel }) {
             <div className="fastnear-interaction__actions">
               <div className="fastnear-interaction__primary-actions">
                 <button
-                  type="button"
+                  ref={sendRequestButtonRef}
+                  type="submit"
                   className="fastnear-button fastnear-button--primary"
-                  onClick={handleRun}
                   disabled={isRunning || !!missingField}
                 >
                   {isRunning ? uiText.sending : uiText.sendRequest}
@@ -2216,7 +2254,7 @@ function FastnearOperationPage({ pageModel }) {
                 <span className="fastnear-interaction__meta-value">{effectiveAuthSummary}</span>
               </div>
             </div>
-          </div>
+          </form>
 
           <div className="fastnear-interaction__response">
             <div className="fastnear-interaction__response-header">
