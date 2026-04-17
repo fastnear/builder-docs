@@ -2019,7 +2019,9 @@ html[data-theme='light'] .fastnear-home-button--primary:focus-visible {
   z-index: 2;
   display: flex;
   justify-content: flex-end;
-  padding: 10px 10px 0;
+  height: 0;
+  padding-inline: 10px;
+  overflow: visible;
   pointer-events: none;
 }
 
@@ -2222,11 +2224,10 @@ html[data-theme='light'] .fastnear-home-button--primary:focus-visible {
 }
 
 .builder-fastnear-direct .fastnear-response-modal__header {
-  position: relative;
   display: flex;
   align-items: flex-start;
-  gap: 12px;
-  padding-right: 48px;
+  justify-content: space-between;
+  gap: 16px;
   padding-bottom: 14px;
   border-bottom: 1px solid var(--fastnear-border);
 }
@@ -2244,6 +2245,19 @@ html[data-theme='light'] .fastnear-home-button--primary:focus-visible {
   line-height: 1.55;
 }
 
+.builder-fastnear-direct .fastnear-response-modal__header-actions {
+  display: inline-flex;
+  flex: 0 0 auto;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.builder-fastnear-direct .fastnear-response-modal__header-share-button {
+  min-height: 32px;
+}
+
 .builder-fastnear-direct .fastnear-response-modal__find-actions {
   display: inline-flex;
   gap: 8px;
@@ -2251,9 +2265,7 @@ html[data-theme='light'] .fastnear-home-button--primary:focus-visible {
 }
 
 .builder-fastnear-direct .fastnear-response-modal__close-button {
-  position: absolute;
-  top: 0;
-  right: 0;
+  flex: 0 0 auto;
 }
 
 .builder-fastnear-direct .fastnear-response-modal__result-meta {
@@ -2331,15 +2343,12 @@ html[data-theme='light'] .fastnear-home-button--primary:focus-visible {
 
 .builder-fastnear-direct .fastnear-response-modal__viewer-rail {
   top: 12px;
-  padding: 12px 12px 0;
+  padding-inline: 12px;
 }
 
 .builder-fastnear-direct .fastnear-response-modal__viewer-actions {
   gap: 10px;
-}
-
-.builder-fastnear-direct .fastnear-response-modal__viewer-share-button {
-  min-height: 32px;
+  justify-content: flex-end;
 }
 
 .builder-fastnear-direct .fastnear-response-modal__text-response {
@@ -2715,6 +2724,14 @@ html[data-theme='light'] .fastnear-home-button--primary:focus-visible {
     padding: 14px;
   }
 
+  .builder-fastnear-direct .fastnear-response-modal__header {
+    flex-wrap: wrap;
+  }
+
+  .builder-fastnear-direct .fastnear-response-modal__header-actions {
+    width: 100%;
+  }
+
   .builder-fastnear-direct .fastnear-response-modal__find-results {
     min-width: 0;
     text-align: left;
@@ -2730,10 +2747,6 @@ html[data-theme='light'] .fastnear-home-button--primary:focus-visible {
   .builder-fastnear-direct .fastnear-response-modal__find-results,
   .builder-fastnear-direct .fastnear-response-modal__find-actions {
     width: 100%;
-  }
-
-  .builder-fastnear-direct .fastnear-response-modal__viewer-share-button {
-    flex: 1 1 auto;
   }
 }
 

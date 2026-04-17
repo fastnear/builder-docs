@@ -2295,15 +2295,34 @@ function FastnearOperationPage({ pageModel }) {
                   {uiText.expandedResponseHint}
                 </p>
               </div>
-              <button
-                type="button"
-                className="fastnear-interaction__copy-button fastnear-response-modal__close-button"
-                onClick={() => closeResponseModal()}
-                aria-label={uiText.closeExpandedResponse}
-                title={uiText.closeExpandedResponse}
-              >
-                <CloseGlyph className="fastnear-interaction__copy-icon" />
-              </button>
+              <div className="fastnear-response-modal__header-actions">
+                <button
+                  type="button"
+                  className="fastnear-button fastnear-button--secondary fastnear-response-modal__header-share-button"
+                  aria-label={copiedViewUrl ? uiText.copiedViewUrl : uiText.copyViewUrl}
+                  title={copiedViewUrl ? uiText.copiedViewUrl : uiText.copyViewUrl}
+                  onClick={() => {
+                    void handleCopyViewUrl();
+                  }}
+                  disabled={!exampleUrl}
+                >
+                  {copiedViewUrl ? (
+                    <CheckGlyph className="fastnear-button__icon" />
+                  ) : (
+                    <CopyGlyph className="fastnear-button__icon" />
+                  )}
+                  <span>{uiText.copyViewUrlButtonLabel}</span>
+                </button>
+                <button
+                  type="button"
+                  className="fastnear-interaction__copy-button fastnear-response-modal__close-button"
+                  onClick={() => closeResponseModal()}
+                  aria-label={uiText.closeExpandedResponse}
+                  title={uiText.closeExpandedResponse}
+                >
+                  <CloseGlyph className="fastnear-interaction__copy-icon" />
+                </button>
+              </div>
             </div>
 
             {runResult ? (
@@ -2386,23 +2405,6 @@ function FastnearOperationPage({ pageModel }) {
             >
               <div className="fastnear-interaction__result-action-rail fastnear-response-modal__viewer-rail">
                 <div className="fastnear-interaction__result-actions fastnear-response-modal__viewer-actions">
-                  <button
-                    type="button"
-                    className="fastnear-button fastnear-button--secondary fastnear-response-modal__viewer-share-button"
-                    aria-label={copiedViewUrl ? uiText.copiedViewUrl : uiText.copyViewUrl}
-                    title={copiedViewUrl ? uiText.copiedViewUrl : uiText.copyViewUrl}
-                    onClick={() => {
-                      void handleCopyViewUrl();
-                    }}
-                    disabled={!exampleUrl}
-                  >
-                    {copiedViewUrl ? (
-                      <CheckGlyph className="fastnear-button__icon" />
-                    ) : (
-                      <CopyGlyph className="fastnear-button__icon" />
-                    )}
-                    <span>{uiText.copyViewUrlButtonLabel}</span>
-                  </button>
                   <button
                     type="button"
                     className={`fastnear-interaction__copy-button ${
