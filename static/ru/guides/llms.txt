@@ -23,6 +23,7 @@
 - [Агенты на FastNear](https://docs.fastnear.com/ru/agents.md): Операционное руководство для ИИ-агентов и сред автоматизации, использующих документацию FastNear и её RPC- и REST-API.
 - [Аутентификация для агентов](https://docs.fastnear.com/ru/agents/auth.md): Операционная работа с учётными данными для ИИ-агентов, автоматизаций, воркеров и бэкенд-сред, использующих FastNear.
 - [Как выбрать подходящую поверхность](https://docs.fastnear.com/ru/agents/choosing-surfaces.md): Направьте задачу агента к сырому RPC, индексированным API, истории транзакций, NEAR Data, FastData или снапшотам.
+- [Как построить MCP-сервер на FastNear](https://docs.fastnear.com/ru/agents/mcp.md): Используйте RPC и REST API FastNear внутри собственного MCP-сервера на TypeScript с примером на прямых HTTP-вызовах.
 - [Плейбуки для агентов](https://docs.fastnear.com/ru/agents/playbooks.md): Рабочие процессы FastNear по умолчанию для типовых задач ИИ-агентов и автоматизаций.
 
 ## Другие гайды

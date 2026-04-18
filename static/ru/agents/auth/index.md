@@ -93,3 +93,4 @@ const response = await fetch('https://rpc.mainnet.fastnear.com', {
 - [Аутентификация и доступ](https://docs.fastnear.com/ru/auth)
 - [Агенты на FastNear](https://docs.fastnear.com/ru/agents)
 - [Как выбрать подходящую поверхность](https://docs.fastnear.com/ru/agents/choosing-surfaces)
+- [Как построить MCP-сервер на FastNear](https://docs.fastnear.com/ru/agents/mcp)

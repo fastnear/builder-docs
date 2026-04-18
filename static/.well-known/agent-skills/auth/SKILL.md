@@ -1,12 +1,8 @@
 ---
-title: Auth for Agents
-description: Operational credential handling for AI agents, automations, workers, and backend runtimes using FastNear.
-slug: /agents/auth
-sidebar_position: 3
-displayed_sidebar: null
-page_actions:
-  - markdown
+name: "auth"
+description: "Authentication guidance for FastNear agents. Use when a task involves API keys, secret handling, or request authorization posture."
 ---
+**Source:** [https://docs.fastnear.com/agents/auth](https://docs.fastnear.com/agents/auth)
 
 # Auth for Agents
 
@@ -98,7 +94,7 @@ When auth is relevant, a useful agent answer usually contains:
 
 ## Related guides
 
-- [Auth & Access](/auth)
-- [Agents on FastNear](/agents)
-- [Choosing the Right Surface](/agents/choosing-surfaces)
-- [Building an MCP Server with FastNear](/agents/mcp)
+- [Auth & Access](https://docs.fastnear.com/auth)
+- [Agents on FastNear](https://docs.fastnear.com/agents)
+- [Choosing the Right Surface](https://docs.fastnear.com/agents/choosing-surfaces)
+- [Building an MCP Server with FastNear](https://docs.fastnear.com/agents/mcp)

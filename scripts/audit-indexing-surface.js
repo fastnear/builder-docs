@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+const crypto = require("node:crypto");
 const fs = require("node:fs");
 const path = require("node:path");
 const {
@@ -41,13 +42,65 @@ const ALGOLIA_RELEVANCE_AUDIT_PATH = path.join(ROOT, "scripts/audit-algolia-rele
 const SEARCH_BAR_PATH = path.join(ROOT, "src/theme/SearchBar/index.js");
 const SEARCH_BAR_RUNTIME_PATH = path.join(ROOT, "src/theme/SearchBar/AlgoliaSearchRuntime.js");
 const SEARCH_BAR_STYLES_PATH = path.join(ROOT, "src/theme/SearchBar/styles.css");
+const HEADERS_PATH = path.join(BUILD_ROOT, "_headers");
 const REDIRECTS_PATH = path.join(BUILD_ROOT, "_redirects");
 const ROBOTS_PATH = path.join(BUILD_ROOT, "robots.txt");
+const API_CATALOG_PATH = path.join(BUILD_ROOT, ".well-known", "api-catalog");
+const AGENT_SKILLS_INDEX_PATH = path.join(
+  BUILD_ROOT,
+  ".well-known",
+  "agent-skills",
+  "index.json"
+);
 const PAGE_MODELS_PATH = path.join(ROOT, "src/data/generatedFastnearPageModels.json");
 const STRUCTURED_GRAPH_PATH = path.join(ROOT, "src/data/generatedFastnearStructuredGraph.json");
 const PRODUCTION_SITE_URL = "https://docs.fastnear.com";
 const WEBSITE_ID = `${PRODUCTION_SITE_URL}/#website`;
 const ORGANIZATION_ID = `${PRODUCTION_SITE_URL}/#organization`;
+const EXPECTED_CONTENT_SIGNAL = "Content-Signal: search=yes, ai-input=yes, ai-train=yes";
+const EXPECTED_ROOT_LINK_HEADERS = [
+  'Link: </.well-known/api-catalog>; rel="api-catalog"; type="application/linkset+json"',
+  'Link: </agents>; rel="service-doc"; type="text/html"',
+  'Link: </.well-known/agent-skills/index.json>; rel="service-meta"; type="application/json"',
+  'Link: </structured-data/site-graph.json>; rel="service-meta"; type="application/json"',
+];
+const EXPECTED_RU_LINK_HEADERS = [
+  'Link: </.well-known/api-catalog>; rel="api-catalog"; type="application/linkset+json"',
+  'Link: </ru/agents>; rel="service-doc"; type="text/html"',
+  'Link: </.well-known/agent-skills/index.json>; rel="service-meta"; type="application/json"',
+  'Link: </ru/structured-data/site-graph.json>; rel="service-meta"; type="application/json"',
+];
+const EXPECTED_HEADER_RULES = [
+  {
+    path: "/",
+    lines: EXPECTED_ROOT_LINK_HEADERS,
+  },
+  {
+    path: "/ru",
+    lines: EXPECTED_RU_LINK_HEADERS,
+  },
+  {
+    path: "/.well-known/api-catalog",
+    lines: [
+      'Content-Type: application/linkset+json; charset=utf-8; profile="https://www.rfc-editor.org/info/rfc9727"',
+      'Link: </.well-known/api-catalog>; rel="api-catalog"; type="application/linkset+json"',
+    ],
+  },
+  {
+    path: "/.well-known/agent-skills/index.json",
+    lines: ['Content-Type: application/json; charset=utf-8'],
+  },
+  {
+    path: "/.well-known/agent-skills/*/SKILL.md",
+    lines: ['Content-Type: text/markdown; charset=utf-8'],
+  },
+];
+const EXPECTED_API_CATALOG_ANCHORS = [
+  "https://api.fastnear.com",
+  "https://mainnet.neardata.xyz",
+  "https://rpc.mainnet.fastnear.com",
+];
+const EXPECTED_AGENT_SKILLS = ["auth", "overview", "playbooks", "surface-routing"];
 
 const hideEarlyApiFamilies = /^(1|true|yes|on)$/i.test(
   process.env.HIDE_EARLY_API_FAMILIES || ""
@@ -115,6 +168,10 @@ function assert(condition, message) {
 function loadJson(filePath, label) {
   assert(fs.existsSync(filePath), `Missing ${label}: ${path.relative(ROOT, filePath)}`);
   return JSON.parse(fs.readFileSync(filePath, "utf8"));
+}
+
+function sha256File(filePath) {
+  return `sha256:${crypto.createHash("sha256").update(fs.readFileSync(filePath)).digest("hex")}`;
 }
 
 function walkDocs(dirPath) {
@@ -707,6 +764,101 @@ function parseSitemapUrls(locale = DEFAULT_LOCALE) {
   );
 }
 
+function auditAgentDiscoveryArtifacts() {
+  assert(fs.existsSync(HEADERS_PATH), `Missing _headers: ${path.relative(ROOT, HEADERS_PATH)}`);
+  const headersText = fs.readFileSync(HEADERS_PATH, "utf8");
+  EXPECTED_HEADER_RULES.forEach(({ path: rulePath, lines }) => {
+    assert(headersText.includes(`${rulePath}\n`), `_headers is missing the ${rulePath} rule`);
+    lines.forEach((line) => {
+      assert(
+        headersText.includes(line),
+        `_headers is missing "${line}" for ${rulePath}`
+      );
+    });
+  });
+
+  assert(
+    fs.existsSync(API_CATALOG_PATH),
+    `Missing API catalog: ${path.relative(ROOT, API_CATALOG_PATH)}`
+  );
+  const apiCatalog = loadJson(API_CATALOG_PATH, "API catalog");
+  assert(Array.isArray(apiCatalog.linkset), "API catalog must expose a linkset array");
+  const apiCatalogAnchors = apiCatalog.linkset.map((entry) => entry.anchor).sort();
+  assert(
+    JSON.stringify(apiCatalogAnchors) === JSON.stringify(EXPECTED_API_CATALOG_ANCHORS),
+    `API catalog anchors are out of sync. Expected ${EXPECTED_API_CATALOG_ANCHORS.join(", ")}, got ${apiCatalogAnchors.join(", ")}`
+  );
+  apiCatalog.linkset.forEach((entry) => {
+    ["service-desc", "service-doc", "status"].forEach((relation) => {
+      assert(
+        Array.isArray(entry[relation]) && entry[relation].length > 0,
+        `API catalog entry ${entry.anchor} must include ${relation}`
+      );
+      entry[relation].forEach((target) => {
+        assert(
+          typeof target.href === "string" && /^https:\/\//.test(target.href),
+          `API catalog entry ${entry.anchor} has an invalid ${relation} target`
+        );
+      });
+    });
+  });
+  [
+    "/openapi/fastnear.json",
+    "/openapi/neardata.json",
+  ].forEach((route) => {
+    const filePath = routeToBuildAssetPath(route);
+    assert(
+      fs.existsSync(filePath),
+      `Build is missing the vendored OpenAPI snapshot ${route}`
+    );
+  });
+
+  assert(
+    fs.existsSync(AGENT_SKILLS_INDEX_PATH),
+    `Missing Agent Skills index: ${path.relative(ROOT, AGENT_SKILLS_INDEX_PATH)}`
+  );
+  const agentSkillsIndex = loadJson(AGENT_SKILLS_INDEX_PATH, "Agent Skills index");
+  assert(
+    agentSkillsIndex.$schema === "https://schemas.agentskills.io/discovery/0.2.0/schema.json",
+    "Agent Skills index must use the v0.2.0 schema URI"
+  );
+  assert(Array.isArray(agentSkillsIndex.skills), "Agent Skills index must expose a skills array");
+  const skillNames = agentSkillsIndex.skills.map((skill) => skill.name).sort();
+  assert(
+    JSON.stringify(skillNames) === JSON.stringify(EXPECTED_AGENT_SKILLS),
+    `Agent Skills index names are out of sync. Expected ${EXPECTED_AGENT_SKILLS.join(", ")}, got ${skillNames.join(", ")}`
+  );
+  agentSkillsIndex.skills.forEach((skill) => {
+    assert(skill.type === "skill-md", `Agent skill ${skill.name} must use type=skill-md`);
+    assert(
+      typeof skill.description === "string" && skill.description.length > 0,
+      `Agent skill ${skill.name} must include a description`
+    );
+    assert(
+      typeof skill.url === "string" && skill.url.startsWith("/.well-known/agent-skills/"),
+      `Agent skill ${skill.name} must use a stable well-known URL`
+    );
+    const filePath = routeToBuildAssetPath(skill.url);
+    assert(
+      fs.existsSync(filePath),
+      `Agent skill artifact is missing: ${path.relative(ROOT, filePath)}`
+    );
+    assert(
+      skill.digest === sha256File(filePath),
+      `Agent skill digest mismatch for ${skill.name}`
+    );
+    const content = fs.readFileSync(filePath, "utf8");
+    assert(
+      content.startsWith("---\n"),
+      `Agent skill ${skill.name} must include YAML frontmatter`
+    );
+    assert(
+      content.includes(`name: "${skill.name}"`) || content.includes(`name: '${skill.name}'`),
+      `Agent skill ${skill.name} frontmatter must declare its name`
+    );
+  });
+}
+
 function auditDocsBuildOutput(routeEntries, structuredGraph) {
   const pageModels = loadJson(PAGE_MODELS_PATH, "generated FastNear page models");
   const pageModelsById = Object.fromEntries(
@@ -732,6 +884,11 @@ function auditDocsBuildOutput(routeEntries, structuredGraph) {
       `robots.txt must explicitly allow ${userAgent}`
     );
   });
+  assert(
+    robotsText.includes(EXPECTED_CONTENT_SIGNAL),
+    "robots.txt must declare the agreed Content-Signal policy"
+  );
+  auditAgentDiscoveryArtifacts();
 
   assert(fs.existsSync(REDIRECTS_PATH), `Missing redirects file: ${path.relative(ROOT, REDIRECTS_PATH)}`);
   const redirectsText = fs.readFileSync(REDIRECTS_PATH, "utf8");

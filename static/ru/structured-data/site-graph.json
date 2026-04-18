@@ -3858,6 +3858,19 @@
       "entityIds": {
         "familyIds": [],
         "mainEntityId": null,
+        "pageId": "https://docs.fastnear.com/ru/agents/mcp#page"
+      },
+      "indexable": true,
+      "markdownMirrorUrl": "https://docs.fastnear.com/ru/agents/mcp.md",
+      "pageSchemaType": "TechArticle",
+      "route": "/ru/agents/mcp",
+      "routeType": "docs",
+      "url": "https://docs.fastnear.com/ru/agents/mcp"
+    },
+    {
+      "entityIds": {
+        "familyIds": [],
+        "mainEntityId": null,
         "pageId": "https://docs.fastnear.com/ru/agents/playbooks#page"
       },
       "indexable": true,

@@ -1,0 +1,429 @@
+---
+title: Building an MCP Server with FastNear
+description: Use FastNear RPC and REST APIs inside your own MCP server with a direct-HTTP TypeScript example.
+slug: /agents/mcp
+sidebar_position: 5
+displayed_sidebar: null
+page_actions:
+  - markdown
+---
+
+# Building an MCP Server with FastNear
+
+{/* FASTNEAR_AI_DISCOVERY: This page is for developers who want to expose FastNear through their own MCP server. It recommends an initial tool set, explains why direct HTTP is a good default, and includes a copy-paste TypeScript example. */}
+
+This page is for teams that want to expose FastNear through their own MCP server for Claude Desktop, Codex, Cursor, or another MCP client. `docs.fastnear.com` is not itself an MCP server. The goal here is to show a clean starting point for building one on top of FastNear's existing RPC and REST APIs.
+
+## When MCP is worth it
+
+Build an MCP server when you want one stable tool surface in front of the FastNear APIs:
+
+- your team uses a desktop or IDE agent and wants chain data available as tools
+- you want the agent to choose between account, transaction, block, and RPC surfaces on its own
+- you want to hide auth handling and base URLs behind a small trusted backend or local process
+- you want a reusable tool contract instead of asking every agent or workflow to call raw HTTP directly
+
+If your workflow already controls HTTP directly and does not need tool discovery, MCP may be unnecessary. FastNear's docs and APIs already work well as plain HTTP surfaces.
+
+## Recommended first tool set
+
+Start with a few broad tools instead of mirroring every endpoint one-for-one:
+
+| MCP tool | FastNear surface | Use it for |
+| --- | --- | --- |
+| `get-account-summary` | [V1 Full Account View](/api/v1/account-full) | balances, holdings, staking, wallet-style summaries |
+| `lookup-public-key` | [V1 Public Key Lookup](/api/v1/public-key) | resolving a public key to one or more accounts |
+| `get-transactions-by-hash` | [Transactions by Hash](/tx/transactions) | transaction investigation and readable execution follow-up |
+| `get-latest-final-block` | [Last Final Block Redirect](/neardata/last-block-final) | latest finalized head checks and polling workflows |
+| `view-account-rpc` | [View Account](/rpc/account/view-account) | exact canonical account state when indexed summaries are not enough |
+
+That tool set covers most "what does this account have?", "what happened to this transaction?", and "what is the latest finalized block?" workflows without forcing the client to understand the full FastNear surface area up front.
+
+## Why this example uses direct HTTP
+
+This example intentionally uses raw `fetch()` calls instead of `near-api-js`.
+
+- The docs you are reading are organized around the raw RPC and REST contracts.
+- Direct HTTP keeps the MCP tool behavior aligned with the docs one-for-one.
+- You avoid SDK abstraction gaps, version drift, and helper behavior that can hide the actual wire format.
+- For read-heavy MCP tools, direct HTTP is usually the simplest thing that works.
+
+If you later need transaction signing, account helpers, or wallet-specific flows in the same process, `near-api-js` can still make sense. For a teaching example focused on FastNear's RPC and APIs, direct calls are the cleaner default.
+
+## Install
+
+Use Node.js 20 or newer so `fetch()` is available globally.
+
+```bash
+mkdir fastnear-mcp
+cd fastnear-mcp
+npm init -y
+npm install @modelcontextprotocol/sdk zod
+npm install -D tsx typescript @types/node
+```
+
+The official MCP TypeScript SDK docs currently recommend the stable `v1.x` line for production use. The install command above will resolve the current stable package release.
+
+## Copy-paste TypeScript example
+
+Create `fastnear-mcp.ts`:
+
+```ts title="fastnear-mcp.ts"
+import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import { z } from "zod";
+
+type Network = "mainnet" | "testnet";
+
+const DEFAULT_NETWORK: Network =
+  process.env.FASTNEAR_DEFAULT_NETWORK === "testnet" ? "testnet" : "mainnet";
+
+const URLS: Record<
+  Network,
+  {
+    api: string;
+    rpc: string;
+    neardata: string;
+    tx: string;
+  }
+> = {
+  mainnet: {
+    api: "https://api.fastnear.com",
+    rpc: "https://rpc.mainnet.fastnear.com",
+    neardata: "https://mainnet.neardata.xyz",
+    tx: "https://tx.main.fastnear.com",
+  },
+  testnet: {
+    api: "https://test.api.fastnear.com",
+    rpc: "https://rpc.testnet.fastnear.com",
+    neardata: "https://testnet.neardata.xyz",
+    tx: "https://tx.test.fastnear.com",
+  },
+};
+
+const apiKey = process.env.FASTNEAR_API_KEY;
+
+function selectNetwork(network?: Network): Network {
+  return network ?? DEFAULT_NETWORK;
+}
+
+function authHeaders(extra: HeadersInit = {}): HeadersInit {
+  if (!apiKey) {
+    return extra;
+  }
+
+  return {
+    ...extra,
+    Authorization: `Bearer ${apiKey}`,
+  };
+}
+
+async function requestJson(url: string, init?: RequestInit): Promise<unknown> {
+  const response = await fetch(url, init);
+  const text = await response.text();
+
+  let body: unknown = null;
+
+  if (text) {
+    try {
+      body = JSON.parse(text);
+    } catch {
+      body = text;
+    }
+  }
+
+  if (!response.ok) {
+    const detail =
+      typeof body === "string" ? body : JSON.stringify(body, null, 2);
+    throw new Error(`${response.status} ${response.statusText}: ${detail}`);
+  }
+
+  return body;
+}
+
+function toolResult(data: unknown) {
+  return {
+    content: [
+      {
+        type: "text" as const,
+        text: JSON.stringify(data, null, 2),
+      },
+    ],
+  };
+}
+
+function toolError(error: unknown) {
+  const message = error instanceof Error ? error.message : String(error);
+  return {
+    isError: true,
+    content: [
+      {
+        type: "text" as const,
+        text: message,
+      },
+    ],
+  };
+}
+
+async function runTool(work: () => Promise<unknown>) {
+  try {
+    return toolResult(await work());
+  } catch (error) {
+    return toolError(error);
+  }
+}
+
+async function getAccountSummary(network: Network, accountId: string) {
+  const baseUrl = URLS[network].api;
+  return requestJson(
+    `${baseUrl}/v1/account/${encodeURIComponent(accountId)}/full`,
+    {
+      headers: authHeaders(),
+    },
+  );
+}
+
+async function lookupPublicKey(network: Network, publicKey: string) {
+  const baseUrl = URLS[network].api;
+  return requestJson(
+    `${baseUrl}/v1/public_key/${encodeURIComponent(publicKey)}`,
+    {
+      headers: authHeaders(),
+    },
+  );
+}
+
+async function getTransactionsByHash(network: Network, txHashes: string[]) {
+  const baseUrl = URLS[network].tx;
+  return requestJson(`${baseUrl}/v0/transactions`, {
+    method: "POST",
+    headers: authHeaders({
+      "Content-Type": "application/json",
+    }),
+    body: JSON.stringify({
+      tx_hashes: txHashes,
+    }),
+  });
+}
+
+async function getLatestFinalBlock(network: Network) {
+  const baseUrl = URLS[network].neardata;
+  return requestJson(`${baseUrl}/v0/last_block/final`, {
+    headers: authHeaders(),
+  });
+}
+
+async function viewAccountRpc(
+  network: Network,
+  accountId: string,
+  finality: "final" | "optimistic",
+) {
+  const rpcUrl = URLS[network].rpc;
+
+  return requestJson(rpcUrl, {
+    method: "POST",
+    headers: authHeaders({
+      "Content-Type": "application/json",
+    }),
+    body: JSON.stringify({
+      jsonrpc: "2.0",
+      id: `view-account:${accountId}`,
+      method: "query",
+      params: {
+        request_type: "view_account",
+        finality,
+        account_id: accountId,
+      },
+    }),
+  });
+}
+
+const server = new McpServer({
+  name: "fastnear-direct-http",
+  version: "0.1.0",
+});
+
+server.registerTool(
+  "get-account-summary",
+  {
+    title: "Get account summary",
+    description:
+      "Fetch a combined FastNear account view with balances, assets, and staking data.",
+    inputSchema: {
+      accountId: z
+        .string()
+        .min(2)
+        .describe("NEAR account ID, for example fastnear.near"),
+      network: z
+        .enum(["mainnet", "testnet"])
+        .optional()
+        .describe("Defaults to FASTNEAR_DEFAULT_NETWORK or mainnet."),
+    },
+  },
+  async ({ accountId, network }) =>
+    runTool(() => getAccountSummary(selectNetwork(network), accountId)),
+);
+
+server.registerTool(
+  "lookup-public-key",
+  {
+    title: "Lookup public key",
+    description:
+      "Resolve a public key to one or more NEAR accounts using the FastNear API.",
+    inputSchema: {
+      publicKey: z
+        .string()
+        .min(16)
+        .describe("Public key, for example ed25519:..."),
+      network: z
+        .enum(["mainnet", "testnet"])
+        .optional()
+        .describe("Defaults to FASTNEAR_DEFAULT_NETWORK or mainnet."),
+    },
+  },
+  async ({ publicKey, network }) =>
+    runTool(() => lookupPublicKey(selectNetwork(network), publicKey)),
+);
+
+server.registerTool(
+  "get-transactions-by-hash",
+  {
+    title: "Get transactions by hash",
+    description:
+      "Fetch up to 20 transactions by hash from the Transactions API.",
+    inputSchema: {
+      txHashes: z
+        .array(z.string().min(32))
+        .min(1)
+        .max(20)
+        .describe("One or more base58 transaction hashes."),
+      network: z
+        .enum(["mainnet", "testnet"])
+        .optional()
+        .describe("Defaults to FASTNEAR_DEFAULT_NETWORK or mainnet."),
+    },
+  },
+  async ({ txHashes, network }) =>
+    runTool(() => getTransactionsByHash(selectNetwork(network), txHashes)),
+);
+
+server.registerTool(
+  "get-latest-final-block",
+  {
+    title: "Get latest final block",
+    description:
+      "Fetch the latest finalized block helper from the NEAR Data API.",
+    inputSchema: {
+      network: z
+        .enum(["mainnet", "testnet"])
+        .optional()
+        .describe("Defaults to FASTNEAR_DEFAULT_NETWORK or mainnet."),
+    },
+  },
+  async ({ network }) =>
+    runTool(() => getLatestFinalBlock(selectNetwork(network))),
+);
+
+server.registerTool(
+  "view-account-rpc",
+  {
+    title: "View account via RPC",
+    description:
+      "Fetch canonical account state directly from NEAR JSON-RPC.",
+    inputSchema: {
+      accountId: z
+        .string()
+        .min(2)
+        .describe("NEAR account ID, for example fastnear.near"),
+      finality: z
+        .enum(["final", "optimistic"])
+        .optional()
+        .describe("Defaults to final."),
+      network: z
+        .enum(["mainnet", "testnet"])
+        .optional()
+        .describe("Defaults to FASTNEAR_DEFAULT_NETWORK or mainnet."),
+    },
+  },
+  async ({ accountId, finality, network }) =>
+    runTool(() =>
+      viewAccountRpc(
+        selectNetwork(network),
+        accountId,
+        finality ?? "final",
+      ),
+    ),
+);
+
+const transport = new StdioServerTransport();
+await server.connect(transport);
+```
+
+Start it locally:
+
+```bash
+FASTNEAR_API_KEY=your_key_here \
+FASTNEAR_DEFAULT_NETWORK=mainnet \
+npx tsx fastnear-mcp.ts
+```
+
+`FASTNEAR_API_KEY` is optional for many public reads, but it is the right default for authenticated runtimes and higher-limit traffic.
+
+## Example client configuration
+
+Exact config shape varies by client, but many local MCP clients accept something close to this:
+
+```json title="Example MCP client config"
+{
+  "mcpServers": {
+    "fastnear": {
+      "command": "npx",
+      "args": ["tsx", "/absolute/path/to/fastnear-mcp.ts"],
+      "env": {
+        "FASTNEAR_API_KEY": "your_key_here",
+        "FASTNEAR_DEFAULT_NETWORK": "mainnet"
+      }
+    }
+  }
+}
+```
+
+For remote or team-wide deployment, start with this same tool surface and then switch from `stdio` to a network transport only when you actually need a hosted server.
+
+## Tool design checklist
+
+When you turn FastNear into MCP tools, these defaults usually hold up well:
+
+- Name tools after user jobs, not endpoint paths.
+- Start with three to six tools, not fifty.
+- Use [FastNear API](/api) for summaries and resolution tasks, [Transactions API](/tx) for readable history, and [RPC Reference](/rpc) only when canonical protocol semantics matter.
+- Keep `network` optional but explicit, with a sensible default.
+- Return concise JSON. Avoid huge payloads when the tool only needs one slice of the response.
+- Keep API keys in env vars or a secret manager and attach them server-side.
+- Preserve opaque pagination tokens exactly as FastNear returned them.
+- Tell the caller when a tool returns indexed summary data versus canonical RPC data.
+- Keep one tool responsible for one kind of answer. Do not create several overlapping tools that all partly answer the same question.
+
+## Common pitfalls
+
+- Do not expose every FastNear endpoint as its own MCP tool on day one.
+- Do not force account-summary workflows through raw RPC if the indexed API already answers the user's real question.
+- Do not hide the difference between indexed data and canonical node data.
+- Do not put `FASTNEAR_API_KEY` into prompts, browser storage, or checked-in config.
+- Do not turn `NEAR Data API` into a fake streaming abstraction. It is a polling-oriented read surface.
+
+## Good next additions
+
+Once the basic server is working, the next useful tools are usually:
+
+- account history on top of [Transactions API](/tx/account)
+- transfer-only history on top of [Transfers API](/transfers/query)
+- contract view calls on top of [Call a Function](/rpc/contract/call-function)
+- a small resource or prompt that explains your own team's default routing and auth rules
+
+## Related guides
+
+- [Agents on FastNear](/agents)
+- [Choosing the Right Surface](/agents/choosing-surfaces)
+- [Auth for Agents](/agents/auth)
+- [Agent Playbooks](/agents/playbooks)

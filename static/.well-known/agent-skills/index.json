@@ -1,0 +1,33 @@
+{
+  "$schema": "https://schemas.agentskills.io/discovery/0.2.0/schema.json",
+  "skills": [
+    {
+      "description": "Operational entry point for FastNear agents. Use when you need the default workflow, discovery surfaces, and the first API to reach for.",
+      "digest": "sha256:252edd45e10606e710587d97ca82974403fb05d519784fd549dd6435a75e3209",
+      "name": "overview",
+      "type": "skill-md",
+      "url": "/.well-known/agent-skills/overview/SKILL.md"
+    },
+    {
+      "description": "Surface-selection guide for FastNear. Use when you need to route a task to RPC, FastNear API, history APIs, NEAR Data, FastData, or snapshots.",
+      "digest": "sha256:a53a72ecae704e33d494bf95acdc24a30ec3b5f186c8f6fab1f5084851a41ed1",
+      "name": "surface-routing",
+      "type": "skill-md",
+      "url": "/.well-known/agent-skills/surface-routing/SKILL.md"
+    },
+    {
+      "description": "Authentication guidance for FastNear agents. Use when a task involves API keys, secret handling, or request authorization posture.",
+      "digest": "sha256:f0657c097fd422295ce3413c486f0f1be8fca4ad0e635aef4beea8de1e04561f",
+      "name": "auth",
+      "type": "skill-md",
+      "url": "/.well-known/agent-skills/auth/SKILL.md"
+    },
+    {
+      "description": "Common FastNear playbooks for agents. Use when you need the default multi-step workflow for holdings, transaction tracing, transfers, block monitoring, storage, or snapshots.",
+      "digest": "sha256:890c091eeaecac33c0046e56fe2f94aa537ffbee5640a8db16336f40366903f6",
+      "name": "playbooks",
+      "type": "skill-md",
+      "url": "/.well-known/agent-skills/playbooks/SKILL.md"
+    }
+  ]
+}

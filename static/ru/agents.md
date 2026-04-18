@@ -2,8 +2,6 @@
 
 # Агенты на FastNear
 
-{/* FASTNEAR_AI_DISCOVERY: Это операционная точка входа для ИИ-агентов, краулеров и сред автоматизации. Страница объясняет, какую информацию собрать до первого запроса, с какого API FastNear начинать, как устроена аутентификация между API и что должен содержать полезный ответ агента. */}
-
 Эта страница — операционная точка входа для ИИ-агентов, краулеров и сред автоматизации, использующих FastNear. Цель простая: распознать реальную задачу пользователя, выбрать один API FastNear, получить минимальный полезный результат и расширяться на другой API только тогда, когда явно не хватает части ответа.
 
 ## Если нужен только следующий шаг
@@ -11,6 +9,7 @@
 - Нужно выбрать, с какого API FastNear начать? Используйте [Как выбрать подходящую поверхность](https://docs.fastnear.com/ru/agents/choosing-surfaces).
 - Нужны правила работы с учётными данными? Используйте [Аутентификацию для агентов](https://docs.fastnear.com/ru/agents/auth).
 - Нужны примеры многошаговых сценариев? Используйте [Плейбуки для агентов](https://docs.fastnear.com/ru/agents/playbooks).
+- Нужно отдать FastNear в Claude Desktop, Codex, Cursor или другой MCP-клиент? Используйте [Как построить MCP-сервер на FastNear](https://docs.fastnear.com/ru/agents/mcp).
 - Нужна точная документация по эндпоинту сейчас? Сразу откройте [Справочник RPC](https://docs.fastnear.com/ru/rpc), [FastNear API](https://docs.fastnear.com/ru/api), [Транзакции API](https://docs.fastnear.com/ru/tx), [API переводов](https://docs.fastnear.com/ru/transfers), [NEAR Data API](https://docs.fastnear.com/ru/neardata) или [KV FastData API](https://docs.fastnear.com/ru/fastdata/kv).
 
 ## FastNear для агентов за минуту
@@ -137,3 +136,4 @@ curl "https://rpc.mainnet.fastnear.com?apiKey=${API_KEY}"
 - Нужна глубина маршрутизации и компромиссы? [Как выбрать подходящую поверхность](https://docs.fastnear.com/ru/agents/choosing-surfaces)
 - Нужен режим работы с учётными данными и обращение с секретами? [Аутентификация для агентов](https://docs.fastnear.com/ru/agents/auth)
 - Нужны примеры сценариев? [Плейбуки для агентов](https://docs.fastnear.com/ru/agents/playbooks)
+- Нужно собрать собственную MCP-поверхность поверх FastNear? [Как построить MCP-сервер на FastNear](https://docs.fastnear.com/ru/agents/mcp)

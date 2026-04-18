@@ -1,16 +1,10 @@
 ---
-title: Agent Playbooks
-description: Default FastNear workflows for common AI-agent and automation tasks.
-slug: /agents/playbooks
-sidebar_position: 4
-displayed_sidebar: null
-page_actions:
-  - markdown
+name: "playbooks"
+description: "Common FastNear playbooks for agents. Use when you need the default multi-step workflow for holdings, transaction tracing, transfers, block monitoring, storage, or snapshots."
 ---
+**Source:** [https://docs.fastnear.com/agents/playbooks](https://docs.fastnear.com/agents/playbooks)
 
 # Agent Playbooks
-
-{/* FASTNEAR_AI_DISCOVERY: This page gives AI agents concrete multi-step workflows for common FastNear tasks. Each playbook names the minimum inputs, the first API to use, when to widen to another API, and what a useful answer should contain. */}
 
 Use this page when the agent already knows the kind of task it is handling and needs the default next steps. Each playbook starts with one FastNear API, names the minimum useful inputs, and tells you when to stop versus when to widen.
 
@@ -28,14 +22,14 @@ The core rule stays the same across all playbooks: start with one API, get the s
 
 | If the user wants... | Start with... | Widen only if... |
 | --- | --- | --- |
-| account balances, holdings, staking, or wallet-style summary | [FastNear API](/api) | exact canonical node fields are required |
-| transaction, receipt, or account execution history | [Transactions API](/tx) | exact RPC-level status or submission semantics are required |
-| transfer-only history | [Transfers API](/transfers) | the question broadens beyond transfers |
-| latest optimistic or finalized blocks | [NEAR Data API](/neardata) | exact canonical block or state follow-up is required |
-| indexed contract key state or key history | [KV FastData API](/fastdata/kv) | exact current on-chain state is required |
-| node bootstrap or operator setup | [Snapshots](/snapshots/) | the task shifts back to application-level chain data |
+| account balances, holdings, staking, or wallet-style summary | [FastNear API](https://docs.fastnear.com/api) | exact canonical node fields are required |
+| transaction, receipt, or account execution history | [Transactions API](https://docs.fastnear.com/tx) | exact RPC-level status or submission semantics are required |
+| transfer-only history | [Transfers API](https://docs.fastnear.com/transfers) | the question broadens beyond transfers |
+| latest optimistic or finalized blocks | [NEAR Data API](https://docs.fastnear.com/neardata) | exact canonical block or state follow-up is required |
+| indexed contract key state or key history | [KV FastData API](https://docs.fastnear.com/fastdata/kv) | exact current on-chain state is required |
+| node bootstrap or operator setup | [Snapshots](https://docs.fastnear.com/snapshots) | the task shifts back to application-level chain data |
 
-If you still are not sure which one applies, use [Choosing the Right Surface](/agents/choosing-surfaces) first.
+If you still are not sure which one applies, use [Choosing the Right Surface](https://docs.fastnear.com/agents/choosing-surfaces) first.
 
 ## Account summary and holdings
 
@@ -49,15 +43,15 @@ Use this when the user says things like "check this account", "what does this wa
 
 **Start here**
 
-- [V1 Full Account View](/api/v1/account-full) for the broad account summary
-- [V1 Public Key Lookup](/api/v1/public-key) when the starting identifier is a public key
-- [FastNear API index](/api) when you need to choose a narrower endpoint first
+- [V1 Full Account View](https://docs.fastnear.com/api/v1/account-full) for the broad account summary
+- [V1 Public Key Lookup](https://docs.fastnear.com/api/v1/public-key) when the starting identifier is a public key
+- [FastNear API index](https://docs.fastnear.com/api) when you need to choose a narrower endpoint first
 
 **Default sequence**
 
-1. If the starting identifier is a public key, resolve it to one or more account IDs with [V1 Public Key Lookup](/api/v1/public-key).
-2. Fetch the broadest useful account view with [V1 Full Account View](/api/v1/account-full).
-3. If the user asked for only one asset family or needs narrower detail, move to the targeted endpoints such as [FT balances](/api/v1/account-ft), [NFT holdings](/api/v1/account-nft), or [staking positions](/api/v1/account-staking).
+1. If the starting identifier is a public key, resolve it to one or more account IDs with [V1 Public Key Lookup](https://docs.fastnear.com/api/v1/public-key).
+2. Fetch the broadest useful account view with [V1 Full Account View](https://docs.fastnear.com/api/v1/account-full).
+3. If the user asked for only one asset family or needs narrower detail, move to the targeted endpoints such as [FT balances](https://docs.fastnear.com/api/v1/account-ft), [NFT holdings](https://docs.fastnear.com/api/v1/account-nft), or [staking positions](https://docs.fastnear.com/api/v1/account-staking).
 4. Stop once you can answer the holdings question directly.
 
 **Widen only if**
@@ -65,7 +59,7 @@ Use this when the user says things like "check this account", "what does this wa
 - the user asks for exact canonical state fields rather than indexed summary data
 - the user needs protocol-native account or access-key semantics
 
-When that happens, widen to [View Account](/rpc/account/view-account) or other relevant pages in [RPC Reference](/rpc).
+When that happens, widen to [View Account](https://docs.fastnear.com/rpc/account/view-account) or other relevant pages in [RPC Reference](https://docs.fastnear.com/rpc).
 
 **A useful answer should contain**
 
@@ -85,9 +79,9 @@ Use this when the user says things like "did this transaction succeed", "why did
 
 **Start here**
 
-- [Transactions by Hash](/tx/transactions) for a transaction hash
-- [Receipt Lookup](/tx/receipt) for a receipt ID
-- [Account History](/tx/account) for account-centric activity
+- [Transactions by Hash](https://docs.fastnear.com/tx/transactions) for a transaction hash
+- [Receipt Lookup](https://docs.fastnear.com/tx/receipt) for a receipt ID
+- [Account History](https://docs.fastnear.com/tx/account) for account-centric activity
 
 **Default sequence**
 
@@ -102,7 +96,7 @@ Use this when the user says things like "did this transaction succeed", "why did
 - the indexed record is not enough to answer a protocol-level question
 - the question shifts into transaction submission behavior
 
-When that happens, widen to [Transaction Status](/rpc/transaction/tx-status) or another relevant method in [RPC Reference](/rpc).
+When that happens, widen to [Transaction Status](https://docs.fastnear.com/rpc/transaction/tx-status) or another relevant method in [RPC Reference](https://docs.fastnear.com/rpc).
 
 **A useful answer should contain**
 
@@ -122,8 +116,8 @@ Use this when the user cares about asset movement and does not need broader rece
 
 **Start here**
 
-- [Query Transfers](/transfers/query)
-- [Transfers API index](/transfers)
+- [Query Transfers](https://docs.fastnear.com/transfers/query)
+- [Transfers API index](https://docs.fastnear.com/transfers)
 
 **Default sequence**
 
@@ -138,7 +132,7 @@ Use this when the user cares about asset movement and does not need broader rece
 - the user needs receipt traces or broader execution context
 - the user wants to explain why an action happened, not just that a transfer occurred
 
-When that happens, widen to [Account History](/tx/account) or another relevant page in [Transactions API](/tx).
+When that happens, widen to [Account History](https://docs.fastnear.com/tx/account) or another relevant page in [Transactions API](https://docs.fastnear.com/tx).
 
 **A useful answer should contain**
 
@@ -158,10 +152,10 @@ Use this when the user wants the latest optimistic or finalized block-family dat
 
 **Start here**
 
-- [Last Final Block Redirect](/neardata/last-block-final) for the latest finalized head
-- [Optimistic Block by Height](/neardata/block-optimistic) when the workflow is explicitly optimistic
-- [Block Headers](/neardata/block-headers) when header-level polling is enough
-- [NEAR Data API index](/neardata) when you need to choose among these
+- [Last Final Block Redirect](https://docs.fastnear.com/neardata/last-block-final) for the latest finalized head
+- [Optimistic Block by Height](https://docs.fastnear.com/neardata/block-optimistic) when the workflow is explicitly optimistic
+- [Block Headers](https://docs.fastnear.com/neardata/block-headers) when header-level polling is enough
+- [NEAR Data API index](https://docs.fastnear.com/neardata) when you need to choose among these
 
 **Default sequence**
 
@@ -176,7 +170,7 @@ Use this when the user wants the latest optimistic or finalized block-family dat
 - the user wants to inspect state or protocol fields beyond the block-family data
 - the user needs exact RPC semantics for a specific block follow-up
 
-When that happens, widen to [RPC Reference](/rpc), usually starting with [Block by Height](/rpc/block/block-by-height) or [Block by Id](/rpc/block/block-by-id).
+When that happens, widen to [RPC Reference](https://docs.fastnear.com/rpc), usually starting with [Block by Height](https://docs.fastnear.com/rpc/block/block-by-height) or [Block by Id](https://docs.fastnear.com/rpc/block/block-by-id).
 
 **A useful answer should contain**
 
@@ -197,14 +191,14 @@ Use this when the user wants indexed contract key history, latest indexed key st
 
 **Start here**
 
-- [GET Latest by Exact Key](/fastdata/kv/get-latest-key) for one exact key
-- [KV FastData API index](/fastdata/kv) when the question is broader than one key
+- [GET Latest by Exact Key](https://docs.fastnear.com/fastdata/kv/get-latest-key) for one exact key
+- [KV FastData API index](https://docs.fastnear.com/fastdata/kv) when the question is broader than one key
 
 **Default sequence**
 
 1. Decide whether the user wants one key, a key family, or account-scoped storage history.
 2. Fetch the smallest indexed key-value view that matches that scope.
-3. If the user needs history rather than the latest value, stay inside [KV FastData API](/fastdata/kv) and switch to the matching history endpoint.
+3. If the user needs history rather than the latest value, stay inside [KV FastData API](https://docs.fastnear.com/fastdata/kv) and switch to the matching history endpoint.
 4. Stop if indexed key-value data already answers the question.
 
 **Widen only if**
@@ -213,7 +207,7 @@ Use this when the user wants indexed contract key history, latest indexed key st
 - the user needs protocol-native contract-state semantics
 - the indexed storage view is insufficient for the exact key or prefix requested
 
-When that happens, widen to [View State](/rpc/contract/view-state) in [RPC Reference](/rpc).
+When that happens, widen to [View State](https://docs.fastnear.com/rpc/contract/view-state) in [RPC Reference](https://docs.fastnear.com/rpc).
 
 **A useful answer should contain**
 
@@ -233,7 +227,7 @@ Use this when the user is trying to get infrastructure online rather than query 
 
 **Start here**
 
-- [Snapshots](/snapshots/)
+- [Snapshots](https://docs.fastnear.com/snapshots)
 
 **Default sequence**
 
@@ -245,7 +239,7 @@ Use this when the user is trying to get infrastructure online rather than query 
 
 - the user stops asking about infrastructure and starts asking about chain data itself
 
-When that happens, return to [Choosing the Right Surface](/agents/choosing-surfaces) and pick the correct data API from there.
+When that happens, return to [Choosing the Right Surface](https://docs.fastnear.com/agents/choosing-surfaces) and pick the correct data API from there.
 
 **A useful answer should contain**
 
@@ -265,7 +259,7 @@ When that happens, return to [Choosing the Right Surface](/agents/choosing-surfa
 
 If the request is still ambiguous after reading this page:
 
-- use [Choosing the Right Surface](/agents/choosing-surfaces) to pick the first API
-- use [Auth for Agents](/agents/auth) if the blocker is credential handling
-- use [Building an MCP Server with FastNear](/agents/mcp) if you are designing a reusable MCP tool surface rather than answering one user task
-- return to [Agents on FastNear](/agents) for the default workflow and answer-shape rules
+- use [Choosing the Right Surface](https://docs.fastnear.com/agents/choosing-surfaces) to pick the first API
+- use [Auth for Agents](https://docs.fastnear.com/agents/auth) if the blocker is credential handling
+- use [Building an MCP Server with FastNear](https://docs.fastnear.com/agents/mcp) if you are designing a reusable MCP tool surface rather than answering one user task
+- return to [Agents on FastNear](https://docs.fastnear.com/agents) for the default workflow and answer-shape rules
