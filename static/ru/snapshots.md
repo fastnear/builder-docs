@@ -49,7 +49,7 @@ sudo -v ; curl https://rclone.org/install.sh | sudo bash
 
 ## Нужен сценарий?
 
-Используйте [Snapshot Examples](https://docs.fastnear.com/ru/snapshots/examples) для операторских сценариев: выбор между optimized `fast-rpc`, standard RPC recovery и archival hot/cold snapshot paths.
+Используйте [примеры снапшотов](https://docs.fastnear.com/ru/snapshots/examples) для операторских сценариев: выбора между оптимизированным `fast-rpc`, стандартным восстановлением RPC и архивными путями с разделением горячих и холодных данных.
 
 ## Выберите сеть
 

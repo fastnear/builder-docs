@@ -39,7 +39,7 @@ https://testnet.neardata.xyz
 
 ## Нужен сценарий?
 
-Используйте [NEAR Data API Examples](https://docs.fastnear.com/ru/neardata/examples) для простых пошаговых сценариев: optimistic polling, finalized confirmation, redirect helpers и переход к каноническому RPC.
+Используйте [примеры NEAR Data API](https://docs.fastnear.com/ru/neardata/examples) для простых пошаговых сценариев: опроса оптимистичных блоков, подтверждения финализированных блоков, работы с перенаправлениями и перехода к каноническому RPC.
 
 ## Устранение неполадок
 

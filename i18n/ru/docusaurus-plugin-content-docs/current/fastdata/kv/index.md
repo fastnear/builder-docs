@@ -53,7 +53,7 @@ https://kv.test.fastnear.com
 
 ## Нужен сценарий?
 
-Используйте [KV FastData Examples](/fastdata/kv/examples) для простых пошаговых сценариев: exact-key lookups, история ключей, анализ по `predecessor_id` и переход к каноническому RPC.
+Используйте [примеры KV FastData](/fastdata/kv/examples) для простых пошаговых сценариев: поиска по точному ключу, истории ключей, анализа по `predecessor_id` и перехода к каноническому RPC.
 
 ## Рабочий цикл по умолчанию
 

@@ -969,7 +969,7 @@ https://test.api.fastnear.com
 
 ## Нужен сценарий?
 
-Используйте [FastNear API Examples](https://docs.fastnear.com/ru/api/examples) для простых пошаговых сценариев: сводки по аккаунтам, резолв ключа в аккаунт и переход к узким представлениям активов.
+Используйте [примеры FastNear API](https://docs.fastnear.com/ru/api/examples) для простых пошаговых сценариев: сводки по аккаунтам, определения аккаунта по ключу и перехода к узким представлениям активов.
 
 ## Устранение неполадок
 
@@ -1240,7 +1240,7 @@ https://kv.test.fastnear.com
 
 ## Нужен сценарий?
 
-Используйте [KV FastData Examples](https://docs.fastnear.com/ru/fastdata/kv/examples) для простых пошаговых сценариев: exact-key lookups, история ключей, анализ по `predecessor_id` и переход к каноническому RPC.
+Используйте [примеры KV FastData](https://docs.fastnear.com/ru/fastdata/kv/examples) для простых пошаговых сценариев: поиска по точному ключу, истории ключей, анализа по `predecessor_id` и перехода к каноническому RPC.
 
 ## Рабочий цикл по умолчанию
 
@@ -1725,7 +1725,7 @@ https://testnet.neardata.xyz
 
 ## Нужен сценарий?
 
-Используйте [NEAR Data API Examples](https://docs.fastnear.com/ru/neardata/examples) для простых пошаговых сценариев: optimistic polling, finalized confirmation, redirect helpers и переход к каноническому RPC.
+Используйте [примеры NEAR Data API](https://docs.fastnear.com/ru/neardata/examples) для простых пошаговых сценариев: опроса оптимистичных блоков, подтверждения финализированных блоков, работы с перенаправлениями и перехода к каноническому RPC.
 
 ## Устранение неполадок
 
@@ -1987,7 +1987,7 @@ https://archival-rpc.testnet.fastnear.com
 
 ## Нужен сценарий?
 
-Используйте [RPC Examples](https://docs.fastnear.com/ru/rpc/examples) для простых пошаговых сценариев: точные проверки состояния, анализ блоков, view-вызовы контрактов и отправка с подтверждением транзакций.
+Используйте [примеры RPC](https://docs.fastnear.com/ru/rpc/examples) для простых пошаговых сценариев: точных проверок состояния, анализа блоков, view-вызовов контрактов и отправки транзакций с подтверждением.
 
 ## Используйте RPC, когда
 
@@ -2221,7 +2221,7 @@ sudo -v ; curl https://rclone.org/install.sh | sudo bash
 
 ## Нужен сценарий?
 
-Используйте [Snapshot Examples](https://docs.fastnear.com/ru/snapshots/examples) для операторских сценариев: выбор между optimized `fast-rpc`, standard RPC recovery и archival hot/cold snapshot paths.
+Используйте [примеры снапшотов](https://docs.fastnear.com/ru/snapshots/examples) для операторских сценариев: выбора между оптимизированным `fast-rpc`, стандартным восстановлением RPC и архивными путями с разделением горячих и холодных данных.
 
 ## Выберите сеть
 
@@ -2828,7 +2828,7 @@ https://tx.test.fastnear.com
 
 ## Нужен сценарий?
 
-Используйте [Transactions API Examples](https://docs.fastnear.com/ru/tx/examples) для простых пошаговых сценариев: поиск транзакций, расследование квитанций, история аккаунта и анализ диапазонов блоков.
+Используйте [примеры API транзакций](https://docs.fastnear.com/ru/tx/examples) для простых пошаговых сценариев: поиска транзакций, расследования квитанций, истории аккаунта и анализа диапазонов блоков.
 
 ## Устранение неполадок
 
