@@ -49,6 +49,10 @@ https://tx.test.fastnear.com
 - [Receipt lookup](/tx/receipt) for execution-flow investigation.
 - [Block range](/tx/blocks) when you want a bounded history scan.
 
+## Need a workflow?
+
+Use [Transactions API Examples](/tx/examples) for plain-language flows like transaction lookups, receipt investigation, account activity, and block-window history.
+
 ## Troubleshooting
 
 ### I expected to submit a transaction here

@@ -1,0 +1,143 @@
+---
+sidebar_label: Examples
+sidebar_position: 3
+slug: /snapshots/examples
+title: Snapshot Examples
+description: Plain-language operator workflows for choosing the right FastNear snapshot path and executing common bootstrap and recovery flows.
+displayed_sidebar: snapshotsSidebars
+page_actions:
+  - markdown
+---
+
+# Snapshot Examples
+
+Use this page when the question is “which snapshot path should I actually run?” rather than “what command exists?” Snapshots are operator workflows, not data APIs: start by choosing the correct node goal, network, and storage model, then run the narrowest download path that gets the node online safely.
+
+## When to start here
+
+- You are bootstrapping or recovering a node.
+- You need to choose among standard RPC, optimized `fast-rpc`, or archival hot/cold snapshot paths.
+- You want the shortest route from operator intent to the right command sequence.
+- You already know this is infrastructure work, not application data access.
+
+## Minimum inputs
+
+- network: mainnet or testnet
+- node goal: standard RPC, optimized `fast-rpc`, or archival
+- storage layout, especially whether hot and cold archival data can be separated
+- whether you are using the default nearcore data path or custom hot/cold roots
+- target data path and rough download constraints
+
+## Common jobs
+
+### Bootstrap an optimized mainnet `fast-rpc` node
+
+**Start here**
+
+- [Mainnet snapshots](/snapshots/mainnet), specifically the optimized `fast-rpc` path.
+
+**Next page if needed**
+
+- Revisit the standard mainnet RPC path if the node cannot support the optimized profile.
+
+**Stop when**
+
+- You have the right `fast-rpc` command and environment variables for the target machine.
+
+**Widen when**
+
+- The real requirement is archival retention rather than fast sync.
+
+### Recover a standard RPC node to the default nearcore path
+
+**Start here**
+
+- [Mainnet snapshots](/snapshots/mainnet) or [Testnet snapshots](/snapshots/testnet), depending on network, and choose the standard RPC snapshot path for that environment.
+
+**Next page if needed**
+
+- Adjust `DATA_PATH`, `THREADS`, or bandwidth settings only after the standard path is clear.
+
+**Stop when**
+
+- You can run the correct RPC recovery command with the expected data path.
+
+**Widen when**
+
+- The operator actually needs archival history or hot/cold data placement.
+
+### Bring up archival mainnet hot and cold data correctly
+
+**Start here**
+
+- [Mainnet snapshots](/snapshots/mainnet), archival section.
+
+**Next page if needed**
+
+- Fetch the latest archival snapshot height, then run separate hot-data and cold-data downloads with the correct paths.
+
+**Stop when**
+
+- The hot-data and cold-data plan is clear and the order of operations is correct.
+
+**Widen when**
+
+- The operator is really looking for broader nearcore bootstrap guidance beyond FastNear snapshots.
+
+### Bootstrap testnet archival hot data
+
+**Start here**
+
+- [Testnet snapshots](/snapshots/testnet), archival section.
+
+**Next page if needed**
+
+- Fetch the latest testnet archival snapshot height before the download step.
+
+**Stop when**
+
+- You have the right testnet archival hot-data command and block anchor.
+
+**Widen when**
+
+- The user is not doing infrastructure bootstrap and should be routed back to API or RPC docs.
+
+## Worked investigation
+
+### Choose and execute the right mainnet recovery path
+
+Use this investigation when an operator says “I need this node back online” and you need to quickly decide whether the correct path is optimized `fast-rpc`, standard RPC, or archival hot/cold recovery.
+
+**Goal**
+
+- Turn a vague recovery request into the right mainnet snapshot path and the minimum command sequence to start safely.
+
+| Path or command | How we use it | Why we use it |
+| --- | --- | --- |
+| Mainnet optimized `fast-rpc` path | Choose it first when the goal is the fastest high-performance RPC recovery and the node can support the optimized profile | It is the preferred fast recovery path when archival retention is not required |
+| Mainnet standard RPC path | Use it when the operator needs a simpler RPC recovery without the optimized profile | It gives a straightforward default recovery route into the normal nearcore data path |
+| Latest archival block lookup | Fetch the latest archival snapshot height before archival recovery | Anchors the hot/cold downloads to a specific archival snapshot block |
+| Archival hot-data command | Run it first and place the result on NVMe | Hot archival data must land on the fast storage tier to support the node correctly |
+| Archival cold-data command | Run it after hot data and place it on the cold storage tier | Completes archival recovery without forcing all archival data onto the expensive hot tier |
+
+**What a useful answer should include**
+
+- which recovery path was chosen and why
+- which critical env vars matter for the chosen path
+- where data should land on disk
+- whether the operator should stay in FastNear snapshot docs or move to broader nearcore guidance
+
+## Common mistakes
+
+- Using snapshot docs when the task is really about reading chain data.
+- Choosing archival recovery when a standard or optimized RPC path would do.
+- Forgetting the hot/cold storage split for archival data.
+- Jumping into commands before deciding the network and node goal.
+
+## Related guides
+
+- [Snapshots overview](/snapshots)
+- [Mainnet snapshots](/snapshots/mainnet)
+- [Testnet snapshots](/snapshots/testnet)
+- [RPC Reference](/rpc)
+- [NEAR Data API](/neardata)

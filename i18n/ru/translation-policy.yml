@@ -114,10 +114,16 @@ waves:
     docs:
       - redocly-config.md
       - internationalization.md
+      - api/examples.md
       - api/reference.md
+      - fastdata/kv/examples.md
+      - neardata/examples.md
+      - snapshots/examples.mdx
       - transfers/index.md
+      - transfers/examples.md
       - snapshots/mainnet.mdx
       - snapshots/testnet.mdx
+      - rpc/examples.md
       - rpc/account/view-access-key-list.mdx
       - rpc/account/view-access-key.mdx
       - rpc/account/view-account.mdx
@@ -147,6 +153,7 @@ waves:
       - rpc/transaction/send-tx.mdx
       - rpc/transaction/tx-status.mdx
       - rpc/validators/experimental-validators-ordered.mdx
+      - tx/examples.md
     pageModels:
       - rpc-view-global-contract-code-by-account-id
       - rpc-view-global-contract-code

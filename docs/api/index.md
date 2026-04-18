@@ -56,6 +56,10 @@ https://test.api.fastnear.com
 - [V1 public key](/api/v1/public-key) when you need account resolution from a key.
 - [V1 FT top holders](/api/v1/ft-top) for token-distribution views.
 
+## Need a workflow?
+
+Use [FastNear API Examples](/api/examples) for plain-language flows like account summaries, key-to-account resolution, and asset-specific follow-up.
+
 ## Troubleshooting
 
 ### I only need one low-level value from chain state

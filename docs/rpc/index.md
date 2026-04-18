@@ -44,6 +44,10 @@ https://archival-rpc.testnet.fastnear.com
 - [`send_tx`](/rpc/transaction/send-tx) for transaction submission; [`tx`](/rpc/transaction/tx-status) for execution status.
 - [`validators`](/rpc/validators/validators-current) for the current epoch's validator set.
 
+## Need a workflow?
+
+Use [RPC Examples](/rpc/examples) for plain-language flows like exact state checks, block inspection, contract view calls, and send-and-confirm transaction work.
+
 ## Use RPC when
 
 - You want protocol-native request and response shapes.

@@ -66,6 +66,10 @@ When that happens, widen to [Transactions API](/tx) or [FastNear API](/api) inst
 
 - [Query Transfers](/transfers/query) for the account-centric feed with direction, asset, amount, and time filters
 
+## Need a workflow?
+
+Use [Transfers API Examples](/transfers/examples) for plain-language flows like narrow transfer searches, `resume_token` pagination, and escalation into broader transaction investigation.
+
 ## Troubleshooting
 
 ### I need full transaction metadata

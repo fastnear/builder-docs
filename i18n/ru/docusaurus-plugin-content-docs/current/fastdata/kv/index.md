@@ -51,6 +51,10 @@ https://kv.test.fastnear.com
 - [Всё по `predecessor_id`](/fastdata/kv/all-by-predecessor) или [История по `predecessor_id`](/fastdata/kv/history-by-predecessor) — когда правильная область — `predecessor_id`
 - [Пакетный поиск по ключам](/fastdata/kv/multi) — когда уже известно несколько точных ключей
 
+## Нужен сценарий?
+
+Используйте [KV FastData Examples](/fastdata/kv/examples) для простых пошаговых сценариев: exact-key lookups, история ключей, анализ по `predecessor_id` и переход к каноническому RPC.
+
 ## Рабочий цикл по умолчанию
 
 1. Выберите самую узкую область, подходящую под вопрос пользователя.

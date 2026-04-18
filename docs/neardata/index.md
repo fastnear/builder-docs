@@ -45,6 +45,10 @@ https://testnet.neardata.xyz
 - [Final block by height](/neardata/block) and [Block headers](/neardata/block-headers) for finalized block-family queries.
 - [Last final block redirect](/neardata/last-block-final) and [Last optimistic block redirect](/neardata/last-block-optimistic) when you want helper redirects.
 
+## Need a workflow?
+
+Use [NEAR Data API Examples](/neardata/examples) for plain-language flows like optimistic polling, finalized confirmation, redirect helpers, and escalation into canonical RPC inspection.
+
 ## Troubleshooting
 
 ### Some endpoints redirect instead of returning the final payload directly

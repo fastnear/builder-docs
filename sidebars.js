@@ -44,6 +44,7 @@ const nearcoreReleaseSidebarItems =
 const rpcSidebar = [
   ...nearcoreReleaseSidebarItems,
   'rpc/index',
+  'rpc/examples',
   'auth/index',
   {
     type: 'category',
@@ -125,6 +126,7 @@ const rpcSidebar = [
 
 const fastnearApiSidebar = [
   'api/index',
+  'api/examples',
   {
     type: 'category',
     label: 'V0',
@@ -159,6 +161,7 @@ const fastnearApiSidebar = [
 
 const transactionsApiSidebar = [
   'tx/index',
+  'tx/examples',
   'tx/transactions',
   'tx/account',
   'tx/block',
@@ -168,10 +171,11 @@ const transactionsApiSidebar = [
 
 const transfersApiSidebar = hideEarlyApiFamilies
   ? []
-  : ['transfers/index', 'transfers/transfers'];
+  : ['transfers/index', 'transfers/examples', 'transfers/transfers'];
 
 const nearDataApiSidebar = [
   'neardata/index',
+  'neardata/examples',
   'neardata/first-block',
   'neardata/block',
   'neardata/block-headers',
@@ -187,6 +191,7 @@ const kvFastDataSidebar = hideEarlyApiFamilies
   ? []
   : [
       'fastdata/kv/index',
+      'fastdata/kv/examples',
       'fastdata/kv/all-by-predecessor',
       'fastdata/kv/history-by-predecessor',
       'fastdata/kv/latest-by-predecessor',

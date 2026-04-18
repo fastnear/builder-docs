@@ -51,6 +51,10 @@ Use [FastNear API](/api) for higher-level account views, [NEAR Data API](/nearda
 - [All by Predecessor](/fastdata/kv/all-by-predecessor) or [History by Predecessor](/fastdata/kv/history-by-predecessor) when the predecessor is the right scope
 - [Multi Lookup](/fastdata/kv/multi) when you already know several exact keys
 
+## Need a workflow?
+
+Use [KV FastData Examples](/fastdata/kv/examples) for plain-language flows like exact-key lookups, key-history investigation, predecessor-scoped inspection, and canonical RPC follow-up.
+
 ## Default workflow
 
 1. Pick the narrowest scope that matches the user's question.

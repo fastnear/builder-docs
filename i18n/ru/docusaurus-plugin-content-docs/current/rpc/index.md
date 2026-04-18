@@ -43,6 +43,10 @@ https://archival-rpc.testnet.fastnear.com
 - [`send_tx`](/rpc/transaction/send-tx) — отправка транзакций; [`tx`](/rpc/transaction/tx-status) — статус исполнения.
 - [`validators`](/rpc/validators/validators-current) — валидаторы текущей эпохи.
 
+## Нужен сценарий?
+
+Используйте [RPC Examples](/rpc/examples) для простых пошаговых сценариев: точные проверки состояния, анализ блоков, view-вызовы контрактов и отправка с подтверждением транзакций.
+
 ## Используйте RPC, когда
 
 - нужны канонические формы запросов и ответов из протокола;

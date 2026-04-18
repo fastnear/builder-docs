@@ -47,6 +47,10 @@ sudo -v ; curl https://rclone.org/install.sh | sudo bash
 
 Требования к узлам смотрите в [nearcore](https://github.com/near/nearcore?tab=readme-ov-file#about-near), а исходники скриптов загрузки, которые используются в этих руководствах, — в [fastnear/static](https://github.com/fastnear/static).
 
+## Нужен сценарий?
+
+Используйте [Snapshot Examples](https://docs.fastnear.com/ru/snapshots/examples) для операторских сценариев: выбор между optimized `fast-rpc`, standard RPC recovery и archival hot/cold snapshot paths.
+
 ## Выберите сеть
 
   - [Снапшоты mainnet](https://docs.fastnear.com/ru/snapshots/mainnet)

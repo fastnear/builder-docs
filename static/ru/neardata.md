@@ -37,6 +37,10 @@ https://testnet.neardata.xyz
 - [Финализированный блок по высоте](https://docs.fastnear.com/ru/neardata/block) и [Заголовки блока](https://docs.fastnear.com/ru/neardata/block-headers) — для запросов по финализированным блокам.
 - [Перенаправление на последний финализированный блок](https://docs.fastnear.com/ru/neardata/last-block-final) и [Перенаправление на последний оптимистичный блок](https://docs.fastnear.com/ru/neardata/last-block-optimistic) — когда нужны вспомогательные маршруты с перенаправлением.
 
+## Нужен сценарий?
+
+Используйте [NEAR Data API Examples](https://docs.fastnear.com/ru/neardata/examples) для простых пошаговых сценариев: optimistic polling, finalized confirmation, redirect helpers и переход к каноническому RPC.
+
 ## Устранение неполадок
 
 ### Некоторые эндпоинты перенаправляют на канонический URL вместо прямого возврата результата
