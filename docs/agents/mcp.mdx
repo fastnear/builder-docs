@@ -173,6 +173,18 @@ async function runTool(work: () => Promise<unknown>) {
   }
 }
 
+function toIsoFromNanoseconds(value: unknown): string | null {
+  if (typeof value !== "string") {
+    return null;
+  }
+
+  try {
+    return new Date(Number(BigInt(value) / 1_000_000n)).toISOString();
+  } catch {
+    return null;
+  }
+}
+
 async function getAccountSummary(network: Network, accountId: string) {
   const baseUrl = URLS[network].api;
   return requestJson(
@@ -208,9 +220,36 @@ async function getTransactionsByHash(network: Network, txHashes: string[]) {
 
 async function getLatestFinalBlock(network: Network) {
   const baseUrl = URLS[network].neardata;
-  return requestJson(`${baseUrl}/v0/last_block/final`, {
+  const result = (await requestJson(`${baseUrl}/v0/last_block/final`, {
     headers: authHeaders(),
-  });
+  })) as {
+    block?: {
+      author?: string;
+      chunks?: unknown[];
+      header?: {
+        height?: number;
+        hash?: string;
+        prev_hash?: string;
+        timestamp_nanosec?: string;
+      };
+    };
+  };
+
+  const block = result.block;
+  const header = block?.header;
+
+  return {
+    network,
+    source: "NEAR Data API",
+    finality: "final",
+    block_height: header?.height ?? null,
+    block_hash: header?.hash ?? null,
+    prev_block_hash: header?.prev_hash ?? null,
+    author: block?.author ?? null,
+    timestamp_nanosec: header?.timestamp_nanosec ?? null,
+    timestamp_iso: toIsoFromNanoseconds(header?.timestamp_nanosec),
+    chunk_count: Array.isArray(block?.chunks) ? block.chunks.length : null,
+  };
 }
 
 async function viewAccountRpc(
@@ -312,7 +351,7 @@ server.registerTool(
   {
     title: "Get latest final block",
     description:
-      "Fetch the latest finalized block helper from the NEAR Data API.",
+      "Fetch a compact summary of the latest finalized block from the NEAR Data API.",
     inputSchema: {
       network: z
         .enum(["mainnet", "testnet"])
@@ -376,9 +415,13 @@ npx tsx fastnear-mcp.ts
 
 `FASTNEAR_API_KEY` is optional for many public reads, but it is the right default for authenticated runtimes and higher-limit traffic.
 
-## Example client configuration
+The raw `NEAR Data API` helper at `/v0/last_block/final` redirects to the current block route. Standard `fetch()` follows that redirect automatically, which is why the example does not need extra redirect-handling code.
 
-Exact config shape varies by client, but many local MCP clients accept something close to this:
+## Generic client configuration
+
+Keep this page generic. Most local MCP clients use nearly the same ingredients even when their file location or JSON shape differs a bit: `command`, `args`, `env`, and sometimes `cwd`.
+
+Many local MCP clients accept something close to this:
 
 ```json title="Example MCP client config"
 {
@@ -397,6 +440,8 @@ Exact config shape varies by client, but many local MCP clients accept something
 
 If your MCP client launches commands from some other working directory, either set its `cwd` or `workingDirectory` option when available, or replace `npx tsx` with an absolute path to the local `tsx` binary. The important part is that the client can resolve the locally installed `tsx` package before it starts `fastnear-mcp.ts`.
 
+One generic config example is usually enough for a page like this. Product-specific snippets and "open in ..." affordances tend to change faster than the MCP tool contract itself.
+
 For remote or team-wide deployment, start with this same tool surface and then switch from `stdio` to a network transport only when you actually need a hosted server.
 
 ## Tool design checklist
@@ -408,6 +453,7 @@ When you turn FastNear into MCP tools, these defaults usually hold up well:
 - Use [FastNear API](/api) for summaries and resolution tasks, [Transactions API](/tx) for readable history, and [RPC Reference](/rpc) only when canonical protocol semantics matter.
 - Keep `network` optional but explicit, with a sensible default.
 - Return concise JSON. Avoid huge payloads when the tool only needs one slice of the response.
+- Polling-oriented tools like latest-block helpers should return summaries by default, not full block bodies.
 - Keep API keys in env vars or a secret manager and attach them server-side.
 - Preserve opaque pagination tokens exactly as FastNear returned them.
 - Tell the caller when a tool returns indexed summary data versus canonical RPC data.

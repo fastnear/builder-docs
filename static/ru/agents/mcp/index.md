@@ -160,6 +160,18 @@ async function runTool(work: () => Promise<unknown>) {
   }
 }
 
+function toIsoFromNanoseconds(value: unknown): string | null {
+  if (typeof value !== "string") {
+    return null;
+  }
+
+  try {
+    return new Date(Number(BigInt(value) / 1_000_000n)).toISOString();
+  } catch {
+    return null;
+  }
+}
+
 async function getAccountSummary(network: Network, accountId: string) {
   const baseUrl = URLS[network].api;
   return requestJson(
@@ -195,9 +207,36 @@ async function getTransactionsByHash(network: Network, txHashes: string[]) {
 
 async function getLatestFinalBlock(network: Network) {
   const baseUrl = URLS[network].neardata;
-  return requestJson(`${baseUrl}/v0/last_block/final`, {
+  const result = (await requestJson(`${baseUrl}/v0/last_block/final`, {
     headers: authHeaders(),
-  });
+  })) as {
+    block?: {
+      author?: string;
+      chunks?: unknown[];
+      header?: {
+        height?: number;
+        hash?: string;
+        prev_hash?: string;
+        timestamp_nanosec?: string;
+      };
+    };
+  };
+
+  const block = result.block;
+  const header = block?.header;
+
+  return {
+    network,
+    source: "NEAR Data API",
+    finality: "final",
+    block_height: header?.height ?? null,
+    block_hash: header?.hash ?? null,
+    prev_block_hash: header?.prev_hash ?? null,
+    author: block?.author ?? null,
+    timestamp_nanosec: header?.timestamp_nanosec ?? null,
+    timestamp_iso: toIsoFromNanoseconds(header?.timestamp_nanosec),
+    chunk_count: Array.isArray(block?.chunks) ? block.chunks.length : null,
+  };
 }
 
 async function viewAccountRpc(
@@ -299,7 +338,7 @@ server.registerTool(
   {
     title: "Get latest final block",
     description:
-      "Fetch the latest finalized block helper from the NEAR Data API.",
+      "Fetch a compact summary of the latest finalized block from the NEAR Data API.",
     inputSchema: {
       network: z
         .enum(["mainnet", "testnet"])
@@ -363,9 +402,13 @@ npx tsx fastnear-mcp.ts
 
 `FASTNEAR_API_KEY` для многих публичных чтений не обязателен, но для аутентифицированных рантаймов и трафика с повышенными лимитами это правильный режим по умолчанию.
 
-## Пример конфигурации клиента
+Вспомогательный маршрут `NEAR Data API` по пути `/v0/last_block/final` отвечает редиректом на маршрут текущего блока. Обычный `fetch()` проходит этот редирект автоматически, поэтому в примере не нужен отдельный код для обработки перенаправления.
 
-Точная форма конфига зависит от клиента, но многие локальные MCP-клиенты принимают что-то очень похожее:
+## Универсальная конфигурация клиента
+
+Эту страницу лучше держать универсальной. У большинства локальных MCP-клиентов одни и те же основные составляющие, даже если путь к конфигу или форма JSON немного отличаются: `command`, `args`, `env` и иногда `cwd`.
+
+Многие локальные MCP-клиенты принимают что-то очень похожее:
 
 ```json title="Пример конфигурации MCP-клиента"
 {
@@ -384,6 +427,8 @@ npx tsx fastnear-mcp.ts
 
 Если MCP-клиент запускает команды из другого рабочего каталога, задайте его опцию `cwd` или `workingDirectory`, если она поддерживается, либо замените `npx tsx` на абсолютный путь к локальному бинарнику `tsx`. Важно, чтобы клиент мог разрешить локально установленный пакет `tsx` до запуска `fastnear-mcp.ts`.
 
+Одного универсального примера конфигурации для такой страницы обычно достаточно. Фрагменты конфигурации под конкретные продукты и кнопки в духе «open in ...» меняются быстрее, чем сам контракт MCP-инструментов.
+
 Если позже понадобится удалённое или командное развёртывание, начните с этой же поверхности инструментов и только потом переходите от `stdio` к сетевому транспорту, когда действительно понадобится удалённый сервер.
 
 ## Чеклист проектирования инструментов
@@ -395,6 +440,7 @@ npx tsx fastnear-mcp.ts
 - Используйте [FastNear API](https://docs.fastnear.com/ru/api) для сводок и задач разрешения идентификаторов, [Transactions API](https://docs.fastnear.com/ru/tx) для читаемой истории, а [Справочник RPC](https://docs.fastnear.com/ru/rpc) — только когда важна каноническая семантика протокола.
 - Делайте `network` опциональным, но явным, с разумным значением по умолчанию.
 - Возвращайте компактный JSON. Не тяните огромные пэйлоады, если инструменту нужен только один срез ответа.
+- Для инструментов, работающих в режиме опроса, вроде маршрутов по последнему блоку, по умолчанию лучше возвращать сводку, а не полное тело блока.
 - Храните API-ключи в переменных окружения или менеджере секретов и подставляйте их на стороне сервера.
 - Сохраняйте непрозрачные токены пагинации ровно в том виде, в каком их вернул FastNear.
 - Ясно сообщайте вызывающей стороне, возвращает ли инструмент индексированную сводку или канонические данные RPC.
