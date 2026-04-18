@@ -77,6 +77,73 @@
 
 - Пользователю прямо нужны квитанции или каноническое подтверждение через RPC. Сначала переходите к [Transactions API](https://docs.fastnear.com/ru/tx), затем к [RPC Reference](https://docs.fastnear.com/ru/rpc), если потребуется.
 
+## Готовый сценарий
+
+### Запросить узкое окно переводов, а затем перейти по receipt
+
+Используйте этот сценарий, когда первый вопрос всё ещё касается только переводов, но вы уже понимаете, что потом может понадобиться одна точная точка перехода в контекст исполнения.
+
+**Что вы делаете**
+
+- Запрашиваете ограниченное окно исходящих переводов одного аккаунта в mainnet.
+- Извлекаете первый `receipt_id` через `jq`.
+- Переиспользуете этот receipt ID в Transactions API, чтобы перейти от движения актива к контексту исполнения.
+
+```bash
+TRANSFERS_BASE_URL=https://transfers.main.fastnear.com
+TX_BASE_URL=https://tx.main.fastnear.com
+ACCOUNT_ID=YOUR_ACCOUNT_ID
+FROM_TIMESTAMP_MS=1711929600000
+TO_TIMESTAMP_MS=1712016000000
+
+RECEIPT_ID="$(
+  curl -s "$TRANSFERS_BASE_URL/v0/transfers" \
+    -H 'content-type: application/json' \
+    --data "$(jq -nc \
+      --arg account_id "$ACCOUNT_ID" \
+      --argjson from_timestamp_ms "$FROM_TIMESTAMP_MS" \
+      --argjson to_timestamp_ms "$TO_TIMESTAMP_MS" '{
+        account_id: $account_id,
+        direction: "sender",
+        from_timestamp_ms: $from_timestamp_ms,
+        to_timestamp_ms: $to_timestamp_ms,
+        desc: true,
+        limit: 10
+      }')" \
+    | tee /tmp/transfers-window.json \
+    | jq -r '.transfers[0].receipt_id'
+)"
+
+jq '{
+  resume_token,
+  transfers: [
+    .transfers[]
+    | {
+        transaction_id,
+        receipt_id,
+        asset_id,
+        amount,
+        other_account_id,
+        block_height
+      }
+  ]
+}' /tmp/transfers-window.json
+
+curl -s "$TX_BASE_URL/v0/receipt" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc --arg receipt_id "$RECEIPT_ID" '{receipt_id: $receipt_id}')" \
+  | jq '{
+      receipt_id: .receipt.receipt_id,
+      transaction_hash: .receipt.transaction_hash,
+      receiver_id: .receipt.receiver_id,
+      tx_block_height: .receipt.tx_block_height
+    }'
+```
+
+**Зачем нужен следующий шаг?**
+
+Запрос переводов позволяет держать первый проход узким и удобным для пагинации. Переход по `receipt_id` даёт одну точную опорную точку в исполнении, не заставляя сразу расширяться до полной истории аккаунта. Если после этого всё ещё нужно больше строк, продолжайте пагинацию тем же `resume_token` и теми же фильтрами.
+
 ## Частые ошибки
 
 - Использовать Transfers API, когда пользователю на самом деле нужны балансы, активы или сводки аккаунта.

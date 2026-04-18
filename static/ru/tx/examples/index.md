@@ -156,6 +156,224 @@
 - какой минимальный контекст по блоку и аккаунтам нужен, чтобы её объяснить
 - был ли эффект на состояние устойчивым и на какой высоте блока он стал видимым
 
+### Понять двухстороннее сопоставление `token_diff`, а затем проследить живой расчёт NEAR Intents
+
+Используйте это расследование, когда история звучит так: «покажи, что именно NEAR Intents делает под капотом, но привяжи разбор к публичным данным, которые можно проверить самостоятельно».
+
+**Цель**
+
+- Сначала объяснить модель сопоставления, а затем превратить один реальный расчёт через `intents.near` в читаемую историю исполнения на базе Transactions API и канонического RPC.
+
+**Официальные ссылки**
+
+- [Обзор NEAR Intents](https://docs.near.org/chain-abstraction/intents/overview)
+- [Типы intent и исполнение](https://docs.near-intents.org/integration/verifier-contract/intent-types-and-execution)
+- [Абстракция аккаунтов](https://docs.near-intents.org/integration/verifier-contract/account-abstraction)
+
+#### Часть 1: анатомия протокола
+
+Базовая форма сопоставления здесь — это `token_diff` intent. Одна сторона объявляет, какие активы она готова отдать и получить, а вторая сторона объявляет противоположную разницу. В официальной документации verifier двухсторонний обмен USDC и USDT показан как один подписанный intent со смыслом «я отдам `-10` USDC и получу `+10` USDT» и второй intent, который описывает обратную сторону сделки. Такие подписанные intent можно собрать через Message Bus или через любой другой внешний канал координации и затем отправить вместе в `intents.near`.
+
+Эта концептуальная часть полезна, чтобы понять сам протокол, но подписанные примеры в официальной документации носят иллюстративный и привязанный ко времени характер. Для рабочего FastNear-сценария полезнее разбирать один реальный расчёт из mainnet, чем делать вид, будто пример из документации является готовой живой транзакцией.
+
+#### Часть 2: живая FastNear-трассировка
+
+Для живой трассировки ниже используйте этот фиксированный якорь расчёта, зафиксированный **18 апреля 2026 года**:
+
+- хеш транзакции: `4cfei8p4HBeNxJnCLjfShhDYGmXZwFVwFgY1sYpyygE7`
+- аккаунт `signer` и `receiver`: `intents.near`
+- высота включающего блока: `194573310`
+
+Публичных FastNear-поверхностей уже достаточно, чтобы восстановить многое:
+
+| Поверхность | Эндпоинт | Как используем | Зачем используем |
+| --- | --- | --- | --- |
+| Якорь расчёта | Transactions API [`POST /v0/transactions`](https://docs.fastnear.com/ru/tx/transactions) | Начинаем с фиксированного хеша транзакции и получаем саму транзакцию плюс список последующих receipt | Даёт читаемый каркас расчёта без необходимости сразу декодировать сырые receipt |
+| Контекст включающего блока | Transactions API [`POST /v0/block`](https://docs.fastnear.com/ru/tx/block) | Загружаем включающий блок с receipt и затем фильтруем его обратно по тому же хешу транзакции | Помещает расчёт в контекст блока и показывает, какие receipt появились там |
+| Канонический DAG по receipt | RPC [`EXPERIMENTAL_tx_status`](https://docs.fastnear.com/ru/rpc/transaction/experimental-tx-status) | Запрашиваем ту же транзакцию с `wait_until: "FINAL"` и смотрим `receipts_outcome` | Даёт протокольно-канонический DAG, `executor_id` и сырые логи событий |
+| Классификация событий | RPC [`EXPERIMENTAL_tx_status`](https://docs.fastnear.com/ru/rpc/transaction/experimental-tx-status) | Извлекаем имена событий вроде `token_diff`, `intents_executed`, `mt_transfer` и `mt_withdraw` из строк `EVENT_JSON` | Позволяет объяснять расчёт по семействам событий, а не по непрозрачным `receipt_id` |
+
+**Что должен включать полезный ответ**
+
+- как концептуальная двухсторонняя модель `token_diff` отображается на реальный расчёт через `execute_intents`
+- какие последующие контракты и методы появились после `intents.near`
+- какие семейства событий выпустила трассировка
+- какие высоты блоков сформировали основной каскад
+
+Этот пример намеренно остаётся на публичных FastNear-поверхностях. NEAR Intents Explorer и 1Click Explorer тоже полезны, но их Explorer API защищён JWT и не подходит как дефолтный публичный сценарий в документации.
+
+### Shell-сценарий для живой трассировки NEAR Intents
+
+Используйте этот сценарий, когда нужен один конкретный расчёт через `intents.near`, который можно сразу разобрать через публичные FastNear-эндпоинты.
+
+**Что вы делаете**
+
+- Получаете историю транзакции через Transactions API.
+- Переиспользуете хеш включающего блока в `POST /v0/block`, чтобы исследовать сам блок.
+- Подтверждаете канонический DAG по receipt и семейства логов событий через `EXPERIMENTAL_tx_status`.
+
+```bash
+TX_BASE_URL=https://tx.main.fastnear.com
+RPC_URL=https://rpc.mainnet.fastnear.com
+INTENTS_TX_HASH=4cfei8p4HBeNxJnCLjfShhDYGmXZwFVwFgY1sYpyygE7
+INTENTS_SIGNER_ID=intents.near
+```
+
+1. Начните с самой транзакции расчёта.
+
+```bash
+INTENTS_BLOCK_HASH="$(
+  curl -s "$TX_BASE_URL/v0/transactions" \
+    -H 'content-type: application/json' \
+    --data "$(jq -nc --arg tx_hash "$INTENTS_TX_HASH" '{tx_hashes: [$tx_hash]}')" \
+    | tee /tmp/intents-transaction.json \
+    | jq -r '.transactions[0].execution_outcome.block_hash'
+)"
+
+jq '{
+  transaction: {
+    hash: .transactions[0].transaction.hash,
+    signer_id: .transactions[0].transaction.signer_id,
+    receiver_id: .transactions[0].transaction.receiver_id,
+    included_block_height: .transactions[0].execution_outcome.block_height
+  },
+  receipt_flow: [
+    .transactions[0].receipts[:6][]
+    | {
+        receipt_id: .receipt.receipt_id,
+        receiver_id: .receipt.receiver_id,
+        block_height: .execution_outcome.block_height,
+        methods: (
+          [.receipt.receipt.Action.actions[]?.FunctionCall.method_name]
+          | map(select(. != null))
+        ),
+        first_log: (.execution_outcome.outcome.logs[0] // null)
+      }
+  ]
+}' /tmp/intents-transaction.json
+```
+
+2. Переиспользуйте хеш блока, чтобы исследовать включающий блок с включёнными receipt.
+
+```bash
+curl -s "$TX_BASE_URL/v0/block" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc --arg block_id "$INTENTS_BLOCK_HASH" '{
+    block_id: $block_id,
+    with_receipts: true,
+    with_transactions: false
+  }')" \
+  | tee /tmp/intents-block.json >/dev/null
+
+jq --arg tx_hash "$INTENTS_TX_HASH" '{
+  block_height: .block.block_height,
+  block_hash: .block.block_hash,
+  tx_receipts: [
+    .block_receipts[]
+    | select(.transaction_hash == $tx_hash)
+    | {
+        receipt_id,
+        predecessor_id,
+        receiver_id,
+        block_height
+      }
+  ]
+}' /tmp/intents-block.json
+```
+
+3. Подтвердите канонический DAG по receipt и извлеките семейства событий через RPC.
+
+```bash
+curl -s "$RPC_URL" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc \
+    --arg tx_hash "$INTENTS_TX_HASH" \
+    --arg sender_account_id "$INTENTS_SIGNER_ID" '{
+      jsonrpc: "2.0",
+      id: "fastnear",
+      method: "EXPERIMENTAL_tx_status",
+      params: {
+        tx_hash: $tx_hash,
+        sender_account_id: $sender_account_id,
+        wait_until: "FINAL"
+      }
+    }')" \
+  | tee /tmp/intents-rpc.json >/dev/null
+
+jq '{
+  final_execution_status: .result.final_execution_status,
+  receipts_outcome: [
+    .result.receipts_outcome[:6][]
+    | {
+        receipt_id: .id,
+        executor_id: .outcome.executor_id,
+        first_log: (.outcome.logs[0] // null)
+      }
+  ]
+}' /tmp/intents-rpc.json
+
+jq -r '
+  .result.receipts_outcome[]
+  | .outcome.logs[]
+  | select(startswith("EVENT_JSON:"))
+  | capture("event\":\"(?<event>[^\"]+)\"").event
+' /tmp/intents-rpc.json | sort -u
+```
+
+**Зачем нужен следующий шаг?**
+
+`POST /v0/transactions` даёт читаемый каркас расчёта. `POST /v0/block` показывает, как этот расчёт расположен внутри включающего блока. `EXPERIMENTAL_tx_status` — это каноническое продолжение, когда нужны `executor_id`, структура DAG по receipt и сырые логи событий, а не только индексированное резюме.
+
+### Shell-сценарий для pivot по receipt
+
+Используйте этот сценарий, когда у вас уже есть один `receipt_id` и нужен самый короткий путь обратно к читаемой истории транзакции.
+
+**Что вы делаете**
+
+- Сначала разрешаете receipt.
+- Извлекаете `receipt.transaction_hash` через `jq`.
+- Переиспользуете этот хеш транзакции в `POST /v0/transactions`.
+
+```bash
+TX_BASE_URL=https://tx.main.fastnear.com
+RECEIPT_ID=YOUR_RECEIPT_ID
+# Пример receipt ID из недавнего mainnet-перевода:
+# RECEIPT_ID='5GhZcpfKWhrpaZo5Am74QfEUFQnZBz48G7hfoLPVDXcq'
+
+TX_HASH="$(
+  curl -s "$TX_BASE_URL/v0/receipt" \
+    -H 'content-type: application/json' \
+    --data "$(jq -nc --arg receipt_id "$RECEIPT_ID" '{receipt_id: $receipt_id}')" \
+    | tee /tmp/receipt-lookup.json \
+    | jq -r '.receipt.transaction_hash'
+)"
+
+jq '{
+  receipt: {
+    receipt_id: .receipt.receipt_id,
+    predecessor_id: .receipt.predecessor_id,
+    receiver_id: .receipt.receiver_id,
+    transaction_hash: .receipt.transaction_hash,
+    tx_block_height: .receipt.tx_block_height
+  }
+}' /tmp/receipt-lookup.json
+
+curl -s "$TX_BASE_URL/v0/transactions" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc --arg tx_hash "$TX_HASH" '{tx_hashes: [$tx_hash]}')" \
+  | jq '{
+      transaction_hash: .transactions[0].transaction.hash,
+      signer_id: .transactions[0].transaction.signer_id,
+      receiver_id: .transactions[0].transaction.receiver_id,
+      tx_block_height: .transactions[0].execution_outcome.block_height,
+      receipt_count: (.transactions[0].receipts | length)
+    }'
+```
+
+**Зачем нужен следующий шаг?**
+
+`POST /v0/receipt` даёт точку перехода. `POST /v0/transactions` превращает эту точку в читаемую историю с контекстом по отправителю, получателю, блоку и связанным receipt-ам. И только после этого обычно стоит расширяться до окон по блоку или аккаунту.
+
 ## Частые ошибки
 
 - Пытаться отправлять транзакцию через history API вместо сырого RPC.

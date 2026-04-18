@@ -125,6 +125,64 @@ Use this investigation when one contract key looks suspicious and you need to co
 - the latest indexed value and what changed in history
 - whether canonical `view_state` matched the indexed current value
 
+### Shell walkthrough
+
+Use this when one fully qualified key is already known and you want to move cleanly from “what is the latest indexed row?” to “what is the broader indexed history for this key?”
+
+**What you're doing**
+
+- Read one latest indexed key with the exact contract, predecessor, and key path.
+- Extract the exact `key` with `jq`.
+- Reuse that key in `POST /v0/history` to widen into history.
+
+```bash
+KV_BASE_URL=https://kv.main.fastnear.com
+CURRENT_ACCOUNT_ID=social.near
+PREDECESSOR_ID=james.near
+KEY='graph/follow/sleet.near'
+
+ENCODED_KEY="$(jq -rn --arg key "$KEY" '$key | @uri')"
+
+EXACT_KEY="$(
+  curl -s "$KV_BASE_URL/v0/latest/$CURRENT_ACCOUNT_ID/$PREDECESSOR_ID/$ENCODED_KEY" \
+    | tee /tmp/kv-latest.json \
+    | jq -r '.entries[0].key'
+)"
+
+jq '{
+  latest: (
+    .entries[0]
+    | {
+        current_account_id,
+        predecessor_id,
+        block_height,
+        key,
+        value
+      }
+  )
+}' /tmp/kv-latest.json
+
+curl -s "$KV_BASE_URL/v0/history" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc --arg key "$EXACT_KEY" '{key: $key, limit: 10}')" \
+  | jq '{
+      page_token,
+      entries: [
+        .entries[]
+        | {
+            current_account_id,
+            predecessor_id,
+            block_height,
+            value
+          }
+      ]
+    }'
+```
+
+**Why this next step?**
+
+The latest lookup gives the narrowest possible answer. Reusing the exact `key` in `POST /v0/history` shows whether that key also appears in a wider indexed pattern. If that result is too broad, narrow back down with [GET History by Exact Key](/fastdata/kv/get-history-key).
+
 ## Common mistakes
 
 - Starting with broad account or predecessor scans when an exact key is already known.

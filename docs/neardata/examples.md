@@ -126,6 +126,52 @@ Use this investigation when you need early detection from the optimistic head, b
 - when the same observation became finalized
 - whether canonical RPC inspection changed the interpretation
 
+### Shell walkthrough
+
+Use this when you want the polling helper to choose the latest finalized block for you, but the follow-up still needs canonical RPC confirmation.
+
+**What you're doing**
+
+- Inspect the redirect returned by `GET /v0/last_block/final`.
+- Fetch the resolved block document.
+- Extract `block.header.height` with `jq`.
+- Reuse that height in RPC `block` by height.
+
+```bash
+NEARDATA_BASE_URL=https://mainnet.neardata.xyz
+RPC_URL=https://rpc.mainnet.fastnear.com
+
+FINAL_LOCATION="$(
+  curl -s -D - -o /dev/null "$NEARDATA_BASE_URL/v0/last_block/final" \
+    | awk 'tolower($1) == "location:" {print $2}' \
+    | tr -d '\r'
+)"
+
+printf 'Redirect target: %s\n' "$FINAL_LOCATION"
+
+curl -s "$NEARDATA_BASE_URL$FINAL_LOCATION" \
+  | tee /tmp/neardata-final-block.json \
+  | jq '{height: .block.header.height, hash: .block.header.hash}'
+
+BLOCK_HEIGHT="$(jq -r '.block.header.height' /tmp/neardata-final-block.json)"
+
+curl -s "$RPC_URL" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc --arg block_height "$BLOCK_HEIGHT" '{
+    jsonrpc: "2.0",
+    id: "fastnear",
+    method: "block",
+    params: {
+      block_id: ($block_height | tonumber)
+    }
+  }')" \
+  | jq '{height: .result.header.height, hash: .result.header.hash, chunks: (.result.chunks | length)}'
+```
+
+**Why this next step?**
+
+The redirect helper is the easiest polling surface for “latest finalized.” Once it tells you the exact block height, RPC becomes the right place to ask for canonical block semantics without guessing which block to inspect.
+
 ## Common mistakes
 
 - Treating NEAR Data API as a streaming product instead of a polling surface.

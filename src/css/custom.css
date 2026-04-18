@@ -477,6 +477,30 @@ pre code {
   background: rgba(243, 245, 255, 0.12);
 }
 
+.theme-doc-sidebar-item-link.fastnear-sidebar-examples-divider,
+.navbar-sidebar .fastnear-sidebar-examples-divider {
+  list-style: none;
+  margin: 1rem 0 0;
+  padding: 0;
+  pointer-events: none;
+}
+
+.theme-doc-sidebar-item-link.fastnear-sidebar-examples-divider > div,
+.navbar-sidebar .fastnear-sidebar-examples-divider > div {
+  border-top: 1px solid rgba(17, 17, 17, 0.08);
+  margin: 0 1rem;
+}
+
+.theme-doc-sidebar-item-link.fastnear-sidebar-examples-link,
+.navbar-sidebar .fastnear-sidebar-examples-link {
+  margin-top: 0.35rem;
+}
+
+[data-theme='dark'] .theme-doc-sidebar-item-link.fastnear-sidebar-examples-divider > div,
+[data-theme='dark'] .navbar-sidebar .fastnear-sidebar-examples-divider > div {
+  border-top-color: rgba(243, 245, 255, 0.12);
+}
+
 /* Swap toggle icons: show destination mode instead of current mode */
 [data-theme-choice='light'] [class*='lightToggleIcon'] {
   display: none !important;

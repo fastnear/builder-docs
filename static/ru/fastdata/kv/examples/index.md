@@ -117,6 +117,64 @@
 - как выглядит последнее индексированное значение и какие изменения видны в истории
 - совпал ли `view_state` с текущим индексированным значением
 
+### Shell-сценарий
+
+Используйте этот сценарий, когда один полностью определённый ключ уже известен и нужно аккуратно перейти от вопроса «какая последняя индексированная запись?» к вопросу «какая у этого ключа более широкая индексированная история?»
+
+**Что вы делаете**
+
+- Читаете последнюю индексированную запись по точному контракту, predecessor и пути ключа.
+- Извлекаете точный `key` через `jq`.
+- Переиспользуете этот ключ в `POST /v0/history`, чтобы расшириться до истории.
+
+```bash
+KV_BASE_URL=https://kv.main.fastnear.com
+CURRENT_ACCOUNT_ID=social.near
+PREDECESSOR_ID=james.near
+KEY='graph/follow/sleet.near'
+
+ENCODED_KEY="$(jq -rn --arg key "$KEY" '$key | @uri')"
+
+EXACT_KEY="$(
+  curl -s "$KV_BASE_URL/v0/latest/$CURRENT_ACCOUNT_ID/$PREDECESSOR_ID/$ENCODED_KEY" \
+    | tee /tmp/kv-latest.json \
+    | jq -r '.entries[0].key'
+)"
+
+jq '{
+  latest: (
+    .entries[0]
+    | {
+        current_account_id,
+        predecessor_id,
+        block_height,
+        key,
+        value
+      }
+  )
+}' /tmp/kv-latest.json
+
+curl -s "$KV_BASE_URL/v0/history" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc --arg key "$EXACT_KEY" '{key: $key, limit: 10}')" \
+  | jq '{
+      page_token,
+      entries: [
+        .entries[]
+        | {
+            current_account_id,
+            predecessor_id,
+            block_height,
+            value
+          }
+      ]
+    }'
+```
+
+**Зачем нужен следующий шаг?**
+
+Поиск последней записи даёт максимально узкий ответ. Повторное использование точного `key` в `POST /v0/history` показывает, не является ли этот ключ частью более широкой индексированной картины. Если результат получается слишком широким, снова сузьте его через [GET History by Exact Key](https://docs.fastnear.com/ru/fastdata/kv/get-history-key).
+
 ## Частые ошибки
 
 - Начинать с широких выборок по аккаунту или предшественнику, когда точный ключ уже известен.

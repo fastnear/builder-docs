@@ -85,6 +85,73 @@ Use this page when the question is specifically about asset movement and you wan
 
 - The user explicitly needs receipt-level or canonical RPC confirmation. Move to [Transactions API](/tx) first, then [RPC Reference](/rpc) if needed.
 
+## Worked walkthrough
+
+### Query a narrow transfer window, then pivot by receipt
+
+Use this when the first question is still transfer-only, but you know you may need one precise execution pivot after you isolate the relevant movement.
+
+**What you're doing**
+
+- Query a bounded outgoing transfer window for one account on mainnet.
+- Extract the first `receipt_id` with `jq`.
+- Reuse that receipt ID in Transactions API to move from asset movement into execution context.
+
+```bash
+TRANSFERS_BASE_URL=https://transfers.main.fastnear.com
+TX_BASE_URL=https://tx.main.fastnear.com
+ACCOUNT_ID=YOUR_ACCOUNT_ID
+FROM_TIMESTAMP_MS=1711929600000
+TO_TIMESTAMP_MS=1712016000000
+
+RECEIPT_ID="$(
+  curl -s "$TRANSFERS_BASE_URL/v0/transfers" \
+    -H 'content-type: application/json' \
+    --data "$(jq -nc \
+      --arg account_id "$ACCOUNT_ID" \
+      --argjson from_timestamp_ms "$FROM_TIMESTAMP_MS" \
+      --argjson to_timestamp_ms "$TO_TIMESTAMP_MS" '{
+        account_id: $account_id,
+        direction: "sender",
+        from_timestamp_ms: $from_timestamp_ms,
+        to_timestamp_ms: $to_timestamp_ms,
+        desc: true,
+        limit: 10
+      }')" \
+    | tee /tmp/transfers-window.json \
+    | jq -r '.transfers[0].receipt_id'
+)"
+
+jq '{
+  resume_token,
+  transfers: [
+    .transfers[]
+    | {
+        transaction_id,
+        receipt_id,
+        asset_id,
+        amount,
+        other_account_id,
+        block_height
+      }
+  ]
+}' /tmp/transfers-window.json
+
+curl -s "$TX_BASE_URL/v0/receipt" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc --arg receipt_id "$RECEIPT_ID" '{receipt_id: $receipt_id}')" \
+  | jq '{
+      receipt_id: .receipt.receipt_id,
+      transaction_hash: .receipt.transaction_hash,
+      receiver_id: .receipt.receiver_id,
+      tx_block_height: .receipt.tx_block_height
+    }'
+```
+
+**Why this next step?**
+
+The transfer query keeps the first pass narrow and pagination-friendly. Pivoting by `receipt_id` gives you one exact execution anchor without immediately widening into full account history. If you still need more rows afterward, continue paginating with the same `resume_token` and unchanged filters.
+
 ## Common mistakes
 
 - Using Transfers API when the user really wants balances, holdings, or account summaries.

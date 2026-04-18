@@ -126,6 +126,52 @@ page_actions:
 - когда то же наблюдение стало финализированным
 - изменил ли канонический разбор через RPC интерпретацию
 
+### Shell-сценарий
+
+Используйте этот сценарий, когда вспомогательный маршрут должен сам выбирать для вас последний финализированный блок, но следующий шаг всё равно требует канонического подтверждения через RPC.
+
+**Что вы делаете**
+
+- Смотрите redirect, который возвращает `GET /v0/last_block/final`.
+- Загружаете итоговый документ блока.
+- Извлекаете `block.header.height` через `jq`.
+- Переиспользуете эту высоту в RPC `block` по высоте.
+
+```bash
+NEARDATA_BASE_URL=https://mainnet.neardata.xyz
+RPC_URL=https://rpc.mainnet.fastnear.com
+
+FINAL_LOCATION="$(
+  curl -s -D - -o /dev/null "$NEARDATA_BASE_URL/v0/last_block/final" \
+    | awk 'tolower($1) == "location:" {print $2}' \
+    | tr -d '\r'
+)"
+
+printf 'Redirect target: %s\n' "$FINAL_LOCATION"
+
+curl -s "$NEARDATA_BASE_URL$FINAL_LOCATION" \
+  | tee /tmp/neardata-final-block.json \
+  | jq '{height: .block.header.height, hash: .block.header.hash}'
+
+BLOCK_HEIGHT="$(jq -r '.block.header.height' /tmp/neardata-final-block.json)"
+
+curl -s "$RPC_URL" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc --arg block_height "$BLOCK_HEIGHT" '{
+    jsonrpc: "2.0",
+    id: "fastnear",
+    method: "block",
+    params: {
+      block_id: ($block_height | tonumber)
+    }
+  }')" \
+  | jq '{height: .result.header.height, hash: .result.header.hash, chunks: (.result.chunks | length)}'
+```
+
+**Зачем нужен следующий шаг?**
+
+Вспомогательный маршрут — самый простой путь опроса для сценария «последний финализированный блок». Как только он сообщил точную высоту блока, правильной следующей поверхностью становится RPC, если нужны канонические семантики этого блока без догадок о том, какой блок проверять.
+
 ## Частые ошибки
 
 - Воспринимать NEAR Data API как потоковый продукт, а не как поверхность для опроса.

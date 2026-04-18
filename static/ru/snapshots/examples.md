@@ -118,6 +118,34 @@
 - куда на диске должны попасть данные
 - должен ли оператор оставаться в FastNear snapshot docs или переходить к более широкой документации nearcore
 
+### Shell-сценарий
+
+Используйте этот сценарий, когда вы уже решили, что нужен именно архивный путь для mainnet, и теперь нужна точная последовательность команд с одной общей опорной высотой блока.
+
+**Что вы делаете**
+
+- Один раз получаете последнюю высоту архивного снапшота mainnet.
+- Сохраняете её в `LATEST`.
+- Переиспользуете ровно эту же высоту блока и для hot-data, и для cold-data.
+
+```bash
+HOT_DATA_PATH=~/.near/data
+COLD_DATA_PATH=/mnt/hdds/cold-data
+
+LATEST="$(curl -s "https://snapshot.neardata.xyz/mainnet/archival/latest.txt")"
+echo "Latest archival mainnet snapshot block: $LATEST"
+
+curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/fastnear/static/refs/heads/main/down_rclone_archival.sh \
+  | DATA_TYPE=hot-data DATA_PATH="$HOT_DATA_PATH" CHAIN_ID=mainnet BLOCK="$LATEST" bash
+
+curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/fastnear/static/refs/heads/main/down_rclone_archival.sh \
+  | DATA_TYPE=cold-data DATA_PATH="$COLD_DATA_PATH" CHAIN_ID=mainnet BLOCK="$LATEST" bash
+```
+
+**Зачем нужен следующий шаг?**
+
+Архивные hot- и cold-данные должны происходить из одного и того же среза снапшота. Повторное использование одного сохранённого значения `LATEST` в обеих командах сохраняет внутреннюю согласованность архива и делает последующую настройку nearcore заметно менее неожиданной.
+
 ## Частые ошибки
 
 - Использовать документацию по снапшотам, когда задача на самом деле про чтение данных цепочки.

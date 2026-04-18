@@ -127,6 +127,34 @@ Use this investigation when an operator says “I need this node back online” 
 - where data should land on disk
 - whether the operator should stay in FastNear snapshot docs or move to broader nearcore guidance
 
+### Shell walkthrough
+
+Use this when you have already decided that archival mainnet is the right path and now need the exact command sequence with one shared block anchor.
+
+**What you're doing**
+
+- Fetch the latest archival mainnet snapshot height once.
+- Store it in `LATEST`.
+- Reuse that exact block height for both the hot-data and cold-data downloads.
+
+```bash
+HOT_DATA_PATH=~/.near/data
+COLD_DATA_PATH=/mnt/hdds/cold-data
+
+LATEST="$(curl -s "https://snapshot.neardata.xyz/mainnet/archival/latest.txt")"
+echo "Latest archival mainnet snapshot block: $LATEST"
+
+curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/fastnear/static/refs/heads/main/down_rclone_archival.sh \
+  | DATA_TYPE=hot-data DATA_PATH="$HOT_DATA_PATH" CHAIN_ID=mainnet BLOCK="$LATEST" bash
+
+curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/fastnear/static/refs/heads/main/down_rclone_archival.sh \
+  | DATA_TYPE=cold-data DATA_PATH="$COLD_DATA_PATH" CHAIN_ID=mainnet BLOCK="$LATEST" bash
+```
+
+**Why this next step?**
+
+Hot and cold archival data need to come from the same snapshot cut. Reusing one captured `LATEST` value across both commands keeps the archival dataset internally consistent and makes later nearcore configuration much less surprising.
+
 ## Common mistakes
 
 - Using snapshot docs when the task is really about reading chain data.
