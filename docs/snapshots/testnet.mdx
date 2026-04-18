@@ -32,4 +32,13 @@ If FastNear support gives you a current block height and a supported download pa
 - Confirm your storage layout with nearcore before you start the transfer.
 - Install `rclone` only if the support flow you receive actually depends on it.
 
+## If FastNear provides a snapshot package
+
+1. Stop `neard` before you replace any snapshot data or edit archival storage settings.
+2. Confirm whether the package is meant for `~/.near/data` or for split `hot-data` and `cold-data` paths.
+3. Verify that your `config.json` matches the intended archival mode before restart.
+   For archival nodes, NEAR Nodes documents `archive: true` and `tracked_shards: [0]` as critical settings.
+4. If the package uses split storage, make sure your configured store paths match the delivered hot/cold layout before you start the node again.
+5. Restart the node and verify that it starts cleanly and resumes syncing instead of silently serving stale local state.
+
 For nearcore storage expectations and operator prerequisites, see [nearcore](https://github.com/near/nearcore?tab=readme-ov-file#about-near).

@@ -33,6 +33,20 @@ The NEAR Infrastructure Committee and Near One recommend Epoch Sync plus decentr
 - For archival snapshot access, visit <Link to="https://fastnear.com/snapshots">fastnear.com/snapshots</Link> or email <Link to="mailto:snapshots@fastnear.com">snapshots@fastnear.com</Link>.
 - The legacy scripts in <Link to="https://github.com/fastnear/static">fastnear/static</Link> still exist, but the old public `latest.txt` discovery flow is no longer the supported public path here.
 
+## Useful operator references
+
+- [NEAR Nodes: State Sync](https://near-nodes.io/rpc/state-sync) for the current non-snapshot bootstrap recommendation.
+- [NEAR Nodes: Run an Archival Node](https://near-nodes.io/archival/run-archival-node) for archival node configuration and data-directory expectations.
+- [NEAR Nodes: Split Storage for NEAR Archival Nodes](https://near-nodes.io/archival/split-storage-archival) if you are planning hot/cold storage for modern archival setups.
+
+## What to have ready before you request archival access
+
+- the network: `mainnet` or `testnet`
+- the node role: validator, RPC node, or archival node
+- whether you expect a single `~/.near/data` restore or a split hot/cold layout
+- the target `NEAR_HOME` path and the storage layout you plan to use
+- any time sensitivity, bandwidth constraints, or recovery deadline that affects the transfer plan
+
 ## Use this section when
 
 - you are confirming the current FastNear snapshot posture for mainnet or testnet
