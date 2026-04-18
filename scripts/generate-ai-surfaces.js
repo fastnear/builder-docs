@@ -15,6 +15,11 @@ const {
   getLocaleDocsRoot,
 } = require("./lib/locale-framework");
 const {
+  isCollectionRoute: isDiscoveryCollectionRoute,
+  isHiddenCanonicalRoute: isDiscoveryHiddenCanonicalRoute,
+  isHiddenDocsRoute: isDiscoveryHiddenDocsRoute,
+} = require("./lib/discovery-surface");
+const {
   localizePageModel,
   localizeStructuredFamily,
   localizeStructuredOperation,
@@ -61,12 +66,6 @@ const GENERATED_STATIC_FILES = [
   path.join(STATIC_ROOT, "llms-full.txt"),
 ];
 
-const HIDDEN_DOC_PREFIXES = [
-  "/transfers",
-  "/fastdata",
-];
-const HIDDEN_CANONICAL_PREFIXES = ["/apis/transfers", "/apis/kv-fastdata"];
-const ALWAYS_HIDDEN_DOC_PREFIXES = ["/transaction-flow"];
 const API_SERVICE_LABELS = {
   en: {
     fastnear: "FastNear API",
@@ -102,20 +101,6 @@ const RPC_CATEGORY_LABELS = {
     validators: "RPC валидаторов",
   },
 };
-
-const COLLECTION_ROUTE_SET = new Set([
-  "/",
-  "/api",
-  "/api/reference",
-  "/auth",
-  "/fastdata/kv",
-  "/neardata",
-  "/rpc",
-  "/snapshots",
-  "/transaction-flow",
-  "/transfers",
-  "/tx",
-]);
 
 const AUTHORED_MARKDOWN_LABELS = {
   en: {
@@ -407,16 +392,12 @@ function buildOperationEntityId(pageModelId) {
   return `${SITE_ORIGIN}/structured-data/operations/${pageModelId}`;
 }
 
-function isCollectionRoute(route) {
-  return COLLECTION_ROUTE_SET.has(normalizeRoute(route));
-}
-
 function getDocsPageSchemaType(entry) {
   if (entry.kind === "wrapper") {
     return "WebPage";
   }
 
-  return isCollectionRoute(stripLocalePrefix(entry.route)) ? "CollectionPage" : "TechArticle";
+  return isDiscoveryCollectionRoute(stripLocalePrefix(entry.route)) ? "CollectionPage" : "TechArticle";
 }
 
 function normalizeMarkdown(markdown) {
@@ -523,26 +504,11 @@ function computeDocRoute(relativePath, frontmatter) {
 }
 
 function isHiddenRoute(route) {
-  return (
-    ALWAYS_HIDDEN_DOC_PREFIXES.some(
-      (prefix) => route === prefix || route.startsWith(`${prefix}/`)
-    ) ||
-    (
-      hideEarlyApiFamilies &&
-      HIDDEN_DOC_PREFIXES.some(
-        (prefix) => route === prefix || route.startsWith(`${prefix}/`)
-      )
-    )
-  );
+  return isDiscoveryHiddenDocsRoute(route, { hideEarlyApiFamilies });
 }
 
 function isHiddenCanonicalRoute(route) {
-  return (
-    hideEarlyApiFamilies &&
-    HIDDEN_CANONICAL_PREFIXES.some(
-      (prefix) => route === prefix || route.startsWith(`${prefix}/`)
-    )
-  );
+  return isDiscoveryHiddenCanonicalRoute(route, { hideEarlyApiFamilies });
 }
 
 function extractPageModelId(content) {
