@@ -363,6 +363,10 @@ function buildLegacyRedirects() {
   addRedirect('/docs/redocly-config', '/redocly-config');
 
   readDocSlugs().forEach((slug) => {
+    if (slug !== '/') {
+      addRedirect(`/docs${slug}`, slug);
+    }
+
     if (slug === '/rpc') {
       addRedirect('/docs/rpc-api/rpc', slug);
       return;

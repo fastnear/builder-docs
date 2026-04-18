@@ -25,6 +25,7 @@
 /docs/rpc-api/protocol/* /rpc/protocol/:splat 301
 /docs/rpc-api/transaction/* /rpc/transaction/:splat 301
 /docs/rpc-api/validators/* /rpc/validators/:splat 301
+/docs/* /:splat 301
 /docs/snapshots /snapshots 301
 /docs/snapshots/* /snapshots/:splat 301
 /docs/transaction-flow /transaction-flow 301
