@@ -3,8 +3,19 @@
 const fs = require("node:fs");
 const path = require("node:path");
 const { execFileSync } = require("node:child_process");
+const {
+  DEFAULT_LOCALE,
+  SUPPORTED_LOCALES,
+  localizeRoute,
+  stripLocalePrefix,
+} = require("./lib/localized-routes");
+const {
+  EXCLUDED_ROUTE_PATTERNS,
+  PUBLIC_DOC_ROUTE_PATTERNS,
+} = require("../algolia/crawler/shared");
 
 const ROOT = path.resolve(__dirname, "..");
+const BUILD_ROOT = path.join(ROOT, "build");
 const DOCS_ROOT = path.join(ROOT, "docs");
 const STATIC_ROOT = path.join(ROOT, "static");
 const SITE_ORIGIN = "https://docs.fastnear.com";
@@ -18,6 +29,30 @@ const HIDDEN_DOC_PREFIXES = [
   "/transfers",
   "/fastdata",
 ];
+
+function matchesRoutePrefix(route, prefix) {
+  return Boolean(route) && (route === prefix || route.startsWith(`${prefix}/`));
+}
+
+function matchesRoutePattern(route, pattern) {
+  if (!route || !pattern) {
+    return false;
+  }
+
+  if (pattern === "/") {
+    return route === "/";
+  }
+
+  if (pattern === "/**/*.md") {
+    return route.endsWith(".md");
+  }
+
+  if (pattern.endsWith("/**")) {
+    return matchesRoutePrefix(route, pattern.slice(0, -3));
+  }
+
+  return route === pattern;
+}
 
 function walkDocs(dirPath) {
   const collected = [];
@@ -75,32 +110,115 @@ function buildAbsoluteUrl(route) {
   return new URL(String(route || "").replace(/^\//, ""), `${SITE_ORIGIN}/`).toString();
 }
 
+function normalizeAbsoluteUrl(url) {
+  const pathname = new URL(url, SITE_ORIGIN).pathname;
+  return buildAbsoluteUrl(pathname);
+}
+
 function isHiddenDocsRoute(route) {
   return (
     hideEarlyApiFamilies &&
     HIDDEN_DOC_PREFIXES.some(
-      (prefix) => route === prefix || route.startsWith(`${prefix}/`)
+      (prefix) => matchesRoutePrefix(route, prefix)
     )
   );
 }
 
-function getCanonicalDocsEntries() {
-  return walkDocs(DOCS_ROOT)
-    .map((filePath) => {
-      const rawContent = fs.readFileSync(filePath, "utf8");
-      const frontmatter = parseFrontmatter(rawContent);
-      const route = normalizeRoute(frontmatter.slug);
-      if (!route || isHiddenDocsRoute(route)) {
-        return null;
-      }
+function isPublicDocsSurfaceRoute(route) {
+  const normalizedRoute = stripLocalePrefix(route);
+  return (
+    PUBLIC_DOC_ROUTE_PATTERNS.some((pattern) => matchesRoutePattern(normalizedRoute, pattern)) &&
+    !EXCLUDED_ROUTE_PATTERNS.some((pattern) => matchesRoutePattern(normalizedRoute, pattern))
+  );
+}
 
-      return {
-        filePath,
-        route,
-        url: buildAbsoluteUrl(route),
-      };
-    })
-    .filter(Boolean);
+function isDiscoverableDocsRoute(route) {
+  const normalizedRoute = stripLocalePrefix(route);
+  return isPublicDocsSurfaceRoute(normalizedRoute) && !isHiddenDocsRoute(normalizedRoute);
+}
+
+function getDocsSourceRoots() {
+  const roots = [
+    {
+      dirPath: DOCS_ROOT,
+      locale: DEFAULT_LOCALE,
+    },
+  ];
+
+  SUPPORTED_LOCALES.filter((locale) => locale !== DEFAULT_LOCALE).forEach((locale) => {
+    const dirPath = path.join(ROOT, "i18n", locale, "docusaurus-plugin-content-docs", "current");
+    if (fs.existsSync(dirPath)) {
+      roots.push({ dirPath, locale });
+    }
+  });
+
+  return roots;
+}
+
+function getCanonicalDocsEntries() {
+  return getDocsSourceRoots()
+    .flatMap(({ dirPath, locale }) =>
+      walkDocs(dirPath).map((filePath) => {
+        const rawContent = fs.readFileSync(filePath, "utf8");
+        const frontmatter = parseFrontmatter(rawContent);
+        const route = normalizeRoute(frontmatter.slug);
+        if (!route) {
+          return null;
+        }
+
+        const localizedRoute = localizeRoute(route, locale);
+        if (!isDiscoverableDocsRoute(localizedRoute)) {
+          return null;
+        }
+
+        return {
+          filePath,
+          locale,
+          route: localizedRoute,
+          url: buildAbsoluteUrl(localizedRoute),
+        };
+      })
+    )
+    .filter(Boolean)
+    .sort((left, right) => left.url.localeCompare(right.url));
+}
+
+function getSitemapPath(locale) {
+  return path.join(BUILD_ROOT, localizeRoute("/sitemap.xml", locale));
+}
+
+function parseSitemapUrls(filePath) {
+  if (!fs.existsSync(filePath)) {
+    return [];
+  }
+
+  const rawContent = fs.readFileSync(filePath, "utf8");
+  return [...rawContent.matchAll(/<loc>([^<]+)<\/loc>/g)]
+    .map((match) => match[1]?.trim())
+    .filter(Boolean)
+    .map((url) => normalizeAbsoluteUrl(url.replace(/&amp;/g, "&")));
+}
+
+function getFullCanonicalUrlList(entries) {
+  const sitemapUrls = SUPPORTED_LOCALES.flatMap((locale) =>
+    parseSitemapUrls(getSitemapPath(locale)).filter((url) =>
+      isDiscoverableDocsRoute(new URL(url, SITE_ORIGIN).pathname)
+    )
+  );
+  if (sitemapUrls.length) {
+    return [...new Set(sitemapUrls)].sort();
+  }
+
+  return [...new Set(entries.map((entry) => entry.url))].sort();
+}
+
+function isDocsSourceFile(filePath) {
+  return (
+    filePath.startsWith("docs/") ||
+    SUPPORTED_LOCALES.some((locale) =>
+      filePath.startsWith(`i18n/${locale}/docusaurus-plugin-content-docs/current/`)
+    )
+  );
 }
 
 function findIndexNowKeyFile(dirPath) {
@@ -203,27 +321,28 @@ function selectUrls({ entries, explicitUrls, fromRef, toRef }) {
     return explicitUrls.map((url) => buildAbsoluteUrl(new URL(url, SITE_ORIGIN).pathname));
   }
 
+  const fullUrlList = getFullCanonicalUrlList(entries);
   const changedFiles = getChangedFiles(fromRef, toRef);
   if (!changedFiles) {
-    return entries.map((entry) => entry.url);
+    return fullUrlList;
   }
 
   if (!changedFiles.length) {
     return [];
   }
 
-  if (changedFiles.some((filePath) => !filePath.startsWith("docs/"))) {
-    return entries.map((entry) => entry.url);
-  }
-
   const entriesByFilePath = new Map(entries.map((entry) => [entry.filePath, entry]));
   const changedUrls = new Set();
 
   for (const filePath of changedFiles) {
+    if (!isDocsSourceFile(filePath)) {
+      return fullUrlList;
+    }
+
     const absolutePath = path.join(ROOT, filePath);
     const entry = entriesByFilePath.get(absolutePath);
     if (!entry) {
-      return entries.map((candidate) => candidate.url);
+      continue;
     }
 
     changedUrls.add(entry.url);
