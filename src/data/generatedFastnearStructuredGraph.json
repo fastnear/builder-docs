@@ -3049,7 +3049,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/rpcs/transaction/broadcast_tx_async",
-      "description": "Submit a Base64-encoded signed transaction and immediately get its hash — no wait for execution.",
+      "description": "Submit a freshly signed transaction and immediately get its hash — no wait for execution. Default examples are illustrative only and are not reusable signed payloads.",
       "docsPath": "/rpc/transaction/broadcast-tx-async",
       "familyId": "rpc-transaction",
       "headline": "NEAR Protocol RPC: Send transaction asynchronously",
@@ -3076,7 +3076,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/rpcs/transaction/broadcast_tx_commit",
-      "description": "Submit a Base64-encoded signed transaction and wait for its commit — the legacy synchronous send, superseded by `send_tx`.",
+      "description": "Submit a freshly signed transaction and wait for its commit — the legacy synchronous send, superseded by `send_tx`. Default examples are illustrative only and are not reusable signed payloads.",
       "docsPath": "/rpc/transaction/broadcast-tx-commit",
       "familyId": "rpc-transaction",
       "headline": "NEAR Protocol RPC: Send transaction and wait",
@@ -3157,7 +3157,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/rpcs/transaction/send_tx",
-      "description": "Submit a Base64-encoded signed transaction and wait for its final execution outcome — the current synchronous send.",
+      "description": "Submit a freshly signed transaction and wait for its final execution outcome — the current synchronous send. Default examples are illustrative only and are not reusable signed payloads.",
       "docsPath": "/rpc/transaction/send-tx",
       "familyId": "rpc-transaction",
       "headline": "NEAR Protocol RPC: Send transaction",

@@ -37,7 +37,9 @@ https://tx.test.fastnear.com
 
 ## Auth and availability
 
-- These pages do not currently use API keys or bearer tokens.
+- Public history reads often work without a key.
+- If your integration standardizes on one FastNear API key across FastNear surfaces, reuse the same header or query-param shape here too.
+- Testnet uses `https://tx.test.fastnear.com`, and receipt lookup is available there as well.
 - The service is built for indexed history access rather than transaction submission.
 
 ## Common starting points

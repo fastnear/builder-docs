@@ -12,5 +12,8 @@ import FastnearDirectOperation from '@site/src/components/FastnearDirectOperatio
 
 `view_state` request type
 
+Use `prefix_base64` when you want to filter by a storage-key prefix.
+
+Set `prefix_base64` to `""` to remove the prefix filter and return all matching state values. Large contracts can produce very large payloads when you do this, so prefer a narrower prefix when you already know the key family you need.
 
 <FastnearDirectOperation pageModelId="rpc-view-state" renderDescription />

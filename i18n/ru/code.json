@@ -681,7 +681,7 @@
     "message": "Настройка API-ключа"
   },
   "fastnear.apiKeyManager.description": {
-    "message": "Укажите здесь API-ключ FastNear. Он будет автоматически подставляться во все RPC-примеры в документации."
+    "message": "Укажите здесь API-ключ FastNear. Он будет автоматически подставляться в интерактивные примеры документации на страницах RPC и API."
   },
   "fastnear.apiKeyManager.placeholder": {
     "message": "Введите API-ключ FastNear"

@@ -3368,7 +3368,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/ru/rpcs/transaction/broadcast_tx_async",
-      "description": "Отправьте подписанную транзакцию в кодировке Base64 и сразу получите её хеш — без ожидания исполнения.",
+      "description": "Отправьте свежеподписанную транзакцию и сразу получите её хеш, без ожидания исполнения. Примеры по умолчанию служат только для иллюстрации и не являются повторно используемыми подписанными пакетами данных.",
       "docsPath": "/ru/rpc/transaction/broadcast-tx-async",
       "familyId": "rpc-transaction",
       "headline": "NEAR Protocol RPC: Send transaction asynchronously",
@@ -3415,7 +3415,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/ru/rpcs/transaction/broadcast_tx_commit",
-      "description": "Отправьте подписанную транзакцию в кодировке Base64 и дождитесь её подтверждения — устаревший синхронный способ, заменён на `send_tx`.",
+      "description": "Отправьте свежеподписанную транзакцию и дождитесь её коммита — это устаревший синхронный способ отправки, который заменён `send_tx`. Примеры по умолчанию служат только для иллюстрации и не являются повторно используемыми подписанными пакетами данных.",
       "docsPath": "/ru/rpc/transaction/broadcast-tx-commit",
       "familyId": "rpc-transaction",
       "headline": "NEAR Protocol RPC: Send transaction and wait",
@@ -3556,7 +3556,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/ru/rpcs/transaction/send_tx",
-      "description": "Отправьте подписанную транзакцию в кодировке Base64 и дождитесь её итогового результата исполнения — текущий синхронный способ.",
+      "description": "Отправьте свежеподписанную транзакцию и дождитесь её итогового результата исполнения — это текущий синхронный способ отправки. Примеры по умолчанию служат только для иллюстрации и не являются повторно используемыми подписанными пакетами данных.",
       "docsPath": "/ru/rpc/transaction/send-tx",
       "familyId": "rpc-transaction",
       "headline": "NEAR Protocol RPC: отправка транзакции",

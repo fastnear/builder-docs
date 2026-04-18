@@ -49,7 +49,8 @@ Use [Transactions API](/tx) for broader execution history and [FastNear API](/ap
 
 ## Auth and availability
 
-- These pages do not use API keys or bearer tokens.
+- Public transfer-history reads often work without a key.
+- If you standardize on one FastNear API key across FastNear surfaces, reuse the same header or query-param shape here too.
 - Responses include an opaque `resume_token` for pagination.
 - The service is mainnet-only today.
 

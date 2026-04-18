@@ -68,7 +68,7 @@ export default function ApiKeyManager() {
         {translate({
           id: 'fastnear.apiKeyManager.description',
           message:
-            'Set your FastNear API key here. It will be automatically included in all RPC documentation examples.',
+            'Set your FastNear API key here. It will be automatically included in the interactive docs examples across the RPC and API pages.',
         })}
       </p>
       

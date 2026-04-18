@@ -529,7 +529,81 @@
         "description": "Optional FastNEAR subscription API key. Invalid values may return `401` before redirect handling."
       }
     ],
-    "response": "Requested document, or `null` when the selected slice is absent Redirect to a canonical archive or finalized block URL Invalid or unauthorized API key Structured block-height error Cache or internal data error"
+    "response": "Requested document, or `null` when the selected slice is absent Redirect to a canonical archive or finalized block URL Invalid or unauthorized API key Structured block-height error Cache or internal data error",
+    "schema": [
+      {
+        "name": "BlockDocument",
+        "description": "Full block document as served by neardata, including the block envelope and per-shard payloads."
+      },
+      {
+        "name": "block",
+        "description": "Block-level payload returned by neardata."
+      },
+      {
+        "name": "BlockEnvelope",
+        "description": "Block-level payload returned by neardata."
+      },
+      {
+        "name": "author",
+        "description": "Block producer account ID."
+      },
+      {
+        "name": "ChunkHeader",
+        "description": "Chunk header object as served by neardata."
+      },
+      {
+        "name": "header",
+        "description": "Block header object as served by neardata."
+      },
+      {
+        "name": "BlockHeader",
+        "description": "Block header object as served by neardata."
+      },
+      {
+        "name": "ShardDocument",
+        "description": "Per-shard payload returned by neardata for a block."
+      },
+      {
+        "name": "chunk",
+        "description": "Chunk payload returned by neardata for a single shard in a selected block."
+      },
+      {
+        "name": "ChunkDocument",
+        "description": "Chunk payload returned by neardata for a single shard in a selected block."
+      },
+      {
+        "name": "author",
+        "description": "Chunk producer account ID."
+      },
+      {
+        "name": "header",
+        "description": "Chunk header object as served by neardata."
+      },
+      {
+        "name": "ReceiptDocument",
+        "description": "Receipt object as served by neardata inside a chunk payload."
+      },
+      {
+        "name": "ChunkTransactionWrapper",
+        "description": "Transaction entry returned inside a neardata chunk."
+      },
+      {
+        "name": "outcome",
+        "description": "Execution result paired with an optional receipt object."
+      },
+      {
+        "name": "ExecutionWithReceipt",
+        "description": "Execution result paired with an optional receipt object."
+      },
+      {
+        "name": "receipt",
+        "description": "Receipt payload when neardata includes it for this entry."
+      },
+      {
+        "name": "StateChangeItem",
+        "description": "State change entry returned by neardata for a shard."
+      }
+    ]
   },
   "neardata-v0-block-chunk": {
     "description": "Fetch one chunk — a single shard's transactions and incoming receipts — at a chosen block height.",
@@ -547,7 +621,45 @@
         "description": "Optional FastNEAR subscription API key. Invalid values may return `401` before redirect handling."
       }
     ],
-    "response": "Requested document, or `null` when the selected slice is absent Redirect to a canonical archive or finalized block URL Invalid or unauthorized API key Structured block-height error Cache or internal data error"
+    "response": "Requested document, or `null` when the selected slice is absent Redirect to a canonical archive or finalized block URL Invalid or unauthorized API key Structured block-height error Cache or internal data error",
+    "schema": [
+      {
+        "name": "ChunkDocument",
+        "description": "Chunk payload returned by neardata for a single shard in a selected block."
+      },
+      {
+        "name": "author",
+        "description": "Chunk producer account ID."
+      },
+      {
+        "name": "header",
+        "description": "Chunk header object as served by neardata."
+      },
+      {
+        "name": "ChunkHeader",
+        "description": "Chunk header object as served by neardata."
+      },
+      {
+        "name": "ReceiptDocument",
+        "description": "Receipt object as served by neardata inside a chunk payload."
+      },
+      {
+        "name": "ChunkTransactionWrapper",
+        "description": "Transaction entry returned inside a neardata chunk."
+      },
+      {
+        "name": "outcome",
+        "description": "Execution result paired with an optional receipt object."
+      },
+      {
+        "name": "ExecutionWithReceipt",
+        "description": "Execution result paired with an optional receipt object."
+      },
+      {
+        "name": "receipt",
+        "description": "Receipt payload when neardata includes it for this entry."
+      }
+    ]
   },
   "neardata-v0-block-headers": {
     "description": "Fetch only a finalized block's header and chunk summaries — no per-shard payload.",
@@ -561,7 +673,29 @@
         "description": "Optional FastNEAR subscription API key. Invalid values may return `401` before redirect handling."
       }
     ],
-    "response": "Requested document, or `null` when the selected slice is absent Redirect to a canonical archive or finalized block URL Invalid or unauthorized API key Structured block-height error Cache or internal data error"
+    "response": "Requested document, or `null` when the selected slice is absent Redirect to a canonical archive or finalized block URL Invalid or unauthorized API key Structured block-height error Cache or internal data error",
+    "schema": [
+      {
+        "name": "BlockEnvelope",
+        "description": "Block-level payload returned by neardata."
+      },
+      {
+        "name": "author",
+        "description": "Block producer account ID."
+      },
+      {
+        "name": "ChunkHeader",
+        "description": "Chunk header object as served by neardata."
+      },
+      {
+        "name": "header",
+        "description": "Block header object as served by neardata."
+      },
+      {
+        "name": "BlockHeader",
+        "description": "Block header object as served by neardata."
+      }
+    ]
   },
   "neardata-v0-block-optimistic": {
     "description": "Fetch an optimistic (not-yet-final) block at a chosen height — may redirect once the optimistic window has finalized.",
@@ -575,7 +709,81 @@
         "description": "Optional FastNEAR subscription API key. Invalid values may return `401` before redirect handling."
       }
     ],
-    "response": "Requested document, or `null` when the selected slice is absent Redirect to a canonical archive or finalized block URL Invalid or unauthorized API key Structured block-height error Cache or internal data error"
+    "response": "Requested document, or `null` when the selected slice is absent Redirect to a canonical archive or finalized block URL Invalid or unauthorized API key Structured block-height error Cache or internal data error",
+    "schema": [
+      {
+        "name": "BlockDocument",
+        "description": "Full block document as served by neardata, including the block envelope and per-shard payloads."
+      },
+      {
+        "name": "block",
+        "description": "Block-level payload returned by neardata."
+      },
+      {
+        "name": "BlockEnvelope",
+        "description": "Block-level payload returned by neardata."
+      },
+      {
+        "name": "author",
+        "description": "Block producer account ID."
+      },
+      {
+        "name": "ChunkHeader",
+        "description": "Chunk header object as served by neardata."
+      },
+      {
+        "name": "header",
+        "description": "Block header object as served by neardata."
+      },
+      {
+        "name": "BlockHeader",
+        "description": "Block header object as served by neardata."
+      },
+      {
+        "name": "ShardDocument",
+        "description": "Per-shard payload returned by neardata for a block."
+      },
+      {
+        "name": "chunk",
+        "description": "Chunk payload returned by neardata for a single shard in a selected block."
+      },
+      {
+        "name": "ChunkDocument",
+        "description": "Chunk payload returned by neardata for a single shard in a selected block."
+      },
+      {
+        "name": "author",
+        "description": "Chunk producer account ID."
+      },
+      {
+        "name": "header",
+        "description": "Chunk header object as served by neardata."
+      },
+      {
+        "name": "ReceiptDocument",
+        "description": "Receipt object as served by neardata inside a chunk payload."
+      },
+      {
+        "name": "ChunkTransactionWrapper",
+        "description": "Transaction entry returned inside a neardata chunk."
+      },
+      {
+        "name": "outcome",
+        "description": "Execution result paired with an optional receipt object."
+      },
+      {
+        "name": "ExecutionWithReceipt",
+        "description": "Execution result paired with an optional receipt object."
+      },
+      {
+        "name": "receipt",
+        "description": "Receipt payload when neardata includes it for this entry."
+      },
+      {
+        "name": "StateChangeItem",
+        "description": "State change entry returned by neardata for a shard."
+      }
+    ]
   },
   "neardata-v0-block-shard": {
     "description": "Fetch one shard's full payload at a chosen block — chunk plus state changes and produced receipts.",
@@ -593,7 +801,57 @@
         "description": "Optional FastNEAR subscription API key. Invalid values may return `401` before redirect handling."
       }
     ],
-    "response": "Requested document, or `null` when the selected slice is absent Redirect to a canonical archive or finalized block URL Invalid or unauthorized API key Structured block-height error Cache or internal data error"
+    "response": "Requested document, or `null` when the selected slice is absent Redirect to a canonical archive or finalized block URL Invalid or unauthorized API key Structured block-height error Cache or internal data error",
+    "schema": [
+      {
+        "name": "ShardDocument",
+        "description": "Per-shard payload returned by neardata for a block."
+      },
+      {
+        "name": "chunk",
+        "description": "Chunk payload returned by neardata for a single shard in a selected block."
+      },
+      {
+        "name": "ChunkDocument",
+        "description": "Chunk payload returned by neardata for a single shard in a selected block."
+      },
+      {
+        "name": "author",
+        "description": "Chunk producer account ID."
+      },
+      {
+        "name": "header",
+        "description": "Chunk header object as served by neardata."
+      },
+      {
+        "name": "ChunkHeader",
+        "description": "Chunk header object as served by neardata."
+      },
+      {
+        "name": "ReceiptDocument",
+        "description": "Receipt object as served by neardata inside a chunk payload."
+      },
+      {
+        "name": "ChunkTransactionWrapper",
+        "description": "Transaction entry returned inside a neardata chunk."
+      },
+      {
+        "name": "outcome",
+        "description": "Execution result paired with an optional receipt object."
+      },
+      {
+        "name": "ExecutionWithReceipt",
+        "description": "Execution result paired with an optional receipt object."
+      },
+      {
+        "name": "receipt",
+        "description": "Receipt payload when neardata includes it for this entry."
+      },
+      {
+        "name": "StateChangeItem",
+        "description": "State change entry returned by neardata for a shard."
+      }
+    ]
   },
   "neardata-v0-first-block": {
     "description": "Redirect to the chain's first post-genesis block — a starting cursor for indexers backfilling from the beginning.",
@@ -603,7 +861,81 @@
         "description": "Optional FastNEAR subscription API key. Invalid values may return `401` before redirect handling."
       }
     ],
-    "response": "Full block document returned after automatic redirect following Redirect to the canonical first block URL Invalid or unauthorized API key"
+    "response": "Full block document returned after automatic redirect following Redirect to the canonical first block URL Invalid or unauthorized API key",
+    "schema": [
+      {
+        "name": "BlockDocument",
+        "description": "Full block document as served by neardata, including the block envelope and per-shard payloads."
+      },
+      {
+        "name": "block",
+        "description": "Block-level payload returned by neardata."
+      },
+      {
+        "name": "BlockEnvelope",
+        "description": "Block-level payload returned by neardata."
+      },
+      {
+        "name": "author",
+        "description": "Block producer account ID."
+      },
+      {
+        "name": "ChunkHeader",
+        "description": "Chunk header object as served by neardata."
+      },
+      {
+        "name": "header",
+        "description": "Block header object as served by neardata."
+      },
+      {
+        "name": "BlockHeader",
+        "description": "Block header object as served by neardata."
+      },
+      {
+        "name": "ShardDocument",
+        "description": "Per-shard payload returned by neardata for a block."
+      },
+      {
+        "name": "chunk",
+        "description": "Chunk payload returned by neardata for a single shard in a selected block."
+      },
+      {
+        "name": "ChunkDocument",
+        "description": "Chunk payload returned by neardata for a single shard in a selected block."
+      },
+      {
+        "name": "author",
+        "description": "Chunk producer account ID."
+      },
+      {
+        "name": "header",
+        "description": "Chunk header object as served by neardata."
+      },
+      {
+        "name": "ReceiptDocument",
+        "description": "Receipt object as served by neardata inside a chunk payload."
+      },
+      {
+        "name": "ChunkTransactionWrapper",
+        "description": "Transaction entry returned inside a neardata chunk."
+      },
+      {
+        "name": "outcome",
+        "description": "Execution result paired with an optional receipt object."
+      },
+      {
+        "name": "ExecutionWithReceipt",
+        "description": "Execution result paired with an optional receipt object."
+      },
+      {
+        "name": "receipt",
+        "description": "Receipt payload when neardata includes it for this entry."
+      },
+      {
+        "name": "StateChangeItem",
+        "description": "State change entry returned by neardata for a shard."
+      }
+    ]
   },
   "neardata-v0-last-block-final": {
     "description": "Redirect to the most recent finalized block — the chain-tip cursor once consensus has settled.",
@@ -613,7 +945,81 @@
         "description": "Optional FastNEAR subscription API key. Invalid values may return `401` before redirect handling."
       }
     ],
-    "response": "Full block document returned after automatic redirect following Redirect to the latest block block URL Invalid or unauthorized API key Cache or internal data error"
+    "response": "Full block document returned after automatic redirect following Redirect to the latest block block URL Invalid or unauthorized API key Cache or internal data error",
+    "schema": [
+      {
+        "name": "BlockDocument",
+        "description": "Full block document as served by neardata, including the block envelope and per-shard payloads."
+      },
+      {
+        "name": "block",
+        "description": "Block-level payload returned by neardata."
+      },
+      {
+        "name": "BlockEnvelope",
+        "description": "Block-level payload returned by neardata."
+      },
+      {
+        "name": "author",
+        "description": "Block producer account ID."
+      },
+      {
+        "name": "ChunkHeader",
+        "description": "Chunk header object as served by neardata."
+      },
+      {
+        "name": "header",
+        "description": "Block header object as served by neardata."
+      },
+      {
+        "name": "BlockHeader",
+        "description": "Block header object as served by neardata."
+      },
+      {
+        "name": "ShardDocument",
+        "description": "Per-shard payload returned by neardata for a block."
+      },
+      {
+        "name": "chunk",
+        "description": "Chunk payload returned by neardata for a single shard in a selected block."
+      },
+      {
+        "name": "ChunkDocument",
+        "description": "Chunk payload returned by neardata for a single shard in a selected block."
+      },
+      {
+        "name": "author",
+        "description": "Chunk producer account ID."
+      },
+      {
+        "name": "header",
+        "description": "Chunk header object as served by neardata."
+      },
+      {
+        "name": "ReceiptDocument",
+        "description": "Receipt object as served by neardata inside a chunk payload."
+      },
+      {
+        "name": "ChunkTransactionWrapper",
+        "description": "Transaction entry returned inside a neardata chunk."
+      },
+      {
+        "name": "outcome",
+        "description": "Execution result paired with an optional receipt object."
+      },
+      {
+        "name": "ExecutionWithReceipt",
+        "description": "Execution result paired with an optional receipt object."
+      },
+      {
+        "name": "receipt",
+        "description": "Receipt payload when neardata includes it for this entry."
+      },
+      {
+        "name": "StateChangeItem",
+        "description": "State change entry returned by neardata for a shard."
+      }
+    ]
   },
   "neardata-v0-last-block-optimistic": {
     "description": "Redirect to the most recent optimistic block — the freshest-possible tip, ahead of final settlement.",
@@ -623,7 +1029,81 @@
         "description": "Optional FastNEAR subscription API key. Invalid values may return `401` before redirect handling."
       }
     ],
-    "response": "Full block document returned after automatic redirect following Redirect to the latest block block URL Invalid or unauthorized API key Cache or internal data error"
+    "response": "Full block document returned after automatic redirect following Redirect to the latest block block URL Invalid or unauthorized API key Cache or internal data error",
+    "schema": [
+      {
+        "name": "BlockDocument",
+        "description": "Full block document as served by neardata, including the block envelope and per-shard payloads."
+      },
+      {
+        "name": "block",
+        "description": "Block-level payload returned by neardata."
+      },
+      {
+        "name": "BlockEnvelope",
+        "description": "Block-level payload returned by neardata."
+      },
+      {
+        "name": "author",
+        "description": "Block producer account ID."
+      },
+      {
+        "name": "ChunkHeader",
+        "description": "Chunk header object as served by neardata."
+      },
+      {
+        "name": "header",
+        "description": "Block header object as served by neardata."
+      },
+      {
+        "name": "BlockHeader",
+        "description": "Block header object as served by neardata."
+      },
+      {
+        "name": "ShardDocument",
+        "description": "Per-shard payload returned by neardata for a block."
+      },
+      {
+        "name": "chunk",
+        "description": "Chunk payload returned by neardata for a single shard in a selected block."
+      },
+      {
+        "name": "ChunkDocument",
+        "description": "Chunk payload returned by neardata for a single shard in a selected block."
+      },
+      {
+        "name": "author",
+        "description": "Chunk producer account ID."
+      },
+      {
+        "name": "header",
+        "description": "Chunk header object as served by neardata."
+      },
+      {
+        "name": "ReceiptDocument",
+        "description": "Receipt object as served by neardata inside a chunk payload."
+      },
+      {
+        "name": "ChunkTransactionWrapper",
+        "description": "Transaction entry returned inside a neardata chunk."
+      },
+      {
+        "name": "outcome",
+        "description": "Execution result paired with an optional receipt object."
+      },
+      {
+        "name": "ExecutionWithReceipt",
+        "description": "Execution result paired with an optional receipt object."
+      },
+      {
+        "name": "receipt",
+        "description": "Receipt payload when neardata includes it for this entry."
+      },
+      {
+        "name": "StateChangeItem",
+        "description": "State change entry returned by neardata for a shard."
+      }
+    ]
   },
   "rpc-block-by-height": {
     "description": "Fetch a block's header and chunk summaries by its height in the chain.",
@@ -662,11 +1142,11 @@
     ]
   },
   "rpc-broadcast-tx-async": {
-    "description": "Submit a Base64-encoded signed transaction and immediately get its hash — no wait for execution.",
+    "description": "Submit a freshly signed transaction and immediately get its hash — no wait for execution. Default examples are illustrative only and are not reusable signed payloads.",
     "parameters": [
       {
         "name": "signed_tx_base64",
-        "description": "Base64-encoded signed transaction"
+        "description": "Base64-encoded signed transaction. Generate a fresh signed payload for the signing account immediately before submission or status lookup."
       },
       {
         "name": "wait_until",
@@ -682,11 +1162,11 @@
     ]
   },
   "rpc-broadcast-tx-commit": {
-    "description": "Submit a Base64-encoded signed transaction and wait for its commit — the legacy synchronous send, superseded by `send_tx`.",
+    "description": "Submit a freshly signed transaction and wait for its commit — the legacy synchronous send, superseded by `send_tx`. Default examples are illustrative only and are not reusable signed payloads.",
     "parameters": [
       {
         "name": "signed_tx_base64",
-        "description": "Base64-encoded signed transaction"
+        "description": "Base64-encoded signed transaction. Generate a fresh signed payload for the signing account immediately before submission or status lookup."
       },
       {
         "name": "wait_until",
@@ -730,7 +1210,7 @@
       },
       {
         "name": "args_base64",
-        "description": "Base64-encoded method arguments"
+        "description": "Base64-encoded raw method arguments. JSON-based contracts typically expect UTF-8 bytes of the JSON payload; the example `e30=` is `{}`."
       },
       {
         "name": "method_name",
@@ -1564,7 +2044,7 @@
       },
       {
         "name": "signed_tx_base64",
-        "description": "Base64-encoded signed transaction"
+        "description": "Base64-encoded signed transaction. Generate a fresh signed payload for the signing account immediately before submission or status lookup."
       },
       {
         "name": "sender_account_id",
@@ -1948,11 +2428,11 @@
     ]
   },
   "rpc-send-tx": {
-    "description": "Submit a Base64-encoded signed transaction and wait for its final execution outcome — the current synchronous send.",
+    "description": "Submit a freshly signed transaction and wait for its final execution outcome — the current synchronous send. Default examples are illustrative only and are not reusable signed payloads.",
     "parameters": [
       {
         "name": "signed_tx_base64",
-        "description": "Base64-encoded signed transaction"
+        "description": "Base64-encoded signed transaction. Generate a fresh signed payload for the signing account immediately before submission or status lookup."
       },
       {
         "name": "wait_until",
@@ -2078,7 +2558,7 @@
       },
       {
         "name": "signed_tx_base64",
-        "description": "Base64-encoded signed transaction"
+        "description": "Base64-encoded signed transaction. Generate a fresh signed payload for the signing account immediately before submission or status lookup."
       },
       {
         "name": "sender_account_id",
@@ -2360,7 +2840,7 @@
       },
       {
         "name": "prefix_base64",
-        "description": "Base64-encoded storage key"
+        "description": "Base64-encoded storage key prefix. Use an empty string (`\"\"`) to remove the prefix filter and return all matching contract state values. Large contracts can produce very large responses when no prefix is set."
       }
     ],
     "response": "Successful response",
