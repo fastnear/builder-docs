@@ -2,7 +2,7 @@
 sidebar_position: 2
 slug: /snapshots
 title: Validator snapshots
-description: Snapshot download paths for FastNear-backed NEAR node bootstrap and recovery workflows.
+description: Current FastNear snapshot status and operator guidance for NEAR node bootstrap and archival snapshot requests.
 sidebar_label: Snapshots Overview
 displayed_sidebar: snapshotsSidebars
 keywords:
@@ -21,16 +21,23 @@ import SimpleButton from '@site/src/components/SimpleButton';
 This section is for node operators who are bootstrapping or recovering NEAR infrastructure. It is not an application-data surface. If the job is reading balances, history, blocks, or contract state, use the API and RPC docs instead of snapshot workflows.
 
 :::warning[Free snapshots are deprecated]
-The free nearcore data snapshots have been deprecated.
+The free nearcore data snapshots were deprecated on June 1, 2025.
 
 The NEAR Infrastructure Committee and Near One recommend Epoch Sync plus decentralized state sync. Use <Link to="https://near-nodes.io">NEAR Nodes</Link> for the current operator guidance and recommended bootstrap posture.
 :::
 
+## Current status
+
+- FastNear does not currently publish a working public self-serve snapshot download flow from this docs site.
+- For regular RPC nodes and validators, follow <Link to="https://near-nodes.io">NEAR Nodes</Link> and use the current Epoch Sync plus decentralized state sync guidance.
+- For archival snapshot access, visit <Link to="https://fastnear.com/snapshots">fastnear.com/snapshots</Link> or email <Link to="mailto:snapshots@fastnear.com">snapshots@fastnear.com</Link>.
+- The legacy scripts in <Link to="https://github.com/fastnear/static">fastnear/static</Link> still exist, but the old public `latest.txt` discovery flow is no longer the supported public path here.
+
 ## Use this section when
 
-- you need to bootstrap a mainnet or testnet node from snapshot data
-- you are recovering an RPC or archival node
-- you already know you want the FastNear snapshot download path
+- you are confirming the current FastNear snapshot posture for mainnet or testnet
+- you need the right request path for archival snapshot access
+- you are deciding whether to use snapshots or the standard NEAR node bootstrap guidance
 
 ## Do not use this section when
 
@@ -40,29 +47,9 @@ The NEAR Infrastructure Committee and Near One recommend Epoch Sync plus decentr
 
 In those cases, use [RPC Reference](/rpc), [FastNear API](/api), [Transactions API](/tx), or [NEAR Data API](/neardata).
 
-## Before you download
-
-- Choose the network first: mainnet or testnet.
-- Decide whether you need regular RPC data or archival data.
-- Make sure you understand where hot and cold data must live before starting an archival download.
-- Install `rclone`, because the download scripts depend on it.
-
-:::info[Getting `rclone`]
-Install `rclone` with:
-
-```bash
-sudo -v ; curl https://rclone.org/install.sh | sudo bash
-```
-:::
-
-## What each path covers
-
-- **Mainnet** includes optimized `fast-rpc`, standard RPC, and archival hot/cold download paths.
-- **Testnet** includes RPC and archival snapshot paths for testnet operators.
-
-See <Link to="https://github.com/near/nearcore?tab=readme-ov-file#about-near">nearcore</Link> for node requirements, and <Link to="https://github.com/fastnear/static">fastnear/static</Link> for the snapshot download script source used by these guides.
-
 ## Choose a network
+
+Use the network pages below for the current status and escalation path. They no longer assume a public self-serve download URL.
 
 <div style={{display: 'flex', flexWrap: 'wrap', gap: '1rem', margin: '2rem 0'}}>
   <SimpleButton to="/snapshots/mainnet">Mainnet Snapshots</SimpleButton>

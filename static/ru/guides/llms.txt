@@ -33,6 +33,6 @@
 
 ## Снапшоты
 
-- [Снапшоты для валидаторов](https://docs.fastnear.com/ru/snapshots.md): Пути загрузки снапшотов FastNear для подъёма и восстановления узлов NEAR.
-- [mainnet](https://docs.fastnear.com/ru/snapshots/mainnet.md): Скачайте RPC- и архивные снапшоты mainnet для быстрого развёртывания NEAR-инфраструктуры на базе FastNear.
-- [testnet](https://docs.fastnear.com/ru/snapshots/testnet.md): Скачайте RPC- и архивные снапшоты testnet для быстрого развёртывания NEAR-инфраструктуры на базе FastNear.
+- [Снапшоты для валидаторов](https://docs.fastnear.com/ru/snapshots.md): Текущий статус снапшотов FastNear и рекомендации для подъёма узлов NEAR и запросов архивных снапшотов.
+- [mainnet](https://docs.fastnear.com/ru/snapshots/mainnet.md): Текущая позиция FastNear по снапшотам mainnet для RPC-подъёма и запросов архивных снапшотов.
+- [testnet](https://docs.fastnear.com/ru/snapshots/testnet.md): Текущая позиция FastNear по снапшотам testnet для RPC-подъёма и запросов архивных снапшотов.
