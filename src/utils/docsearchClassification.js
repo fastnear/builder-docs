@@ -325,6 +325,7 @@ module.exports = {
   getDocsearchFamily,
   getDocsearchMethodType,
   getDocsearchPageType,
+  getDocsearchSurface,
   getDocsearchSemanticMeta,
   getOperationSemanticMeta,
   isPublicDocsPermalink,
