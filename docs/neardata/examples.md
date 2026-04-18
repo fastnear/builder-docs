@@ -1,116 +1,22 @@
 ---
 sidebar_label: Examples
 slug: /neardata/examples
-title: NEAR Data API Examples
-description: Plain-language workflows for using NEAR Data API docs for polling, redirect helpers, and escalation to canonical RPC inspection.
+title: NEAR Data Examples
+description: Plain-language workflows for polling optimistic and finalized blocks and handing off to RPC when needed.
 displayed_sidebar: nearDataApiSidebar
 page_actions:
   - markdown
 ---
 
-# NEAR Data API Examples
-
-Use this page when freshness matters more than protocol-native exactness. NEAR Data API is for polling and recent block-family reads: start with the freshest or most stable block mode that matches the job, stay on the polling-oriented surface as long as it answers the question, and widen to RPC only when canonical block or state semantics become necessary.
-
-## When to start here
-
-- You want recent optimistic or finalized block-family data.
-- You are building a polling client, monitor, or freshness check.
-- Redirect helpers are acceptable or useful in your client flow.
-- The job is about “what changed recently?” rather than canonical historical confirmation.
-
-## Minimum inputs
-
-- network
-- freshness mode: optimistic or finalized
-- whether you have a specific height/hash or want the latest block-family object
-- whether the client can follow redirects cleanly
-- whether a later RPC follow-up may be required
-
-## Common jobs
-
-### Monitor the optimistic head
-
-**Start here**
-
-- [Optimistic block](/neardata/block-optimistic) for the freshest block-family read.
-
-**Next page if needed**
-
-- [Last optimistic block redirect](/neardata/last-block-optimistic) if your client wants a helper route that always points at the newest optimistic block.
-
-**Stop when**
-
-- You can report the latest optimistic head or detect freshness drift.
-
-**Widen when**
-
-- The user needs finalized stability instead of maximum freshness. Move to [Final block by height](/neardata/block) or [Last final block redirect](/neardata/last-block-final).
-
-### Track finalized block progress safely
-
-**Start here**
-
-- [Final block by height](/neardata/block) when you already know the height you want to confirm.
-- [Block headers](/neardata/block-headers) when header-level polling is enough.
-
-**Next page if needed**
-
-- [Last final block redirect](/neardata/last-block-final) when the client should follow the newest finalized block without computing the height first.
-
-**Stop when**
-
-- You can show finalized progress without pulling in deeper protocol detail.
-
-**Widen when**
-
-- The user needs exact canonical block fields or transaction semantics. Move to [RPC Reference](/rpc).
-
-### Use redirect helpers in a polling client
-
-**Start here**
-
-- [Last final block redirect](/neardata/last-block-final) or [Last optimistic block redirect](/neardata/last-block-optimistic) depending on the freshness requirement.
-
-**Next page if needed**
-
-- Follow the canonical target returned by the helper and continue reading the block-family payload there.
-
-**Stop when**
-
-- The client can reliably follow the helper route and consume the final block resource.
-
-**Widen when**
-
-- Redirect behavior itself becomes a problem for the client. Move to the direct block routes instead.
-
-### Escalate from fresh block polling to canonical RPC inspection
-
-**Start here**
-
-- Use the relevant NEAR Data block route to find the recent block or block-family event of interest.
-
-**Next page if needed**
-
-- [Block by Height](/rpc/block/block-by-height), [Block by ID](/rpc/block/block-by-id), or another RPC method once you know the exact block or follow-up object you need.
-
-**Stop when**
-
-- You can clearly name the recent block that deserves canonical follow-up.
-
-**Widen when**
-
-- The user asks for exact protocol-native structure, not just freshness-oriented reads.
-
 ## Worked investigation
 
-### Start with an optimistic block, then confirm the finalized and canonical story
+### Catch a new block early, then confirm it after finality
 
-Use this investigation when you need early detection from the optimistic head, but the final answer still needs a stable finalized view and, sometimes, canonical RPC confirmation.
+Use this investigation when you want to notice a new block as early as possible, but the final answer still needs a finalized block and sometimes an exact RPC read.
 
 **Goal**
 
-- Catch a recent change quickly, then narrow it into a finalized and canonical block story without overfetching.
+- Notice a recent block quickly, then check the same thing again once finality catches up.
 
 | Surface | Endpoint | How we use it | Why we use it |
 | --- | --- | --- | --- |
@@ -118,17 +24,17 @@ Use this investigation when you need early detection from the optimistic head, b
 | Latest optimistic helper | NEAR Data [`last-block-optimistic`](/neardata/last-block-optimistic) | Use the redirect helper when the client should always follow the newest optimistic target | Keeps the polling client simple when “latest” matters more than explicit heights |
 | Stable confirmation | NEAR Data [`block`](/neardata/block) or [`last-block-final`](/neardata/last-block-final) | Re-check the same block family once finality catches up | Confirms that the observed optimistic change survived into finalized history |
 | Light block summary | NEAR Data [`block-headers`](/neardata/block-headers) | Read header-level data if only timing or progression is needed | Avoids wider block payloads when header-level confirmation is enough |
-| Canonical follow-up | RPC [Block by ID](/rpc/block/block-by-id) or [Block by Height](/rpc/block/block-by-height) | Fetch the exact canonical block once you know which one matters | Moves from freshness-oriented reads to protocol-native confirmation only when necessary |
+| Exact RPC follow-up | RPC [Block by ID](/rpc/block/block-by-id) or [Block by Height](/rpc/block/block-by-height) | Fetch the exact block once you know which one matters | This is the point where RPC becomes useful if you need the protocol's own block object |
 
 **What a useful answer should include**
 
 - which optimistic observation first triggered the investigation
 - when the same observation became finalized
-- whether canonical RPC inspection changed the interpretation
+- whether the exact RPC block changed the interpretation
 
 ### Shell walkthrough
 
-Use this when you want the polling helper to choose the latest finalized block for you, but the follow-up still needs canonical RPC confirmation.
+Use this when you want the helper route to pick the latest finalized block for you, but you still want to confirm the exact block in RPC.
 
 **What you're doing**
 
@@ -170,12 +76,87 @@ curl -s "$RPC_URL" \
 
 **Why this next step?**
 
-The redirect helper is the easiest polling surface for “latest finalized.” Once it tells you the exact block height, RPC becomes the right place to ask for canonical block semantics without guessing which block to inspect.
+The redirect helper is the easiest way to poll for “latest finalized.” Once it gives you a concrete block height, RPC is the natural next read if you want the exact block object the protocol would return.
+
+## Common jobs
+
+### Monitor the optimistic head
+
+**Start here**
+
+- [Optimistic block](/neardata/block-optimistic) for the freshest block-family read.
+
+**Next page if needed**
+
+- [Last optimistic block redirect](/neardata/last-block-optimistic) if your client wants a helper route that always points at the newest optimistic block.
+
+**Stop when**
+
+- You can report the latest optimistic head or detect freshness drift.
+
+**Switch when**
+
+- The user needs finalized stability instead of maximum freshness. Move to [Final block by height](/neardata/block) or [Last final block redirect](/neardata/last-block-final).
+
+### Track finalized block progress safely
+
+**Start here**
+
+- [Final block by height](/neardata/block) when you already know the height you want to confirm.
+- [Block headers](/neardata/block-headers) when header-level polling is enough.
+
+**Next page if needed**
+
+- [Last final block redirect](/neardata/last-block-final) when the client should follow the newest finalized block without computing the height first.
+
+**Stop when**
+
+- You can show finalized progress without pulling in deeper protocol detail.
+
+**Switch when**
+
+- The user needs exact block fields or transaction semantics. Move to [RPC Reference](/rpc).
+
+### Use redirect helpers in a polling client
+
+**Start here**
+
+- [Last final block redirect](/neardata/last-block-final) or [Last optimistic block redirect](/neardata/last-block-optimistic) depending on the freshness requirement.
+
+**Next page if needed**
+
+- Follow the block URL returned by the helper and keep reading from there.
+
+**Stop when**
+
+- The client can reliably follow the helper route and consume the final block resource.
+
+**Switch when**
+
+- Redirect behavior itself becomes a problem for the client. Move to the direct block routes instead.
+
+### Move from recent block polling to exact RPC inspection
+
+**Start here**
+
+- Use the relevant NEAR Data block route to find the recent block or block-family event of interest.
+
+**Next page if needed**
+
+- [Block by Height](/rpc/block/block-by-height), [Block by ID](/rpc/block/block-by-id), or another RPC method once you know the exact block or follow-up object you need.
+
+**Stop when**
+
+- You can clearly name the recent block that deserves RPC follow-up.
+
+**Switch when**
+
+- The user asks for the exact protocol structure, not just recent block polling.
 
 ## Common mistakes
 
-- Treating NEAR Data API as a streaming product instead of a polling surface.
-- Starting with canonical RPC when the real need is a recent block monitor.
+- Treating NEAR Data like a push stream instead of a polling API.
+- Starting with RPC when the real need is a recent block monitor.
 - Forgetting that redirect helpers may return `401` before redirecting if the key is invalid, or may be awkward for some HTTP clients.
 - Staying on NEAR Data when the user has already asked for exact protocol-native block details.
 

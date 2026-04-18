@@ -10,110 +10,7 @@ page_actions:
 
 # RPC Examples
 
-Use this page when you already know the answer needs canonical RPC behavior and you want the shortest doc path to get there. The goal is not to memorize every method. It is to pick the right starting page, stop as soon as the RPC result answers the question, and widen only when a higher-level surface would help.
-
-## When to start here
-
-- The user asked for exact on-chain state or protocol-native fields.
-- You need a direct contract view call or transaction submission flow.
-- You are inspecting blocks, chunks, validators, or protocol metadata.
-- Correctness depends on node semantics rather than indexed summary data.
-
-## Minimum inputs
-
-- network: mainnet or testnet
-- primary identifier: `account_id`, public key, contract ID plus method, transaction hash, or block height/hash
-- whether you need current state, historical state, or submission/finality behavior
-- whether the result should stay canonical or become a human-friendly summary afterward
-
-## Common jobs
-
-### Check exact account or access-key state
-
-**Start here**
-
-- [View Account](/rpc/account/view-account) for canonical account fields.
-- [View Access Key](/rpc/account/view-access-key) or [View Access Key List](/rpc/account/view-access-key-list) for key inspection.
-
-**Next page if needed**
-
-- [FastNear API full account view](/api/v1/account-full) if you need a wallet-style summary after confirming the canonical state.
-- [Transactions API account history](/tx/account) if the next question is "what has this account been doing?"
-
-**Stop when**
-
-- The RPC fields already answer the state or permission question.
-
-**Widen when**
-
-- The user wants balances, NFTs, staking, or other product-shaped output.
-- The user really wants recent activity history rather than current canonical state.
-
-### Inspect a block or protocol snapshot
-
-**Start here**
-
-- [Block by ID](/rpc/block/block-by-id) or [Block by Height](/rpc/block/block-by-height) for a specific block.
-- [Latest Block](/rpc/protocol/latest-block) for the current canonical head.
-- [Status](/rpc/protocol/status), [Health](/rpc/protocol/health), or [Network Info](/rpc/protocol/network-info) for node and network diagnostics.
-
-**Next page if needed**
-
-- [Block Effects](/rpc/block/block-effects) if the block lookup needs state-change context.
-- [Transactions API block history](/tx/block) or [Transactions API block range](/tx/blocks) if you need a more readable execution window.
-
-**Stop when**
-
-- The canonical block or protocol payload answers the question directly.
-
-**Widen when**
-
-- The user wants recent polling-oriented block data instead of one canonical snapshot. Move to [NEAR Data API](/neardata).
-- The user needs a history story across many transactions, not just one block payload. Move to [Transactions API](/tx).
-
-### Run a contract view call
-
-**Start here**
-
-- [Call Function](/rpc/contract/call-function) for a contract view method.
-- [View State](/rpc/contract/view-state) when the question is about raw contract storage.
-- [View Code](/rpc/contract/view-code) if code presence or hash is the real question.
-
-**Next page if needed**
-
-- [FastNear API](/api) if the user actually wants a product-shaped answer such as holdings or account summary after the raw call.
-- [KV FastData API](/fastdata/kv) if the next task is indexed key-value history rather than an exact RPC state read.
-
-**Stop when**
-
-- The contract view result already answers the question in canonical form.
-
-**Widen when**
-
-- The user wants indexed history or a simpler summary instead of raw contract output.
-- The user starts asking "what changed over time?" rather than "what does it return right now?"
-
-### Send and confirm a transaction
-
-**Start here**
-
-- [Send Transaction](/rpc/transaction/send-tx) when you want canonical submission behavior with explicit waiting semantics.
-- [Broadcast Transaction Async](/rpc/transaction/broadcast-tx-async) or [Broadcast Transaction Commit](/rpc/transaction/broadcast-tx-commit) when those exact submission modes are the point.
-- [Transaction Status](/rpc/transaction/tx-status) to confirm the canonical result.
-
-**Next page if needed**
-
-- [Transactions by Hash](/tx/transactions) for a readable history record after submission.
-- [Receipt Lookup](/tx/receipt) when you need to investigate downstream execution or callback flow.
-
-**Stop when**
-
-- You have the submission result and final canonical status you needed.
-
-**Widen when**
-
-- The next question is about receipts, affected accounts, or execution history in a human-friendly order.
-- You need a broader investigation workflow instead of one canonical status check.
+Use this page when you already know the answer lives in RPC and you want the shortest path to it. The goal is not to memorize every method. It is to start with the right RPC read or write, stop as soon as the response answers the question, and only switch to a higher-level API when that would save time.
 
 ## Worked walkthroughs
 
@@ -123,7 +20,7 @@ Use this when you know an account has accumulated older `social.near` function-c
 
 **What you're doing**
 
-- Use canonical RPC to list every access key on the account.
+- Use RPC itself to list every access key on the account.
 - Narrow that list to function-call keys scoped to `social.near`.
 - Inspect one candidate key exactly before you delete it.
 - Build and sign a `DeleteKey` transaction with a full-access key, then submit it through RPC and verify the key is gone.
@@ -358,7 +255,7 @@ fi
 
 **Why this next step?**
 
-Re-running `view_access_key_list` closes the loop on the same canonical surface you used for discovery. If the delete succeeded there, you do not need a higher-level indexed summary to prove the cleanup.
+Re-running `view_access_key_list` closes the loop on the same RPC method you used for discovery. If the delete succeeded there, you do not need an indexed API to prove the cleanup.
 
 ### Register FT storage if needed, then transfer tokens
 
@@ -377,10 +274,10 @@ This walkthrough uses the safe public contract `ft.predeployed.examples.testnet`
 
 **What you're doing**
 
-- Use canonical RPC view calls to check whether the receiver already has FT storage on the contract.
+- Use exact RPC view calls to check whether the receiver already has FT storage on the contract.
 - If needed, fetch the minimum storage requirement.
 - Sign and submit `storage_deposit`, then `ft_transfer`.
-- Verify the receiver balance with the same contract’s canonical view method.
+- Verify the receiver balance with the same contract’s own view method.
 
 ```bash
 export NETWORK_ID=testnet
@@ -627,7 +524,7 @@ curl -s "$RPC_URL" \
     }'
 ```
 
-6. Verify the receiver’s FT balance with the contract’s canonical view method.
+6. Verify the receiver’s FT balance with the contract’s own view method.
 
 ```bash
 RECEIVER_BALANCE_ARGS_BASE64="$(
@@ -659,7 +556,422 @@ curl -s "$RPC_URL" \
 
 **Why this next step?**
 
-This is a canonical RPC example because every step stays on exact contract state and exact transaction submission semantics: first prove storage state, then submit the minimum required change calls, then verify the post-transfer state directly on the contract.
+This is a good RPC example because every step stays close to the contract itself: first check storage state, then send the minimum required change calls, then verify the post-transfer balance directly on the contract.
+
+### Can this account still publish to NEAR Social right now?
+
+Use this when the user story is “I’m about to publish a profile change, widget update, or graph write under `mike.near`, and I want a plain go/no-go answer before I open wallet signing.”
+
+This is the same question real NEAR Social clients have to answer before they try a write:
+
+- does the target account already have storage on `social.near`?
+- if it does, is there still room left in that storage?
+- if a different signer is trying to write under that account, has write permission already been granted?
+
+**Official references**
+
+- [SocialDB API and contract surface](https://github.com/NearSocial/social-db#api)
+
+**What you're doing**
+
+- Check that the signer account itself exists and can pay gas.
+- Ask `social.near` how much storage the target account has left.
+- If the signer differs from the target account, ask `social.near` whether that delegated write is already allowed.
+- Turn those exact RPC answers into one simple “ready now” or “fix this first” summary.
+
+```bash
+export NETWORK_ID=mainnet
+export RPC_URL=https://rpc.mainnet.fastnear.com
+export SOCIAL_CONTRACT_ID=social.near
+export ACCOUNT_ID=mike.near
+export SIGNER_ACCOUNT_ID=mike.near
+```
+
+1. Check the signer account itself first.
+
+```bash
+curl -s "$RPC_URL" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc --arg account_id "$SIGNER_ACCOUNT_ID" '{
+    jsonrpc: "2.0",
+    id: "fastnear",
+    method: "query",
+    params: {
+      request_type: "view_account",
+      account_id: $account_id,
+      finality: "final"
+    }
+  }')" \
+  | tee /tmp/social-publish-signer.json >/dev/null
+
+jq --arg signer_account_id "$SIGNER_ACCOUNT_ID" '{
+  signer_account_id: $signer_account_id,
+  amount: .result.amount,
+  locked: .result.locked,
+  storage_usage: .result.storage_usage
+}' /tmp/social-publish-signer.json
+```
+
+If this query fails, you do not have a signer account to work with. If it succeeds, you know the signer exists and can at least pay gas.
+
+2. Ask `social.near` how much storage is already available for the account you want to write under.
+
+```bash
+SOCIAL_STORAGE_ARGS_BASE64="$(
+  jq -nc --arg account_id "$ACCOUNT_ID" '{
+    account_id: $account_id
+  }' | base64 | tr -d '\n'
+)"
+
+curl -s "$RPC_URL" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc \
+    --arg account_id "$SOCIAL_CONTRACT_ID" \
+    --arg args_base64 "$SOCIAL_STORAGE_ARGS_BASE64" '{
+      jsonrpc: "2.0",
+      id: "fastnear",
+      method: "query",
+      params: {
+        request_type: "call_function",
+        account_id: $account_id,
+        method_name: "get_account_storage",
+        args_base64: $args_base64,
+        finality: "final"
+      }
+    }')" \
+  | tee /tmp/social-account-storage.json >/dev/null
+
+jq --arg account_id "$ACCOUNT_ID" '{
+  account_id: $account_id,
+  storage: (.result.result | implode | fromjson),
+  storage_ready: ((.result.result | implode | fromjson | .available_bytes) > 0)
+}' /tmp/social-account-storage.json
+```
+
+If `available_bytes` is greater than zero, storage is not the blocker. If this method returns `null` or `available_bytes` is zero, the account needs a `storage_deposit` top-up before a new write can land.
+
+3. If the signer is different from the target account, check delegated write permission too.
+
+```bash
+if [ "$SIGNER_ACCOUNT_ID" = "$ACCOUNT_ID" ]; then
+  jq -n --arg account_id "$ACCOUNT_ID" '{
+    account_id: $account_id,
+    signer_matches_target: true,
+    permission_granted: true,
+    reason: "owner write"
+  }'
+else
+  WRITE_PERMISSION_ARGS_BASE64="$(
+    jq -nc \
+      --arg predecessor_id "$SIGNER_ACCOUNT_ID" \
+      --arg key "$ACCOUNT_ID" '{
+        predecessor_id: $predecessor_id,
+        key: $key
+      }' | base64 | tr -d '\n'
+  )"
+
+  curl -s "$RPC_URL" \
+    -H 'content-type: application/json' \
+    --data "$(jq -nc \
+      --arg account_id "$SOCIAL_CONTRACT_ID" \
+      --arg args_base64 "$WRITE_PERMISSION_ARGS_BASE64" '{
+        jsonrpc: "2.0",
+        id: "fastnear",
+        method: "query",
+        params: {
+          request_type: "call_function",
+          account_id: $account_id,
+          method_name: "is_write_permission_granted",
+          args_base64: $args_base64,
+          finality: "final"
+        }
+      }')" \
+    | jq '{
+        signer_matches_target: false,
+        permission_granted: (.result.result | implode | fromjson)
+      }'
+fi
+```
+
+4. Turn the storage and permission checks into one readable answer.
+
+```bash
+AVAILABLE_BYTES="$(
+  jq -r '
+    .result.result
+    | if length == 0 then "0"
+      else (implode | fromjson | .available_bytes // 0 | tostring)
+      end
+  ' /tmp/social-account-storage.json
+)"
+
+if [ "$SIGNER_ACCOUNT_ID" = "$ACCOUNT_ID" ]; then
+  PERMISSION_GRANTED=true
+else
+  PERMISSION_GRANTED="$(
+    curl -s "$RPC_URL" \
+      -H 'content-type: application/json' \
+      --data "$(jq -nc \
+        --arg account_id "$SOCIAL_CONTRACT_ID" \
+        --arg args_base64 "$WRITE_PERMISSION_ARGS_BASE64" '{
+          jsonrpc: "2.0",
+          id: "fastnear",
+          method: "query",
+          params: {
+            request_type: "call_function",
+            account_id: $account_id,
+            method_name: "is_write_permission_granted",
+            args_base64: $args_base64,
+            finality: "final"
+          }
+        }')" \
+      | jq -r '.result.result | implode | fromjson'
+  )"
+fi
+
+jq -n \
+  --arg account_id "$ACCOUNT_ID" \
+  --arg signer_account_id "$SIGNER_ACCOUNT_ID" \
+  --argjson available_bytes "$AVAILABLE_BYTES" \
+  --argjson permission_granted "$PERMISSION_GRANTED" '{
+    account_id: $account_id,
+    signer_account_id: $signer_account_id,
+    storage_ready: ($available_bytes > 0),
+    permission_ready: $permission_granted,
+    ready_to_publish_now: (($available_bytes > 0) and $permission_granted)
+  }'
+```
+
+If that final object says `ready_to_publish_now: true`, RPC has already answered the question. If it says `false`, you know whether the blocker is storage, delegated permission, or both.
+
+**Why this next step?**
+
+This keeps the whole question on exact on-chain reads. `social.near` itself answers whether the target account has room left and whether a delegated signer is already allowed to write. That is a better NEAR Social readiness check than guessing from wallet state alone.
+
+### Did `efiz.near` really publish `DonateNEARtoEfiz`, and what does it do?
+
+Use this when the user story is lighter and more playful: “my friend says `efiz.near` once published a widget literally called `DonateNEARtoEfiz`. Check whether that is true, then show me what the widget actually does without leaving RPC.”
+
+This one is intentionally fun. It does not teach anything deep about async execution. It just shows how to use exact SocialDB reads to browse a BOS author's catalog and answer one very specific question from live on-chain data.
+
+**Official references**
+
+- [SocialDB API and contract surface](https://github.com/NearSocial/social-db#api)
+
+**What you're doing**
+
+- Ask `social.near` for the widget catalog under `efiz.near`.
+- Keep the block heights, because they tell you when each widget key was last written.
+- Confirm that `DonateNEARtoEfiz` is really there, then read its exact source code through the same contract.
+- End with one clean handoff: if the next question becomes “which transaction wrote this widget?”, switch to the NEAR Social proof recipes in [Transactions Examples](/tx/examples).
+
+```bash
+export NETWORK_ID=mainnet
+export RPC_URL=https://rpc.mainnet.fastnear.com
+export SOCIAL_CONTRACT_ID=social.near
+export ACCOUNT_ID=efiz.near
+export WIDGET_NAME=DonateNEARtoEfiz
+```
+
+1. List the widget catalog and keep the last-write block heights.
+
+```bash
+WIDGET_KEYS_ARGS_BASE64="$(
+  jq -nc --arg account_id "$ACCOUNT_ID" '{
+    keys: [($account_id + "/widget/*")],
+    options: {return_type: "BlockHeight"}
+  }' | base64 | tr -d '\n'
+)"
+
+curl -s "$RPC_URL" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc \
+    --arg account_id "$SOCIAL_CONTRACT_ID" \
+    --arg args_base64 "$WIDGET_KEYS_ARGS_BASE64" '{
+      jsonrpc: "2.0",
+      id: "fastnear",
+      method: "query",
+      params: {
+        request_type: "call_function",
+        account_id: $account_id,
+        method_name: "keys",
+        args_base64: $args_base64,
+        finality: "final"
+      }
+    }')" \
+  | tee /tmp/social-widget-keys.json >/dev/null
+
+jq --arg account_id "$ACCOUNT_ID" '
+  .result.result
+  | implode
+  | fromjson
+  | .[$account_id].widget
+  | to_entries
+  | sort_by(.value * -1)
+  | map({
+      widget_name: .key,
+      last_write_block: .value
+    })
+  | .[0:20]
+' /tmp/social-widget-keys.json
+```
+
+That gives you a compact BOS inventory. At the time of writing, `efiz.near` had a wonderfully eclectic widget catalog including names like `ReversedFeed`, `HelloWorld`, `PotlockDonateAll`, and `DonateNEARtoEfiz`, but the live query is the real source of truth.
+
+2. Confirm that `DonateNEARtoEfiz` is really in the catalog, then print the exact source stored in SocialDB.
+
+```bash
+WIDGET_GET_ARGS_BASE64="$(
+  jq -nc \
+    --arg account_id "$ACCOUNT_ID" \
+    --arg widget_name "$WIDGET_NAME" '{
+      keys: [($account_id + "/widget/" + $widget_name)]
+    }' | base64 | tr -d '\n'
+)"
+
+curl -s "$RPC_URL" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc \
+    --arg account_id "$SOCIAL_CONTRACT_ID" \
+    --arg args_base64 "$WIDGET_GET_ARGS_BASE64" '{
+      jsonrpc: "2.0",
+      id: "fastnear",
+      method: "query",
+      params: {
+        request_type: "call_function",
+        account_id: $account_id,
+        method_name: "get",
+        args_base64: $args_base64,
+        finality: "final"
+      }
+    }')" \
+  | tee /tmp/social-widget-source.json >/dev/null
+
+jq -r \
+  --arg account_id "$ACCOUNT_ID" \
+  --arg widget_name "$WIDGET_NAME" '
+    .result.result
+    | implode
+    | fromjson
+    | .[$account_id].widget[$widget_name]
+    | split("\n")[0:25]
+    | join("\n")
+  ' /tmp/social-widget-source.json
+```
+
+That prints the first 25 lines of the widget source so you can quickly tell what kind of component it is. In the live version at the time of writing, the source initializes `reciever: "efiz.near"` and builds a button that calls `donate` with the chosen amount. The widget name is not subtle.
+
+3. Pull the last-write block for the same widget so you keep one useful historical anchor.
+
+```bash
+jq -r \
+  --arg account_id "$ACCOUNT_ID" \
+  --arg widget_name "$WIDGET_NAME" '
+    .result.result
+    | implode
+    | fromjson
+    | .[$account_id].widget[$widget_name]
+  ' /tmp/social-widget-keys.json \
+  | xargs -I{} printf 'Last write block for %s/%s: %s\n' "$ACCOUNT_ID" "$WIDGET_NAME" "{}"
+```
+
+At the time of writing, the live last-write block for `efiz.near/widget/DonateNEARtoEfiz` was `92543301`.
+
+If your next question becomes “which transaction wrote that version of the widget?”, keep that block height and switch to the NEAR Social proof workflows in [Transactions Examples](/tx/examples).
+
+**Why this next step?**
+
+This is a nice reminder that RPC can be fun, not just forensic. `keys` lets you browse a BOS author's catalog like a developer, and `get` lets you inspect the exact widget body that lives on chain. Sometimes the answer really is “yes, your friend did publish a widget called `DonateNEARtoEfiz`, and here is the code.”
+
+## Common jobs
+
+### Check exact account or access-key state
+
+**Start here**
+
+- [View Account](/rpc/account/view-account) for exact account fields.
+- [View Access Key](/rpc/account/view-access-key) or [View Access Key List](/rpc/account/view-access-key-list) for key inspection.
+
+**Next page if needed**
+
+- [FastNear API full account view](/api/v1/account-full) if you want a readable holdings summary after checking the exact RPC state.
+- [Transactions API account history](/tx/account) if the next question is "what has this account been doing?"
+
+**Stop when**
+
+- The RPC fields already answer the state or permission question.
+
+**Switch when**
+
+- The user wants balances, NFTs, staking, or another readable account summary.
+- The user really wants recent activity history rather than current state.
+
+### Check one exact block or protocol snapshot
+
+**Start here**
+
+- [Block by ID](/rpc/block/block-by-id) or [Block by Height](/rpc/block/block-by-height) when you already know which block you care about.
+- [Latest Block](/rpc/protocol/latest-block) when the question is “what is the current head right now?”
+- [Status](/rpc/protocol/status), [Health](/rpc/protocol/health), or [Network Info](/rpc/protocol/network-info) when the real question is about node or network condition, not transaction history.
+
+**Next page if needed**
+
+- [Block Effects](/rpc/block/block-effects) if the block payload tells you what block you are looking at but not what changed in it.
+- [Transactions API block history](/tx/block) or [Transactions API block range](/tx/blocks) if the question becomes “what actually happened around this block?” rather than “what does this block payload say?”
+
+**Stop when**
+
+- One exact block or protocol response already answers the question directly.
+
+**Switch when**
+
+- The user wants to watch fresh blocks arrive rather than inspect one exact snapshot. Move to [NEAR Data API](/neardata).
+- The user needs a readable story across many transactions, not just one block payload. Move to [Transactions API](/tx).
+
+### What does this contract return right now?
+
+**Start here**
+
+- [Call Function](/rpc/contract/call-function) when you already know the view method you want and just need the exact return value.
+- [View State](/rpc/contract/view-state) when the real question is about raw contract storage or key prefixes, not a method result.
+- [View Code](/rpc/contract/view-code) when the real question is “is there code here at all?” or “which code hash is deployed?”
+
+**Next page if needed**
+
+- [FastNear API](/api) if the raw contract answer is technically correct but the user actually wanted a readable holdings or account summary.
+- [KV FastData API](/fastdata/kv) if the next question becomes “what did this storage key look like over time?” instead of “what is it right now?”
+
+**Stop when**
+
+- The view call, storage read, or code hash already answers the contract question exactly.
+
+**Switch when**
+
+- The user wants indexed history or a simpler summary instead of raw contract output.
+- The user stops asking “what does it return right now?” and starts asking “what changed over time?”
+
+### Send and confirm a transaction
+
+**Start here**
+
+- [Send Transaction](/rpc/transaction/send-tx) when you want RPC submission with explicit waiting semantics.
+- [Broadcast Transaction Async](/rpc/transaction/broadcast-tx-async) or [Broadcast Transaction Commit](/rpc/transaction/broadcast-tx-commit) when those exact submission modes are the point.
+- [Transaction Status](/rpc/transaction/tx-status) to confirm the final result.
+
+**Next page if needed**
+
+- [Transactions by Hash](/tx/transactions) for a readable history record after submission.
+- [Receipt Lookup](/tx/receipt) when you need to investigate downstream execution or callback flow.
+- [Transactions Examples](/tx/examples) when the next question is “one batched action failed, did the earlier actions roll back too?”
+
+**Stop when**
+
+- You have the submission result and final status you needed.
+
+**Switch when**
+
+- The next question is about receipts, affected accounts, or execution history in a human-friendly order.
+- You need a fuller investigation workflow instead of one status check.
 
 ## Common mistakes
 
