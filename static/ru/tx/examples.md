@@ -156,6 +156,388 @@
 - какой минимальный контекст по блоку и аккаунтам нужен, чтобы её объяснить
 - был ли эффект на состояние устойчивым и на какой высоте блока он стал видимым
 
+### Доказать, что `mike.near` установил `profile.name` в `Mike Purvis`, а затем восстановить транзакцию записи профиля в SocialDB
+
+Используйте это расследование, когда история звучит так: «я вижу `Mike Purvis` в профиле NEAR Social аккаунта `mike.near`, но хочу точно доказать, когда это поле было записано и какая транзакция его записала».
+
+**Цель**
+
+- Начать с одного читаемого поля профиля в SocialDB, а затем восстановить точный receipt и исходную транзакцию, которые его записали.
+
+**Официальные ссылки**
+
+- [API и поверхность контракта SocialDB](https://github.com/NearSocial/social-db#api)
+- [Живая поверхность чтения NEAR Social](https://api.near.social)
+
+Этот сценарий следует тому же рецепту доказательства, что и расследование по подписке, но добавляет ещё один важный нюанс SocialDB: для исторического доказательства `:block` на уровне конкретного поля обычно точнее, чем `:block` у родительского объекта. В этом живом примере `mike.near/profile/name` был записан на блоке `78675795`, тогда как более широкий объект `mike.near/profile` позже сдвинулся на другой блок из-за изменений в соседних полях. Роль FastNear в этом сценарии — превратить этот блок уровня поля в receipt, затем в транзакцию и потом в читаемый payload записи.
+
+Для этого живого примера текущее значение `profile.name` равно `Mike Purvis`, блок записи SocialDB на уровне поля равен `78675795`, ID receipt — `2gbAmEEdcCNARuCorquXStftqvWFmPG2GSaMJXFw5qiN`, хеш исходной транзакции — `6zMb9L6rLNufZGUgCmeHTh5LvFsn3R92dPxuubH6MRsZ`, а внешний блок транзакции — `78675794`.
+
+| Поверхность | Эндпоинт | Как используем | Зачем используем |
+| --- | --- | --- | --- |
+| Семантическое чтение поля | NEAR Social `POST /get` | Читаем `mike.near/profile/name` с включёнными метаданными блока | Даёт читаемое значение поля и опорный `:block` SocialDB на уровне поля, где это значение было записано |
+| Мост к receipt | Transactions API [`POST /v0/block`](https://docs.fastnear.com/ru/tx/block) | Используем блок уровня поля из SocialDB с `with_receipts: true`, а затем фильтруем receipt обратно до `mike.near -> social.near` | Превращает блок записи уровня поля в конкретный receipt и хеш исходной транзакции |
+| История транзакции | Transactions API [`POST /v0/transactions`](https://docs.fastnear.com/ru/tx/transactions) | Загружаем исходную транзакцию по хешу и декодируем payload первого `FunctionCall.args` | Доказывает, что базовая запись была вызовом `social.near set`, который нёс `profile.name` и окружающие поля профиля в одном payload |
+| Каноническое подтверждение текущего состояния | RPC [`query(call_function)`](https://docs.fastnear.com/ru/rpc/contract/call-function) | Напрямую вызываем `social.near get` с `final` | Подтверждает, что поле и сейчас имеет это значение, хотя предыдущие шаги уже доказали конкретную историческую запись |
+
+**Что должен включать полезный ответ**
+
+- разрешается ли `mike.near/profile/name` сейчас в `Mike Purvis`
+- высоту блока записи SocialDB на уровне поля (`78675795`) и объяснение, почему для этого вопроса этот якорь лучше, чем блок родительского профиля
+- конкретный ID receipt и хеш исходной транзакции за этой записью
+- доказательство того, что запись была вызовом `set`, который нёс `profile.name` и другие поля профиля в том же payload
+- различие между блоком исполнения receipt (`78675795`) и блоком включения внешней транзакции (`78675794`)
+
+### Shell-сценарий доказательства поля профиля в NEAR Social
+
+Используйте этот сценарий, когда нужен конкретный и воспроизводимый путь доказательства: от читаемого поля профиля в NEAR Social до точной транзакции записи в SocialDB.
+
+**Что вы делаете**
+
+- Читаете текущее поле `profile.name` из NEAR Social и сохраняете блок записи SocialDB на уровне поля.
+- Переиспользуете эту высоту блока в FastNear block receipts, чтобы получить ID receipt и хеш транзакции.
+- Переиспользуете хеш транзакции в `POST /v0/transactions`, чтобы доказать, что payload был записью `social.near set`, несущей `profile.name`.
+- Завершаете каноническим RPC-подтверждением того, что поле всё ещё разрешается в то же значение на `final`.
+
+```bash
+SOCIAL_API_BASE_URL=https://api.near.social
+TX_BASE_URL=https://tx.main.fastnear.com
+RPC_URL=https://rpc.mainnet.fastnear.com
+ACCOUNT_ID=mike.near
+PROFILE_FIELD=profile/name
+```
+
+1. Прочитайте поле профиля из NEAR Social и сохраните блок записи SocialDB на уровне поля.
+
+```bash
+PROFILE_BLOCK_HEIGHT="$(
+  curl -s "$SOCIAL_API_BASE_URL/get" \
+    -H 'content-type: application/json' \
+    --data "$(jq -nc \
+      --arg account_id "$ACCOUNT_ID" \
+      --arg profile_field "$PROFILE_FIELD" '{
+        keys: [($account_id + "/" + $profile_field)],
+        options: {with_block_height: true}
+      }')" \
+    | tee /tmp/mike-profile-name.json \
+    | jq -r --arg account_id "$ACCOUNT_ID" \
+        '.[ $account_id ].profile.name[":block"]'
+)"
+
+jq --arg account_id "$ACCOUNT_ID" '{
+  current_name: .[$account_id].profile.name[""],
+  field_block_height: .[$account_id].profile.name[":block"],
+  parent_profile_block_height: .[$account_id].profile[":block"]
+}' /tmp/mike-profile-name.json
+
+# Ожидаемое current_name: "Mike Purvis"
+# Ожидаемая высота блока уровня поля: 78675795
+```
+
+2. Переиспользуйте эту высоту блока в FastNear block receipts и восстановите мост к receipt и транзакции.
+
+```bash
+PROFILE_TX_HASH="$(
+  curl -s "$TX_BASE_URL/v0/block" \
+    -H 'content-type: application/json' \
+    --data "$(jq -nc --argjson block_id "$PROFILE_BLOCK_HEIGHT" '{
+      block_id: $block_id,
+      with_transactions: false,
+      with_receipts: true
+    }')" \
+    | tee /tmp/mike-profile-block.json \
+    | jq -r --arg account_id "$ACCOUNT_ID" '
+        first(
+          .block_receipts[]
+          | select(.predecessor_id == $account_id and .receiver_id == "social.near")
+          | .transaction_hash
+        )'
+)"
+
+jq --arg account_id "$ACCOUNT_ID" '{
+  profile_receipt: (
+    first(
+      .block_receipts[]
+      | select(.predecessor_id == $account_id and .receiver_id == "social.near")
+      | {
+          receipt_id,
+          transaction_hash,
+          block_height,
+          tx_block_height
+        }
+    )
+  )
+}' /tmp/mike-profile-block.json
+
+# Ожидаемый receipt ID: 2gbAmEEdcCNARuCorquXStftqvWFmPG2GSaMJXFw5qiN
+# Ожидаемый хеш транзакции: 6zMb9L6rLNufZGUgCmeHTh5LvFsn3R92dPxuubH6MRsZ
+```
+
+3. Переиспользуйте полученный хеш транзакции в `POST /v0/transactions` и декодируйте payload записи SocialDB.
+
+```bash
+curl -s "$TX_BASE_URL/v0/transactions" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc --arg tx_hash "$PROFILE_TX_HASH" '{tx_hashes: [$tx_hash]}')" \
+  | tee /tmp/mike-profile-transaction.json >/dev/null
+
+jq '{
+  transaction: {
+    hash: .transactions[0].transaction.hash,
+    signer_id: .transactions[0].transaction.signer_id,
+    receiver_id: .transactions[0].transaction.receiver_id,
+    included_block_height: .transactions[0].execution_outcome.block_height
+  },
+  write_proof: (
+    .transactions[0].receipts[0].receipt.receipt.Action.actions[0].FunctionCall
+    | {
+        method_name,
+        profile_name: (.args | @base64d | fromjson | .data["mike.near"].profile.name),
+        description: (.args | @base64d | fromjson | .data["mike.near"].profile.description),
+        tags: (
+          .args
+          | @base64d
+          | fromjson
+          | .data["mike.near"].profile.tags
+          | keys
+        )
+      }
+  )
+}' /tmp/mike-profile-transaction.json
+```
+
+4. Завершите каноническим подтверждением текущего состояния через raw RPC.
+
+```bash
+SOCIAL_GET_ARGS_BASE64="$(
+  jq -nr --arg account_id "$ACCOUNT_ID" --arg profile_field "$PROFILE_FIELD" '{
+    keys: [($account_id + "/" + $profile_field)]
+  } | @base64'
+)"
+
+curl -s "$RPC_URL" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc --arg args_base64 "$SOCIAL_GET_ARGS_BASE64" '{
+    jsonrpc: "2.0",
+    id: "fastnear",
+    method: "query",
+    params: {
+      request_type: "call_function",
+      account_id: "social.near",
+      method_name: "get",
+      args_base64: $args_base64,
+      finality: "final"
+    }
+  }')" \
+  | tee /tmp/mike-profile-rpc.json >/dev/null
+
+jq --arg account_id "$ACCOUNT_ID" '{
+  finality: "final",
+  current_name: (
+    .result.result
+    | implode
+    | fromjson
+    | .[$account_id].profile.name
+  )
+}' /tmp/mike-profile-rpc.json
+```
+
+Этот последний шаг подтверждает, что поле и сейчас разрешается в `Mike Purvis`. Предыдущие шаги через NEAR Social и FastNear доказали, какая именно историческая запись установила это поле и какая транзакция несла эту запись.
+
+**Зачем нужен следующий шаг?**
+
+NEAR Social даёт семантическое значение поля. FastNear block receipts дают мост к конкретной записи. FastNear lookup транзакции превращает эту запись в читаемый payload профиля. RPC даёт каноническое подтверждение текущего состояния.
+
+### Доказать, что `mike.near` подписался на `mob.near`, а затем восстановить транзакцию записи в SocialDB
+
+Используйте это расследование, когда история звучит так: «я вижу, что `mike.near` подписан на `mob.near`, но хочу точно доказать, когда именно была записана эта связь и какая транзакция её записала».
+
+**Цель**
+
+- Начать с читаемой связи подписки из NEAR Social, а затем восстановить точный receipt и исходную транзакцию, которые записали её в SocialDB.
+
+**Официальные ссылки**
+
+- [API и поверхность контракта SocialDB](https://github.com/NearSocial/social-db#api)
+- [Живая поверхность чтения NEAR Social](https://api.near.social)
+
+Читаемая связь подписки приходит из данных NEAR Social, а не из FastNear. Ключевой мост здесь — метаданные SocialDB `:block`: они указывают на блок, в котором исполнился receipt, записавший это значение. Этот блок не совпадает с блоком, в который была включена внешняя транзакция. Роль FastNear в этом сценарии — превратить эту высоту блока в receipt, затем в транзакцию и, наконец, в читаемую историю исполнения.
+
+Для этого живого примера текущая связь выглядит как `mike.near -> mob.near`, блок записи SocialDB равен `79574924`, ID receipt — `UiyiQaqHbkkMxkrB6rDkYr7X5EQLt8QG9MDATrES7Th`, хеш исходной транзакции — `FLLmTvFx9vCof79scy2uUviF5WwYmevkz9TZ8azPGVQb`, а внешний блок транзакции — `79574923`.
+
+| Поверхность | Эндпоинт | Как используем | Зачем используем |
+| --- | --- | --- | --- |
+| Семантическое чтение связи | NEAR Social `POST /get` | Читаем `mike.near/graph/follow/mob.near` с включёнными метаданными блока | Даёт читаемую связь подписки и опорный `:block` из SocialDB, где это значение было записано |
+| Мост к receipt | Transactions API [`POST /v0/block`](https://docs.fastnear.com/ru/tx/block) | Используем высоту блока из SocialDB с `with_receipts: true`, а затем фильтруем receipt обратно до `mike.near -> social.near` | Превращает блок записи SocialDB в конкретный receipt и хеш исходной транзакции |
+| История транзакции | Transactions API [`POST /v0/transactions`](https://docs.fastnear.com/ru/tx/transactions) | Загружаем исходную транзакцию по хешу и декодируем payload первого `FunctionCall.args` | Доказывает, что базовая запись была вызовом `social.near set`, который записал и `graph.follow`, и записи `index.graph` |
+| Каноническое подтверждение текущего состояния | RPC [`query(call_function)`](https://docs.fastnear.com/ru/rpc/contract/call-function) | Напрямую вызываем `social.near get` с `final` | Подтверждает, что связь подписки существует и сейчас, хотя предыдущие шаги уже доказали конкретную историческую запись |
+
+**Что должен включать полезный ответ**
+
+- существует ли сейчас связь подписки `mike.near -> mob.near`
+- высоту блока записи SocialDB (`79574924`) и объяснение, почему это блок исполнения receipt
+- конкретный ID receipt и хеш исходной транзакции за этой записью
+- доказательство того, что запись была вызовом `set`, который нёс и `graph.follow.mob.near`, и соответствующую запись `index.graph`
+- различие между блоком исполнения receipt (`79574924`) и блоком включения внешней транзакции (`79574923`)
+
+### Shell-сценарий доказательства подписки в NEAR Social
+
+Используйте этот сценарий, когда нужен конкретный и воспроизводимый путь доказательства: от читаемой связи подписки в NEAR Social до точной транзакции записи в SocialDB.
+
+**Что вы делаете**
+
+- Читаете текущую связь подписки из NEAR Social и сохраняете блок записи SocialDB.
+- Переиспользуете эту высоту блока в FastNear block receipts, чтобы получить ID receipt и хеш транзакции.
+- Переиспользуете хеш транзакции в `POST /v0/transactions`, чтобы доказать, что payload был записью `social.near set`.
+- Завершаете каноническим RPC-подтверждением того, что связь всё ещё существует на `final`.
+
+```bash
+SOCIAL_API_BASE_URL=https://api.near.social
+TX_BASE_URL=https://tx.main.fastnear.com
+RPC_URL=https://rpc.mainnet.fastnear.com
+ACCOUNT_ID=mike.near
+TARGET_ACCOUNT_ID=mob.near
+```
+
+1. Прочитайте связь подписки из NEAR Social и сохраните блок записи SocialDB.
+
+```bash
+FOLLOW_BLOCK_HEIGHT="$(
+  curl -s "$SOCIAL_API_BASE_URL/get" \
+    -H 'content-type: application/json' \
+    --data "$(jq -nc \
+      --arg account_id "$ACCOUNT_ID" \
+      --arg target_account_id "$TARGET_ACCOUNT_ID" '{
+        keys: [($account_id + "/graph/follow/" + $target_account_id)],
+        options: {with_block_height: true}
+      }')" \
+    | tee /tmp/mike-follow-edge.json \
+    | jq -r --arg account_id "$ACCOUNT_ID" --arg target_account_id "$TARGET_ACCOUNT_ID" \
+        '.[ $account_id ].graph.follow[ $target_account_id ][":block"]'
+)"
+
+jq --arg account_id "$ACCOUNT_ID" --arg target_account_id "$TARGET_ACCOUNT_ID" '{
+  follow_edge: .[$account_id].graph.follow[$target_account_id][""],
+  follow_block_height: .[$account_id].graph.follow[$target_account_id][":block"]
+}' /tmp/mike-follow-edge.json
+
+# Ожидаемая высота блока записи: 79574924
+```
+
+2. Переиспользуйте эту высоту блока в FastNear block receipts и восстановите мост к receipt и транзакции.
+
+```bash
+FOLLOW_TX_HASH="$(
+  curl -s "$TX_BASE_URL/v0/block" \
+    -H 'content-type: application/json' \
+    --data "$(jq -nc --argjson block_id "$FOLLOW_BLOCK_HEIGHT" '{
+      block_id: $block_id,
+      with_transactions: false,
+      with_receipts: true
+    }')" \
+    | tee /tmp/mike-follow-block.json \
+    | jq -r --arg account_id "$ACCOUNT_ID" '
+        first(
+          .block_receipts[]
+          | select(.predecessor_id == $account_id and .receiver_id == "social.near")
+          | .transaction_hash
+        )'
+)"
+
+jq --arg account_id "$ACCOUNT_ID" '{
+  follow_receipt: (
+    first(
+      .block_receipts[]
+      | select(.predecessor_id == $account_id and .receiver_id == "social.near")
+      | {
+          receipt_id,
+          transaction_hash,
+          block_height,
+          tx_block_height
+        }
+    )
+  )
+}' /tmp/mike-follow-block.json
+
+# Ожидаемый receipt ID: UiyiQaqHbkkMxkrB6rDkYr7X5EQLt8QG9MDATrES7Th
+# Ожидаемый хеш транзакции: FLLmTvFx9vCof79scy2uUviF5WwYmevkz9TZ8azPGVQb
+```
+
+3. Переиспользуйте полученный хеш транзакции в `POST /v0/transactions` и декодируйте payload записи SocialDB.
+
+```bash
+curl -s "$TX_BASE_URL/v0/transactions" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc --arg tx_hash "$FOLLOW_TX_HASH" '{tx_hashes: [$tx_hash]}')" \
+  | tee /tmp/mike-follow-transaction.json >/dev/null
+
+jq '{
+  transaction: {
+    hash: .transactions[0].transaction.hash,
+    signer_id: .transactions[0].transaction.signer_id,
+    receiver_id: .transactions[0].transaction.receiver_id,
+    included_block_height: .transactions[0].execution_outcome.block_height
+  },
+  write_proof: (
+    .transactions[0].receipts[0].receipt.receipt.Action.actions[0].FunctionCall
+    | {
+        method_name,
+        follow_edge: (.args | @base64d | fromjson | .data["mike.near"].graph.follow["mob.near"]),
+        index_graph: (
+          .args
+          | @base64d
+          | fromjson
+          | .data["mike.near"].index.graph
+          | fromjson
+          | map(select(.value.accountId == "mob.near"))
+        )
+      }
+  )
+}' /tmp/mike-follow-transaction.json
+```
+
+4. Завершите каноническим подтверждением текущего состояния через raw RPC.
+
+```bash
+SOCIAL_GET_ARGS_BASE64="$(
+  jq -nr --arg account_id "$ACCOUNT_ID" --arg target_account_id "$TARGET_ACCOUNT_ID" '{
+    keys: [($account_id + "/graph/follow/" + $target_account_id)]
+  } | @base64'
+)"
+
+curl -s "$RPC_URL" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc --arg args_base64 "$SOCIAL_GET_ARGS_BASE64" '{
+    jsonrpc: "2.0",
+    id: "fastnear",
+    method: "query",
+    params: {
+      request_type: "call_function",
+      account_id: "social.near",
+      method_name: "get",
+      args_base64: $args_base64,
+      finality: "final"
+    }
+  }')" \
+  | tee /tmp/mike-follow-rpc.json >/dev/null
+
+jq --arg account_id "$ACCOUNT_ID" --arg target_account_id "$TARGET_ACCOUNT_ID" '{
+  finality: "final",
+  current_follow_edge: (
+    .result.result
+    | implode
+    | fromjson
+    | .[$account_id].graph.follow[$target_account_id]
+  )
+}' /tmp/mike-follow-rpc.json
+```
+
+Этот последний шаг подтверждает, что связь подписки существует и сейчас. Предыдущие шаги через NEAR Social и FastNear доказали, какая именно историческая запись создала эту связь и какая транзакция несла эту запись.
+
+**Зачем нужен следующий шаг?**
+
+NEAR Social даёт семантическую связь. FastNear block receipts дают мост к конкретной записи. FastNear lookup транзакции превращает эту запись в читаемую историю. RPC даёт каноническое подтверждение текущего состояния.
+
 ### Понять двухстороннее сопоставление `token_diff`, а затем проследить живой расчёт NEAR Intents
 
 Используйте это расследование, когда история звучит так: «покажи, что именно NEAR Intents делает под капотом, но привяжи разбор к публичным данным, которые можно проверить самостоятельно».
