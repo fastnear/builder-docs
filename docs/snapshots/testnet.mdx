@@ -16,6 +16,8 @@ The free nearcore data snapshots were deprecated on June 1, 2025.
 
 Use [NEAR Nodes](https://near-nodes.io) for the current bootstrap guidance based on Epoch Sync plus decentralized state sync. That is the public recommendation for normal testnet node bring-up and recovery.
 
+Before the first `neard run`, refresh `network.boot_nodes` with the current command from [NEAR Nodes: Epoch Sync](https://near-nodes.io/intro/node-epoch-sync). A freshly downloaded `config.json` can still leave `boot_nodes` empty, which can leave the node stuck at `Waiting for peers 0 peers`.
+
 ## For archival testnet snapshots
 
 Archival snapshot access is request-based. Start from [fastnear.com/snapshots](https://fastnear.com/snapshots) or email [snapshots@fastnear.com](mailto:snapshots@fastnear.com) to get the current availability, block height, and storage expectations.
