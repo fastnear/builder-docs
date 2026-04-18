@@ -355,8 +355,15 @@ server.registerTool(
     ),
 );
 
-const transport = new StdioServerTransport();
-await server.connect(transport);
+async function main() {
+  const transport = new StdioServerTransport();
+  await server.connect(transport);
+}
+
+main().catch((error) => {
+  console.error(error);
+  process.exit(1);
+});
 ```
 
 Start it locally:
@@ -387,6 +394,8 @@ Exact config shape varies by client, but many local MCP clients accept something
   }
 }
 ```
+
+If your MCP client launches commands from some other working directory, either set its `cwd` or `workingDirectory` option when available, or replace `npx tsx` with an absolute path to the local `tsx` binary. The important part is that the client can resolve the locally installed `tsx` package before it starts `fastnear-mcp.ts`.
 
 For remote or team-wide deployment, start with this same tool surface and then switch from `stdio` to a network transport only when you actually need a hosted server.
 

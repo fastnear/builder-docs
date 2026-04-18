@@ -995,8 +995,15 @@ server.registerTool(
     ),
 );
 
-const transport = new StdioServerTransport();
-await server.connect(transport);
+async function main() {
+  const transport = new StdioServerTransport();
+  await server.connect(transport);
+}
+
+main().catch((error) => {
+  console.error(error);
+  process.exit(1);
+});
 ```
 
 Локальный запуск:
@@ -1027,6 +1034,8 @@ npx tsx fastnear-mcp.ts
   }
 }
 ```
+
+Если MCP-клиент запускает команды из другого рабочего каталога, задайте его опцию `cwd` или `workingDirectory`, если она поддерживается, либо замените `npx tsx` на абсолютный путь к локальному бинарнику `tsx`. Важно, чтобы клиент мог разрешить локально установленный пакет `tsx` до запуска `fastnear-mcp.ts`.
 
 Если позже понадобится удалённое или командное развёртывание, начните с этой же поверхности инструментов и только потом переходите от `stdio` к сетевому транспорту, когда действительно понадобится удалённый сервер.
 
