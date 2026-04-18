@@ -17,6 +17,9 @@ const {
   matchesRoutePrefix,
 } = require("./lib/discovery-surface");
 const {
+  getDocsearchSemanticMeta,
+} = require("../src/utils/docsearchClassification");
+const {
   createCrawlerConfig,
   renderCrawlerConfigSource,
 } = require("../algolia/crawler/shared");
@@ -72,77 +75,6 @@ const REQUIRED_SITEMAP_ROUTES = [
   "/api/v1/public-key",
   "/fastdata/kv/all-by-predecessor",
 ];
-
-const DOCSEARCH_CATEGORY_RULES = [
-  { prefix: "/api/reference", value: "guide" },
-  { prefix: "/rpc", value: "rpc-reference" },
-  { prefix: "/api", value: "api-reference" },
-  { prefix: "/tx", value: "api-reference" },
-  { prefix: "/transfers", value: "api-reference" },
-  { prefix: "/neardata", value: "api-reference" },
-  { prefix: "/fastdata", value: "api-reference" },
-  { prefix: "/auth", value: "guide" },
-  { prefix: "/agents", value: "guide" },
-  { prefix: "/internationalization", value: "guide" },
-  { prefix: "/snapshots", value: "guide" },
-  { prefix: "/transaction-flow", value: "guide" },
-  { prefix: "/redocly-config", value: "guide" },
-  { prefix: "/", value: "guide" },
-];
-
-const DOCSEARCH_METHOD_TYPE_RULES = [
-  { prefix: "/api/reference", value: null },
-  { prefix: "/rpc/account", value: "account" },
-  { prefix: "/rpc/block", value: "block" },
-  { prefix: "/rpc/contract", value: "contract" },
-  { prefix: "/rpc/protocol", value: "protocol" },
-  { prefix: "/rpc/transaction", value: "transaction" },
-  { prefix: "/rpc/validators", value: "validators" },
-  { prefix: "/api", value: "fastnear" },
-  { prefix: "/tx", value: "transactions" },
-  { prefix: "/transfers", value: "transfers" },
-  { prefix: "/neardata", value: "neardata" },
-  { prefix: "/fastdata", value: "kv-fastdata" },
-];
-
-const DOCSEARCH_SURFACE_RULES = [
-  { prefix: "/rpc", value: "rpc" },
-  { prefix: "/api", value: "api" },
-  { prefix: "/tx", value: "tx" },
-  { prefix: "/transfers", value: "transfers" },
-  { prefix: "/neardata", value: "neardata" },
-  { prefix: "/fastdata", value: "fastdata" },
-  { prefix: "/auth", value: "auth" },
-  { prefix: "/agents", value: "agents" },
-  { prefix: "/internationalization", value: "guide" },
-  { prefix: "/snapshots", value: "snapshots" },
-  { prefix: "/transaction-flow", value: "transaction-flow" },
-  { prefix: "/redocly-config", value: "guide" },
-  { prefix: "/", value: "guide" },
-];
-
-const DOCSEARCH_FAMILY_RULES = [
-  { prefix: "/rpc/account", value: "account" },
-  { prefix: "/rpc/block", value: "block" },
-  { prefix: "/rpc/contract", value: "contract" },
-  { prefix: "/rpc/protocol", value: "protocol" },
-  { prefix: "/rpc/transaction", value: "transaction" },
-  { prefix: "/rpc/validators", value: "validators" },
-  { prefix: "/api", value: "fastnear" },
-  { prefix: "/tx", value: "transactions" },
-  { prefix: "/transfers", value: "transfers" },
-  { prefix: "/neardata", value: "neardata" },
-  { prefix: "/fastdata/kv", value: "kv-fastdata" },
-];
-
-const REFERENCE_COLLECTION_ROUTES = new Set([
-  "/api",
-  "/fastdata/kv",
-  "/neardata",
-  "/rpc",
-  "/transfers",
-  "/tx",
-]);
 
 const REQUIRED_ROBOTS_USER_AGENTS = [
   "GPTBot",
@@ -221,10 +153,6 @@ function parseFrontmatter(rawContent) {
   }
 
   return frontmatter;
-}
-
-function resolveDocsearchValue(route, rules) {
-  return rules.find((rule) => matchesRoutePrefix(route, rule.prefix))?.value || null;
 }
 
 function normalizeRoute(route) {
@@ -306,61 +234,6 @@ function routeToBuildHtmlPath(route) {
 
 function routeToBuildAssetPath(route) {
   return path.join(BUILD_ROOT, String(route || "/").replace(/^\//, ""));
-}
-
-function getExpectedDocsearchCategory(route) {
-  return resolveDocsearchValue(route, DOCSEARCH_CATEGORY_RULES);
-}
-
-function getExpectedDocsearchMethodType(route) {
-  return resolveDocsearchValue(route, DOCSEARCH_METHOD_TYPE_RULES);
-}
-
-function getExpectedDocsearchSurface(route) {
-  return resolveDocsearchValue(route, DOCSEARCH_SURFACE_RULES);
-}
-
-function getExpectedDocsearchFamily(route) {
-  return resolveDocsearchValue(route, DOCSEARCH_FAMILY_RULES);
-}
-
-function getExpectedDocsearchAudience(route) {
-  if (matchesRoutePrefix(route, "/agents")) {
-    return "agent";
-  }
-
-  if (matchesRoutePrefix(route, "/snapshots")) {
-    return "operator";
-  }
-
-  return "builder";
-}
-
-function getExpectedDocsearchPageType(route) {
-  if (route === "/api/reference") {
-    return "guide";
-  }
-
-  if (REFERENCE_COLLECTION_ROUTES.has(route)) {
-    return "collection";
-  }
-
-  if (
-    (matchesRoutePrefix(route, "/api") && route !== "/api") ||
-    (matchesRoutePrefix(route, "/tx") && route !== "/tx") ||
-    (matchesRoutePrefix(route, "/transfers") && route !== "/transfers") ||
-    (matchesRoutePrefix(route, "/neardata") && route !== "/neardata") ||
-    (matchesRoutePrefix(route, "/fastdata/kv") && route !== "/fastdata/kv")
-  ) {
-    return "reference";
-  }
-
-  const routeParts = route.split("/").filter(Boolean);
-  if (matchesRoutePrefix(route, "/rpc") && routeParts.length >= 3) {
-    return "reference";
-  }
-
-  return "guide";
 }
 
 function getExpectedDocsPageSchemaType({ hasFastnearOperation, route }) {
@@ -787,24 +660,27 @@ function auditDocsSource() {
     );
     seenRoutes.set(route, relativePath);
 
-    const expectedCategory = getExpectedDocsearchCategory(route);
-    assert(expectedCategory, `No docsearch:category mapping exists for ${relativePath}: ${route}`);
+    const expectedDocsearchMeta = getDocsearchSemanticMeta(route);
+    assert(
+      expectedDocsearchMeta?.category,
+      `No docsearch:category mapping exists for ${relativePath}: ${route}`
+    );
 
     const fastnearOperationMatch = rawContent.match(
       /<FastnearDirectOperation[^>]+pageModelId=["']([^"']+)["']/
     );
     const hasFastnearOperation = Boolean(fastnearOperationMatch);
     routeEntries.push({
-      expectedAudience: getExpectedDocsearchAudience(route),
-      expectedCategory,
-      expectedFamily: getExpectedDocsearchFamily(route),
-      expectedMethodType: getExpectedDocsearchMethodType(route),
-      expectedPageType: getExpectedDocsearchPageType(route),
+      expectedAudience: expectedDocsearchMeta.audience,
+      expectedCategory: expectedDocsearchMeta.category,
+      expectedFamily: expectedDocsearchMeta.family,
+      expectedMethodType: expectedDocsearchMeta.methodType,
+      expectedPageType: expectedDocsearchMeta.pageType,
       expectedPageSchemaType: getExpectedDocsPageSchemaType({
         hasFastnearOperation,
         route,
       }),
-      expectedSurface: getExpectedDocsearchSurface(route),
+      expectedSurface: expectedDocsearchMeta.surface,
       hasFastnearOperation,
       operationPageModelId: fastnearOperationMatch?.[1] || null,
       relativePath,
