@@ -4,39 +4,14 @@ const {
   SUPPORTED_LOCALES,
   localizeRoute,
 } = require("../../scripts/lib/localized-routes");
+const {
+  EXCLUDED_ROUTE_PATTERNS,
+  PUBLIC_DOC_ROUTE_PATTERNS,
+} = require("../../scripts/lib/discovery-surface");
 
 const SITE_ROOT = "https://docs.fastnear.com";
 const APP_ID_PLACEHOLDER = "YOUR_ALGOLIA_APP_ID";
 const INDEX_NAME_PLACEHOLDER = "YOUR_DOCSEARCH_INDEX_NAME";
-
-const PUBLIC_DOC_ROUTE_PATTERNS = [
-  "/",
-  "/rpc/**",
-  "/api/**",
-  "/tx/**",
-  "/transfers/**",
-  "/neardata/**",
-  "/fastdata/**",
-  "/auth/**",
-  "/agents/**",
-  "/snapshots/**",
-];
-
-const EXCLUDED_ROUTE_PATTERNS = [
-  "/transaction-flow",
-  "/transaction-flow/**",
-  "/rpcs/**",
-  "/apis/**",
-  "/**/*.md",
-  "/llms.txt",
-  "/llms-full.txt",
-  "/guides/llms.txt",
-  "/rpcs/llms.txt",
-  "/apis/llms.txt",
-  "/structured-data/**",
-  "/api/reference",
-  "/redocly-config",
-];
 
 function buildSiteUrl(route) {
   if (route === "/") {

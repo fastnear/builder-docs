@@ -9,6 +9,14 @@ const {
   stripLocalePrefix,
 } = require("./lib/localized-routes");
 const {
+  EXCLUDED_SITEMAP_ROUTES,
+  EXCLUDED_SITEMAP_ROUTE_PREFIXES,
+  isCollectionRoute,
+  isHiddenCanonicalRoute,
+  isHiddenDocsRoute,
+  matchesRoutePrefix,
+} = require("./lib/discovery-surface");
+const {
   createCrawlerConfig,
   renderCrawlerConfigSource,
 } = require("../algolia/crawler/shared");
@@ -64,35 +72,6 @@ const REQUIRED_SITEMAP_ROUTES = [
   "/api/v1/public-key",
   "/fastdata/kv/all-by-predecessor",
 ];
-
-const EXCLUDED_SITEMAP_ROUTES = [
-  "/api/reference",
-  "/redocly-config",
-];
-const EXCLUDED_SITEMAP_ROUTE_PREFIXES = [
-  "/transaction-flow",
-];
-
-const HIDDEN_DOC_PREFIXES = [
-  "/transfers",
-  "/fastdata",
-];
-const HIDDEN_CANONICAL_PREFIXES = ["/apis/transfers", "/apis/kv-fastdata"];
-const ALWAYS_HIDDEN_DOC_PREFIXES = ["/transaction-flow"];
-
-const COLLECTION_ROUTE_SET = new Set([
-  "/",
-  "/api",
-  "/api/reference",
-  "/auth",
-  "/fastdata/kv",
-  "/neardata",
-  "/rpc",
-  "/snapshots",
-  "/transaction-flow",
-  "/transfers",
-  "/tx",
-]);
 
 const DOCSEARCH_CATEGORY_RULES = [
   { prefix: "/api/reference", value: "guide" },
@@ -244,10 +223,6 @@ function parseFrontmatter(rawContent) {
   return frontmatter;
 }
 
-function matchesRoutePrefix(route, prefix) {
-  return Boolean(route) && (route === prefix || route.startsWith(`${prefix}/`));
-}
-
 function resolveDocsearchValue(route, rules) {
   return rules.find((rule) => matchesRoutePrefix(route, rule.prefix))?.value || null;
 }
@@ -315,29 +290,6 @@ function getExpectedMarkdownMirrorPath(route) {
 
 function getLegacyMarkdownMirrorPath(route) {
   return route === "/" ? "/index.md" : `${route}/index.md`;
-}
-
-function isHiddenDocsRoute(route) {
-  return (
-    ALWAYS_HIDDEN_DOC_PREFIXES.some(
-      (prefix) => route === prefix || route.startsWith(`${prefix}/`)
-    ) ||
-    (
-      hideEarlyApiFamilies &&
-      HIDDEN_DOC_PREFIXES.some(
-        (prefix) => route === prefix || route.startsWith(`${prefix}/`)
-      )
-    )
-  );
-}
-
-function isHiddenCanonicalRoute(route) {
-  return (
-    hideEarlyApiFamilies &&
-    HIDDEN_CANONICAL_PREFIXES.some(
-      (prefix) => route === prefix || route.startsWith(`${prefix}/`)
-    )
-  );
 }
 
 function routeToBuildHtmlPath(route) {
@@ -416,7 +368,7 @@ function getExpectedDocsPageSchemaType({ hasFastnearOperation, route }) {
     return "WebPage";
   }
 
-  return COLLECTION_ROUTE_SET.has(route) ? "CollectionPage" : "TechArticle";
+  return isCollectionRoute(route) ? "CollectionPage" : "TechArticle";
 }
 
 function countOccurrences(value, pattern) {

@@ -7,12 +7,10 @@ const {
   DEFAULT_LOCALE,
   SUPPORTED_LOCALES,
   localizeRoute,
-  stripLocalePrefix,
 } = require("./lib/localized-routes");
 const {
-  EXCLUDED_ROUTE_PATTERNS,
-  PUBLIC_DOC_ROUTE_PATTERNS,
-} = require("../algolia/crawler/shared");
+  isDiscoverableDocsRoute,
+} = require("./lib/discovery-surface");
 
 const ROOT = path.resolve(__dirname, "..");
 const BUILD_ROOT = path.join(ROOT, "build");
@@ -24,35 +22,6 @@ const INDEXNOW_ENDPOINT = "https://api.indexnow.org/indexnow";
 const hideEarlyApiFamilies = /^(1|true|yes|on)$/i.test(
   process.env.HIDE_EARLY_API_FAMILIES || ""
 );
-
-const HIDDEN_DOC_PREFIXES = [
-  "/transfers",
-  "/fastdata",
-];
-
-function matchesRoutePrefix(route, prefix) {
-  return Boolean(route) && (route === prefix || route.startsWith(`${prefix}/`));
-}
-
-function matchesRoutePattern(route, pattern) {
-  if (!route || !pattern) {
-    return false;
-  }
-
-  if (pattern === "/") {
-    return route === "/";
-  }
-
-  if (pattern === "/**/*.md") {
-    return route.endsWith(".md");
-  }
-
-  if (pattern.endsWith("/**")) {
-    return matchesRoutePrefix(route, pattern.slice(0, -3));
-  }
-
-  return route === pattern;
-}
 
 function walkDocs(dirPath) {
   const collected = [];
@@ -115,28 +84,6 @@ function normalizeAbsoluteUrl(url) {
   return buildAbsoluteUrl(pathname);
 }
 
-function isHiddenDocsRoute(route) {
-  return (
-    hideEarlyApiFamilies &&
-    HIDDEN_DOC_PREFIXES.some(
-      (prefix) => matchesRoutePrefix(route, prefix)
-    )
-  );
-}
-
-function isPublicDocsSurfaceRoute(route) {
-  const normalizedRoute = stripLocalePrefix(route);
-  return (
-    PUBLIC_DOC_ROUTE_PATTERNS.some((pattern) => matchesRoutePattern(normalizedRoute, pattern)) &&
-    !EXCLUDED_ROUTE_PATTERNS.some((pattern) => matchesRoutePattern(normalizedRoute, pattern))
-  );
-}
-
-function isDiscoverableDocsRoute(route) {
-  const normalizedRoute = stripLocalePrefix(route);
-  return isPublicDocsSurfaceRoute(normalizedRoute) && !isHiddenDocsRoute(normalizedRoute);
-}
-
 function getDocsSourceRoots() {
   const roots = [
     {
@@ -167,7 +114,7 @@ function getCanonicalDocsEntries() {
         }
 
         const localizedRoute = localizeRoute(route, locale);
-        if (!isDiscoverableDocsRoute(localizedRoute)) {
+        if (!isDiscoverableDocsRoute(localizedRoute, { hideEarlyApiFamilies })) {
           return null;
         }
 
@@ -202,7 +149,7 @@ function parseSitemapUrls(filePath) {
 function getFullCanonicalUrlList(entries) {
   const sitemapUrls = SUPPORTED_LOCALES.flatMap((locale) =>
     parseSitemapUrls(getSitemapPath(locale)).filter((url) =>
-      isDiscoverableDocsRoute(new URL(url, SITE_ORIGIN).pathname)
+      isDiscoverableDocsRoute(new URL(url, SITE_ORIGIN).pathname, { hideEarlyApiFamilies })
     )
   );
   if (sitemapUrls.length) {
