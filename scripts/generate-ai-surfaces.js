@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+const crypto = require("crypto");
 const fs = require("fs");
 const path = require("path");
 const { isSecretQueryParam } = require("../src/utils/fastnearOperationUrlState");
@@ -29,6 +30,7 @@ const {
 const ROOT = path.resolve(__dirname, "..");
 const DOCS_ROOT = path.resolve(ROOT, "docs");
 const PAGE_MODELS_PATH = path.resolve(ROOT, "src/data/generatedFastnearPageModels.json");
+const OPENAPI_SNAPSHOTS_ROOT = path.resolve(ROOT, "src/data/openapiSnapshots");
 const STRUCTURED_GRAPH_PATH = path.resolve(
   ROOT,
   "src/data/generatedFastnearStructuredGraph.json"
@@ -39,12 +41,14 @@ const WEBSITE_ID = `${SITE_ORIGIN}/#website`;
 const ORGANIZATION_ID = `${SITE_ORIGIN}/#organization`;
 const ORGANIZATION_LOGO_URL = `${SITE_ORIGIN}/img/fastnear_logo_black.png`;
 const ORGANIZATION_SAME_AS = ["https://github.com/fastnear", "https://x.com/fast_near"];
+const AGENT_SKILLS_SCHEMA = "https://schemas.agentskills.io/discovery/0.2.0/schema.json";
 
 const hideEarlyApiFamilies = /^(1|true|yes|on)$/i.test(
   process.env.HIDE_EARLY_API_FAMILIES || ""
 );
 
 const GENERATED_STATIC_ROOTS = [
+  path.join(STATIC_ROOT, ".well-known"),
   path.join(STATIC_ROOT, "docs"),
   path.join(STATIC_ROOT, "guides"),
   path.join(STATIC_ROOT, "rpc"),
@@ -59,12 +63,114 @@ const GENERATED_STATIC_ROOTS = [
   path.join(STATIC_ROOT, "transaction-flow"),
   path.join(STATIC_ROOT, "rpcs"),
   path.join(STATIC_ROOT, "apis"),
+  path.join(STATIC_ROOT, "openapi"),
   path.join(STATIC_ROOT, "structured-data"),
 ];
 const GENERATED_STATIC_FILES = [
   path.join(STATIC_ROOT, "index.md"),
   path.join(STATIC_ROOT, "llms.txt"),
   path.join(STATIC_ROOT, "llms-full.txt"),
+];
+const OPENAPI_SNAPSHOT_FILES = {
+  fastnear: {
+    filePath: path.join(OPENAPI_SNAPSHOTS_ROOT, "fastnear.json"),
+    publishedPath: "/openapi/fastnear.json",
+  },
+  neardata: {
+    filePath: path.join(OPENAPI_SNAPSHOTS_ROOT, "neardata.json"),
+    publishedPath: "/openapi/neardata.json",
+  },
+};
+const AGENT_SKILL_DEFINITIONS = [
+  {
+    description:
+      "Operational entry point for FastNear agents. Use when you need the default workflow, discovery surfaces, and the first API to reach for.",
+    name: "overview",
+    route: "/agents",
+  },
+  {
+    description:
+      "Surface-selection guide for FastNear. Use when you need to route a task to RPC, FastNear API, history APIs, NEAR Data, FastData, or snapshots.",
+    name: "surface-routing",
+    route: "/agents/choosing-surfaces",
+  },
+  {
+    description:
+      "Authentication guidance for FastNear agents. Use when a task involves API keys, secret handling, or request authorization posture.",
+    name: "auth",
+    route: "/agents/auth",
+  },
+  {
+    description:
+      "Common FastNear playbooks for agents. Use when you need the default multi-step workflow for holdings, transaction tracing, transfers, block monitoring, storage, or snapshots.",
+    name: "playbooks",
+    route: "/agents/playbooks",
+  },
+];
+const API_CATALOG_ENTRIES = [
+  {
+    anchor: "https://rpc.mainnet.fastnear.com",
+    "service-desc": [
+      {
+        href: "https://rpc.mainnet.fastnear.com/openapi.json",
+        type: "application/json",
+      },
+    ],
+    "service-doc": [
+      {
+        href: `${SITE_ORIGIN}/rpc`,
+        type: "text/html",
+      },
+    ],
+    status: [
+      {
+        href: "https://status.fastnear.com/status/main",
+        type: "text/html",
+      },
+    ],
+  },
+  {
+    anchor: "https://api.fastnear.com",
+    "service-desc": [
+      {
+        href: `${SITE_ORIGIN}${OPENAPI_SNAPSHOT_FILES.fastnear.publishedPath}`,
+        type: "application/json",
+      },
+    ],
+    "service-doc": [
+      {
+        href: `${SITE_ORIGIN}/api`,
+        type: "text/html",
+      },
+    ],
+    status: [
+      {
+        href: "https://api.fastnear.com/status",
+        type: "application/json",
+      },
+    ],
+  },
+  {
+    anchor: "https://mainnet.neardata.xyz",
+    "service-desc": [
+      {
+        href: `${SITE_ORIGIN}${OPENAPI_SNAPSHOT_FILES.neardata.publishedPath}`,
+        type: "application/json",
+      },
+    ],
+    "service-doc": [
+      {
+        href: `${SITE_ORIGIN}/neardata`,
+        type: "text/html",
+      },
+    ],
+    status: [
+      {
+        href: "https://mainnet.neardata.xyz/health",
+        type: "application/json",
+      },
+    ],
+  },
 ];
 
 const API_SERVICE_LABELS = {
@@ -305,6 +411,10 @@ function writeTextFile(filePath, content) {
   fs.writeFileSync(filePath, content, "utf8");
 }
 
+function writeJsonFile(filePath, value) {
+  writeTextFile(filePath, `${JSON.stringify(value, null, 2)}\n`);
+}
+
 function normalizeRoute(route) {
   if (!route) {
     return "/";
@@ -393,12 +503,16 @@ function buildPageEntityId(url) {
   return `${url}#page`;
 }
 
-function buildFamilyEntityId(familyId) {
-  return `${SITE_ORIGIN}/structured-data/families/${familyId}`;
+function buildSiteGraphDocumentUrl(locale = DEFAULT_LOCALE) {
+  return buildLocalizedAbsoluteUrl("/structured-data/site-graph.json", locale);
 }
 
-function buildOperationEntityId(pageModelId) {
-  return `${SITE_ORIGIN}/structured-data/operations/${pageModelId}`;
+function buildFamilyEntityId(familyId, locale = DEFAULT_LOCALE) {
+  return `${buildSiteGraphDocumentUrl(locale)}#family-${familyId}`;
+}
+
+function buildOperationEntityId(pageModelId, locale = DEFAULT_LOCALE) {
+  return `${buildSiteGraphDocumentUrl(locale)}#operation-${pageModelId}`;
 }
 
 function getDocsPageSchemaType(entry) {
@@ -673,6 +787,7 @@ function transformInlineLinks(markdown, locale = DEFAULT_LOCALE) {
 
 function transformSimpleJsx(markdown, locale = DEFAULT_LOCALE) {
   let transformed = markdown
+    .replace(/\{\/\*[\s\S]*?\*\/\}/g, "")
     .replace(/<\/?React\.Fragment[^>]*>/g, "")
     .replace(/<IconExternalLink\s*\/>/g, "")
     .replace(/<strong>([\s\S]*?)<\/strong>/g, "**$1**");
@@ -1533,7 +1648,7 @@ function buildSiteGraphFamilyRecord(family, locale = DEFAULT_LOCALE) {
   const docsUrl = buildAbsoluteUrl(docsPath);
   return {
     ...localizedFamily,
-    "@id": buildFamilyEntityId(family.id),
+    "@id": buildFamilyEntityId(family.id, locale),
     docsPageId: buildPageEntityId(docsUrl),
     docsPath,
     docsUrl,
@@ -1554,7 +1669,7 @@ function buildSiteGraphOperationRecord(operation, locale = DEFAULT_LOCALE) {
   const canonicalUrl = buildAbsoluteUrl(canonicalPath);
   return {
     ...localizedOperation,
-    "@id": buildOperationEntityId(operation.pageModelId),
+    "@id": buildOperationEntityId(operation.pageModelId, locale),
     abstract: localizedOperation.summary || localizedOperation.name,
     canonicalPageId: buildPageEntityId(canonicalUrl),
     canonicalPath,
@@ -1562,7 +1677,7 @@ function buildSiteGraphOperationRecord(operation, locale = DEFAULT_LOCALE) {
     docsPageId: buildPageEntityId(docsUrl),
     docsPath,
     docsUrl,
-    familyEntityId: buildFamilyEntityId(operation.familyId),
+    familyEntityId: buildFamilyEntityId(operation.familyId, locale),
     inLanguage: locale,
     mainEntityOfPageId: buildPageEntityId(docsUrl),
     publisherId: ORGANIZATION_ID,
@@ -1615,8 +1730,10 @@ function buildSiteGraphArtifact({ authoredDocEntries, canonicalEntries, docEntri
 
       return {
         entityIds: {
-          familyIds: linkedFamilies.map((familyId) => buildFamilyEntityId(familyId)),
-          mainEntityId: linkedOperation ? buildOperationEntityId(linkedOperation.pageModelId) : null,
+          familyIds: linkedFamilies.map((familyId) => buildFamilyEntityId(familyId, locale)),
+          mainEntityId: linkedOperation
+            ? buildOperationEntityId(linkedOperation.pageModelId, locale)
+            : null,
           pageId: buildPageEntityId(url),
         },
         indexable: true,
@@ -1639,8 +1756,8 @@ function buildSiteGraphArtifact({ authoredDocEntries, canonicalEntries, docEntri
       const url = buildAbsoluteUrl(route);
       return {
         entityIds: {
-          familyIds: [buildFamilyEntityId(operation.familyId)],
-          mainEntityId: buildOperationEntityId(operation.pageModelId),
+          familyIds: [buildFamilyEntityId(operation.familyId, locale)],
+          mainEntityId: buildOperationEntityId(operation.pageModelId, locale),
           pageId: buildPageEntityId(url),
         },
         indexable: false,
@@ -1668,6 +1785,83 @@ function buildSiteGraphArtifact({ authoredDocEntries, canonicalEntries, docEntri
     pages,
     version: 1,
     website: buildWebsiteEntity(locale),
+  };
+}
+
+function copyOpenApiSnapshots() {
+  Object.values(OPENAPI_SNAPSHOT_FILES).forEach(({ filePath, publishedPath }) => {
+    if (!fs.existsSync(filePath)) {
+      throw new Error(`Missing vendored OpenAPI snapshot: ${path.relative(ROOT, filePath)}`);
+    }
+
+    const snapshot = JSON.parse(fs.readFileSync(filePath, "utf8"));
+    writeJsonFile(path.join(STATIC_ROOT, publishedPath.replace(/^\//, "")), snapshot);
+  });
+}
+
+function buildApiCatalogArtifact() {
+  return {
+    linkset: API_CATALOG_ENTRIES,
+  };
+}
+
+function quoteYamlString(value) {
+  return JSON.stringify(String(value));
+}
+
+function buildAgentSkillContent({ description, name, markdown }) {
+  const frontmatter = [
+    "---",
+    `name: ${quoteYamlString(name)}`,
+    `description: ${quoteYamlString(description)}`,
+    "---",
+    "",
+  ].join("\n");
+
+  return `${frontmatter}${markdown}`;
+}
+
+function computeSha256Digest(content) {
+  return `sha256:${crypto.createHash("sha256").update(content, "utf8").digest("hex")}`;
+}
+
+function buildAgentSkillsArtifacts(entries) {
+  const entriesByRoute = Object.fromEntries(entries.map((entry) => [entry.route, entry]));
+  const skills = AGENT_SKILL_DEFINITIONS.map((definition) => {
+    const entry = entriesByRoute[definition.route];
+    if (!entry) {
+      throw new Error(`Missing authored docs entry for agent skill route ${definition.route}`);
+    }
+
+    const url = `/.well-known/agent-skills/${definition.name}/SKILL.md`;
+    const content = buildAgentSkillContent({
+      description: definition.description,
+      name: definition.name,
+      markdown: entry.markdown,
+    });
+
+    return {
+      content,
+      description: definition.description,
+      digest: computeSha256Digest(content),
+      name: definition.name,
+      type: "skill-md",
+      url,
+    };
+  });
+
+  return {
+    index: {
+      $schema: AGENT_SKILLS_SCHEMA,
+      skills: skills.map(({ description, digest, name, type, url }) => ({
+        description,
+        digest,
+        name,
+        type,
+        url,
+      })),
+    },
+    skills,
   };
 }
 
@@ -1745,6 +1939,7 @@ function buildFullArchive(entries, locale = DEFAULT_LOCALE) {
 
 function main() {
   removeGeneratedStaticRoots();
+  copyOpenApiSnapshots();
 
   for (const locale of SUPPORTED_LOCALES) {
     const labels = getAuthoredMarkdownLabels(locale);
@@ -1824,6 +2019,22 @@ function main() {
         2
       )}\n`
     );
+
+    if (locale === DEFAULT_LOCALE) {
+      writeJsonFile(
+        path.join(STATIC_ROOT, ".well-known/api-catalog"),
+        buildApiCatalogArtifact()
+      );
+
+      const agentSkills = buildAgentSkillsArtifacts(authoredDocEntries);
+      writeJsonFile(
+        path.join(STATIC_ROOT, ".well-known/agent-skills/index.json"),
+        agentSkills.index
+      );
+      agentSkills.skills.forEach((skill) => {
+        writeTextFile(path.join(STATIC_ROOT, skill.url.replace(/^\//, "")), skill.content);
+      });
+    }
 
     if (wrapperDocEntries.length === 0) {
       throw new Error("Expected docs operation wrapper pages to generate Markdown mirrors.");

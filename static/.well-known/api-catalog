@@ -1,0 +1,67 @@
+{
+  "linkset": [
+    {
+      "anchor": "https://rpc.mainnet.fastnear.com",
+      "service-desc": [
+        {
+          "href": "https://rpc.mainnet.fastnear.com/openapi.json",
+          "type": "application/json"
+        }
+      ],
+      "service-doc": [
+        {
+          "href": "https://docs.fastnear.com/rpc",
+          "type": "text/html"
+        }
+      ],
+      "status": [
+        {
+          "href": "https://status.fastnear.com/status/main",
+          "type": "text/html"
+        }
+      ]
+    },
+    {
+      "anchor": "https://api.fastnear.com",
+      "service-desc": [
+        {
+          "href": "https://docs.fastnear.com/openapi/fastnear.json",
+          "type": "application/json"
+        }
+      ],
+      "service-doc": [
+        {
+          "href": "https://docs.fastnear.com/api",
+          "type": "text/html"
+        }
+      ],
+      "status": [
+        {
+          "href": "https://api.fastnear.com/status",
+          "type": "application/json"
+        }
+      ]
+    },
+    {
+      "anchor": "https://mainnet.neardata.xyz",
+      "service-desc": [
+        {
+          "href": "https://docs.fastnear.com/openapi/neardata.json",
+          "type": "application/json"
+        }
+      ],
+      "service-doc": [
+        {
+          "href": "https://docs.fastnear.com/neardata",
+          "type": "text/html"
+        }
+      ],
+      "status": [
+        {
+          "href": "https://mainnet.neardata.xyz/health",
+          "type": "application/json"
+        }
+      ]
+    }
+  ]
+}
