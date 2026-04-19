@@ -12,6 +12,225 @@ page_actions:
 
 Use this page when you already know the answer lives in RPC and you want the shortest path to it. The goal is not to memorize every method. It is to start with the right RPC read or write, stop as soon as the response answers the question, and only switch to a higher-level API when that would save time.
 
+## Transaction Submission and Tracking
+
+Start here when the real question is not just “how do I send this?” but “which RPC endpoint should I use, and how do I track the transaction all the way to done?”
+
+### Submit a transaction, then track it from hash to final execution
+
+Use this when the user story is simple: “I have a signed transaction. Which endpoint do I call first, and what should I poll after I get the hash?” Not every tx question wants the same RPC method. The practical pattern is to submit fast, then track deliberately.
+
+This walkthrough is intentionally pinned and historical. It uses one real mainnet transaction that wrote a NEAR Social follow edge:
+
+- transaction hash: `FLLmTvFx9vCof79scy2uUviF5WwYmevkz9TZ8azPGVQb`
+- signer: `mike.near`
+- receiver: `social.near`
+- included block height: `79574923`
+- receipt execution block for the SocialDB write: `79574924`
+
+Because this transaction is already old and finalized, you cannot literally replay its true pending window. That is fine. The point here is to teach the right submission and tracking pattern, then inspect one pinned transaction with the same tools.
+
+<div className="fastnear-example-strategy">
+  <div className="fastnear-example-strategy__header">
+    <span className="fastnear-example-strategy__eyebrow">Strategy</span>
+    <p className="fastnear-example-strategy__title">Submit fast, poll the simpler status path first, and only drop into the receipt tree when the headline status stops being enough.</p>
+  </div>
+  <div className="fastnear-example-strategy__items">
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">01</span><span><span className="fastnear-example-strategy__code">RPC broadcast_tx_async</span> is the low-latency submission surface when your client will track separately.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">02</span><span><span className="fastnear-example-strategy__code">RPC tx</span> is the default polling surface for included, optimistic, and final guarantees.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span><span className="fastnear-example-strategy__code">RPC EXPERIMENTAL_tx_status</span> is the deeper follow-up when you need the receipt tree, not the default loop.</span></p>
+  </div>
+</div>
+
+**What you're deciding**
+
+- which submission endpoint to reach for first
+- what to poll after you have a tx hash
+- how `wait_until` thresholds relate to included, optimistic, and final guarantees
+- when to stop using `tx` and switch to `EXPERIMENTAL_tx_status`
+
+```mermaid
+flowchart LR
+    S["Sign transaction"] --> A["broadcast_tx_async<br/>returns tx hash"]
+    A --> T["tx polling<br/>INCLUDED_FINAL -> FINAL"]
+    T --> F["Transaction fully done"]
+    T -. "only when needed" .-> E["EXPERIMENTAL_tx_status<br/>receipt tree + outcomes"]
+    F -. "optional readable story" .-> X["POST /v0/transactions"]
+```
+
+| Method | Use it when | What comes back | Position here |
+| --- | --- | --- | --- |
+| [`broadcast_tx_async`](/rpc/transaction/broadcast-tx-async) | your client wants to own tracking after submission | just the tx hash | **default submit path** |
+| [`send_tx`](/rpc/transaction/send-tx) | you want the node to wait to a chosen threshold for you | tx result up to `wait_until` | blocking alternative |
+| [`broadcast_tx_commit`](/rpc/transaction/broadcast-tx-commit) | older code or quick one-call confirmation is the point | execution result with commit-style waiting | legacy convenience |
+| [`tx`](/rpc/transaction/tx-status) | you already have the tx hash and want to know how far it got | status plus outcomes at the threshold you asked for | **default tracking path** |
+| [`EXPERIMENTAL_tx_status`](/rpc/transaction/experimental-tx-status) | you need receipt-tree detail or a richer async story | full receipt tree and detailed outcomes | deep follow-up only |
+
+**Status and wait map**
+
+`wait_until` values are waiting thresholds, not a permanent lifecycle enum you should treat as the user's one true transaction status. The word `pending` is still useful in human conversation, but here it means “the transaction has been submitted and is not yet included.”
+
+| Phase or threshold | What it means in practice | Best RPC surface |
+| --- | --- | --- |
+| pre-inclusion / pending | the client has submitted the tx, but it is not yet anchored in a block | your own submission state plus retry/backoff logic |
+| `INCLUDED` | the tx is in a block, but that block may not be final yet | `tx` |
+| `INCLUDED_FINAL` | the inclusion block is final | `tx` |
+| `EXECUTED_OPTIMISTIC` | execution has happened with optimistic finality | `tx` or `send_tx` |
+| `FINAL` | all relevant execution has completed and finalized | `tx` by default, `EXPERIMENTAL_tx_status` when you need more detail |
+
+The key practical distinction is simple:
+
+- use `broadcast_tx_async` when the tx hash is enough to keep going
+- use `tx` as the normal tracking loop
+- use `EXPERIMENTAL_tx_status` when the next question is about the receipt tree rather than the headline status
+
+**What you're doing**
+
+- Show what a live submission would look like with `broadcast_tx_async`.
+- Poll the pinned tx with `tx` at two thresholds: `INCLUDED_FINAL` and `FINAL`.
+- Only after that inspect the same tx with `EXPERIMENTAL_tx_status`.
+- Optionally pivot to Transactions API if the human-readable story is what matters next.
+
+```bash
+RPC_URL=https://rpc.mainnet.fastnear.com
+TX_BASE_URL=https://tx.main.fastnear.com
+TX_HASH=FLLmTvFx9vCof79scy2uUviF5WwYmevkz9TZ8azPGVQb
+SIGNER_ACCOUNT_ID=mike.near
+RECEIVER_ID=social.near
+```
+
+1. If this were a live client flow, submit with `broadcast_tx_async` and keep the returned hash.
+
+```bash
+curl -s "$RPC_URL" \
+  -H 'content-type: application/json' \
+  --data '{
+    "jsonrpc": "2.0",
+    "id": "fastnear",
+    "method": "broadcast_tx_async",
+    "params": ["BASE64_SIGNED_TX"]
+  }' \
+  | jq .
+```
+
+In a real app, that response is the moment you stop waiting on submission and start tracking by tx hash.
+
+2. Poll with `tx` at the first threshold that answers the user question.
+
+```bash
+curl -s "$RPC_URL" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc \
+    --arg tx_hash "$TX_HASH" \
+    --arg signer_account_id "$SIGNER_ACCOUNT_ID" '{
+      jsonrpc: "2.0",
+      id: "fastnear",
+      method: "tx",
+      params: {
+        tx_hash: $tx_hash,
+        sender_account_id: $signer_account_id,
+        wait_until: "INCLUDED_FINAL"
+      }
+    }')" \
+  | jq '{
+      final_execution_status: .result.final_execution_status,
+      status: .result.status,
+      transaction_handoff: .result.transaction_outcome.outcome.status
+    }'
+```
+
+What to notice:
+
+- on a live tx, this threshold is useful when you care that the tx is safely included before you claim success to the user
+- on this historical tx, it returns immediately because the transaction is long past inclusion
+- `transaction_outcome.outcome.status` still tells you that the original action handed off into receipt execution
+
+3. Poll again with `FINAL` when you want the completed transaction story rather than just safe inclusion.
+
+```bash
+curl -s "$RPC_URL" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc \
+    --arg tx_hash "$TX_HASH" \
+    --arg signer_account_id "$SIGNER_ACCOUNT_ID" '{
+      jsonrpc: "2.0",
+      id: "fastnear",
+      method: "tx",
+      params: {
+        tx_hash: $tx_hash,
+        sender_account_id: $signer_account_id,
+        wait_until: "FINAL"
+      }
+    }')" \
+  | jq '{
+      final_execution_status: .result.final_execution_status,
+      status: .result.status,
+      receipts_outcome_count: (.result.receipts_outcome | length)
+    }'
+```
+
+What to notice:
+
+- for a historical tx, this call also returns immediately
+- in a real tracking loop, this is the threshold that answers “is the transaction actually done?”
+- for many apps, this is where you stop and move on
+
+4. Only switch to `EXPERIMENTAL_tx_status` when you need the richer receipt tree.
+
+```bash
+curl -s "$RPC_URL" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc \
+    --arg tx_hash "$TX_HASH" \
+    --arg signer_account_id "$SIGNER_ACCOUNT_ID" '{
+      jsonrpc: "2.0",
+      id: "fastnear",
+      method: "EXPERIMENTAL_tx_status",
+      params: {
+        tx_hash: $tx_hash,
+        sender_account_id: $signer_account_id,
+        wait_until: "FINAL"
+      }
+    }')" \
+  | jq '{
+      final_execution_status: .result.final_execution_status,
+      status: .result.status,
+      transaction_handoff: .result.transaction_outcome.outcome.status,
+      receipts_outcome_count: (.result.receipts_outcome | length)
+    }'
+```
+
+This is where you go when “did it finish?” turns into “show me the receipt tree and the full async execution story.”
+
+5. Optional: pivot to Transactions API only when you want the readable story surface.
+
+```bash
+curl -s "$TX_BASE_URL/v0/transactions" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc --arg tx_hash "$TX_HASH" '{tx_hashes: [$tx_hash]}')" \
+  | jq '{
+      transaction: {
+        hash: .transactions[0].transaction.hash,
+        signer_id: .transactions[0].transaction.signer_id,
+        receiver_id: .transactions[0].transaction.receiver_id,
+        included_block_height: .transactions[0].execution_outcome.block_height
+      },
+      actions: (
+        .transactions[0].transaction.actions
+        | map(if type == "string" then . else keys[0] end)
+      ),
+      transaction_handoff: .transactions[0].transaction_outcome.outcome.status
+    }'
+```
+
+That last step is intentionally optional. The RPC truth is already enough for submission and tracking. This is only the human-readable story surface when the next user question becomes “what actually happened?” instead of “how far did the tx get?”
+
+**Recommended pattern**
+
+- Use `broadcast_tx_async` plus `tx` polling when you want the best client control and the fastest feedback.
+- Use `send_tx` when you really do want one blocking call to wait up to a chosen threshold.
+- Use `EXPERIMENTAL_tx_status` when the normal polling loop stops being enough and the receipt tree becomes the real question.
+
 ## Account and Key Mechanics
 
 Start here when the question is about exact permissions, exact key state, or one contract-level write flow.
@@ -1218,6 +1437,7 @@ Sometimes the right RPC answer is just: here is the widget, here is the live sou
 
 **Start here**
 
+- Start with the worked example above when the real question is which submission endpoint to use and how to track the transaction through completion.
 - [Send Transaction](/rpc/transaction/send-tx) when you want RPC submission with explicit waiting semantics.
 - [Broadcast Transaction Async](/rpc/transaction/broadcast-tx-async) or [Broadcast Transaction Commit](/rpc/transaction/broadcast-tx-commit) when those exact submission modes are the point.
 - [Transaction Status](/rpc/transaction/tx-status) to confirm the final result.

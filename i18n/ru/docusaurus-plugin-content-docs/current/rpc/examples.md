@@ -12,6 +12,225 @@ page_actions:
 
 Используйте эту страницу, когда уже ясно, что ответ надо брать прямо из RPC, и нужен самый короткий путь по документации. Цель не в том, чтобы запомнить каждый метод, а в том, чтобы начать с правильного RPC-запроса, остановиться, как только ответ уже решает задачу, и переходить к более высокоуровневому API только тогда, когда это действительно экономит время.
 
+## Отправка и отслеживание транзакции
+
+Начинайте отсюда, когда настоящий вопрос звучит не просто как «как мне это отправить?», а как «какой RPC-эндпоинт здесь правильный и как довести отслеживание транзакции до полного завершения?»
+
+### Отправить транзакцию и затем проследить её от хеша до финального исполнения
+
+Используйте этот сценарий, когда история звучит просто: «у меня есть подписанная транзакция. Какой эндпоинт вызвать первым и что потом опрашивать после получения хеша?» Разные вопросы про транзакции требуют разных RPC-методов. Практичный паттерн здесь один: быстро отправить, а потом осознанно отслеживать.
+
+Этот walkthrough специально сделан зафиксированным и историческим. Он использует одну реальную mainnet-транзакцию, которая записала follow edge в NEAR Social:
+
+- хеш транзакции: `FLLmTvFx9vCof79scy2uUviF5WwYmevkz9TZ8azPGVQb`
+- signer: `mike.near`
+- receiver: `social.near`
+- высота блока включения: `79574923`
+- высота блока исполнения receipt для записи в SocialDB: `79574924`
+
+Поскольку эта транзакция уже старая и давно финализирована, вы не можете буквально воспроизвести её настоящий интервал до включения. Это нормально. Смысл примера в том, чтобы показать правильный паттерн отправки и отслеживания, а затем посмотреть на одну зафиксированную транзакцию теми же инструментами.
+
+<div className="fastnear-example-strategy">
+  <div className="fastnear-example-strategy__header">
+    <span className="fastnear-example-strategy__eyebrow">Стратегия</span>
+    <p className="fastnear-example-strategy__title">Сначала быстро отправьте, затем идите по более простому статусному пути и переходите к дереву receipts только когда общего статуса уже недостаточно.</p>
+  </div>
+  <div className="fastnear-example-strategy__items">
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">01</span><span><span className="fastnear-example-strategy__code">RPC broadcast_tx_async</span> — это способ отправки с минимальной задержкой, когда клиент сам будет отслеживать статус дальше.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">02</span><span><span className="fastnear-example-strategy__code">RPC tx</span> — это базовый способ опроса статуса для гарантий включения, optimistic finality и полного завершения.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span><span className="fastnear-example-strategy__code">RPC EXPERIMENTAL_tx_status</span> — это уже более глубокое продолжение, когда нужен не общий статус, а дерево receipts.</span></p>
+  </div>
+</div>
+
+**Что вы здесь решаете**
+
+- какой эндпоинт отправки брать первым
+- что опрашивать после того, как у вас появился tx hash
+- как `wait_until` связан с included-, optimistic- и final-гарантиями
+- когда пора перестать использовать `tx` и перейти на `EXPERIMENTAL_tx_status`
+
+```mermaid
+flowchart LR
+    S["Подписываем транзакцию"] --> A["broadcast_tx_async<br/>возвращает tx hash"]
+    A --> T["Polling через tx<br/>INCLUDED_FINAL -> FINAL"]
+    T --> F["Транзакция полностью завершена"]
+    T -. "только при необходимости" .-> E["EXPERIMENTAL_tx_status<br/>дерево receipts + outcomes"]
+    F -. "необязательная читаемая история" .-> X["POST /v0/transactions"]
+```
+
+| Метод | Когда использовать | Что вернётся | Роль здесь |
+| --- | --- | --- | --- |
+| [`broadcast_tx_async`](/rpc/transaction/broadcast-tx-async) | клиент сам будет отслеживать транзакцию после отправки | только tx hash | **базовый путь отправки** |
+| [`send_tx`](/rpc/transaction/send-tx) | вы хотите, чтобы узел сам подождал до выбранного порога | результат tx до уровня `wait_until` | блокирующая альтернатива |
+| [`broadcast_tx_commit`](/rpc/transaction/broadcast-tx-commit) | у вас старый код или важен быстрый режим “одним вызовом” | результат исполнения с commit-ожиданием | устаревшее удобство |
+| [`tx`](/rpc/transaction/tx-status) | у вас уже есть tx hash и нужно понять, насколько далеко всё продвинулось | статус и outcomes на выбранном пороге | **базовый путь отслеживания** |
+| [`EXPERIMENTAL_tx_status`](/rpc/transaction/experimental-tx-status) | вам уже нужно дерево receipts или более богатая async-история | полное дерево receipts и детальные outcomes | только глубокое продолжение |
+
+**Карта статусов и ожидания**
+
+Значения `wait_until` — это пороги ожидания, а не один постоянный статус транзакции, который стоит считать единственно правильным. Слово `pending` всё ещё полезно в человеческом разговоре, но здесь оно означает только одно: транзакция уже отправлена клиентом, но ещё не включена в блок.
+
+| Фаза или порог | Что это значит на практике | Лучшая RPC-поверхность |
+| --- | --- | --- |
+| до включения (`pending`) | клиент уже отправил tx, но она ещё не заякорена в блоке | собственное состояние клиента плюс логика повторов и пауз |
+| `INCLUDED` | транзакция уже в блоке, но сам блок ещё может быть не финальным | `tx` |
+| `INCLUDED_FINAL` | блок включения уже финален | `tx` |
+| `EXECUTED_OPTIMISTIC` | исполнение уже произошло с optimistic finality | `tx` или `send_tx` |
+| `FINAL` | всё релевантное исполнение завершилось и финализировалось | по умолчанию `tx`, а `EXPERIMENTAL_tx_status` — если нужна более глубокая детализация |
+
+Практическое различие очень простое:
+
+- используйте `broadcast_tx_async`, когда для продолжения вам достаточно tx hash
+- используйте `tx` как обычный цикл опроса
+- используйте `EXPERIMENTAL_tx_status`, когда следующий вопрос относится уже к дереву receipts, а не к общему статусу
+
+**Что вы делаете**
+
+- Показываете, как выглядела бы живая отправка через `broadcast_tx_async`.
+- Опрашиваете зафиксированную tx через `tx` на двух порогах: `INCLUDED_FINAL` и `FINAL`.
+- Только после этого смотрите ту же tx через `EXPERIMENTAL_tx_status`.
+- Необязательно переходите в Transactions API, если дальше уже нужна человеческая история.
+
+```bash
+RPC_URL=https://rpc.mainnet.fastnear.com
+TX_BASE_URL=https://tx.main.fastnear.com
+TX_HASH=FLLmTvFx9vCof79scy2uUviF5WwYmevkz9TZ8azPGVQb
+SIGNER_ACCOUNT_ID=mike.near
+RECEIVER_ID=social.near
+```
+
+1. Если бы это был живой клиентский сценарий, вы бы отправили транзакцию через `broadcast_tx_async` и сохранили возвращённый хеш.
+
+```bash
+curl -s "$RPC_URL" \
+  -H 'content-type: application/json' \
+  --data '{
+    "jsonrpc": "2.0",
+    "id": "fastnear",
+    "method": "broadcast_tx_async",
+    "params": ["BASE64_SIGNED_TX"]
+  }' \
+  | jq .
+```
+
+В реальном приложении именно в этот момент вы перестаёте ждать завершения отправки и переходите к отслеживанию по tx hash.
+
+2. Опрашивайте `tx` на первом пороге, который уже отвечает на вопрос пользователя.
+
+```bash
+curl -s "$RPC_URL" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc \
+    --arg tx_hash "$TX_HASH" \
+    --arg signer_account_id "$SIGNER_ACCOUNT_ID" '{
+      jsonrpc: "2.0",
+      id: "fastnear",
+      method: "tx",
+      params: {
+        tx_hash: $tx_hash,
+        sender_account_id: $signer_account_id,
+        wait_until: "INCLUDED_FINAL"
+      }
+    }')" \
+  | jq '{
+      final_execution_status: .result.final_execution_status,
+      status: .result.status,
+      transaction_handoff: .result.transaction_outcome.outcome.status
+    }'
+```
+
+Что здесь важно заметить:
+
+- на живой транзакции этот порог полезен, когда важно понять, что включение уже безопасно с точки зрения finality
+- на этой исторической tx ответ приходит сразу, потому что она давно прошла фазу включения
+- `transaction_outcome.outcome.status` всё равно показывает, что исходное действие передало управление в исполнение через receipt
+
+3. Опрашивайте снова, но уже с `FINAL`, когда нужна завершённая история транзакции, а не просто безопасное включение.
+
+```bash
+curl -s "$RPC_URL" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc \
+    --arg tx_hash "$TX_HASH" \
+    --arg signer_account_id "$SIGNER_ACCOUNT_ID" '{
+      jsonrpc: "2.0",
+      id: "fastnear",
+      method: "tx",
+      params: {
+        tx_hash: $tx_hash,
+        sender_account_id: $signer_account_id,
+        wait_until: "FINAL"
+      }
+    }')" \
+  | jq '{
+      final_execution_status: .result.final_execution_status,
+      status: .result.status,
+      receipts_outcome_count: (.result.receipts_outcome | length)
+    }'
+```
+
+Что здесь важно заметить:
+
+- для исторической tx этот вызов тоже возвращается сразу
+- в реальном цикле опроса именно этот порог отвечает на вопрос «транзакция уже действительно завершена?»
+- для многих приложений именно здесь и стоит остановиться
+
+4. Переходите к `EXPERIMENTAL_tx_status` только тогда, когда вам уже нужно более богатое дерево receipts.
+
+```bash
+curl -s "$RPC_URL" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc \
+    --arg tx_hash "$TX_HASH" \
+    --arg signer_account_id "$SIGNER_ACCOUNT_ID" '{
+      jsonrpc: "2.0",
+      id: "fastnear",
+      method: "EXPERIMENTAL_tx_status",
+      params: {
+        tx_hash: $tx_hash,
+        sender_account_id: $signer_account_id,
+        wait_until: "FINAL"
+      }
+    }')" \
+  | jq '{
+      final_execution_status: .result.final_execution_status,
+      status: .result.status,
+      transaction_handoff: .result.transaction_outcome.outcome.status,
+      receipts_outcome_count: (.result.receipts_outcome | length)
+    }'
+```
+
+Сюда стоит идти, когда вопрос меняется с «дошло ли всё до конца?» на «покажи мне дерево receipts и полную async-историю исполнения».
+
+5. Необязательно: переходите в Transactions API только если дальше нужна именно читаемая история.
+
+```bash
+curl -s "$TX_BASE_URL/v0/transactions" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc --arg tx_hash "$TX_HASH" '{tx_hashes: [$tx_hash]}')" \
+  | jq '{
+      transaction: {
+        hash: .transactions[0].transaction.hash,
+        signer_id: .transactions[0].transaction.signer_id,
+        receiver_id: .transactions[0].transaction.receiver_id,
+        included_block_height: .transactions[0].execution_outcome.block_height
+      },
+      actions: (
+        .transactions[0].transaction.actions
+        | map(if type == "string" then . else keys[0] end)
+      ),
+      transaction_handoff: .transactions[0].transaction_outcome.outcome.status
+    }'
+```
+
+Этот последний шаг специально сделан необязательным. Для отправки и отслеживания RPC-правды уже достаточно. Это просто читаемая история на тот случай, если следующий вопрос уже звучит как «что именно произошло?», а не «насколько далеко продвинулась tx?»
+
+**Рекомендуемый паттерн**
+
+- Используйте `broadcast_tx_async` плюс опрос через `tx`, если хотите максимум клиентского контроля и самую быструю обратную связь.
+- Используйте `send_tx`, когда вам действительно нужен один блокирующий вызов, который подождёт до выбранного порога.
+- Используйте `EXPERIMENTAL_tx_status`, когда обычного цикла опроса уже недостаточно и настоящий вопрос относится к дереву receipts.
+
 ## Механика аккаунтов и ключей
 
 Начинайте отсюда, когда вопрос касается точных прав, точного состояния ключей или одного сценария записи на уровне контракта.
@@ -1218,6 +1437,7 @@ jq -r \
 
 **Начните здесь**
 
+- Сначала поднимитесь к готовому примеру выше, если настоящий вопрос в том, какой эндпоинт отправки выбрать и как потом отслеживать транзакцию до завершения.
 - [Send Transaction](/rpc/transaction/send-tx), когда нужна RPC-отправка с явной семантикой ожидания.
 - [Broadcast Transaction Async](/rpc/transaction/broadcast-tx-async) или [Broadcast Transaction Commit](/rpc/transaction/broadcast-tx-commit), когда важны именно эти режимы отправки.
 - [Transaction Status](/rpc/transaction/tx-status), чтобы подтвердить финальный результат.
