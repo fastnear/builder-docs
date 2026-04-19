@@ -284,7 +284,12 @@ jq --arg fragment "$LOG_FRAGMENT" '{
         receipt_id: .receipt.receipt_id,
         predecessor_id: .receipt.predecessor_id,
         receiver_id: .receipt.receiver_id,
-        method_name: (.receipt.receipt.Action.actions[0].FunctionCall.method_name // "transfer"),
+        method_name: (
+          .receipt.receipt.Action.actions[0]
+          | if type == "string" then .
+            else (.FunctionCall.method_name // keys[0])
+            end
+        ),
         block_height: .execution_outcome.block_height,
         logs: .execution_outcome.outcome.logs
       }
@@ -308,7 +313,12 @@ jq '{
     | {
         receipt_id: .receipt.receipt_id,
         receiver_id: .receipt.receiver_id,
-        method_name: (.receipt.receipt.Action.actions[0].FunctionCall.method_name // "transfer"),
+        method_name: (
+          .receipt.receipt.Action.actions[0]
+          | if type == "string" then .
+            else (.FunctionCall.method_name // keys[0])
+            end
+        ),
         logs: .execution_outcome.outcome.logs
       }
   ]
@@ -438,8 +448,19 @@ jq '{
 
 ```bash
 jq -r '
+  def zeros($n):
+    reduce range(0; $n) as $i (""; . + "0");
+  def yocto_to_near($yocto):
+    ($yocto | tostring) as $digits
+    | if ($digits | length) <= 24 then
+        ("0." + zeros(24 - ($digits | length)) + $digits)
+      else
+        ($digits[0:(($digits | length) - 24)] + "." + $digits[-24:])
+      end
+    | sub("0+$"; "")
+    | sub("\\.$"; "");
   .transactions[0] as $tx
-  | "Receipt \($tx.execution_outcome.outcome.receipt_ids[0]) belongs to tx \($tx.transaction.hash): \($tx.transaction.signer_id) sent 5 NEAR to \($tx.transaction.receiver_id). The tx landed in block \($tx.execution_outcome.block_height), and the receipt executed successfully in block \($tx.receipts[0].execution_outcome.block_height)."
+  | "Receipt \($tx.execution_outcome.outcome.receipt_ids[0]) belongs to tx \($tx.transaction.hash): \($tx.transaction.signer_id) sent \(yocto_to_near($tx.transaction.actions[0].Transfer.deposit)) NEAR to \($tx.transaction.receiver_id). The tx landed in block \($tx.execution_outcome.block_height), and the receipt executed successfully in block \($tx.receipts[0].execution_outcome.block_height)."
 ' /tmp/receipt-parent-transaction.json
 ```
 
@@ -901,6 +922,25 @@ curl -s "$TX_BASE_URL/v0/transactions" \
   -H 'content-type: application/json' \
   --data "$(jq -nc --arg tx_hash "$TX_HASH" '{tx_hashes: [$tx_hash]}')" \
   | tee /tmp/callback-check-transaction.json >/dev/null
+```
+
+2. Answer the smallest useful question first: did the callback come back at all?
+
+```bash
+jq --arg origin "$ORIGIN_CONTRACT_ID" '
+  [
+    .transactions[0].receipts[]
+    | select(
+        .receipt.receiver_id == $origin
+        and (.receipt.receipt.Action.actions[0].FunctionCall.method_name // "") == "ft_resolve_transfer"
+      )
+  ] | length > 0
+' /tmp/callback-check-transaction.json
+```
+
+3. If the answer is `true`, print the downstream receipt plus the callback receipt.
+
+```bash
 
 CALLBACK_RECEIPT_ID="$(
   jq -r --arg origin "$ORIGIN_CONTRACT_ID" '
@@ -931,7 +971,12 @@ jq --arg origin "$ORIGIN_CONTRACT_ID" --arg downstream "$DOWNSTREAM_CONTRACT_ID"
           receipt_id: .receipt.receipt_id,
           predecessor_id: .receipt.predecessor_id,
           receiver_id: .receipt.receiver_id,
-          method_name: (.receipt.receipt.Action.actions[0].FunctionCall.method_name // "transfer"),
+          method_name: (
+            .receipt.receipt.Action.actions[0]
+            | if type == "string" then .
+              else (.FunctionCall.method_name // keys[0])
+              end
+          ),
           status: .execution_outcome.outcome.status,
           block_height: .execution_outcome.block_height
         }
@@ -973,7 +1018,7 @@ jq --arg origin "$ORIGIN_CONTRACT_ID" --arg downstream "$DOWNSTREAM_CONTRACT_ID"
 # - callback_ran is true even though the downstream receipt failed
 ```
 
-2. If you want the canonical callback outcome and refund log, confirm the same receipt in RPC.
+4. If you want the canonical callback outcome and refund log, confirm the same receipt in RPC.
 
 ```bash
 curl -s "$RPC_URL" \
@@ -1023,7 +1068,6 @@ For callback questions, the important proof is not “did every receipt succeed?
 - Trying to submit a transaction from the history API instead of raw RPC.
 - Using Transactions API when the user only wants current balances or holdings.
 - Dropping to raw RPC before indexed history has answered the readable "what happened?" question.
-- Reusing opaque pagination tokens in a different endpoint or filter context.
 
 ## Related guides
 

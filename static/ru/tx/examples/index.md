@@ -266,7 +266,12 @@ jq --arg fragment "$LOG_FRAGMENT" '{
         receipt_id: .receipt.receipt_id,
         predecessor_id: .receipt.predecessor_id,
         receiver_id: .receipt.receiver_id,
-        method_name: (.receipt.receipt.Action.actions[0].FunctionCall.method_name // "transfer"),
+        method_name: (
+          .receipt.receipt.Action.actions[0]
+          | if type == "string" then .
+            else (.FunctionCall.method_name // keys[0])
+            end
+        ),
         block_height: .execution_outcome.block_height,
         logs: .execution_outcome.outcome.logs
       }
@@ -290,7 +295,12 @@ jq '{
     | {
         receipt_id: .receipt.receipt_id,
         receiver_id: .receipt.receiver_id,
-        method_name: (.receipt.receipt.Action.actions[0].FunctionCall.method_name // "transfer"),
+        method_name: (
+          .receipt.receipt.Action.actions[0]
+          | if type == "string" then .
+            else (.FunctionCall.method_name // keys[0])
+            end
+        ),
         logs: .execution_outcome.outcome.logs
       }
   ]
@@ -415,8 +425,19 @@ jq '{
 
 ```bash
 jq -r '
+  def zeros($n):
+    reduce range(0; $n) as $i (""; . + "0");
+  def yocto_to_near($yocto):
+    ($yocto | tostring) as $digits
+    | if ($digits | length) <= 24 then
+        ("0." + zeros(24 - ($digits | length)) + $digits)
+      else
+        ($digits[0:(($digits | length) - 24)] + "." + $digits[-24:])
+      end
+    | sub("0+$"; "")
+    | sub("\\.$"; "");
   .transactions[0] as $tx
-  | "Receipt \($tx.execution_outcome.outcome.receipt_ids[0]) относится к tx \($tx.transaction.hash): \($tx.transaction.signer_id) отправил 5 NEAR в \($tx.transaction.receiver_id). Транзакция попала в блок \($tx.execution_outcome.block_height), а receipt успешно исполнился в блоке \($tx.receipts[0].execution_outcome.block_height)."
+  | "Receipt \($tx.execution_outcome.outcome.receipt_ids[0]) относится к tx \($tx.transaction.hash): \($tx.transaction.signer_id) отправил \(yocto_to_near($tx.transaction.actions[0].Transfer.deposit)) NEAR в \($tx.transaction.receiver_id). Транзакция попала в блок \($tx.execution_outcome.block_height), а receipt успешно исполнился в блоке \($tx.receipts[0].execution_outcome.block_height)."
 ' /tmp/receipt-parent-transaction.json
 ```
 
@@ -856,13 +877,32 @@ ORIGIN_CONTRACT_ID=wrap.near
 DOWNSTREAM_CONTRACT_ID=v2.ref-finance.near
 ```
 
-1. Получите транзакцию и распечатайте downstream-receipt вместе с callback-receipt.
+1. Получите транзакцию и сохраните receipt-цепочку.
 
 ```bash
 curl -s "$TX_BASE_URL/v0/transactions" \
   -H 'content-type: application/json' \
   --data "$(jq -nc --arg tx_hash "$TX_HASH" '{tx_hashes: [$tx_hash]}')" \
   | tee /tmp/callback-check-transaction.json >/dev/null
+```
+
+2. Сначала ответьте на самый короткий полезный вопрос: вернулся ли callback вообще?
+
+```bash
+jq --arg origin "$ORIGIN_CONTRACT_ID" '
+  [
+    .transactions[0].receipts[]
+    | select(
+        .receipt.receiver_id == $origin
+        and (.receipt.receipt.Action.actions[0].FunctionCall.method_name // "") == "ft_resolve_transfer"
+      )
+  ] | length > 0
+' /tmp/callback-check-transaction.json
+```
+
+3. Если ответ `true`, распечатайте downstream-receipt вместе с callback-receipt.
+
+```bash
 
 CALLBACK_RECEIPT_ID="$(
   jq -r --arg origin "$ORIGIN_CONTRACT_ID" '
@@ -893,7 +933,12 @@ jq --arg origin "$ORIGIN_CONTRACT_ID" --arg downstream "$DOWNSTREAM_CONTRACT_ID"
           receipt_id: .receipt.receipt_id,
           predecessor_id: .receipt.predecessor_id,
           receiver_id: .receipt.receiver_id,
-          method_name: (.receipt.receipt.Action.actions[0].FunctionCall.method_name // "transfer"),
+          method_name: (
+            .receipt.receipt.Action.actions[0]
+            | if type == "string" then .
+              else (.FunctionCall.method_name // keys[0])
+              end
+          ),
           status: .execution_outcome.outcome.status,
           block_height: .execution_outcome.block_height
         }
@@ -935,7 +980,7 @@ jq --arg origin "$ORIGIN_CONTRACT_ID" --arg downstream "$DOWNSTREAM_CONTRACT_ID"
 # - callback_ran равно true, даже несмотря на downstream-сбой
 ```
 
-2. Если нужен канонический результат callback-а и лог refund, подтвердите тот же receipt через RPC.
+4. Если нужен канонический результат callback-а и лог refund, подтвердите тот же receipt через RPC.
 
 ```bash
 curl -s "$RPC_URL" \
@@ -985,7 +1030,6 @@ jq --arg callback_receipt_id "$CALLBACK_RECEIPT_ID" '{
 - Пытаться отправлять транзакцию через history API вместо сырого RPC.
 - Использовать Transactions API, когда пользователю нужны только текущие балансы или активы.
 - Слишком рано уходить в сырой RPC до того, как индексированная история уже ответила на читаемый вопрос «что произошло?».
-- Повторно использовать непрозрачные токены пагинации с другим эндпоинтом или другим набором фильтров.
 
 ## Полезные связанные страницы
 

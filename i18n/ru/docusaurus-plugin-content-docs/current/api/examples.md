@@ -46,7 +46,7 @@ curl -s "$API_BASE_URL/v1/account/$ACCOUNT_ID/full" \
 <div className="fastnear-example-strategy">
   <div className="fastnear-example-strategy__header">
     <span className="fastnear-example-strategy__eyebrow">Стратегия</span>
-    <p className="fastnear-example-strategy__title">Сначала определите личность, а затем переиспользуйте тот же аккаунт для одной читаемой сводки по кошельку.</p>
+    <p className="fastnear-example-strategy__title">Сначала определите личность, а затем либо сразу проверьте один аккаунт, либо пройдитесь по всему списку, если ключ сопоставляется с несколькими аккаунтами.</p>
   </div>
   <div className="fastnear-example-strategy__items">
     <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">01</span><span><span className="fastnear-example-strategy__code">GET /v1/public_key</span> возвращает кандидатные значения <span className="fastnear-example-strategy__code">account_id</span> для этого ключа.</span></p>
@@ -58,8 +58,8 @@ curl -s "$API_BASE_URL/v1/account/$ACCOUNT_ID/full" \
 **Что вы делаете**
 
 - Ищете по публичному ключу один или несколько `account_id`.
-- Извлекаете первый найденный `account_id` через `jq`.
-- Переиспользуете это значение в широком эндпоинте полного снимка аккаунта.
+- Сначала считаете, сколько `account_id` вернулось, прежде чем выбирать один.
+- Сразу переиспользуете один аккаунт или проходите по всему списку, если ключ сопоставляется с несколькими аккаунтами.
 
 ```bash
 API_BASE_URL=https://api.fastnear.com
@@ -75,21 +75,42 @@ ACCOUNT_ID="$(
     | jq -r '.account_ids[0]'
 )"
 
-jq '{account_ids}' /tmp/fastnear-public-key.json
+ACCOUNT_COUNT="$(
+  jq -r '.account_ids | length' /tmp/fastnear-public-key.json
+)"
 
-curl -s "$API_BASE_URL/v1/account/$ACCOUNT_ID/full" \
-  | jq '{
-      account_id,
-      state,
-      token_count: (.tokens | length),
-      nft_count: (.nfts | length),
-      pool_count: (.pools | length)
-    }'
+jq '{
+  account_ids,
+  account_count: (.account_ids | length)
+}' /tmp/fastnear-public-key.json
+
+if [ "$ACCOUNT_COUNT" -eq 1 ]; then
+  curl -s "$API_BASE_URL/v1/account/$ACCOUNT_ID/full" \
+    | jq '{
+        account_id,
+        state,
+        token_count: (.tokens | length),
+        nft_count: (.nfts | length),
+        pool_count: (.pools | length)
+      }'
+else
+  jq -r '.account_ids[]' /tmp/fastnear-public-key.json \
+    | while read -r candidate_account_id; do
+        curl -s "$API_BASE_URL/v1/account/$candidate_account_id/full" \
+          | jq '{
+              account_id,
+              state,
+              token_count: (.tokens | length),
+              nft_count: (.nfts | length),
+              pool_count: (.pools | length)
+            }'
+      done
+fi
 ```
 
 **Зачем нужен следующий шаг?**
 
-Поиск по публичному ключу говорит, с каким аккаунтом вы имеете дело. Полный снимок аккаунта — естественный следующий запрос, если нужны балансы, NFT, стейкинг и пулы в одном ответе. Если ключ сопоставляется не с одним, а с несколькими аккаунтами, переходите к [V1 Public Key Lookup All](/api/v1/public-key-all) или пройдитесь по каждому найденному `account_id`.
+Поиск по публичному ключу говорит, с каким аккаунтом или аккаунтами вы имеете дело. Полный снимок аккаунта — естественный следующий запрос, если нужны балансы, NFT, стейкинг и пулы в одном ответе. Если ключ сопоставляется не с одним, а с несколькими аккаунтами, именно здесь стоит либо пройтись по каждому найденному `account_id`, либо перейти к [V1 Public Key Lookup All](/api/v1/public-key-all) для более широкого исторического ответа.
 
 ### Есть ли у этого аккаунта прямой стейкинг прямо сейчас?
 
@@ -144,7 +165,7 @@ jq '{
 
 **Зачем нужен следующий шаг?**
 
-Так вопрос остаётся узким и практическим. Если ответ `true`, важно помнить, что это значит на chain-уровне: аккаунт обычно делегировал средства в staking-pool-контракт вроде `polkachu.poolv1.near`, отправив `FunctionCall` наподобие `deposit_and_stake` с attached deposit. Сам `Stake` action позже выполняет уже сам pool-контракт на своём аккаунте. Если ответ `false`, не делайте из этого примера выводов про liquid staking: этот сценарий касается только прямых пулов.
+Так вопрос остаётся узким и практическим. Если ответ `true`, важно помнить, что это значит на chain-уровне: аккаунт обычно делегировал средства в staking-pool-контракт вроде `polkachu.poolv1.near`, отправив `FunctionCall` наподобие `deposit_and_stake` с attached deposit. Сам `Stake` action позже выполняет уже сам pool-контракт на своём аккаунте. Если ответ `false`, не делайте из этого примера выводов про liquid staking: liquid staking-позиции обычно сначала видны как FT-holdings в конкретных LST-контрактах, поэтому правильный follow-up здесь — FT-пример ниже. И ещё одна граница этой поверхности: этот эндпоинт сейчас не показывает pending-unstake или withdraw-ready amount, так что по нему не стоит отвечать на вопросы о задержках по эпохам.
 
 #### Необязательное продолжение: Что сделал этот контрактный вызов для делегирования?
 
@@ -155,7 +176,7 @@ jq '{
 - хеш транзакции: `5Qo96GonLaAfuh6eHWdi8zPRk92TFW8W2xWqSAoYKBVz`
 - top-level receiver: `polkachu.poolv1.near`
 - top-level метод: `deposit_and_stake`
-- attached deposit: `34650000000000000000000000`
+- attached deposit: `34650000000000000000000000` (≈34.65 NEAR)
 
 Важная форма chain-истории здесь такая:
 
@@ -221,6 +242,8 @@ jq '{
 - Печатаете один короткий индексированный инвентарь, который можно переиспользовать в wallet- или support-сценарии.
 
 Этот пример не отвечает на вопросы про нативный баланс, стейкинг, пулы, точные NFT token ID или метаданные.
+
+FT-эндпоинт здесь решает задачу балансов. Он не включает display-метаданные вроде `symbol` или `decimals`; когда нужно форматировать баланс для UI, вызовите у токен-контракта read-метод `ft_metadata` через RPC.
 
 NFT-эндпоинт здесь работает на уровне коллекций. Воспринимайте его как ответ на вопрос «из каких NFT-контрактов этот аккаунт сейчас что-то держит?», а не как полный per-token crawl.
 

@@ -46,7 +46,7 @@ Use this when you have a public key first and the next user-facing question is �
 <div className="fastnear-example-strategy">
   <div className="fastnear-example-strategy__header">
     <span className="fastnear-example-strategy__eyebrow">Strategy</span>
-    <p className="fastnear-example-strategy__title">Resolve identity first, then reuse the same account ID for one readable wallet snapshot.</p>
+    <p className="fastnear-example-strategy__title">Resolve identity first, then either inspect one account immediately or fan out across the returned list when the key maps to more than one account.</p>
   </div>
   <div className="fastnear-example-strategy__items">
     <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">01</span><span><span className="fastnear-example-strategy__code">GET /v1/public_key</span> gives the candidate <span className="fastnear-example-strategy__code">account_id</span> values for the key.</span></p>
@@ -58,8 +58,8 @@ Use this when you have a public key first and the next user-facing question is �
 **What you're doing**
 
 - Resolve the public key to one or more account IDs.
-- Extract the first matching account ID with `jq`.
-- Reuse that value in the full account snapshot endpoint.
+- Count how many account IDs came back before you commit to one.
+- Reuse one account ID immediately, or loop through the full list when the key maps to multiple accounts.
 
 ```bash
 API_BASE_URL=https://api.fastnear.com
@@ -75,21 +75,42 @@ ACCOUNT_ID="$(
     | jq -r '.account_ids[0]'
 )"
 
-jq '{account_ids}' /tmp/fastnear-public-key.json
+ACCOUNT_COUNT="$(
+  jq -r '.account_ids | length' /tmp/fastnear-public-key.json
+)"
 
-curl -s "$API_BASE_URL/v1/account/$ACCOUNT_ID/full" \
-  | jq '{
-      account_id,
-      state,
-      token_count: (.tokens | length),
-      nft_count: (.nfts | length),
-      pool_count: (.pools | length)
-    }'
+jq '{
+  account_ids,
+  account_count: (.account_ids | length)
+}' /tmp/fastnear-public-key.json
+
+if [ "$ACCOUNT_COUNT" -eq 1 ]; then
+  curl -s "$API_BASE_URL/v1/account/$ACCOUNT_ID/full" \
+    | jq '{
+        account_id,
+        state,
+        token_count: (.tokens | length),
+        nft_count: (.nfts | length),
+        pool_count: (.pools | length)
+      }'
+else
+  jq -r '.account_ids[]' /tmp/fastnear-public-key.json \
+    | while read -r candidate_account_id; do
+        curl -s "$API_BASE_URL/v1/account/$candidate_account_id/full" \
+          | jq '{
+              account_id,
+              state,
+              token_count: (.tokens | length),
+              nft_count: (.nfts | length),
+              pool_count: (.pools | length)
+            }'
+      done
+fi
 ```
 
 **Why this next step?**
 
-The public-key lookup tells you which account you are dealing with. The full account snapshot is the natural next read when you want balances, NFTs, staking, and pools in one response. If the key maps to multiple accounts instead of one, move to [V1 Public Key Lookup All](/api/v1/public-key-all) or loop through each returned `account_id`.
+The public-key lookup tells you which account or accounts you are dealing with. The full account snapshot is the natural next read when you want balances, NFTs, staking, and pools in one response. If the key maps to multiple accounts instead of one, this is the point where you either inspect each returned `account_id` or move to [V1 Public Key Lookup All](/api/v1/public-key-all) for the broader historical view.
 
 ### Does this account have direct staking right now?
 
@@ -144,7 +165,7 @@ At the time of writing, `mike.near` returned visible direct staking pools here. 
 
 **Why this next step?**
 
-This keeps the question narrow and operational. If the answer is `true`, remember what that means on chain: the account usually delegated into a staking-pool contract such as `polkachu.poolv1.near` by sending a `FunctionCall` like `deposit_and_stake` with attached deposit. The pool contract later performs the actual `Stake` action on its own account. If the answer is `false`, do not infer liquid staking from this example alone; this example is only about direct pool positions.
+This keeps the question narrow and operational. If the answer is `true`, remember what that means on chain: the account usually delegated into a staking-pool contract such as `polkachu.poolv1.near` by sending a `FunctionCall` like `deposit_and_stake` with attached deposit. The pool contract later performs the actual `Stake` action on its own account. If the answer is `false`, do not infer liquid staking from this example alone; liquid staking positions usually show up first as FT holdings in specific LST contracts, so the right follow-up is the FT holdings example below. Also note the scope boundary here: this endpoint does not currently surface pending-unstake or withdraw-ready amounts, so it is not the place to answer epoch-delay timing questions.
 
 #### Optional follow-up: What did this contract call for delegation do?
 
@@ -155,7 +176,7 @@ This pinned mainnet tx is useful because it shows the full pattern clearly:
 - transaction hash: `5Qo96GonLaAfuh6eHWdi8zPRk92TFW8W2xWqSAoYKBVz`
 - top-level receiver: `polkachu.poolv1.near`
 - top-level method: `deposit_and_stake`
-- attached deposit: `34650000000000000000000000`
+- attached deposit: `34650000000000000000000000` (≈34.65 NEAR)
 
 The important chain shape is:
 
@@ -221,6 +242,8 @@ Use this when a wallet view, support tool, or agent already has an `account_id` 
 - Print one short indexed inventory that a wallet or support flow could reuse.
 
 This example does not answer native balance, staking, pools, exact NFT token IDs, or metadata.
+
+The FT endpoint here is balance-first. It does not include display metadata such as token `symbol` or `decimals`; when you need to format a balance for UI, call the token contract’s `ft_metadata` read method over RPC.
 
 The NFT endpoint here is collection-level. Treat it as “which NFT contracts does this account currently hold from?” rather than a full per-token crawl.
 
