@@ -1199,6 +1199,252 @@ If `agrees_now` is `true`, you have proved the point of the example:
 
 Use `view_state` when the real question is about exact storage and you already know the key family. Use `call_function` when you want the contract’s public read API. If the next question becomes historical instead of “what is it right now?”, that is the moment to widen into [KV FastData API](/fastdata/kv).
 
+## Chunk and Shard Tracing
+
+Start here when the question is no longer just “did this transaction succeed?” but “which shard-local chunk actually executed each leg of the work?”
+
+### Trace a generated transfer receipt from one shard chunk to another
+
+Use this when the contract call itself was only the start of the story. In this pinned mainnet case, the signed transaction starts on shard `11`, then a generated `Transfer` receipt finishes on shard `6`. That cross-shard handoff is exactly why chunk-level inspection matters.
+
+This walkthrough is pinned to:
+
+- transaction `8xrcQU6Sr1jhnigenBbpfGzk9jN24rLmMqSWT7TF7xJP` from `7419369993.tg` to `game.hot.tg` calling `l2_claim`
+- origin chunk `BfydTxiPbGY34pejscBytYSXpBsk9gWA2ixKoAe7VsVw` on shard `11` in block `194623170`
+- first receipt chunk `FJWpAYzVXbZwqJUbGXELTnnBBkdvc6W8vWkwuUA3Zwz9` on shard `11` in block `194623171`
+- generated `Transfer` receipt `TtRn4DzLKzFmGEn5YqoZ35ts411Hz6Ci6WQMjphPMn4`
+- destination chunk `EPauY1GBaeAgGf1TikxFcPUhmYsVhLf1cwy14vAYsUuU` on shard `6` in block `194623172`
+
+<div className="fastnear-example-strategy">
+  <div className="fastnear-example-strategy__header">
+    <span className="fastnear-example-strategy__eyebrow">Strategy</span>
+    <p className="fastnear-example-strategy__title">Recover the receipt chain first, inspect the generated receipt directly, then map each leg back to the shard chunk that actually carried it.</p>
+  </div>
+  <div className="fastnear-example-strategy__items">
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">01</span><span><span className="fastnear-example-strategy__code">RPC EXPERIMENTAL_tx_status</span> quickly shows the receipt graph and which later blocks the work moved into.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">02</span><span><span className="fastnear-example-strategy__code">RPC EXPERIMENTAL_receipt</span> lets you inspect the generated receipt payload directly instead of inferring it from logs alone.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span><span className="fastnear-example-strategy__code">RPC chunk</span> by block-and-shard or by chunk hash proves which shard-local execution unit actually carried each step.</span></p>
+  </div>
+</div>
+
+The two experimental methods here are a good fit for advanced tracing: `EXPERIMENTAL_tx_status` finds the receipt graph quickly, and `EXPERIMENTAL_receipt` shows the generated receipt body before you map it back to chunks.
+
+```mermaid
+flowchart LR
+    A["Tx 8xrc...<br/>block 194623170<br/>chunk Bfyd...<br/>shard 11"] --> B["Receipt AFC2...<br/>block 194623171<br/>chunk FJWp...<br/>shard 11<br/>ft_mint logs"]
+    B --> C["Generated receipt TtRn...<br/>Transfer 1800930478788300000000 yoctoNEAR"]
+    C --> D["Chunk EPau...<br/>block 194623172<br/>shard 6<br/>receipt executes"]
+```
+
+**What you're doing**
+
+- Recover the receipt chain from the transaction first.
+- Inspect the generated `Transfer` receipt body directly.
+- Use chunk coordinates when you know the block and shard.
+- Use chunk hash when another tool already handed you the exact destination chunk.
+
+```bash
+export NETWORK_ID=mainnet
+export RPC_URL=https://rpc.mainnet.fastnear.com
+export TX_HASH=8xrcQU6Sr1jhnigenBbpfGzk9jN24rLmMqSWT7TF7xJP
+export SIGNER_ACCOUNT_ID=7419369993.tg
+export ORIGIN_BLOCK_HEIGHT=194623170
+export ORIGIN_SHARD_ID=11
+export RECEIPT_BLOCK_HEIGHT=194623171
+export RECEIPT_SHARD_ID=11
+export GENERATED_RECEIPT_ID=TtRn4DzLKzFmGEn5YqoZ35ts411Hz6Ci6WQMjphPMn4
+export DESTINATION_CHUNK_HASH=EPauY1GBaeAgGf1TikxFcPUhmYsVhLf1cwy14vAYsUuU
+```
+
+1. Start with `EXPERIMENTAL_tx_status` so you can see the receipt graph before you think about chunks.
+
+```bash
+curl -s "$RPC_URL" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc \
+    --arg tx_hash "$TX_HASH" \
+    --arg signer_account_id "$SIGNER_ACCOUNT_ID" '{
+      jsonrpc: "2.0",
+      id: "fastnear",
+      method: "EXPERIMENTAL_tx_status",
+      params: [$tx_hash, $signer_account_id]
+    }')" \
+  | tee /tmp/chunk-trace-status.json >/dev/null
+
+jq '{
+  final_execution_status: .result.final_execution_status,
+  transaction_handoff: .result.transaction_outcome.outcome.status,
+  receipts: (
+    .result.receipts_outcome
+    | map({
+        receipt_id: .id,
+        executor_id: .outcome.executor_id,
+        block_hash,
+        status: .outcome.status
+      })
+  )
+}' /tmp/chunk-trace-status.json
+```
+
+What to notice:
+
+- the signed transaction hands off into receipt `AFC2xUPuuA6BKMMvAV47LLPtzsg3Moh7frvLSuyMeZ2Y`
+- later in the same receipt graph, `TtRn4DzLKzFmGEn5YqoZ35ts411Hz6Ci6WQMjphPMn4` executes for `7419369993.tg`
+- the high-level tx status is already enough to tell you that the real work continued after the original signed transaction
+
+2. Inspect the generated receipt directly so you can prove that the follow-up object is a real `Transfer` receipt.
+
+```bash
+curl -s "$RPC_URL" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc --arg receipt_id "$GENERATED_RECEIPT_ID" '{
+    jsonrpc: "2.0",
+    id: "fastnear",
+    method: "EXPERIMENTAL_receipt",
+    params: {
+      receipt_id: $receipt_id
+    }
+  }')" \
+  | tee /tmp/chunk-trace-receipt.json >/dev/null
+
+jq '{
+  predecessor_id: .result.predecessor_id,
+  receiver_id: .result.receiver_id,
+  signer_id: .result.receipt.Action.signer_id,
+  signer_public_key: .result.receipt.Action.signer_public_key,
+  actions: .result.receipt.Action.actions
+}' /tmp/chunk-trace-receipt.json
+```
+
+This is the point where the shard story becomes concrete: the contract flow generated a `Transfer` action receipt from `system` to `7419369993.tg` with deposit `1800930478788300000000`.
+
+3. Use chunk by block and shard to locate the original signed transaction on shard `11`.
+
+```bash
+curl -s "$RPC_URL" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc \
+    --argjson block_id "$ORIGIN_BLOCK_HEIGHT" \
+    --argjson shard_id "$ORIGIN_SHARD_ID" '{
+      jsonrpc: "2.0",
+      id: "fastnear",
+      method: "chunk",
+      params: {
+        block_id: $block_id,
+        shard_id: $shard_id
+      }
+    }')" \
+  | jq --arg tx_hash "$TX_HASH" '{
+      header: {
+        chunk_hash: .result.header.chunk_hash,
+        shard_id: .result.header.shard_id,
+        height_created: .result.header.height_created
+      },
+      matching_transaction: (
+        .result.transactions[]
+        | select(.hash == $tx_hash)
+        | {
+            hash,
+            signer_id,
+            receiver_id
+          }
+      )
+    }'
+```
+
+This is the cleanest use of `chunk` by block and shard: you already know the coordinates, and you want the exact shard-local execution unit that carried the original signed transaction.
+
+4. Stay on the same route for the next block and watch the first receipt execute on the same shard.
+
+```bash
+curl -s "$RPC_URL" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc \
+    --argjson block_id "$RECEIPT_BLOCK_HEIGHT" \
+    --argjson shard_id "$RECEIPT_SHARD_ID" '{
+      jsonrpc: "2.0",
+      id: "fastnear",
+      method: "chunk",
+      params: {
+        block_id: $block_id,
+        shard_id: $shard_id
+      }
+    }')" \
+  | jq '{
+      header: {
+        chunk_hash: .result.header.chunk_hash,
+        shard_id: .result.header.shard_id,
+        height_created: .result.header.height_created,
+        tx_root: .result.header.tx_root,
+        gas_used: .result.header.gas_used
+      },
+      tx_count: (.result.transactions | length),
+      receipt_count: (.result.receipts | length),
+      matching_receipt: (
+        .result.receipts[]
+        | select(.receipt_id == "AFC2xUPuuA6BKMMvAV47LLPtzsg3Moh7frvLSuyMeZ2Y")
+        | {
+            receipt_id,
+            predecessor_id,
+            receiver_id
+          }
+      )
+    }'
+```
+
+This is the chunk moment that makes the whole concept natural:
+
+- the chunk has `tx_root = 11111111111111111111111111111111`
+- `tx_count` is `0`
+- but the shard still burned gas and executed receipt `AFC2...`
+
+In other words, this shard did real work in that block even though no new signed transaction appeared directly inside the chunk.
+
+5. Switch to chunk by hash once another tool has already given you the exact destination chunk.
+
+```bash
+curl -s "$RPC_URL" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc --arg chunk_id "$DESTINATION_CHUNK_HASH" '{
+    jsonrpc: "2.0",
+    id: "fastnear",
+    method: "chunk",
+    params: {
+      chunk_id: $chunk_id
+    }
+  }')" \
+  | jq --arg receipt_id "$GENERATED_RECEIPT_ID" '{
+      header: {
+        chunk_hash: .result.header.chunk_hash,
+        shard_id: .result.header.shard_id,
+        height_created: .result.header.height_created,
+        tx_root: .result.header.tx_root,
+        gas_used: .result.header.gas_used
+      },
+      tx_count: (.result.transactions | length),
+      receipt_count: (.result.receipts | length),
+      matching_receipt: (
+        .result.receipts[]
+        | select(.receipt_id == $receipt_id)
+        | {
+            receipt_id,
+            predecessor_id,
+            receiver_id
+          }
+      )
+    }'
+```
+
+This confirms the cross-shard hop:
+
+- the generated `Transfer` receipt executes in chunk `EPau...`
+- that chunk lives on shard `6`, not shard `11`
+- the signed transaction started on one shard, but the later receipt finished on another
+
+**Why this next step?**
+
+Use [`Chunk by Block and Shard`](/rpc/protocol/chunk-by-block-shard) when you know the block and shard coordinates and want to ask “what did this shard execute in this block?” Use [`Chunk by Hash`](/rpc/protocol/chunk-by-hash) when another tool has already handed you the exact chunk hash. Use [`EXPERIMENTAL_tx_status`](/rpc/transaction/experimental-tx-status) and [`EXPERIMENTAL_receipt`](/rpc/transaction/experimental-receipt) when the real question is receipt-driven tracing. If you also need state changes and produced receipts, widen to [Block Shard](/neardata/block-shard).
+
 ## NEAR Social and BOS Exact Reads
 
 These stay on exact SocialDB reads and on-chain readiness checks until the question turns historical.
@@ -1566,6 +1812,28 @@ Sometimes the right RPC answer is just: here is the widget, here is the live sou
 
 - The user wants balances, NFTs, staking, or another readable account summary.
 - The user really wants recent activity history rather than current state.
+
+### Trace shard-local execution through chunks
+
+**Start here**
+
+- Start with the chunk-tracing example above when the real question is “which chunk or shard actually executed this receipt?”
+- [Chunk by Block and Shard](/rpc/protocol/chunk-by-block-shard) when you already know the block and shard coordinates.
+- [Chunk by Hash](/rpc/protocol/chunk-by-hash) when another tool already handed you the exact chunk hash.
+
+**Next page if needed**
+
+- [Experimental Receipt](/rpc/transaction/experimental-receipt) when you need the generated receipt body itself.
+- [Block Shard](/neardata/block-shard) when chunk data alone is not enough and you need state changes or produced receipts too.
+- [Transactions Examples](/tx/examples) when the question turns into a broader async or callback investigation.
+
+**Stop when**
+
+- You can name which chunk and shard carried the work that mattered.
+
+**Switch when**
+
+- The user really wants a readable transaction story instead of shard-local execution details. Move to [Transactions API](/tx).
 
 ### Check one exact block or protocol snapshot
 

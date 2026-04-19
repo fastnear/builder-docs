@@ -1199,6 +1199,252 @@ jq -n \
 
 Используйте `view_state`, когда настоящий вопрос относится к точному storage и вы уже знаете семейство ключей. Используйте `call_function`, когда вам нужен публичный read API самого контракта. Если следующий вопрос становится историческим, а не «что там лежит прямо сейчас?», тогда и стоит расширяться в [KV FastData API](/fastdata/kv).
 
+## Трассировка чанков и шардов
+
+Начинайте отсюда, когда вопрос уже не просто «транзакция прошла или нет?», а «какой именно чанк на шарде исполнил каждый шаг работы?»
+
+### Проследить, как сгенерированная `Transfer`-receipt переходит из одного чанка на шарде в другой
+
+Используйте этот сценарий, когда вызов контракта был только началом истории. В этом зафиксированном mainnet-примере подписанная транзакция стартует на шарде `11`, а сгенерированная `Transfer`-receipt заканчивает путь уже на шарде `6`. Именно ради таких cross-shard handoff и имеет смысл смотреть на чанки.
+
+Этот walkthrough привязан к:
+
+- транзакции `8xrcQU6Sr1jhnigenBbpfGzk9jN24rLmMqSWT7TF7xJP` от `7419369993.tg` к `game.hot.tg` с вызовом `l2_claim`
+- исходному чанку `BfydTxiPbGY34pejscBytYSXpBsk9gWA2ixKoAe7VsVw` на шарде `11` в блоке `194623170`
+- чанку первой receipt `FJWpAYzVXbZwqJUbGXELTnnBBkdvc6W8vWkwuUA3Zwz9` на шарде `11` в блоке `194623171`
+- сгенерированной `Transfer`-receipt `TtRn4DzLKzFmGEn5YqoZ35ts411Hz6Ci6WQMjphPMn4`
+- конечному чанку `EPauY1GBaeAgGf1TikxFcPUhmYsVhLf1cwy14vAYsUuU` на шарде `6` в блоке `194623172`
+
+<div className="fastnear-example-strategy">
+  <div className="fastnear-example-strategy__header">
+    <span className="fastnear-example-strategy__eyebrow">Стратегия</span>
+    <p className="fastnear-example-strategy__title">Сначала восстановите receipt-цепочку, потом напрямую посмотрите на сгенерированную receipt, а затем привяжите каждый шаг к тому чанку на шарде, который действительно нёс эту работу.</p>
+  </div>
+  <div className="fastnear-example-strategy__items">
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">01</span><span><span className="fastnear-example-strategy__code">RPC EXPERIMENTAL_tx_status</span> быстро показывает граф receipts и в какие следующие блоки перешла работа.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">02</span><span><span className="fastnear-example-strategy__code">RPC EXPERIMENTAL_receipt</span> позволяет посмотреть на тело сгенерированной receipt напрямую, а не выводить его только из логов.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span><span className="fastnear-example-strategy__code">RPC chunk</span> по блоку и шарду или по хешу чанка доказывает, какая именно единица исполнения на шарде нёсла каждый шаг.</span></p>
+  </div>
+</div>
+
+Оба experimental-метода здесь очень уместны: `EXPERIMENTAL_tx_status` быстро находит граф receipts, а `EXPERIMENTAL_receipt` показывает тело сгенерированной receipt ещё до того, как вы привяжете её обратно к чанкам.
+
+```mermaid
+flowchart LR
+    A["Tx 8xrc...<br/>блок 194623170<br/>чанк Bfyd...<br/>шард 11"] --> B["Receipt AFC2...<br/>блок 194623171<br/>чанк FJWp...<br/>шард 11<br/>логи ft_mint"]
+    B --> C["Сгенерированная receipt TtRn...<br/>Transfer 1800930478788300000000 yoctoNEAR"]
+    C --> D["Чанк EPau...<br/>блок 194623172<br/>шард 6<br/>receipt исполняется"]
+```
+
+**Что вы делаете**
+
+- Сначала восстанавливаете receipt-цепочку из транзакции.
+- Напрямую смотрите на тело сгенерированной `Transfer`-receipt.
+- Используете координаты блока и шарда там, где они уже известны.
+- Используете хеш чанка там, где другой инструмент уже выдал точный конечный чанк.
+
+```bash
+export NETWORK_ID=mainnet
+export RPC_URL=https://rpc.mainnet.fastnear.com
+export TX_HASH=8xrcQU6Sr1jhnigenBbpfGzk9jN24rLmMqSWT7TF7xJP
+export SIGNER_ACCOUNT_ID=7419369993.tg
+export ORIGIN_BLOCK_HEIGHT=194623170
+export ORIGIN_SHARD_ID=11
+export RECEIPT_BLOCK_HEIGHT=194623171
+export RECEIPT_SHARD_ID=11
+export GENERATED_RECEIPT_ID=TtRn4DzLKzFmGEn5YqoZ35ts411Hz6Ci6WQMjphPMn4
+export DESTINATION_CHUNK_HASH=EPauY1GBaeAgGf1TikxFcPUhmYsVhLf1cwy14vAYsUuU
+```
+
+1. Начните с `EXPERIMENTAL_tx_status`, чтобы сначала увидеть граф receipts, а уже потом думать о чанках.
+
+```bash
+curl -s "$RPC_URL" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc \
+    --arg tx_hash "$TX_HASH" \
+    --arg signer_account_id "$SIGNER_ACCOUNT_ID" '{
+      jsonrpc: "2.0",
+      id: "fastnear",
+      method: "EXPERIMENTAL_tx_status",
+      params: [$tx_hash, $signer_account_id]
+    }')" \
+  | tee /tmp/chunk-trace-status.json >/dev/null
+
+jq '{
+  final_execution_status: .result.final_execution_status,
+  transaction_handoff: .result.transaction_outcome.outcome.status,
+  receipts: (
+    .result.receipts_outcome
+    | map({
+        receipt_id: .id,
+        executor_id: .outcome.executor_id,
+        block_hash,
+        status: .outcome.status
+      })
+  )
+}' /tmp/chunk-trace-status.json
+```
+
+На что смотреть:
+
+- подписанная транзакция передаёт работу в receipt `AFC2xUPuuA6BKMMvAV47LLPtzsg3Moh7frvLSuyMeZ2Y`
+- позже в том же графе receipts исполняется `TtRn4DzLKzFmGEn5YqoZ35ts411Hz6Ci6WQMjphPMn4` для `7419369993.tg`
+- уже одного tx status достаточно, чтобы увидеть: настоящая работа продолжилась после исходной подписанной транзакции
+
+2. Посмотрите на сгенерированную receipt напрямую, чтобы доказать, что это действительно `Transfer`-receipt.
+
+```bash
+curl -s "$RPC_URL" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc --arg receipt_id "$GENERATED_RECEIPT_ID" '{
+    jsonrpc: "2.0",
+    id: "fastnear",
+    method: "EXPERIMENTAL_receipt",
+    params: {
+      receipt_id: $receipt_id
+    }
+  }')" \
+  | tee /tmp/chunk-trace-receipt.json >/dev/null
+
+jq '{
+  predecessor_id: .result.predecessor_id,
+  receiver_id: .result.receiver_id,
+  signer_id: .result.receipt.Action.signer_id,
+  signer_public_key: .result.receipt.Action.signer_public_key,
+  actions: .result.receipt.Action.actions
+}' /tmp/chunk-trace-receipt.json
+```
+
+Именно здесь история по шардам становится конкретной: эта цепочка исполнения контракта сгенерировала `Transfer` action receipt от `system` к `7419369993.tg` с депозитом `1800930478788300000000`.
+
+3. Используйте `chunk` по блоку и шарду, чтобы найти исходную подписанную транзакцию на шарде `11`.
+
+```bash
+curl -s "$RPC_URL" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc \
+    --argjson block_id "$ORIGIN_BLOCK_HEIGHT" \
+    --argjson shard_id "$ORIGIN_SHARD_ID" '{
+      jsonrpc: "2.0",
+      id: "fastnear",
+      method: "chunk",
+      params: {
+        block_id: $block_id,
+        shard_id: $shard_id
+      }
+    }')" \
+  | jq --arg tx_hash "$TX_HASH" '{
+      header: {
+        chunk_hash: .result.header.chunk_hash,
+        shard_id: .result.header.shard_id,
+        height_created: .result.header.height_created
+      },
+      matching_transaction: (
+        .result.transactions[]
+        | select(.hash == $tx_hash)
+        | {
+            hash,
+            signer_id,
+            receiver_id
+          }
+      )
+    }'
+```
+
+Это самый чистый use case для `chunk` по блоку и шарду: координаты уже известны, а вам нужна точная единица исполнения на шарде, которая несла исходную подписанную транзакцию.
+
+4. Оставайтесь на том же маршруте и посмотрите, как первая receipt исполняется в следующем блоке на том же шарде.
+
+```bash
+curl -s "$RPC_URL" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc \
+    --argjson block_id "$RECEIPT_BLOCK_HEIGHT" \
+    --argjson shard_id "$RECEIPT_SHARD_ID" '{
+      jsonrpc: "2.0",
+      id: "fastnear",
+      method: "chunk",
+      params: {
+        block_id: $block_id,
+        shard_id: $shard_id
+      }
+    }')" \
+  | jq '{
+      header: {
+        chunk_hash: .result.header.chunk_hash,
+        shard_id: .result.header.shard_id,
+        height_created: .result.header.height_created,
+        tx_root: .result.header.tx_root,
+        gas_used: .result.header.gas_used
+      },
+      tx_count: (.result.transactions | length),
+      receipt_count: (.result.receipts | length),
+      matching_receipt: (
+        .result.receipts[]
+        | select(.receipt_id == "AFC2xUPuuA6BKMMvAV47LLPtzsg3Moh7frvLSuyMeZ2Y")
+        | {
+            receipt_id,
+            predecessor_id,
+            receiver_id
+          }
+      )
+    }'
+```
+
+Вот здесь chunks наконец становятся естественными:
+
+- у чанка `tx_root = 11111111111111111111111111111111`
+- `tx_count` равен `0`
+- но шард всё равно жжёт gas и исполняет receipt `AFC2...`
+
+То есть этот шард реально сделал работу в этом блоке, хотя новая подписанная транзакция прямо в самом чанке не появилась.
+
+5. Переключайтесь на `chunk` по хешу, когда другой инструмент уже выдал точный конечный чанк.
+
+```bash
+curl -s "$RPC_URL" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc --arg chunk_id "$DESTINATION_CHUNK_HASH" '{
+    jsonrpc: "2.0",
+    id: "fastnear",
+    method: "chunk",
+    params: {
+      chunk_id: $chunk_id
+    }
+  }')" \
+  | jq --arg receipt_id "$GENERATED_RECEIPT_ID" '{
+      header: {
+        chunk_hash: .result.header.chunk_hash,
+        shard_id: .result.header.shard_id,
+        height_created: .result.header.height_created,
+        tx_root: .result.header.tx_root,
+        gas_used: .result.header.gas_used
+      },
+      tx_count: (.result.transactions | length),
+      receipt_count: (.result.receipts | length),
+      matching_receipt: (
+        .result.receipts[]
+        | select(.receipt_id == $receipt_id)
+        | {
+            receipt_id,
+            predecessor_id,
+            receiver_id
+          }
+      )
+    }'
+```
+
+Это и подтверждает cross-shard hop:
+
+- сгенерированная `Transfer`-receipt исполняется в чанке `EPau...`
+- этот чанк живёт на шарде `6`, а не на шарде `11`
+- подписанная транзакция стартовала на одном шарде, а следующая receipt завершилась уже на другом
+
+**Зачем нужен следующий шаг?**
+
+Используйте [Chunk by Block and Shard](/rpc/protocol/chunk-by-block-shard), когда вы знаете координаты блока и шарда и хотите буквально спросить: «что этот шард исполнил в этом блоке?» Используйте [Chunk by Hash](/rpc/protocol/chunk-by-hash), когда другой инструмент уже выдал точный хеш чанка. Используйте [EXPERIMENTAL_tx_status](/rpc/transaction/experimental-tx-status) и [EXPERIMENTAL_receipt](/rpc/transaction/experimental-receipt), когда настоящий вопрос относится к трассировке на уровне receipts. Если ещё нужны state changes и produced receipts, расширяйтесь в [Block Shard](/neardata/block-shard).
+
 ## Точные чтения NEAR Social и BOS
 
 Эти сценарии остаются на точных чтениях SocialDB и on-chain-проверках готовности, пока вопрос не становится историческим.
@@ -1566,6 +1812,28 @@ jq -r \
 
 - Пользователю нужны балансы, NFT, стейкинг или другая понятная сводка по аккаунту.
 - Пользователя интересует не текущее состояние, а недавняя история активности.
+
+### Трассировать исполнение на уровне шарда через чанки
+
+**Начните здесь**
+
+- Начните с примера выше, если настоящий вопрос звучит как «какой чанк или шард вообще исполнил эту receipt?»
+- [Chunk by Block and Shard](/rpc/protocol/chunk-by-block-shard), когда координаты блока и шарда уже известны.
+- [Chunk by Hash](/rpc/protocol/chunk-by-hash), когда другой инструмент уже выдал точный хеш чанка.
+
+**Следующая страница при необходимости**
+
+- [Experimental Receipt](/rpc/transaction/experimental-receipt), если нужно само тело сгенерированной receipt.
+- [Block Shard](/neardata/block-shard), если chunk payload уже недостаточен и ещё нужны state changes или produced receipts.
+- [Transactions Examples](/tx/examples), если вопрос превращается в более широкое async- или callback-расследование.
+
+**Остановитесь, когда**
+
+- Уже можно назвать, какой именно чанк и какой шард несли ту работу, которая была важна.
+
+**Переходите дальше, когда**
+
+- Пользователю нужны уже не детали исполнения на уровне шарда, а читаемая история транзакции. Тогда переходите к [Transactions API](/tx).
 
 ### Проверить один точный блок или снимок состояния протокола
 
