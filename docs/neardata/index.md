@@ -1,6 +1,6 @@
 ---
 title: NEAR Data API
-description: Cached and archived block-family reads for optimistic, finalized, and redirect-style block access patterns.
+description: Recent block and shard reads for contract-touch monitoring, optimistic confirmation, and shard-local inspection.
 sidebar_position: 1
 displayed_sidebar: nearDataApiSidebar
 slug: /neardata
@@ -10,7 +10,7 @@ page_actions:
 
 # NEAR Data API
 
-NEAR Data API is the near-realtime and block-family surface. Use it when you want fresh block slices, redirect helpers, or recent finalized and optimistic block reads without presenting it as a streaming product.
+NEAR Data API is the recent block and shard surface. Use it when you want fresh block slices, contract-touch monitoring, helper redirects, or optimistic-versus-finalized confirmation without turning the product into a streaming API.
 
 ## Base URLs
 
@@ -25,8 +25,9 @@ https://testnet.neardata.xyz
 ## Best fit
 
 - Polling for recent finalized or optimistic blocks.
-- Block-family helpers and redirect flows.
-- Lightweight freshness checks and monitoring paths.
+- Detecting whether a live contract showed up or changed state in a recent block.
+- Comparing optimistic signals with finalized confirmation.
+- Inspecting one recent shard after you already know which block matters.
 
 ## When not to use it
 
@@ -41,13 +42,14 @@ https://testnet.neardata.xyz
 
 ## Common starting points
 
-- [Optimistic block](/neardata/block-optimistic) for freshest block polling.
-- [Final block by height](/neardata/block) and [Block headers](/neardata/block-headers) for finalized block-family queries.
-- [Last final block redirect](/neardata/last-block-final) and [Last optimistic block redirect](/neardata/last-block-optimistic) when you want helper redirects.
+- [Last final block redirect](/neardata/last-block-final) and [Last optimistic block redirect](/neardata/last-block-optimistic) when you want the newest recent block quickly.
+- [Final block by height](/neardata/block) for one recent hydrated block document with shard payloads attached.
+- [Block Shard](/neardata/block-shard) when a recent block already identified the shard you need to inspect more closely.
+- [Block Headers](/neardata/block-headers) when head progression matters more than the wider block payload.
 
 ## Need a workflow?
 
-Use [NEAR Data API Examples](/neardata/examples) for plain-language flows like optimistic polling, finalized confirmation, redirect helpers, and escalation into canonical RPC inspection.
+Use [NEAR Data API Examples](/neardata/examples) for compact workflows like contract-touch detection, optimistic-versus-finalized comparison, and shard-local change inspection.
 
 ## Troubleshooting
 

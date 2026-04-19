@@ -2,110 +2,86 @@
 sidebar_label: Examples
 slug: /fastdata/kv/examples
 title: "Примеры KV FastData"
-description: "Пошаговые сценарии для чтения точных строк FastData, проверки истории точного ключа и необязательной привязки индексированной настройки к исходной транзакции."
+description: "Пошаговые сценарии для проверки точных storage-key, чтения индексированной истории записей и подтверждения текущего состояния через RPC."
 displayed_sidebar: kvFastDataSidebar
 page_actions:
   - markdown
 ---
 
-## Быстрый старт
-
-Если точные FastData-ключи уже известны, читайте их напрямую.
-
-```bash
-KV_BASE_URL=https://kv.test.fastnear.com
-CURRENT_ACCOUNT_ID=kv.gork-agent.testnet
-PREDECESSOR_ID=kv.gork-agent.testnet
-
-curl -s "$KV_BASE_URL/v0/multi" \
-  -H 'content-type: application/json' \
-  --data '{
-    "keys": [
-      "kv.gork-agent.testnet/kv.gork-agent.testnet/key",
-      "kv.gork-agent.testnet/kv.gork-agent.testnet/value"
-    ]
-  }' \
-  | jq '{
-      entries: [
-        .entries[]
-        | {
-            current_account_id,
-            predecessor_id,
-            block_height,
-            key,
-            value
-          }
-      ]
-    }'
-```
-
-Это самое короткое полезное чтение FastData на странице: один запрос и сразу две точные строки.
-
 ## Готовое расследование
 
-### Прочитать одну индексированную настройку и посмотреть её историю
+### Посмотреть индексированные записи одного `predecessor_id`, а затем сузиться до ключа, который изменился
 
-Используйте это расследование, когда контракт и предшественник уже известны, а вопрос звучит так: «какое текущее значение у этой индексированной настройки и менялось ли оно раньше?»
+Используйте это расследование, когда сначала известен предшественник, а настоящий вопрос звучит так: «что вообще записал этот `predecessor_id`, какая строка здесь действительно интересна и что потом происходило с этим ключом?»
 
 <div className="fastnear-example-strategy">
   <div className="fastnear-example-strategy__header">
     <span className="fastnear-example-strategy__eyebrow">Стратегия</span>
-    <p className="fastnear-example-strategy__title">Сначала читайте точные строки настройки, расширяйтесь до метаданных предшественника только если нужна provenance-цепочка, и переходите к Transactions API только для финального доказательства.</p>
+    <p className="fastnear-example-strategy__title">Начните с области по `predecessor_id`, переходите к точному ключу только после того, как он заслужил внимание, а RPC оставляйте на самый конец.</p>
   </div>
   <div className="fastnear-example-strategy__items">
-    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">01</span><span><span className="fastnear-example-strategy__code">multi</span> или <span className="fastnear-example-strategy__code">get-latest-key</span> читают точные индексированные строки настройки.</span></p>
-    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">02</span><span><span className="fastnear-example-strategy__code">get-history-key</span> показывает, менялось ли это индексированное значение позже.</span></p>
-    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span>Только если важна provenance-цепочка, <span className="fastnear-example-strategy__code">latest-by-predecessor</span> с метаданными плюс <span className="fastnear-example-strategy__code">POST /v0/transactions</span> доказывают, какая запись создала эти индексированные строки.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">01</span><span><span className="fastnear-example-strategy__code">all-by-predecessor</span> даёт последние индексированные строки для одного `predecessor_id` по затронутым контрактам.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">02</span><span><span className="fastnear-example-strategy__code">get-history-key</span> или <span className="fastnear-example-strategy__code">history-by-predecessor</span> объясняют, как менялась интересующая строка во времени.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span><span className="fastnear-example-strategy__code">RPC view_state</span> — это уже необязательное точное чтение, когда нужен именно канонический current state, а не индексированная история.</span></p>
   </div>
 </div>
 
 **Цель**
 
-- Прочитать одну стабильную индексированную настройку из минимального публичного testnet-контракта и подтвердить историю точного ключа для одной строки.
+- Объяснить, что записал этот `predecessor_id`, какой точный ключ стал настоящим фокусом, как он менялся и нужен ли вам вообще финальный `view_state`.
 
 | Поверхность | Эндпоинт | Как используем | Зачем используем |
 | --- | --- | --- | --- |
-| Чтение точной настройки | KV FastData [`multi`](/fastdata/kv/multi) | Читаем известные строки `key` и `value` одним запросом | Это самое узкое полезное чтение, когда точные индексированные строки настройки уже известны |
-| Чтение точной строки | KV FastData [`get-latest-key`](/fastdata/kv/get-latest-key) | Повторно читаем одну точную строку по path-маршруту | Полезно, когда вопрос только про одну строку, а не про всю пару настройки |
-| История точного ключа | KV FastData [`get-history-key`](/fastdata/kv/get-history-key) | Проверяем историю точной строки `value` | Показывает, менялось ли именно это индексированное значение в нескольких записях |
-| Необязательный мост к provenance | KV FastData [`latest-by-predecessor`](/fastdata/kv/latest-by-predecessor) | Восстанавливаем `tx_hash` и `receipt_id` для индексированных строк только если provenance действительно важна | Это необязательный мост от индексированных строк обратно к одной записи |
-| Необязательная гидратация транзакции | Transactions API [`POST /v0/transactions`](/tx/transactions) | Гидратируем найденный `tx_hash` и декодируем исходные args только когда нужно это доказательство | Финальное необязательное доказательство того, что обе строки создал один вызов |
+| Последние индексированные строки по области | KV FastData [`all-by-predecessor`](/fastdata/kv/all-by-predecessor) | Сначала получаем текущие индексированные записи одного `predecessor_id` по затронутым контрактам | Отвечает на вопрос по области раньше, чем вы начинаете притворяться, будто точный ключ уже известен |
+| История индексированного ключа | KV FastData [`get-history-key`](/fastdata/kv/get-history-key) или [`history-by-predecessor`](/fastdata/kv/history-by-predecessor) | Забираем историю точного ключа или ещё на один шаг оставляем историю шире, на уровне предшественника | Показывает, стабильно ли интересующее значение, насколько оно недавнее и не входит ли в более широкий паттерн записей |
+| Точная проверка состояния | RPC [`view_state`](/rpc/contract/view-state) | Подтверждаем текущее состояние в цепочке, когда индексированная картина уже понятна | Разводит индексированную историю и точное состояние, которое цепочка вернёт прямо сейчас |
 
 **Что должен включать полезный ответ**
 
-- какие именно `current_account_id`, `predecessor_id` и индексированные строки настройки исследовались
-- как выглядят последние индексированные строки и история точного ключа для одной из них
-- какой `tx_hash` или `receipt_id` создал эти строки, только если важна provenance-цепочка
-- остаётся ли вопрос про индексированные строки FastData или уже перешёл к каноническому состоянию контракта
+- с какой области по `predecessor_id` вы начали
+- какой точный ключ стал настоящим фокусом
+- как этот ключ менялся в истории
+- нужен ли вообще финальный `view_state`
 
-### Проверенный read-only testnet shell-сценарий
+### Shell-сценарий по области предшественника
 
-Используйте этот сценарий, когда нужен полностью read-only пример на стабильных sample-данных в `kv.gork-agent.testnet`.
-
-Этот минимальный контракт ведёт себя как крошечное хранилище настроек: одна запись эмитирует две индексированные строки, `key` и `value`. Сейчас sample-настройка выглядит как `test=hello`, и этого достаточно, чтобы показать shape FastData без притворства, будто перед нами более богатый прикладной объект.
-Этот sample-контракт индексирует собственные записи, поэтому в этом walkthrough `CURRENT_ACCOUNT_ID` и `PREDECESSOR_ID` намеренно совпадают.
+Используйте этот сценарий, когда сначала известен один `predecessor_id` и нужно аккуратно перейти от вопроса «что он вообще записал?» к вопросу «как этот конкретный ключ дошёл до такого состояния?»
 
 **Что вы делаете**
 
-- Читаете точные индексированные строки настройки вместе.
-- Повторно читаете те же строки по отдельности, чтобы был понятен shape exact-key маршрута.
-- Забираете историю точного ключа для строки `value` этой настройки.
-- Останавливаетесь на этом, если provenance дальше не нужна.
+- Читаете последние индексированные строки для одного `predecessor_id` по затронутым контрактам.
+- Поднимаете интересующие `current_account_id` и точный `key` через `jq`.
+- Переиспользуете эти значения в документированном маршруте истории по точному ключу.
+- Только после этого решаете, нужен ли вам `view_state` для канонического current state.
 
 ```bash
-KV_BASE_URL=https://kv.test.fastnear.com
-TX_BASE_URL=https://tx.test.fastnear.com
-CURRENT_ACCOUNT_ID=kv.gork-agent.testnet
-PREDECESSOR_ID=kv.gork-agent.testnet
+KV_BASE_URL=https://kv.main.fastnear.com
+PREDECESSOR_ID=james.near
 
-curl -s "$KV_BASE_URL/v0/multi" \
+curl -s "$KV_BASE_URL/v0/all/$PREDECESSOR_ID" \
   -H 'content-type: application/json' \
-  --data '{
-    "keys": [
-      "kv.gork-agent.testnet/kv.gork-agent.testnet/key",
-      "kv.gork-agent.testnet/kv.gork-agent.testnet/value"
-    ]
-  }' \
+  --data '{"include_metadata":true,"limit":10}' \
+  | tee /tmp/kv-predecessor.json >/dev/null
+
+jq '{
+  page_token,
+  entries: [
+    .entries[]
+    | {
+        current_account_id,
+        predecessor_id,
+        block_height,
+        key,
+        value
+      }
+  ]
+}' /tmp/kv-predecessor.json
+
+CURRENT_ACCOUNT_ID="$(jq -r '.entries[0].current_account_id' /tmp/kv-predecessor.json)"
+EXACT_KEY="$(jq -r '.entries[0].key' /tmp/kv-predecessor.json)"
+ENCODED_KEY="$(jq -rn --arg key "$EXACT_KEY" '$key | @uri')"
+
+curl -s "$KV_BASE_URL/v0/history/$CURRENT_ACCOUNT_ID/$PREDECESSOR_ID/$ENCODED_KEY" \
   | jq '{
       entries: [
         .entries[]
@@ -118,113 +94,100 @@ curl -s "$KV_BASE_URL/v0/multi" \
           }
       ]
     }'
-
-curl -s "$KV_BASE_URL/v0/latest/$CURRENT_ACCOUNT_ID/$PREDECESSOR_ID/key" \
-  | jq '{
-      latest_key_row: (
-        .entries[0]
-        | {
-            block_height,
-            key,
-            value
-          }
-      )
-    }'
-
-curl -s "$KV_BASE_URL/v0/latest/$CURRENT_ACCOUNT_ID/$PREDECESSOR_ID/value" \
-  | jq '{
-      latest_value_row: (
-        .entries[0]
-        | {
-            block_height,
-            key,
-            value
-          }
-      )
-    }'
-
-curl -s "$KV_BASE_URL/v0/history/$CURRENT_ACCOUNT_ID/$PREDECESSOR_ID/value" \
-  | jq '{
-      page_token,
-      entries: [
-        .entries[]
-        | {
-            block_height,
-            key,
-            value
-          }
-      ]
-    }'
-```
-
-На этом основной read-path заканчивается: точные строки, их exact latest-чтение и история точного ключа для той же индексированной настройки.
-
-### Необязательное расширение до provenance
-
-Переходите сюда только тогда, когда следующий вопрос уже звучит как «какая запись создала эти строки?»
-
-```bash
-
-curl -s "$KV_BASE_URL/v0/latest/$CURRENT_ACCOUNT_ID/$PREDECESSOR_ID" \
-  -H 'content-type: application/json' \
-  --data '{"include_metadata": true, "limit": 10}' \
-  | tee /tmp/kv-predecessor-latest.json >/dev/null
-
-jq '{
-  entries: [
-    .entries[]
-    | {
-        block_height,
-        key,
-        value,
-        tx_hash,
-        receipt_id
-      }
-  ]
-}' /tmp/kv-predecessor-latest.json
-
-INDEXED_TX_HASH="$(
-  jq -r '
-    first(.entries[] | select(.key == "value") | .tx_hash)
-  ' /tmp/kv-predecessor-latest.json
-)"
-
-curl -s "$TX_BASE_URL/v0/transactions" \
-  -H 'content-type: application/json' \
-  --data "$(jq -nc --arg tx_hash "$INDEXED_TX_HASH" '{tx_hashes: [$tx_hash]}')" \
-  | jq '{
-      transaction_hash: .transactions[0].transaction.hash,
-      signer_id: .transactions[0].transaction.signer_id,
-      receiver_id: .transactions[0].transaction.receiver_id,
-      method_name: .transactions[0].transaction.actions[0].FunctionCall.method_name,
-      args: (
-        .transactions[0].transaction.actions[0].FunctionCall.args
-        | @base64d
-        | fromjson
-      ),
-      receipt_ids: .transactions[0].execution_outcome.outcome.receipt_ids
-    }'
 ```
 
 **Зачем нужен следующий шаг?**
 
-Этот sample-контракт эмитирует две индексированные строки из одной записи: `key=test` и `value=hello`. Рассматривайте их как одну индексированную настройку. Exact-key маршруты напрямую доказывают эти строки. Lookup по предшественнику с метаданными — это необязательный мост к provenance, потому что именно он возвращает `tx_hash` и `receipt_id`, которые создали эти строки. Гидратация транзакции доказывает, что эти индексированные строки произошли из одного вызова `__fastdata_kv` с декодированными args `{ "key": "test", "value": "hello" }`.
+Первый запрос отвечает на вопрос по области: «что этот `predecessor_id` сейчас пишет?». Сужение из этой ленты до одного точного ключа отвечает на более точный вопрос: «как именно эта строка дошла до такого состояния?». Если картина всё ещё шире одного ключа, ещё немного побудьте на [History by Predecessor](/fastdata/kv/history-by-predecessor), а уже потом переходите к точной истории ключа или RPC.
 
-Именно здесь проходит важная граница этой поверхности: KV FastData отвечает на вопросы про индексированные строки FastData. Если вопрос меняется на каноническое состояние контракта, переходите к собственному read-методу контракта или к [View State](/rpc/contract/view-state) только тогда, когда вы независимо знаете нужную layout-структуру хранилища.
+## Частые задачи
 
+### Начать с записей одного `predecessor_id`
+
+**Начните здесь**
+
+- [Всё по `predecessor_id`](/fastdata/kv/all-by-predecessor), когда вы знаете, кто писал строки, но ещё не знаете, какой точный ключ важнее всего.
+
+**Следующая страница при необходимости**
+
+- [История по точному ключу](/fastdata/kv/get-history-key), если одна строка становится настоящим фокусом.
+- [История по `predecessor_id`](/fastdata/kv/history-by-predecessor), если более широкая картина записей всё ещё важнее точного ключа.
+
+**Остановитесь, когда**
+
+- Уже можно объяснить, что писал этот `predecessor_id`, и заслуживает ли одна строка более глубокой истории.
+
+**Переходите дальше, когда**
+
+- Пользователю нужно каноническое текущее состояние в цепочке, а не индексированная история записей. Переходите к [View State](/rpc/contract/view-state).
+
+### Превратить один точный ключ в историю изменений
+
+**Начните здесь**
+
+- [История по точному ключу](/fastdata/kv/get-history-key) для поиска истории по пути.
+- [History by Key](/fastdata/kv/history-by-key), когда лучше подходит маршрут по полному ключу.
+
+**Следующая страница при необходимости**
+
+- Возвращайтесь к [Последнему по точному ключу](/fastdata/kv/get-latest-key), если нужно увидеть текущее индексированное значение рядом с историей.
+
+**Остановитесь, когда**
+
+- Уже можно объяснить, как ключ менялся со временем.
+
+**Переходите дальше, когда**
+
+- Пользователь спрашивает, совпадает ли последнее индексированное значение с тем, что цепочка возвращает прямо сейчас.
+
+### Проследить записи от одного `predecessor_id`
+
+**Начните здесь**
+
+- [Всё по `predecessor_id`](/fastdata/kv/all-by-predecessor) для последних записей по контрактам, затронутым одним предшественником.
+- [История по `predecessor_id`](/fastdata/kv/history-by-predecessor), когда нужна история записей во времени.
+
+**Следующая страница при необходимости**
+
+- Сузьте область до точного ключа, если одна строка становится настоящим фокусом расследования.
+
+**Остановитесь, когда**
+
+- Уже можно ответить, что именно этот предшественник изменил и где.
+
+**Переходите дальше, когда**
+
+- Пользователя перестают интересовать индексированные записи и начинает интересовать текущее состояние в цепочке.
+
+### Пакетно проверить несколько известных ключей
+
+**Начните здесь**
+
+- [Пакетный поиск по ключам](/fastdata/kv/multi), когда уже известен фиксированный набор точных ключей.
+
+**Следующая страница при необходимости**
+
+- Переведите один интересный ключ в [Историю по точному ключу](/fastdata/kv/get-history-key), если batch-ответ вызывает исторический вопрос.
+
+**Остановитесь, когда**
+
+- Пакетный ответ уже показывает, какие ключи действительно важны.
+
+**Переходите дальше, когда**
+
+- У вас больше нет фиксированного списка ключей и нужно смотреть на контракт или предшественника шире.
 
 ## Частые ошибки
 
-- Начинать с широких выборок по предшественнику, когда точные строки FastData уже известны.
-- Считать [History by Key](/fastdata/kv/history-by-key) тем же самым, что и [GET History by Exact Key](/fastdata/kv/get-history-key). Первый маршрут глобальный по строке ключа, второй остаётся внутри одного контракта и predecessor.
-- Использовать KV FastData, когда настоящий вопрос про балансы, holdings или account summaries.
-- Путать индексированные строки FastData с каноническим on-chain-состоянием контракта.
-- Предполагать, что для каждого FastData-расследования сначала обязательно нужна новая запись.
+- Начинать с широких выборок по аккаунту или предшественнику, когда точный ключ уже известен.
+- Использовать KV FastData, хотя пользователю на самом деле нужны балансы или активы.
+- Путать индексированную историю с точным текущим состоянием в цепочке.
+- Переиспользовать токен пагинации или менять фильтры прямо во время просмотра.
 
 ## Полезные связанные страницы
 
 - [KV FastData API](/fastdata/kv)
-- [Transactions API](/tx)
 - [RPC Reference](/rpc)
+- [FastNear API](/api)
 - [Choosing the Right Surface](/agents/choosing-surfaces)
 - [Agent Playbooks](/agents/playbooks)

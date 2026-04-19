@@ -2,102 +2,72 @@
 sidebar_label: Examples
 slug: /neardata/examples
 title: NEAR Data Examples
-description: Plain-language workflows for checking contract touches, comparing optimistic and final heads, and walking forward block by block.
+description: Plain-language workflows for recent contract-touch monitoring, optimistic confirmation, and shard-local change inspection.
 displayed_sidebar: nearDataApiSidebar
 page_actions:
   - markdown
 ---
 
-## Quick start
+NEAR Data is strongest when the real question is about recent chain activity: did a contract show up in the newest block family, did an optimistic signal survive finality, and which shard actually carried the change?
 
-Start with one recent finalized block and ask for the smallest possible touch summary first.
-
-```bash
-NEARDATA_BASE_URL=https://mainnet.neardata.xyz
-TARGET_ACCOUNT_ID=intents.near
-
-FINAL_LOCATION="$(
-  curl -s -D - -o /dev/null "$NEARDATA_BASE_URL/v0/last_block/final" \
-    | awk 'tolower($1) == "location:" {print $2}' \
-    | tr -d '\r'
-)"
-
-curl -s "$NEARDATA_BASE_URL$FINAL_LOCATION" \
-  | jq --arg target "$TARGET_ACCOUNT_ID" '{
-      height: .block.header.height,
-      hash: .block.header.hash,
-      direct_tx_count: ([.shards[].chunk.transactions[]?
-        | select(.transaction.receiver_id == $target)] | length),
-      incoming_receipt_count: ([.shards[].chunk.receipts[]?
-        | select(.receiver_id == $target)] | length),
-      outcome_hit_count: ([.shards[].receipt_execution_outcomes[]?
-        | select(
-            (.receipt.receiver_id // "") == $target
-            or (.execution_outcome.outcome.executor_id // "") == $target
-          )] | length),
-      state_change_count: ([.shards[].state_changes[]?
-        | select((.change.account_id // "") == $target)] | length),
-      state_change_types: ([.shards[].state_changes[]?
-        | select((.change.account_id // "") == $target)
-        | .type] | unique | sort)
-    } | . + {
-      touched: (
-        (.direct_tx_count > 0)
-        or (.incoming_receipt_count > 0)
-        or (.outcome_hit_count > 0)
-        or (.state_change_count > 0)
-      )
-    }'
-```
-
-This is the smallest useful NEAR Data summary for an app team: one finalized block, one yes-or-no answer, and a few counts before you widen. `intents.near` is pinned here so the first run is likely to return a real touched block before you swap in your own contract.
-
-NEAR blocks are sharded, so the filter walks `.shards[]` before it inspects transactions, receipts, outcomes, or state changes. `chunk.receipts` means work that landed in this block; `receipt_execution_outcomes` means work that executed in this block, even if it was scheduled earlier.
-
-## Worked investigation
+## Worked investigations
 
 ### Did my contract get touched in the latest finalized block?
 
-Use this investigation when you want a concrete yes/no answer before you widen into Transactions API or RPC.
+Use this when your app, bot, or support tool needs one fast answer about a live contract. We will check `intents.near`, but the same summary works for any contract account.
 
 <div className="fastnear-example-strategy">
   <div className="fastnear-example-strategy__header">
     <span className="fastnear-example-strategy__eyebrow">Strategy</span>
-    <p className="fastnear-example-strategy__title">Answer the contract-touch question first, then keep only one tx hash or receipt id for the next step.</p>
+    <p className="fastnear-example-strategy__title">Let NEAR Data answer the monitoring question first, then keep one tx hash or receipt ID for the next surface only if you need it.</p>
   </div>
   <div className="fastnear-example-strategy__items">
-    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">01</span><span><span className="fastnear-example-strategy__code">last-block-final</span> gives you one stable block height without guessing.</span></p>
-    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">02</span><span><span className="fastnear-example-strategy__code">block</span> is the main read: it already contains the transactions, incoming receipts, receipt execution outcomes, and state changes you need to answer “touched or not?”.</span></p>
-    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span>Only if the answer is “yes” do you widen: keep one exact tx hash or receipt id from the same cached block, then hand that identifier to [Transactions API](/tx) or [RPC Reference](/rpc).</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">01</span><span><span className="fastnear-example-strategy__code">last-block-final</span> resolves the newest finalized height.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">02</span><span><span className="fastnear-example-strategy__code">block</span> gives one recent hydrated block document with shard payloads already attached.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span>Summarize direct txs, incoming receipts, execution outcomes, and <span className="fastnear-example-strategy__code">state_changes</span> for your contract. Treat <span className="fastnear-example-strategy__code">state_changes</span> as the strongest signal that the contract was actually changed.</span></p>
   </div>
 </div>
 
-**Goal**
-
-- Decide whether one target contract was touched in the latest finalized block, and keep only the compact counts plus one exact identifier worth investigating next.
-
-**What a useful answer should include**
-
-- finalized height and hash
-- touched or not touched
-- counts for direct txs, incoming receipts, outcome hits, and state changes
-- a compact `state_change_types` list
-- one sample tx hash or receipt id when present
-
-### Final block to contract-touch answer shell walkthrough
-
-Use this when the target account is already known and you want one recent finalized answer, not a long polling loop.
-
-**What you're doing**
-
-- Get the latest finalized block redirect target.
-- Fetch the full block document once.
-- Build one small touch summary for one `TARGET_ACCOUNT_ID`.
-- Return a yes/no answer plus the smallest useful counts, state-change types, and sample identifiers.
+This can honestly return `touched: false` in a quiet block. That is still a useful answer: nothing in the newest finalized block currently needs deeper tracing.
 
 ```bash
 NEARDATA_BASE_URL=https://mainnet.neardata.xyz
-TARGET_ACCOUNT_ID=intents.near
+TARGET_CONTRACT=intents.near
+
+contract_touch_summary() {
+  jq -r --arg contract "$1" '
+    [ .shards[] | {
+        shard_id,
+        direct_txs: ([.chunk.transactions[]? | select(.transaction.receiver_id == $contract)] | length),
+        incoming_receipts: ([.chunk.receipts[]? | select(.receiver_id == $contract)] | length),
+        execution_outcomes: ([.receipt_execution_outcomes[]? | select(.execution_outcome.outcome.executor_id == $contract)] | length),
+        state_changes: ([.state_changes[]? | select(.change.account_id? == $contract)] | length),
+        sample_tx_hash: ([.chunk.transactions[]? | select(.transaction.receiver_id == $contract) | .transaction.hash] | .[0]),
+        sample_receipt_id: (
+          [ .chunk.receipts[]? | select(.receiver_id == $contract) | .receipt_id ] +
+          [ .receipt_execution_outcomes[]? | select(.execution_outcome.outcome.executor_id == $contract) | .execution_outcome.id ] +
+          [ .state_changes[]? | select(.change.account_id? == $contract) | (.cause.receipt_hash? // empty) ]
+          | .[0]
+        )
+      }
+      | select(.direct_txs + .incoming_receipts + .execution_outcomes + .state_changes > 0)
+    ] as $rows
+    | {
+        height: .block.header.height,
+        hash: .block.header.hash,
+        contract: $contract,
+        touched: (($rows | length) > 0),
+        shards: ($rows | map(.shard_id)),
+        evidence: {
+          direct_txs: (($rows | map(.direct_txs) | add) // 0),
+          incoming_receipts: (($rows | map(.incoming_receipts) | add) // 0),
+          execution_outcomes: (($rows | map(.execution_outcomes) | add) // 0),
+          state_changes: (($rows | map(.state_changes) | add) // 0)
+        },
+        sample_tx_hash: ([ $rows[] | .sample_tx_hash | select(.) ] | .[0]),
+        sample_receipt_id: ([ $rows[] | .sample_receipt_id | select(.) ] | .[0])
+      }'
+}
 
 FINAL_LOCATION="$(
   curl -s -D - -o /dev/null "$NEARDATA_BASE_URL/v0/last_block/final" \
@@ -105,197 +75,163 @@ FINAL_LOCATION="$(
     | tr -d '\r'
 )"
 
-printf 'Final redirect target: %s\n' "$FINAL_LOCATION"
+printf 'Latest finalized block: %s\n' "$FINAL_LOCATION"
 
 curl -s "$NEARDATA_BASE_URL$FINAL_LOCATION" \
-  | tee /tmp/neardata-block.json >/dev/null
-
-jq --arg target "$TARGET_ACCOUNT_ID" '
-  (
-    [
-      .shards[]
-      | .chunk.transactions[]?
-      | select(.transaction.receiver_id == $target)
-      | .transaction.hash
-    ]
-  ) as $txs
-  | (
-    [
-      .shards[]
-      | .chunk.receipts[]?
-      | select(.receiver_id == $target)
-      | .receipt_id
-    ]
-  ) as $receipts
-  | (
-    [
-      .shards[]
-      | .receipt_execution_outcomes[]?
-      | select(
-          (.receipt.receiver_id // "") == $target
-          or (.execution_outcome.outcome.executor_id // "") == $target
-        )
-      | .tx_hash
-      | select(. != null)
-    ]
-    | unique
-  ) as $outcomes
-  | (
-    [
-      .shards[]
-      | .state_changes[]?
-      | select((.change.account_id // "") == $target)
-      | .type
-    ]
-  ) as $state_changes
-  | (
-    $state_changes
-    | unique
-    | sort
-  ) as $state_change_types
-  | {
-      height: .block.header.height,
-      hash: .block.header.hash,
-      touched: (
-        ($txs | length) > 0
-        or ($receipts | length) > 0
-        or ($outcomes | length) > 0
-        or ($state_changes | length) > 0
-      ),
-      direct_tx_count: ($txs | length),
-      incoming_receipt_count: ($receipts | length),
-      outcome_hit_count: ($outcomes | length),
-      state_change_count: ($state_changes | length),
-      state_change_types: $state_change_types,
-      sample_direct_tx: ($txs[0] // null),
-      sample_incoming_receipt: ($receipts[0] // null),
-      sample_outcome_tx_hash: ($outcomes[0] // null)
-    }
-' /tmp/neardata-block.json | tee /tmp/neardata-touch-summary.json
+  | tee /tmp/neardata-final-block.json \
+  | contract_touch_summary "$TARGET_CONTRACT"
 ```
 
-If you need richer detail later, keep reusing `/tmp/neardata-block.json`. The point of this first pass is to answer “touched or not?” before you widen into longer arrays or deeper traces.
+Read the answer like this:
 
-Common `state_change_types` include `account_update`, `access_key_update`, `data_update`, and the corresponding `*_deletion` variants. That is often enough to tell whether you are looking at storage writes, key churn, or broader account-level changes before you leave NEAR Data.
+- `touched: false` means the newest finalized block did not mention or mutate the contract in any of the monitored ways.
+- `sample_tx_hash` means you already have a good `/tx` anchor for the next question.
+- `sample_receipt_id` without a tx hash usually means the contract showed up through receipt-driven execution, so NEAR Data already saved you the cheaper monitoring step.
 
-#### Optional follow-up: Which tx hash or receipt id should I inspect next?
+### Did I see activity optimistically, and did it survive finality?
 
-Keep the same cached block and summary, then lift one exact identifier for the next surface.
+Use this when you want an early signal for a live contract, but the stable answer still needs finalized confirmation.
 
-```bash
-FOLLOW_UP_KIND="$(
-  jq -r '
-    if .sample_direct_tx != null then "tx_hash"
-    elif .sample_incoming_receipt != null then "receipt_id"
-    elif .sample_outcome_tx_hash != null then "tx_hash"
-    else "none"
-    end
-  ' /tmp/neardata-touch-summary.json
-)"
+<div className="fastnear-example-strategy">
+  <div className="fastnear-example-strategy__header">
+    <span className="fastnear-example-strategy__eyebrow">Strategy</span>
+    <p className="fastnear-example-strategy__title">Use the same contract-touch vocabulary on both surfaces so the comparison stays honest.</p>
+  </div>
+  <div className="fastnear-example-strategy__items">
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">01</span><span><span className="fastnear-example-strategy__code">last-block-optimistic</span> resolves the newest optimistic height.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">02</span><span><span className="fastnear-example-strategy__code">block-optimistic</span> shows the early signal for the same contract.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span><span className="fastnear-example-strategy__code">block</span> at the same height either confirms the same observation or proves finality has not caught up yet.</span></p>
+  </div>
+</div>
 
-FOLLOW_UP_VALUE="$(
-  jq -r '
-    .sample_direct_tx
-    // .sample_incoming_receipt
-    // .sample_outcome_tx_hash
-    // empty
-  ' /tmp/neardata-touch-summary.json
-)"
-
-printf 'Next identifier kind: %s\n' "$FOLLOW_UP_KIND"
-printf 'Next identifier value: %s\n' "$FOLLOW_UP_VALUE"
-```
-
-If the identifier is a `tx_hash`, hand it to [Transactions API](/tx) or RPC `tx` status. If it is a `receipt_id`, hand it to [Transactions API: Receipt by ID](/tx/receipt). Only after that should you decide whether shard-level reopening is still necessary.
-
-**Why this next step?**
-
-This keeps the question as small as possible: first answer “was my contract touched?”, then widen only if one exact tx hash or receipt id justifies a deeper trace. NEAR Data is the discovery layer here, not just a block monitor.
-
-### How far ahead is optimistic right now?
-
-Use this when you need to choose between low-latency reads and settled reads before you start polling.
+If finality has already caught up, the optimistic and finalized summaries may match immediately. That is still useful: it tells you the early signal already survived into stable history.
 
 ```bash
 NEARDATA_BASE_URL=https://mainnet.neardata.xyz
+TARGET_CONTRACT=intents.near
 
-FINAL_LOCATION="$(
-  curl -s -D - -o /dev/null "$NEARDATA_BASE_URL/v0/last_block/final" \
-    | awk 'tolower($1) == "location:" {print $2}' \
-    | tr -d '\r'
-)"
+contract_touch_summary() {
+  jq -r --arg contract "$1" '
+    [ .shards[] | {
+        shard_id,
+        direct_txs: ([.chunk.transactions[]? | select(.transaction.receiver_id == $contract)] | length),
+        incoming_receipts: ([.chunk.receipts[]? | select(.receiver_id == $contract)] | length),
+        execution_outcomes: ([.receipt_execution_outcomes[]? | select(.execution_outcome.outcome.executor_id == $contract)] | length),
+        state_changes: ([.state_changes[]? | select(.change.account_id? == $contract)] | length)
+      }
+      | select(.direct_txs + .incoming_receipts + .execution_outcomes + .state_changes > 0)
+    ] as $rows
+    | {
+        height: .block.header.height,
+        hash: .block.header.hash,
+        contract: $contract,
+        touched: (($rows | length) > 0),
+        shards: ($rows | map(.shard_id)),
+        evidence: {
+          direct_txs: (($rows | map(.direct_txs) | add) // 0),
+          incoming_receipts: (($rows | map(.incoming_receipts) | add) // 0),
+          execution_outcomes: (($rows | map(.execution_outcomes) | add) // 0),
+          state_changes: (($rows | map(.state_changes) | add) // 0)
+        }
+      }'
+}
 
-OPTIMISTIC_LOCATION="$(
+OPT_LOCATION="$(
   curl -s -D - -o /dev/null "$NEARDATA_BASE_URL/v0/last_block/optimistic" \
     | awk 'tolower($1) == "location:" {print $2}' \
     | tr -d '\r'
 )"
 
-jq -n \
-  --arg final_location "$FINAL_LOCATION" \
-  --arg optimistic_location "$OPTIMISTIC_LOCATION" '{
-    final_location: $final_location,
-    optimistic_location: $optimistic_location,
-    final_height: ($final_location | split("/") | last | tonumber),
-    optimistic_height: ($optimistic_location | split("/") | last | tonumber)
-  } | . + {
-    optimistic_minus_final: (.optimistic_height - .final_height)
-  }'
+OPT_HEIGHT="${OPT_LOCATION##*/}"
+
+printf 'Latest optimistic block: %s\n' "$OPT_LOCATION"
+
+curl -s "$NEARDATA_BASE_URL$OPT_LOCATION" \
+  | tee /tmp/neardata-optimistic-block.json \
+  | contract_touch_summary "$TARGET_CONTRACT"
+
+curl -s "$NEARDATA_BASE_URL/v0/block/$OPT_HEIGHT" \
+  | tee /tmp/neardata-final-same-height.json >/dev/null
+
+if jq -e 'type == "null"' /tmp/neardata-final-same-height.json >/dev/null; then
+  printf 'Finalized block %s is not available yet; finality has not caught up.\n' "$OPT_HEIGHT"
+else
+  printf 'Finalized block %s is already available; compare the stable answer below.\n' "$OPT_HEIGHT"
+  contract_touch_summary "$TARGET_CONTRACT" < /tmp/neardata-final-same-height.json
+fi
 ```
 
-Use `last_block/optimistic` when the app values speed more than settled finality, for example reactive status views or early alerting. Use `last_block/final` when the answer feeds accounting, reconciliation, or any workflow that should not rewind.
+That is the practical split:
 
-### How do I walk forward block by block?
+- optimistic is the early signal that your monitoring loop can react to quickly;
+- finalized is the stable answer you can show to users or use for durable automation.
 
-Use this when the job is “start at height N, fetch, process, increment, repeat.” For a deterministic bootstrap floor, read [`first-block`](/neardata/first-block) once before you begin.
+### Which shard actually changed my contract in this block?
+
+Use this when a recent block already showed contract activity and you now want the shard-local proof of where the change actually landed.
+
+<div className="fastnear-example-strategy">
+  <div className="fastnear-example-strategy__header">
+    <span className="fastnear-example-strategy__eyebrow">Strategy</span>
+    <p className="fastnear-example-strategy__title">Use the full block to find the winning shard, then let <span className="fastnear-example-strategy__code">block-shard</span> prove the actual mutation.</p>
+  </div>
+  <div className="fastnear-example-strategy__items">
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">01</span><span>Scan the finalized block’s shard list for <span className="fastnear-example-strategy__code">state_changes</span> on your contract.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">02</span><span>Open only the shard that actually changed the contract.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span>Keep the matching state changes and receipt execution outcomes as your shard-local proof.</span></p>
+  </div>
+</div>
+
+At the time of writing, recent finalized block `194727131` gave a clean live `intents.near` example: the contract first appeared as an incoming receipt on shard `8`, then actually executed and changed state on shard `7`.
+
+If you need a fresher block, reuse the same summary from the first example over a few nearby finalized heights and then plug the winning height into the same `block-shard` call.
 
 ```bash
 NEARDATA_BASE_URL=https://mainnet.neardata.xyz
+TARGET_CONTRACT=intents.near
+EXAMPLE_HEIGHT=194727131
 
-FINAL_LOCATION="$(
-  curl -s -D - -o /dev/null "$NEARDATA_BASE_URL/v0/last_block/final" \
-    | awk 'tolower($1) == "location:" {print $2}' \
-    | tr -d '\r'
-)"
+curl -s "$NEARDATA_BASE_URL/v0/block/$EXAMPLE_HEIGHT" \
+  | tee /tmp/neardata-block-194727131.json \
+  | jq --arg contract "$TARGET_CONTRACT" '[
+      .shards[] | {
+        shard_id,
+        incoming_receipts: ([.chunk.receipts[]? | select(.receiver_id == $contract)] | length),
+        execution_outcomes: ([.receipt_execution_outcomes[]? | select(.execution_outcome.outcome.executor_id == $contract)] | length),
+        state_changes: ([.state_changes[]? | select(.change.account_id? == $contract)] | length)
+      }
+      | select(.incoming_receipts + .execution_outcomes + .state_changes > 0)
+    ]'
 
-FINAL_HEIGHT="$(printf '%s' "$FINAL_LOCATION" | awk -F/ '{print $4}')"
-NEXT_HEIGHT=$((FINAL_HEIGHT + 1))
-
-while true; do
-  HTTP_CODE="$(
-    curl -s -o /tmp/neardata-next-block.json -w '%{http_code}' \
-      "$NEARDATA_BASE_URL/v0/block/$NEXT_HEIGHT"
-  )"
-
-  if [ "$HTTP_CODE" = "200" ]; then
-    jq '{height: .block.header.height, hash: .block.header.hash}' \
-      /tmp/neardata-next-block.json
-    NEXT_HEIGHT=$((NEXT_HEIGHT + 1))
-  elif [ "$HTTP_CODE" = "404" ]; then
-    sleep 2
-  else
-    printf 'Unexpected status: %s\n' "$HTTP_CODE" >&2
-    break
-  fi
-done
+curl -s "$NEARDATA_BASE_URL/v0/block/$EXAMPLE_HEIGHT/shard/7" \
+  | jq --arg contract "$TARGET_CONTRACT" '{
+      shard_id,
+      chunk_hash: .chunk.header.chunk_hash,
+      matching_state_changes: [
+        .state_changes[]
+        | select(.change.account_id? == $contract)
+        | {type, cause, account_id: .change.account_id}
+      ][0:2],
+      matching_execution_outcomes: [
+        .receipt_execution_outcomes[]
+        | select(.execution_outcome.outcome.executor_id == $contract)
+        | {
+            receipt_id: .execution_outcome.id,
+            executor_id: .execution_outcome.outcome.executor_id,
+            status: .execution_outcome.outcome.status,
+            predecessor_id: .receipt.predecessor_id
+          }
+      ][0:2]
+    }'
 ```
 
-That is the canonical polling shape for finalized data: fetch by height, process one block, advance, and treat `404` as “not finalized yet, back off and try again.” If you need the same loop at optimistic speed, switch to `/v0/block_opt/<height>` and accept optimistic semantics instead of final ones.
+That is the practical rule:
 
+- use `block` when the first question is “which shard mattered?”;
+- use `block-shard` when the real question becomes “show me the actual state-changing shard payload.”
 
-## Common mistakes
+## When to widen
 
-- Treating NEAR Data like a push stream instead of a polling or point-read API.
-- Starting with RPC before checking whether one finalized block already answers the contract-touch question.
-- Looking only for direct transactions and forgetting that contracts are often touched through receipts or state changes.
-- Using optimistic data for settled accounting or reconciliation.
-- Assuming one hard-coded shard id should be checked before you inspect the block family itself.
-- Widening to Transactions API or RPC before extracting one exact tx hash or receipt id from NEAR Data.
-
-## Related guides
-
-- [NEAR Data API](/neardata)
-- [Transactions API](/tx)
-- [RPC Reference](/rpc)
-- [Choosing the Right Surface](/agents/choosing-surfaces)
-- [Agent Playbooks](/agents/playbooks)
+- Use [Transactions API](/tx) once you have a `tx_hash` and want the human-readable transaction story.
+- Use [RPC Reference](/rpc) when the next question is about exact protocol-native receipt or block semantics.
+- Use [Block Headers](/neardata/block-headers) when you only need head progression or finality lag, not contract-touch inspection.

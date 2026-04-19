@@ -10,7 +10,7 @@ page_actions:
 
 # KV FastData API
 
-KV FastData API is the indexed key-value family. Use it when you already know the contract, account, predecessor, or key scope you want to inspect and you want indexed rows without building your own FastData indexing layer.
+KV FastData API is the indexed key-value family. Use it when you already know the contract, account, predecessor, or key scope you want to inspect and you want indexed rows without building your own storage indexing layer.
 
 ## Base URLs
 
@@ -22,12 +22,41 @@ https://kv.main.fastnear.com
 https://kv.test.fastnear.com
 ```
 
+## Quick start
+
+If you already know one exact key, start with the latest indexed row and stop as soon as it answers the question.
+
+```bash
+KV_BASE_URL=https://kv.main.fastnear.com
+CURRENT_ACCOUNT_ID=social.near
+PREDECESSOR_ID=james.near
+KEY='graph/follow/sleet.near'
+
+ENCODED_KEY="$(jq -rn --arg key "$KEY" '$key | @uri')"
+
+curl -s "$KV_BASE_URL/v0/latest/$CURRENT_ACCOUNT_ID/$PREDECESSOR_ID/$ENCODED_KEY" \
+  | jq '{
+      latest: (
+        .entries[0]
+        | {
+            current_account_id,
+            predecessor_id,
+            block_height,
+            key,
+            value
+          }
+      )
+    }'
+```
+
+This is the narrowest useful KV read: one exact key, one latest indexed row. If the next question becomes “how did this key change over time?”, move to [GET History by Exact Key](/fastdata/kv/get-history-key) or the fuller [KV FastData Examples](/fastdata/kv/examples).
+
 ## Use this API when
 
 - you want latest indexed state for one key or a known key family
 - you want historical key changes by account, key, or predecessor
 - you want batch lookups for known exact keys
-- you are debugging indexed FastData rows emitted by a contract or predecessor
+- you are debugging contract storage in indexed form
 
 ## Do not start here when
 
@@ -53,18 +82,18 @@ Use [FastNear API](/api) for higher-level account views, [NEAR Data API](/nearda
 
 ## Need a workflow?
 
-Use [KV FastData Examples](/fastdata/kv/examples) for plain-language flows like exact-key lookups, exact-key history, predecessor-scoped inspection, and transaction bridging.
+Use [KV FastData Examples](/fastdata/kv/examples) for plain-language flows like exact-key lookups, key-history investigation, predecessor-scoped inspection, and canonical RPC follow-up.
 
 ## Default workflow
 
 1. Pick the narrowest scope that matches the user's question.
 2. Stay within KV FastData first when the question is still about indexed key-value data.
 3. Use the latest endpoints for current indexed views and the history endpoints only when the user needs change-over-time answers.
-4. Stop once the indexed rows already answer the FastData question.
+4. Stop once the indexed rows already answer the storage question.
 
 ## Auth and availability
 
-- Public indexed FastData reads often work without a key.
+- Public indexed storage reads often work without a key.
 - If you standardize on one FastNear API key across FastNear surfaces, reuse the same header or query-param shape here too.
 - Add `?network=testnet` to switch the page to the testnet backend where supported.
 - List responses omit `page_token` when there are no more results.
@@ -75,7 +104,7 @@ Use [KV FastData Examples](/fastdata/kv/examples) for plain-language flows like 
 - the user needs canonical contract-state semantics
 - the indexed storage view is the wrong abstraction for the question
 
-When that happens, widen to [View State](/rpc/contract/view-state) in [RPC Reference](/rpc) or to the contract's own read method. Do not assume one FastData key maps directly to one raw `view_state` key.
+When that happens, widen to [View State](/rpc/contract/view-state) in [RPC Reference](/rpc).
 
 ## Troubleshooting
 

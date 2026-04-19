@@ -1,42 +1,15 @@
 **Источник:** [https://docs.fastnear.com/ru/api/examples](https://docs.fastnear.com/ru/api/examples)
 
-## Быстрый старт
-
-Начните с одного поиска по публичному ключу и одного широкого чтения аккаунта.
-
-```bash
-API_BASE_URL=https://api.fastnear.com
-PUBLIC_KEY='ed25519:YOUR_PUBLIC_KEY'
-
-ENCODED_PUBLIC_KEY="$(jq -rn --arg public_key "$PUBLIC_KEY" '$public_key | @uri')"
-
-ACCOUNT_ID="$(
-  curl -s "$API_BASE_URL/v1/public_key/$ENCODED_PUBLIC_KEY" \
-    | jq -r '.account_ids[0]'
-)"
-
-echo "$ACCOUNT_ID"
-
-curl -s "$API_BASE_URL/v1/account/$ACCOUNT_ID/full" \
-  | jq '{
-      account_id,
-      state,
-      token_count: (.tokens | length),
-      nft_count: (.nfts | length),
-      pool_count: (.pools | length)
-    }'
-```
-
-Это самый короткий путь к вопросам «какой это аккаунт?» и «что сейчас видно по этому кошельку?»
-
 ## Готовые сценарии
+
+Читайте эту страницу как короткую лестницу: сначала определите, что это за аккаунт, затем классифицируйте форму кошелька, а потом переходите к более насыщенному сценарию происхождения, если хотите превратить живой BOS-артефакт в отчеканенную запись.
 
 ### Определить аккаунт по публичному ключу, а затем получить сводку по нему
 
 Используйте этот сценарий, когда у вас сначала есть только публичный ключ, а следующий практический вопрос пользователя звучит как «какому аккаунту он соответствует?» и сразу после этого «что сейчас видно по этому аккаунту?»
 
     Стратегия
-    Сначала определите личность, а затем либо сразу проверьте один аккаунт, либо пройдитесь по всему списку, если ключ сопоставляется с несколькими аккаунтами.
+    Сначала определите личность, а затем переиспользуйте тот же аккаунт для одной читаемой сводки по кошельку.
 
     01GET /v1/public_key возвращает кандидатные значения account_id для этого ключа.
     02jq поднимает тот аккаунт, который вы хотите смотреть дальше.
@@ -45,8 +18,8 @@ curl -s "$API_BASE_URL/v1/account/$ACCOUNT_ID/full" \
 **Что вы делаете**
 
 - Ищете по публичному ключу один или несколько `account_id`.
-- Сначала считаете, сколько `account_id` вернулось, прежде чем выбирать один.
-- Сразу переиспользуете один аккаунт или проходите по всему списку, если ключ сопоставляется с несколькими аккаунтами.
+- Извлекаете первый найденный `account_id` через `jq`.
+- Переиспользуете это значение в широком эндпоинте полного снимка аккаунта.
 
 ```bash
 API_BASE_URL=https://api.fastnear.com
@@ -62,53 +35,32 @@ ACCOUNT_ID="$(
     | jq -r '.account_ids[0]'
 )"
 
-ACCOUNT_COUNT="$(
-  jq -r '.account_ids | length' /tmp/fastnear-public-key.json
-)"
+jq '{account_ids}' /tmp/fastnear-public-key.json
 
-jq '{
-  account_ids,
-  account_count: (.account_ids | length)
-}' /tmp/fastnear-public-key.json
-
-if [ "$ACCOUNT_COUNT" -eq 1 ]; then
-  curl -s "$API_BASE_URL/v1/account/$ACCOUNT_ID/full" \
-    | jq '{
-        account_id,
-        state,
-        token_count: (.tokens | length),
-        nft_count: (.nfts | length),
-        pool_count: (.pools | length)
-      }'
-else
-  jq -r '.account_ids[]' /tmp/fastnear-public-key.json \
-    | while read -r candidate_account_id; do
-        curl -s "$API_BASE_URL/v1/account/$candidate_account_id/full" \
-          | jq '{
-              account_id,
-              state,
-              token_count: (.tokens | length),
-              nft_count: (.nfts | length),
-              pool_count: (.pools | length)
-            }'
-      done
-fi
+curl -s "$API_BASE_URL/v1/account/$ACCOUNT_ID/full" \
+  | jq '{
+      account_id,
+      state,
+      token_count: (.tokens | length),
+      nft_count: (.nfts | length),
+      pool_count: (.pools | length)
+    }'
 ```
 
 **Зачем нужен следующий шаг?**
 
-Поиск по публичному ключу говорит, с каким аккаунтом или аккаунтами вы имеете дело. Полный снимок аккаунта — естественный следующий запрос, если нужны балансы, NFT, стейкинг и пулы в одном ответе. Если ключ сопоставляется не с одним, а с несколькими аккаунтами, именно здесь стоит либо пройтись по каждому найденному `account_id`, либо перейти к [V1 Public Key Lookup All](https://docs.fastnear.com/ru/api/v1/public-key-all) для более широкого исторического ответа.
+Поиск по публичному ключу говорит, с каким аккаунтом вы имеете дело. Полный снимок аккаунта — естественный следующий запрос, если нужны балансы, NFT, стейкинг и пулы в одном ответе. Если ключ сопоставляется не с одним, а с несколькими аккаунтами, переходите к [V1 Public Key Lookup All](https://docs.fastnear.com/ru/api/v1/public-key-all) или пройдитесь по каждому найденному `account_id`.
 
-### Есть ли у этого аккаунта прямой стейкинг прямо сейчас?
+### Показывает ли этот кошелёк прямой стейкинг, ликвидные стейкинг-токены или и то и другое?
 
-Используйте этот сценарий, когда история проста: «скажи, есть ли у аккаунта видимые прямые staking pool прямо сейчас, и покажи, какие именно это пулы».
+Используйте этот сценарий, когда история звучит так: «покажи, видно ли по этому кошельку прямые позиции в staking pool, ликвидные стейкинг-токены или и то и другое».
 
     Стратегия
-    Один раз прочитайте staking-эндпоинт и превратите видимый список пулов в ответ “да / нет”.
+    Сначала сравните staking-позиции и FT-балансы, а уже потом интерпретируйте кошелёк.
 
-    01GET /v1/account/.../staking возвращает видимые прямые staking-позиции аккаунта.
-    02jq превращает ответ в has_direct_staking_now, pool_count и pool_ids.
-    03Если массив pools пуст, ответ этой поверхности просто звучит как «прямой стейкинг сейчас не виден».
+    01GET /v1/account/.../staking находит прямую экспозицию через пулы.
+    02GET /v1/account/.../ft находит liquid staking token, которые лежат рядом с пулами или вместо них.
+    03jq превращает эти два индексированных чтения в direct_only, liquid_only или mixed.
 
 **Сеть**
 
@@ -117,208 +69,344 @@ fi
 **Официальные ссылки**
 
 - [Валидаторский стейкинг](https://docs.near.org/concepts/basics/staking)
+- [Liquid staking](https://docs.near.org/primitives/liquid-staking)
+
+Этот пример намеренно остаётся наблюдательным. Он классифицирует то, что FastNear видит сейчас по staking-позициям и FT-балансам. Он не доказывает каждую возможную синтетическую или внешнюю форму стейкинг-экспозиции.
 
 **Что вы делаете**
 
 - Читаете индексированные прямые staking-позиции через staking-эндпоинт аккаунта.
-- Печатаете короткий итог “да / нет” и список видимых `pool_id`.
-- На этом останавливаетесь, если только следующий вопрос уже не касается `unstake` или `withdraw` в конкретном пуле.
+- Читаете индексированные FT-балансы через FT-эндпоинт аккаунта.
+- Классифицируете аккаунт как `direct_only`, `liquid_only`, `mixed` или `no_visible_staking_position`.
+- Выводите список прямых пулов и список liquid staking-токенов, на которых основана эта классификация.
 
 ```bash
 API_BASE_URL=https://api.fastnear.com
-ACCOUNT_ID=mike.near
+ACCOUNT_ID=YOUR_ACCOUNT_ID
+LIQUID_PROVIDERS_JSON='["meta-pool.near","lst.rhealab.near","linear-protocol.near"]'
 ```
 
 1. Получите представление по прямому стейкингу.
 
 ```bash
 curl -s "$API_BASE_URL/v1/account/$ACCOUNT_ID/staking" \
-  | tee /tmp/account-staking.json >/dev/null
-
-jq '{
-  account_id,
-  has_direct_staking_now: ((.pools // []) | length > 0),
-  pool_count: ((.pools // []) | length),
-  pool_ids: ((.pools // []) | map(.pool_id))
-}' /tmp/account-staking.json
+  | tee /tmp/account-staking.json \
+  | jq '{account_id, pools}'
 ```
 
-На момент написания для `mike.near` здесь возвращались видимые прямые staking-пулы. Если для вашего аккаунта `pool_ids` пуст, этот эндпоинт отвечает: «прямой стейкинг сейчас не виден».
-
-**Зачем нужен следующий шаг?**
-
-Так вопрос остаётся узким и практическим. Если ответ `true`, важно помнить, что это значит на chain-уровне: аккаунт обычно делегировал средства в staking-pool-контракт вроде `polkachu.poolv1.near`, отправив `FunctionCall` наподобие `deposit_and_stake` с attached deposit. Сам `Stake` action позже выполняет уже сам pool-контракт на своём аккаунте. Если ответ `false`, не делайте из этого примера выводов про liquid staking: liquid staking-позиции обычно сначала видны как FT-holdings в конкретных LST-контрактах, поэтому правильный follow-up здесь — FT-пример ниже. И ещё одна граница этой поверхности: этот эндпоинт сейчас не показывает pending-unstake или withdraw-ready amount, так что по нему не стоит отвечать на вопросы о задержках по эпохам.
-
-#### Необязательное продолжение: Что сделал этот контрактный вызов для делегирования?
-
-Используйте это продолжение, когда staking-эндпоинт уже показал пул вроде `polkachu.poolv1.near`, и теперь вы хотите увидеть форму одной реальной делегационной транзакции.
-
-Этот зафиксированный mainnet tx хорош тем, что очень ясно показывает весь паттерн:
-
-- хеш транзакции: `5Qo96GonLaAfuh6eHWdi8zPRk92TFW8W2xWqSAoYKBVz`
-- top-level receiver: `polkachu.poolv1.near`
-- top-level метод: `deposit_and_stake`
-- attached deposit: `34650000000000000000000000` (≈34.65 NEAR)
-
-Важная форма chain-истории здесь такая:
-
-- делегатор отправляет `FunctionCall deposit_and_stake` в pool-контракт
-- pool-контракт учитывает депозит и staking shares
-- затем pool выпускает self-receipt с настоящим `Stake` action
-
-```bash
-TX_BASE_URL=https://tx.main.fastnear.com
-TX_HASH=5Qo96GonLaAfuh6eHWdi8zPRk92TFW8W2xWqSAoYKBVz
-
-curl -s "$TX_BASE_URL/v0/transactions" \
-  -H 'content-type: application/json' \
-  --data "$(jq -nc --arg tx_hash "$TX_HASH" '{tx_hashes: [$tx_hash]}')" \
-  | tee /tmp/staking-delegation-tx.json >/dev/null
-
-jq '{
-  top_level_call: {
-    hash: .transactions[0].transaction.hash,
-    signer_id: .transactions[0].transaction.signer_id,
-    receiver_id: .transactions[0].transaction.receiver_id,
-    method_name: .transactions[0].transaction.actions[0].FunctionCall.method_name,
-    attached_deposit: .transactions[0].transaction.actions[0].FunctionCall.deposit
-  },
-  pool_side_effects: [
-    .transactions[0].receipts[]
-    | select(.receipt.receiver_id == "polkachu.poolv1.near")
-    | {
-        predecessor_id: .receipt.predecessor_id,
-        receiver_id: .receipt.receiver_id,
-        actions: (
-          .receipt.receipt.Action.actions
-          | map(if type == "string" then . else keys[0] end)
-        ),
-        first_logs: (.execution_outcome.outcome.logs[:3])
-      }
-  ]
-}' /tmp/staking-delegation-tx.json
-```
-
-Простой вывод здесь такой: делегатор не подписывал сырой `Stake` action напрямую. Он вызвал staking-pool-контракт через `deposit_and_stake` и приложил депозит, а затем уже pool-контракт сам выполнил `Stake` action на своём аккаунте.
-
-### Какие FT-балансы и NFT-коллекции этот аккаунт сейчас показывает?
-
-Используйте этот сценарий, когда у wallet-экрана, support-инструмента или агента уже есть `account_id` и нужен быстрый индексированный обзор holdings: FT-балансы плюс NFT-коллекции, из которых этот аккаунт сейчас что-то показывает.
-
-    Стратегия
-    Сначала прочитайте FT-балансы, затем NFT-коллекции и только потом соберите их в один компактный индексированный инвентарь.
-
-    01GET /v1/account/.../ft даёт индексированные FT-балансы кошелька.
-    02GET /v1/account/.../nft даёт NFT-коллекции, из которых этот кошелёк сейчас показывает holdings.
-    03jq превращает эти два индексированных чтения в один wallet-friendly инвентарь.
-
-**Что вы делаете**
-
-- Читаете FT-балансы аккаунта.
-- Читаете NFT-holdings аккаунта на уровне коллекций.
-- Печатаете один короткий индексированный инвентарь, который можно переиспользовать в wallet- или support-сценарии.
-
-Этот пример не отвечает на вопросы про нативный баланс, стейкинг, пулы, точные NFT token ID или метаданные.
-
-FT-эндпоинт здесь решает задачу балансов. Он не включает display-метаданные вроде `symbol` или `decimals`; когда нужно форматировать баланс для UI, вызовите у токен-контракта read-метод `ft_metadata` через RPC.
-
-NFT-эндпоинт здесь работает на уровне коллекций. Воспринимайте его как ответ на вопрос «из каких NFT-контрактов этот аккаунт сейчас что-то держит?», а не как полный per-token crawl.
-
-```bash
-API_BASE_URL=https://api.fastnear.com
-ACCOUNT_ID=YOUR_ACCOUNT_ID
-
-# Пример живого значения, проверенного 19 апреля 2026 года:
-# ACCOUNT_ID=mike.near
-```
-
-1. Прочитайте FT-балансы аккаунта.
+2. Получите FT-балансы, чтобы увидеть liquid staking-позиции.
 
 ```bash
 curl -s "$API_BASE_URL/v1/account/$ACCOUNT_ID/ft" \
   | tee /tmp/account-ft.json >/dev/null
-
-jq '{
-  account_id,
-  ft_contracts: (
-    .tokens
-    | map(select((.balance // "0") != "0") | {
-        contract_id,
-        balance,
-        last_update_block_height
-      })
-    | .[:10]
-  )
-}' /tmp/account-ft.json
 ```
 
-2. Прочитайте NFT-коллекции для того же аккаунта.
-
-```bash
-curl -s "$API_BASE_URL/v1/account/$ACCOUNT_ID/nft" \
-  | tee /tmp/account-nft.json >/dev/null
-
-jq '{
-  account_id,
-  nft_collections: (
-    (.tokens // [])
-    | map({
-        contract_id,
-        last_update_block_height
-      })
-    | unique_by(.contract_id)
-    | .[:10]
-  )
-}' /tmp/account-nft.json
-```
-
-3. Соберите из этих двух чтений один компактный инвентарь.
+3. Классифицируйте аккаунт на основе этих двух индексированных представлений.
 
 ```bash
 jq -n \
+  --slurpfile staking /tmp/account-staking.json \
   --slurpfile ft /tmp/account-ft.json \
-  --slurpfile nft /tmp/account-nft.json '
-  ($ft[0].tokens // []) as $ft_tokens
-  | ($nft[0].tokens // []) as $nft_tokens
+  --argjson providers "$LIQUID_PROVIDERS_JSON" '
+  ($staking[0].pools // []) as $direct_pools
+  | ($ft[0].tokens // []) as $tokens
+  | ($tokens | map(select(.contract_id as $id | $providers | index($id)))) as $liquid_tokens
   | {
-      account_id: ($ft[0].account_id // $nft[0].account_id),
-      ft_contract_count: (
-        $ft_tokens
-        | map(select((.balance // "0") != "0"))
-        | length
-      ),
-      nft_collection_count: (
-        $nft_tokens
-        | map(.contract_id)
-        | unique
-        | length
-      ),
-      ft_contracts: (
-        $ft_tokens
-        | map(select((.balance // "0") != "0") | {
+      classification:
+        if (($direct_pools | length) > 0 and ($liquid_tokens | length) > 0) then "mixed"
+        elif (($direct_pools | length) > 0) then "direct_only"
+        elif (($liquid_tokens | length) > 0) then "liquid_only"
+        else "no_visible_staking_position"
+        end,
+      direct_pools: ($direct_pools | map(.pool_id)),
+      liquid_tokens: (
+        $liquid_tokens
+        | map({
             contract_id,
             balance,
             last_update_block_height
           })
-        | .[:10]
-      ),
-      nft_collections: (
-        $nft_tokens
-        | map({
-            contract_id,
-            last_update_block_height
-          })
-        | unique_by(.contract_id)
-        | .[:10]
       )
     }'
 ```
 
-Для `mike.near` на 19 апреля 2026 года эти чтения вернули десятки FT-контрактов и NFT-коллекций. Этого достаточно для частого wallet-вопроса: «какие FT-балансы и NFT-коллекции этот аккаунт сейчас показывает?»
+**Зачем нужен следующий шаг?**
+
+Если классификация показывает `direct_only`, следующий практический вопрос обычно касается сроков `unstake` и `withdraw`. Если она показывает `liquid_only`, следующий вопрос обычно про `redeem`, `swap` или провайдерский путь выхода. Если результат `mixed`, эти пути лучше рассматривать раздельно, а не пытаться свести их к одному сценарию.
+
+### Заархивировать версию BOS-виджета как provenance NFT
+
+Используйте этот сценарий, когда история звучит так: «этот BOS-виджет — реальный on-chain-артефакт. Хочу выпустить NFT, который фиксирует, какую именно версию я заархивировал».
+
+    Стратегия
+    Сначала прочитайте точный виджет, а mint делайте только тогда, когда provenance-поля уже детерминированы.
+
+    01GET /v1/account/.../nft проверяет, есть ли у получателя уже архивные NFT из этой коллекции.
+    02RPC call_function get на social.near читает точный исходник виджета и блок его записи в SocialDB.
+    03Захешируйте исходник, выполните nft_mint в testnet, а потом проверьте provenance-поля через nft_tokens_for_owner.
+
+**Сети**
+
+- mainnet для чтения виджета из `social.near`
+- testnet для безопасного mint provenance NFT в `nft.examples.testnet`
+
+**Официальные ссылки**
+
+- [Предразвёрнутый NFT-контракт](https://docs.near.org/tutorials/nfts/js/predeployed-contract)
+- [Стандарт NFT NEP-171](https://docs.near.org/primitives/nft/standard)
+- [API SocialDB и поверхность контракта](https://github.com/NearSocial/social-db#api)
+
+**Что вы делаете**
+
+- Через FastNear API проверяете, есть ли у получателя NFT из архивной коллекции.
+- Читаете один точный BOS-виджет из `social.near`, включая SocialDB-блок именно этого виджета.
+- Хешируете исходник виджета и превращаете его в provenance-метаданные.
+- Выпускаете NFT в testnet, чьи метаданные фиксируют автора, widget-path, SocialDB-блок и хеш исходника.
+- Подтверждаете, что выпущенный токен действительно несёт эти provenance-поля.
+
+Зафиксированный исходный виджет:
+
+- аккаунт автора: `mob.near`
+- путь виджета: `mob.near/widget/Profile`
+- SocialDB-блок уровня виджета: `86494825`
+
+```bash
+API_BASE_URL=https://test.api.fastnear.com
+MAINNET_RPC_URL=https://rpc.mainnet.fastnear.com
+TESTNET_RPC_URL=https://rpc.testnet.fastnear.com
+AUTHOR_ACCOUNT_ID=mob.near
+WIDGET_NAME=Profile
+DESTINATION_COLLECTION_ID=nft.examples.testnet
+RECEIVER_ACCOUNT_ID=YOUR_ACCOUNT_ID.testnet
+SIGNER_ACCOUNT_ID="$RECEIVER_ACCOUNT_ID"
+```
+
+1. Через FastNear API посмотрите, держит ли получатель уже какие-то NFT из архивной коллекции.
+
+```bash
+curl -s "$API_BASE_URL/v1/account/$RECEIVER_ACCOUNT_ID/nft" \
+  | tee /tmp/provenance-account-nfts.json >/dev/null
+
+jq --arg destination_collection_id "$DESTINATION_COLLECTION_ID" '{
+  existing_archive_tokens: [
+    .tokens[]?
+    | select(.contract_id == $destination_collection_id)
+    | {
+        contract_id,
+        token_id,
+        last_update_block_height
+      }
+  ]
+}' /tmp/provenance-account-nfts.json
+```
+
+2. Прочитайте точное тело виджета и widget-level SocialDB-блок из mainnet.
+
+```bash
+WIDGET_ARGS_BASE64="$(
+  jq -nc --arg author_account_id "$AUTHOR_ACCOUNT_ID" --arg widget_name "$WIDGET_NAME" '{
+    keys: [($author_account_id + "/widget/" + $widget_name)],
+    options: {with_block_height: true}
+  }' | base64 | tr -d '\n'
+)"
+
+curl -s "$MAINNET_RPC_URL" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc --arg args_base64 "$WIDGET_ARGS_BASE64" '{
+    jsonrpc: "2.0",
+    id: "fastnear",
+    method: "query",
+    params: {
+      request_type: "call_function",
+      account_id: "social.near",
+      method_name: "get",
+      args_base64: $args_base64,
+      finality: "final"
+    }
+  }')" \
+  | jq '.result.result | implode | fromjson' \
+  | tee /tmp/bos-widget.json >/dev/null
+
+jq --arg author_account_id "$AUTHOR_ACCOUNT_ID" --arg widget_name "$WIDGET_NAME" '{
+  widget_path: ($author_account_id + "/widget/" + $widget_name),
+  socialdb_block_height: .[$author_account_id].widget[$widget_name][":block"],
+  source_preview: (
+    .[$author_account_id].widget[$widget_name][""]
+    | split("\n")[0:8]
+  )
+}' /tmp/bos-widget.json
+```
+
+3. Захешируйте исходник виджета и постройте детерминированные provenance-метаданные.
+
+```bash
+jq -r --arg author_account_id "$AUTHOR_ACCOUNT_ID" --arg widget_name "$WIDGET_NAME" '
+  .[$author_account_id].widget[$widget_name][""]
+' /tmp/bos-widget.json > /tmp/bos-widget-source.jsx
+
+WIDGET_BLOCK_HEIGHT="$(
+  jq -r --arg author_account_id "$AUTHOR_ACCOUNT_ID" --arg widget_name "$WIDGET_NAME" '
+    .[$author_account_id].widget[$widget_name][":block"]
+  ' /tmp/bos-widget.json
+)"
+
+SOURCE_SHA256="$(shasum -a 256 /tmp/bos-widget-source.jsx | awk '{print $1}')"
+SOURCE_HASH_SHORT="$(printf '%s' "$SOURCE_SHA256" | cut -c1-12)"
+TOKEN_ID="bos-widget-$SOURCE_HASH_SHORT"
+
+PROVENANCE_METADATA_JSON="$(
+  jq -nc \
+    --arg author_account_id "$AUTHOR_ACCOUNT_ID" \
+    --arg widget_name "$WIDGET_NAME" \
+    --arg widget_path "$AUTHOR_ACCOUNT_ID/widget/$WIDGET_NAME" \
+    --arg block_height "$WIDGET_BLOCK_HEIGHT" \
+    --arg source_sha256 "$SOURCE_SHA256" '{
+      title: ("BOS widget archive: " + $widget_path),
+      description: ("Archived from social.near on mainnet at block " + $block_height),
+      copies: 1,
+      extra: ({
+        author_account_id: $author_account_id,
+        widget_name: $widget_name,
+        widget_path: $widget_path,
+        source_contract_id: "social.near",
+        source_network: "mainnet",
+        socialdb_block_height: ($block_height | tonumber),
+        source_sha256: $source_sha256
+      } | @json)
+    }'
+)"
+
+printf '%s\n' "$PROVENANCE_METADATA_JSON" | jq '.'
+```
+
+4. Выпустите provenance NFT в testnet.
+
+```bash
+near call "$DESTINATION_COLLECTION_ID" nft_mint "$(jq -nc \
+  --arg token_id "$TOKEN_ID" \
+  --arg receiver_id "$RECEIVER_ACCOUNT_ID" \
+  --argjson metadata "$PROVENANCE_METADATA_JSON" '{
+    token_id: $token_id,
+    receiver_id: $receiver_id,
+    metadata: $metadata
+  }')" \
+  --accountId "$SIGNER_ACCOUNT_ID" \
+  --deposit 0.1 \
+  --networkId testnet
+```
+
+5. Подтвердите, что выпущенный NFT действительно несёт ожидаемые provenance-поля.
+
+Не считайте отсутствие токена ошибкой мгновенно: после mint-транзакции опросите view-метод несколько раз.
+
+```bash
+NFT_TOKEN_ARGS_BASE64="$(
+  jq -nc --arg token_id "$TOKEN_ID" '{token_id: $token_id}' \
+    | base64 | tr -d '\n'
+)"
+
+for attempt in 1 2 3 4 5; do
+  curl -s "$TESTNET_RPC_URL" \
+    -H 'content-type: application/json' \
+    --data "$(jq -nc \
+      --arg account_id "$DESTINATION_COLLECTION_ID" \
+      --arg args_base64 "$NFT_TOKEN_ARGS_BASE64" '{
+        jsonrpc: "2.0",
+        id: "fastnear",
+        method: "query",
+        params: {
+          request_type: "call_function",
+          account_id: $account_id,
+          method_name: "nft_token",
+          args_base64: $args_base64,
+          finality: "final"
+        }
+      }')" \
+    | jq '.result.result | implode | fromjson' \
+    | tee /tmp/bos-widget-provenance-token.json >/dev/null
+
+  if jq -e '. != null' /tmp/bos-widget-provenance-token.json >/dev/null; then
+    break
+  fi
+
+  sleep 1
+done
+
+jq '{
+  token_id,
+  owner_id,
+  title: .metadata.title,
+  provenance: (.metadata.extra | fromjson)
+}' /tmp/bos-widget-provenance-token.json
+```
 
 **Зачем нужен следующий шаг?**
 
-Переходите к [`GET /v1/account/{account_id}/full`](https://docs.fastnear.com/ru/api/v1/account-full), когда следующий вопрос уже требует ещё и стейкинг, пулы или нативное состояние аккаунта. Переходите к contract-specific чтениям только тогда, когда вопрос меняется на «какие именно идентификаторы NFT-токенов и метаданные мне принадлежат?»
+FastNear API даёт быстрый чек со стороны получателя. Mainnet RPC даёт точное тело виджета и его SocialDB-блок. После этого mint в testnet превращает чтение в долговечную NFT-запись. Если позже понадобится доказать, какая именно историческая транзакция записала этот виджет, переходите к NEAR Social proof-расследованиям в [Transactions API examples](https://docs.fastnear.com/ru/tx/examples).
+
+## Частые задачи
+
+### Что этот аккаунт вообще держит прямо сейчас?
+
+**Начните здесь**
+
+- [V1 Full Account View](https://docs.fastnear.com/ru/api/v1/account-full), когда нужен самый быстрый понятный ответ на вопрос «что сейчас лежит в этом аккаунте?»
+
+**Следующая страница при необходимости**
+
+- [V1 Account FT](https://docs.fastnear.com/ru/api/v1/account-ft), [V1 Account NFT](https://docs.fastnear.com/ru/api/v1/account-nft) или [V1 Account Staking](https://docs.fastnear.com/ru/api/v1/account-staking), если широкая сводка уже помогла, но дальше хочется остаться только в одной категории активов.
+- [Transactions API account history](https://docs.fastnear.com/ru/tx/account), если следующий вопрос звучит как «как аккаунт пришёл к такому состоянию?», а не «что он держит сейчас?»
+
+**Остановитесь, когда**
+
+- Сводка уже отвечает на вопрос по активам в одной выдаче.
+
+**Переходите дальше, когда**
+
+- Пользователь спрашивает о точном состоянии аккаунта, о семантике ключей доступа или о протокольных полях. Переходите к [RPC Reference](https://docs.fastnear.com/ru/rpc).
+- Пользователя интересует история активности или исполнения, а не текущий набор активов. Переходите к [Transactions API](https://docs.fastnear.com/ru/tx).
+
+### Определить аккаунты по публичному ключу
+
+**Начните здесь**
+
+- [V1 Public Key Lookup](https://docs.fastnear.com/ru/api/v1/public-key), когда нужен основной аккаунт для ключа.
+- [V1 Public Key Lookup All](https://docs.fastnear.com/ru/api/v1/public-key-all), когда нужен более полный список связанных аккаунтов.
+
+**Следующая страница при необходимости**
+
+- [V1 Full Account View](https://docs.fastnear.com/ru/api/v1/account-full) после поиска, если сразу нужна сводка по балансам или активам найденных аккаунтов.
+
+**Остановитесь, когда**
+
+- Уже определён аккаунт или набор аккаунтов, которым принадлежит ключ.
+
+**Переходите дальше, когда**
+
+- Пользователь спрашивает о точных правах ключа, nonce или текущем состоянии access key. Переходите к [View Access Key](https://docs.fastnear.com/ru/rpc/account/view-access-key) или [View Access Key List](https://docs.fastnear.com/ru/rpc/account/view-access-key-list).
+- Пользователя интересует недавняя активность найденных аккаунтов, а не только их идентификация. Переходите к [Transactions API](https://docs.fastnear.com/ru/tx).
+
+### Есть ли у этого аккаунта FT, NFT или стейкинг-позиции?
+
+**Начните здесь**
+
+- [V1 Account FT](https://docs.fastnear.com/ru/api/v1/account-ft), когда вопрос относится только к балансам FT-токенов.
+- [V1 Account NFT](https://docs.fastnear.com/ru/api/v1/account-nft), когда вопрос конкретно про владение NFT.
+- [V1 Account Staking](https://docs.fastnear.com/ru/api/v1/account-staking), когда пользователя интересуют именно стейкинг-позиции, а не вся картина по аккаунту.
+
+**Следующая страница при необходимости**
+
+- [V1 Full Account View](https://docs.fastnear.com/ru/api/v1/account-full), если после одной категории активов позже понадобится вся картина по аккаунту.
+- [Transactions API account history](https://docs.fastnear.com/ru/tx/account), если вопрос уже меняется с «чем аккаунт владеет?» на «как он к этому пришёл?»
+
+**Остановитесь, когда**
+
+- Эндпоинт по конкретной категории активов уже отвечает на вопрос о владении без пересборки всей картины аккаунта.
+
+**Переходите дальше, когда**
+
+- Индексированного представления недостаточно и нужна точная семантика состояния в цепочке. Переходите к [RPC Reference](https://docs.fastnear.com/ru/rpc).
+- Вопрос становится историческим или связанным с исполнением вместо «чем этот аккаунт владеет сейчас?». Переходите к [Transactions API](https://docs.fastnear.com/ru/tx).
 
 ## Частые ошибки
 
