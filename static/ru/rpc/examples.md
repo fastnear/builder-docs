@@ -991,6 +991,174 @@ curl -s "$RPC_URL" \
 
 Это хороший RPC-сценарий, потому что каждый шаг держится рядом с самим контрактом: сначала вы проверяете состояние storage, затем отправляете минимально необходимые change-call, а потом напрямую подтверждаете итоговое состояние на контракте.
 
+## Чтения контракта и сырое состояние
+
+Начинайте отсюда, когда вопрос звучит как «достаточно ли мне вызова метода?» против «можно ли прочитать storage напрямую?»
+
+### Прочитать счётчик прямо из состояния контракта, а потом подтвердить его через view-метод
+
+Используйте этот сценарий, когда история простая: «я знаю, что этот контракт держит счётчик, но можно ли прочитать это число напрямую из storage, не вызывая код контракта?»
+
+В этом walkthrough используется живой публичный testnet-контракт `counter.near-examples.testnet`. Число в нём может меняться со временем. Это нормально. Важен сам принцип: оба чтения должны совпасть в тот момент, когда вы их запускаете:
+
+- `view_state` читает сырой ключ `STATE` прямо из storage контракта
+- `call_function get_num` спрашивает у контракта то же текущее число через его публичный view API
+
+    Стратегия
+    Сначала прочитайте raw storage, затем декодируйте байты, а потом дайте контракту подтвердить тот же ответ через view-метод.
+
+    01RPC view_state читает сырой ключ STATE, не запуская код контракта.
+    02Декодируйте значение из base64 в байты, а затем интерпретируйте эти байты по известной Borsh-схеме контракта.
+    03RPC call_function get_num — это удобная перепроверка того, что raw-state-чтение и view-метод по-прежнему дают один и тот же ответ.
+
+Здесь важнее ментальная модель, чем сам счётчик:
+
+- `view_state` — это прямое чтение storage из trie
+- `call_function` исполняет read-only-метод контракта
+- оба способа могут ответить на один и тот же вопрос, но делают разную работу
+
+```mermaid
+flowchart LR
+    S["RPC view_state<br/>prefix STATE"] --> R["Сырые байты STATE"]
+    R --> D["Декодировать base64 + Borsh"]
+    D --> N["Знаковое значение счётчика"]
+    C["RPC call_function get_num"] --> J["JSON-результат метода"]
+    N --> X["Сравнить"]
+    J --> X
+    X --> A["Одно и то же текущее значение"]
+```
+
+**Что вы делаете**
+
+- Читаете сырой ключ `STATE` из storage контракта.
+- Декодируете возвращённые байты в текущее знаковое значение счётчика.
+- Вызываете `get_num` через view-метод и подтверждаете, что ответ метода совпадает с raw-state-декодированием.
+
+```bash
+export NETWORK_ID=testnet
+export RPC_URL=https://rpc.testnet.fastnear.com
+export CONTRACT_ID=counter.near-examples.testnet
+export STATE_PREFIX_BASE64=U1RBVEU=
+```
+
+1. Сначала прочитайте сырое состояние контракта.
+
+```bash
+curl -s "$RPC_URL" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc \
+    --arg account_id "$CONTRACT_ID" \
+    --arg prefix_base64 "$STATE_PREFIX_BASE64" '{
+      jsonrpc: "2.0",
+      id: "fastnear",
+      method: "query",
+      params: {
+        request_type: "view_state",
+        account_id: $account_id,
+        prefix_base64: $prefix_base64,
+        finality: "final"
+      }
+    }')" \
+  | tee /tmp/counter-view-state.json >/dev/null
+
+jq '{
+  block_height: .result.block_height,
+  key_base64: .result.values[0].key,
+  value_base64: .result.values[0].value
+}' /tmp/counter-view-state.json
+
+jq -r '.result.values[0].key | @base64d' /tmp/counter-view-state.json
+```
+
+Последняя команда должна вывести `STATE`. Это и есть семейство ключей, которое вы уже заранее знаете, поэтому `view_state` может пойти прямо к raw storage entry, не заставляя контракт исполнять никакой метод.
+
+2. Декодируйте байты значения в знаковое число счётчика.
+
+```bash
+RAW_VALUE_BASE64="$(jq -r '.result.values[0].value' /tmp/counter-view-state.json)"
+
+python3 - "$RAW_VALUE_BASE64" <<'PY' | jq .
+
+raw = base64.b64decode(sys.argv[1])
+
+print(json.dumps({
+    "value_base64": sys.argv[1],
+    "bytes": list(raw),
+    "hex": raw.hex(),
+    "signed_i8": int.from_bytes(raw, "little", signed=True),
+    "unsigned_u8": int.from_bytes(raw, "little", signed=False),
+}))
+PY
+```
+
+Для этого конкретного контракта достаточно одного байта, потому что Rust-счётчик хранит `val: i8` внутри состояния контракта. Поэтому raw-значение вроде `CQ==` декодируется в один байт `0x09`, а он уже читается как знаковое целое `9`.
+
+Ещё один важный момент про знак: если бы счётчик был отрицательным, тот же однобайтовый payload всё равно корректно декодировался бы как знаковый `i8` в дополнительном коде. Например, `/w==` — это один байт `0xff`, а значит `-1` как `signed_i8`, а не `255`.
+
+Переиспользуемый рецепт здесь короткий:
+
+- `view_state` возвращает сырые байты в base64
+- вы декодируете эти байты по известной схеме хранения контракта
+- для больших контрактов схема может быть сложнее, но идея та же: сначала байты, потом схема
+
+3. Теперь спросите контракт более привычным способом и сравните.
+
+```bash
+curl -s "$RPC_URL" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc --arg account_id "$CONTRACT_ID" '{
+    jsonrpc: "2.0",
+    id: "fastnear",
+    method: "query",
+    params: {
+      request_type: "call_function",
+      account_id: $account_id,
+      method_name: "get_num",
+      args_base64: "e30=",
+      finality: "final"
+    }
+  }')" \
+  | tee /tmp/counter-call-function.json >/dev/null
+
+jq '{
+  block_height: .result.block_height,
+  view_method_value: (.result.result | implode | fromjson)
+}' /tmp/counter-call-function.json
+```
+
+4. Сравните оба ответа напрямую.
+
+```bash
+RAW_STATE_NUMBER="$(
+  python3 - "$RAW_VALUE_BASE64" <<'PY'
+
+raw = base64.b64decode(sys.argv[1])
+print(int.from_bytes(raw, "little", signed=True))
+PY
+)"
+
+VIEW_METHOD_NUMBER="$(
+  jq -r '.result.result | implode | fromjson' /tmp/counter-call-function.json
+)"
+
+jq -n \
+  --argjson raw_state "$RAW_STATE_NUMBER" \
+  --argjson view_method "$VIEW_METHOD_NUMBER" '{
+    raw_state: $raw_state,
+    view_method: $view_method,
+    agrees_now: ($raw_state == $view_method)
+  }'
+```
+
+Если `agrees_now` равен `true`, значит вы доказали основную мысль этого примера:
+
+- `view_state` ответил на вопрос, прочитав storage напрямую
+- `call_function get_num` ответил на тот же вопрос, исполнив публичный read-метод контракта
+
+**Зачем нужен следующий шаг?**
+
+Используйте `view_state`, когда настоящий вопрос относится к точному storage и вы уже знаете семейство ключей. Используйте `call_function`, когда вам нужен публичный read API самого контракта. Если следующий вопрос становится историческим, а не «что там лежит прямо сейчас?», тогда и стоит расширяться в [KV FastData API](https://docs.fastnear.com/ru/fastdata/kv).
+
 ## Точные чтения NEAR Social и BOS
 
 Эти сценарии остаются на точных чтениях SocialDB и on-chain-проверках готовности, пока вопрос не становится историческим.
@@ -1375,6 +1543,7 @@ jq -r \
 
 **Начните здесь**
 
+- Начните с примера со счётчиком выше, если настоящий выбор звучит как «мне нужен `call_function` или `view_state`?» или «можно ли прочитать storage напрямую вместо вызова метода?»
 - [Call Function](https://docs.fastnear.com/ru/rpc/contract/call-function), когда вы уже знаете нужный view-метод и хотите просто получить его точный результат.
 - [View State](https://docs.fastnear.com/ru/rpc/contract/view-state), когда настоящий вопрос относится к сырому хранилищу контракта или key prefix, а не к результату метода.
 - [View Code](https://docs.fastnear.com/ru/rpc/contract/view-code), когда настоящий вопрос звучит как «есть ли здесь код вообще?» или «какой code hash здесь развёрнут?»

@@ -1021,6 +1021,184 @@ curl -s "$RPC_URL" \
 
 This is a good RPC example because every step stays close to the contract itself: first check storage state, then send the minimum required change calls, then verify the post-transfer balance directly on the contract.
 
+## Contract Reads and Raw State
+
+Start here when the question is “does this contract method tell me enough?” versus “should I read the storage directly?”
+
+### Read a counter straight from contract state, then confirm it with the view method
+
+Use this when the user story is simple: “I know this contract exposes a counter, but can I read that number straight from storage without calling the contract code?”
+
+This walkthrough uses the live public testnet contract `counter.near-examples.testnet`. The number can change over time. That is fine. The point is that both reads agree when you run them:
+
+- `view_state` reads the raw `STATE` entry directly from contract storage
+- `call_function get_num` asks the contract for the same current number through its public view API
+
+<div className="fastnear-example-strategy">
+  <div className="fastnear-example-strategy__header">
+    <span className="fastnear-example-strategy__eyebrow">Strategy</span>
+    <p className="fastnear-example-strategy__title">Read the raw storage first, decode the bytes you got back, then let the contract confirm the same answer through its view method.</p>
+  </div>
+  <div className="fastnear-example-strategy__items">
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">01</span><span><span className="fastnear-example-strategy__code">RPC view_state</span> reads the raw <span className="fastnear-example-strategy__code">STATE</span> entry without running contract code.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">02</span><span>Decode the base64 value into bytes, then interpret those bytes with the contract’s known Borsh layout.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span><span className="fastnear-example-strategy__code">RPC call_function get_num</span> is the friendly cross-check that the raw-state read and the view method still agree.</span></p>
+  </div>
+</div>
+
+The mental model matters more than the counter itself:
+
+- `view_state` is a direct storage read from the trie
+- `call_function` executes a read-only method on the contract
+- both can answer the same question, but they do different work to get there
+
+```mermaid
+flowchart LR
+    S["RPC view_state<br/>prefix STATE"] --> R["Raw STATE bytes"]
+    R --> D["Decode base64 + Borsh"]
+    D --> N["Signed counter value"]
+    C["RPC call_function get_num"] --> J["JSON method result"]
+    N --> X["Compare"]
+    J --> X
+    X --> A["Same current counter value"]
+```
+
+**What you're doing**
+
+- Read the raw `STATE` key from contract storage.
+- Decode the returned bytes into the current signed counter value.
+- Call `get_num` through the view method and confirm that the method answer matches the raw-state decode.
+
+```bash
+export NETWORK_ID=testnet
+export RPC_URL=https://rpc.testnet.fastnear.com
+export CONTRACT_ID=counter.near-examples.testnet
+export STATE_PREFIX_BASE64=U1RBVEU=
+```
+
+1. Read the raw contract state first.
+
+```bash
+curl -s "$RPC_URL" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc \
+    --arg account_id "$CONTRACT_ID" \
+    --arg prefix_base64 "$STATE_PREFIX_BASE64" '{
+      jsonrpc: "2.0",
+      id: "fastnear",
+      method: "query",
+      params: {
+        request_type: "view_state",
+        account_id: $account_id,
+        prefix_base64: $prefix_base64,
+        finality: "final"
+      }
+    }')" \
+  | tee /tmp/counter-view-state.json >/dev/null
+
+jq '{
+  block_height: .result.block_height,
+  key_base64: .result.values[0].key,
+  value_base64: .result.values[0].value
+}' /tmp/counter-view-state.json
+
+jq -r '.result.values[0].key | @base64d' /tmp/counter-view-state.json
+```
+
+That last command should print `STATE`. This is the key family you already knew ahead of time, so `view_state` can go straight to the raw storage entry without asking the contract to execute any method.
+
+2. Decode the returned value bytes into the signed counter.
+
+```bash
+RAW_VALUE_BASE64="$(jq -r '.result.values[0].value' /tmp/counter-view-state.json)"
+
+python3 - "$RAW_VALUE_BASE64" <<'PY' | jq .
+import base64
+import json
+import sys
+
+raw = base64.b64decode(sys.argv[1])
+
+print(json.dumps({
+    "value_base64": sys.argv[1],
+    "bytes": list(raw),
+    "hex": raw.hex(),
+    "signed_i8": int.from_bytes(raw, "little", signed=True),
+    "unsigned_u8": int.from_bytes(raw, "little", signed=False),
+}))
+PY
+```
+
+For this specific contract, one byte is enough because the Rust counter stores `val: i8` inside the contract state. That is why a raw value like `CQ==` decodes to one byte `0x09`, which reads as the signed integer `9`.
+
+One small signed-value note is worth keeping in your head: if the counter were negative, the same one-byte payload would still decode correctly as a signed two's-complement `i8`. For example, `/w==` is the single byte `0xff`, which means `-1` as `signed_i8`, not `255`.
+
+The reusable recipe is small:
+
+- `view_state` gives you base64-encoded raw bytes
+- you decode those bytes with the contract’s known storage layout
+- for larger contracts, that layout may be more complex, but the idea is the same: bytes first, schema second
+
+3. Now ask the contract the friendly way and compare.
+
+```bash
+curl -s "$RPC_URL" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc --arg account_id "$CONTRACT_ID" '{
+    jsonrpc: "2.0",
+    id: "fastnear",
+    method: "query",
+    params: {
+      request_type: "call_function",
+      account_id: $account_id,
+      method_name: "get_num",
+      args_base64: "e30=",
+      finality: "final"
+    }
+  }')" \
+  | tee /tmp/counter-call-function.json >/dev/null
+
+jq '{
+  block_height: .result.block_height,
+  view_method_value: (.result.result | implode | fromjson)
+}' /tmp/counter-call-function.json
+```
+
+4. Compare both answers directly.
+
+```bash
+RAW_STATE_NUMBER="$(
+  python3 - "$RAW_VALUE_BASE64" <<'PY'
+import base64
+import sys
+
+raw = base64.b64decode(sys.argv[1])
+print(int.from_bytes(raw, "little", signed=True))
+PY
+)"
+
+VIEW_METHOD_NUMBER="$(
+  jq -r '.result.result | implode | fromjson' /tmp/counter-call-function.json
+)"
+
+jq -n \
+  --argjson raw_state "$RAW_STATE_NUMBER" \
+  --argjson view_method "$VIEW_METHOD_NUMBER" '{
+    raw_state: $raw_state,
+    view_method: $view_method,
+    agrees_now: ($raw_state == $view_method)
+  }'
+```
+
+If `agrees_now` is `true`, you have proved the point of the example:
+
+- `view_state` answered the question by reading storage directly
+- `call_function get_num` answered the same question by running the contract’s public read method
+
+**Why this next step?**
+
+Use `view_state` when the real question is about exact storage and you already know the key family. Use `call_function` when you want the contract’s public read API. If the next question becomes historical instead of “what is it right now?”, that is the moment to widen into [KV FastData API](/fastdata/kv).
+
 ## NEAR Social and BOS Exact Reads
 
 These stay on exact SocialDB reads and on-chain readiness checks until the question turns historical.
@@ -1415,6 +1593,7 @@ Sometimes the right RPC answer is just: here is the widget, here is the live sou
 
 **Start here**
 
+- Start with the counter example above when the real decision is “should I use `call_function` or `view_state`?” or “can I read this storage directly instead of calling a method?”
 - [Call Function](/rpc/contract/call-function) when you already know the view method you want and just need the exact return value.
 - [View State](/rpc/contract/view-state) when the real question is about raw contract storage or key prefixes, not a method result.
 - [View Code](/rpc/contract/view-code) when the real question is “is there code here at all?” or “which code hash is deployed?”
