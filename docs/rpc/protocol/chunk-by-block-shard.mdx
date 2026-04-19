@@ -12,5 +12,8 @@ import FastnearDirectOperation from '@site/src/components/FastnearDirectOperatio
 
 `chunk` request type
 
+Use this when you know the block and shard coordinates and want to inspect exactly what that shard executed in that block.
+
+This is the most natural RPC route for cross-shard debugging because it answers the practical question “what did shard X execute in block Y?” The response gives the chunk header plus the transactions and receipts in that shard-local execution unit. If you already have the exact chunk hash, use [Chunk by Hash](/rpc/protocol/chunk-by-hash). If you want the fuller per-shard envelope with state changes and produced receipts, use [Block Shard](/neardata/block-shard). For a worked tracing example, see [RPC Examples](/rpc/examples).
 
 <FastnearDirectOperation pageModelId="rpc-chunk-by-block-shard" renderDescription />

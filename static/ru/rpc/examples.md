@@ -2,65 +2,93 @@
 
 # Примеры RPC
 
-Используйте эту страницу, когда нужен быстрый точный ответ через RPC. Начните с одного чтения, а к транзакциям и сырому состоянию переходите только если простого запроса уже недостаточно.
-
-## Быстрый старт
-
-Если вы только открыли эту страницу, начните с одного точного чтения аккаунта.
-
-```bash
-RPC_URL=https://rpc.mainnet.fastnear.com
-ACCOUNT_ID=near
-
-curl -s "$RPC_URL" \
-  -H 'content-type: application/json' \
-  --data "$(jq -nc --arg account_id "$ACCOUNT_ID" '{
-    jsonrpc: "2.0",
-    id: "fastnear",
-    method: "query",
-    params: {
-      request_type: "view_account",
-      finality: "final",
-      account_id: $account_id
-    }
-  }')" \
-  | jq '.result | {
-      amount,
-      locked,
-      code_hash,
-      storage_usage
-    }'
-```
-
-Это самый маленький надёжный RPC-пример на странице: один запрос, один точный ответ, без дерева receipts.
+Используйте эту страницу, когда уже ясно, что ответ надо брать прямо из RPC, и нужен самый короткий путь по документации. Цель не в том, чтобы запомнить каждый метод, а в том, чтобы начать с правильного RPC-запроса, остановиться, как только ответ уже решает задачу, и переходить к более высокоуровневому API только тогда, когда это действительно экономит время.
 
 ## Отправка и отслеживание транзакции
 
-### Двухчастный паттерн: отправить транзакцию или отследить уже известный tx hash до финального исполнения
+Начинайте отсюда, когда настоящий вопрос звучит не просто как «как мне это отправить?», а как «какой RPC-эндпоинт здесь правильный и как довести отслеживание транзакции до полного завершения?»
 
-Базовый паттерн:
+### Отправить транзакцию и затем проследить её от хеша до финального исполнения
 
-- `broadcast_tx_async` для отправки
-- `tx` с `wait_until: "FINAL"` для отслеживания
-- `EXPERIMENTAL_tx_status` только если следующий вопрос уже про receipts
+Используйте этот сценарий, когда история звучит просто: «у меня есть подписанная транзакция. Какой эндпоинт вызвать первым и что потом опрашивать после получения хеша?» Разные вопросы про транзакции требуют разных RPC-методов. Практичный паттерн здесь один: быстро отправить, а потом осознанно отслеживать.
 
-Этот walkthrough намеренно разбит на две части:
-
-- отправить новую подписанную транзакцию и сохранить возвращённый хеш
-- отследить один известный исторический tx hash с воспроизводимым выводом
-
-Для части про отслеживание используется одна зафиксированная историческая транзакция, поэтому status-lookup идёт через архивный хост:
+Этот walkthrough специально сделан зафиксированным и историческим. Он использует одну реальную mainnet-транзакцию, которая записала follow edge в NEAR Social:
 
 - хеш транзакции: `FLLmTvFx9vCof79scy2uUviF5WwYmevkz9TZ8azPGVQb`
 - signer: `mike.near`
 - receiver: `social.near`
-- `https://archival-rpc.mainnet.fastnear.com`
+- высота блока включения: `79574923`
+- высота блока исполнения receipt для записи в SocialDB: `79574924`
 
-1. Отправьте новую подписанную транзакцию и сохраните возвращённый хеш.
+Поскольку эта транзакция уже старая и давно финализирована, вы не можете буквально воспроизвести её настоящий интервал до включения. Это нормально. Смысл примера в том, чтобы показать правильный паттерн отправки и отслеживания, а затем посмотреть на одну зафиксированную транзакцию теми же инструментами.
+
+    Стратегия
+    Сначала быстро отправьте, затем идите по более простому статусному пути и переходите к дереву receipts только когда общего статуса уже недостаточно.
+
+    01RPC broadcast_tx_async — это способ отправки с минимальной задержкой, когда клиент сам будет отслеживать статус дальше.
+    02RPC tx — это базовый способ опроса статуса для гарантий включения, optimistic finality и полного завершения.
+    03RPC EXPERIMENTAL_tx_status — это уже более глубокое продолжение, когда нужен не общий статус, а дерево receipts.
+
+**Что вы здесь решаете**
+
+- какой эндпоинт отправки брать первым
+- что опрашивать после того, как у вас появился tx hash
+- как `wait_until` связан с included-, optimistic- и final-гарантиями
+- когда пора перестать использовать `tx` и перейти на `EXPERIMENTAL_tx_status`
+
+```mermaid
+flowchart LR
+    S["Подписываем транзакцию"] --> A["broadcast_tx_async<br/>возвращает tx hash"]
+    A --> T["Polling через tx<br/>INCLUDED_FINAL -> FINAL"]
+    T --> F["Транзакция полностью завершена"]
+    T -. "только при необходимости" .-> E["EXPERIMENTAL_tx_status<br/>дерево receipts + outcomes"]
+    F -. "необязательная читаемая история" .-> X["POST /v0/transactions"]
+```
+
+| Метод | Когда использовать | Что вернётся | Роль здесь |
+| --- | --- | --- | --- |
+| [`broadcast_tx_async`](https://docs.fastnear.com/ru/rpc/transaction/broadcast-tx-async) | клиент сам будет отслеживать транзакцию после отправки | только tx hash | **базовый путь отправки** |
+| [`send_tx`](https://docs.fastnear.com/ru/rpc/transaction/send-tx) | вы хотите, чтобы узел сам подождал до выбранного порога | результат tx до уровня `wait_until` | блокирующая альтернатива |
+| [`broadcast_tx_commit`](https://docs.fastnear.com/ru/rpc/transaction/broadcast-tx-commit) | у вас старый код или важен быстрый режим “одним вызовом” | результат исполнения с commit-ожиданием | устаревшее удобство |
+| [`tx`](https://docs.fastnear.com/ru/rpc/transaction/tx-status) | у вас уже есть tx hash и нужно понять, насколько далеко всё продвинулось | статус и outcomes на выбранном пороге | **базовый путь отслеживания** |
+| [`EXPERIMENTAL_tx_status`](https://docs.fastnear.com/ru/rpc/transaction/experimental-tx-status) | вам уже нужно дерево receipts или более богатая async-история | полное дерево receipts и детальные outcomes | только глубокое продолжение |
+
+**Карта статусов и ожидания**
+
+Значения `wait_until` — это пороги ожидания, а не один постоянный статус транзакции, который стоит считать единственно правильным. Слово `pending` всё ещё полезно в человеческом разговоре, но здесь оно означает только одно: транзакция уже отправлена клиентом, но ещё не включена в блок.
+
+| Фаза или порог | Что это значит на практике | Лучшая RPC-поверхность |
+| --- | --- | --- |
+| до включения (`pending`) | клиент уже отправил tx, но она ещё не заякорена в блоке | собственное состояние клиента плюс логика повторов и пауз |
+| `INCLUDED` | транзакция уже в блоке, но сам блок ещё может быть не финальным | `tx` |
+| `INCLUDED_FINAL` | блок включения уже финален | `tx` |
+| `EXECUTED_OPTIMISTIC` | исполнение уже произошло с optimistic finality | `tx` или `send_tx` |
+| `FINAL` | всё релевантное исполнение завершилось и финализировалось | по умолчанию `tx`, а `EXPERIMENTAL_tx_status` — если нужна более глубокая детализация |
+
+Практическое различие очень простое:
+
+- используйте `broadcast_tx_async`, когда для продолжения вам достаточно tx hash
+- используйте `tx` как обычный цикл опроса
+- используйте `EXPERIMENTAL_tx_status`, когда следующий вопрос относится уже к дереву receipts, а не к общему статусу
+
+**Что вы делаете**
+
+- Показываете, как выглядела бы живая отправка через `broadcast_tx_async`.
+- Опрашиваете зафиксированную tx через `tx` на двух порогах: `INCLUDED_FINAL` и `FINAL`.
+- Только после этого смотрите ту же tx через `EXPERIMENTAL_tx_status`.
+- Необязательно переходите в Transactions API, если дальше уже нужна человеческая история.
 
 ```bash
 RPC_URL=https://rpc.mainnet.fastnear.com
+TX_BASE_URL=https://tx.main.fastnear.com
+TX_HASH=FLLmTvFx9vCof79scy2uUviF5WwYmevkz9TZ8azPGVQb
+SIGNER_ACCOUNT_ID=mike.near
+RECEIVER_ID=social.near
+```
 
+1. Если бы это был живой клиентский сценарий, вы бы отправили транзакцию через `broadcast_tx_async` и сохранили возвращённый хеш.
+
+```bash
 curl -s "$RPC_URL" \
   -H 'content-type: application/json' \
   --data '{
@@ -72,15 +100,39 @@ curl -s "$RPC_URL" \
   | jq .
 ```
 
-Этот первый шаг нужен только для формы отправки. Именно возвращённый хеш вы потом будете отслеживать для своей живой транзакции.
+В реальном приложении именно в этот момент вы перестаёте ждать завершения отправки и переходите к отслеживанию по tx hash.
 
-2. Отслеживайте один известный tx hash, пока не получите самый простой финальный ответ.
+2. Опрашивайте `tx` на первом пороге, который уже отвечает на вопрос пользователя.
 
 ```bash
-RPC_URL=https://archival-rpc.mainnet.fastnear.com
-TX_HASH=FLLmTvFx9vCof79scy2uUviF5WwYmevkz9TZ8azPGVQb
-SIGNER_ACCOUNT_ID=mike.near
+curl -s "$RPC_URL" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc \
+    --arg tx_hash "$TX_HASH" \
+    --arg signer_account_id "$SIGNER_ACCOUNT_ID" '{
+      jsonrpc: "2.0",
+      id: "fastnear",
+      method: "tx",
+      params: {
+        tx_hash: $tx_hash,
+        sender_account_id: $signer_account_id,
+        wait_until: "INCLUDED_FINAL"
+      }
+    }')" \
+  | jq '{
+      final_execution_status: .result.final_execution_status,
+      status: .result.status,
+      transaction_handoff: .result.transaction_outcome.outcome.status
+    }'
 ```
+
+Что здесь важно заметить:
+
+- на живой транзакции этот порог полезен, когда важно понять, что включение уже безопасно с точки зрения finality
+- на этой исторической tx ответ приходит сразу, потому что она давно прошла фазу включения
+- `transaction_outcome.outcome.status` всё равно показывает, что исходное действие передало управление в исполнение через receipt
+
+3. Опрашивайте снова, но уже с `FINAL`, когда нужна завершённая история транзакции, а не просто безопасное включение.
 
 ```bash
 curl -s "$RPC_URL" \
@@ -99,12 +151,18 @@ curl -s "$RPC_URL" \
     }')" \
   | jq '{
       final_execution_status: .result.final_execution_status,
-      transaction_status: .result.status,
+      status: .result.status,
       receipts_outcome_count: (.result.receipts_outcome | length)
     }'
 ```
 
-3. Переходите к `EXPERIMENTAL_tx_status` только тогда, когда для этого известного tx уже нужен уровень receipts.
+Что здесь важно заметить:
+
+- для исторической tx этот вызов тоже возвращается сразу
+- в реальном цикле опроса именно этот порог отвечает на вопрос «транзакция уже действительно завершена?»
+- для многих приложений именно здесь и стоит остановиться
+
+4. Переходите к `EXPERIMENTAL_tx_status` только тогда, когда вам уже нужно более богатое дерево receipts.
 
 ```bash
 curl -s "$RPC_URL" \
@@ -123,49 +181,82 @@ curl -s "$RPC_URL" \
     }')" \
   | jq '{
       final_execution_status: .result.final_execution_status,
+      status: .result.status,
       transaction_handoff: .result.transaction_outcome.outcome.status,
       receipts_outcome_count: (.result.receipts_outcome | length)
     }'
 ```
 
-Если вы хотите, чтобы узел ждал за вас, используйте [`send_tx`](https://docs.fastnear.com/ru/rpc/transaction/send-tx). Но базовый паттерн на этой странице остаётся таким: отправка через `broadcast_tx_async`, затем отслеживание хеша через `tx`.
+Сюда стоит идти, когда вопрос меняется с «дошло ли всё до конца?» на «покажи мне дерево receipts и полную async-историю исполнения».
+
+5. Необязательно: переходите в Transactions API только если дальше нужна именно читаемая история.
+
+```bash
+curl -s "$TX_BASE_URL/v0/transactions" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc --arg tx_hash "$TX_HASH" '{tx_hashes: [$tx_hash]}')" \
+  | jq '{
+      transaction: {
+        hash: .transactions[0].transaction.hash,
+        signer_id: .transactions[0].transaction.signer_id,
+        receiver_id: .transactions[0].transaction.receiver_id,
+        included_block_height: .transactions[0].execution_outcome.block_height
+      },
+      actions: (
+        .transactions[0].transaction.actions
+        | map(if type == "string" then . else keys[0] end)
+      ),
+      transaction_handoff: .transactions[0].transaction_outcome.outcome.status
+    }'
+```
+
+Этот последний шаг специально сделан необязательным. Для отправки и отслеживания RPC-правды уже достаточно. Это просто читаемая история на тот случай, если следующий вопрос уже звучит как «что именно произошло?», а не «насколько далеко продвинулась tx?»
+
+**Рекомендуемый паттерн**
+
+- Используйте `broadcast_tx_async` плюс опрос через `tx`, если хотите максимум клиентского контроля и самую быструю обратную связь.
+- Используйте `send_tx`, когда вам действительно нужен один блокирующий вызов, который подождёт до выбранного порога.
+- Используйте `EXPERIMENTAL_tx_status`, когда обычного цикла опроса уже недостаточно и настоящий вопрос относится к дереву receipts.
 
 ## Механика аккаунтов и ключей
 
 Начинайте отсюда, когда вопрос касается точных прав, точного состояния ключей или одного сценария записи на уровне контракта.
 
-### Может ли этот access key прямо сейчас вызвать этот контракт?
+### Проверить и удалить старые function-call-ключи Near Social
 
-Используйте этот сценарий, когда у вас уже есть аккаунт, один public key и целевой контракт, а вам нужен простой ответ да или нет до того, как вы начнёте что-то подписывать.
+Используйте этот сценарий, когда вы знаете, что на аккаунте накопились старые function-call-ключи для `social.near`, и хотите осмысленно их просмотреть, выбрать один конкретный ключ и удалить его через сырой RPC.
 
     Стратегия
-    Сначала отфильтруйте ключи аккаунта, затем прочитайте точный ключ и только потом классифицируйте его права.
+    Сначала сузьте набор точными чтениями ключей, а уже потом подписывайте ровно одно удаление.
 
-    01RPC view_access_key_list сужает список до ключей, которые вообще могут относиться к целевому контракту.
-    02RPC view_access_key даёт точный permission-object для того public key, которым вы реально можете подписывать.
-    03jq превращает этот permission-object в full_access, function_call_match, receiver_mismatch или method_not_allowed.
+    01RPC view_access_key_list находит только function-call-ключи, привязанные к social.near.
+    02RPC view_access_key перепроверяет конкретный ключ перед удалением, а POST /v0/account нужен только для необязательного контекста на уровне аккаунта.
+    03RPC send_tx отправляет DeleteKey, а RPC view_access_key_list подтверждает результат.
 
 **Что вы делаете**
 
-- Получаете access key аккаунта и сужаете список до нужного контракта.
-- Точно проверяете тот ключ, которым собираетесь подписывать.
-- Решаете, может ли он вызвать этот receiver и method, не выходя за пределы RPC.
+- Через сам RPC получаете полный список access key аккаунта.
+- Сужаете этот список до function-call-ключей, привязанных к `social.near`.
+- Точно проверяете один выбранный ключ перед удалением.
+- Собираете и подписываете транзакцию `DeleteKey` с помощью full-access-key, затем отправляете её через RPC и подтверждаете, что ключ исчез.
+
+Сразу важны два ограничения:
+
+- Ключ, которым вы удаляете другой ключ, должен быть full-access. Function-call-key не может подписать действие `DeleteKey`.
+- Этот сценарий про точное состояние ключей и очистку. Необязательный шаг с Transactions API ниже даёт контекст на уровне аккаунта, но не является надёжным источником «когда использовался именно этот ключ».
 
 ```bash
-RPC_URL=https://rpc.mainnet.fastnear.com
-ACCOUNT_ID=YOUR_ACCOUNT_ID
-TARGET_CONTRACT_ID=crossword.puzzle.near
-TARGET_METHOD_NAME=new_puzzle
-TARGET_PUBLIC_KEY='ed25519:PASTE_THE_KEY_YOU_WANT_TO_CHECK'
-
-# Пример живых значений, проверенных 19 апреля 2026 года:
-# ACCOUNT_ID=mike.near
-# TARGET_CONTRACT_ID=crossword.puzzle.near
-# TARGET_METHOD_NAME=new_puzzle
-# TARGET_PUBLIC_KEY='ed25519:otwaB1X88ocpmUdC1B5XaifucfDLmLKaonb26KqTj96'
+export NETWORK_ID=mainnet
+export RPC_URL=https://rpc.mainnet.fastnear.com
+export TX_BASE_URL=https://tx.main.fastnear.com
+export ACCOUNT_ID=YOUR_ACCOUNT_ID
+export SOCIAL_RECEIVER_ID=social.near
+export DELETE_PUBLIC_KEY='ed25519:PASTE_THE_KEY_YOU_PLAN_TO_REMOVE'
+export FULL_ACCESS_PUBLIC_KEY='ed25519:PASTE_THE_FULL_ACCESS_PUBLIC_KEY_YOU_WILL_SIGN_WITH'
+export FULL_ACCESS_PRIVATE_KEY='ed25519:PASTE_THE_MATCHING_FULL_ACCESS_PRIVATE_KEY'
 ```
 
-1. Получите ключи аккаунта и сузьте их до целевого контракта.
+1. Получите все access key аккаунта, затем сузьте результат до function-call-ключей для `social.near`.
 
 ```bash
 curl -s "$RPC_URL" \
@@ -180,28 +271,246 @@ curl -s "$RPC_URL" \
       finality: "final"
     }
   }')" \
-  | tee /tmp/access-key-list.json >/dev/null
+  | tee /tmp/fastnear-access-keys.json >/dev/null
 
-jq --arg target_contract_id "$TARGET_CONTRACT_ID" '{
-  candidate_keys: [
-    .result.keys[]
-    | select(
-        .access_key.permission == "FullAccess"
-        or (
-          (.access_key.permission | type) == "object"
-          and .access_key.permission.FunctionCall.receiver_id == $target_contract_id
-        )
-      )
-    | {
-        public_key,
-        nonce: .access_key.nonce,
-        permission: .access_key.permission
-      }
-  ]
-}' /tmp/access-key-list.json
+jq -r --arg receiver "$SOCIAL_RECEIVER_ID" '
+  .result.keys[]
+  | select((.access_key.permission | type) == "object")
+  | select(.access_key.permission.FunctionCall.receiver_id == $receiver)
+  | {
+      public_key,
+      nonce: .access_key.nonce,
+      receiver_id: .access_key.permission.FunctionCall.receiver_id,
+      method_names: .access_key.permission.FunctionCall.method_names,
+      allowance: (.access_key.permission.FunctionCall.allowance // "unlimited")
+    }
+' /tmp/fastnear-access-keys.json
 ```
 
-2. Прочитайте точное состояние того ключа, который хотите оценить.
+Выберите один `public_key` из этого отфильтрованного списка и присвойте его переменной `DELETE_PUBLIC_KEY`.
+
+2. Ещё раз проверьте конкретный ключ перед удалением.
+
+```bash
+curl -s "$RPC_URL" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc \
+    --arg account_id "$ACCOUNT_ID" \
+    --arg public_key "$DELETE_PUBLIC_KEY" '{
+      jsonrpc: "2.0",
+      id: "fastnear",
+      method: "query",
+      params: {
+        request_type: "view_access_key",
+        account_id: $account_id,
+        public_key: $public_key,
+        finality: "final"
+      }
+    }')" \
+  | jq '{nonce: .result.nonce, permission: .result.permission}'
+```
+
+3. Необязательно: получите недавнюю function-call-активность аккаунта, если хотите понять, стоит ли сначала расследовать контекст, а уже потом чистить ключи.
+
+```bash
+curl -s "$TX_BASE_URL/v0/account" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc --arg account_id "$ACCOUNT_ID" '{
+    account_id: $account_id,
+    is_function_call: true,
+    limit: 10
+  }')" \
+  | jq '{
+    account_txs: [
+      .account_txs[]
+      | {
+          transaction_hash,
+          tx_block_height,
+          is_success
+        }
+    ]
+  }'
+```
+
+Этот запрос помогает ответить на вопрос «делал ли аккаунт недавно function-call-операции вообще?», но не доказывает, что использовался именно этот access key.
+
+4. Подпишите транзакцию `DeleteKey` для `DELETE_PUBLIC_KEY` с помощью full-access-key.
+
+Выполняйте это в каталоге, где установлен `near-api-js@5`. Команда использует переменные окружения выше, получает актуальный nonce для `FULL_ACCESS_PUBLIC_KEY`, запрашивает свежий хеш финализированного блока, подписывает действие `DeleteKey` и сохраняет `signed_tx_base64` в `SIGNED_TX_BASE64`.
+
+```bash
+SIGNED_TX_BASE64="$(
+  node --input-type=module <<'EOF'
+
+const {
+  ACCOUNT_ID,
+  NETWORK_ID = 'mainnet',
+  RPC_URL = 'https://rpc.mainnet.fastnear.com',
+  DELETE_PUBLIC_KEY,
+  FULL_ACCESS_PUBLIC_KEY,
+  FULL_ACCESS_PRIVATE_KEY,
+} = process.env;
+
+for (const name of [
+  'ACCOUNT_ID',
+  'DELETE_PUBLIC_KEY',
+  'FULL_ACCESS_PUBLIC_KEY',
+  'FULL_ACCESS_PRIVATE_KEY',
+]) {
+  if (!process.env[name]) {
+    throw new Error(`Missing ${name}`);
+  }
+}
+
+async function rpc(method, params) {
+  const response = await fetch(RPC_URL, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({
+      jsonrpc: '2.0',
+      id: 'fastnear',
+      method,
+      params,
+    }),
+  });
+  const json = await response.json();
+  if (json.error) {
+    throw new Error(JSON.stringify(json.error));
+  }
+  return json.result;
+}
+
+const keyPair = KeyPair.fromString(FULL_ACCESS_PRIVATE_KEY);
+const derivedPublicKey = keyPair.getPublicKey().toString();
+
+if (derivedPublicKey !== FULL_ACCESS_PUBLIC_KEY) {
+  throw new Error(
+    `FULL_ACCESS_PUBLIC_KEY does not match FULL_ACCESS_PRIVATE_KEY (${derivedPublicKey})`
+  );
+}
+
+const signer = await InMemorySigner.fromKeyPair(NETWORK_ID, ACCOUNT_ID, keyPair);
+
+const accessKey = await rpc('query', {
+  request_type: 'view_access_key',
+  account_id: ACCOUNT_ID,
+  public_key: FULL_ACCESS_PUBLIC_KEY,
+  finality: 'final',
+});
+
+const block = await rpc('block', { finality: 'final' });
+
+const transaction = transactions.createTransaction(
+  ACCOUNT_ID,
+  utils.PublicKey.fromString(FULL_ACCESS_PUBLIC_KEY),
+  ACCOUNT_ID,
+  BigInt(accessKey.nonce) + 1n,
+  [transactions.deleteKey(utils.PublicKey.fromString(DELETE_PUBLIC_KEY))],
+  utils.serialize.base_decode(block.header.hash)
+);
+
+const [, signedTx] = await transactions.signTransaction(
+  transaction,
+  signer,
+  ACCOUNT_ID,
+  NETWORK_ID
+);
+
+process.stdout.write(Buffer.from(signedTx.encode()).toString('base64'));
+EOF
+)"
+```
+
+5. Отправьте подписанную транзакцию через сырой RPC и дождитесь `FINAL`.
+
+```bash
+curl -s "$RPC_URL" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc --arg signed_tx_base64 "$SIGNED_TX_BASE64" '{
+    jsonrpc: "2.0",
+    id: "fastnear",
+    method: "send_tx",
+    params: {
+      signed_tx_base64: $signed_tx_base64,
+      wait_until: "FINAL"
+    }
+  }')" \
+  | jq '{
+    final_execution_status: .result.final_execution_status,
+    transaction_hash: .result.transaction.hash,
+    status: .result.status
+  }'
+```
+
+6. Повторно получите список access key и убедитесь, что нужного ключа больше нет.
+
+```bash
+if curl -s "$RPC_URL" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc --arg account_id "$ACCOUNT_ID" '{
+    jsonrpc: "2.0",
+    id: "fastnear",
+    method: "query",
+    params: {
+      request_type: "view_access_key_list",
+      account_id: $account_id,
+      finality: "final"
+    }
+  }')" \
+  | jq -e --arg public_key "$DELETE_PUBLIC_KEY" '
+      .result.keys[]
+      | select(.public_key == $public_key)
+    ' >/dev/null; then
+  echo "Key is still present: $DELETE_PUBLIC_KEY"
+else
+  echo "Key deleted: $DELETE_PUBLIC_KEY"
+fi
+```
+
+**Зачем нужен следующий шаг?**
+
+Повторный вызов `view_access_key_list` замыкает сценарий тем же RPC-методом, с которого вы начинали поиск. Если ключ исчез именно там, дополнительный индексированный API уже не нужен, чтобы подтвердить удаление.
+
+### Какая транзакция добавила этот function-call-ключ для `social.near` и какой ключ его авторизовал?
+
+Используйте этот сценарий, когда ключ уже виден на аккаунте, но вы хотите вернуться назад до транзакции `AddKey`, которая его создала, и понять, каким public key это изменение было реально авторизовано.
+
+    Стратегия
+    Начинаем с уже существующего ключа и идём назад только настолько, насколько это действительно нужно.
+
+    01RPC view_access_key даёт текущий сохранённый nonce, а это лучшая историческая подсказка в этой истории.
+    02POST /v0/account превращает этот nonce в узкое окно кандидатов вместо полного поиска по истории аккаунта.
+    03POST /v0/transactions показывает, был ли ключ добавлен напрямую или через делегированную авторизацию, а POST /v0/receipt нужен только для точного блока исполнения AddKey.
+
+**Что вы делаете**
+
+- Сначала читаете точное состояние ключа через RPC и берёте его текущий nonce как улику.
+- Превращаете этот nonce в узкое окно высот блоков для вероятного `AddKey` receipt.
+- Ищете историю аккаунта только внутри этого окна, а не сканируете весь аккаунт.
+- Подтягиваете кандидата по транзакциям и различаете три разных ключа:
+  - ключ, который был добавлен
+  - public key верхнеуровневого signer
+  - public key, который реально авторизовал изменение, если оно было завернуто в `Delegate`
+
+Сразу важны три детали про nonce:
+
+- Новый access key получает стартовый nonce, производный от высоты блока примерно как `block_height * 1_000_000`, поэтому деление текущего nonce на `1_000_000` даёт полезное поисковое окно.
+- В payload действия `AddKey` часто будет `access_key.nonce: 0`. Это не тот сохранённый nonce, который вы потом видите через `view_access_key`.
+- Если после создания ключ уже успели очень активно использовать, просто расширьте окно поиска.
+
+```bash
+export NETWORK_ID=mainnet
+export RPC_URL=https://rpc.mainnet.fastnear.com
+export TX_BASE_URL=https://tx.main.fastnear.com
+export ACCOUNT_ID=YOUR_ACCOUNT_ID
+export TARGET_PUBLIC_KEY='ed25519:PASTE_THE_ACCESS_KEY_YOU_WANT_TO_TRACE'
+
+# Пример живого ключа, наблюдавшегося 18 апреля 2026 года:
+# export ACCOUNT_ID=mike.near
+# export TARGET_PUBLIC_KEY='ed25519:7GZgXkMPEyGXqRhxaLvHxWn6fVfeyuQGMqnLVQAh7bs'
+```
+
+1. Сначала прочитайте точное состояние ключа, затем превратите его текущий nonce в поисковое окно.
 
 ```bash
 curl -s "$RPC_URL" \
@@ -219,69 +528,172 @@ curl -s "$RPC_URL" \
         finality: "final"
       }
     }')" \
-  | tee /tmp/exact-access-key.json >/dev/null
+  | tee /tmp/key-origin-view.json >/dev/null
 
-jq '{nonce: .result.nonce, permission: .result.permission}' /tmp/exact-access-key.json
+CURRENT_NONCE="$(jq -r '.result.nonce' /tmp/key-origin-view.json)"
+ESTIMATED_RECEIPT_BLOCK="$(( CURRENT_NONCE / 1000000 + 1 ))"
+SEARCH_FROM="$(( ESTIMATED_RECEIPT_BLOCK - 20 ))"
+SEARCH_TO="$(( ESTIMATED_RECEIPT_BLOCK + 5 ))"
+
+jq -n \
+  --arg account_id "$ACCOUNT_ID" \
+  --arg target_public_key "$TARGET_PUBLIC_KEY" \
+  --argjson current_nonce "$CURRENT_NONCE" \
+  --argjson estimated_receipt_block "$ESTIMATED_RECEIPT_BLOCK" \
+  --argjson search_from "$SEARCH_FROM" \
+  --argjson search_to "$SEARCH_TO" \
+  --arg permission "$(jq -c '.result.permission' /tmp/key-origin-view.json)" '{
+    account_id: $account_id,
+    target_public_key: $target_public_key,
+    current_nonce: $current_nonce,
+    estimated_receipt_block: $estimated_receipt_block,
+    search_from_tx_block_height: $search_from,
+    search_to_tx_block_height: $search_to,
+    permission: ($permission | fromjson)
+  }'
 ```
 
-3. Превратите этот permission-object в ответ да или нет для этого контракта и метода.
+Если использовать пример ключа выше, оценочный блок receipt должен получиться `112057392`.
+
+2. Ищите историю аккаунта только внутри этого диапазона блоков.
 
 ```bash
-jq -n \
-  --slurpfile key /tmp/exact-access-key.json \
-  --arg target_contract_id "$TARGET_CONTRACT_ID" \
-  --arg target_method_name "$TARGET_METHOD_NAME" '
-  ($key[0].result.permission) as $permission
-  | if $permission == "FullAccess" then
-      {
-        can_call_now: true,
-        reason: "full_access"
+curl -s "$TX_BASE_URL/v0/account" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc \
+    --arg account_id "$ACCOUNT_ID" \
+    --argjson from_tx_block_height "$SEARCH_FROM" \
+    --argjson to_tx_block_height "$SEARCH_TO" '{
+      account_id: $account_id,
+      is_real_signer: true,
+      from_tx_block_height: $from_tx_block_height,
+      to_tx_block_height: $to_tx_block_height,
+      desc: false,
+      limit: 50
+    }')" \
+  | tee /tmp/key-origin-candidates.json >/dev/null
+
+jq '{
+  txs_count,
+  candidate_txs: [
+    .account_txs[]
+    | {
+        transaction_hash,
+        tx_block_height,
+        is_signer,
+        is_real_signer,
+        is_predecessor,
+        is_receiver
       }
-    elif $permission.FunctionCall.receiver_id != $target_contract_id then
-      {
-        can_call_now: false,
-        reason: "receiver_mismatch",
-        receiver_id: $permission.FunctionCall.receiver_id
-      }
-    elif (
-      ($permission.FunctionCall.method_names | length) == 0
-      or ($permission.FunctionCall.method_names | index($target_method_name))
-    ) then
-      {
-        can_call_now: true,
-        reason: (
-          if ($permission.FunctionCall.method_names | length) == 0
-          then "function_call_any_method"
-          else "function_call_method_match"
-          end
-        ),
-        allowance: ($permission.FunctionCall.allowance // "unlimited")
-      }
-    else
-      {
-        can_call_now: false,
-        reason: "method_not_allowed",
-        allowed_methods: $permission.FunctionCall.method_names
-      }
-    end'
+  ]
+}' /tmp/key-origin-candidates.json
 ```
 
-Для примерного ключа `mike.near` выше на 19 апреля 2026 года ответ получается `can_call_now: true`: это function-call-key для `crossword.puzzle.near`, а `method_names: ["new_puzzle"]` явно разрешает тот метод, который мы проверяем.
+Для примерного ключа `mike.near` выше это окно возвращает одну кандидатную транзакцию: `6ZT8UGPRC6L3NGs2qHnECPVexKWNQ5LWLK9w95tgj3tV` во внешнем tx-блоке `112057390`.
+
+3. Подтяните этих кандидатов целиком и оставьте только ту транзакцию, которая действительно добавила ваш целевой ключ.
+
+```bash
+TX_HASHES_JSON="$(
+  jq -c '[.account_txs[].transaction_hash]' /tmp/key-origin-candidates.json
+)"
+
+curl -s "$TX_BASE_URL/v0/transactions" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc --argjson tx_hashes "$TX_HASHES_JSON" '{tx_hashes: $tx_hashes}')" \
+  | tee /tmp/key-origin-transactions.json >/dev/null
+
+jq --arg target_public_key "$TARGET_PUBLIC_KEY" '
+  .transactions[]
+  | . as $tx
+  | (
+      ($tx.transaction.actions[]?
+        | .AddKey?
+        | select(.public_key == $target_public_key)
+        | {
+            authorization_mode: "direct",
+            top_level_signer_id: $tx.transaction.signer_id,
+            top_level_signer_public_key: $tx.transaction.public_key,
+            authorizing_public_key: $tx.transaction.public_key,
+            added_public_key: .public_key,
+            add_key_payload_nonce: .access_key.nonce,
+            permission: .access_key.permission
+          }),
+      ($tx.transaction.actions[]?
+        | .Delegate?
+        | .delegate_action as $delegate
+        | $delegate.actions[]?
+        | .AddKey?
+        | select(.public_key == $target_public_key)
+        | {
+            authorization_mode: "delegated",
+            top_level_signer_id: $tx.transaction.signer_id,
+            top_level_signer_public_key: $tx.transaction.public_key,
+            authorizing_public_key: $delegate.public_key,
+            added_public_key: .public_key,
+            add_key_payload_nonce: .access_key.nonce,
+            permission: .access_key.permission
+          })
+    )
+  | {
+      transaction_hash: $tx.transaction.hash,
+      tx_block_height: $tx.execution_outcome.block_height,
+      tx_block_hash: $tx.execution_outcome.block_hash,
+      receiver_id: $tx.transaction.receiver_id
+    } + .
+' /tmp/key-origin-transactions.json | tee /tmp/key-origin-match.json
+```
+
+Если `authorization_mode` равен `direct`, то top-level signer public key и authorizing public key — это один и тот же ключ. Если `authorization_mode` равен `delegated`, то ключ, который реально авторизовал `AddKey`, находится внутри `Delegate.delegate_action.public_key`.
+
+Для примерного ключа `mike.near` выше совпадение оказывается делегированным:
+
+- `transaction_hash`: `6ZT8UGPRC6L3NGs2qHnECPVexKWNQ5LWLK9w95tgj3tV`
+- `top_level_signer_public_key`: `ed25519:Ez817Dgs2uYP5a6GoijzFarcS3SWPT5eEB82VJXsd4oM`
+- `authorizing_public_key`: `ed25519:GaYgzN1eZUgwA7t8a5pYxFGqtF4kon9dQaDMjPDejsiu`
+- `added_public_key`: `ed25519:7GZgXkMPEyGXqRhxaLvHxWn6fVfeyuQGMqnLVQAh7bs`
+
+4. Необязательно: если нужен ещё и точный блок `AddKey` receipt, сделайте ещё один шаг по `receipt_id`.
+
+```bash
+ADD_KEY_RECEIPT_ID="$(
+  jq -r --arg target_public_key "$TARGET_PUBLIC_KEY" '
+    .transactions[]
+    | .receipts[]
+    | select(any((.receipt.receipt.Action.actions // [])[]; .AddKey.public_key? == $target_public_key))
+    | .receipt.receipt_id
+  ' /tmp/key-origin-transactions.json | head -n 1
+)"
+
+curl -s "$TX_BASE_URL/v0/receipt" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc --arg receipt_id "$ADD_KEY_RECEIPT_ID" '{receipt_id: $receipt_id}')" \
+  | jq '{
+      receipt_id: .receipt.receipt_id,
+      receipt_block_height: .receipt.block_height,
+      tx_block_height: .receipt.tx_block_height,
+      predecessor_id: .receipt.predecessor_id,
+      receiver_id: .receipt.receiver_id,
+      transaction_hash: .receipt.transaction_hash
+    }'
+```
+
+Для примерного ключа выше точный `AddKey` receipt — это `C5jsTftYwPiibyxdoDKd4LXFFru8n4weDKLV4cfb1bcX` в receipt-блоке `112057392`, тогда как внешняя транзакция попала раньше, в блок `112057390`.
 
 **Зачем нужен следующий шаг?**
 
-`view_access_key_list` — самый быстрый фильтр на уровне контракта. `view_access_key` — точная проверка полномочий для того public key, которым вы действительно хотите пользоваться. Если ответ `false`, вам нужен другой ключ или другая схема permissions, а не более глубокая историческая трассировка.
+Начинайте с точного текущего состояния ключа, потому что именно оно даёт вам nonce-подсказку. Узкое окно в `/v0/account` превращает эту подсказку в маленький набор кандидатов. `/v0/transactions` показывает, был ли ключ добавлен напрямую или через делегированную авторизацию. `/v0/receipt` — это необязательный последний шаг, если нужен именно точный блок исполнения `AddKey`, а не только внешняя транзакция.
 
-### Нужно ли этому получателю сначала зарегистрировать FT storage?
+### Проверить регистрацию FT storage и затем перевести токены
 
-Используйте этот сценарий, когда история звучит так: «я собираюсь отправить FT-токен и хочу получить простой ответ “нужен ли сначала `storage_deposit`?”».
+Используйте этот сценарий, когда история звучит так: «безопасно отправить FT-токен, но сначала доказать, зарегистрирован ли получатель для storage на этом FT-контракте».
 
     Стратегия
-    Сначала прочитайте storage-состояние получателя и остановитесь, как только станет понятно, может ли `ft_transfer` уже пройти.
+    Сначала прочитайте storage-состояние, а затем тратьте только те write-вызовы, которые действительно нужны переводу.
 
     01RPC call_function storage_balance_of показывает, зарегистрирован ли получатель уже сейчас.
     02RPC call_function storage_balance_bounds нужен только тогда, когда перед записью надо узнать точный минимальный депозит.
-    03jq превращает эти два чтения в один ответ: «перевод уже может идти» или «сначала нужен `storage_deposit`».
+    03RPC send_tx отправляет storage_deposit и ft_transfer, а RPC call_function ft_balance_of доказывает итог.
 
 **Сеть**
 
@@ -292,19 +704,24 @@ jq -n \
 - [FT storage и перевод токенов](https://docs.near.org/integrations/fungible-tokens)
 - [Предразвёрнутый FT-контракт](https://docs.near.org/tutorials/fts/predeployed-contract)
 
-В этом сценарии используется безопасный публичный контракт `ft.predeployed.examples.testnet`. Здесь важен именно read-only-ответ: нужен ли сначала `storage_deposit`, или путь перевода уже может продолжаться.
+В этом сценарии используется безопасный публичный контракт `ft.predeployed.examples.testnet`. Перед началом убедитесь, что у отправителя уже есть немного `gtNEAR` на этом контракте. Если баланса ещё нет, сначала получите небольшой объём через гайд по предразвёрнутому контракту и затем вернитесь к этому сценарию.
 
 **Что вы делаете**
 
 - Через точные RPC view-вызовы проверяете, есть ли у получателя FT storage на контракте.
-- Получаете точный минимальный размер storage deposit на этом же контракте.
-- Останавливаетесь, как только понимаете: `ft_transfer` уже может идти или сначала нужен `storage_deposit`.
+- При необходимости получаете минимальный размер storage deposit.
+- Подписываете и отправляете `storage_deposit`, а затем `ft_transfer`.
+- Подтверждаете баланс получателя тем же view-методом самого контракта.
 
 ```bash
 export NETWORK_ID=testnet
 export RPC_URL=https://rpc.testnet.fastnear.com
 export TOKEN_CONTRACT_ID=ft.predeployed.examples.testnet
+export SENDER_ACCOUNT_ID=YOUR_ACCOUNT_ID.testnet
 export RECEIVER_ACCOUNT_ID=YOUR_RECEIVER_ID.testnet
+export SENDER_PUBLIC_KEY='ed25519:YOUR_FULL_ACCESS_PUBLIC_KEY'
+export SENDER_PRIVATE_KEY='ed25519:YOUR_MATCHING_PRIVATE_KEY'
+export AMOUNT_YOCTO_GTNEAR='10000000000000000000000'
 ```
 
 1. Проверьте, зарегистрирован ли получатель на FT-контракте.
@@ -340,7 +757,7 @@ jq '{
 }' /tmp/ft-storage-balance.json
 ```
 
-2. Получите минимальный storage deposit на этом же контракте.
+2. Если получатель ещё не зарегистрирован, получите минимальный storage deposit.
 
 ```bash
 MIN_STORAGE_YOCTO="$(
@@ -365,52 +782,257 @@ MIN_STORAGE_YOCTO="$(
 printf 'Minimum storage deposit: %s yoctoNEAR\n' "$MIN_STORAGE_YOCTO"
 ```
 
-3. Превратите эти два чтения в один ответ о готовности перевода.
+3. Определите одну переиспользуемую функцию подписи для function-call к контракту.
+
+Выполняйте этот шаг в каталоге, где установлен `near-api-js@5`. Функция ниже читает экспортированные shell-переменные выше и превращает каждый function-call в подписанный payload для отправки через сырой RPC.
 
 ```bash
-jq -n \
-  --slurpfile balance /tmp/ft-storage-balance.json \
-  --slurpfile bounds /tmp/ft-storage-bounds.json \
-  --arg receiver_account_id "$RECEIVER_ACCOUNT_ID" '
-  (
-    $balance[0].result.result
-    | if length == 0 then null else (implode | fromjson) end
-  ) as $storage
-  | (
-    $bounds[0].result.result
-    | implode
-    | fromjson
-  ) as $bounds
-  | {
-      receiver_account_id: $receiver_account_id,
-      receiver_registered: ($storage != null),
-      current_storage: $storage,
-      minimum_storage_deposit_yocto: $bounds.min,
-      next_step: (
-        if $storage != null
-        then "получатель уже зарегистрирован; ft_transfer может продолжаться"
-        else "сначала отправьте storage_deposit, потом делайте ft_transfer"
-        end
-      )
+sign_function_call() {
+  METHOD_NAME="$1" \
+  ARGS_JSON="$2" \
+  DEPOSIT_YOCTO="$3" \
+  GAS_TGAS="$4" \
+  node --input-type=module <<'EOF'
+
+const {
+  NETWORK_ID = 'testnet',
+  RPC_URL = 'https://rpc.testnet.fastnear.com',
+  TOKEN_CONTRACT_ID,
+  SENDER_ACCOUNT_ID,
+  SENDER_PUBLIC_KEY,
+  SENDER_PRIVATE_KEY,
+  METHOD_NAME,
+  ARGS_JSON,
+  DEPOSIT_YOCTO = '0',
+  GAS_TGAS = '100',
+} = process.env;
+
+for (const name of [
+  'TOKEN_CONTRACT_ID',
+  'SENDER_ACCOUNT_ID',
+  'SENDER_PUBLIC_KEY',
+  'SENDER_PRIVATE_KEY',
+  'METHOD_NAME',
+  'ARGS_JSON',
+]) {
+  if (!process.env[name]) {
+    throw new Error(`Missing ${name}`);
+  }
+}
+
+async function rpc(method, params) {
+  const response = await fetch(RPC_URL, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({
+      jsonrpc: '2.0',
+      id: 'fastnear',
+      method,
+      params,
+    }),
+  });
+  const json = await response.json();
+  if (json.error) {
+    throw new Error(JSON.stringify(json.error));
+  }
+  return json.result;
+}
+
+const keyPair = KeyPair.fromString(SENDER_PRIVATE_KEY);
+const signer = await InMemorySigner.fromKeyPair(
+  NETWORK_ID,
+  SENDER_ACCOUNT_ID,
+  keyPair
+);
+
+const derivedPublicKey = keyPair.getPublicKey().toString();
+if (derivedPublicKey !== SENDER_PUBLIC_KEY) {
+  throw new Error(
+    `SENDER_PUBLIC_KEY does not match SENDER_PRIVATE_KEY (${derivedPublicKey})`
+  );
+}
+
+const accessKey = await rpc('query', {
+  request_type: 'view_access_key',
+  account_id: SENDER_ACCOUNT_ID,
+  public_key: SENDER_PUBLIC_KEY,
+  finality: 'final',
+});
+
+const block = await rpc('block', { finality: 'final' });
+
+const action = transactions.functionCall(
+  METHOD_NAME,
+  Buffer.from(ARGS_JSON),
+  BigInt(GAS_TGAS) * 10n ** 12n,
+  BigInt(DEPOSIT_YOCTO)
+);
+
+const transaction = transactions.createTransaction(
+  SENDER_ACCOUNT_ID,
+  utils.PublicKey.fromString(SENDER_PUBLIC_KEY),
+  TOKEN_CONTRACT_ID,
+  BigInt(accessKey.nonce) + 1n,
+  [action],
+  utils.serialize.base_decode(block.header.hash)
+);
+
+const [, signedTx] = await transactions.signTransaction(
+  transaction,
+  signer,
+  SENDER_ACCOUNT_ID,
+  NETWORK_ID
+);
+
+process.stdout.write(Buffer.from(signedTx.encode()).toString('base64'));
+EOF
+}
+```
+
+4. При необходимости сначала зарегистрируйте storage для получателя.
+
+```bash
+if jq -e '.result.result | implode | fromjson == null' /tmp/ft-storage-balance.json >/dev/null; then
+  SIGNED_TX_BASE64="$(
+    sign_function_call \
+      storage_deposit \
+      "$(jq -nc --arg account_id "$RECEIVER_ACCOUNT_ID" '{
+        account_id: $account_id,
+        registration_only: true
+      }')" \
+      "$MIN_STORAGE_YOCTO" \
+      100
+  )"
+
+  curl -s "$RPC_URL" \
+    -H 'content-type: application/json' \
+    --data "$(jq -nc --arg signed_tx_base64 "$SIGNED_TX_BASE64" '{
+      jsonrpc: "2.0",
+      id: "fastnear",
+      method: "send_tx",
+      params: {
+        signed_tx_base64: $signed_tx_base64,
+        wait_until: "FINAL"
+      }
+    }')" \
+    | jq '{
+        final_execution_status: .result.final_execution_status,
+        transaction_hash: .result.transaction.hash
+      }'
+fi
+```
+
+5. После готовности storage переведите FT.
+
+```bash
+SIGNED_TX_BASE64="$(
+  sign_function_call \
+    ft_transfer \
+    "$(jq -nc \
+      --arg receiver_id "$RECEIVER_ACCOUNT_ID" \
+      --arg amount "$AMOUNT_YOCTO_GTNEAR" '{
+        receiver_id: $receiver_id,
+        amount: $amount,
+        memo: "FastNear RPC example"
+      }')" \
+    1 \
+    100
+)"
+
+curl -s "$RPC_URL" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc --arg signed_tx_base64 "$SIGNED_TX_BASE64" '{
+    jsonrpc: "2.0",
+    id: "fastnear",
+    method: "send_tx",
+    params: {
+      signed_tx_base64: $signed_tx_base64,
+      wait_until: "FINAL"
+    }
+  }')" \
+  | jq '{
+      final_execution_status: .result.final_execution_status,
+      transaction_hash: .result.transaction.hash,
+      status: .result.status
+    }'
+```
+
+6. Подтвердите FT-баланс получателя тем же view-методом контракта.
+
+```bash
+RECEIVER_BALANCE_ARGS_BASE64="$(
+  jq -nc --arg account_id "$RECEIVER_ACCOUNT_ID" '{
+    account_id: $account_id
+  }' | base64 | tr -d '\n'
+)"
+
+curl -s "$RPC_URL" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc \
+    --arg account_id "$TOKEN_CONTRACT_ID" \
+    --arg args_base64 "$RECEIVER_BALANCE_ARGS_BASE64" '{
+      jsonrpc: "2.0",
+      id: "fastnear",
+      method: "query",
+      params: {
+        request_type: "call_function",
+        account_id: $account_id,
+        method_name: "ft_balance_of",
+        args_base64: $args_base64,
+        finality: "final"
+      }
+    }')" \
+  | jq '{
+      receiver_balance: (.result.result | implode | fromjson)
     }'
 ```
 
 **Зачем нужен следующий шаг?**
 
-Это чистый RPC-вопрос в этом workflow: «зарегистрирован ли уже получатель и какой минимальный депозит потребует контракт, если нет?» Подписанный write-path зависит уже от вашего wallet, CLI или backend-интеграции, поэтому в самый маленький core RPC-пример он не входит.
+Это хороший RPC-сценарий, потому что каждый шаг держится рядом с самим контрактом: сначала вы проверяете состояние storage, затем отправляете минимально необходимые change-call, а потом напрямую подтверждаете итоговое состояние на контракте.
 
 ## Чтения контракта и сырое состояние
 
 Начинайте отсюда, когда вопрос звучит как «достаточно ли мне вызова метода?» против «можно ли прочитать storage напрямую?»
 
-### Прочитать счётчик прямо из состояния контракта, а потом подтвердить его через view-метод
+### Как прочитать сырое состояние контракта напрямую?
 
-Используйте этот сценарий, когда вы уже знаете точное семейство storage-ключей и хотите увидеть самый короткий контраст между raw state и публичным методом чтения контракта.
+Используйте этот сценарий, когда у контракта нет нужного view-метода или когда вам нужно проверить саму схему хранения, а не просто довериться ответу метода.
 
-Здесь используется живой публичный testnet-контракт `counter.near-examples.testnet`:
+В этом walkthrough используется живой публичный testnet-контракт `counter.near-examples.testnet`. Число в нём может меняться со временем. Это нормально. Важен сам принцип: сначала вы читаете storage напрямую, а потом подтверждаете, что публичный view-метод контракта даёт тот же ответ:
 
-- `view_state` читает сырой ключ `STATE` напрямую
-- `call_function get_num` спрашивает у контракта то же текущее число
+- `view_state` читает сырой ключ `STATE` прямо из storage контракта
+- `call_function get_num` спрашивает у контракта то же текущее число через его публичный view API
+
+    Стратегия
+    Сначала прочитайте storage напрямую, а уже потом дайте контракту подтвердить тот же ответ через view-метод.
+
+    01RPC view_state читает сырой ключ STATE, не запуская код контракта.
+    02Декодируйте значение из base64 в байты, а затем интерпретируйте эти байты по известной Borsh-схеме контракта.
+    03RPC call_function get_num — это удобная перепроверка того, что прямое чтение storage и view-метод по-прежнему дают один и тот же ответ.
+
+Здесь важнее ментальная модель, чем сам счётчик:
+
+- `view_state` — это прямое чтение storage из trie
+- `call_function` исполняет read-only-метод контракта
+- оба способа могут ответить на один и тот же вопрос, но делают разную работу
+
+```mermaid
+flowchart LR
+    S["RPC view_state<br/>prefix STATE"] --> R["Сырые байты STATE"]
+    R --> D["Декодировать base64 + Borsh"]
+    D --> N["Знаковое значение счётчика"]
+    C["RPC call_function get_num"] --> J["JSON-результат метода"]
+    N --> X["Сравнить"]
+    J --> X
+    X --> A["Одно и то же текущее значение"]
+```
+
+**Что вы делаете**
+
+- Читаете сырой ключ `STATE` из storage контракта.
+- Декодируете возвращённые байты в текущее знаковое значение счётчика.
+- Вызываете `get_num` через view-метод и подтверждаете, что ответ метода совпадает с raw-state-декодированием.
 
 ```bash
 export NETWORK_ID=testnet
@@ -419,7 +1041,7 @@ export CONTRACT_ID=counter.near-examples.testnet
 export STATE_PREFIX_BASE64=U1RBVEU=
 ```
 
-1. Сначала прочитайте сырой ключ `STATE`.
+1. Сначала прочитайте сырое состояние контракта.
 
 ```bash
 curl -s "$RPC_URL" \
@@ -440,28 +1062,46 @@ curl -s "$RPC_URL" \
   | tee /tmp/counter-view-state.json >/dev/null
 
 jq '{
-  key: (.result.values[0].key | @base64d),
+  block_height: .result.block_height,
+  key_base64: .result.values[0].key,
   value_base64: .result.values[0].value
 }' /tmp/counter-view-state.json
+
+jq -r '.result.values[0].key | @base64d' /tmp/counter-view-state.json
 ```
 
-Здесь должен появиться `key: "STATE"`. Это и есть тот случай, когда `view_state` уместен: семейство ключей вам уже известно заранее.
+Последняя команда должна вывести `STATE`. Это и есть семейство ключей, которое вы уже заранее знаете, поэтому `view_state` может пойти прямо к raw storage entry, не заставляя контракт исполнять никакой метод.
 
-2. Декодируйте сырые байты.
+2. Декодируйте байты значения в знаковое число счётчика.
 
 ```bash
 RAW_VALUE_BASE64="$(jq -r '.result.values[0].value' /tmp/counter-view-state.json)"
 
-python3 - "$RAW_VALUE_BASE64" <<'PY'
+python3 - "$RAW_VALUE_BASE64" <<'PY' | jq .
 
 raw = base64.b64decode(sys.argv[1])
-print(int.from_bytes(raw, "little", signed=True))
+
+print(json.dumps({
+    "value_base64": sys.argv[1],
+    "bytes": list(raw),
+    "hex": raw.hex(),
+    "signed_i8": int.from_bytes(raw, "little", signed=True),
+    "unsigned_u8": int.from_bytes(raw, "little", signed=False),
+}))
 PY
 ```
 
-Для этого контракта `STATE` — это однобайтовый знаковый счётчик, поэтому декодирование совсем простое. На других контрактах layout может быть гораздо менее дружелюбным: near-sdk-коллекции и Borsh-сериализованные структуры часто выводят storage-ключи из префиксов и внутренних схем ключей, поэтому `view_state` остаётся практичным только когда вы уже знаете точный layout, который хотите читать. Правило остаётся тем же: сначала байты, потом схема.
+Для этого конкретного контракта достаточно одного байта, потому что Rust-счётчик хранит `val: i8` внутри состояния контракта. Поэтому raw-значение вроде `CQ==` декодируется в один байт `0x09`, а он уже читается как знаковое целое `9`.
 
-3. Теперь спросите контракт привычным способом и сравните.
+Ещё один важный момент про знак: если бы счётчик был отрицательным, тот же однобайтовый payload всё равно корректно декодировался бы как знаковый `i8` в дополнительном коде. Например, `/w==` — это один байт `0xff`, а значит `-1` как `signed_i8`, а не `255`.
+
+Переиспользуемый рецепт здесь короткий:
+
+- `view_state` возвращает сырые байты в base64
+- вы декодируете эти байты по известной схеме хранения контракта
+- для больших контрактов схема может быть сложнее, но идея та же: сначала байты, потом схема
+
+3. Теперь спросите контракт более привычным способом и сравните.
 
 ```bash
 curl -s "$RPC_URL" \
@@ -486,7 +1126,7 @@ jq '{
 }' /tmp/counter-call-function.json
 ```
 
-4. Сравните оба ответа.
+4. Сравните оба ответа напрямую.
 
 ```bash
 RAW_STATE_NUMBER="$(
@@ -510,194 +1150,704 @@ jq -n \
   }'
 ```
 
+Если `agrees_now` равен `true`, значит вы доказали основную мысль этого примера:
+
+- `view_state` ответил на вопрос, прочитав storage напрямую
+- `call_function get_num` ответил на тот же вопрос, исполнив публичный read-метод контракта
+
 **Зачем нужен следующий шаг?**
 
-Используйте `view_state`, когда вы уже знаете точное семейство storage-ключей и хотите raw bytes. Используйте `call_function`, когда вам нужен публичный метод чтения самого контракта. Если следующий вопрос становится историческим, а не «что там лежит прямо сейчас?», тогда уже стоит расширяться в [KV FastData API](https://docs.fastnear.com/ru/fastdata/kv).
+Используйте `view_state`, когда настоящий вопрос относится к точному storage, отсутствующему view-методу или проверке известного семейства ключей. Используйте `call_function`, когда вам нужен публичный read API самого контракта. Если следующий вопрос становится историческим, а не «что там лежит прямо сейчас?», тогда и стоит расширяться в [KV FastData API](https://docs.fastnear.com/ru/fastdata/kv).
 
-### Какие ERC-20 токены из Rainbow Bridge существуют на NEAR и сколько одного такого токена сейчас в обращении?
+## Трассировка чанков и шардов
 
-Используйте этот сценарий, когда хотите найти Rainbow Bridge ERC-20 контракты и посмотреть живой объём одного токена на NEAR. Rainbow Bridge развёртывает по одному NEAR-контракту на каждый bridged ERC-20 токен, а `factory.bridge.near` их перечисляет.
+Начинайте отсюда, когда вопрос уже не просто «транзакция прошла или нет?», а «какой именно чанк на шарде исполнил каждый шаг работы?»
+
+### Проследить, как сгенерированная `Transfer`-receipt переходит из одного чанка на шарде в другой
+
+Используйте этот сценарий, когда вызов контракта был только началом истории. В этом зафиксированном mainnet-примере подписанная транзакция стартует на шарде `11`, а сгенерированная `Transfer`-receipt заканчивает путь уже на шарде `6`. Именно ради таких cross-shard handoff и имеет смысл смотреть на чанки.
+
+Этот walkthrough привязан к:
+
+- транзакции `8xrcQU6Sr1jhnigenBbpfGzk9jN24rLmMqSWT7TF7xJP` от `7419369993.tg` к `game.hot.tg` с вызовом `l2_claim`
+- исходному чанку `BfydTxiPbGY34pejscBytYSXpBsk9gWA2ixKoAe7VsVw` на шарде `11` в блоке `194623170`
+- чанку первой receipt `FJWpAYzVXbZwqJUbGXELTnnBBkdvc6W8vWkwuUA3Zwz9` на шарде `11` в блоке `194623171`
+- сгенерированной `Transfer`-receipt `TtRn4DzLKzFmGEn5YqoZ35ts411Hz6Ci6WQMjphPMn4`
+- конечному чанку `EPauY1GBaeAgGf1TikxFcPUhmYsVhLf1cwy14vAYsUuU` на шарде `6` в блоке `194623172`
 
     Стратегия
-    Одно чтение factory перечисляет token-контракты. Ещё два небольших view-вызова по одному токену показывают, что это за токен и сколько его сейчас на NEAR.
+    Сначала восстановите receipt-цепочку, потом напрямую посмотрите на сгенерированную receipt, а затем привяжите каждый шаг к тому чанку на шарде, который действительно нёс эту работу.
 
-    01RPC call_function get_tokens_accounts по factory.bridge.near возвращает развёрнутые bridged token-контракты.
-    02Следующий RPC call_function по одному bridged token-контракту возвращает метаданные токена: имя, тикер и число десятичных знаков.
-    03Ещё один RPC call_function по тому же контракту возвращает текущее сырое значение объёма в обращении на NEAR.
+    01RPC EXPERIMENTAL_tx_status быстро показывает граф receipts и в какие следующие блоки перешла работа.
+    02RPC EXPERIMENTAL_receipt позволяет посмотреть на тело сгенерированной receipt напрямую, а не выводить его только из логов.
+    03RPC chunk по блоку и шарду или по хешу чанка доказывает, какая именно единица исполнения на шарде нёсла каждый шаг.
+
+Оба experimental-метода здесь очень уместны: `EXPERIMENTAL_tx_status` быстро находит граф receipts, а `EXPERIMENTAL_receipt` показывает тело сгенерированной receipt ещё до того, как вы привяжете её обратно к чанкам.
+
+```mermaid
+flowchart LR
+    A["Tx 8xrc...<br/>блок 194623170<br/>чанк Bfyd...<br/>шард 11"] --> B["Receipt AFC2...<br/>блок 194623171<br/>чанк FJWp...<br/>шард 11<br/>логи ft_mint"]
+    B --> C["Сгенерированная receipt TtRn...<br/>Transfer 1800930478788300000000 yoctoNEAR"]
+    C --> D["Чанк EPau...<br/>блок 194623172<br/>шард 6<br/>receipt исполняется"]
+```
 
 **Что вы делаете**
 
-- Спрашиваете у bridge factory обо всех bridged token-контрактах, которые она создала.
-- Выбираете один bridged token-контракт и читаете его метаданные.
-- Читаете total supply того же контракта и переводите его в человеческие единицы через `decimals`.
+- Сначала восстанавливаете receipt-цепочку из транзакции.
+- Напрямую смотрите на тело сгенерированной `Transfer`-receipt.
+- Используете координаты блока и шарда там, где они уже известны.
+- Используете хеш чанка там, где другой инструмент уже выдал точный конечный чанк.
 
 ```bash
 export NETWORK_ID=mainnet
 export RPC_URL=https://rpc.mainnet.fastnear.com
-export FACTORY_ID=factory.bridge.near
-export TOKENS_FILE=/tmp/rainbow-bridge-tokens.json
+export TX_HASH=8xrcQU6Sr1jhnigenBbpfGzk9jN24rLmMqSWT7TF7xJP
+export SIGNER_ACCOUNT_ID=7419369993.tg
+export ORIGIN_BLOCK_HEIGHT=194623170
+export ORIGIN_SHARD_ID=11
+export RECEIPT_BLOCK_HEIGHT=194623171
+export RECEIPT_SHARD_ID=11
+export GENERATED_RECEIPT_ID=TtRn4DzLKzFmGEn5YqoZ35ts411Hz6Ci6WQMjphPMn4
+export DESTINATION_CHUNK_HASH=EPauY1GBaeAgGf1TikxFcPUhmYsVhLf1cwy14vAYsUuU
 ```
 
-1. Получите список bridged token-контрактов.
+1. Начните с `EXPERIMENTAL_tx_status`, чтобы сначала увидеть граф receipts, а уже потом думать о чанках.
 
 ```bash
 curl -s "$RPC_URL" \
   -H 'content-type: application/json' \
-  --data "$(jq -nc --arg account_id "$FACTORY_ID" '{
-    jsonrpc: "2.0",
-    id: "fastnear",
-    method: "query",
-    params: {
-      request_type: "call_function",
-      account_id: $account_id,
-      method_name: "get_tokens_accounts",
-      args_base64: "e30=",
-      finality: "final"
-    }
-  }')" \
-  | tee "$TOKENS_FILE" >/dev/null
+  --data "$(jq -nc \
+    --arg tx_hash "$TX_HASH" \
+    --arg signer_account_id "$SIGNER_ACCOUNT_ID" '{
+      jsonrpc: "2.0",
+      id: "fastnear",
+      method: "EXPERIMENTAL_tx_status",
+      params: [$tx_hash, $signer_account_id]
+    }')" \
+  | tee /tmp/chunk-trace-status.json >/dev/null
 
-jq -r '.result.result | implode | fromjson | .[]' "$TOKENS_FILE"
+jq '{
+  final_execution_status: .result.final_execution_status,
+  transaction_handoff: .result.transaction_outcome.outcome.status,
+  receipts: (
+    .result.receipts_outcome
+    | map({
+        receipt_id: .id,
+        executor_id: .outcome.executor_id,
+        block_hash,
+        status: .outcome.status
+      })
+  )
+}' /tmp/chunk-trace-status.json
 ```
 
-Каждая строка — это один bridged FT-контракт на NEAR в форме `<hex_eth_address>.factory.bridge.near`. Например, bridged ERC-20 USDT с Ethereum-адреса `0xdAC17F958D2ee523a2206206994597C13D831ec7` появляется как `dac17f958d2ee523a2206206994597c13d831ec7.factory.bridge.near`.
+На что смотреть:
 
-2. Прочитайте метаданные одного токен-контракта.
+- подписанная транзакция передаёт работу в receipt `AFC2xUPuuA6BKMMvAV47LLPtzsg3Moh7frvLSuyMeZ2Y`
+- позже в том же графе receipts исполняется `TtRn4DzLKzFmGEn5YqoZ35ts411Hz6Ci6WQMjphPMn4` для `7419369993.tg`
+- уже одного tx status достаточно, чтобы увидеть: настоящая работа продолжилась после исходной подписанной транзакции
 
-```bash
-export TOKEN_ID=dac17f958d2ee523a2206206994597c13d831ec7.factory.bridge.near
-
-curl -s "$RPC_URL" \
-  -H 'content-type: application/json' \
-  --data "$(jq -nc --arg account_id "$TOKEN_ID" '{
-    jsonrpc: "2.0",
-    id: "fastnear",
-    method: "query",
-    params: {
-      request_type: "call_function",
-      account_id: $account_id,
-      method_name: "ft_metadata",
-      args_base64: "e30=",
-      finality: "final"
-    }
-  }')" \
-  | tee /tmp/rainbow-bridge-token-metadata.json >/dev/null
-
-jq '.result.result | implode | fromjson | {name, symbol, decimals}' /tmp/rainbow-bridge-token-metadata.json
-```
-
-3. Прочитайте текущий total supply на NEAR и переведите его в человеческие единицы.
+2. Посмотрите на сгенерированную receipt напрямую, чтобы доказать, что это действительно `Transfer`-receipt.
 
 ```bash
 curl -s "$RPC_URL" \
   -H 'content-type: application/json' \
-  --data "$(jq -nc --arg account_id "$TOKEN_ID" '{
+  --data "$(jq -nc --arg receipt_id "$GENERATED_RECEIPT_ID" '{
     jsonrpc: "2.0",
     id: "fastnear",
-    method: "query",
+    method: "EXPERIMENTAL_receipt",
     params: {
-      request_type: "call_function",
-      account_id: $account_id,
-      method_name: "ft_total_supply",
-      args_base64: "e30=",
-      finality: "final"
+      receipt_id: $receipt_id
     }
   }')" \
-  | tee /tmp/rainbow-bridge-token-supply.json >/dev/null
+  | tee /tmp/chunk-trace-receipt.json >/dev/null
 
-RAW_SUPPLY="$(
-  jq -r '.result.result | implode | fromjson' /tmp/rainbow-bridge-token-supply.json
-)"
-
-DECIMALS="$(
-  jq -r '.result.result | implode | fromjson | .decimals' /tmp/rainbow-bridge-token-metadata.json
-)"
-
-HUMAN_SUPPLY="$(
-  python3 - "$RAW_SUPPLY" "$DECIMALS" <<'PY'
-from decimal import Decimal
-
-raw = Decimal(sys.argv[1])
-decimals = int(sys.argv[2])
-human = raw / (Decimal(10) ** decimals)
-print(human)
-PY
-)"
-
-jq -n \
-  --arg token_id "$TOKEN_ID" \
-  --arg raw_supply "$RAW_SUPPLY" \
-  --argjson decimals "$DECIMALS" \
-  --arg human_supply "$HUMAN_SUPPLY" '{
-    token_id: $token_id,
-    raw_supply: $raw_supply,
-    decimals: $decimals,
-    human_supply: $human_supply
-  }'
+jq '{
+  predecessor_id: .result.predecessor_id,
+  receiver_id: .result.receiver_id,
+  signer_id: .result.receipt.Action.signer_id,
+  signer_public_key: .result.receipt.Action.signer_public_key,
+  actions: .result.receipt.Action.actions
+}' /tmp/chunk-trace-receipt.json
 ```
 
-Результат `ft_total_supply` приходит в минимальных единицах токена. Используйте `decimals` из ответа предыдущего шага, чтобы перевести его в человекочитаемый объём в обращении.
+Именно здесь история по шардам становится конкретной: эта цепочка исполнения контракта сгенерировала `Transfer` action receipt от `system` к `7419369993.tg` с депозитом `1800930478788300000000`.
 
-#### Необязательное расширение: показать первые несколько bridged token-ов с метаданными и объёмом в обращении
-
-Используйте это расширение, когда нужен быстрый sample-инвентарь и вы всё ещё хотите оставаться в RPC.
+3. Используйте `chunk` по блоку и шарду, чтобы найти исходную подписанную транзакцию на шарде `11`.
 
 ```bash
-export TOKEN_SAMPLE_COUNT=5
-
-python3 <<'PY'
-from decimal import Decimal
-
-TOKENS_FILE = os.environ["TOKENS_FILE"]
-LIMIT = int(os.environ.get("TOKEN_SAMPLE_COUNT", "5"))
-RPC_URL = os.environ["RPC_URL"]
-
-def decode_result(result):
-    return json.loads("".join(chr(b) for b in result))
-
-with open(TOKENS_FILE) as fh:
-    token_ids = decode_result(json.load(fh)["result"]["result"])[:LIMIT]
-
-def rpc_call(account_id, method_name):
-    payload = {
-        "jsonrpc": "2.0",
-        "id": "fastnear",
-        "method": "query",
-        "params": {
-            "request_type": "call_function",
-            "account_id": account_id,
-            "method_name": method_name,
-            "args_base64": "e30=",
-            "finality": "final",
-        },
-    }
-    import subprocess
-    raw = subprocess.check_output([
-        "curl", "-s", RPC_URL,
-        "-H", "content-type: application/json",
-        "--data", json.dumps(payload),
-    ], text=True)
-    return decode_result(json.loads(raw)["result"]["result"])
-
-print(f"{'token_id':<56} {'symbol':<12} {'decimals':>8} {'raw_supply':>24} {'human_supply':>24}  name")
-for token_id in token_ids:
-    metadata = rpc_call(token_id, "ft_metadata")
-    raw_supply = rpc_call(token_id, "ft_total_supply")
-    human_supply = Decimal(raw_supply) / (Decimal(10) ** metadata["decimals"])
-    print(
-        f"{token_id:<56} "
-        f"{metadata['symbol']:<12} "
-        f"{metadata['decimals']:>8} "
-        f"{raw_supply:>24} "
-        f"{str(human_supply):>24}  "
-        f"{metadata['name']}"
-    )
-PY
+curl -s "$RPC_URL" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc \
+    --argjson block_id "$ORIGIN_BLOCK_HEIGHT" \
+    --argjson shard_id "$ORIGIN_SHARD_ID" '{
+      jsonrpc: "2.0",
+      id: "fastnear",
+      method: "chunk",
+      params: {
+        block_id: $block_id,
+        shard_id: $shard_id
+      }
+    }')" \
+  | jq --arg tx_hash "$TX_HASH" '{
+      header: {
+        chunk_hash: .result.header.chunk_hash,
+        shard_id: .result.header.shard_id,
+        height_created: .result.header.height_created
+      },
+      matching_transaction: (
+        .result.transactions[]
+        | select(.hash == $tx_hash)
+        | {
+            hash,
+            signer_id,
+            receiver_id
+          }
+      )
+    }'
 ```
+
+Это самый чистый use case для `chunk` по блоку и шарду: координаты уже известны, а вам нужна точная единица исполнения на шарде, которая несла исходную подписанную транзакцию.
+
+4. Оставайтесь на том же маршруте и посмотрите, как первая receipt исполняется в следующем блоке на том же шарде.
+
+```bash
+curl -s "$RPC_URL" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc \
+    --argjson block_id "$RECEIPT_BLOCK_HEIGHT" \
+    --argjson shard_id "$RECEIPT_SHARD_ID" '{
+      jsonrpc: "2.0",
+      id: "fastnear",
+      method: "chunk",
+      params: {
+        block_id: $block_id,
+        shard_id: $shard_id
+      }
+    }')" \
+  | jq '{
+      header: {
+        chunk_hash: .result.header.chunk_hash,
+        shard_id: .result.header.shard_id,
+        height_created: .result.header.height_created,
+        tx_root: .result.header.tx_root,
+        gas_used: .result.header.gas_used
+      },
+      tx_count: (.result.transactions | length),
+      receipt_count: (.result.receipts | length),
+      matching_receipt: (
+        .result.receipts[]
+        | select(.receipt_id == "AFC2xUPuuA6BKMMvAV47LLPtzsg3Moh7frvLSuyMeZ2Y")
+        | {
+            receipt_id,
+            predecessor_id,
+            receiver_id
+          }
+      )
+    }'
+```
+
+Вот здесь chunks наконец становятся естественными:
+
+- у чанка `tx_root = 11111111111111111111111111111111`
+- `tx_count` равен `0`
+- но шард всё равно жжёт gas и исполняет receipt `AFC2...`
+
+То есть этот шард реально сделал работу в этом блоке, хотя новая подписанная транзакция прямо в самом чанке не появилась.
+
+5. Переключайтесь на `chunk` по хешу, когда другой инструмент уже выдал точный конечный чанк.
+
+```bash
+curl -s "$RPC_URL" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc --arg chunk_id "$DESTINATION_CHUNK_HASH" '{
+    jsonrpc: "2.0",
+    id: "fastnear",
+    method: "chunk",
+    params: {
+      chunk_id: $chunk_id
+    }
+  }')" \
+  | jq --arg receipt_id "$GENERATED_RECEIPT_ID" '{
+      header: {
+        chunk_hash: .result.header.chunk_hash,
+        shard_id: .result.header.shard_id,
+        height_created: .result.header.height_created,
+        tx_root: .result.header.tx_root,
+        gas_used: .result.header.gas_used
+      },
+      tx_count: (.result.transactions | length),
+      receipt_count: (.result.receipts | length),
+      matching_receipt: (
+        .result.receipts[]
+        | select(.receipt_id == $receipt_id)
+        | {
+            receipt_id,
+            predecessor_id,
+            receiver_id
+          }
+      )
+    }'
+```
+
+Это и подтверждает cross-shard hop:
+
+- сгенерированная `Transfer`-receipt исполняется в чанке `EPau...`
+- этот чанк живёт на шарде `6`, а не на шарде `11`
+- подписанная транзакция стартовала на одном шарде, а следующая receipt завершилась уже на другом
 
 **Зачем нужен следующий шаг?**
 
-Оставайтесь в RPC, пока вопрос звучит как «какие bridged token-контракты существуют и сколько одного такого токена сейчас в обращении?» Factory — это источник истины для множества bridged token-ов, а каждый token-контракт сам отвечает за свои метаданные и объём в обращении через стандартные NEP-141 view-методы. Если следующий вопрос становится «кто держит этот токен?», переключайтесь на [V1 FT Top Holders](https://docs.fastnear.com/ru/api/v1/ft-top), а не пытайтесь обходить holders через RPC.
+Используйте [Chunk by Block and Shard](https://docs.fastnear.com/ru/rpc/protocol/chunk-by-block-shard), когда вы знаете координаты блока и шарда и хотите буквально спросить: «что этот шард исполнил в этом блоке?» Используйте [Chunk by Hash](https://docs.fastnear.com/ru/rpc/protocol/chunk-by-hash), когда другой инструмент уже выдал точный хеш чанка. Используйте [EXPERIMENTAL_tx_status](https://docs.fastnear.com/ru/rpc/transaction/experimental-tx-status) и [EXPERIMENTAL_receipt](https://docs.fastnear.com/ru/rpc/transaction/experimental-receipt), когда настоящий вопрос относится к трассировке на уровне receipts. Если ещё нужны state changes и produced receipts, расширяйтесь в [Block Shard](https://docs.fastnear.com/ru/neardata/block-shard).
+
+## Точные чтения NEAR Social и BOS
+
+Эти сценарии остаются на точных чтениях SocialDB и on-chain-проверках готовности, пока вопрос не становится историческим.
+
+### Может ли этот аккаунт прямо сейчас публиковать в NEAR Social?
+
+Используйте этот сценарий, когда история звучит так: «я собираюсь опубликовать изменение профиля, обновление виджета или запись в графе под `mike.near` и хочу получить простой ответ “готово / не готово” ещё до открытия окна подписи».
+
+    Стратегия
+    Спросите у social.near ровно о двух вещах, которые важны до подписи.
+
+    01RPC view_account проверяет, что signer-аккаунт вообще существует и может отправить транзакцию.
+    02RPC call_function get_account_storage показывает, осталось ли у целевого аккаунта место на social.near.
+    03RPC call_function is_write_permission_granted нужен только тогда, когда писать пытается другой signer.
+
+Именно на такие вопросы и должен ответить клиент NEAR Social перед записью:
+
+- есть ли у целевого аккаунта storage на `social.near`?
+- если есть, осталось ли там ещё место?
+- если писать под этим аккаунтом пытается другой signer, выдано ли ему право на запись заранее?
+
+**Официальные ссылки**
+
+- [API SocialDB и поверхность контракта](https://github.com/NearSocial/social-db#api)
+
+**Что вы делаете**
+
+- Проверяете, что аккаунт signer вообще существует и способен оплатить gas.
+- Спрашиваете у `social.near`, сколько storage осталось у аккаунта, под которым вы хотите писать.
+- Если signer отличается от целевого аккаунта, отдельно спрашиваете у `social.near`, разрешена ли уже такая делегированная запись.
+- Превращаете точные RPC-ответы в один понятный итог: «можно писать сейчас» или «сначала устраните блокер».
+
+```bash
+export NETWORK_ID=mainnet
+export RPC_URL=https://rpc.mainnet.fastnear.com
+export SOCIAL_CONTRACT_ID=social.near
+export ACCOUNT_ID=mike.near
+export SIGNER_ACCOUNT_ID=mike.near
+```
+
+1. Сначала проверьте сам аккаунт signer.
+
+```bash
+curl -s "$RPC_URL" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc --arg account_id "$SIGNER_ACCOUNT_ID" '{
+    jsonrpc: "2.0",
+    id: "fastnear",
+    method: "query",
+    params: {
+      request_type: "view_account",
+      account_id: $account_id,
+      finality: "final"
+    }
+  }')" \
+  | tee /tmp/social-publish-signer.json >/dev/null
+
+jq --arg signer_account_id "$SIGNER_ACCOUNT_ID" '{
+  signer_account_id: $signer_account_id,
+  amount: .result.amount,
+  locked: .result.locked,
+  storage_usage: .result.storage_usage
+}' /tmp/social-publish-signer.json
+```
+
+Если этот запрос падает, рабочего signer-аккаунта у вас нет. Если проходит, значит signer существует и хотя бы может оплатить gas.
+
+2. Спросите у `social.near`, сколько storage уже доступно для аккаунта, под которым вы хотите писать.
+
+```bash
+SOCIAL_STORAGE_ARGS_BASE64="$(
+  jq -nc --arg account_id "$ACCOUNT_ID" '{
+    account_id: $account_id
+  }' | base64 | tr -d '\n'
+)"
+
+curl -s "$RPC_URL" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc \
+    --arg account_id "$SOCIAL_CONTRACT_ID" \
+    --arg args_base64 "$SOCIAL_STORAGE_ARGS_BASE64" '{
+      jsonrpc: "2.0",
+      id: "fastnear",
+      method: "query",
+      params: {
+        request_type: "call_function",
+        account_id: $account_id,
+        method_name: "get_account_storage",
+        args_base64: $args_base64,
+        finality: "final"
+      }
+    }')" \
+  | tee /tmp/social-account-storage.json >/dev/null
+
+jq --arg account_id "$ACCOUNT_ID" '{
+  account_id: $account_id,
+  storage: (.result.result | implode | fromjson),
+  storage_ready: ((.result.result | implode | fromjson | .available_bytes) > 0)
+}' /tmp/social-account-storage.json
+```
+
+Если `available_bytes` больше нуля, значит storage не является блокером. Если метод вернул `null` или `available_bytes` равен нулю, аккаунту нужен `storage_deposit`, иначе новая запись не ляжет.
+
+3. Если signer отличается от целевого аккаунта, отдельно проверьте и делегированное право на запись.
+
+```bash
+if [ "$SIGNER_ACCOUNT_ID" = "$ACCOUNT_ID" ]; then
+  jq -n --arg account_id "$ACCOUNT_ID" '{
+    account_id: $account_id,
+    signer_matches_target: true,
+    permission_granted: true,
+    reason: "owner write"
+  }'
+else
+  WRITE_PERMISSION_ARGS_BASE64="$(
+    jq -nc \
+      --arg predecessor_id "$SIGNER_ACCOUNT_ID" \
+      --arg key "$ACCOUNT_ID" '{
+        predecessor_id: $predecessor_id,
+        key: $key
+      }' | base64 | tr -d '\n'
+  )"
+
+  curl -s "$RPC_URL" \
+    -H 'content-type: application/json' \
+    --data "$(jq -nc \
+      --arg account_id "$SOCIAL_CONTRACT_ID" \
+      --arg args_base64 "$WRITE_PERMISSION_ARGS_BASE64" '{
+        jsonrpc: "2.0",
+        id: "fastnear",
+        method: "query",
+        params: {
+          request_type: "call_function",
+          account_id: $account_id,
+          method_name: "is_write_permission_granted",
+          args_base64: $args_base64,
+          finality: "final"
+        }
+      }')" \
+    | jq '{
+        signer_matches_target: false,
+        permission_granted: (.result.result | implode | fromjson)
+      }'
+fi
+```
+
+4. Сведите проверку storage и разрешения в один читаемый итог.
+
+```bash
+AVAILABLE_BYTES="$(
+  jq -r '
+    .result.result
+    | if length == 0 then "0"
+      else (implode | fromjson | .available_bytes // 0 | tostring)
+      end
+  ' /tmp/social-account-storage.json
+)"
+
+if [ "$SIGNER_ACCOUNT_ID" = "$ACCOUNT_ID" ]; then
+  PERMISSION_GRANTED=true
+else
+  PERMISSION_GRANTED="$(
+    curl -s "$RPC_URL" \
+      -H 'content-type: application/json' \
+      --data "$(jq -nc \
+        --arg account_id "$SOCIAL_CONTRACT_ID" \
+        --arg args_base64 "$WRITE_PERMISSION_ARGS_BASE64" '{
+          jsonrpc: "2.0",
+          id: "fastnear",
+          method: "query",
+          params: {
+            request_type: "call_function",
+            account_id: $account_id,
+            method_name: "is_write_permission_granted",
+            args_base64: $args_base64,
+            finality: "final"
+          }
+        }')" \
+      | jq -r '.result.result | implode | fromjson'
+  )"
+fi
+
+jq -n \
+  --arg account_id "$ACCOUNT_ID" \
+  --arg signer_account_id "$SIGNER_ACCOUNT_ID" \
+  --argjson available_bytes "$AVAILABLE_BYTES" \
+  --argjson permission_granted "$PERMISSION_GRANTED" '{
+    account_id: $account_id,
+    signer_account_id: $signer_account_id,
+    storage_ready: ($available_bytes > 0),
+    permission_ready: $permission_granted,
+    ready_to_publish_now: (($available_bytes > 0) and $permission_granted)
+  }'
+```
+
+Если в этом итоговом объекте `ready_to_publish_now: true`, RPC уже дал ответ на вопрос. Если `false`, вы точно знаете, в чём блокер: в storage, в делегированном разрешении или сразу в обоих местах.
+
+**Зачем нужен следующий шаг?**
+
+Весь вопрос остаётся на точных on-chain-чтениях. Именно `social.near` отвечает, осталось ли место у целевого аккаунта и разрешён ли уже делегированный signer. Для проверки готовности к записи в NEAR Social это надёжнее, чем гадать по одному только состоянию кошелька.
+
+### Что прямо сейчас содержит `mob.near/widget/Profile`?
+
+Используйте этот сценарий, когда вопрос простой: «покажи живой исходник `mob.near/widget/Profile`, скажи, когда этот ключ виджета последний раз переписывали, и оставь меня на точных RPC-чтениях».
+
+    Стратегия
+    Оставайтесь на точных чтениях SocialDB и расширяйтесь в историю только тогда, когда вопрос уже стал форензикой.
+
+    01RPC call_function keys показывает каталог виджетов и блоки последней записи под mob.near/widget/*.
+    02RPC call_function get читает точный исходник widget/Profile.
+    03Если следующий вопрос становится «какая транзакция это записала?», переходите к доказательству записи виджета в /tx/examples.
+
+**Официальные ссылки**
+
+- [API SocialDB и поверхность контракта](https://github.com/NearSocial/social-db#api)
+
+**Что вы делаете**
+
+- Спрашиваете у `social.near` каталог виджетов под `mob.near`.
+- Сохраняете высоты блоков, чтобы понимать, когда каждый ключ виджета менялся в последний раз.
+- Подтверждаете, что `Profile` действительно есть в каталоге, и читаете его точный исходник через тот же контракт.
+- Если следующий вопрос уже звучит как «какая транзакция записала этот виджет?», переходите к сценариям-доказательствам в [Transactions Examples](https://docs.fastnear.com/ru/tx/examples).
+
+```bash
+export NETWORK_ID=mainnet
+export RPC_URL=https://rpc.mainnet.fastnear.com
+export SOCIAL_CONTRACT_ID=social.near
+export ACCOUNT_ID=mob.near
+export WIDGET_NAME=Profile
+```
+
+1. Получите каталог виджетов и сохраните высоты блоков последней записи.
+
+```bash
+WIDGET_KEYS_ARGS_BASE64="$(
+  jq -nc --arg account_id "$ACCOUNT_ID" '{
+    keys: [($account_id + "/widget/*")],
+    options: {return_type: "BlockHeight"}
+  }' | base64 | tr -d '\n'
+)"
+
+curl -s "$RPC_URL" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc \
+    --arg account_id "$SOCIAL_CONTRACT_ID" \
+    --arg args_base64 "$WIDGET_KEYS_ARGS_BASE64" '{
+      jsonrpc: "2.0",
+      id: "fastnear",
+      method: "query",
+      params: {
+        request_type: "call_function",
+        account_id: $account_id,
+        method_name: "keys",
+        args_base64: $args_base64,
+        finality: "final"
+      }
+    }')" \
+  | tee /tmp/social-widget-keys.json >/dev/null
+
+jq --arg account_id "$ACCOUNT_ID" '
+  .result.result
+  | implode
+  | fromjson
+  | .[$account_id].widget
+  | to_entries
+  | sort_by(.value * -1)
+  | map({
+      widget_name: .key,
+      last_write_block: .value
+    })
+  | .[0:20]
+' /tmp/social-widget-keys.json
+```
+
+2. Подтвердите, что `Profile` действительно есть в каталоге, и распечатайте точный исходник, который хранится в SocialDB.
+
+```bash
+WIDGET_GET_ARGS_BASE64="$(
+  jq -nc \
+    --arg account_id "$ACCOUNT_ID" \
+    --arg widget_name "$WIDGET_NAME" '{
+      keys: [($account_id + "/widget/" + $widget_name)]
+    }' | base64 | tr -d '\n'
+)"
+
+curl -s "$RPC_URL" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc \
+    --arg account_id "$SOCIAL_CONTRACT_ID" \
+    --arg args_base64 "$WIDGET_GET_ARGS_BASE64" '{
+      jsonrpc: "2.0",
+      id: "fastnear",
+      method: "query",
+      params: {
+        request_type: "call_function",
+        account_id: $account_id,
+        method_name: "get",
+        args_base64: $args_base64,
+        finality: "final"
+      }
+    }')" \
+  | tee /tmp/social-widget-source.json >/dev/null
+
+jq -r \
+  --arg account_id "$ACCOUNT_ID" \
+  --arg widget_name "$WIDGET_NAME" '
+    .result.result
+    | implode
+    | fromjson
+    | .[$account_id].widget[$widget_name]
+    | split("\n")[0:25]
+    | join("\n")
+  ' /tmp/social-widget-source.json
+```
+
+3. Заберите высоту последней записи для этого же виджета, чтобы оставить себе один полезный исторический якорь.
+
+```bash
+jq -r \
+  --arg account_id "$ACCOUNT_ID" \
+  --arg widget_name "$WIDGET_NAME" '
+    .result.result
+    | implode
+    | fromjson
+    | .[$account_id].widget[$widget_name]
+  ' /tmp/social-widget-keys.json \
+  | xargs -I{} printf 'Last write block for %s/%s: %s\n' "$ACCOUNT_ID" "$WIDGET_NAME" "{}"
+```
+
+На момент написания живая высота последней записи для `mob.near/widget/Profile` была `86494825`. Сохраните этот блок, если позже понадобится доказать, какая транзакция записала именно эту версию.
+
+**Зачем нужен следующий шаг?**
+
+Иногда правильный RPC-ответ очень простой: вот виджет, вот его живой исходник, и вот высота блока, которую стоит сохранить, если позже понадобится provenance.
+
+## Частые задачи
+
+### Проверить точное состояние аккаунта или ключа доступа
+
+**Начните здесь**
+
+- [View Account](https://docs.fastnear.com/ru/rpc/account/view-account) для точных полей аккаунта.
+- [View Access Key](https://docs.fastnear.com/ru/rpc/account/view-access-key) или [View Access Key List](https://docs.fastnear.com/ru/rpc/account/view-access-key-list) для проверки ключей.
+
+**Следующая страница при необходимости**
+
+- [FastNear API full account view](https://docs.fastnear.com/ru/api/v1/account-full), если после проверки точного RPC-состояния нужна ещё и понятная сводка по активам.
+- [Transactions API account history](https://docs.fastnear.com/ru/tx/account), если следующий вопрос звучит как «что этот аккаунт делал недавно?»
+
+**Остановитесь, когда**
+
+- Поля RPC уже отвечают на вопрос о состоянии или правах доступа.
+
+**Переходите дальше, когда**
+
+- Пользователю нужны балансы, NFT, стейкинг или другая понятная сводка по аккаунту.
+- Пользователя интересует не текущее состояние, а недавняя история активности.
+
+### Трассировать исполнение на уровне шарда через чанки
+
+**Начните здесь**
+
+- Начните с примера выше, если настоящий вопрос звучит как «какой чанк или шард вообще исполнил эту receipt?»
+- [Chunk by Block and Shard](https://docs.fastnear.com/ru/rpc/protocol/chunk-by-block-shard), когда координаты блока и шарда уже известны.
+- [Chunk by Hash](https://docs.fastnear.com/ru/rpc/protocol/chunk-by-hash), когда другой инструмент уже выдал точный хеш чанка.
+
+**Следующая страница при необходимости**
+
+- [Experimental Receipt](https://docs.fastnear.com/ru/rpc/transaction/experimental-receipt), если нужно само тело сгенерированной receipt.
+- [Block Shard](https://docs.fastnear.com/ru/neardata/block-shard), если chunk payload уже недостаточен и ещё нужны state changes или produced receipts.
+- [Transactions Examples](https://docs.fastnear.com/ru/tx/examples), если вопрос превращается в более широкое async- или callback-расследование.
+
+**Остановитесь, когда**
+
+- Уже можно назвать, какой именно чанк и какой шард несли ту работу, которая была важна.
+
+**Переходите дальше, когда**
+
+- Пользователю нужны уже не детали исполнения на уровне шарда, а читаемая история транзакции. Тогда переходите к [Transactions API](https://docs.fastnear.com/ru/tx).
+
+### Проверить один точный блок или снимок состояния протокола
+
+**Начните здесь**
+
+- [Block by ID](https://docs.fastnear.com/ru/rpc/block/block-by-id) или [Block by Height](https://docs.fastnear.com/ru/rpc/block/block-by-height), когда вы уже знаете, какой именно блок вас интересует.
+- [Latest Block](https://docs.fastnear.com/ru/rpc/protocol/latest-block), когда вопрос звучит как «какая сейчас голова цепочки?»
+- [Status](https://docs.fastnear.com/ru/rpc/protocol/status), [Health](https://docs.fastnear.com/ru/rpc/protocol/health) или [Network Info](https://docs.fastnear.com/ru/rpc/protocol/network-info), когда настоящий вопрос относится к состоянию узла или сети, а не к истории транзакций.
+
+**Следующая страница при необходимости**
+
+- [Block Effects](https://docs.fastnear.com/ru/rpc/block/block-effects), если ответ по блоку уже говорит, какой это блок, но всё ещё не объясняет, что в нём изменилось.
+- [Transactions API block history](https://docs.fastnear.com/ru/tx/block) или [Transactions API block range](https://docs.fastnear.com/ru/tx/blocks), если вопрос превращается в «что вообще происходило вокруг этого блока?», а не только «что говорит payload этого блока?»
+
+**Остановитесь, когда**
+
+- Один точный ответ по блоку или протоколу уже напрямую отвечает на вопрос.
+
+**Переходите дальше, когда**
+
+- Нужно следить за появлением новых блоков, а не разбирать один точный снимок. Переходите к [NEAR Data API](https://docs.fastnear.com/ru/neardata).
+- Нужна читаемая история по многим транзакциям, а не только payload одного блока. Переходите к [Transactions API](https://docs.fastnear.com/ru/tx).
+
+### Что этот контракт возвращает прямо сейчас?
+
+**Начните здесь**
+
+- Начните с примера со счётчиком выше, если настоящий выбор звучит как «мне нужен `call_function` или `view_state`?» или «можно ли прочитать storage напрямую вместо вызова метода?»
+- [Call Function](https://docs.fastnear.com/ru/rpc/contract/call-function), когда вы уже знаете нужный view-метод и хотите просто получить его точный результат.
+- [View State](https://docs.fastnear.com/ru/rpc/contract/view-state), когда настоящий вопрос относится к сырому хранилищу контракта или key prefix, а не к результату метода.
+- [View Code](https://docs.fastnear.com/ru/rpc/contract/view-code), когда настоящий вопрос звучит как «есть ли здесь код вообще?» или «какой code hash здесь развёрнут?»
+
+**Следующая страница при необходимости**
+
+- [FastNear API](https://docs.fastnear.com/ru/api), если сырой ответ контракта технически правильный, но пользователю на самом деле нужна читаемая сводка по активам или аккаунту.
+- [KV FastData API](https://docs.fastnear.com/ru/fastdata/kv), если следующий вопрос уже звучит как «как этот storage key выглядел со временем?», а не «что там лежит сейчас?»
+
+**Остановитесь, когда**
+
+- View-вызов, чтение хранилища или code hash уже дают точный ответ на вопрос по контракту.
+
+**Переходите дальше, когда**
+
+- Пользователю нужна индексированная история или более простое резюме вместо сырого ответа контракта.
+- Вопрос смещается от «что он возвращает сейчас?» к «что менялось со временем?»
+
+### Отправить транзакцию и подтвердить результат
+
+**Начните здесь**
+
+- Сначала поднимитесь к готовому примеру выше, если настоящий вопрос в том, какой эндпоинт отправки выбрать и как потом отслеживать транзакцию до завершения.
+- [Send Transaction](https://docs.fastnear.com/ru/rpc/transaction/send-tx), когда нужна RPC-отправка с явной семантикой ожидания.
+- [Broadcast Transaction Async](https://docs.fastnear.com/ru/rpc/transaction/broadcast-tx-async) или [Broadcast Transaction Commit](https://docs.fastnear.com/ru/rpc/transaction/broadcast-tx-commit), когда важны именно эти режимы отправки.
+- [Transaction Status](https://docs.fastnear.com/ru/rpc/transaction/tx-status), чтобы подтвердить финальный результат.
+
+**Следующая страница при необходимости**
+
+- [Transactions by Hash](https://docs.fastnear.com/ru/tx/transactions), если после отправки нужна более читаемая история по транзакции.
+- [Receipt Lookup](https://docs.fastnear.com/ru/tx/receipt), если нужно исследовать последующее исполнение или цепочку обратных вызовов.
+- [Transactions Examples](https://docs.fastnear.com/ru/tx/examples), если следующий вопрос звучит так: «одно действие в пакете транзакции упало, а ранние действия откатились или нет?»
+
+**Остановитесь, когда**
+
+- У вас уже есть результат отправки и нужный финальный статус.
+
+**Переходите дальше, когда**
+
+- Следующий вопрос относится к квитанциям, затронутым аккаунтам или истории исполнения в более человеческом порядке.
+- Нужен уже не единичный статус, а более широкий сценарий расследования.
 
 ## Частые ошибки
 
