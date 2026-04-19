@@ -2,7 +2,7 @@
 sidebar_label: Examples
 slug: /tx/examples
 title: Transactions Examples
-description: Plain-language transaction investigations for common developer jobs first, plus a few deeper case studies when you need them.
+description: Plain-language transaction investigations for common developer jobs first.
 displayed_sidebar: transactionsApiSidebar
 page_actions:
   - markdown
@@ -36,8 +36,6 @@ curl -s "$TX_BASE_URL/v0/transactions" \
 ```
 
 This is the shortest investigation on the page. Only move to RPC or receipt IDs if this output is not enough.
-
-If you want the longer case-study version of the same surface, jump to the [Berry Club case study](/tx/examples/berry-club) for historical board reconstruction or the [OutLayer case study](/tx/examples/outlayer) for worker and callback tracing.
 
 ## Start Here
 
@@ -1020,60 +1018,6 @@ jq --arg callback_receipt_id "$CALLBACK_RECEIPT_ID" '{
 
 For callback questions, the important proof is not “did every receipt succeed?” but “did the origin contract get its callback receipt back, and what happened there?” `POST /v0/transactions` gives the fastest readable answer. RPC is only the optional confirmation layer when you need the callback receipt's canonical outcome and logs.
 
-## Advanced and Case Studies
-
-The examples below are still useful, but they are longer or more specialized than the default start-here flows above. `Berry Club` and `OutLayer` live as separate case-study pages, the SocialDB provenance pattern now lives on its own advanced page, and the last example here keeps only a slim multi-contract follow-up pattern.
-
-### Advanced SocialDB provenance pattern
-
-If the readable fact already comes from `api.near.social`, keep the follow-up small: semantic value first, `:block` second, then FastNear block and transaction lookup. Use the [dedicated SocialDB provenance pattern page](/tx/socialdb-proofs) for one canonical example of that flow.
-
-### Advanced: which downstream contracts did this transaction touch?
-
-Use this when you already have one multi-contract tx hash and the next question is simply “which contracts did this call into after the top-level action?”
-
-This pinned mainnet anchor still makes a good example, even though it happens to be an `intents.near` settlement:
-
-- transaction hash: `4cfei8p4HBeNxJnCLjfShhDYGmXZwFVwFgY1sYpyygE7`
-- signer and receiver: `intents.near`
-- included block height: `194573310`
-
-The short answer for this tx is already useful:
-
-- the top-level method was `execute_intents`
-- early downstream receipts touched `v2_1.omni.hot.tg` and `bridge-refuel.hot.tg`
-- later logs included event families like `token_diff`, `intents_executed`, `mt_transfer`, `mt_withdraw`, and `mt_burn`
-
-For most questions, Transactions API is enough:
-
-```bash
-TX_BASE_URL=https://tx.main.fastnear.com
-TX_HASH=4cfei8p4HBeNxJnCLjfShhDYGmXZwFVwFgY1sYpyygE7
-
-curl -s "$TX_BASE_URL/v0/transactions" \
-  -H 'content-type: application/json' \
-  --data "$(jq -nc --arg tx_hash "$TX_HASH" '{tx_hashes: [$tx_hash]}')" \
-  | jq '{
-      transaction: {
-        hash: .transactions[0].transaction.hash,
-        signer_id: .transactions[0].transaction.signer_id,
-        receiver_id: .transactions[0].transaction.receiver_id,
-        method_name: .transactions[0].transaction.actions[0].FunctionCall.method_name
-      },
-      downstream_receivers: (
-        [.transactions[0].receipts[] | .receipt.receiver_id]
-        | unique
-      ),
-      first_logs: (
-        [.transactions[0].receipts[] | .execution_outcome.outcome.logs[]?]
-        | .[:5]
-      )
-    }'
-```
-
-If you need the containing block, widen once to Transactions API [`POST /v0/block`](/tx/block). If you need the canonical receipt DAG or raw `EVENT_JSON` logs, widen once more to RPC [`EXPERIMENTAL_tx_status`](/rpc/transaction/experimental-tx-status). The teaching point here is generic: start with one tx hash, list the downstream receivers, and stop unless the trace really needs more.
-
-
 ## Common mistakes
 
 - Trying to submit a transaction from the history API instead of raw RPC.
@@ -1087,5 +1031,8 @@ If you need the containing block, widen once to Transactions API [`POST /v0/bloc
 - [RPC Reference](/rpc)
 - [FastNear API](/api)
 - [NEAR Data API](/neardata)
+- [Berry Club: live board and one historical reconstruction path](/tx/examples/berry-club)
+- [OutLayer: pair one request tx with one worker resolution](/tx/examples/outlayer)
+- [Advanced SocialDB write lookup](/tx/socialdb-proofs)
 - [Choosing the Right Surface](/agents/choosing-surfaces)
 - [Agent Playbooks](/agents/playbooks)

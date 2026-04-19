@@ -29,8 +29,6 @@ curl -s "$TX_BASE_URL/v0/transactions" \
 
 Это самое короткое расследование на странице. Переходите к RPC или к receipt ID только если этого вывода уже мало.
 
-Если нужен более развёрнутый case study на той же поверхности, переходите к [Berry Club case study](https://docs.fastnear.com/ru/tx/examples/berry-club) для исторического восстановления доски или к [OutLayer case study](https://docs.fastnear.com/ru/tx/examples/outlayer) для трассировки воркера и callback-цепочки.
-
 ## С чего начать
 
 Здесь собраны самые маленькие полезные якоря на странице: сначала один tx hash, потом один receipt ID, и только затем более глубокая форензика.
@@ -982,59 +980,6 @@ jq --arg callback_receipt_id "$CALLBACK_RECEIPT_ID" '{
 
 Для вопросов про callback главный proof звучит не как «все ли receipt прошли успешно?», а как «получил ли исходный контракт свой callback-receipt обратно и что там случилось?» `POST /v0/transactions` даёт самый быстрый читаемый ответ. RPC нужен только как дополнительный слой подтверждения, если важны канонический результат callback-а и его логи.
 
-## Расширенные сценарии и case study
-
-Примеры ниже всё ещё полезны, но они длиннее или более специализированы, чем основные start-here-сценарии выше. `Berry Club` и `OutLayer` вынесены в отдельные case-study-страницы, паттерн provenance для SocialDB теперь живёт на отдельной расширенной странице, а последний пример здесь оставляет только компактный multi-contract follow-up.
-
-### Расширенный паттерн provenance для SocialDB
-
-Если читаемый факт уже приходит из `api.near.social`, держите follow-up маленьким: сначала семантическое значение, затем `:block`, потом lookup по блоку и транзакции в FastNear. Для одного канонического примера такого сценария используйте [отдельную страницу паттерна provenance для SocialDB](https://docs.fastnear.com/ru/tx/socialdb-proofs).
-
-### Расширенный сценарий: какие downstream-контракты затронула эта транзакция?
-
-Используйте этот сценарий, когда у вас уже есть один multi-contract tx hash и следующий вопрос звучит просто: «в какие контракты ушёл этот вызов после top-level action?»
-
-Этот зафиксированный mainnet-якорь по-прежнему хорошо подходит как пример, хотя сама транзакция и относится к `intents.near`:
-
-- хеш транзакции: `4cfei8p4HBeNxJnCLjfShhDYGmXZwFVwFgY1sYpyygE7`
-- аккаунт `signer` и `receiver`: `intents.near`
-- высота включающего блока: `194573310`
-
-Короткий ответ для этой tx уже полезен:
-
-- top-level метод был `execute_intents`
-- ранние downstream-receipt затронули `v2_1.omni.hot.tg` и `bridge-refuel.hot.tg`
-- в более поздних логах были семейства событий вроде `token_diff`, `intents_executed`, `mt_transfer`, `mt_withdraw` и `mt_burn`
-
-Для большинства вопросов достаточно Transactions API:
-
-```bash
-TX_BASE_URL=https://tx.main.fastnear.com
-TX_HASH=4cfei8p4HBeNxJnCLjfShhDYGmXZwFVwFgY1sYpyygE7
-
-curl -s "$TX_BASE_URL/v0/transactions" \
-  -H 'content-type: application/json' \
-  --data "$(jq -nc --arg tx_hash "$TX_HASH" '{tx_hashes: [$tx_hash]}')" \
-  | jq '{
-      transaction: {
-        hash: .transactions[0].transaction.hash,
-        signer_id: .transactions[0].transaction.signer_id,
-        receiver_id: .transactions[0].transaction.receiver_id,
-        method_name: .transactions[0].transaction.actions[0].FunctionCall.method_name
-      },
-      downstream_receivers: (
-        [.transactions[0].receipts[] | .receipt.receiver_id]
-        | unique
-      ),
-      first_logs: (
-        [.transactions[0].receipts[] | .execution_outcome.outcome.logs[]?]
-        | .[:5]
-      )
-    }'
-```
-
-Если нужен включающий блок, расширяйтесь один раз до Transactions API [`POST /v0/block`](https://docs.fastnear.com/ru/tx/block). Если нужен канонический DAG по receipt или сырые логи `EVENT_JSON`, расширяйтесь ещё на один шаг до RPC [`EXPERIMENTAL_tx_status`](https://docs.fastnear.com/ru/rpc/transaction/experimental-tx-status). Учебная идея здесь общая: начинайте с одного tx hash, перечислите downstream receiver-и и останавливайтесь, пока trace действительно не требует большего.
-
 ## Частые ошибки
 
 - Пытаться отправлять транзакцию через history API вместо сырого RPC.
@@ -1048,5 +993,8 @@ curl -s "$TX_BASE_URL/v0/transactions" \
 - [RPC Reference](https://docs.fastnear.com/ru/rpc)
 - [FastNear API](https://docs.fastnear.com/ru/api)
 - [NEAR Data API](https://docs.fastnear.com/ru/neardata)
+- [Berry Club: живая доска и один путь исторической реконструкции](https://docs.fastnear.com/ru/tx/examples/berry-club)
+- [OutLayer: связать одну транзакцию запроса с одним ответом воркера](https://docs.fastnear.com/ru/tx/examples/outlayer)
+- [Расширенный поиск записи SocialDB](https://docs.fastnear.com/ru/tx/socialdb-proofs)
 - [Choosing the Right Surface](https://docs.fastnear.com/ru/agents/choosing-surfaces)
 - [Agent Playbooks](https://docs.fastnear.com/ru/agents/playbooks)

@@ -2,7 +2,7 @@
 sidebar_label: Examples
 slug: /api/examples
 title: "Примеры API"
-description: "Пошаговые сценарии использования FastNear API для поиска аккаунтов, инвентаризации активов и классификации стейкинга."
+description: "Пошаговые сценарии использования FastNear API для поиска аккаунтов, инвентаризации активов и проверки прямого стейкинга."
 displayed_sidebar: fastnearApiSidebar
 page_actions:
   - markdown
@@ -144,7 +144,59 @@ jq '{
 
 **Зачем нужен следующий шаг?**
 
-Так вопрос остаётся узким и практическим. Если ответ `true`, следующий реальный шаг обычно связан с `unstake` или `withdraw` в конкретном пуле. Если ответ `false`, не делайте из этого примера выводов про liquid staking: этот сценарий касается только прямых пулов.
+Так вопрос остаётся узким и практическим. Если ответ `true`, важно помнить, что это значит на chain-уровне: аккаунт обычно делегировал средства в staking-pool-контракт вроде `polkachu.poolv1.near`, отправив `FunctionCall` наподобие `deposit_and_stake` с attached deposit. Сам `Stake` action позже выполняет уже сам pool-контракт на своём аккаунте. Если ответ `false`, не делайте из этого примера выводов про liquid staking: этот сценарий касается только прямых пулов.
+
+#### Необязательное продолжение: Что сделал этот контрактный вызов для делегирования?
+
+Используйте это продолжение, когда staking-эндпоинт уже показал пул вроде `polkachu.poolv1.near`, и теперь вы хотите увидеть форму одной реальной делегационной транзакции.
+
+Этот зафиксированный mainnet tx хорош тем, что очень ясно показывает весь паттерн:
+
+- хеш транзакции: `5Qo96GonLaAfuh6eHWdi8zPRk92TFW8W2xWqSAoYKBVz`
+- top-level receiver: `polkachu.poolv1.near`
+- top-level метод: `deposit_and_stake`
+- attached deposit: `34650000000000000000000000`
+
+Важная форма chain-истории здесь такая:
+
+- делегатор отправляет `FunctionCall deposit_and_stake` в pool-контракт
+- pool-контракт учитывает депозит и staking shares
+- затем pool выпускает self-receipt с настоящим `Stake` action
+
+```bash
+TX_BASE_URL=https://tx.main.fastnear.com
+TX_HASH=5Qo96GonLaAfuh6eHWdi8zPRk92TFW8W2xWqSAoYKBVz
+
+curl -s "$TX_BASE_URL/v0/transactions" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc --arg tx_hash "$TX_HASH" '{tx_hashes: [$tx_hash]}')" \
+  | tee /tmp/staking-delegation-tx.json >/dev/null
+
+jq '{
+  top_level_call: {
+    hash: .transactions[0].transaction.hash,
+    signer_id: .transactions[0].transaction.signer_id,
+    receiver_id: .transactions[0].transaction.receiver_id,
+    method_name: .transactions[0].transaction.actions[0].FunctionCall.method_name,
+    attached_deposit: .transactions[0].transaction.actions[0].FunctionCall.deposit
+  },
+  pool_side_effects: [
+    .transactions[0].receipts[]
+    | select(.receipt.receiver_id == "polkachu.poolv1.near")
+    | {
+        predecessor_id: .receipt.predecessor_id,
+        receiver_id: .receipt.receiver_id,
+        actions: (
+          .receipt.receipt.Action.actions
+          | map(if type == "string" then . else keys[0] end)
+        ),
+        first_logs: (.execution_outcome.outcome.logs[:3])
+      }
+  ]
+}' /tmp/staking-delegation-tx.json
+```
+
+Простой вывод здесь такой: делегатор не подписывал сырой `Stake` action напрямую. Он вызвал staking-pool-контракт через `deposit_and_stake` и приложил депозит, а затем уже pool-контракт сам выполнил `Stake` action на своём аккаунте.
 
 ### Какие FT-балансы и NFT-коллекции этот аккаунт сейчас показывает?
 

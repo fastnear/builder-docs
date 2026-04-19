@@ -1,8 +1,8 @@
 ---
-sidebar_label: OutLayer Case Study
+sidebar_label: OutLayer
 slug: /tx/examples/outlayer
-title: "OutLayer Case Study: Trace request and worker resolution"
-description: "A case study that uses Transactions API to pair one caller-side OutLayer request with one later worker-side resolution and inspect the finish receipts."
+title: "OutLayer: What did this request/resolution pair do?"
+description: "Use Transactions API to read one caller-side OutLayer request, one later worker-side resolution, and the finish receipts only when needed."
 displayed_sidebar: transactionsApiSidebar
 page_actions:
   - markdown
@@ -17,28 +17,22 @@ keywords:
 
 import Link from '@site/src/components/LocalizedLink';
 
-{/* FASTNEAR_AI_DISCOVERY: This case study stays on observable transaction and receipt evidence. It shows how to pair one caller-side OutLayer request with one later worker-side resolution and inspect the finish receipts. It does not try to prove OutLayer's internal TEE, yield/resume, or CKD/MPC architecture from public chain data alone. */}
+{/* FASTNEAR_AI_DISCOVERY: This walkthrough stays on observable transaction and receipt evidence. It shows how to read one caller-side OutLayer request together with one later worker-side resolution, then inspect the finish receipts only when needed. */}
 
-# OutLayer Case Study: Trace request and worker resolution
+# OutLayer: What did this request/resolution pair do?
 
-Use this case study when the question is: “Which transaction opened the OutLayer request, which later transaction came from the worker, and where did the finish receipts show callback, charging, or refund behavior?”
+Use this walkthrough when the question is: “What did this OutLayer request do, what later resolution belongs to it, and do I need to look at the finish receipts?”
 
-This page intentionally stays on public chain evidence only. It shows the caller transaction, the later worker transaction, and the finish receipts. It does not try to prove OutLayer’s internal TEE, `yield/resume`, or CKD/MPC architecture from chain traces alone.
+Stay on public chain evidence only: read the request tx, read the later resolution tx, and only then decide whether the finish receipts matter.
 
-Treat this as a transaction-history problem first:
-
-- one caller-side `request_execution`
-- one later worker-side `submit_execution_output_and_resolve` or `resolve_execution`
-- receipt-level follow-up only when the finish path matters
-
-## Verified shell walkthrough
+## Compact shell walkthrough
 
 This pair worked on April 18, 2026:
 
 - caller-side request: `AJgn2DB7BaD3487wXii8rGM648eqvkFDqJ1zXCxfuRk4`
 - worker-side resolution: `AVbxfPyN5P1ryFh7HPstWbjiSantPYWfMpiwKcJ7hXTs`
 
-### 1. Hydrate the caller transaction and the worker transaction together
+### 1. Main answer: hydrate the request tx and the resolution tx together
 
 ```bash
 TX_BASE_URL=https://tx.main.fastnear.com
@@ -59,16 +53,20 @@ jq '{
         hash: .transaction.hash,
         signer_id: .transaction.signer_id,
         receiver_id: .transaction.receiver_id,
-        actions: [.transaction.actions[] | keys[0]],
+        methods: [
+          .transaction.actions[]
+          | .FunctionCall.method_name?
+          | select(. != null)
+        ],
         first_logs: (.receipts[0].execution_outcome.outcome.logs[:2])
       }
   ]
 }' /tmp/outlayer-pair.json
 ```
 
-This gives you the core observable loop: caller-side request first, worker-side resolution later, with readable signer, method, and log evidence for both.
+This is the core answer: one request tx, one later resolution tx, and readable signer, receiver, method, and log evidence for both.
 
-### 2. Inspect the worker receipts only when the finish path matters
+### Optional follow-up: What did the finish path do?
 
 ```bash
 jq --arg worker_tx_hash "$WORKER_TX_HASH" '
@@ -90,15 +88,15 @@ jq --arg worker_tx_hash "$WORKER_TX_HASH" '
 ' /tmp/outlayer-pair.json
 ```
 
-Look for:
+Look for the smallest readable finish-path evidence:
 
 - `FunctionCall` receipts that continue the finish path
 - charging logs such as `[[yNEAR charged: "..."]]`
 - follow-up `Transfer` receipts that suggest refund or settlement movement
 
-This is the right point to care about receipts. Do not start here if the real question is still “which two transactions belong to the same OutLayer request?”
+Do not start here if the real question is still “which two transactions belong together?”
 
-### 3. If you do not already know the two hashes, discover them first
+### Optional: discover the two hashes first
 
 ```bash
 curl -sS "$TX_BASE_URL/v0/account" \
@@ -110,12 +108,10 @@ curl -sS "$TX_BASE_URL/v0/account" \
     }'
 ```
 
-Use this as a discovery surface only. For this example, `/v0/account` gives you candidate hashes, and `/v0/transactions` is the surface that turns those hashes into readable evidence.
+Use this only when you do not already know the pair. `/v0/account` gives you candidate hashes, and `/v0/transactions` is the surface that turns them into a readable answer.
 
-## Related pages
+## Related guides
 
 - <Link to="/tx/account">Transactions API: Account History</Link>
 - <Link to="/tx/transactions">Transactions API: Transactions by Hash</Link>
 - <Link to="/tx/receipt">Transactions API: Receipt by ID</Link>
-- [OutLayer NEAR Integration](https://outlayer.fastnear.com/docs/near-integration)
-- [OutLayer Secrets / CKD](https://outlayer.fastnear.com/docs/secrets)

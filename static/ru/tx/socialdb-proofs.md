@@ -1,8 +1,8 @@
 **Источник:** [https://docs.fastnear.com/ru/tx/socialdb-proofs](https://docs.fastnear.com/ru/tx/socialdb-proofs)
 
-# Расширенный паттерн provenance для SocialDB
+# Расширенный поиск записи SocialDB
 
-Используйте эту страницу только тогда, когда отправная точка уже является читаемым значением из `api.near.social`, а следующий вопрос относится к историческому provenance.
+Используйте эту страницу только тогда, когда отправная точка уже является читаемым значением из `api.near.social`, а следующий вопрос относится к историческому поиску записи.
 
 Для FastNear-first-задач сначала откройте [Transactions Examples](https://docs.fastnear.com/ru/tx/examples). Сюда переходите только тогда, когда вопрос уже звучит как "какая запись сделала это читаемое значение SocialDB истинным?"
 
@@ -121,71 +121,11 @@ jq '{
 }' /tmp/mike-profile-transaction.json
 ```
 
-4. Завершите каноническим подтверждением текущего состояния через raw RPC.
+Это и есть весь паттерн lookup-а: читаемое значение, block уровня поля, мост через receipt и payload транзакции.
 
-```bash
-SOCIAL_GET_ARGS_BASE64="$(
-  jq -nr --arg account_id "$ACCOUNT_ID" --arg profile_field "$PROFILE_FIELD" '{
-    keys: [($account_id + "/" + $profile_field)]
-  } | @base64'
-)"
+Тот же мост работает и для других читаемых значений SocialDB:
 
-curl -s "$RPC_URL" \
-  -H 'content-type: application/json' \
-  --data "$(jq -nc --arg args_base64 "$SOCIAL_GET_ARGS_BASE64" '{
-    jsonrpc: "2.0",
-    id: "fastnear",
-    method: "query",
-    params: {
-      request_type: "call_function",
-      account_id: "social.near",
-      method_name: "get",
-      args_base64: $args_base64,
-      finality: "final"
-    }
-  }')" \
-  | tee /tmp/mike-profile-rpc.json >/dev/null
+- вариант для связи подписки: `mike.near -> mob.near`, блок `79574924`, tx `FLLmTvFx9vCof79scy2uUviF5WwYmevkz9TZ8azPGVQb`
+- вариант для исходника виджета: `mob.near/widget/Profile`, блок `86494825`, tx `9QDupdK2ewMxfSvMmdGEkdBcVnoL4TexmXY2FnMRxfia`
 
-jq --arg account_id "$ACCOUNT_ID" '{
-  finality: "final",
-  current_name: (
-    .result.result
-    | implode
-    | fromjson
-    | .[$account_id].profile.name
-  )
-}' /tmp/mike-profile-rpc.json
-```
-
-Это и есть весь provenance-паттерн: читаемое значение, block уровня поля, мост через receipt, payload транзакции и затем необязательное подтверждение текущего состояния.
-
-## Тот же паттерн для других ключей SocialDB
-
-Используйте тот же мост каждый раз, когда у вас уже есть читаемое значение SocialDB и его write-block:
-
-1. Прочитайте семантическое значение и `:block` из NEAR Social или начните с уже известного блока записи виджета.
-2. Используйте Transactions API [`POST /v0/block`](https://docs.fastnear.com/ru/tx/block), чтобы восстановить receipt `*.near -> social.near` и хеш транзакции.
-3. Используйте Transactions API [`POST /v0/transactions`](https://docs.fastnear.com/ru/tx/transactions), чтобы декодировать payload `social.near set`.
-4. Используйте RPC [`query(call_function)`](https://docs.fastnear.com/ru/rpc/contract/call-function) только если всё ещё нужно каноническое подтверждение текущего состояния.
-
-### Вариант для связи подписки
-
-Тот же паттерн работает для читаемой связи подписки:
-
-- текущая связь: `mike.near -> mob.near`
-- блок записи SocialDB: `79574924`
-- receipt ID: `UiyiQaqHbkkMxkrB6rDkYr7X5EQLt8QG9MDATrES7Th`
-- хеш исходной транзакции: `FLLmTvFx9vCof79scy2uUviF5WwYmevkz9TZ8azPGVQb`
-
-Главное отличие от примера с профилем только в ключе и форме payload: читайте `mike.near/graph/follow/mob.near`, а затем декодируйте и `graph.follow`, и соответствующую запись `index.graph` из payload записи.
-
-### Вариант для исходника виджета
-
-Тот же паттерн снова работает, когда читаемый факт относится к ключу с исходником виджета:
-
-- ключ виджета: `mob.near/widget/Profile`
-- блок записи SocialDB: `86494825`
-- receipt ID: `CZyjiBjphzE95tFEqi1YH6eLCLhqknaW4SQ5R4L6pkC6`
-- хеш исходной транзакции: `9QDupdK2ewMxfSvMmdGEkdBcVnoL4TexmXY2FnMRxfia`
-
-Главное отличие здесь в том, что вы обычно стартуете с уже известного блока записи виджета, а затем декодируете `.data["mob.near"].widget.Profile[""]` из исходного payload `social.near set`.
+Ключевая идея не меняется: начните с читаемого значения и его write-block, восстановите receipt `*.near -> social.near` из блока, а затем декодируйте payload `social.near set` из исходной транзакции.

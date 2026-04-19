@@ -48,30 +48,22 @@ curl -s "$NEARDATA_BASE_URL$FINAL_LOCATION" \
 Используйте это расследование, когда вам нужен конкретный ответ “да / нет” ещё до перехода к Transactions API или RPC.
 
     Стратегия
-    Зафиксируйтесь на одном финализированном блоке, просканируйте всё семейство блока по целевому аккаунту, а затем оставьте только компактную сводку и идентификаторы, которые действительно стоит разбирать дальше.
+    Сначала ответьте на вопрос о контрактном touch, а затем оставьте только один tx hash или receipt id для следующего шага.
 
     01last-block-final даёт одну стабильную высоту блока без угадывания.
     02block — это главный read: он уже содержит транзакции, receipts, результаты исполнения receipts и изменения состояния, которых достаточно для ответа на вопрос «был ли контракт затронут?»
-    03Только если ответ «да», расширяйтесь дальше: сохраняйте найденные shard id, tx hash и receipt id, а затем передавайте именно эти идентификаторы в [Transactions API](https://docs.fastnear.com/ru/tx) или [RPC Reference](https://docs.fastnear.com/ru/rpc).
+    03Только если ответ «да», расширяйтесь дальше: сохраните один точный tx hash или receipt id из того же сохранённого блока, а затем передайте этот идентификатор в [Transactions API](https://docs.fastnear.com/ru/tx) или [RPC Reference](https://docs.fastnear.com/ru/rpc).
 
 **Цель**
 
-- Определить, был ли один целевой контракт затронут в последнем финализированном блоке, и оставить только shard id, счётчики и sample-идентификаторы для следующего шага.
-
-| Поверхность | Эндпоинт | Как используем | Зачем используем |
-| --- | --- | --- | --- |
-| Последняя стабильная точка | NEAR Data [`last-block-final`](https://docs.fastnear.com/ru/neardata/last-block-final) | Получаем высоту одного финализированного блока без угадывания | Даёт стабильную отправную точку для всего вопроса |
-| Всё семейство блока | NEAR Data [`block`](https://docs.fastnear.com/ru/neardata/block) | Сканируем транзакции, receipts, результаты исполнения receipts и изменения состояния по целевому аккаунту | Это главная поверхность ответа на вопрос «был ли затронут мой контракт?» |
-| Лёгкая сводка по блоку | NEAR Data [`block-headers`](https://docs.fastnear.com/ru/neardata/block-headers) | Используем, когда нужны только высота, хеш, время или заголовки чанков | Позволяет не тянуть более широкий payload блока, когда фильтрация по контракту не нужна |
-| Необязательный follow-up по шарду | NEAR Data [`block-chunk`](https://docs.fastnear.com/ru/neardata/block-chunk) или [`block-shard`](https://docs.fastnear.com/ru/neardata/block-shard) | Повторно открываем только затронутый шард, если нужен более глубокий payload | Полезно, когда вы уже знаете, какой шард mattered |
-| Точные поверхности для продолжения | [Transactions API](https://docs.fastnear.com/ru/tx) или [RPC Reference](https://docs.fastnear.com/ru/rpc) | Переиспользуем найденные tx hash или receipt id только если нужна полная история исполнения | NEAR Data позволяет сначала понять, нужен ли вообще переход дальше |
+- Определить, был ли один целевой контракт затронут в последнем финализированном блоке, и оставить только компактные счётчики плюс один точный идентификатор для следующего шага.
 
 **Что должен включать полезный ответ**
 
 - финализированную высоту и хеш
 - ответ “затронут / не затронут”
 - счётчики прямых транзакций, входящих receipts, outcome-hit и state changes
-- по одному sample tx hash или receipt id на категорию, когда он есть
+- один sample tx hash или receipt id, когда он есть
 
 ### Shell-сценарий от финализированного блока к ответу по контракту
 
@@ -94,10 +86,7 @@ FINAL_LOCATION="$(
     | tr -d '\r'
 )"
 
-BLOCK_HEIGHT="$(printf '%s' "$FINAL_LOCATION" | sed -E 's#.*/([0-9]+)$#\1#')"
-
 printf 'Final redirect target: %s\n' "$FINAL_LOCATION"
-printf 'Final block height: %s\n' "$BLOCK_HEIGHT"
 
 curl -s "$NEARDATA_BASE_URL$FINAL_LOCATION" \
   | tee /tmp/neardata-block.json >/dev/null
@@ -160,60 +149,41 @@ jq --arg target "$TARGET_ACCOUNT_ID" '
 ' /tmp/neardata-block.json | tee /tmp/neardata-touch-summary.json
 ```
 
-Если позже понадобятся более богатые списки или разбор по шардам, продолжайте использовать `/tmp/neardata-block.json`. Смысл первого прохода в том, чтобы сначала ответить на вопрос «затронут или нет?», а уже потом расширяться до длинных массивов или более глубокого trace.
+Если позже понадобятся более богатые списки, продолжайте использовать `/tmp/neardata-block.json`. Смысл первого прохода в том, чтобы сначала ответить на вопрос «затронут или нет?», а уже потом расширяться до длинных массивов или более глубокого trace.
 
-Необязательное расширение: если всё же нужны `touched_shards`, их можно вычислить из того же сохранённого блока, не утяжеляя основной ответ:
+#### Необязательное продолжение: Какой tx hash или receipt id разбирать дальше?
 
-```bash
-jq --arg target "$TARGET_ACCOUNT_ID" '
-  [
-    .shards[]
-    | .shard_id as $shard_id
-    | select(
-        ([.chunk.transactions[]? | (.transaction.receiver_id // .receiver_id)] | index($target))
-        or ([.chunk.receipts[]? | .receiver_id] | index($target))
-        or ([.receipt_execution_outcomes[]? | .receipt.receiver_id, .execution_outcome.outcome.executor_id] | index($target))
-        or ([.state_changes[]? | .change.account_id] | index($target))
-      )
-    | $shard_id
-  ] | unique
-' /tmp/neardata-block.json
-```
-
-Если в этом ответе `touched: true` и нужен один follow-up на уровне шарда, откройте только первый затронутый шард:
+Используйте ту же сохранённую сводку и поднимите один точный идентификатор для следующей поверхности.
 
 ```bash
-TOUCHED_SHARD_ID="$(
-  jq -r --arg target "$TARGET_ACCOUNT_ID" '
-    first(
-      .shards[]
-      | .shard_id as $shard_id
-      | select(
-          ([.chunk.transactions[]? | (.transaction.receiver_id // .receiver_id)] | index($target))
-          or ([.chunk.receipts[]? | .receiver_id] | index($target))
-          or ([.receipt_execution_outcomes[]? | .receipt.receiver_id, .execution_outcome.outcome.executor_id] | index($target))
-          or ([.state_changes[]? | .change.account_id] | index($target))
-        )
-      | $shard_id
-    ) // empty
-  ' /tmp/neardata-block.json
+FOLLOW_UP_KIND="$(
+  jq -r '
+    if .sample_direct_tx != null then "tx_hash"
+    elif .sample_incoming_receipt != null then "receipt_id"
+    elif .sample_outcome_tx_hash != null then "tx_hash"
+    else "none"
+    end
+  ' /tmp/neardata-touch-summary.json
 )"
 
-if [ -n "$TOUCHED_SHARD_ID" ]; then
-  curl -s "$NEARDATA_BASE_URL/v0/block/$BLOCK_HEIGHT/chunk/$TOUCHED_SHARD_ID" \
-    | jq '{
-        shard_id: .header.shard_id,
-        chunk_hash: .header.chunk_hash,
-        tx_hashes: ([.transactions[]? | (.transaction.hash // .hash)] | .[:5]),
-        receipt_ids: ([.receipts[]? | .receipt_id] | .[:5]),
-        receipt_receivers: ([.receipts[]? | .receiver_id] | .[:5])
-      }'
-fi
+FOLLOW_UP_VALUE="$(
+  jq -r '
+    .sample_direct_tx
+    // .sample_incoming_receipt
+    // .sample_outcome_tx_hash
+    // empty
+  ' /tmp/neardata-touch-summary.json
+)"
+
+printf 'Next identifier kind: %s\n' "$FOLLOW_UP_KIND"
+printf 'Next identifier value: %s\n' "$FOLLOW_UP_VALUE"
 ```
+
+Если идентификатор — это `tx_hash`, передайте его в [Transactions API](https://docs.fastnear.com/ru/tx) или RPC `tx` status. Если это `receipt_id`, передайте его в [Transactions API: Receipt by ID](https://docs.fastnear.com/ru/tx/receipt). И только после этого решайте, нужен ли вам вообще shard-level follow-up.
 
 **Зачем нужен следующий шаг?**
 
-Так вопрос остаётся максимально маленьким: сначала вы отвечаете «был ли затронут мой контракт?», а затем расширяетесь только тогда, когда один из sample-идентификаторов уже оправдывает более глубокий trace. Здесь NEAR Data выступает как discovery-layer, а не просто как block monitor.
+Так вопрос остаётся максимально маленьким: сначала вы отвечаете «был ли затронут мой контракт?», а затем расширяетесь только тогда, когда один точный tx hash или receipt id уже оправдывает более глубокий trace. Здесь NEAR Data выступает как discovery-layer, а не просто как block monitor.
 
 ## Частые ошибки
 
@@ -221,7 +191,7 @@ fi
 - Начинать с RPC, не проверив, не отвечает ли уже один финализированный блок на вопрос о контракте.
 - Смотреть только на прямые транзакции и забывать, что контракты часто затрагиваются через receipts или state changes.
 - Предполагать, что сначала нужно проверить какой-то заранее выбранный shard id, а не само семейство блока.
-- Переходить к Transactions API или RPC до того, как вы извлекли из NEAR Data точные shard id, tx hash и receipt id.
+- Переходить к Transactions API или RPC до того, как вы извлекли из NEAR Data один точный tx hash или receipt id.
 
 ## Полезные связанные страницы
 

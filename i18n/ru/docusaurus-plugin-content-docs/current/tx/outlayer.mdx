@@ -1,8 +1,8 @@
 ---
-sidebar_label: OutLayer Case Study
+sidebar_label: OutLayer
 slug: /tx/examples/outlayer
-title: "OutLayer Case Study: трассировка запроса и разрешения воркером"
-description: "Case study, который использует Transactions API, чтобы связать один caller-side запрос OutLayer с более поздним worker-side разрешением и разобрать завершающие receipts."
+title: "OutLayer: что сделала эта пара request/resolution?"
+description: "Используйте Transactions API, чтобы прочитать один caller-side запрос OutLayer, одно более позднее worker-side resolution и обращаться к finish-receipts только когда это действительно нужно."
 displayed_sidebar: transactionsApiSidebar
 page_actions:
   - markdown
@@ -17,28 +17,22 @@ keywords:
 
 import Link from '@site/src/components/LocalizedLink';
 
-{/* FASTNEAR_AI_DISCOVERY: Этот case study остаётся в пределах наблюдаемых транзакций и receipts. Он показывает, как связать один caller-side запрос OutLayer с более поздним worker-side разрешением и разобрать finish-receipts. Он не пытается доказывать внутреннюю TEE-, yield/resume- или CKD/MPC-архитектуру OutLayer только по публичным chain-данным. */}
+{/* FASTNEAR_AI_DISCOVERY: Этот walkthrough остаётся в пределах наблюдаемых транзакций и receipts. Он показывает, как прочитать один caller-side запрос OutLayer вместе с более поздним worker-side resolution, а затем разобрать finish-receipts только если это действительно нужно. */}
 
-# OutLayer Case Study: трассировка запроса и разрешения воркером
+# OutLayer: что сделала эта пара request/resolution?
 
-Используйте этот case study, когда вопрос звучит так: «какая транзакция открыла запрос OutLayer, какая более поздняя транзакция пришла от воркера и где в завершающих receipts видны callback, списание или возврат средств?»
+Используйте этот walkthrough, когда вопрос звучит так: «что сделал этот запрос OutLayer, какое более позднее resolution к нему относится и нужно ли мне вообще смотреть на finish-receipts?»
 
-Эта страница намеренно остаётся только в пределах публичных chain-данных. Она показывает caller-транзакцию, более позднюю worker-транзакцию и finish-receipts. Она не пытается доказывать внутреннюю TEE-, `yield/resume`- или CKD/MPC-архитектуру OutLayer только по chain-trace.
+Оставайтесь в пределах публичных chain-данных: прочитайте request tx, прочитайте более поздний resolution tx и только потом решайте, нужны ли вам finish-receipts.
 
-Сначала смотрите на это как на задачу по истории транзакций:
-
-- один caller-side `request_execution`
-- одна более поздняя worker-side транзакция `submit_execution_output_and_resolve` или `resolve_execution`
-- переход к receipts только тогда, когда уже важен путь завершения
-
-## Проверенный shell-сценарий
+## Компактный shell-сценарий
 
 Эта пара работала 18 апреля 2026 года:
 
 - caller-side запрос: `AJgn2DB7BaD3487wXii8rGM648eqvkFDqJ1zXCxfuRk4`
 - worker-side разрешение: `AVbxfPyN5P1ryFh7HPstWbjiSantPYWfMpiwKcJ7hXTs`
 
-### 1. Сразу раскройте caller-транзакцию и worker-транзакцию вместе
+### 1. Основной ответ: сразу раскройте request tx и resolution tx вместе
 
 ```bash
 TX_BASE_URL=https://tx.main.fastnear.com
@@ -59,16 +53,20 @@ jq '{
         hash: .transaction.hash,
         signer_id: .transaction.signer_id,
         receiver_id: .transaction.receiver_id,
-        actions: [.transaction.actions[] | keys[0]],
+        methods: [
+          .transaction.actions[]
+          | .FunctionCall.method_name?
+          | select(. != null)
+        ],
         first_logs: (.receipts[0].execution_outcome.outcome.logs[:2])
       }
   ]
 }' /tmp/outlayer-pair.json
 ```
 
-Это и есть главный наблюдаемый цикл: сначала caller-side запрос, затем более позднее worker-side разрешение, с читаемыми signer-, method- и log-доказательствами для обеих транзакций.
+Это и есть основной ответ: один request tx, один более поздний resolution tx и читаемые signer-, receiver-, method- и log-доказательства для обеих транзакций.
 
-### 2. Читайте worker-receipts только тогда, когда уже важен finish-путь
+### Необязательное продолжение: Что сделал finish-путь?
 
 ```bash
 jq --arg worker_tx_hash "$WORKER_TX_HASH" '
@@ -90,15 +88,15 @@ jq --arg worker_tx_hash "$WORKER_TX_HASH" '
 ' /tmp/outlayer-pair.json
 ```
 
-На что смотреть:
+Смотрите на самое маленькое читаемое доказательство finish-пути:
 
 - `FunctionCall`-receipts, которые продолжают finish-путь
 - логи списания вроде `[[yNEAR charged: "..."]]`
 - последующие `Transfer`-receipts, которые похожи на refund или settlement-движение
 
-Именно здесь receipts становятся правильной абстракцией. Не начинайте с них, если вопрос пока ещё звучит как «какие две транзакции относятся к одному запросу OutLayer?»
+Именно здесь receipts становятся нужной абстракцией. Не начинайте с них, если вопрос пока ещё звучит как «какие две транзакции здесь относятся друг к другу?»
 
-### 3. Если двух хешей у вас ещё нет, сначала найдите их
+### Необязательный шаг: сначала найдите два хеша
 
 ```bash
 curl -sS "$TX_BASE_URL/v0/account" \
@@ -110,12 +108,10 @@ curl -sS "$TX_BASE_URL/v0/account" \
     }'
 ```
 
-Используйте это только как surface для поиска хешей. В этом примере `/v0/account` даёт кандидатов, а `/v0/transactions` — это surface, который превращает их в читаемое доказательство.
+Используйте это только если вы ещё не знаете пару хешей. В этом примере `/v0/account` даёт кандидатов, а `/v0/transactions` превращает их в читаемый ответ.
 
 ## Полезные связанные страницы
 
 - <Link to="/tx/account">Transactions API: история аккаунта</Link>
 - <Link to="/tx/transactions">Transactions API: транзакции по хешу</Link>
 - <Link to="/tx/receipt">Transactions API: receipt по ID</Link>
-- [NEAR Integration в OutLayer](https://outlayer.fastnear.com/docs/near-integration)
-- [Secrets / CKD в OutLayer](https://outlayer.fastnear.com/docs/secrets)

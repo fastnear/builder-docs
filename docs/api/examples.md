@@ -2,7 +2,7 @@
 sidebar_label: Examples
 slug: /api/examples
 title: API Examples
-description: Plain-language workflows for using FastNear API docs for account lookups, asset inventory, and staking classification.
+description: Plain-language workflows for using FastNear API docs for account lookups, asset inventory, and direct staking checks.
 displayed_sidebar: fastnearApiSidebar
 page_actions:
   - markdown
@@ -144,7 +144,59 @@ At the time of writing, `mike.near` returned visible direct staking pools here. 
 
 **Why this next step?**
 
-This keeps the question narrow and operational. If the answer is `true`, the next practical step is usually pool-specific unstake or withdraw work. If the answer is `false`, do not infer liquid staking from this example alone; this example is only about direct pool positions.
+This keeps the question narrow and operational. If the answer is `true`, remember what that means on chain: the account usually delegated into a staking-pool contract such as `polkachu.poolv1.near` by sending a `FunctionCall` like `deposit_and_stake` with attached deposit. The pool contract later performs the actual `Stake` action on its own account. If the answer is `false`, do not infer liquid staking from this example alone; this example is only about direct pool positions.
+
+#### Optional follow-up: What did this contract call for delegation do?
+
+Use this when the staking endpoint already showed a pool like `polkachu.poolv1.near` and you want to see the transaction shape behind one real delegation.
+
+This pinned mainnet tx is useful because it shows the full pattern clearly:
+
+- transaction hash: `5Qo96GonLaAfuh6eHWdi8zPRk92TFW8W2xWqSAoYKBVz`
+- top-level receiver: `polkachu.poolv1.near`
+- top-level method: `deposit_and_stake`
+- attached deposit: `34650000000000000000000000`
+
+The important chain shape is:
+
+- the delegator sends a `FunctionCall deposit_and_stake` into the pool contract
+- the pool contract records the deposit and staking shares
+- the pool later emits a self-receipt with a real `Stake` action
+
+```bash
+TX_BASE_URL=https://tx.main.fastnear.com
+TX_HASH=5Qo96GonLaAfuh6eHWdi8zPRk92TFW8W2xWqSAoYKBVz
+
+curl -s "$TX_BASE_URL/v0/transactions" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc --arg tx_hash "$TX_HASH" '{tx_hashes: [$tx_hash]}')" \
+  | tee /tmp/staking-delegation-tx.json >/dev/null
+
+jq '{
+  top_level_call: {
+    hash: .transactions[0].transaction.hash,
+    signer_id: .transactions[0].transaction.signer_id,
+    receiver_id: .transactions[0].transaction.receiver_id,
+    method_name: .transactions[0].transaction.actions[0].FunctionCall.method_name,
+    attached_deposit: .transactions[0].transaction.actions[0].FunctionCall.deposit
+  },
+  pool_side_effects: [
+    .transactions[0].receipts[]
+    | select(.receipt.receiver_id == "polkachu.poolv1.near")
+    | {
+        predecessor_id: .receipt.predecessor_id,
+        receiver_id: .receipt.receiver_id,
+        actions: (
+          .receipt.receipt.Action.actions
+          | map(if type == "string" then . else keys[0] end)
+        ),
+        first_logs: (.execution_outcome.outcome.logs[:3])
+      }
+  ]
+}' /tmp/staking-delegation-tx.json
+```
+
+The answer you want is simple: the delegator did not sign a raw `Stake` action directly. They called the staking-pool contract with `deposit_and_stake` and attached deposit, and the pool contract later executed the `Stake` action on its own account.
 
 ### What FT balances and NFT collections does this account show right now?
 

@@ -2,7 +2,7 @@
 sidebar_label: Examples
 slug: /fastdata/kv/examples
 title: KV FastData Examples
-description: Plain-language workflows for reading exact FastData rows, checking exact-key history, and tracing one indexed row back to its originating transaction.
+description: Plain-language workflows for reading exact FastData rows, checking exact-key history, and optionally tracing one indexed setting back to its originating transaction.
 displayed_sidebar: kvFastDataSidebar
 page_actions:
   - markdown

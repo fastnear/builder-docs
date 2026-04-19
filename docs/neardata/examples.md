@@ -2,7 +2,7 @@
 sidebar_label: Examples
 slug: /neardata/examples
 title: NEAR Data Examples
-description: Plain-language workflows for checking whether a contract was touched in the latest finalized block and extracting the exact hashes worth following up.
+description: Plain-language workflows for checking whether a contract was touched in the latest finalized block and extracting the exact identifiers worth following up.
 displayed_sidebar: nearDataApiSidebar
 page_actions:
   - markdown
@@ -58,33 +58,25 @@ Use this investigation when you want a concrete yes/no answer before you widen i
 <div className="fastnear-example-strategy">
   <div className="fastnear-example-strategy__header">
     <span className="fastnear-example-strategy__eyebrow">Strategy</span>
-    <p className="fastnear-example-strategy__title">Anchor on one finalized block, scan the whole block family for your target account, then keep only one small summary plus the identifiers worth following up.</p>
+    <p className="fastnear-example-strategy__title">Answer the contract-touch question first, then keep only one tx hash or receipt id for the next step.</p>
   </div>
   <div className="fastnear-example-strategy__items">
     <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">01</span><span><span className="fastnear-example-strategy__code">last-block-final</span> gives you one stable block height without guessing.</span></p>
     <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">02</span><span><span className="fastnear-example-strategy__code">block</span> is the main read: it already contains the transactions, receipts, receipt execution outcomes, and state changes you need to answer “touched or not?”.</span></p>
-    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span>Only if the answer is “yes” do you widen: keep the shard ids, tx hashes, and receipt ids you discovered, then hand those exact identifiers to [Transactions API](/tx) or [RPC Reference](/rpc).</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span>Only if the answer is “yes” do you widen: keep one exact tx hash or receipt id from the same cached block, then hand that identifier to [Transactions API](/tx) or [RPC Reference](/rpc).</span></p>
   </div>
 </div>
 
 **Goal**
 
-- Decide whether one target contract was touched in the latest finalized block, and keep only the shard ids, counts, and sample identifiers worth investigating next.
-
-| Surface | Endpoint | How we use it | Why we use it |
-| --- | --- | --- | --- |
-| Latest stable anchor | NEAR Data [`last-block-final`](/neardata/last-block-final) | Get one finalized block height without guessing | Gives you a stable starting point for the whole question |
-| Whole block family | NEAR Data [`block`](/neardata/block) | Scan transactions, receipts, receipt execution outcomes, and state changes for the target account | This is the main answer surface for “was my contract touched?” |
-| Light block summary | NEAR Data [`block-headers`](/neardata/block-headers) | Use when you only need the height, hash, timing, or chunk headers | Avoids the wider block payload when contract-level filtering is not needed |
-| Optional shard follow-up | NEAR Data [`block-chunk`](/neardata/block-chunk) or [`block-shard`](/neardata/block-shard) | Re-open only the touched shard if you need deeper payload details | Useful after you already know which shard mattered |
-| Exact follow-up surfaces | [Transactions API](/tx) or [RPC Reference](/rpc) | Reuse the discovered tx hashes or receipt ids only if you need the full execution story | NEAR Data tells you whether widening is necessary at all |
+- Decide whether one target contract was touched in the latest finalized block, and keep only the compact counts plus one exact identifier worth investigating next.
 
 **What a useful answer should include**
 
 - finalized height and hash
 - touched or not touched
 - counts for direct txs, incoming receipts, outcome hits, and state changes
-- one sample tx hash or receipt id per category when present
+- one sample tx hash or receipt id when present
 
 ### Final block to contract-touch answer shell walkthrough
 
@@ -107,10 +99,7 @@ FINAL_LOCATION="$(
     | tr -d '\r'
 )"
 
-BLOCK_HEIGHT="$(printf '%s' "$FINAL_LOCATION" | sed -E 's#.*/([0-9]+)$#\1#')"
-
 printf 'Final redirect target: %s\n' "$FINAL_LOCATION"
-printf 'Final block height: %s\n' "$BLOCK_HEIGHT"
 
 curl -s "$NEARDATA_BASE_URL$FINAL_LOCATION" \
   | tee /tmp/neardata-block.json >/dev/null
@@ -173,60 +162,41 @@ jq --arg target "$TARGET_ACCOUNT_ID" '
 ' /tmp/neardata-block.json | tee /tmp/neardata-touch-summary.json
 ```
 
-If you need richer shard-by-shard or full-list detail later, keep reusing `/tmp/neardata-block.json`. The point of this first pass is to answer “touched or not?” before you widen into longer arrays or deeper traces.
+If you need richer detail later, keep reusing `/tmp/neardata-block.json`. The point of this first pass is to answer “touched or not?” before you widen into longer arrays or deeper traces.
 
-Optional extension: if you still want the touched shard ids, compute them from the same cached block without changing the main answer shape:
+#### Optional follow-up: Which tx hash or receipt id should I inspect next?
 
-```bash
-jq --arg target "$TARGET_ACCOUNT_ID" '
-  [
-    .shards[]
-    | .shard_id as $shard_id
-    | select(
-        ([.chunk.transactions[]? | (.transaction.receiver_id // .receiver_id)] | index($target))
-        or ([.chunk.receipts[]? | .receiver_id] | index($target))
-        or ([.receipt_execution_outcomes[]? | .receipt.receiver_id, .execution_outcome.outcome.executor_id] | index($target))
-        or ([.state_changes[]? | .change.account_id] | index($target))
-      )
-    | $shard_id
-  ] | unique
-' /tmp/neardata-block.json
-```
-
-If that answer says `touched: true` and you want one shard-level follow-up, reopen only the first touched shard:
+Keep the same cached block and summary, then lift one exact identifier for the next surface.
 
 ```bash
-TOUCHED_SHARD_ID="$(
-  jq -r --arg target "$TARGET_ACCOUNT_ID" '
-    first(
-      .shards[]
-      | .shard_id as $shard_id
-      | select(
-          ([.chunk.transactions[]? | (.transaction.receiver_id // .receiver_id)] | index($target))
-          or ([.chunk.receipts[]? | .receiver_id] | index($target))
-          or ([.receipt_execution_outcomes[]? | .receipt.receiver_id, .execution_outcome.outcome.executor_id] | index($target))
-          or ([.state_changes[]? | .change.account_id] | index($target))
-        )
-      | $shard_id
-    ) // empty
-  ' /tmp/neardata-block.json
+FOLLOW_UP_KIND="$(
+  jq -r '
+    if .sample_direct_tx != null then "tx_hash"
+    elif .sample_incoming_receipt != null then "receipt_id"
+    elif .sample_outcome_tx_hash != null then "tx_hash"
+    else "none"
+    end
+  ' /tmp/neardata-touch-summary.json
 )"
 
-if [ -n "$TOUCHED_SHARD_ID" ]; then
-  curl -s "$NEARDATA_BASE_URL/v0/block/$BLOCK_HEIGHT/chunk/$TOUCHED_SHARD_ID" \
-    | jq '{
-        shard_id: .header.shard_id,
-        chunk_hash: .header.chunk_hash,
-        tx_hashes: ([.transactions[]? | (.transaction.hash // .hash)] | .[:5]),
-        receipt_ids: ([.receipts[]? | .receipt_id] | .[:5]),
-        receipt_receivers: ([.receipts[]? | .receiver_id] | .[:5])
-      }'
-fi
+FOLLOW_UP_VALUE="$(
+  jq -r '
+    .sample_direct_tx
+    // .sample_incoming_receipt
+    // .sample_outcome_tx_hash
+    // empty
+  ' /tmp/neardata-touch-summary.json
+)"
+
+printf 'Next identifier kind: %s\n' "$FOLLOW_UP_KIND"
+printf 'Next identifier value: %s\n' "$FOLLOW_UP_VALUE"
 ```
+
+If the identifier is a `tx_hash`, hand it to [Transactions API](/tx) or RPC `tx` status. If it is a `receipt_id`, hand it to [Transactions API: Receipt by ID](/tx/receipt). Only after that should you decide whether shard-level reopening is still necessary.
 
 **Why this next step?**
 
-This keeps the question as small as possible: first answer “was my contract touched?”, then widen only if one of the sample identifiers justifies a deeper trace. NEAR Data is the discovery layer here, not just a block monitor.
+This keeps the question as small as possible: first answer “was my contract touched?”, then widen only if one exact tx hash or receipt id justifies a deeper trace. NEAR Data is the discovery layer here, not just a block monitor.
 
 
 ## Common mistakes
@@ -235,7 +205,7 @@ This keeps the question as small as possible: first answer “was my contract to
 - Starting with RPC before checking whether one finalized block already answers the contract-touch question.
 - Looking only for direct transactions and forgetting that contracts are often touched through receipts or state changes.
 - Assuming one hard-coded shard id should be checked before you inspect the block family itself.
-- Widening to Transactions API or RPC before extracting the exact shard ids, tx hashes, or receipt ids from NEAR Data.
+- Widening to Transactions API or RPC before extracting one exact tx hash or receipt id from NEAR Data.
 
 ## Related guides
 

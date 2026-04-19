@@ -215,10 +215,7 @@ const transactionsApiSidebar = withExamplesFooter(
     'tx/blocks',
     'tx/receipt',
   ],
-  {
-    id: 'tx/examples',
-    items: ['tx/berry-club', 'tx/outlayer'],
-  }
+  'tx/examples'
 );
 
 const transfersApiSidebar = hideEarlyApiFamilies

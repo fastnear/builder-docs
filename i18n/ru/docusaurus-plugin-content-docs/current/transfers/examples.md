@@ -2,7 +2,7 @@
 sidebar_label: Examples
 slug: /transfers/examples
 title: "Примеры Transfers API"
-description: "Пошаговые сценарии для поиска переводов, пагинации через resume_token и перехода к истории транзакций."
+description: "Пошаговые сценарии для проверки, было ли движение средств в одном окне, и необязательного перехода от одной строки к receipt."
 displayed_sidebar: transfersApiSidebar
 page_actions:
   - markdown
@@ -47,35 +47,34 @@ curl -s "$TRANSFERS_BASE_URL/v0/transfers" \
     }'
 ```
 
-Это самый короткий путь к вопросу «были ли здесь движения средств и какой receipt брать следующим?»
+Это самый короткий путь к вопросу «были ли здесь движения средств и какую строку стоит разбирать дальше?»
 
 ## Готовый сценарий
 
-### Найти один исходящий перевод и при необходимости перейти к деталям исполнения
+### Отправлял ли этот аккаунт средства в этом окне и какую строку стоит разобрать?
 
-Используйте этот сценарий, когда история звучит так: «я знаю, что этот аккаунт отправлял средства в этом окне, и мне может понадобиться точная опорная точка исполнения для одной строки, но я не хочу сразу тянуть всю историю аккаунта».
+Используйте этот сценарий, когда история звучит так: «мне сначала нужно одно узкое окно исходящих переводов, и только после просмотра строк я решу, нужен ли одной из них follow-up по receipt».
 
 <div className="fastnear-example-strategy">
   <div className="fastnear-example-strategy__header">
     <span className="fastnear-example-strategy__eyebrow">Стратегия</span>
-    <p className="fastnear-example-strategy__title">Сначала оставайтесь на узкой истории движения, а затем переходите в историю исполнения только если строки перевода уже недостаточно.</p>
+    <p className="fastnear-example-strategy__title">Сначала ответьте на вопрос о движении средств, а затем расширяйтесь только если одной строке всё ещё нужен execution-anchor.</p>
   </div>
   <div className="fastnear-example-strategy__items">
     <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">01</span><span><span className="fastnear-example-strategy__code">POST /v0/transfers</span> даёт узкое исходящее окно и конкретное движение, которое стоит догонять.</span></p>
     <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">02</span><span>Сначала выведите строки, а затем явно выберите один <span className="fastnear-example-strategy__code">transfer_index</span> перед тем, как поднимать его <span className="fastnear-example-strategy__code">receipt_id</span>.</span></p>
-    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span><span className="fastnear-example-strategy__code">POST /v0/receipt</span> — это необязательное расширение, когда уже нужны детали исполнения именно за этим переводом.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span><span className="fastnear-example-strategy__code">POST /v0/receipt</span> — необязательный follow-up, когда вы хотите понять, что именно эта строка перевода сделала on-chain.</span></p>
   </div>
 </div>
 
 **Что вы делаете**
 
 - Запрашиваете ограниченное окно исходящих переводов одного аккаунта в mainnet.
-- Выделяете одну строку перевода, которая действительно похожа на нужное вам движение.
-- Переиспользуете его `receipt_id` в Transactions API только если нужно перейти от движения актива к истории исполнения.
+- Сначала выводите строки, а затем выбираете одну строку перевода, которая действительно похожа на нужное вам движение.
+- Переиспользуете её `receipt_id` только если нужно перейти от движения актива к истории исполнения.
 
 ```bash
 TRANSFERS_BASE_URL=https://transfers.main.fastnear.com
-TX_BASE_URL=https://tx.main.fastnear.com
 ACCOUNT_ID=YOUR_ACCOUNT_ID
 FROM_TIMESTAMP_MS=1711929600000
 TO_TIMESTAMP_MS=1712016000000
@@ -121,6 +120,16 @@ RECEIPT_ID="$(
 
 printf 'Chosen transfer index: %s\n' "$TRANSFER_INDEX"
 printf 'Chosen receipt id: %s\n' "$RECEIPT_ID"
+```
+
+Этим вы отвечаете на первый вопрос: было ли здесь движение средств и какую строку перевода стоит разбирать дальше?
+
+#### Необязательное продолжение: Что сделала эта строка перевода on-chain?
+
+Переходите к истории receipt только если самой строки перевода уже недостаточно.
+
+```bash
+TX_BASE_URL=https://tx.main.fastnear.com
 
 if [ -n "$RECEIPT_ID" ]; then
   curl -s "$TX_BASE_URL/v0/receipt" \
@@ -137,7 +146,7 @@ fi
 
 **Зачем нужен следующий шаг?**
 
-Запрос переводов быстро отвечает на первый вопрос: отправлял ли этот аккаунт средства в этом окне и кому именно? Переход по `receipt_id` — это необязательный следующий шаг, когда самой строки перевода уже недостаточно и нужна опорная точка в истории исполнения. Если после этого всё ещё нужно больше строк, продолжайте пагинацию тем же `resume_token` и теми же фильтрами.
+Запрос переводов быстро отвечает на первый вопрос: отправлял ли этот аккаунт средства в этом окне и кому именно? Переход по `receipt_id` — это необязательный второй вопрос: какая execution-anchor стоит за этой одной строкой? Если после этого всё ещё нужно больше строк, продолжайте пагинацию тем же `resume_token` и теми же фильтрами.
 
 
 ## Частые ошибки

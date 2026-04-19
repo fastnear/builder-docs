@@ -1,15 +1,15 @@
 ---
 slug: /tx/socialdb-proofs
-title: Advanced SocialDB Provenance Pattern
-description: One advanced pattern for starting from a readable SocialDB value and recovering the write transaction behind it.
+title: Advanced SocialDB Write Lookup
+description: One small advanced playbook for starting from a readable SocialDB value and recovering the write transaction behind it.
 displayed_sidebar: transactionsApiSidebar
 page_actions:
   - markdown
 ---
 
-# Advanced SocialDB Provenance Pattern
+# Advanced SocialDB Write Lookup
 
-Use this page only when the starting point is already a readable SocialDB value from `api.near.social` and the next question is historical provenance.
+Use this page only when the starting point is already a readable SocialDB value from `api.near.social` and the next question is historical write lookup.
 
 For FastNear-first jobs, start with [Transactions Examples](/tx/examples). Come here only when the question has become "which write made this readable SocialDB value true?"
 
@@ -128,71 +128,11 @@ jq '{
 }' /tmp/mike-profile-transaction.json
 ```
 
-4. Finish with canonical current-state confirmation via raw RPC.
+That is the whole lookup pattern: readable value, field-level block, receipt bridge, and transaction payload.
 
-```bash
-SOCIAL_GET_ARGS_BASE64="$(
-  jq -nr --arg account_id "$ACCOUNT_ID" --arg profile_field "$PROFILE_FIELD" '{
-    keys: [($account_id + "/" + $profile_field)]
-  } | @base64'
-)"
+The same bridge works for other readable SocialDB values too:
 
-curl -s "$RPC_URL" \
-  -H 'content-type: application/json' \
-  --data "$(jq -nc --arg args_base64 "$SOCIAL_GET_ARGS_BASE64" '{
-    jsonrpc: "2.0",
-    id: "fastnear",
-    method: "query",
-    params: {
-      request_type: "call_function",
-      account_id: "social.near",
-      method_name: "get",
-      args_base64: $args_base64,
-      finality: "final"
-    }
-  }')" \
-  | tee /tmp/mike-profile-rpc.json >/dev/null
+- follow edge variant: `mike.near -> mob.near`, block `79574924`, tx `FLLmTvFx9vCof79scy2uUviF5WwYmevkz9TZ8azPGVQb`
+- widget source variant: `mob.near/widget/Profile`, block `86494825`, tx `9QDupdK2ewMxfSvMmdGEkdBcVnoL4TexmXY2FnMRxfia`
 
-jq --arg account_id "$ACCOUNT_ID" '{
-  finality: "final",
-  current_name: (
-    .result.result
-    | implode
-    | fromjson
-    | .[$account_id].profile.name
-  )
-}' /tmp/mike-profile-rpc.json
-```
-
-That is the whole provenance pattern: readable value, field-level block, receipt bridge, transaction payload, then optional current-state confirmation.
-
-## Same pattern, different SocialDB keys
-
-Use the same bridge whenever you already have a readable SocialDB value and its write block:
-
-1. Read the semantic value and `:block` from NEAR Social, or start from a known widget write block.
-2. Use Transactions API [`POST /v0/block`](/tx/block) to recover the `*.near -> social.near` receipt and transaction hash.
-3. Use Transactions API [`POST /v0/transactions`](/tx/transactions) to decode the `social.near set` payload.
-4. Use RPC [`query(call_function)`](/rpc/contract/call-function) only if you still need canonical current-state confirmation.
-
-### Follow edge variant
-
-Use the same pattern for one readable follow edge:
-
-- current edge: `mike.near -> mob.near`
-- SocialDB write block: `79574924`
-- receipt ID: `UiyiQaqHbkkMxkrB6rDkYr7X5EQLt8QG9MDATrES7Th`
-- originating transaction hash: `FLLmTvFx9vCof79scy2uUviF5WwYmevkz9TZ8azPGVQb`
-
-The only meaningful difference from the profile example is the key and payload shape: read `mike.near/graph/follow/mob.near`, then decode both `graph.follow` and the matching `index.graph` entry from the write payload.
-
-### Widget source variant
-
-Use the same pattern again when the readable fact is a widget source key:
-
-- widget key: `mob.near/widget/Profile`
-- SocialDB write block: `86494825`
-- receipt ID: `CZyjiBjphzE95tFEqi1YH6eLCLhqknaW4SQ5R4L6pkC6`
-- originating transaction hash: `9QDupdK2ewMxfSvMmdGEkdBcVnoL4TexmXY2FnMRxfia`
-
-The main difference here is that you usually start from the widget's known write block, then decode `.data["mob.near"].widget.Profile[""]` from the originating `social.near set` payload.
+The key idea does not change: start from the readable value and its write block, recover the `*.near -> social.near` receipt from the block, then decode the `social.near set` payload from the originating transaction.

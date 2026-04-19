@@ -1120,7 +1120,59 @@ jq '{
 
 **Зачем нужен следующий шаг?**
 
-Так вопрос остаётся узким и практическим. Если ответ `true`, следующий реальный шаг обычно связан с `unstake` или `withdraw` в конкретном пуле. Если ответ `false`, не делайте из этого примера выводов про liquid staking: этот сценарий касается только прямых пулов.
+Так вопрос остаётся узким и практическим. Если ответ `true`, важно помнить, что это значит на chain-уровне: аккаунт обычно делегировал средства в staking-pool-контракт вроде `polkachu.poolv1.near`, отправив `FunctionCall` наподобие `deposit_and_stake` с attached deposit. Сам `Stake` action позже выполняет уже сам pool-контракт на своём аккаунте. Если ответ `false`, не делайте из этого примера выводов про liquid staking: этот сценарий касается только прямых пулов.
+
+#### Необязательное продолжение: Что сделал этот контрактный вызов для делегирования?
+
+Используйте это продолжение, когда staking-эндпоинт уже показал пул вроде `polkachu.poolv1.near`, и теперь вы хотите увидеть форму одной реальной делегационной транзакции.
+
+Этот зафиксированный mainnet tx хорош тем, что очень ясно показывает весь паттерн:
+
+- хеш транзакции: `5Qo96GonLaAfuh6eHWdi8zPRk92TFW8W2xWqSAoYKBVz`
+- top-level receiver: `polkachu.poolv1.near`
+- top-level метод: `deposit_and_stake`
+- attached deposit: `34650000000000000000000000`
+
+Важная форма chain-истории здесь такая:
+
+- делегатор отправляет `FunctionCall deposit_and_stake` в pool-контракт
+- pool-контракт учитывает депозит и staking shares
+- затем pool выпускает self-receipt с настоящим `Stake` action
+
+```bash
+TX_BASE_URL=https://tx.main.fastnear.com
+TX_HASH=5Qo96GonLaAfuh6eHWdi8zPRk92TFW8W2xWqSAoYKBVz
+
+curl -s "$TX_BASE_URL/v0/transactions" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc --arg tx_hash "$TX_HASH" '{tx_hashes: [$tx_hash]}')" \
+  | tee /tmp/staking-delegation-tx.json >/dev/null
+
+jq '{
+  top_level_call: {
+    hash: .transactions[0].transaction.hash,
+    signer_id: .transactions[0].transaction.signer_id,
+    receiver_id: .transactions[0].transaction.receiver_id,
+    method_name: .transactions[0].transaction.actions[0].FunctionCall.method_name,
+    attached_deposit: .transactions[0].transaction.actions[0].FunctionCall.deposit
+  },
+  pool_side_effects: [
+    .transactions[0].receipts[]
+    | select(.receipt.receiver_id == "polkachu.poolv1.near")
+    | {
+        predecessor_id: .receipt.predecessor_id,
+        receiver_id: .receipt.receiver_id,
+        actions: (
+          .receipt.receipt.Action.actions
+          | map(if type == "string" then . else keys[0] end)
+        ),
+        first_logs: (.execution_outcome.outcome.logs[:3])
+      }
+  ]
+}' /tmp/staking-delegation-tx.json
+```
+
+Простой вывод здесь такой: делегатор не подписывал сырой `Stake` action напрямую. Он вызвал staking-pool-контракт через `deposit_and_stake` и приложил депозит, а затем уже pool-контракт сам выполнил `Stake` action на своём аккаунте.
 
 ### Какие FT-балансы и NFT-коллекции этот аккаунт сейчас показывает?
 
@@ -2044,30 +2096,22 @@ curl -s "$NEARDATA_BASE_URL$FINAL_LOCATION" \
 Используйте это расследование, когда вам нужен конкретный ответ “да / нет” ещё до перехода к Transactions API или RPC.
 
     Стратегия
-    Зафиксируйтесь на одном финализированном блоке, просканируйте всё семейство блока по целевому аккаунту, а затем оставьте только компактную сводку и идентификаторы, которые действительно стоит разбирать дальше.
+    Сначала ответьте на вопрос о контрактном touch, а затем оставьте только один tx hash или receipt id для следующего шага.
 
     01last-block-final даёт одну стабильную высоту блока без угадывания.
     02block — это главный read: он уже содержит транзакции, receipts, результаты исполнения receipts и изменения состояния, которых достаточно для ответа на вопрос «был ли контракт затронут?»
-    03Только если ответ «да», расширяйтесь дальше: сохраняйте найденные shard id, tx hash и receipt id, а затем передавайте именно эти идентификаторы в [Transactions API](https://docs.fastnear.com/ru/tx) или [RPC Reference](https://docs.fastnear.com/ru/rpc).
+    03Только если ответ «да», расширяйтесь дальше: сохраните один точный tx hash или receipt id из того же сохранённого блока, а затем передайте этот идентификатор в [Transactions API](https://docs.fastnear.com/ru/tx) или [RPC Reference](https://docs.fastnear.com/ru/rpc).
 
 **Цель**
 
-- Определить, был ли один целевой контракт затронут в последнем финализированном блоке, и оставить только shard id, счётчики и sample-идентификаторы для следующего шага.
-
-| Поверхность | Эндпоинт | Как используем | Зачем используем |
-| --- | --- | --- | --- |
-| Последняя стабильная точка | NEAR Data [`last-block-final`](https://docs.fastnear.com/ru/neardata/last-block-final) | Получаем высоту одного финализированного блока без угадывания | Даёт стабильную отправную точку для всего вопроса |
-| Всё семейство блока | NEAR Data [`block`](https://docs.fastnear.com/ru/neardata/block) | Сканируем транзакции, receipts, результаты исполнения receipts и изменения состояния по целевому аккаунту | Это главная поверхность ответа на вопрос «был ли затронут мой контракт?» |
-| Лёгкая сводка по блоку | NEAR Data [`block-headers`](https://docs.fastnear.com/ru/neardata/block-headers) | Используем, когда нужны только высота, хеш, время или заголовки чанков | Позволяет не тянуть более широкий payload блока, когда фильтрация по контракту не нужна |
-| Необязательный follow-up по шарду | NEAR Data [`block-chunk`](https://docs.fastnear.com/ru/neardata/block-chunk) или [`block-shard`](https://docs.fastnear.com/ru/neardata/block-shard) | Повторно открываем только затронутый шард, если нужен более глубокий payload | Полезно, когда вы уже знаете, какой шард mattered |
-| Точные поверхности для продолжения | [Transactions API](https://docs.fastnear.com/ru/tx) или [RPC Reference](https://docs.fastnear.com/ru/rpc) | Переиспользуем найденные tx hash или receipt id только если нужна полная история исполнения | NEAR Data позволяет сначала понять, нужен ли вообще переход дальше |
+- Определить, был ли один целевой контракт затронут в последнем финализированном блоке, и оставить только компактные счётчики плюс один точный идентификатор для следующего шага.
 
 **Что должен включать полезный ответ**
 
 - финализированную высоту и хеш
 - ответ “затронут / не затронут”
 - счётчики прямых транзакций, входящих receipts, outcome-hit и state changes
-- по одному sample tx hash или receipt id на категорию, когда он есть
+- один sample tx hash или receipt id, когда он есть
 
 ### Shell-сценарий от финализированного блока к ответу по контракту
 
@@ -2090,10 +2134,7 @@ FINAL_LOCATION="$(
     | tr -d '\r'
 )"
 
-BLOCK_HEIGHT="$(printf '%s' "$FINAL_LOCATION" | sed -E 's#.*/([0-9]+)$#\1#')"
-
 printf 'Final redirect target: %s\n' "$FINAL_LOCATION"
-printf 'Final block height: %s\n' "$BLOCK_HEIGHT"
 
 curl -s "$NEARDATA_BASE_URL$FINAL_LOCATION" \
   | tee /tmp/neardata-block.json >/dev/null
@@ -2156,60 +2197,41 @@ jq --arg target "$TARGET_ACCOUNT_ID" '
 ' /tmp/neardata-block.json | tee /tmp/neardata-touch-summary.json
 ```
 
-Если позже понадобятся более богатые списки или разбор по шардам, продолжайте использовать `/tmp/neardata-block.json`. Смысл первого прохода в том, чтобы сначала ответить на вопрос «затронут или нет?», а уже потом расширяться до длинных массивов или более глубокого trace.
+Если позже понадобятся более богатые списки, продолжайте использовать `/tmp/neardata-block.json`. Смысл первого прохода в том, чтобы сначала ответить на вопрос «затронут или нет?», а уже потом расширяться до длинных массивов или более глубокого trace.
 
-Необязательное расширение: если всё же нужны `touched_shards`, их можно вычислить из того же сохранённого блока, не утяжеляя основной ответ:
+#### Необязательное продолжение: Какой tx hash или receipt id разбирать дальше?
 
-```bash
-jq --arg target "$TARGET_ACCOUNT_ID" '
-  [
-    .shards[]
-    | .shard_id as $shard_id
-    | select(
-        ([.chunk.transactions[]? | (.transaction.receiver_id // .receiver_id)] | index($target))
-        or ([.chunk.receipts[]? | .receiver_id] | index($target))
-        or ([.receipt_execution_outcomes[]? | .receipt.receiver_id, .execution_outcome.outcome.executor_id] | index($target))
-        or ([.state_changes[]? | .change.account_id] | index($target))
-      )
-    | $shard_id
-  ] | unique
-' /tmp/neardata-block.json
-```
-
-Если в этом ответе `touched: true` и нужен один follow-up на уровне шарда, откройте только первый затронутый шард:
+Используйте ту же сохранённую сводку и поднимите один точный идентификатор для следующей поверхности.
 
 ```bash
-TOUCHED_SHARD_ID="$(
-  jq -r --arg target "$TARGET_ACCOUNT_ID" '
-    first(
-      .shards[]
-      | .shard_id as $shard_id
-      | select(
-          ([.chunk.transactions[]? | (.transaction.receiver_id // .receiver_id)] | index($target))
-          or ([.chunk.receipts[]? | .receiver_id] | index($target))
-          or ([.receipt_execution_outcomes[]? | .receipt.receiver_id, .execution_outcome.outcome.executor_id] | index($target))
-          or ([.state_changes[]? | .change.account_id] | index($target))
-        )
-      | $shard_id
-    ) // empty
-  ' /tmp/neardata-block.json
+FOLLOW_UP_KIND="$(
+  jq -r '
+    if .sample_direct_tx != null then "tx_hash"
+    elif .sample_incoming_receipt != null then "receipt_id"
+    elif .sample_outcome_tx_hash != null then "tx_hash"
+    else "none"
+    end
+  ' /tmp/neardata-touch-summary.json
 )"
 
-if [ -n "$TOUCHED_SHARD_ID" ]; then
-  curl -s "$NEARDATA_BASE_URL/v0/block/$BLOCK_HEIGHT/chunk/$TOUCHED_SHARD_ID" \
-    | jq '{
-        shard_id: .header.shard_id,
-        chunk_hash: .header.chunk_hash,
-        tx_hashes: ([.transactions[]? | (.transaction.hash // .hash)] | .[:5]),
-        receipt_ids: ([.receipts[]? | .receipt_id] | .[:5]),
-        receipt_receivers: ([.receipts[]? | .receiver_id] | .[:5])
-      }'
-fi
+FOLLOW_UP_VALUE="$(
+  jq -r '
+    .sample_direct_tx
+    // .sample_incoming_receipt
+    // .sample_outcome_tx_hash
+    // empty
+  ' /tmp/neardata-touch-summary.json
+)"
+
+printf 'Next identifier kind: %s\n' "$FOLLOW_UP_KIND"
+printf 'Next identifier value: %s\n' "$FOLLOW_UP_VALUE"
 ```
+
+Если идентификатор — это `tx_hash`, передайте его в [Transactions API](https://docs.fastnear.com/ru/tx) или RPC `tx` status. Если это `receipt_id`, передайте его в [Transactions API: Receipt by ID](https://docs.fastnear.com/ru/tx/receipt). И только после этого решайте, нужен ли вам вообще shard-level follow-up.
 
 **Зачем нужен следующий шаг?**
 
-Так вопрос остаётся максимально маленьким: сначала вы отвечаете «был ли затронут мой контракт?», а затем расширяетесь только тогда, когда один из sample-идентификаторов уже оправдывает более глубокий trace. Здесь NEAR Data выступает как discovery-layer, а не просто как block monitor.
+Так вопрос остаётся максимально маленьким: сначала вы отвечаете «был ли затронут мой контракт?», а затем расширяетесь только тогда, когда один точный tx hash или receipt id уже оправдывает более глубокий trace. Здесь NEAR Data выступает как discovery-layer, а не просто как block monitor.
 
 ## Частые ошибки
 
@@ -2217,7 +2239,7 @@ fi
 - Начинать с RPC, не проверив, не отвечает ли уже один финализированный блок на вопрос о контракте.
 - Смотреть только на прямые транзакции и забывать, что контракты часто затрагиваются через receipts или state changes.
 - Предполагать, что сначала нужно проверить какой-то заранее выбранный shard id, а не само семейство блока.
-- Переходить к Transactions API или RPC до того, как вы извлекли из NEAR Data точные shard id, tx hash и receipt id.
+- Переходить к Transactions API или RPC до того, как вы извлекли из NEAR Data один точный tx hash или receipt id.
 
 ## Полезные связанные страницы
 
@@ -3083,137 +3105,6 @@ PY
 
 Оставайтесь в RPC, пока вопрос звучит как «какие bridged token-контракты существуют и сколько одного такого токена сейчас в обращении?» Factory — это источник истины для множества bridged token-ов, а каждый token-контракт сам отвечает за свои метаданные и объём в обращении через стандартные NEP-141 view-методы. Если следующий вопрос становится «кто держит этот токен?», переключайтесь на [V1 FT Top Holders](https://docs.fastnear.com/ru/api/v1/ft-top), а не пытайтесь обходить holders через RPC.
 
-## Точные чтения SocialDB
-
-Оставайтесь на точных чтениях через `call_function get`, когда вы уже знаете нужный ключ SocialDB. На обычном RPC raw `view_state` для `social.near` не подходит как обучающий путь, потому что состояние контракта слишком велико для прямого чтения.
-
-### Прочитать один пост SocialDB ровно в том виде, как он хранится сейчас
-
-Используйте этот сценарий, когда продукту, support-инструменту или агенту уже известен аккаунт и нужен живой payload поста из SocialDB без перехода в историю транзакций.
-
-    Стратегия
-    Сначала прочитайте текущий ключ поста, затем получите точный payload этого поста из social.near.
-
-    01RPC call_function get по mike.near/index/post показывает, какой ключ поста сейчас активен.
-    02RPC call_function get по mike.near/post/main возвращает точный сохранённый payload поста.
-    03Если следующий вопрос становится «какая транзакция это записала?», переключайтесь на [Transactions Examples](https://docs.fastnear.com/ru/tx/examples).
-
-**Официальные ссылки**
-
-- [API SocialDB и поверхность контракта](https://github.com/NearSocial/social-db#api)
-
-**Что вы делаете**
-
-- Читаете текущий указатель поста под `mike.near/index/post`.
-- Используете этот ключ, чтобы получить точный payload по `mike.near/post/<key>`.
-- Останавливаетесь на точном JSON и расширяетесь в историю только тогда, когда действительно нужна provenance.
-
-```bash
-export NETWORK_ID=mainnet
-export RPC_URL=https://rpc.mainnet.fastnear.com
-export SOCIAL_CONTRACT_ID=social.near
-export ACCOUNT_ID=mike.near
-```
-
-1. Сначала прочитайте текущий указатель поста.
-
-```bash
-INDEX_POST_ARGS_BASE64="$(
-  jq -nc --arg account_id "$ACCOUNT_ID" '{
-    keys: [($account_id + "/index/post")]
-  }' | base64 | tr -d '\n'
-)"
-
-curl -s "$RPC_URL" \
-  -H 'content-type: application/json' \
-  --data "$(jq -nc \
-    --arg account_id "$SOCIAL_CONTRACT_ID" \
-    --arg args_base64 "$INDEX_POST_ARGS_BASE64" '{
-      jsonrpc: "2.0",
-      id: "fastnear",
-      method: "query",
-      params: {
-        request_type: "call_function",
-        account_id: $account_id,
-        method_name: "get",
-        args_base64: $args_base64,
-        finality: "final"
-      }
-    }')" \
-  | tee /tmp/social-index-post.json >/dev/null
-
-jq --arg account_id "$ACCOUNT_ID" '
-  .result.result
-  | implode
-  | fromjson
-  | {
-      account_id: $account_id,
-      index_entry: (.[$account_id].index.post | fromjson),
-      current_post_key: (.[$account_id].index.post | fromjson | .key)
-    }
-' /tmp/social-index-post.json
-```
-
-На момент написания текущим ключом поста для `mike.near` был `main`.
-
-2. Прочитайте точный payload этого поста.
-
-```bash
-POST_KEY="$(
-  jq -r --arg account_id "$ACCOUNT_ID" '
-    .result.result
-    | implode
-    | fromjson
-    | .[$account_id].index.post
-    | fromjson
-    | .key
-  ' /tmp/social-index-post.json
-)"
-
-POST_ARGS_BASE64="$(
-  jq -nc \
-    --arg account_id "$ACCOUNT_ID" \
-    --arg post_key "$POST_KEY" '{
-      keys: [($account_id + "/post/" + $post_key)]
-    }' | base64 | tr -d '\n'
-)"
-
-curl -s "$RPC_URL" \
-  -H 'content-type: application/json' \
-  --data "$(jq -nc \
-    --arg account_id "$SOCIAL_CONTRACT_ID" \
-    --arg args_base64 "$POST_ARGS_BASE64" '{
-      jsonrpc: "2.0",
-      id: "fastnear",
-      method: "query",
-      params: {
-        request_type: "call_function",
-        account_id: $account_id,
-        method_name: "get",
-        args_base64: $args_base64,
-        finality: "final"
-      }
-    }')" \
-  | tee /tmp/social-post-main.json >/dev/null
-
-jq --arg account_id "$ACCOUNT_ID" --arg post_key "$POST_KEY" '
-  .result.result
-  | implode
-  | fromjson
-  | {
-      account_id: $account_id,
-      post_key: $post_key,
-      post: (.[$account_id].post[$post_key] | fromjson)
-    }
-' /tmp/social-post-main.json
-```
-
-Так вы получаете точный JSON, который хранится для текущего поста, включая поля вроде `type`, `text` и `image`.
-
-**Зачем нужен следующий шаг?**
-
-Это чистый RPC-паттерн для SocialDB: спросите у контракта один точный ключ, декодируйте возвращённый JSON и остановитесь. Если вопрос превращается в «кто и когда это записал?», переходите к примерам по транзакциям, а не пытайтесь brute-force читать raw state `social.near`.
-
 ## Частые ошибки
 
 - Начинать с RPC, когда пользователю на самом деле нужна сводка по активам или индексированная история.
@@ -3770,30 +3661,29 @@ curl -s "$TRANSFERS_BASE_URL/v0/transfers" \
     }'
 ```
 
-Это самый короткий путь к вопросу «были ли здесь движения средств и какой receipt брать следующим?»
+Это самый короткий путь к вопросу «были ли здесь движения средств и какую строку стоит разбирать дальше?»
 
 ## Готовый сценарий
 
-### Найти один исходящий перевод и при необходимости перейти к деталям исполнения
+### Отправлял ли этот аккаунт средства в этом окне и какую строку стоит разобрать?
 
-Используйте этот сценарий, когда история звучит так: «я знаю, что этот аккаунт отправлял средства в этом окне, и мне может понадобиться точная опорная точка исполнения для одной строки, но я не хочу сразу тянуть всю историю аккаунта».
+Используйте этот сценарий, когда история звучит так: «мне сначала нужно одно узкое окно исходящих переводов, и только после просмотра строк я решу, нужен ли одной из них follow-up по receipt».
 
     Стратегия
-    Сначала оставайтесь на узкой истории движения, а затем переходите в историю исполнения только если строки перевода уже недостаточно.
+    Сначала ответьте на вопрос о движении средств, а затем расширяйтесь только если одной строке всё ещё нужен execution-anchor.
 
     01POST /v0/transfers даёт узкое исходящее окно и конкретное движение, которое стоит догонять.
     02Сначала выведите строки, а затем явно выберите один transfer_index перед тем, как поднимать его receipt_id.
-    03POST /v0/receipt — это необязательное расширение, когда уже нужны детали исполнения именно за этим переводом.
+    03POST /v0/receipt — необязательный follow-up, когда вы хотите понять, что именно эта строка перевода сделала on-chain.
 
 **Что вы делаете**
 
 - Запрашиваете ограниченное окно исходящих переводов одного аккаунта в mainnet.
-- Выделяете одну строку перевода, которая действительно похожа на нужное вам движение.
-- Переиспользуете его `receipt_id` в Transactions API только если нужно перейти от движения актива к истории исполнения.
+- Сначала выводите строки, а затем выбираете одну строку перевода, которая действительно похожа на нужное вам движение.
+- Переиспользуете её `receipt_id` только если нужно перейти от движения актива к истории исполнения.
 
 ```bash
 TRANSFERS_BASE_URL=https://transfers.main.fastnear.com
-TX_BASE_URL=https://tx.main.fastnear.com
 ACCOUNT_ID=YOUR_ACCOUNT_ID
 FROM_TIMESTAMP_MS=1711929600000
 TO_TIMESTAMP_MS=1712016000000
@@ -3839,6 +3729,16 @@ RECEIPT_ID="$(
 
 printf 'Chosen transfer index: %s\n' "$TRANSFER_INDEX"
 printf 'Chosen receipt id: %s\n' "$RECEIPT_ID"
+```
+
+Этим вы отвечаете на первый вопрос: было ли здесь движение средств и какую строку перевода стоит разбирать дальше?
+
+#### Необязательное продолжение: Что сделала эта строка перевода on-chain?
+
+Переходите к истории receipt только если самой строки перевода уже недостаточно.
+
+```bash
+TX_BASE_URL=https://tx.main.fastnear.com
 
 if [ -n "$RECEIPT_ID" ]; then
   curl -s "$TX_BASE_URL/v0/receipt" \
@@ -3855,7 +3755,7 @@ fi
 
 **Зачем нужен следующий шаг?**
 
-Запрос переводов быстро отвечает на первый вопрос: отправлял ли этот аккаунт средства в этом окне и кому именно? Переход по `receipt_id` — это необязательный следующий шаг, когда самой строки перевода уже недостаточно и нужна опорная точка в истории исполнения. Если после этого всё ещё нужно больше строк, продолжайте пагинацию тем же `resume_token` и теми же фильтрами.
+Запрос переводов быстро отвечает на первый вопрос: отправлял ли этот аккаунт средства в этом окне и кому именно? Переход по `receipt_id` — это необязательный второй вопрос: какая execution-anchor стоит за этой одной строкой? Если после этого всё ещё нужно больше строк, продолжайте пагинацию тем же `resume_token` и теми же фильтрами.
 
 ## Частые ошибки
 
@@ -3976,8 +3876,6 @@ curl -s "$TX_BASE_URL/v0/transactions" \
 ```
 
 Это самое короткое расследование на странице. Переходите к RPC или к receipt ID только если этого вывода уже мало.
-
-Если нужен более развёрнутый case study на той же поверхности, переходите к [Berry Club case study](https://docs.fastnear.com/ru/tx/examples/berry-club) для исторического восстановления доски или к [OutLayer case study](https://docs.fastnear.com/ru/tx/examples/outlayer) для трассировки воркера и callback-цепочки.
 
 ## С чего начать
 
@@ -4930,59 +4828,6 @@ jq --arg callback_receipt_id "$CALLBACK_RECEIPT_ID" '{
 
 Для вопросов про callback главный proof звучит не как «все ли receipt прошли успешно?», а как «получил ли исходный контракт свой callback-receipt обратно и что там случилось?» `POST /v0/transactions` даёт самый быстрый читаемый ответ. RPC нужен только как дополнительный слой подтверждения, если важны канонический результат callback-а и его логи.
 
-## Расширенные сценарии и case study
-
-Примеры ниже всё ещё полезны, но они длиннее или более специализированы, чем основные start-here-сценарии выше. `Berry Club` и `OutLayer` вынесены в отдельные case-study-страницы, паттерн provenance для SocialDB теперь живёт на отдельной расширенной странице, а последний пример здесь оставляет только компактный multi-contract follow-up.
-
-### Расширенный паттерн provenance для SocialDB
-
-Если читаемый факт уже приходит из `api.near.social`, держите follow-up маленьким: сначала семантическое значение, затем `:block`, потом lookup по блоку и транзакции в FastNear. Для одного канонического примера такого сценария используйте [отдельную страницу паттерна provenance для SocialDB](https://docs.fastnear.com/ru/tx/socialdb-proofs).
-
-### Расширенный сценарий: какие downstream-контракты затронула эта транзакция?
-
-Используйте этот сценарий, когда у вас уже есть один multi-contract tx hash и следующий вопрос звучит просто: «в какие контракты ушёл этот вызов после top-level action?»
-
-Этот зафиксированный mainnet-якорь по-прежнему хорошо подходит как пример, хотя сама транзакция и относится к `intents.near`:
-
-- хеш транзакции: `4cfei8p4HBeNxJnCLjfShhDYGmXZwFVwFgY1sYpyygE7`
-- аккаунт `signer` и `receiver`: `intents.near`
-- высота включающего блока: `194573310`
-
-Короткий ответ для этой tx уже полезен:
-
-- top-level метод был `execute_intents`
-- ранние downstream-receipt затронули `v2_1.omni.hot.tg` и `bridge-refuel.hot.tg`
-- в более поздних логах были семейства событий вроде `token_diff`, `intents_executed`, `mt_transfer`, `mt_withdraw` и `mt_burn`
-
-Для большинства вопросов достаточно Transactions API:
-
-```bash
-TX_BASE_URL=https://tx.main.fastnear.com
-TX_HASH=4cfei8p4HBeNxJnCLjfShhDYGmXZwFVwFgY1sYpyygE7
-
-curl -s "$TX_BASE_URL/v0/transactions" \
-  -H 'content-type: application/json' \
-  --data "$(jq -nc --arg tx_hash "$TX_HASH" '{tx_hashes: [$tx_hash]}')" \
-  | jq '{
-      transaction: {
-        hash: .transactions[0].transaction.hash,
-        signer_id: .transactions[0].transaction.signer_id,
-        receiver_id: .transactions[0].transaction.receiver_id,
-        method_name: .transactions[0].transaction.actions[0].FunctionCall.method_name
-      },
-      downstream_receivers: (
-        [.transactions[0].receipts[] | .receipt.receiver_id]
-        | unique
-      ),
-      first_logs: (
-        [.transactions[0].receipts[] | .execution_outcome.outcome.logs[]?]
-        | .[:5]
-      )
-    }'
-```
-
-Если нужен включающий блок, расширяйтесь один раз до Transactions API [`POST /v0/block`](https://docs.fastnear.com/ru/tx/block). Если нужен канонический DAG по receipt или сырые логи `EVENT_JSON`, расширяйтесь ещё на один шаг до RPC [`EXPERIMENTAL_tx_status`](https://docs.fastnear.com/ru/rpc/transaction/experimental-tx-status). Учебная идея здесь общая: начинайте с одного tx hash, перечислите downstream receiver-и и останавливайтесь, пока trace действительно не требует большего.
-
 ## Частые ошибки
 
 - Пытаться отправлять транзакцию через history API вместо сырого RPC.
@@ -4996,23 +4841,26 @@ curl -s "$TX_BASE_URL/v0/transactions" \
 - [RPC Reference](https://docs.fastnear.com/ru/rpc)
 - [FastNear API](https://docs.fastnear.com/ru/api)
 - [NEAR Data API](https://docs.fastnear.com/ru/neardata)
+- [Berry Club: живая доска и один путь исторической реконструкции](https://docs.fastnear.com/ru/tx/examples/berry-club)
+- [OutLayer: связать одну транзакцию запроса с одним ответом воркера](https://docs.fastnear.com/ru/tx/examples/outlayer)
+- [Расширенный поиск записи SocialDB](https://docs.fastnear.com/ru/tx/socialdb-proofs)
 - [Choosing the Right Surface](https://docs.fastnear.com/ru/agents/choosing-surfaces)
 - [Agent Playbooks](https://docs.fastnear.com/ru/agents/playbooks)
 
 ---
 
-## Berry Club Case Study: как читать живую доску и разбирать одну эпоху
+## Berry Club: как читать живую доску и разбирать одну эпоху
 
 - HTML-маршрут: https://docs.fastnear.com/ru/tx/examples/berry-club
 - Markdown-маршрут: https://docs.fastnear.com/ru/tx/examples/berry-club.md
 
 **Источник:** [https://docs.fastnear.com/ru/tx/examples/berry-club](https://docs.fastnear.com/ru/tx/examples/berry-club)
 
-{/* FASTNEAR_AI_DISCOVERY: Этот case study показывает краткий и полезный путь для Berry Club: сначала прочитайте живую доску через RPC get_lines, а Transactions API используйте только тогда, когда нужно восстановить одну более раннюю эпоху по draw-вызовам. */}
+{/* FASTNEAR_AI_DISCOVERY: Этот walkthrough показывает краткий и полезный путь для Berry Club: сначала прочитайте живую доску через RPC get_lines, а Transactions API используйте только тогда, когда нужно восстановить одну более раннюю эпоху по draw-вызовам. */}
 
-# Berry Club Case Study: как читать живую доску и разбирать одну эпоху
+# Berry Club: как читать живую доску и разбирать одну эпоху
 
-Используйте этот case study, когда живую доску читать легко, но нужен один понятный путь к исторической реконструкции.
+Используйте этот walkthrough, когда живую доску читать легко, но нужен один понятный путь к исторической реконструкции.
 
 Начните с живой доски. Если этого уже достаточно для ответа, на этом можно остановиться.
 
@@ -5116,35 +4964,29 @@ for (const drawTx of drawTransactionsOldestFirst) {
 
 ---
 
-## OutLayer Case Study: трассировка запроса и разрешения воркером
+## OutLayer: что сделала эта пара request/resolution?
 
 - HTML-маршрут: https://docs.fastnear.com/ru/tx/examples/outlayer
 - Markdown-маршрут: https://docs.fastnear.com/ru/tx/examples/outlayer.md
 
 **Источник:** [https://docs.fastnear.com/ru/tx/examples/outlayer](https://docs.fastnear.com/ru/tx/examples/outlayer)
 
-{/* FASTNEAR_AI_DISCOVERY: Этот case study остаётся в пределах наблюдаемых транзакций и receipts. Он показывает, как связать один caller-side запрос OutLayer с более поздним worker-side разрешением и разобрать finish-receipts. Он не пытается доказывать внутреннюю TEE-, yield/resume- или CKD/MPC-архитектуру OutLayer только по публичным chain-данным. */}
+{/* FASTNEAR_AI_DISCOVERY: Этот walkthrough остаётся в пределах наблюдаемых транзакций и receipts. Он показывает, как прочитать один caller-side запрос OutLayer вместе с более поздним worker-side resolution, а затем разобрать finish-receipts только если это действительно нужно. */}
 
-# OutLayer Case Study: трассировка запроса и разрешения воркером
+# OutLayer: что сделала эта пара request/resolution?
 
-Используйте этот case study, когда вопрос звучит так: «какая транзакция открыла запрос OutLayer, какая более поздняя транзакция пришла от воркера и где в завершающих receipts видны callback, списание или возврат средств?»
+Используйте этот walkthrough, когда вопрос звучит так: «что сделал этот запрос OutLayer, какое более позднее resolution к нему относится и нужно ли мне вообще смотреть на finish-receipts?»
 
-Эта страница намеренно остаётся только в пределах публичных chain-данных. Она показывает caller-транзакцию, более позднюю worker-транзакцию и finish-receipts. Она не пытается доказывать внутреннюю TEE-, `yield/resume`- или CKD/MPC-архитектуру OutLayer только по chain-trace.
+Оставайтесь в пределах публичных chain-данных: прочитайте request tx, прочитайте более поздний resolution tx и только потом решайте, нужны ли вам finish-receipts.
 
-Сначала смотрите на это как на задачу по истории транзакций:
-
-- один caller-side `request_execution`
-- одна более поздняя worker-side транзакция `submit_execution_output_and_resolve` или `resolve_execution`
-- переход к receipts только тогда, когда уже важен путь завершения
-
-## Проверенный shell-сценарий
+## Компактный shell-сценарий
 
 Эта пара работала 18 апреля 2026 года:
 
 - caller-side запрос: `AJgn2DB7BaD3487wXii8rGM648eqvkFDqJ1zXCxfuRk4`
 - worker-side разрешение: `AVbxfPyN5P1ryFh7HPstWbjiSantPYWfMpiwKcJ7hXTs`
 
-### 1. Сразу раскройте caller-транзакцию и worker-транзакцию вместе
+### 1. Основной ответ: сразу раскройте request tx и resolution tx вместе
 
 ```bash
 TX_BASE_URL=https://tx.main.fastnear.com
@@ -5165,16 +5007,20 @@ jq '{
         hash: .transaction.hash,
         signer_id: .transaction.signer_id,
         receiver_id: .transaction.receiver_id,
-        actions: [.transaction.actions[] | keys[0]],
+        methods: [
+          .transaction.actions[]
+          | .FunctionCall.method_name?
+          | select(. != null)
+        ],
         first_logs: (.receipts[0].execution_outcome.outcome.logs[:2])
       }
   ]
 }' /tmp/outlayer-pair.json
 ```
 
-Это и есть главный наблюдаемый цикл: сначала caller-side запрос, затем более позднее worker-side разрешение, с читаемыми signer-, method- и log-доказательствами для обеих транзакций.
+Это и есть основной ответ: один request tx, один более поздний resolution tx и читаемые signer-, receiver-, method- и log-доказательства для обеих транзакций.
 
-### 2. Читайте worker-receipts только тогда, когда уже важен finish-путь
+### Необязательное продолжение: Что сделал finish-путь?
 
 ```bash
 jq --arg worker_tx_hash "$WORKER_TX_HASH" '
@@ -5196,15 +5042,15 @@ jq --arg worker_tx_hash "$WORKER_TX_HASH" '
 ' /tmp/outlayer-pair.json
 ```
 
-На что смотреть:
+Смотрите на самое маленькое читаемое доказательство finish-пути:
 
 - `FunctionCall`-receipts, которые продолжают finish-путь
 - логи списания вроде `[[yNEAR charged: "..."]]`
 - последующие `Transfer`-receipts, которые похожи на refund или settlement-движение
 
-Именно здесь receipts становятся правильной абстракцией. Не начинайте с них, если вопрос пока ещё звучит как «какие две транзакции относятся к одному запросу OutLayer?»
+Именно здесь receipts становятся нужной абстракцией. Не начинайте с них, если вопрос пока ещё звучит как «какие две транзакции здесь относятся друг к другу?»
 
-### 3. Если двух хешей у вас ещё нет, сначала найдите их
+### Необязательный шаг: сначала найдите два хеша
 
 ```bash
 curl -sS "$TX_BASE_URL/v0/account" \
@@ -5216,28 +5062,26 @@ curl -sS "$TX_BASE_URL/v0/account" \
     }'
 ```
 
-Используйте это только как surface для поиска хешей. В этом примере `/v0/account` даёт кандидатов, а `/v0/transactions` — это surface, который превращает их в читаемое доказательство.
+Используйте это только если вы ещё не знаете пару хешей. В этом примере `/v0/account` даёт кандидатов, а `/v0/transactions` превращает их в читаемый ответ.
 
 ## Полезные связанные страницы
 
 - [Transactions API: история аккаунта](https://docs.fastnear.com/ru/tx/account)
 - [Transactions API: транзакции по хешу](https://docs.fastnear.com/ru/tx/transactions)
 - [Transactions API: receipt по ID](https://docs.fastnear.com/ru/tx/receipt)
-- [NEAR Integration в OutLayer](https://outlayer.fastnear.com/docs/near-integration)
-- [Secrets / CKD в OutLayer](https://outlayer.fastnear.com/docs/secrets)
 
 ---
 
-## Расширенный паттерн provenance для SocialDB
+## Расширенный поиск записи SocialDB
 
 - HTML-маршрут: https://docs.fastnear.com/ru/tx/socialdb-proofs
 - Markdown-маршрут: https://docs.fastnear.com/ru/tx/socialdb-proofs.md
 
 **Источник:** [https://docs.fastnear.com/ru/tx/socialdb-proofs](https://docs.fastnear.com/ru/tx/socialdb-proofs)
 
-# Расширенный паттерн provenance для SocialDB
+# Расширенный поиск записи SocialDB
 
-Используйте эту страницу только тогда, когда отправная точка уже является читаемым значением из `api.near.social`, а следующий вопрос относится к историческому provenance.
+Используйте эту страницу только тогда, когда отправная точка уже является читаемым значением из `api.near.social`, а следующий вопрос относится к историческому поиску записи.
 
 Для FastNear-first-задач сначала откройте [Transactions Examples](https://docs.fastnear.com/ru/tx/examples). Сюда переходите только тогда, когда вопрос уже звучит как "какая запись сделала это читаемое значение SocialDB истинным?"
 
@@ -5356,74 +5200,14 @@ jq '{
 }' /tmp/mike-profile-transaction.json
 ```
 
-4. Завершите каноническим подтверждением текущего состояния через raw RPC.
+Это и есть весь паттерн lookup-а: читаемое значение, block уровня поля, мост через receipt и payload транзакции.
 
-```bash
-SOCIAL_GET_ARGS_BASE64="$(
-  jq -nr --arg account_id "$ACCOUNT_ID" --arg profile_field "$PROFILE_FIELD" '{
-    keys: [($account_id + "/" + $profile_field)]
-  } | @base64'
-)"
+Тот же мост работает и для других читаемых значений SocialDB:
 
-curl -s "$RPC_URL" \
-  -H 'content-type: application/json' \
-  --data "$(jq -nc --arg args_base64 "$SOCIAL_GET_ARGS_BASE64" '{
-    jsonrpc: "2.0",
-    id: "fastnear",
-    method: "query",
-    params: {
-      request_type: "call_function",
-      account_id: "social.near",
-      method_name: "get",
-      args_base64: $args_base64,
-      finality: "final"
-    }
-  }')" \
-  | tee /tmp/mike-profile-rpc.json >/dev/null
+- вариант для связи подписки: `mike.near -> mob.near`, блок `79574924`, tx `FLLmTvFx9vCof79scy2uUviF5WwYmevkz9TZ8azPGVQb`
+- вариант для исходника виджета: `mob.near/widget/Profile`, блок `86494825`, tx `9QDupdK2ewMxfSvMmdGEkdBcVnoL4TexmXY2FnMRxfia`
 
-jq --arg account_id "$ACCOUNT_ID" '{
-  finality: "final",
-  current_name: (
-    .result.result
-    | implode
-    | fromjson
-    | .[$account_id].profile.name
-  )
-}' /tmp/mike-profile-rpc.json
-```
-
-Это и есть весь provenance-паттерн: читаемое значение, block уровня поля, мост через receipt, payload транзакции и затем необязательное подтверждение текущего состояния.
-
-## Тот же паттерн для других ключей SocialDB
-
-Используйте тот же мост каждый раз, когда у вас уже есть читаемое значение SocialDB и его write-block:
-
-1. Прочитайте семантическое значение и `:block` из NEAR Social или начните с уже известного блока записи виджета.
-2. Используйте Transactions API [`POST /v0/block`](https://docs.fastnear.com/ru/tx/block), чтобы восстановить receipt `*.near -> social.near` и хеш транзакции.
-3. Используйте Transactions API [`POST /v0/transactions`](https://docs.fastnear.com/ru/tx/transactions), чтобы декодировать payload `social.near set`.
-4. Используйте RPC [`query(call_function)`](https://docs.fastnear.com/ru/rpc/contract/call-function) только если всё ещё нужно каноническое подтверждение текущего состояния.
-
-### Вариант для связи подписки
-
-Тот же паттерн работает для читаемой связи подписки:
-
-- текущая связь: `mike.near -> mob.near`
-- блок записи SocialDB: `79574924`
-- receipt ID: `UiyiQaqHbkkMxkrB6rDkYr7X5EQLt8QG9MDATrES7Th`
-- хеш исходной транзакции: `FLLmTvFx9vCof79scy2uUviF5WwYmevkz9TZ8azPGVQb`
-
-Главное отличие от примера с профилем только в ключе и форме payload: читайте `mike.near/graph/follow/mob.near`, а затем декодируйте и `graph.follow`, и соответствующую запись `index.graph` из payload записи.
-
-### Вариант для исходника виджета
-
-Тот же паттерн снова работает, когда читаемый факт относится к ключу с исходником виджета:
-
-- ключ виджета: `mob.near/widget/Profile`
-- блок записи SocialDB: `86494825`
-- receipt ID: `CZyjiBjphzE95tFEqi1YH6eLCLhqknaW4SQ5R4L6pkC6`
-- хеш исходной транзакции: `9QDupdK2ewMxfSvMmdGEkdBcVnoL4TexmXY2FnMRxfia`
-
-Главное отличие здесь в том, что вы обычно стартуете с уже известного блока записи виджета, а затем декодируете `.data["mob.near"].widget.Profile[""]` из исходного payload `social.near set`.
+Ключевая идея не меняется: начните с читаемого значения и его write-block, восстановите receipt `*.near -> social.near` из блока, а затем декодируйте payload `social.near set` из исходной транзакции.
 
 ---
 

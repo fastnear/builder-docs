@@ -2,7 +2,7 @@
 sidebar_label: Examples
 slug: /fastdata/kv/examples
 title: "Примеры KV FastData"
-description: "Пошаговые сценарии для чтения точных строк FastData, проверки истории точного ключа и привязки индексированной строки к исходной транзакции."
+description: "Пошаговые сценарии для чтения точных строк FastData, проверки истории точного ключа и необязательной привязки индексированной настройки к исходной транзакции."
 displayed_sidebar: kvFastDataSidebar
 page_actions:
   - markdown
