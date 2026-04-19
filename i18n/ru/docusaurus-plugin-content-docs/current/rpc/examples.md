@@ -536,6 +536,199 @@ jq -n \
 
 Используйте `view_state`, когда вы уже знаете точное семейство storage-ключей и хотите raw bytes. Используйте `call_function`, когда вам нужен публичный метод чтения самого контракта. Если следующий вопрос становится историческим, а не «что там лежит прямо сейчас?», тогда уже стоит расширяться в [KV FastData API](/fastdata/kv).
 
+### Какие ERC-20 токены из Rainbow Bridge существуют на NEAR и сколько одного такого токена сейчас в обращении?
+
+Используйте этот сценарий, когда хотите найти Rainbow Bridge ERC-20 контракты и посмотреть живой объём одного токена на NEAR. Rainbow Bridge развёртывает по одному NEAR-контракту на каждый bridged ERC-20 токен, а `factory.bridge.near` их перечисляет.
+
+<div className="fastnear-example-strategy">
+  <div className="fastnear-example-strategy__header">
+    <span className="fastnear-example-strategy__eyebrow">Стратегия</span>
+    <p className="fastnear-example-strategy__title">Одно чтение factory перечисляет token-контракты. Ещё два небольших view-вызова по одному токену показывают, что это за токен и сколько его сейчас на NEAR.</p>
+  </div>
+  <div className="fastnear-example-strategy__items">
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">01</span><span><span className="fastnear-example-strategy__code">RPC call_function get_tokens_accounts</span> по <span className="fastnear-example-strategy__code">factory.bridge.near</span> возвращает развёрнутые bridged token-контракты.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">02</span><span>Следующий <span className="fastnear-example-strategy__code">RPC call_function</span> по одному bridged token-контракту возвращает метаданные токена: имя, тикер и число десятичных знаков.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span>Ещё один <span className="fastnear-example-strategy__code">RPC call_function</span> по тому же контракту возвращает текущее сырое значение объёма в обращении на NEAR.</span></p>
+  </div>
+</div>
+
+**Что вы делаете**
+
+- Спрашиваете у bridge factory обо всех bridged token-контрактах, которые она создала.
+- Выбираете один bridged token-контракт и читаете его метаданные.
+- Читаете total supply того же контракта и переводите его в человеческие единицы через `decimals`.
+
+```bash
+export NETWORK_ID=mainnet
+export RPC_URL=https://rpc.mainnet.fastnear.com
+export FACTORY_ID=factory.bridge.near
+export TOKENS_FILE=/tmp/rainbow-bridge-tokens.json
+```
+
+1. Получите список bridged token-контрактов.
+
+```bash
+curl -s "$RPC_URL" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc --arg account_id "$FACTORY_ID" '{
+    jsonrpc: "2.0",
+    id: "fastnear",
+    method: "query",
+    params: {
+      request_type: "call_function",
+      account_id: $account_id,
+      method_name: "get_tokens_accounts",
+      args_base64: "e30=",
+      finality: "final"
+    }
+  }')" \
+  | tee "$TOKENS_FILE" >/dev/null
+
+jq -r '.result.result | implode | fromjson | .[]' "$TOKENS_FILE"
+```
+
+Каждая строка — это один bridged FT-контракт на NEAR в форме `<hex_eth_address>.factory.bridge.near`. Например, bridged ERC-20 USDT с Ethereum-адреса `0xdAC17F958D2ee523a2206206994597C13D831ec7` появляется как `dac17f958d2ee523a2206206994597c13d831ec7.factory.bridge.near`.
+
+2. Прочитайте метаданные одного токен-контракта.
+
+```bash
+export TOKEN_ID=dac17f958d2ee523a2206206994597c13d831ec7.factory.bridge.near
+
+curl -s "$RPC_URL" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc --arg account_id "$TOKEN_ID" '{
+    jsonrpc: "2.0",
+    id: "fastnear",
+    method: "query",
+    params: {
+      request_type: "call_function",
+      account_id: $account_id,
+      method_name: "ft_metadata",
+      args_base64: "e30=",
+      finality: "final"
+    }
+  }')" \
+  | tee /tmp/rainbow-bridge-token-metadata.json >/dev/null
+
+jq '.result.result | implode | fromjson | {name, symbol, decimals}' /tmp/rainbow-bridge-token-metadata.json
+```
+
+3. Прочитайте текущий total supply на NEAR и переведите его в человеческие единицы.
+
+```bash
+curl -s "$RPC_URL" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc --arg account_id "$TOKEN_ID" '{
+    jsonrpc: "2.0",
+    id: "fastnear",
+    method: "query",
+    params: {
+      request_type: "call_function",
+      account_id: $account_id,
+      method_name: "ft_total_supply",
+      args_base64: "e30=",
+      finality: "final"
+    }
+  }')" \
+  | tee /tmp/rainbow-bridge-token-supply.json >/dev/null
+
+RAW_SUPPLY="$(
+  jq -r '.result.result | implode | fromjson' /tmp/rainbow-bridge-token-supply.json
+)"
+
+DECIMALS="$(
+  jq -r '.result.result | implode | fromjson | .decimals' /tmp/rainbow-bridge-token-metadata.json
+)"
+
+HUMAN_SUPPLY="$(
+  python3 - "$RAW_SUPPLY" "$DECIMALS" <<'PY'
+from decimal import Decimal
+import sys
+
+raw = Decimal(sys.argv[1])
+decimals = int(sys.argv[2])
+human = raw / (Decimal(10) ** decimals)
+print(human)
+PY
+)"
+
+jq -n \
+  --arg token_id "$TOKEN_ID" \
+  --arg raw_supply "$RAW_SUPPLY" \
+  --argjson decimals "$DECIMALS" \
+  --arg human_supply "$HUMAN_SUPPLY" '{
+    token_id: $token_id,
+    raw_supply: $raw_supply,
+    decimals: $decimals,
+    human_supply: $human_supply
+  }'
+```
+
+Результат `ft_total_supply` приходит в минимальных единицах токена. Используйте `decimals` из ответа предыдущего шага, чтобы перевести его в человекочитаемый объём в обращении.
+
+#### Необязательное расширение: показать первые несколько bridged token-ов с метаданными и объёмом в обращении
+
+Используйте это расширение, когда нужен быстрый sample-инвентарь и вы всё ещё хотите оставаться в RPC.
+
+```bash
+export TOKEN_SAMPLE_COUNT=5
+
+python3 <<'PY'
+import json
+import os
+from decimal import Decimal
+
+TOKENS_FILE = os.environ["TOKENS_FILE"]
+LIMIT = int(os.environ.get("TOKEN_SAMPLE_COUNT", "5"))
+RPC_URL = os.environ["RPC_URL"]
+
+def decode_result(result):
+    return json.loads("".join(chr(b) for b in result))
+
+with open(TOKENS_FILE) as fh:
+    token_ids = decode_result(json.load(fh)["result"]["result"])[:LIMIT]
+
+def rpc_call(account_id, method_name):
+    payload = {
+        "jsonrpc": "2.0",
+        "id": "fastnear",
+        "method": "query",
+        "params": {
+            "request_type": "call_function",
+            "account_id": account_id,
+            "method_name": method_name,
+            "args_base64": "e30=",
+            "finality": "final",
+        },
+    }
+    import subprocess
+    raw = subprocess.check_output([
+        "curl", "-s", RPC_URL,
+        "-H", "content-type: application/json",
+        "--data", json.dumps(payload),
+    ], text=True)
+    return decode_result(json.loads(raw)["result"]["result"])
+
+print(f"{'token_id':<56} {'symbol':<12} {'decimals':>8} {'raw_supply':>24} {'human_supply':>24}  name")
+for token_id in token_ids:
+    metadata = rpc_call(token_id, "ft_metadata")
+    raw_supply = rpc_call(token_id, "ft_total_supply")
+    human_supply = Decimal(raw_supply) / (Decimal(10) ** metadata["decimals"])
+    print(
+        f"{token_id:<56} "
+        f"{metadata['symbol']:<12} "
+        f"{metadata['decimals']:>8} "
+        f"{raw_supply:>24} "
+        f"{str(human_supply):>24}  "
+        f"{metadata['name']}"
+    )
+PY
+```
+
+**Зачем нужен следующий шаг?**
+
+Оставайтесь в RPC, пока вопрос звучит как «какие bridged token-контракты существуют и сколько одного такого токена сейчас в обращении?» Factory — это источник истины для множества bridged token-ов, а каждый token-контракт сам отвечает за свои метаданные и объём в обращении через стандартные NEP-141 view-методы. Если следующий вопрос становится «кто держит этот токен?», переключайтесь на [V1 FT Top Holders](/api/v1/ft-top), а не пытайтесь обходить holders через RPC.
+
 ## Точные чтения SocialDB
 
 Оставайтесь на точных чтениях через `call_function get`, когда вы уже знаете нужный ключ SocialDB. На обычном RPC raw `view_state` для `social.near` не подходит как обучающий путь, потому что состояние контракта слишком велико для прямого чтения.

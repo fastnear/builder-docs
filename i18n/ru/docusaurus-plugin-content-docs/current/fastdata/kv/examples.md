@@ -43,9 +43,9 @@ curl -s "$KV_BASE_URL/v0/multi" \
 
 ## Готовое расследование
 
-### Прочитать одну индексированную настройку, а затем привязать её к записи
+### Прочитать одну индексированную настройку и посмотреть её историю
 
-Используйте это расследование, когда контракт и предшественник уже известны, а вопрос звучит так: «какое текущее значение у этой индексированной настройки, менялось ли оно раньше и какая транзакция его создала?»
+Используйте это расследование, когда контракт и предшественник уже известны, а вопрос звучит так: «какое текущее значение у этой индексированной настройки и менялось ли оно раньше?»
 
 <div className="fastnear-example-strategy">
   <div className="fastnear-example-strategy__header">
@@ -55,13 +55,13 @@ curl -s "$KV_BASE_URL/v0/multi" \
   <div className="fastnear-example-strategy__items">
     <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">01</span><span><span className="fastnear-example-strategy__code">multi</span> или <span className="fastnear-example-strategy__code">get-latest-key</span> читают точные индексированные строки настройки.</span></p>
     <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">02</span><span><span className="fastnear-example-strategy__code">get-history-key</span> показывает, менялось ли это индексированное значение позже.</span></p>
-    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span><span className="fastnear-example-strategy__code">latest-by-predecessor</span> с метаданными плюс <span className="fastnear-example-strategy__code">POST /v0/transactions</span> доказывают, какая запись создала эти индексированные строки.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span>Только если важна provenance-цепочка, <span className="fastnear-example-strategy__code">latest-by-predecessor</span> с метаданными плюс <span className="fastnear-example-strategy__code">POST /v0/transactions</span> доказывают, какая запись создала эти индексированные строки.</span></p>
   </div>
 </div>
 
 **Цель**
 
-- Прочитать одну стабильную индексированную настройку из минимального публичного testnet-контракта, подтвердить историю точного ключа для одной строки и восстановить транзакцию, которая создала обе строки.
+- Прочитать одну стабильную индексированную настройку из минимального публичного testnet-контракта и подтвердить историю точного ключа для одной строки.
 
 | Поверхность | Эндпоинт | Как используем | Зачем используем |
 | --- | --- | --- | --- |

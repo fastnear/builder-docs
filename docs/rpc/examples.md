@@ -536,6 +536,199 @@ jq -n \
 
 Use `view_state` when you already know the exact storage key family and want raw bytes. Use `call_function` when you want the contract’s public read API. If the next question becomes historical instead of “what is it right now?”, widen into [KV FastData API](/fastdata/kv).
 
+### Which Rainbow Bridge ERC-20 tokens exist on NEAR, and how much of one token is out there?
+
+Use this when you want to discover Rainbow Bridge ERC-20 contracts and inspect one token's live supply on NEAR. Rainbow Bridge deploys one NEAR contract per bridged ERC-20 token, and `factory.bridge.near` lists them.
+
+<div className="fastnear-example-strategy">
+  <div className="fastnear-example-strategy__header">
+    <span className="fastnear-example-strategy__eyebrow">Strategy</span>
+    <p className="fastnear-example-strategy__title">One factory read lists the token contracts. Two small view calls on one token tell you what it is and how much is on NEAR right now.</p>
+  </div>
+  <div className="fastnear-example-strategy__items">
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">01</span><span><span className="fastnear-example-strategy__code">RPC call_function get_tokens_accounts</span> on <span className="fastnear-example-strategy__code">factory.bridge.near</span> returns the deployed bridged token contracts.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">02</span><span><span className="fastnear-example-strategy__code">RPC call_function ft_metadata</span> on one bridged token contract returns its <span className="fastnear-example-strategy__code">name</span>, <span className="fastnear-example-strategy__code">symbol</span>, and <span className="fastnear-example-strategy__code">decimals</span>.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span><span className="fastnear-example-strategy__code">RPC call_function ft_total_supply</span> on the same contract returns the current raw supply on NEAR.</span></p>
+  </div>
+</div>
+
+**What you're doing**
+
+- Ask the bridge factory for every bridged token contract it has created.
+- Pick one bridged token contract and read its metadata.
+- Read the same contract's total supply and convert it to human units using `decimals`.
+
+```bash
+export NETWORK_ID=mainnet
+export RPC_URL=https://rpc.mainnet.fastnear.com
+export FACTORY_ID=factory.bridge.near
+export TOKENS_FILE=/tmp/rainbow-bridge-tokens.json
+```
+
+1. List the bridged token contracts.
+
+```bash
+curl -s "$RPC_URL" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc --arg account_id "$FACTORY_ID" '{
+    jsonrpc: "2.0",
+    id: "fastnear",
+    method: "query",
+    params: {
+      request_type: "call_function",
+      account_id: $account_id,
+      method_name: "get_tokens_accounts",
+      args_base64: "e30=",
+      finality: "final"
+    }
+  }')" \
+  | tee "$TOKENS_FILE" >/dev/null
+
+jq -r '.result.result | implode | fromjson | .[]' "$TOKENS_FILE"
+```
+
+Each line is one bridged FT contract on NEAR in the form `<hex_eth_address>.factory.bridge.near`. For example, bridged ERC-20 USDT on Ethereum address `0xdAC17F958D2ee523a2206206994597C13D831ec7` appears as `dac17f958d2ee523a2206206994597c13d831ec7.factory.bridge.near`.
+
+2. Read metadata for one token contract.
+
+```bash
+export TOKEN_ID=dac17f958d2ee523a2206206994597c13d831ec7.factory.bridge.near
+
+curl -s "$RPC_URL" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc --arg account_id "$TOKEN_ID" '{
+    jsonrpc: "2.0",
+    id: "fastnear",
+    method: "query",
+    params: {
+      request_type: "call_function",
+      account_id: $account_id,
+      method_name: "ft_metadata",
+      args_base64: "e30=",
+      finality: "final"
+    }
+  }')" \
+  | tee /tmp/rainbow-bridge-token-metadata.json >/dev/null
+
+jq '.result.result | implode | fromjson | {name, symbol, decimals}' /tmp/rainbow-bridge-token-metadata.json
+```
+
+3. Read the current total supply on NEAR and convert it to human units.
+
+```bash
+curl -s "$RPC_URL" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc --arg account_id "$TOKEN_ID" '{
+    jsonrpc: "2.0",
+    id: "fastnear",
+    method: "query",
+    params: {
+      request_type: "call_function",
+      account_id: $account_id,
+      method_name: "ft_total_supply",
+      args_base64: "e30=",
+      finality: "final"
+    }
+  }')" \
+  | tee /tmp/rainbow-bridge-token-supply.json >/dev/null
+
+RAW_SUPPLY="$(
+  jq -r '.result.result | implode | fromjson' /tmp/rainbow-bridge-token-supply.json
+)"
+
+DECIMALS="$(
+  jq -r '.result.result | implode | fromjson | .decimals' /tmp/rainbow-bridge-token-metadata.json
+)"
+
+HUMAN_SUPPLY="$(
+  python3 - "$RAW_SUPPLY" "$DECIMALS" <<'PY'
+from decimal import Decimal
+import sys
+
+raw = Decimal(sys.argv[1])
+decimals = int(sys.argv[2])
+human = raw / (Decimal(10) ** decimals)
+print(human)
+PY
+)"
+
+jq -n \
+  --arg token_id "$TOKEN_ID" \
+  --arg raw_supply "$RAW_SUPPLY" \
+  --argjson decimals "$DECIMALS" \
+  --arg human_supply "$HUMAN_SUPPLY" '{
+    token_id: $token_id,
+    raw_supply: $raw_supply,
+    decimals: $decimals,
+    human_supply: $human_supply
+  }'
+```
+
+The `ft_total_supply` result is in the token's smallest units. Use the `decimals` from `ft_metadata` to convert it into a human-readable supply.
+
+#### Optional extension: print the first few bridged tokens with metadata and supply
+
+Use this when you want a quick sample inventory without leaving RPC.
+
+```bash
+export TOKEN_SAMPLE_COUNT=5
+
+python3 <<'PY'
+import json
+import os
+from decimal import Decimal
+
+TOKENS_FILE = os.environ["TOKENS_FILE"]
+LIMIT = int(os.environ.get("TOKEN_SAMPLE_COUNT", "5"))
+RPC_URL = os.environ["RPC_URL"]
+
+def decode_result(result):
+    return json.loads("".join(chr(b) for b in result))
+
+with open(TOKENS_FILE) as fh:
+    token_ids = decode_result(json.load(fh)["result"]["result"])[:LIMIT]
+
+def rpc_call(account_id, method_name):
+    payload = {
+        "jsonrpc": "2.0",
+        "id": "fastnear",
+        "method": "query",
+        "params": {
+            "request_type": "call_function",
+            "account_id": account_id,
+            "method_name": method_name,
+            "args_base64": "e30=",
+            "finality": "final",
+        },
+    }
+    import subprocess
+    raw = subprocess.check_output([
+        "curl", "-s", RPC_URL,
+        "-H", "content-type: application/json",
+        "--data", json.dumps(payload),
+    ], text=True)
+    return decode_result(json.loads(raw)["result"]["result"])
+
+print(f"{'token_id':<56} {'symbol':<12} {'decimals':>8} {'raw_supply':>24} {'human_supply':>24}  name")
+for token_id in token_ids:
+    metadata = rpc_call(token_id, "ft_metadata")
+    raw_supply = rpc_call(token_id, "ft_total_supply")
+    human_supply = Decimal(raw_supply) / (Decimal(10) ** metadata["decimals"])
+    print(
+        f"{token_id:<56} "
+        f"{metadata['symbol']:<12} "
+        f"{metadata['decimals']:>8} "
+        f"{raw_supply:>24} "
+        f"{str(human_supply):>24}  "
+        f"{metadata['name']}"
+    )
+PY
+```
+
+**Why this next step?**
+
+Stay on RPC while the question is “what bridged token contracts exist and how much of one token is out there?” The factory is the source of truth for the bridged token set, and each token contract answers its own metadata and supply through standard NEP-141 view methods. If the next question becomes “who holds this token?”, move to [V1 FT Top Holders](/api/v1/ft-top) instead of trying to walk holders through RPC.
+
 ## SocialDB Exact Reads
 
 Stay on exact `call_function get` reads when you already know the SocialDB key you want. On standard RPC, raw `view_state` against `social.near` is not a practical teaching path because the contract state is too large to scan directly.

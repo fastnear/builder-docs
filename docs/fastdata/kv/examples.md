@@ -43,9 +43,9 @@ This is the shortest useful FastData read on the page: one request, two exact ro
 
 ## Worked investigation
 
-### Read one indexed setting, then trace it back to the write
+### Read one indexed setting and inspect its history
 
-Use this investigation when you already know the contract and predecessor, and the question is: “what is the current indexed setting value, did it change before, and which transaction created it?”
+Use this investigation when you already know the contract and predecessor, and the question is: “what is the current indexed setting value, and did it change before?”
 
 <div className="fastnear-example-strategy">
   <div className="fastnear-example-strategy__header">
@@ -55,13 +55,13 @@ Use this investigation when you already know the contract and predecessor, and t
   <div className="fastnear-example-strategy__items">
     <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">01</span><span><span className="fastnear-example-strategy__code">multi</span> or <span className="fastnear-example-strategy__code">get-latest-key</span> reads the exact indexed setting rows.</span></p>
     <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">02</span><span><span className="fastnear-example-strategy__code">get-history-key</span> shows whether the indexed setting changed again later.</span></p>
-    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span><span className="fastnear-example-strategy__code">latest-by-predecessor</span> with metadata plus <span className="fastnear-example-strategy__code">POST /v0/transactions</span> proves which write created those indexed rows.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span>Only if provenance matters, <span className="fastnear-example-strategy__code">latest-by-predecessor</span> with metadata plus <span className="fastnear-example-strategy__code">POST /v0/transactions</span> proves which write created those indexed rows.</span></p>
   </div>
 </div>
 
 **Goal**
 
-- Read one stable indexed setting from a minimal public testnet contract, confirm the exact-key history for one row, and recover the transaction that created both rows.
+- Read one stable indexed setting from a minimal public testnet contract and confirm the exact-key history for one row.
 
 | Surface | Endpoint | How we use it | Why we use it |
 | --- | --- | --- | --- |
