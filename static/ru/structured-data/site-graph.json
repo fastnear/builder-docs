@@ -6497,6 +6497,19 @@
     },
     {
       "entityIds": {
+        "familyIds": [],
+        "mainEntityId": null,
+        "pageId": "https://docs.fastnear.com/ru/tx/socialdb-proofs#page"
+      },
+      "indexable": true,
+      "markdownMirrorUrl": "https://docs.fastnear.com/ru/tx/socialdb-proofs.md",
+      "pageSchemaType": "TechArticle",
+      "route": "/ru/tx/socialdb-proofs",
+      "routeType": "docs",
+      "url": "https://docs.fastnear.com/ru/tx/socialdb-proofs"
+    },
+    {
+      "entityIds": {
         "familyIds": [
           "https://docs.fastnear.com/structured-data/families/api-transactions"
         ],

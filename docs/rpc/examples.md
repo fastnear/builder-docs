@@ -44,94 +44,31 @@ This is the smallest reliable RPC example on the page: one request, one exact an
 
 ## Transaction Submission and Tracking
 
-Start here when the real question is not just “how do I send this?” but “which RPC endpoint should I use, and how do I track the transaction all the way to done?”
+### Two-part pattern: submit a transaction, or track a known tx hash to final execution
 
-### Submit a transaction, then track it from hash to final execution
+Default pattern:
 
-Use this when the user story is simple: “I have a signed transaction. Which endpoint do I call first, and what should I poll after I get the hash?” Not every tx question wants the same RPC method. The practical pattern is to submit fast, then track deliberately.
+- `broadcast_tx_async` to submit
+- `tx` with `wait_until: "FINAL"` to track
+- `EXPERIMENTAL_tx_status` only if the next question is about receipts
 
-This walkthrough is intentionally pinned and historical. It uses one real mainnet transaction that wrote a NEAR Social follow edge:
+This walkthrough is intentionally split in two:
+
+- submit a fresh signed transaction and keep the returned hash
+- track one known historical tx hash with reproducible output
+
+The tracking half uses one pinned historical transaction, so the status lookups use the archival host:
 
 - transaction hash: `FLLmTvFx9vCof79scy2uUviF5WwYmevkz9TZ8azPGVQb`
 - signer: `mike.near`
 - receiver: `social.near`
-- included block height: `79574923`
-- receipt execution block for the SocialDB write: `79574924`
+- `https://archival-rpc.mainnet.fastnear.com`
 
-Because this transaction is already old and finalized, you cannot literally replay its true pending window. That is fine. The point here is to teach the right submission and tracking pattern, then inspect one pinned transaction with the same tools.
-
-<div className="fastnear-example-strategy">
-  <div className="fastnear-example-strategy__header">
-    <span className="fastnear-example-strategy__eyebrow">Strategy</span>
-    <p className="fastnear-example-strategy__title">Submit fast, poll the simpler status path first, and only drop into the receipt tree when the headline status stops being enough.</p>
-  </div>
-  <div className="fastnear-example-strategy__items">
-    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">01</span><span><span className="fastnear-example-strategy__code">RPC broadcast_tx_async</span> is the low-latency submission surface when your client will track separately.</span></p>
-    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">02</span><span><span className="fastnear-example-strategy__code">RPC tx</span> is the default polling surface for included, optimistic, and final guarantees.</span></p>
-    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span><span className="fastnear-example-strategy__code">RPC EXPERIMENTAL_tx_status</span> is the deeper follow-up when you need the receipt tree, not the default loop.</span></p>
-  </div>
-</div>
-
-**What you're deciding**
-
-- which submission endpoint to reach for first
-- what to poll after you have a tx hash
-- how `wait_until` thresholds relate to included, optimistic, and final guarantees
-- when to stop using `tx` and switch to `EXPERIMENTAL_tx_status`
-
-```mermaid
-flowchart LR
-    S["Sign transaction"] --> A["broadcast_tx_async<br/>returns tx hash"]
-    A --> T["tx polling<br/>INCLUDED_FINAL -> FINAL"]
-    T --> F["Transaction fully done"]
-    T -. "only when needed" .-> E["EXPERIMENTAL_tx_status<br/>receipt tree + outcomes"]
-    F -. "optional readable story" .-> X["POST /v0/transactions"]
-```
-
-| Method | Use it when | What comes back | Position here |
-| --- | --- | --- | --- |
-| [`broadcast_tx_async`](/rpc/transaction/broadcast-tx-async) | your client wants to own tracking after submission | just the tx hash | **default submit path** |
-| [`send_tx`](/rpc/transaction/send-tx) | you want the node to wait to a chosen threshold for you | tx result up to `wait_until` | blocking alternative |
-| [`broadcast_tx_commit`](/rpc/transaction/broadcast-tx-commit) | older code or quick one-call confirmation is the point | execution result with commit-style waiting | legacy convenience |
-| [`tx`](/rpc/transaction/tx-status) | you already have the tx hash and want to know how far it got | status plus outcomes at the threshold you asked for | **default tracking path** |
-| [`EXPERIMENTAL_tx_status`](/rpc/transaction/experimental-tx-status) | you need receipt-tree detail or a richer async story | full receipt tree and detailed outcomes | deep follow-up only |
-
-**Status and wait map**
-
-`wait_until` values are waiting thresholds, not a permanent lifecycle enum you should treat as the user's one true transaction status. The word `pending` is still useful in human conversation, but here it means “the transaction has been submitted and is not yet included.”
-
-| Phase or threshold | What it means in practice | Best RPC surface |
-| --- | --- | --- |
-| pre-inclusion / pending | the client has submitted the tx, but it is not yet anchored in a block | your own submission state plus retry/backoff logic |
-| `INCLUDED` | the tx is in a block, but that block may not be final yet | `tx` |
-| `INCLUDED_FINAL` | the inclusion block is final | `tx` |
-| `EXECUTED_OPTIMISTIC` | execution has happened with optimistic finality | `tx` or `send_tx` |
-| `FINAL` | all relevant execution has completed and finalized | `tx` by default, `EXPERIMENTAL_tx_status` when you need more detail |
-
-The key practical distinction is simple:
-
-- use `broadcast_tx_async` when the tx hash is enough to keep going
-- use `tx` as the normal tracking loop
-- use `EXPERIMENTAL_tx_status` when the next question is about the receipt tree rather than the headline status
-
-**What you're doing**
-
-- Show what a live submission would look like with `broadcast_tx_async`.
-- Poll the pinned tx with `tx` at two thresholds: `INCLUDED_FINAL` and `FINAL`.
-- Only after that inspect the same tx with `EXPERIMENTAL_tx_status`.
-- Optionally pivot to Transactions API if the human-readable story is what matters next.
+1. Submit a fresh signed transaction and keep the returned hash.
 
 ```bash
 RPC_URL=https://rpc.mainnet.fastnear.com
-TX_BASE_URL=https://tx.main.fastnear.com
-TX_HASH=FLLmTvFx9vCof79scy2uUviF5WwYmevkz9TZ8azPGVQb
-SIGNER_ACCOUNT_ID=mike.near
-RECEIVER_ID=social.near
-```
 
-1. If this were a live client flow, submit with `broadcast_tx_async` and keep the returned hash.
-
-```bash
 curl -s "$RPC_URL" \
   -H 'content-type: application/json' \
   --data '{
@@ -143,39 +80,15 @@ curl -s "$RPC_URL" \
   | jq .
 ```
 
-In a real app, that response is the moment you stop waiting on submission and start tracking by tx hash.
+That first step is only about the submission shape. The returned hash is what you would track next for your own live transaction.
 
-2. Poll with `tx` at the first threshold that answers the user question.
+2. Track one known tx hash until you have the simplest final answer.
 
 ```bash
-curl -s "$RPC_URL" \
-  -H 'content-type: application/json' \
-  --data "$(jq -nc \
-    --arg tx_hash "$TX_HASH" \
-    --arg signer_account_id "$SIGNER_ACCOUNT_ID" '{
-      jsonrpc: "2.0",
-      id: "fastnear",
-      method: "tx",
-      params: {
-        tx_hash: $tx_hash,
-        sender_account_id: $signer_account_id,
-        wait_until: "INCLUDED_FINAL"
-      }
-    }')" \
-  | jq '{
-      final_execution_status: .result.final_execution_status,
-      status: .result.status,
-      transaction_handoff: .result.transaction_outcome.outcome.status
-    }'
+RPC_URL=https://archival-rpc.mainnet.fastnear.com
+TX_HASH=FLLmTvFx9vCof79scy2uUviF5WwYmevkz9TZ8azPGVQb
+SIGNER_ACCOUNT_ID=mike.near
 ```
-
-What to notice:
-
-- on a live tx, this threshold is useful when you care that the tx is safely included before you claim success to the user
-- on this historical tx, it returns immediately because the transaction is long past inclusion
-- `transaction_outcome.outcome.status` still tells you that the original action handed off into receipt execution
-
-3. Poll again with `FINAL` when you want the completed transaction story rather than just safe inclusion.
 
 ```bash
 curl -s "$RPC_URL" \
@@ -194,18 +107,12 @@ curl -s "$RPC_URL" \
     }')" \
   | jq '{
       final_execution_status: .result.final_execution_status,
-      status: .result.status,
+      transaction_status: .result.status,
       receipts_outcome_count: (.result.receipts_outcome | length)
     }'
 ```
 
-What to notice:
-
-- for a historical tx, this call also returns immediately
-- in a real tracking loop, this is the threshold that answers “is the transaction actually done?”
-- for many apps, this is where you stop and move on
-
-4. Only switch to `EXPERIMENTAL_tx_status` when you need the richer receipt tree.
+3. Only switch to `EXPERIMENTAL_tx_status` when that known tx now needs receipt-tree detail.
 
 ```bash
 curl -s "$RPC_URL" \
@@ -224,87 +131,54 @@ curl -s "$RPC_URL" \
     }')" \
   | jq '{
       final_execution_status: .result.final_execution_status,
-      status: .result.status,
       transaction_handoff: .result.transaction_outcome.outcome.status,
       receipts_outcome_count: (.result.receipts_outcome | length)
     }'
 ```
 
-This is where you go when “did it finish?” turns into “show me the receipt tree and the full async execution story.”
-
-5. Optional: pivot to Transactions API only when you want the readable story surface.
-
-```bash
-curl -s "$TX_BASE_URL/v0/transactions" \
-  -H 'content-type: application/json' \
-  --data "$(jq -nc --arg tx_hash "$TX_HASH" '{tx_hashes: [$tx_hash]}')" \
-  | jq '{
-      transaction: {
-        hash: .transactions[0].transaction.hash,
-        signer_id: .transactions[0].transaction.signer_id,
-        receiver_id: .transactions[0].transaction.receiver_id,
-        included_block_height: .transactions[0].execution_outcome.block_height
-      },
-      actions: (
-        .transactions[0].transaction.actions
-        | map(if type == "string" then . else keys[0] end)
-      ),
-      transaction_handoff: .transactions[0].transaction_outcome.outcome.status
-    }'
-```
-
-That last step is intentionally optional. The RPC truth is already enough for submission and tracking. This is only the human-readable story surface when the next user question becomes “what actually happened?” instead of “how far did the tx get?”
-
-**Recommended pattern**
-
-- Use `broadcast_tx_async` plus `tx` polling when you want the best client control and the fastest feedback.
-- Use `send_tx` when you really do want one blocking call to wait up to a chosen threshold.
-- Use `EXPERIMENTAL_tx_status` when the normal polling loop stops being enough and the receipt tree becomes the real question.
+If you want the node to wait for you instead of tracking separately, use [`send_tx`](/rpc/transaction/send-tx). The default pattern on this page is still: submit with `broadcast_tx_async`, then track a hash with `tx`.
 
 ## Account and Key Mechanics
 
-Start here when the question is about exact permissions, exact key state, or one contract-level write flow.
+Start here when the question is about exact permissions, exact key state, or whether one key can call one contract right now.
 
-### Audit and remove old Near Social function-call keys
+### Does this access key let me call this contract right now?
 
-Use this when you know an account has accumulated older `social.near` function-call keys and you want to inspect them, choose one intentionally, and remove it with raw RPC submission.
+Use this when you already have an account, one public key, and one target contract, and you want a plain yes-or-no answer before you try to sign anything.
 
 <div className="fastnear-example-strategy">
   <div className="fastnear-example-strategy__header">
     <span className="fastnear-example-strategy__eyebrow">Strategy</span>
-    <p className="fastnear-example-strategy__title">Use exact key reads to narrow the target first, then sign exactly one delete.</p>
+    <p className="fastnear-example-strategy__title">Filter the account’s keys first, inspect the exact key second, and classify the permission last.</p>
   </div>
   <div className="fastnear-example-strategy__items">
-    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">01</span><span><span className="fastnear-example-strategy__code">RPC view_access_key_list</span> finds only the function-call keys scoped to <span className="fastnear-example-strategy__code">social.near</span>.</span></p>
-    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">02</span><span><span className="fastnear-example-strategy__code">RPC view_access_key</span> double-checks the one key you plan to remove, and <span className="fastnear-example-strategy__code">POST /v0/account</span> is only for optional account-level context.</span></p>
-    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span><span className="fastnear-example-strategy__code">RPC send_tx</span> submits the <span className="fastnear-example-strategy__code">DeleteKey</span>, then <span className="fastnear-example-strategy__code">RPC view_access_key_list</span> closes the loop.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">01</span><span><span className="fastnear-example-strategy__code">RPC view_access_key_list</span> narrows the account down to keys that could matter for the target contract.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">02</span><span><span className="fastnear-example-strategy__code">RPC view_access_key</span> gives the exact permission object for the one public key you might actually use.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span><span className="fastnear-example-strategy__code">jq</span> turns that permission object into <span className="fastnear-example-strategy__code">full_access</span>, <span className="fastnear-example-strategy__code">function_call_match</span>, <span className="fastnear-example-strategy__code">receiver_mismatch</span>, or <span className="fastnear-example-strategy__code">method_not_allowed</span>.</span></p>
   </div>
 </div>
 
 **What you're doing**
 
-- Use RPC itself to list every access key on the account.
-- Narrow that list to function-call keys scoped to `social.near`.
-- Inspect one candidate key exactly before you delete it.
-- Build and sign a `DeleteKey` transaction with a full-access key, then submit it through RPC and verify the key is gone.
-
-Two caveats matter up front:
-
-- The deleting key must be a full-access key. A function-call key cannot sign a `DeleteKey` action.
-- This flow is about exact key state and cleanup. The optional Transactions API step below gives account-level context, not authoritative per-key “last used” forensics.
+- List the account’s access keys and narrow them to the contract you care about.
+- Inspect the exact key you might sign with.
+- Decide whether it can call this receiver and method without leaving RPC.
 
 ```bash
-export NETWORK_ID=mainnet
-export RPC_URL=https://rpc.mainnet.fastnear.com
-export TX_BASE_URL=https://tx.main.fastnear.com
-export ACCOUNT_ID=YOUR_ACCOUNT_ID
-export SOCIAL_RECEIVER_ID=social.near
-export DELETE_PUBLIC_KEY='ed25519:PASTE_THE_KEY_YOU_PLAN_TO_REMOVE'
-export FULL_ACCESS_PUBLIC_KEY='ed25519:PASTE_THE_FULL_ACCESS_PUBLIC_KEY_YOU_WILL_SIGN_WITH'
-export FULL_ACCESS_PRIVATE_KEY='ed25519:PASTE_THE_MATCHING_FULL_ACCESS_PRIVATE_KEY'
+RPC_URL=https://rpc.mainnet.fastnear.com
+ACCOUNT_ID=YOUR_ACCOUNT_ID
+TARGET_CONTRACT_ID=crossword.puzzle.near
+TARGET_METHOD_NAME=new_puzzle
+TARGET_PUBLIC_KEY='ed25519:PASTE_THE_KEY_YOU_WANT_TO_CHECK'
+
+# Sample live values observed on April 19, 2026:
+# ACCOUNT_ID=mike.near
+# TARGET_CONTRACT_ID=crossword.puzzle.near
+# TARGET_METHOD_NAME=new_puzzle
+# TARGET_PUBLIC_KEY='ed25519:otwaB1X88ocpmUdC1B5XaifucfDLmLKaonb26KqTj96'
 ```
 
-1. List all access keys on the account, then narrow to `social.near` function-call keys.
+1. List the account’s keys and narrow them to the target contract.
 
 ```bash
 curl -s "$RPC_URL" \
@@ -319,252 +193,28 @@ curl -s "$RPC_URL" \
       finality: "final"
     }
   }')" \
-  | tee /tmp/fastnear-access-keys.json >/dev/null
+  | tee /tmp/access-key-list.json >/dev/null
 
-jq -r --arg receiver "$SOCIAL_RECEIVER_ID" '
-  .result.keys[]
-  | select((.access_key.permission | type) == "object")
-  | select(.access_key.permission.FunctionCall.receiver_id == $receiver)
-  | {
-      public_key,
-      nonce: .access_key.nonce,
-      receiver_id: .access_key.permission.FunctionCall.receiver_id,
-      method_names: .access_key.permission.FunctionCall.method_names,
-      allowance: (.access_key.permission.FunctionCall.allowance // "unlimited")
-    }
-' /tmp/fastnear-access-keys.json
-```
-
-Pick one `public_key` from that filtered list and set `DELETE_PUBLIC_KEY` to it.
-
-2. Inspect the specific candidate key one more time before deleting it.
-
-```bash
-curl -s "$RPC_URL" \
-  -H 'content-type: application/json' \
-  --data "$(jq -nc \
-    --arg account_id "$ACCOUNT_ID" \
-    --arg public_key "$DELETE_PUBLIC_KEY" '{
-      jsonrpc: "2.0",
-      id: "fastnear",
-      method: "query",
-      params: {
-        request_type: "view_access_key",
-        account_id: $account_id,
-        public_key: $public_key,
-        finality: "final"
+jq --arg target_contract_id "$TARGET_CONTRACT_ID" '{
+  candidate_keys: [
+    .result.keys[]
+    | select(
+        .access_key.permission == "FullAccess"
+        or (
+          (.access_key.permission | type) == "object"
+          and .access_key.permission.FunctionCall.receiver_id == $target_contract_id
+        )
+      )
+    | {
+        public_key,
+        nonce: .access_key.nonce,
+        permission: .access_key.permission
       }
-    }')" \
-  | jq '{nonce: .result.nonce, permission: .result.permission}'
+  ]
+}' /tmp/access-key-list.json
 ```
 
-3. Optional: pull recent function-call activity for the account to decide whether you want to investigate more before cleanup.
-
-```bash
-curl -s "$TX_BASE_URL/v0/account" \
-  -H 'content-type: application/json' \
-  --data "$(jq -nc --arg account_id "$ACCOUNT_ID" '{
-    account_id: $account_id,
-    is_function_call: true,
-    limit: 10
-  }')" \
-  | jq '{
-    account_txs: [
-      .account_txs[]
-      | {
-          transaction_hash,
-          tx_block_height,
-          is_success
-        }
-    ]
-  }'
-```
-
-That query helps answer “has this account still been doing function-call work recently?”, but it does not prove that a specific access key was the one used.
-
-4. Sign a `DeleteKey` transaction for `DELETE_PUBLIC_KEY` with a full-access key.
-
-Run this in a directory where `near-api-js@5` is installed. The command reads the environment variables above, fetches the latest nonce for `FULL_ACCESS_PUBLIC_KEY`, fetches a fresh final block hash, signs a `DeleteKey` action, and stores the resulting `signed_tx_base64` in `SIGNED_TX_BASE64`.
-
-```bash
-SIGNED_TX_BASE64="$(
-  node --input-type=module <<'EOF'
-import { InMemorySigner, KeyPair, transactions, utils } from 'near-api-js';
-
-const {
-  ACCOUNT_ID,
-  NETWORK_ID = 'mainnet',
-  RPC_URL = 'https://rpc.mainnet.fastnear.com',
-  DELETE_PUBLIC_KEY,
-  FULL_ACCESS_PUBLIC_KEY,
-  FULL_ACCESS_PRIVATE_KEY,
-} = process.env;
-
-for (const name of [
-  'ACCOUNT_ID',
-  'DELETE_PUBLIC_KEY',
-  'FULL_ACCESS_PUBLIC_KEY',
-  'FULL_ACCESS_PRIVATE_KEY',
-]) {
-  if (!process.env[name]) {
-    throw new Error(`Missing ${name}`);
-  }
-}
-
-async function rpc(method, params) {
-  const response = await fetch(RPC_URL, {
-    method: 'POST',
-    headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({
-      jsonrpc: '2.0',
-      id: 'fastnear',
-      method,
-      params,
-    }),
-  });
-  const json = await response.json();
-  if (json.error) {
-    throw new Error(JSON.stringify(json.error));
-  }
-  return json.result;
-}
-
-const keyPair = KeyPair.fromString(FULL_ACCESS_PRIVATE_KEY);
-const derivedPublicKey = keyPair.getPublicKey().toString();
-
-if (derivedPublicKey !== FULL_ACCESS_PUBLIC_KEY) {
-  throw new Error(
-    `FULL_ACCESS_PUBLIC_KEY does not match FULL_ACCESS_PRIVATE_KEY (${derivedPublicKey})`
-  );
-}
-
-const signer = await InMemorySigner.fromKeyPair(NETWORK_ID, ACCOUNT_ID, keyPair);
-
-const accessKey = await rpc('query', {
-  request_type: 'view_access_key',
-  account_id: ACCOUNT_ID,
-  public_key: FULL_ACCESS_PUBLIC_KEY,
-  finality: 'final',
-});
-
-const block = await rpc('block', { finality: 'final' });
-
-const transaction = transactions.createTransaction(
-  ACCOUNT_ID,
-  utils.PublicKey.fromString(FULL_ACCESS_PUBLIC_KEY),
-  ACCOUNT_ID,
-  BigInt(accessKey.nonce) + 1n,
-  [transactions.deleteKey(utils.PublicKey.fromString(DELETE_PUBLIC_KEY))],
-  utils.serialize.base_decode(block.header.hash)
-);
-
-const [, signedTx] = await transactions.signTransaction(
-  transaction,
-  signer,
-  ACCOUNT_ID,
-  NETWORK_ID
-);
-
-process.stdout.write(Buffer.from(signedTx.encode()).toString('base64'));
-EOF
-)"
-```
-
-5. Submit the signed transaction through raw RPC and wait for `FINAL`.
-
-```bash
-curl -s "$RPC_URL" \
-  -H 'content-type: application/json' \
-  --data "$(jq -nc --arg signed_tx_base64 "$SIGNED_TX_BASE64" '{
-    jsonrpc: "2.0",
-    id: "fastnear",
-    method: "send_tx",
-    params: {
-      signed_tx_base64: $signed_tx_base64,
-      wait_until: "FINAL"
-    }
-  }')" \
-  | jq '{
-    final_execution_status: .result.final_execution_status,
-    transaction_hash: .result.transaction.hash,
-    status: .result.status
-  }'
-```
-
-6. Re-run the access-key list and verify that the deleted key is gone.
-
-```bash
-if curl -s "$RPC_URL" \
-  -H 'content-type: application/json' \
-  --data "$(jq -nc --arg account_id "$ACCOUNT_ID" '{
-    jsonrpc: "2.0",
-    id: "fastnear",
-    method: "query",
-    params: {
-      request_type: "view_access_key_list",
-      account_id: $account_id,
-      finality: "final"
-    }
-  }')" \
-  | jq -e --arg public_key "$DELETE_PUBLIC_KEY" '
-      .result.keys[]
-      | select(.public_key == $public_key)
-    ' >/dev/null; then
-  echo "Key is still present: $DELETE_PUBLIC_KEY"
-else
-  echo "Key deleted: $DELETE_PUBLIC_KEY"
-fi
-```
-
-**Why this next step?**
-
-Re-running `view_access_key_list` closes the loop on the same RPC method you used for discovery. If the delete succeeded there, you do not need an indexed API to prove the cleanup.
-
-### Which transaction added this `social.near` function-call key, and who authorized it?
-
-Use this when you can already see a live access key on the account, but you want to trace it back to the `AddKey` transaction that created it and identify which public key actually authorized that change.
-
-<div className="fastnear-example-strategy">
-  <div className="fastnear-example-strategy__header">
-    <span className="fastnear-example-strategy__eyebrow">Strategy</span>
-    <p className="fastnear-example-strategy__title">Start from the live key, then walk backward only as far as you need.</p>
-  </div>
-  <div className="fastnear-example-strategy__items">
-    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">01</span><span><span className="fastnear-example-strategy__code">RPC view_access_key</span> gives the current stored nonce, which is the best historical clue you have.</span></p>
-    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">02</span><span><span className="fastnear-example-strategy__code">POST /v0/account</span> turns that nonce into a tight candidate window instead of a whole-account search.</span></p>
-    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span><span className="fastnear-example-strategy__code">POST /v0/transactions</span> tells you whether the key was added directly or through delegated authorization, and <span className="fastnear-example-strategy__code">POST /v0/receipt</span> is only for the exact <span className="fastnear-example-strategy__code">AddKey</span> execution block.</span></p>
-  </div>
-</div>
-
-**What you're doing**
-
-- Read the exact key first with RPC and keep its current nonce as the clue.
-- Convert that nonce into a tight block-height window for the likely `AddKey` receipt.
-- Search account history only inside that window instead of scanning the whole account.
-- Hydrate the candidate transaction and distinguish three different keys:
-  - the key that got added
-  - the top-level signer public key
-  - the delegated authorizing public key, if the change was wrapped in a `Delegate` action
-
-Three nonce details matter up front:
-
-- New access keys start with a nonce derived from block height at roughly `block_height * 1_000_000`, so dividing the current nonce by `1_000_000` gives a useful search window.
-- The `AddKey` action payload often shows `access_key.nonce: 0`. That is not the stored nonce you later see from `view_access_key`.
-- If the key has been used heavily since creation, widen the search window a bit more.
-
-```bash
-export NETWORK_ID=mainnet
-export RPC_URL=https://rpc.mainnet.fastnear.com
-export TX_BASE_URL=https://tx.main.fastnear.com
-export ACCOUNT_ID=YOUR_ACCOUNT_ID
-export TARGET_PUBLIC_KEY='ed25519:PASTE_THE_ACCESS_KEY_YOU_WANT_TO_TRACE'
-
-# Sample live key observed on April 18, 2026:
-# export ACCOUNT_ID=mike.near
-# export TARGET_PUBLIC_KEY='ed25519:7GZgXkMPEyGXqRhxaLvHxWn6fVfeyuQGMqnLVQAh7bs'
-```
-
-1. Read the exact key first, then turn its current nonce into a search window.
+2. Inspect the exact key you want to evaluate.
 
 ```bash
 curl -s "$RPC_URL" \
@@ -582,175 +232,72 @@ curl -s "$RPC_URL" \
         finality: "final"
       }
     }')" \
-  | tee /tmp/key-origin-view.json >/dev/null
+  | tee /tmp/exact-access-key.json >/dev/null
 
-CURRENT_NONCE="$(jq -r '.result.nonce' /tmp/key-origin-view.json)"
-ESTIMATED_RECEIPT_BLOCK="$(( CURRENT_NONCE / 1000000 + 1 ))"
-SEARCH_FROM="$(( ESTIMATED_RECEIPT_BLOCK - 20 ))"
-SEARCH_TO="$(( ESTIMATED_RECEIPT_BLOCK + 5 ))"
+jq '{nonce: .result.nonce, permission: .result.permission}' /tmp/exact-access-key.json
+```
 
+3. Turn that exact permission object into a yes-or-no answer for this contract and method.
+
+```bash
 jq -n \
-  --arg account_id "$ACCOUNT_ID" \
-  --arg target_public_key "$TARGET_PUBLIC_KEY" \
-  --argjson current_nonce "$CURRENT_NONCE" \
-  --argjson estimated_receipt_block "$ESTIMATED_RECEIPT_BLOCK" \
-  --argjson search_from "$SEARCH_FROM" \
-  --argjson search_to "$SEARCH_TO" \
-  --arg permission "$(jq -c '.result.permission' /tmp/key-origin-view.json)" '{
-    account_id: $account_id,
-    target_public_key: $target_public_key,
-    current_nonce: $current_nonce,
-    estimated_receipt_block: $estimated_receipt_block,
-    search_from_tx_block_height: $search_from,
-    search_to_tx_block_height: $search_to,
-    permission: ($permission | fromjson)
-  }'
-```
-
-If you use the sample key above, the estimated receipt block should land at `112057392`.
-
-2. Search account history only inside that block neighborhood.
-
-```bash
-curl -s "$TX_BASE_URL/v0/account" \
-  -H 'content-type: application/json' \
-  --data "$(jq -nc \
-    --arg account_id "$ACCOUNT_ID" \
-    --argjson from_tx_block_height "$SEARCH_FROM" \
-    --argjson to_tx_block_height "$SEARCH_TO" '{
-      account_id: $account_id,
-      is_real_signer: true,
-      from_tx_block_height: $from_tx_block_height,
-      to_tx_block_height: $to_tx_block_height,
-      desc: false,
-      limit: 50
-    }')" \
-  | tee /tmp/key-origin-candidates.json >/dev/null
-
-jq '{
-  txs_count,
-  candidate_txs: [
-    .account_txs[]
-    | {
-        transaction_hash,
-        tx_block_height,
-        is_signer,
-        is_real_signer,
-        is_predecessor,
-        is_receiver
+  --slurpfile key /tmp/exact-access-key.json \
+  --arg target_contract_id "$TARGET_CONTRACT_ID" \
+  --arg target_method_name "$TARGET_METHOD_NAME" '
+  ($key[0].result.permission) as $permission
+  | if $permission == "FullAccess" then
+      {
+        can_call_now: true,
+        reason: "full_access"
       }
-  ]
-}' /tmp/key-origin-candidates.json
+    elif $permission.FunctionCall.receiver_id != $target_contract_id then
+      {
+        can_call_now: false,
+        reason: "receiver_mismatch",
+        receiver_id: $permission.FunctionCall.receiver_id
+      }
+    elif (
+      ($permission.FunctionCall.method_names | length) == 0
+      or ($permission.FunctionCall.method_names | index($target_method_name))
+    ) then
+      {
+        can_call_now: true,
+        reason: (
+          if ($permission.FunctionCall.method_names | length) == 0
+          then "function_call_any_method"
+          else "function_call_method_match"
+          end
+        ),
+        allowance: ($permission.FunctionCall.allowance // "unlimited")
+      }
+    else
+      {
+        can_call_now: false,
+        reason: "method_not_allowed",
+        allowed_methods: $permission.FunctionCall.method_names
+      }
+    end'
 ```
 
-With the sample `mike.near` key above, this window returns one candidate transaction: `6ZT8UGPRC6L3NGs2qHnECPVexKWNQ5LWLK9w95tgj3tV` at outer tx block `112057390`.
-
-3. Hydrate those candidates and keep only the transaction that actually added your target key.
-
-```bash
-TX_HASHES_JSON="$(
-  jq -c '[.account_txs[].transaction_hash]' /tmp/key-origin-candidates.json
-)"
-
-curl -s "$TX_BASE_URL/v0/transactions" \
-  -H 'content-type: application/json' \
-  --data "$(jq -nc --argjson tx_hashes "$TX_HASHES_JSON" '{tx_hashes: $tx_hashes}')" \
-  | tee /tmp/key-origin-transactions.json >/dev/null
-
-jq --arg target_public_key "$TARGET_PUBLIC_KEY" '
-  .transactions[]
-  | . as $tx
-  | (
-      ($tx.transaction.actions[]?
-        | .AddKey?
-        | select(.public_key == $target_public_key)
-        | {
-            authorization_mode: "direct",
-            top_level_signer_id: $tx.transaction.signer_id,
-            top_level_signer_public_key: $tx.transaction.public_key,
-            authorizing_public_key: $tx.transaction.public_key,
-            added_public_key: .public_key,
-            add_key_payload_nonce: .access_key.nonce,
-            permission: .access_key.permission
-          }),
-      ($tx.transaction.actions[]?
-        | .Delegate?
-        | .delegate_action as $delegate
-        | $delegate.actions[]?
-        | .AddKey?
-        | select(.public_key == $target_public_key)
-        | {
-            authorization_mode: "delegated",
-            top_level_signer_id: $tx.transaction.signer_id,
-            top_level_signer_public_key: $tx.transaction.public_key,
-            authorizing_public_key: $delegate.public_key,
-            added_public_key: .public_key,
-            add_key_payload_nonce: .access_key.nonce,
-            permission: .access_key.permission
-          })
-    )
-  | {
-      transaction_hash: $tx.transaction.hash,
-      tx_block_height: $tx.execution_outcome.block_height,
-      tx_block_hash: $tx.execution_outcome.block_hash,
-      receiver_id: $tx.transaction.receiver_id
-    } + .
-' /tmp/key-origin-transactions.json | tee /tmp/key-origin-match.json
-```
-
-If `authorization_mode` is `direct`, the top-level signer public key and the authorizing public key are the same. If `authorization_mode` is `delegated`, the key that actually authorized the `AddKey` lives inside `Delegate.delegate_action.public_key`.
-
-With the sample `mike.near` key above, the match is delegated:
-
-- `transaction_hash`: `6ZT8UGPRC6L3NGs2qHnECPVexKWNQ5LWLK9w95tgj3tV`
-- `top_level_signer_public_key`: `ed25519:Ez817Dgs2uYP5a6GoijzFarcS3SWPT5eEB82VJXsd4oM`
-- `authorizing_public_key`: `ed25519:GaYgzN1eZUgwA7t8a5pYxFGqtF4kon9dQaDMjPDejsiu`
-- `added_public_key`: `ed25519:7GZgXkMPEyGXqRhxaLvHxWn6fVfeyuQGMqnLVQAh7bs`
-
-4. Optional: if you need the exact `AddKey` receipt block too, pivot one more time by receipt ID.
-
-```bash
-ADD_KEY_RECEIPT_ID="$(
-  jq -r --arg target_public_key "$TARGET_PUBLIC_KEY" '
-    .transactions[]
-    | .receipts[]
-    | select(any((.receipt.receipt.Action.actions // [])[]; .AddKey.public_key? == $target_public_key))
-    | .receipt.receipt_id
-  ' /tmp/key-origin-transactions.json | head -n 1
-)"
-
-curl -s "$TX_BASE_URL/v0/receipt" \
-  -H 'content-type: application/json' \
-  --data "$(jq -nc --arg receipt_id "$ADD_KEY_RECEIPT_ID" '{receipt_id: $receipt_id}')" \
-  | jq '{
-      receipt_id: .receipt.receipt_id,
-      receipt_block_height: .receipt.block_height,
-      tx_block_height: .receipt.tx_block_height,
-      predecessor_id: .receipt.predecessor_id,
-      receiver_id: .receipt.receiver_id,
-      transaction_hash: .receipt.transaction_hash
-    }'
-```
-
-For the sample key above, the exact `AddKey` receipt is `C5jsTftYwPiibyxdoDKd4LXFFru8n4weDKLV4cfb1bcX` in receipt block `112057392`, while the outer transaction landed earlier in block `112057390`.
+For the sample `mike.near` key above on April 19, 2026, the answer is `can_call_now: true`: the key is a function-call key for `crossword.puzzle.near`, and `method_names: ["new_puzzle"]` explicitly allows the method we asked about.
 
 **Why this next step?**
 
-Start with exact current key state because it gives you the nonce clue. A tight `/v0/account` window turns that clue into a small candidate set. `/v0/transactions` tells you whether the key was added directly or through delegated authorization. `/v0/receipt` is the optional last step when you need the exact `AddKey` receipt block, not just the outer transaction.
+`view_access_key_list` is the fastest contract-level filter. `view_access_key` is the exact authority check for the one public key you may actually use. If the answer is `false`, you need a different key or a different permission setup, not a deeper history trace.
 
-### Register FT storage if needed, then transfer tokens
+### Does this FT receiver need storage registration before I transfer?
 
-Use this when the user story is “send fungible tokens safely, but first prove whether the receiver is already registered for storage on that FT contract.”
+Use this when the user story is “I am about to send fungible tokens, and I want a plain yes-or-no answer about whether the receiver needs `storage_deposit` first.”
 
 <div className="fastnear-example-strategy">
   <div className="fastnear-example-strategy__header">
     <span className="fastnear-example-strategy__eyebrow">Strategy</span>
-    <p className="fastnear-example-strategy__title">Read storage first, then spend the minimum write calls needed to make the transfer stick.</p>
+    <p className="fastnear-example-strategy__title">Read the receiver storage state first, then stop as soon as you know whether `ft_transfer` can proceed.</p>
   </div>
   <div className="fastnear-example-strategy__items">
     <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">01</span><span><span className="fastnear-example-strategy__code">RPC call_function storage_balance_of</span> tells you whether the receiver is already registered.</span></p>
     <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">02</span><span><span className="fastnear-example-strategy__code">RPC call_function storage_balance_bounds</span> only matters if you need the exact minimum deposit before writing.</span></p>
-    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span><span className="fastnear-example-strategy__code">RPC send_tx</span> submits <span className="fastnear-example-strategy__code">storage_deposit</span> and <span className="fastnear-example-strategy__code">ft_transfer</span>, then <span className="fastnear-example-strategy__code">RPC call_function ft_balance_of</span> proves the result.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span><span className="fastnear-example-strategy__code">jq</span> turns those two reads into one answer: “transfer can proceed” or “send `storage_deposit` first”.</span></p>
   </div>
 </div>
 
@@ -763,24 +310,19 @@ Use this when the user story is “send fungible tokens safely, but first prove 
 - [FT storage and transfer](https://docs.near.org/integrations/fungible-tokens)
 - [Pre-deployed FT contract](https://docs.near.org/tutorials/fts/predeployed-contract)
 
-This walkthrough uses the safe public contract `ft.predeployed.examples.testnet`. Before you start, make sure the sender already holds some `gtNEAR` there. If not, mint a small balance first with the pre-deployed contract guide above and then come back to this flow.
+This walkthrough uses the safe public contract `ft.predeployed.examples.testnet`. The point here is the read-only decision: do you need a `storage_deposit` first, or can your transfer path proceed already?
 
 **What you're doing**
 
 - Use exact RPC view calls to check whether the receiver already has FT storage on the contract.
-- If needed, fetch the minimum storage requirement.
-- Sign and submit `storage_deposit`, then `ft_transfer`.
-- Verify the receiver balance with the same contract’s own view method.
+- Fetch the exact minimum storage requirement from the same contract.
+- Stop once you know whether `ft_transfer` can proceed or whether `storage_deposit` has to come first.
 
 ```bash
 export NETWORK_ID=testnet
 export RPC_URL=https://rpc.testnet.fastnear.com
 export TOKEN_CONTRACT_ID=ft.predeployed.examples.testnet
-export SENDER_ACCOUNT_ID=YOUR_ACCOUNT_ID.testnet
 export RECEIVER_ACCOUNT_ID=YOUR_RECEIVER_ID.testnet
-export SENDER_PUBLIC_KEY='ed25519:YOUR_FULL_ACCESS_PUBLIC_KEY'
-export SENDER_PRIVATE_KEY='ed25519:YOUR_MATCHING_PRIVATE_KEY'
-export AMOUNT_YOCTO_GTNEAR='10000000000000000000000'
 ```
 
 1. Check whether the receiver is already registered on the FT contract.
@@ -816,7 +358,7 @@ jq '{
 }' /tmp/ft-storage-balance.json
 ```
 
-2. If the receiver is not registered yet, fetch the minimum storage deposit.
+2. Fetch the minimum storage deposit from the same contract.
 
 ```bash
 MIN_STORAGE_YOCTO="$(
@@ -841,215 +383,39 @@ MIN_STORAGE_YOCTO="$(
 printf 'Minimum storage deposit: %s yoctoNEAR\n' "$MIN_STORAGE_YOCTO"
 ```
 
-3. Define one reusable signer for contract function calls.
-
-Run this in a directory where `near-api-js@5` is installed. The function below reads the exported shell variables above and turns each function call into a signed payload for raw RPC submission.
+3. Turn those two reads into one transfer-readiness answer.
 
 ```bash
-sign_function_call() {
-  METHOD_NAME="$1" \
-  ARGS_JSON="$2" \
-  DEPOSIT_YOCTO="$3" \
-  GAS_TGAS="$4" \
-  node --input-type=module <<'EOF'
-import { InMemorySigner, KeyPair, transactions, utils } from 'near-api-js';
-
-const {
-  NETWORK_ID = 'testnet',
-  RPC_URL = 'https://rpc.testnet.fastnear.com',
-  TOKEN_CONTRACT_ID,
-  SENDER_ACCOUNT_ID,
-  SENDER_PUBLIC_KEY,
-  SENDER_PRIVATE_KEY,
-  METHOD_NAME,
-  ARGS_JSON,
-  DEPOSIT_YOCTO = '0',
-  GAS_TGAS = '100',
-} = process.env;
-
-for (const name of [
-  'TOKEN_CONTRACT_ID',
-  'SENDER_ACCOUNT_ID',
-  'SENDER_PUBLIC_KEY',
-  'SENDER_PRIVATE_KEY',
-  'METHOD_NAME',
-  'ARGS_JSON',
-]) {
-  if (!process.env[name]) {
-    throw new Error(`Missing ${name}`);
-  }
-}
-
-async function rpc(method, params) {
-  const response = await fetch(RPC_URL, {
-    method: 'POST',
-    headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({
-      jsonrpc: '2.0',
-      id: 'fastnear',
-      method,
-      params,
-    }),
-  });
-  const json = await response.json();
-  if (json.error) {
-    throw new Error(JSON.stringify(json.error));
-  }
-  return json.result;
-}
-
-const keyPair = KeyPair.fromString(SENDER_PRIVATE_KEY);
-const signer = await InMemorySigner.fromKeyPair(
-  NETWORK_ID,
-  SENDER_ACCOUNT_ID,
-  keyPair
-);
-
-const derivedPublicKey = keyPair.getPublicKey().toString();
-if (derivedPublicKey !== SENDER_PUBLIC_KEY) {
-  throw new Error(
-    `SENDER_PUBLIC_KEY does not match SENDER_PRIVATE_KEY (${derivedPublicKey})`
-  );
-}
-
-const accessKey = await rpc('query', {
-  request_type: 'view_access_key',
-  account_id: SENDER_ACCOUNT_ID,
-  public_key: SENDER_PUBLIC_KEY,
-  finality: 'final',
-});
-
-const block = await rpc('block', { finality: 'final' });
-
-const action = transactions.functionCall(
-  METHOD_NAME,
-  Buffer.from(ARGS_JSON),
-  BigInt(GAS_TGAS) * 10n ** 12n,
-  BigInt(DEPOSIT_YOCTO)
-);
-
-const transaction = transactions.createTransaction(
-  SENDER_ACCOUNT_ID,
-  utils.PublicKey.fromString(SENDER_PUBLIC_KEY),
-  TOKEN_CONTRACT_ID,
-  BigInt(accessKey.nonce) + 1n,
-  [action],
-  utils.serialize.base_decode(block.header.hash)
-);
-
-const [, signedTx] = await transactions.signTransaction(
-  transaction,
-  signer,
-  SENDER_ACCOUNT_ID,
-  NETWORK_ID
-);
-
-process.stdout.write(Buffer.from(signedTx.encode()).toString('base64'));
-EOF
-}
-```
-
-4. If needed, register the receiver for storage first.
-
-```bash
-if jq -e '.result.result | implode | fromjson == null' /tmp/ft-storage-balance.json >/dev/null; then
-  SIGNED_TX_BASE64="$(
-    sign_function_call \
-      storage_deposit \
-      "$(jq -nc --arg account_id "$RECEIVER_ACCOUNT_ID" '{
-        account_id: $account_id,
-        registration_only: true
-      }')" \
-      "$MIN_STORAGE_YOCTO" \
-      100
-  )"
-
-  curl -s "$RPC_URL" \
-    -H 'content-type: application/json' \
-    --data "$(jq -nc --arg signed_tx_base64 "$SIGNED_TX_BASE64" '{
-      jsonrpc: "2.0",
-      id: "fastnear",
-      method: "send_tx",
-      params: {
-        signed_tx_base64: $signed_tx_base64,
-        wait_until: "FINAL"
-      }
-    }')" \
-    | jq '{
-        final_execution_status: .result.final_execution_status,
-        transaction_hash: .result.transaction.hash
-      }'
-fi
-```
-
-5. Transfer the FT after storage is ready.
-
-```bash
-SIGNED_TX_BASE64="$(
-  sign_function_call \
-    ft_transfer \
-    "$(jq -nc \
-      --arg receiver_id "$RECEIVER_ACCOUNT_ID" \
-      --arg amount "$AMOUNT_YOCTO_GTNEAR" '{
-        receiver_id: $receiver_id,
-        amount: $amount,
-        memo: "FastNear RPC example"
-      }')" \
-    1 \
-    100
-)"
-
-curl -s "$RPC_URL" \
-  -H 'content-type: application/json' \
-  --data "$(jq -nc --arg signed_tx_base64 "$SIGNED_TX_BASE64" '{
-    jsonrpc: "2.0",
-    id: "fastnear",
-    method: "send_tx",
-    params: {
-      signed_tx_base64: $signed_tx_base64,
-      wait_until: "FINAL"
-    }
-  }')" \
-  | jq '{
-      final_execution_status: .result.final_execution_status,
-      transaction_hash: .result.transaction.hash,
-      status: .result.status
-    }'
-```
-
-6. Verify the receiver’s FT balance with the contract’s own view method.
-
-```bash
-RECEIVER_BALANCE_ARGS_BASE64="$(
-  jq -nc --arg account_id "$RECEIVER_ACCOUNT_ID" '{
-    account_id: $account_id
-  }' | base64 | tr -d '\n'
-)"
-
-curl -s "$RPC_URL" \
-  -H 'content-type: application/json' \
-  --data "$(jq -nc \
-    --arg account_id "$TOKEN_CONTRACT_ID" \
-    --arg args_base64 "$RECEIVER_BALANCE_ARGS_BASE64" '{
-      jsonrpc: "2.0",
-      id: "fastnear",
-      method: "query",
-      params: {
-        request_type: "call_function",
-        account_id: $account_id,
-        method_name: "ft_balance_of",
-        args_base64: $args_base64,
-        finality: "final"
-      }
-    }')" \
-  | jq '{
-      receiver_balance: (.result.result | implode | fromjson)
+jq -n \
+  --slurpfile balance /tmp/ft-storage-balance.json \
+  --slurpfile bounds /tmp/ft-storage-bounds.json \
+  --arg receiver_account_id "$RECEIVER_ACCOUNT_ID" '
+  (
+    $balance[0].result.result
+    | if length == 0 then null else (implode | fromjson) end
+  ) as $storage
+  | (
+    $bounds[0].result.result
+    | implode
+    | fromjson
+  ) as $bounds
+  | {
+      receiver_account_id: $receiver_account_id,
+      receiver_registered: ($storage != null),
+      current_storage: $storage,
+      minimum_storage_deposit_yocto: $bounds.min,
+      next_step: (
+        if $storage != null
+        then "receiver already registered; ft_transfer can proceed"
+        else "send storage_deposit before ft_transfer"
+        end
+      )
     }'
 ```
 
 **Why this next step?**
 
-This is a good RPC example because every step stays close to the contract itself: first check storage state, then send the minimum required change calls, then verify the post-transfer balance directly on the contract.
+This is the clean RPC question in this workflow: “is the receiver already registered, and if not, what minimum deposit will the contract require?” The signed write path depends on your wallet, CLI, or backend integration, so it does not belong in the smallest core RPC example.
 
 ## Contract Reads and Raw State
 
@@ -1057,47 +423,12 @@ Start here when the question is “does this contract method tell me enough?” 
 
 ### Read a counter straight from contract state, then confirm it with the view method
 
-Use this when the user story is simple: “I know this contract exposes a counter, but can I read that number straight from storage without calling the contract code?”
+Use this when you already know the exact storage key family and want the smallest possible contrast between raw state and the contract’s public read API.
 
-This walkthrough uses the live public testnet contract `counter.near-examples.testnet`. The number can change over time. That is fine. The point is that both reads agree when you run them:
+This uses the live public testnet contract `counter.near-examples.testnet`:
 
-- `view_state` reads the raw `STATE` entry directly from contract storage
-- `call_function get_num` asks the contract for the same current number through its public view API
-
-<div className="fastnear-example-strategy">
-  <div className="fastnear-example-strategy__header">
-    <span className="fastnear-example-strategy__eyebrow">Strategy</span>
-    <p className="fastnear-example-strategy__title">Read the raw storage first, decode the bytes you got back, then let the contract confirm the same answer through its view method.</p>
-  </div>
-  <div className="fastnear-example-strategy__items">
-    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">01</span><span><span className="fastnear-example-strategy__code">RPC view_state</span> reads the raw <span className="fastnear-example-strategy__code">STATE</span> entry without running contract code.</span></p>
-    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">02</span><span>Decode the base64 value into bytes, then interpret those bytes with the contract’s known Borsh layout.</span></p>
-    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span><span className="fastnear-example-strategy__code">RPC call_function get_num</span> is the friendly cross-check that the raw-state read and the view method still agree.</span></p>
-  </div>
-</div>
-
-The mental model matters more than the counter itself:
-
-- `view_state` is a direct storage read from the trie
-- `call_function` executes a read-only method on the contract
-- both can answer the same question, but they do different work to get there
-
-```mermaid
-flowchart LR
-    S["RPC view_state<br/>prefix STATE"] --> R["Raw STATE bytes"]
-    R --> D["Decode base64 + Borsh"]
-    D --> N["Signed counter value"]
-    C["RPC call_function get_num"] --> J["JSON method result"]
-    N --> X["Compare"]
-    J --> X
-    X --> A["Same current counter value"]
-```
-
-**What you're doing**
-
-- Read the raw `STATE` key from contract storage.
-- Decode the returned bytes into the current signed counter value.
-- Call `get_num` through the view method and confirm that the method answer matches the raw-state decode.
+- `view_state` reads the raw `STATE` entry directly
+- `call_function get_num` asks the contract for the same current number
 
 ```bash
 export NETWORK_ID=testnet
@@ -1106,7 +437,7 @@ export CONTRACT_ID=counter.near-examples.testnet
 export STATE_PREFIX_BASE64=U1RBVEU=
 ```
 
-1. Read the raw contract state first.
+1. Read the raw `STATE` entry.
 
 ```bash
 curl -s "$RPC_URL" \
@@ -1127,49 +458,30 @@ curl -s "$RPC_URL" \
   | tee /tmp/counter-view-state.json >/dev/null
 
 jq '{
-  block_height: .result.block_height,
-  key_base64: .result.values[0].key,
+  key: (.result.values[0].key | @base64d),
   value_base64: .result.values[0].value
 }' /tmp/counter-view-state.json
-
-jq -r '.result.values[0].key | @base64d' /tmp/counter-view-state.json
 ```
 
-That last command should print `STATE`. This is the key family you already knew ahead of time, so `view_state` can go straight to the raw storage entry without asking the contract to execute any method.
+That should show `key: "STATE"`. This is the case where `view_state` makes sense: you already know the exact key family.
 
-2. Decode the returned value bytes into the signed counter.
+2. Decode the raw bytes.
 
 ```bash
 RAW_VALUE_BASE64="$(jq -r '.result.values[0].value' /tmp/counter-view-state.json)"
 
-python3 - "$RAW_VALUE_BASE64" <<'PY' | jq .
+python3 - "$RAW_VALUE_BASE64" <<'PY'
 import base64
-import json
 import sys
 
 raw = base64.b64decode(sys.argv[1])
-
-print(json.dumps({
-    "value_base64": sys.argv[1],
-    "bytes": list(raw),
-    "hex": raw.hex(),
-    "signed_i8": int.from_bytes(raw, "little", signed=True),
-    "unsigned_u8": int.from_bytes(raw, "little", signed=False),
-}))
+print(int.from_bytes(raw, "little", signed=True))
 PY
 ```
 
-For this specific contract, one byte is enough because the Rust counter stores `val: i8` inside the contract state. That is why a raw value like `CQ==` decodes to one byte `0x09`, which reads as the signed integer `9`.
+For this contract, `STATE` is a one-byte signed counter, so decoding is trivial. On other contracts the layout may be more complex, but the rule stays the same: bytes first, schema second.
 
-One small signed-value note is worth keeping in your head: if the counter were negative, the same one-byte payload would still decode correctly as a signed two's-complement `i8`. For example, `/w==` is the single byte `0xff`, which means `-1` as `signed_i8`, not `255`.
-
-The reusable recipe is small:
-
-- `view_state` gives you base64-encoded raw bytes
-- you decode those bytes with the contract’s known storage layout
-- for larger contracts, that layout may be more complex, but the idea is the same: bytes first, schema second
-
-3. Now ask the contract the friendly way and compare.
+3. Ask the contract the friendly way and compare.
 
 ```bash
 curl -s "$RPC_URL" \
@@ -1194,7 +506,7 @@ jq '{
 }' /tmp/counter-call-function.json
 ```
 
-4. Compare both answers directly.
+4. Compare both answers.
 
 ```bash
 RAW_STATE_NUMBER="$(
@@ -1220,40 +532,29 @@ jq -n \
   }'
 ```
 
-If `agrees_now` is `true`, you have proved the point of the example:
-
-- `view_state` answered the question by reading storage directly
-- `call_function get_num` answered the same question by running the contract’s public read method
-
 **Why this next step?**
 
-Use `view_state` when the real question is about exact storage and you already know the key family. Use `call_function` when you want the contract’s public read API. If the next question becomes historical instead of “what is it right now?”, that is the moment to widen into [KV FastData API](/fastdata/kv).
+Use `view_state` when you already know the exact storage key family and want raw bytes. Use `call_function` when you want the contract’s public read API. If the next question becomes historical instead of “what is it right now?”, widen into [KV FastData API](/fastdata/kv).
 
-## NEAR Social and BOS Exact Reads
+## SocialDB Exact Reads
 
-These stay on exact SocialDB reads and on-chain readiness checks until the question turns historical.
+Stay on exact `call_function get` reads when you already know the SocialDB key you want. On standard RPC, raw `view_state` against `social.near` is not a practical teaching path because the contract state is too large to scan directly.
 
-### Can this account still publish to NEAR Social right now?
+### Read one SocialDB post exactly as stored right now
 
-Use this when the user story is “I’m about to publish a profile change, widget update, or graph write under `mike.near`, and I want a plain go/no-go answer before I open wallet signing.”
+Use this when a product, support tool, or agent already knows the account and wants the live SocialDB post payload without widening into transaction history.
 
 <div className="fastnear-example-strategy">
   <div className="fastnear-example-strategy__header">
     <span className="fastnear-example-strategy__eyebrow">Strategy</span>
-    <p className="fastnear-example-strategy__title">Ask <span className="fastnear-example-strategy__code">social.near</span> for the two things that matter before you sign anything.</p>
+    <p className="fastnear-example-strategy__title">Read the current post key first, then fetch that exact post payload from <span className="fastnear-example-strategy__code">social.near</span>.</p>
   </div>
   <div className="fastnear-example-strategy__items">
-    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">01</span><span><span className="fastnear-example-strategy__code">RPC view_account</span> makes sure the signer account exists and can actually submit a transaction.</span></p>
-    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">02</span><span><span className="fastnear-example-strategy__code">RPC call_function get_account_storage</span> tells you whether the target account has room left on <span className="fastnear-example-strategy__code">social.near</span>.</span></p>
-    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span><span className="fastnear-example-strategy__code">RPC call_function is_write_permission_granted</span> only comes into play when a different signer is trying to write on that account’s behalf.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">01</span><span><span className="fastnear-example-strategy__code">RPC call_function get</span> on <span className="fastnear-example-strategy__code">mike.near/index/post</span> tells you which post key is current.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">02</span><span><span className="fastnear-example-strategy__code">RPC call_function get</span> on <span className="fastnear-example-strategy__code">mike.near/post/main</span> returns the exact stored post payload.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span>If the next question becomes “which transaction wrote this?”, switch to [Transactions Examples](/tx/examples).</span></p>
   </div>
 </div>
-
-This is the same question real NEAR Social clients have to answer before they try a write:
-
-- does the target account already have storage on `social.near`?
-- if it does, is there still room left in that storage?
-- if a different signer is trying to write under that account, has write permission already been granted?
 
 **Official references**
 
@@ -1261,52 +562,23 @@ This is the same question real NEAR Social clients have to answer before they tr
 
 **What you're doing**
 
-- Check that the signer account itself exists and can pay gas.
-- Ask `social.near` how much storage the target account has left.
-- If the signer differs from the target account, ask `social.near` whether that delegated write is already allowed.
-- Turn those exact RPC answers into one simple “ready now” or “fix this first” summary.
+- Read the current post pointer under `mike.near/index/post`.
+- Reuse that key to fetch the exact post payload under `mike.near/post/<key>`.
+- Stop once you have the exact stored JSON and only widen into history if provenance matters.
 
 ```bash
 export NETWORK_ID=mainnet
 export RPC_URL=https://rpc.mainnet.fastnear.com
 export SOCIAL_CONTRACT_ID=social.near
 export ACCOUNT_ID=mike.near
-export SIGNER_ACCOUNT_ID=mike.near
 ```
 
-1. Check the signer account itself first.
+1. Read the current post pointer first.
 
 ```bash
-curl -s "$RPC_URL" \
-  -H 'content-type: application/json' \
-  --data "$(jq -nc --arg account_id "$SIGNER_ACCOUNT_ID" '{
-    jsonrpc: "2.0",
-    id: "fastnear",
-    method: "query",
-    params: {
-      request_type: "view_account",
-      account_id: $account_id,
-      finality: "final"
-    }
-  }')" \
-  | tee /tmp/social-publish-signer.json >/dev/null
-
-jq --arg signer_account_id "$SIGNER_ACCOUNT_ID" '{
-  signer_account_id: $signer_account_id,
-  amount: .result.amount,
-  locked: .result.locked,
-  storage_usage: .result.storage_usage
-}' /tmp/social-publish-signer.json
-```
-
-If this query fails, you do not have a signer account to work with. If it succeeds, you know the signer exists and can at least pay gas.
-
-2. Ask `social.near` how much storage is already available for the account you want to write under.
-
-```bash
-SOCIAL_STORAGE_ARGS_BASE64="$(
+INDEX_POST_ARGS_BASE64="$(
   jq -nc --arg account_id "$ACCOUNT_ID" '{
-    account_id: $account_id
+    keys: [($account_id + "/index/post")]
   }' | base64 | tr -d '\n'
 )"
 
@@ -1314,221 +586,7 @@ curl -s "$RPC_URL" \
   -H 'content-type: application/json' \
   --data "$(jq -nc \
     --arg account_id "$SOCIAL_CONTRACT_ID" \
-    --arg args_base64 "$SOCIAL_STORAGE_ARGS_BASE64" '{
-      jsonrpc: "2.0",
-      id: "fastnear",
-      method: "query",
-      params: {
-        request_type: "call_function",
-        account_id: $account_id,
-        method_name: "get_account_storage",
-        args_base64: $args_base64,
-        finality: "final"
-      }
-    }')" \
-  | tee /tmp/social-account-storage.json >/dev/null
-
-jq --arg account_id "$ACCOUNT_ID" '{
-  account_id: $account_id,
-  storage: (.result.result | implode | fromjson),
-  storage_ready: ((.result.result | implode | fromjson | .available_bytes) > 0)
-}' /tmp/social-account-storage.json
-```
-
-If `available_bytes` is greater than zero, storage is not the blocker. If this method returns `null` or `available_bytes` is zero, the account needs a `storage_deposit` top-up before a new write can land.
-
-3. If the signer is different from the target account, check delegated write permission too.
-
-```bash
-if [ "$SIGNER_ACCOUNT_ID" = "$ACCOUNT_ID" ]; then
-  jq -n --arg account_id "$ACCOUNT_ID" '{
-    account_id: $account_id,
-    signer_matches_target: true,
-    permission_granted: true,
-    reason: "owner write"
-  }'
-else
-  WRITE_PERMISSION_ARGS_BASE64="$(
-    jq -nc \
-      --arg predecessor_id "$SIGNER_ACCOUNT_ID" \
-      --arg key "$ACCOUNT_ID" '{
-        predecessor_id: $predecessor_id,
-        key: $key
-      }' | base64 | tr -d '\n'
-  )"
-
-  curl -s "$RPC_URL" \
-    -H 'content-type: application/json' \
-    --data "$(jq -nc \
-      --arg account_id "$SOCIAL_CONTRACT_ID" \
-      --arg args_base64 "$WRITE_PERMISSION_ARGS_BASE64" '{
-        jsonrpc: "2.0",
-        id: "fastnear",
-        method: "query",
-        params: {
-          request_type: "call_function",
-          account_id: $account_id,
-          method_name: "is_write_permission_granted",
-          args_base64: $args_base64,
-          finality: "final"
-        }
-      }')" \
-    | jq '{
-        signer_matches_target: false,
-        permission_granted: (.result.result | implode | fromjson)
-      }'
-fi
-```
-
-4. Turn the storage and permission checks into one readable answer.
-
-```bash
-AVAILABLE_BYTES="$(
-  jq -r '
-    .result.result
-    | if length == 0 then "0"
-      else (implode | fromjson | .available_bytes // 0 | tostring)
-      end
-  ' /tmp/social-account-storage.json
-)"
-
-if [ "$SIGNER_ACCOUNT_ID" = "$ACCOUNT_ID" ]; then
-  PERMISSION_GRANTED=true
-else
-  PERMISSION_GRANTED="$(
-    curl -s "$RPC_URL" \
-      -H 'content-type: application/json' \
-      --data "$(jq -nc \
-        --arg account_id "$SOCIAL_CONTRACT_ID" \
-        --arg args_base64 "$WRITE_PERMISSION_ARGS_BASE64" '{
-          jsonrpc: "2.0",
-          id: "fastnear",
-          method: "query",
-          params: {
-            request_type: "call_function",
-            account_id: $account_id,
-            method_name: "is_write_permission_granted",
-            args_base64: $args_base64,
-            finality: "final"
-          }
-        }')" \
-      | jq -r '.result.result | implode | fromjson'
-  )"
-fi
-
-jq -n \
-  --arg account_id "$ACCOUNT_ID" \
-  --arg signer_account_id "$SIGNER_ACCOUNT_ID" \
-  --argjson available_bytes "$AVAILABLE_BYTES" \
-  --argjson permission_granted "$PERMISSION_GRANTED" '{
-    account_id: $account_id,
-    signer_account_id: $signer_account_id,
-    storage_ready: ($available_bytes > 0),
-    permission_ready: $permission_granted,
-    ready_to_publish_now: (($available_bytes > 0) and $permission_granted)
-  }'
-```
-
-If that final object says `ready_to_publish_now: true`, RPC has already answered the question. If it says `false`, you know whether the blocker is storage, delegated permission, or both.
-
-**Why this next step?**
-
-This keeps the whole question on exact on-chain reads. `social.near` itself answers whether the target account has room left and whether a delegated signer is already allowed to write. That is a better NEAR Social readiness check than guessing from wallet state alone.
-
-### What does `mob.near/widget/Profile` actually contain right now?
-
-Use this when the question is simple: “show me the live source for `mob.near/widget/Profile`, tell me when that widget key was last written, and keep me on exact RPC reads.”
-
-<div className="fastnear-example-strategy">
-  <div className="fastnear-example-strategy__header">
-    <span className="fastnear-example-strategy__eyebrow">Strategy</span>
-    <p className="fastnear-example-strategy__title">Stay on exact SocialDB reads, and only widen into history if the question turns forensic.</p>
-  </div>
-  <div className="fastnear-example-strategy__items">
-    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">01</span><span><span className="fastnear-example-strategy__code">RPC call_function keys</span> shows the widget catalog and the last-write blocks under <span className="fastnear-example-strategy__code">mob.near/widget/*</span>.</span></p>
-    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">02</span><span><span className="fastnear-example-strategy__code">RPC call_function get</span> reads the exact source for <span className="fastnear-example-strategy__code">widget/Profile</span>.</span></p>
-    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span>If the next question becomes “which transaction wrote this?”, hand off to the widget proof recipe in <span className="fastnear-example-strategy__code">/tx/examples</span>.</span></p>
-  </div>
-</div>
-
-**Official references**
-
-- [SocialDB API and contract surface](https://github.com/NearSocial/social-db#api)
-
-**What you're doing**
-
-- Ask `social.near` for the widget catalog under `mob.near`.
-- Keep the block heights so you know when each widget key last changed.
-- Confirm that `Profile` is really there, then read its exact source through the same contract.
-- If the next question becomes “which transaction wrote this widget?”, switch to the NEAR Social proof recipes in [Transactions Examples](/tx/examples).
-
-```bash
-export NETWORK_ID=mainnet
-export RPC_URL=https://rpc.mainnet.fastnear.com
-export SOCIAL_CONTRACT_ID=social.near
-export ACCOUNT_ID=mob.near
-export WIDGET_NAME=Profile
-```
-
-1. List the widget catalog and keep the last-write block heights.
-
-```bash
-WIDGET_KEYS_ARGS_BASE64="$(
-  jq -nc --arg account_id "$ACCOUNT_ID" '{
-    keys: [($account_id + "/widget/*")],
-    options: {return_type: "BlockHeight"}
-  }' | base64 | tr -d '\n'
-)"
-
-curl -s "$RPC_URL" \
-  -H 'content-type: application/json' \
-  --data "$(jq -nc \
-    --arg account_id "$SOCIAL_CONTRACT_ID" \
-    --arg args_base64 "$WIDGET_KEYS_ARGS_BASE64" '{
-      jsonrpc: "2.0",
-      id: "fastnear",
-      method: "query",
-      params: {
-        request_type: "call_function",
-        account_id: $account_id,
-        method_name: "keys",
-        args_base64: $args_base64,
-        finality: "final"
-      }
-    }')" \
-  | tee /tmp/social-widget-keys.json >/dev/null
-
-jq --arg account_id "$ACCOUNT_ID" '
-  .result.result
-  | implode
-  | fromjson
-  | .[$account_id].widget
-  | to_entries
-  | sort_by(.value * -1)
- | map({
-      widget_name: .key,
-      last_write_block: .value
-    })
-  | .[0:20]
-' /tmp/social-widget-keys.json
-```
-
-2. Confirm that `Profile` is really in the catalog, then print the exact source stored in SocialDB.
-
-```bash
-WIDGET_GET_ARGS_BASE64="$(
-  jq -nc \
-    --arg account_id "$ACCOUNT_ID" \
-    --arg widget_name "$WIDGET_NAME" '{
-      keys: [($account_id + "/widget/" + $widget_name)]
-    }' | base64 | tr -d '\n'
-)"
-
-curl -s "$RPC_URL" \
-  -H 'content-type: application/json' \
-  --data "$(jq -nc \
-    --arg account_id "$SOCIAL_CONTRACT_ID" \
-    --arg args_base64 "$WIDGET_GET_ARGS_BASE64" '{
+    --arg args_base64 "$INDEX_POST_ARGS_BASE64" '{
       jsonrpc: "2.0",
       id: "fastnear",
       method: "query",
@@ -1540,131 +598,80 @@ curl -s "$RPC_URL" \
         finality: "final"
       }
     }')" \
-  | tee /tmp/social-widget-source.json >/dev/null
+  | tee /tmp/social-index-post.json >/dev/null
 
-jq -r \
-  --arg account_id "$ACCOUNT_ID" \
-  --arg widget_name "$WIDGET_NAME" '
-    .result.result
-    | implode
-    | fromjson
-    | .[$account_id].widget[$widget_name]
-    | split("\n")[0:25]
-    | join("\n")
-  ' /tmp/social-widget-source.json
+jq --arg account_id "$ACCOUNT_ID" '
+  .result.result
+  | implode
+  | fromjson
+  | {
+      account_id: $account_id,
+      index_entry: (.[$account_id].index.post | fromjson),
+      current_post_key: (.[$account_id].index.post | fromjson | .key)
+    }
+' /tmp/social-index-post.json
 ```
 
-3. Pull the last-write block for the same widget so you keep one useful historical anchor.
+At the time of writing, the current post key for `mike.near` was `main`.
+
+2. Read that exact post payload.
 
 ```bash
-jq -r \
-  --arg account_id "$ACCOUNT_ID" \
-  --arg widget_name "$WIDGET_NAME" '
+POST_KEY="$(
+  jq -r --arg account_id "$ACCOUNT_ID" '
     .result.result
     | implode
     | fromjson
-    | .[$account_id].widget[$widget_name]
-  ' /tmp/social-widget-keys.json \
-  | xargs -I{} printf 'Last write block for %s/%s: %s\n' "$ACCOUNT_ID" "$WIDGET_NAME" "{}"
+    | .[$account_id].index.post
+    | fromjson
+    | .key
+  ' /tmp/social-index-post.json
+)"
+
+POST_ARGS_BASE64="$(
+  jq -nc \
+    --arg account_id "$ACCOUNT_ID" \
+    --arg post_key "$POST_KEY" '{
+      keys: [($account_id + "/post/" + $post_key)]
+    }' | base64 | tr -d '\n'
+)"
+
+curl -s "$RPC_URL" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc \
+    --arg account_id "$SOCIAL_CONTRACT_ID" \
+    --arg args_base64 "$POST_ARGS_BASE64" '{
+      jsonrpc: "2.0",
+      id: "fastnear",
+      method: "query",
+      params: {
+        request_type: "call_function",
+        account_id: $account_id,
+        method_name: "get",
+        args_base64: $args_base64,
+        finality: "final"
+      }
+    }')" \
+  | tee /tmp/social-post-main.json >/dev/null
+
+jq --arg account_id "$ACCOUNT_ID" --arg post_key "$POST_KEY" '
+  .result.result
+  | implode
+  | fromjson
+  | {
+      account_id: $account_id,
+      post_key: $post_key,
+      post: (.[$account_id].post[$post_key] | fromjson)
+    }
+' /tmp/social-post-main.json
 ```
 
-At the time of writing, the live last-write block for `mob.near/widget/Profile` was `86494825`. Keep that block if you later want to prove which transaction wrote this version.
+That gives you the exact JSON stored for the current post, including fields like `type`, `text`, and `image`.
 
 **Why this next step?**
 
-Sometimes the right RPC answer is just: here is the widget, here is the live source, and here is the block height to keep if provenance matters later.
+This is the clean RPC pattern for SocialDB: ask the contract for one exact key, decode the returned JSON, and stop. If the question turns into “who wrote this and when?”, move to the transaction examples instead of trying to brute-force raw `social.near` state.
 
-## Common jobs
-
-### Check exact account or access-key state
-
-**Start here**
-
-- [View Account](/rpc/account/view-account) for exact account fields.
-- [View Access Key](/rpc/account/view-access-key) or [View Access Key List](/rpc/account/view-access-key-list) for key inspection.
-
-**Next page if needed**
-
-- [FastNear API full account view](/api/v1/account-full) if you want a readable holdings summary after checking the exact RPC state.
-- [Transactions API account history](/tx/account) if the next question is "what has this account been doing?"
-
-**Stop when**
-
-- The RPC fields already answer the state or permission question.
-
-**Switch when**
-
-- The user wants balances, NFTs, staking, or another readable account summary.
-- The user really wants recent activity history rather than current state.
-
-### Check one exact block or protocol snapshot
-
-**Start here**
-
-- [Block by ID](/rpc/block/block-by-id) or [Block by Height](/rpc/block/block-by-height) when you already know which block you care about.
-- [Latest Block](/rpc/protocol/latest-block) when the question is “what is the current head right now?”
-- [Status](/rpc/protocol/status), [Health](/rpc/protocol/health), or [Network Info](/rpc/protocol/network-info) when the real question is about node or network condition, not transaction history.
-
-**Next page if needed**
-
-- [Block Effects](/rpc/block/block-effects) if the block payload tells you what block you are looking at but not what changed in it.
-- [Transactions API block history](/tx/block) or [Transactions API block range](/tx/blocks) if the question becomes “what actually happened around this block?” rather than “what does this block payload say?”
-
-**Stop when**
-
-- One exact block or protocol response already answers the question directly.
-
-**Switch when**
-
-- The user wants to watch fresh blocks arrive rather than inspect one exact snapshot. Move to [NEAR Data API](/neardata).
-- The user needs a readable story across many transactions, not just one block payload. Move to [Transactions API](/tx).
-
-### What does this contract return right now?
-
-**Start here**
-
-- Start with the counter example above when the real decision is “should I use `call_function` or `view_state`?” or “can I read this storage directly instead of calling a method?”
-- [Call Function](/rpc/contract/call-function) when you already know the view method you want and just need the exact return value.
-- [View State](/rpc/contract/view-state) when the real question is about raw contract storage or key prefixes, not a method result.
-- [View Code](/rpc/contract/view-code) when the real question is “is there code here at all?” or “which code hash is deployed?”
-
-**Next page if needed**
-
-- [FastNear API](/api) if the raw contract answer is technically correct but the user actually wanted a readable holdings or account summary.
-- [KV FastData API](/fastdata/kv) if the next question becomes “what did this storage key look like over time?” instead of “what is it right now?”
-
-**Stop when**
-
-- The view call, storage read, or code hash already answers the contract question exactly.
-
-**Switch when**
-
-- The user wants indexed history or a simpler summary instead of raw contract output.
-- The user stops asking “what does it return right now?” and starts asking “what changed over time?”
-
-### Send and confirm a transaction
-
-**Start here**
-
-- Start with the worked example above when the real question is which submission endpoint to use and how to track the transaction through completion.
-- [Send Transaction](/rpc/transaction/send-tx) when you want RPC submission with explicit waiting semantics.
-- [Broadcast Transaction Async](/rpc/transaction/broadcast-tx-async) or [Broadcast Transaction Commit](/rpc/transaction/broadcast-tx-commit) when those exact submission modes are the point.
-- [Transaction Status](/rpc/transaction/tx-status) to confirm the final result.
-
-**Next page if needed**
-
-- [Transactions by Hash](/tx/transactions) for a readable history record after submission.
-- [Receipt Lookup](/tx/receipt) when you need to investigate downstream execution or callback flow.
-- [Transactions Examples](/tx/examples) when the next question is “one batched action failed, did the earlier actions roll back too?”
-
-**Stop when**
-
-- You have the submission result and final status you needed.
-
-**Switch when**
-
-- The next question is about receipts, affected accounts, or execution history in a human-friendly order.
-- You need a fuller investigation workflow instead of one status check.
 
 ## Common mistakes
 

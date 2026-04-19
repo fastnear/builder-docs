@@ -1,8 +1,8 @@
 ---
-sidebar_label: OutLayer
+sidebar_label: OutLayer Case Study
 slug: /tx/examples/outlayer
-title: "OutLayer: Trace request and worker resolution"
-description: "Use Transactions API to pair one caller-side OutLayer request with one later worker-side resolution and inspect the finish receipts."
+title: "OutLayer Case Study: Trace request and worker resolution"
+description: "A case study that uses Transactions API to pair one caller-side OutLayer request with one later worker-side resolution and inspect the finish receipts."
 displayed_sidebar: transactionsApiSidebar
 page_actions:
   - markdown
@@ -17,40 +17,19 @@ keywords:
 
 import Link from '@site/src/components/LocalizedLink';
 
-{/* FASTNEAR_AI_DISCOVERY: This example stays on observable transaction and receipt evidence. It shows how to pair one caller-side OutLayer request with one later worker-side resolution and inspect the finish receipts. It does not try to prove OutLayer's internal TEE, yield/resume, or CKD/MPC architecture from public chain data alone. */}
+{/* FASTNEAR_AI_DISCOVERY: This case study stays on observable transaction and receipt evidence. It shows how to pair one caller-side OutLayer request with one later worker-side resolution and inspect the finish receipts. It does not try to prove OutLayer's internal TEE, yield/resume, or CKD/MPC architecture from public chain data alone. */}
 
-# OutLayer: Trace request and worker resolution
+# OutLayer Case Study: Trace request and worker resolution
 
-Use this when the question is: “Which transaction opened the OutLayer request, which later transaction came from the worker, and where did the finish receipts show callback, charging, or refund behavior?”
+Use this case study when the question is: “Which transaction opened the OutLayer request, which later transaction came from the worker, and where did the finish receipts show callback, charging, or refund behavior?”
+
+This page intentionally stays on public chain evidence only. It shows the caller transaction, the later worker transaction, and the finish receipts. It does not try to prove OutLayer’s internal TEE, `yield/resume`, or CKD/MPC architecture from chain traces alone.
 
 Treat this as a transaction-history problem first:
 
 - one caller-side `request_execution`
 - one later worker-side `submit_execution_output_and_resolve` or `resolve_execution`
 - receipt-level follow-up only when the finish path matters
-
-<div className="fastnear-example-strategy">
-  <div className="fastnear-example-strategy__header">
-    <span className="fastnear-example-strategy__eyebrow">Strategy</span>
-    <p className="fastnear-example-strategy__title">Find the two hashes first, hydrate them second, and inspect worker receipts only when you need the finish path.</p>
-  </div>
-  <div className="fastnear-example-strategy__items">
-    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">01</span><span><span className="fastnear-example-strategy__code">POST /v0/account</span> on <span className="fastnear-example-strategy__code">outlayer.*</span> is the quickest hash-discovery surface.</span></p>
-    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">02</span><span><span className="fastnear-example-strategy__code">POST /v0/transactions</span> turns the caller hash and the worker hash into readable signer, method, and log evidence.</span></p>
-    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span>Inspect the worker transaction’s receipts only when the real question is about callback, charging, or refund behavior.</span></p>
-  </div>
-</div>
-
-**Goal**
-
-- Recover one caller transaction, one worker transaction, and the finish receipts that belong to the same OutLayer request.
-
-| Surface | Endpoint | How we use it | Why we use it |
-| --- | --- | --- | --- |
-| Hash discovery | Transactions API [`POST /v0/account`](/tx/account) | Pull recent transaction hashes for `outlayer.near` | Gives the fastest contract-local search surface when you do not already know the pair of hashes |
-| Transaction hydration | Transactions API [`POST /v0/transactions`](/tx/transactions) | Hydrate the caller-side and worker-side hashes together | Turns the raw hashes into signer, receiver, action, and log evidence |
-| Finish-path inspection | Transactions API [`POST /v0/transactions`](/tx/transactions) | Reuse the worker hash and inspect its receipt list | Shows where callback, charging, and refund behavior materialized |
-| Optional identity check | RPC [`view_account`](/rpc/account/view-account) | Use RPC only if the next question is about contract identity rather than transaction history | Keeps current-state identity checks separate from history tracing |
 
 ## Verified shell walkthrough
 
@@ -87,14 +66,7 @@ jq '{
 }' /tmp/outlayer-pair.json
 ```
 
-What this establishes:
-
-- the request transaction came from `solarflux.near` to `outlayer.near`
-- the request logs included the resolved project `zavodil.near/near-email`
-- the worker transaction came later from `worker.outlayer.near` to `outlayer.near`
-- the worker logs included `Stored pending output` and `Resolving execution ...`
-
-That is the core observable loop in NEAR terms: caller-side request first, worker-side resolution later.
+This gives you the core observable loop: caller-side request first, worker-side resolution later, with readable signer, method, and log evidence for both.
 
 ### 2. Inspect the worker receipts only when the finish path matters
 
@@ -140,21 +112,10 @@ curl -sS "$TX_BASE_URL/v0/account" \
 
 Use this as a discovery surface only. For this example, `/v0/account` gives you candidate hashes, and `/v0/transactions` is the surface that turns those hashes into readable evidence.
 
-## Scope boundary
-
-This page intentionally stays on public chain evidence that FastNear and RPC can show directly:
-
-- caller-side request transaction
-- later worker-side resolution transaction
-- finish-path receipts and logs
-
-It does **not** try to prove OutLayer’s internal TEE execution model, same-account `yield/resume` usage, or CKD/MPC trust path from public transaction traces alone. Treat those as separate architecture questions and read them in the OutLayer docs, not as claims established by this trace.
-
 ## Related pages
 
 - <Link to="/tx/account">Transactions API: Account History</Link>
 - <Link to="/tx/transactions">Transactions API: Transactions by Hash</Link>
 - <Link to="/tx/receipt">Transactions API: Receipt by ID</Link>
-- <Link to="/rpc/account/view-account">RPC: View Account</Link>
 - [OutLayer NEAR Integration](https://outlayer.fastnear.com/docs/near-integration)
 - [OutLayer Secrets / CKD](https://outlayer.fastnear.com/docs/secrets)

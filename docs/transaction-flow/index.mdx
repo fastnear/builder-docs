@@ -1,6 +1,6 @@
 ---
 title: Transaction Flow in NEAR Protocol
-description: Complete guide to transaction lifecycle from JSON-RPC submission to validator execution
+description: Practical guide to the user-visible stages of a NEAR transaction, from RPC submission to receipts and finality
 sidebar_position: 0
 slug: /transaction-flow
 sidebar_label: Overview
@@ -15,16 +15,13 @@ keywords:
 
 # Transaction Flow in NEAR Protocol
 
-This guide traces the complete lifecycle of a transaction in NEAR Protocol, from JSON-RPC submission to validator execution.
+This guide focuses on the stages a docs user can actually observe: submission, transaction status, receipt fan-out, and final outcome. It keeps protocol background only where that background changes what you should query next.
 
 ```mermaid
 flowchart LR
-    Client["Client Signs Tx"] --> RPC["RPC Layer"]
-    RPC --> Validation["Validation"]
-    Validation --> P2P["P2P Forward"]
-    P2P --> Pool["Transaction Pool"]
-    Pool --> Chunk["Chunk Producer"]
-    Chunk --> Runtime["Runtime Execution"]
+    Submit["Submit signed transaction"] --> Track["Track tx hash"]
+    Track --> Receipts["Inspect receipts only if needed"]
+    Receipts --> Final["Confirm final outcome or final state"]
 ```
 
 ## Quick Reference

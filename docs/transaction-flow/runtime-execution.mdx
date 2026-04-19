@@ -75,15 +75,12 @@ Actions execute in order within a transaction. All actions in a single transacti
 
 ### Execution Order
 
-```mermaid
-flowchart TD
-    A[Validate all actions] --> B{All valid?}
-    B -->|No| C[Return validation error]
-    B -->|Yes| D[Execute actions sequentially]
-    D --> E[Generate receipts for cross-shard effects]
-    E --> F[Update state]
-    F --> G[Return execution outcome]
-```
+For docs users, the actionable model is short:
+
+1. validate the batch
+2. execute actions in order
+3. emit receipts for async work
+4. return one execution outcome
 
 The detailed flow:
 

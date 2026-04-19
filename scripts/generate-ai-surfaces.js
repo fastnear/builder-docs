@@ -106,6 +106,8 @@ const AUTHORED_MARKDOWN_LABELS = {
   en: {
     aiAndAgents: "AI & Agents",
     bestFor: "Best for:",
+    berryClubLiveBoardNote:
+      "Live board card: fetches `berryclub.ek.near` `get_lines` from mainnet RPC and renders the current 50x50 grid in the docs UI.",
     berryClubGalleryNote:
       "Rendered snapshot gallery: launch, mid, and recent checkpoints from checked-in `src/data/berryClubSnapshots.json`.",
     guidesArchiveTitle: "FastNear Builder Docs Full Documentation Archive",
@@ -139,6 +141,8 @@ const AUTHORED_MARKDOWN_LABELS = {
   ru: {
     aiAndAgents: "AI и агенты",
     bestFor: "Лучше всего подходит для:",
+    berryClubLiveBoardNote:
+      "Карточка живой доски: запрашивает `berryclub.ek.near` `get_lines` через mainnet RPC и рендерит текущую сетку 50x50 в интерфейсе документации.",
     berryClubGalleryNote:
       "Галерея снимков: контрольные точки launch, mid и recent из сохранённого `src/data/berryClubSnapshots.json`.",
     guidesArchiveTitle: "Полный архив документации FastNear Builder Docs",
@@ -662,6 +666,9 @@ function transformSpecialComponents(markdown, locale = DEFAULT_LOCALE) {
   const labels = getAuthoredMarkdownLabels(locale);
 
   return markdown.replace(
+    /<BerryClubLiveBoard\b[\s\S]*?\/>/g,
+    `\n\n${labels.berryClubLiveBoardNote}\n\n`
+  ).replace(
     /<BerryClubSnapshotGallery\b[\s\S]*?\/>/g,
     `\n\n${labels.berryClubGalleryNote}\n\n`
   );

@@ -2,79 +2,11 @@
 
 ## Быстрый старт
 
-Начните с двух helper-маршрутов, которые показывают, что изменилось прямо сейчас.
+Начните с одного недавнего финализированного блока и сначала запросите самую маленькую возможную touch-сводку.
 
 ```bash
 NEARDATA_BASE_URL=https://mainnet.neardata.xyz
-
-curl -s -D - -o /dev/null "$NEARDATA_BASE_URL/v0/last_block/optimistic" \
-  | awk 'tolower($1) == "location:" {print "optimistic:", $2}' \
-  | tr -d '\r'
-
-curl -s -D - -o /dev/null "$NEARDATA_BASE_URL/v0/last_block/final" \
-  | awk 'tolower($1) == "location:" {print "final:", $2}' \
-  | tr -d '\r'
-```
-
-Это даёт текущие optimistic и final redirect target до того, как вы запрашиваете полные документы блоков.
-
-## Готовое расследование
-
-### Поймать новый блок как можно раньше, а затем подтвердить его после finality
-
-Используйте это расследование, когда нужно заметить новый блок как можно раньше, но финальный ответ всё равно должен опираться на финализированный блок и иногда на точное чтение через RPC.
-
-    Стратегия
-    Пусть NEAR Data сначала скажет, что что-то изменилось, а затем переиспользуйте то же семейство блоков для стабильного подтверждения.
-
-    01block-optimistic или last-block-optimistic дают самый ранний полезный сигнал.
-    02block или last-block-final подтверждают, что то же наблюдение дошло до финализированной истории.
-    03RPC block нужен только в самом конце, когда уже известна точная высота или хеш.
-
-**Цель**
-
-- Как можно раньше заметить одно свежее изменение в семействе блоков, а затем подтвердить, какой финализированный блок его догнал.
-
-| Поверхность | Эндпоинт | Как используем | Зачем используем |
-| --- | --- | --- | --- |
-| Самое быстрое обнаружение | NEAR Data [`block-optimistic`](https://docs.fastnear.com/ru/neardata/block-optimistic) | Опрашиваем оптимистичные блоки, чтобы как можно раньше заметить новое изменение в семействе блоков | Даёт самый ранний полезный сигнал ещё до финализированного подтверждения |
-| Маршрут для последнего оптимистичного блока | NEAR Data [`last-block-optimistic`](https://docs.fastnear.com/ru/neardata/last-block-optimistic) | Используем маршрут перенаправления, когда клиент должен всегда следовать за самым новым оптимистичным блоком | Упрощает клиент опроса, когда важнее получать последний блок, а не работать с явными высотами |
-| Стабильное подтверждение | NEAR Data [`block`](https://docs.fastnear.com/ru/neardata/block) или [`last-block-final`](https://docs.fastnear.com/ru/neardata/last-block-final) | Повторно проверяем то же семейство блоков, когда финальность догоняет ранее замеченное изменение | Подтверждает, что замеченное в оптимистичном режиме изменение действительно попало в финализированную историю |
-| Лёгкая сводка по блоку | NEAR Data [`block-headers`](https://docs.fastnear.com/ru/neardata/block-headers) | Читаем данные заголовков, если для ответа достаточно времени и общего хода событий | Позволяет не запрашивать более широкий блок, когда хватает заголовков |
-| Точный разбор через RPC | RPC [Блок по ID](https://docs.fastnear.com/ru/rpc/block/block-by-id) или [Блок по высоте](https://docs.fastnear.com/ru/rpc/block/block-by-height) | Получаем точный блок, как только понятно, какой именно блок важен | Здесь уже имеет смысл RPC, если нужен тот самый блок-объект, который вернул бы сам протокол |
-
-**Что должен включать полезный ответ**
-
-- какой redirect target и какой разрешённый оптимистичный блок впервые запустили расследование
-- когда helper для finality догнал его и в какой блок он разрешился
-- изменил ли точный разбор через RPC интерпретацию
-
-### Shell-сценарий от оптимистичного сигнала к финализированному подтверждению
-
-Используйте этот сценарий, когда нужно сразу заметить свежее изменение в семействе блоков, а затем доказать, какой финализированный блок его догнал, и подтвердить именно эту высоту через RPC.
-
-**Что вы делаете**
-
-- Смотрите redirect, который возвращает `GET /v0/last_block/optimistic`.
-- Загружаете разрешённый оптимистичный блок и сохраняете его высоту и хеш.
-- Смотрите redirect, который возвращает `GET /v0/last_block/final`, и сохраняете финализированный counterpart.
-- Сравниваете оптимистичное и финализированное наблюдения, а затем переиспользуете финализированную высоту в RPC `block` по высоте.
-
-```bash
-NEARDATA_BASE_URL=https://mainnet.neardata.xyz
-RPC_URL=https://rpc.mainnet.fastnear.com
-
-OPTIMISTIC_LOCATION="$(
-  curl -s -D - -o /dev/null "$NEARDATA_BASE_URL/v0/last_block/optimistic" \
-    | awk 'tolower($1) == "location:" {print $2}' \
-    | tr -d '\r'
-)"
-
-printf 'Optimistic redirect target: %s\n' "$OPTIMISTIC_LOCATION"
-
-curl -s "$NEARDATA_BASE_URL$OPTIMISTIC_LOCATION" \
-  | tee /tmp/neardata-optimistic-block.json \
-  | jq '{height: .block.header.height, hash: .block.header.hash}'
+TARGET_ACCOUNT_ID=YOUR_CONTRACT_ID
 
 FINAL_LOCATION="$(
   curl -s -D - -o /dev/null "$NEARDATA_BASE_URL/v0/last_block/final" \
@@ -82,134 +14,219 @@ FINAL_LOCATION="$(
     | tr -d '\r'
 )"
 
+curl -s "$NEARDATA_BASE_URL$FINAL_LOCATION" \
+  | jq --arg target "$TARGET_ACCOUNT_ID" '{
+      height: .block.header.height,
+      hash: .block.header.hash,
+      direct_tx_count: ([.shards[].chunk.transactions[]?
+        | select((.transaction.receiver_id // .receiver_id) == $target)] | length),
+      incoming_receipt_count: ([.shards[].chunk.receipts[]?
+        | select(.receiver_id == $target)] | length),
+      outcome_hit_count: ([.shards[].receipt_execution_outcomes[]?
+        | select(
+            (.receipt.receiver_id // "") == $target
+            or (.execution_outcome.outcome.executor_id // "") == $target
+          )] | length),
+      state_change_count: ([.shards[].state_changes[]?
+        | select((.change.account_id // "") == $target)] | length)
+    } | . + {
+      touched: (
+        (.direct_tx_count > 0)
+        or (.incoming_receipt_count > 0)
+        or (.outcome_hit_count > 0)
+        or (.state_change_count > 0)
+      )
+    }'
+```
+
+Это самая маленькая полезная сводка NEAR Data для команды приложения: один финализированный блок, один ответ “да / нет” и несколько счётчиков до того, как вы начнёте расширяться дальше.
+
+## Готовое расследование
+
+### Был ли мой контракт затронут в последнем финализированном блоке?
+
+Используйте это расследование, когда вам нужен конкретный ответ “да / нет” ещё до перехода к Transactions API или RPC.
+
+    Стратегия
+    Зафиксируйтесь на одном финализированном блоке, просканируйте всё семейство блока по целевому аккаунту, а затем оставьте только компактную сводку и идентификаторы, которые действительно стоит разбирать дальше.
+
+    01last-block-final даёт одну стабильную высоту блока без угадывания.
+    02block — это главный read: он уже содержит транзакции, receipts, результаты исполнения receipts и изменения состояния, которых достаточно для ответа на вопрос «был ли контракт затронут?»
+    03Только если ответ «да», расширяйтесь дальше: сохраняйте найденные shard id, tx hash и receipt id, а затем передавайте именно эти идентификаторы в [Transactions API](https://docs.fastnear.com/ru/tx) или [RPC Reference](https://docs.fastnear.com/ru/rpc).
+
+**Цель**
+
+- Определить, был ли один целевой контракт затронут в последнем финализированном блоке, и оставить только shard id, счётчики и sample-идентификаторы для следующего шага.
+
+| Поверхность | Эндпоинт | Как используем | Зачем используем |
+| --- | --- | --- | --- |
+| Последняя стабильная точка | NEAR Data [`last-block-final`](https://docs.fastnear.com/ru/neardata/last-block-final) | Получаем высоту одного финализированного блока без угадывания | Даёт стабильную отправную точку для всего вопроса |
+| Всё семейство блока | NEAR Data [`block`](https://docs.fastnear.com/ru/neardata/block) | Сканируем транзакции, receipts, результаты исполнения receipts и изменения состояния по целевому аккаунту | Это главная поверхность ответа на вопрос «был ли затронут мой контракт?» |
+| Лёгкая сводка по блоку | NEAR Data [`block-headers`](https://docs.fastnear.com/ru/neardata/block-headers) | Используем, когда нужны только высота, хеш, время или заголовки чанков | Позволяет не тянуть более широкий payload блока, когда фильтрация по контракту не нужна |
+| Необязательный follow-up по шарду | NEAR Data [`block-chunk`](https://docs.fastnear.com/ru/neardata/block-chunk) или [`block-shard`](https://docs.fastnear.com/ru/neardata/block-shard) | Повторно открываем только затронутый шард, если нужен более глубокий payload | Полезно, когда вы уже знаете, какой шард mattered |
+| Точные поверхности для продолжения | [Transactions API](https://docs.fastnear.com/ru/tx) или [RPC Reference](https://docs.fastnear.com/ru/rpc) | Переиспользуем найденные tx hash или receipt id только если нужна полная история исполнения | NEAR Data позволяет сначала понять, нужен ли вообще переход дальше |
+
+**Что должен включать полезный ответ**
+
+- финализированную высоту и хеш
+- ответ “затронут / не затронут”
+- счётчики прямых транзакций, входящих receipts, outcome-hit и state changes
+- по одному sample tx hash или receipt id на категорию, когда он есть
+
+### Shell-сценарий от финализированного блока к ответу по контракту
+
+Используйте этот сценарий, когда целевой аккаунт уже известен и нужен один свежий финализированный ответ, а не длинный polling-цикл.
+
+**Что вы делаете**
+
+- Получаете redirect target для последнего финализированного блока.
+- Один раз загружаете полный документ блока.
+- Собираете один компактный ответ по одному `TARGET_ACCOUNT_ID`.
+- Получаете ответ “да / нет” плюс минимально полезные счётчики и sample-идентификаторы.
+
+```bash
+NEARDATA_BASE_URL=https://mainnet.neardata.xyz
+TARGET_ACCOUNT_ID=YOUR_CONTRACT_ID
+
+FINAL_LOCATION="$(
+  curl -s -D - -o /dev/null "$NEARDATA_BASE_URL/v0/last_block/final" \
+    | awk 'tolower($1) == "location:" {print $2}' \
+    | tr -d '\r'
+)"
+
+BLOCK_HEIGHT="$(printf '%s' "$FINAL_LOCATION" | sed -E 's#.*/([0-9]+)$#\1#')"
+
 printf 'Final redirect target: %s\n' "$FINAL_LOCATION"
+printf 'Final block height: %s\n' "$BLOCK_HEIGHT"
 
 curl -s "$NEARDATA_BASE_URL$FINAL_LOCATION" \
-  | tee /tmp/neardata-final-block.json \
-  | jq '{height: .block.header.height, hash: .block.header.hash}'
+  | tee /tmp/neardata-block.json >/dev/null
 
-jq -n \
-  --slurpfile optimistic /tmp/neardata-optimistic-block.json \
-  --slurpfile final /tmp/neardata-final-block.json '{
-    optimistic: {
-      height: $optimistic[0].block.header.height,
-      hash: $optimistic[0].block.header.hash
-    },
-    final: {
-      height: $final[0].block.header.height,
-      hash: $final[0].block.header.hash
-    },
-    same_height: (
-      $optimistic[0].block.header.height
-      == $final[0].block.header.height
-    )
-  }'
-
-BLOCK_HEIGHT="$(jq -r '.block.header.height' /tmp/neardata-final-block.json)"
-
-curl -s "$RPC_URL" \
-  -H 'content-type: application/json' \
-  --data "$(jq -nc --arg block_height "$BLOCK_HEIGHT" '{
-    jsonrpc: "2.0",
-    id: "fastnear",
-    method: "block",
-    params: {
-      block_id: ($block_height | tonumber)
+jq --arg target "$TARGET_ACCOUNT_ID" '
+  (
+    [
+      .shards[]
+      | .chunk.transactions[]?
+      | select((.transaction.receiver_id // .receiver_id) == $target)
+      | (.transaction.hash // .hash)
+    ]
+  ) as $txs
+  | (
+    [
+      .shards[]
+      | .chunk.receipts[]?
+      | select(.receiver_id == $target)
+      | .receipt_id
+    ]
+  ) as $receipts
+  | (
+    [
+      .shards[]
+      | .receipt_execution_outcomes[]?
+      | select(
+          (.receipt.receiver_id // "") == $target
+          or (.execution_outcome.outcome.executor_id // "") == $target
+        )
+      | .tx_hash
+      | select(. != null)
+    ]
+    | unique
+  ) as $outcomes
+  | (
+    [
+      .shards[]
+      | .state_changes[]?
+      | select((.change.account_id // "") == $target)
+      | .type
+    ]
+  ) as $state_changes
+  | {
+      height: .block.header.height,
+      hash: .block.header.hash,
+      touched: (
+        ($txs | length) > 0
+        or ($receipts | length) > 0
+        or ($outcomes | length) > 0
+        or ($state_changes | length) > 0
+      ),
+      direct_tx_count: ($txs | length),
+      incoming_receipt_count: ($receipts | length),
+      outcome_hit_count: ($outcomes | length),
+      state_change_count: ($state_changes | length),
+      sample_direct_tx: ($txs[0] // null),
+      sample_incoming_receipt: ($receipts[0] // null),
+      sample_outcome_tx_hash: ($outcomes[0] // null)
     }
-  }')" \
-  | jq '{height: .result.header.height, hash: .result.header.hash, chunks: (.result.chunks | length)}'
+' /tmp/neardata-block.json | tee /tmp/neardata-touch-summary.json
+```
+
+Если позже понадобятся более богатые списки или разбор по шардам, продолжайте использовать `/tmp/neardata-block.json`. Смысл первого прохода в том, чтобы сначала ответить на вопрос «затронут или нет?», а уже потом расширяться до длинных массивов или более глубокого trace.
+
+Необязательное расширение: если всё же нужны `touched_shards`, их можно вычислить из того же сохранённого блока, не утяжеляя основной ответ:
+
+```bash
+jq --arg target "$TARGET_ACCOUNT_ID" '
+  [
+    .shards[]
+    | .shard_id as $shard_id
+    | select(
+        ([.chunk.transactions[]? | (.transaction.receiver_id // .receiver_id)] | index($target))
+        or ([.chunk.receipts[]? | .receiver_id] | index($target))
+        or ([.receipt_execution_outcomes[]? | .receipt.receiver_id, .execution_outcome.outcome.executor_id] | index($target))
+        or ([.state_changes[]? | .change.account_id] | index($target))
+      )
+    | $shard_id
+  ] | unique
+' /tmp/neardata-block.json
+```
+
+Если в этом ответе `touched: true` и нужен один follow-up на уровне шарда, откройте только первый затронутый шард:
+
+```bash
+TOUCHED_SHARD_ID="$(
+  jq -r --arg target "$TARGET_ACCOUNT_ID" '
+    first(
+      .shards[]
+      | .shard_id as $shard_id
+      | select(
+          ([.chunk.transactions[]? | (.transaction.receiver_id // .receiver_id)] | index($target))
+          or ([.chunk.receipts[]? | .receiver_id] | index($target))
+          or ([.receipt_execution_outcomes[]? | .receipt.receiver_id, .execution_outcome.outcome.executor_id] | index($target))
+          or ([.state_changes[]? | .change.account_id] | index($target))
+        )
+      | $shard_id
+    ) // empty
+  ' /tmp/neardata-block.json
+)"
+
+if [ -n "$TOUCHED_SHARD_ID" ]; then
+  curl -s "$NEARDATA_BASE_URL/v0/block/$BLOCK_HEIGHT/chunk/$TOUCHED_SHARD_ID" \
+    | jq '{
+        shard_id: .header.shard_id,
+        chunk_hash: .header.chunk_hash,
+        tx_hashes: ([.transactions[]? | (.transaction.hash // .hash)] | .[:5]),
+        receipt_ids: ([.receipts[]? | .receipt_id] | .[:5]),
+        receipt_receivers: ([.receipts[]? | .receiver_id] | .[:5])
+      }'
+fi
 ```
 
 **Зачем нужен следующий шаг?**
 
-Так вы получаете обе стороны истории: самый ранний оптимистичный якорь и более поздний финализированный якорь. Как только helper для finality сообщил точную высоту блока, RPC становится естественным следующим шагом, если нужен точный блок-объект без догадок о том, что именно проверять.
-
-## Частые задачи
-
-### Отслеживать последний оптимистичный блок
-
-**Начните здесь**
-
-- [Оптимистичный блок](https://docs.fastnear.com/ru/neardata/block-optimistic) для самого свежего чтения по семейству блоков.
-
-**Следующая страница при необходимости**
-
-- [Перенаправление на последний оптимистичный блок](https://docs.fastnear.com/ru/neardata/last-block-optimistic), если нужен маршрут перенаправления, который всегда ведёт к самому новому оптимистичному блоку.
-
-**Остановитесь, когда**
-
-- Уже можно сообщить о последнем оптимистичном блоке или зафиксировать отставание по свежести.
-
-**Переходите дальше, когда**
-
-- Нужна finalized-стабильность вместо максимальной свежести. Переходите к [Финализированному блоку по высоте](https://docs.fastnear.com/ru/neardata/block) или [Перенаправлению на последний финализированный блок](https://docs.fastnear.com/ru/neardata/last-block-final).
-
-### Безопасно отслеживать ход финализации блоков
-
-**Начните здесь**
-
-- [Финализированный блок по высоте](https://docs.fastnear.com/ru/neardata/block), когда уже известна нужная высота.
-- [Заголовки блока](https://docs.fastnear.com/ru/neardata/block-headers), когда достаточно чтения заголовков.
-
-**Следующая страница при необходимости**
-
-- [Перенаправление на последний финализированный блок](https://docs.fastnear.com/ru/neardata/last-block-final), когда клиент должен следовать за самым новым финализированным блоком без предварительного вычисления высоты.
-
-**Остановитесь, когда**
-
-- Уже можно показывать движение финализированных блоков без перехода к более глубоким протокольным деталям.
-
-**Переходите дальше, когда**
-
-- Пользователю нужны точные поля блока или семантика транзакций. Переходите к [RPC Reference](https://docs.fastnear.com/ru/rpc).
-
-### Использовать маршруты перенаправления в клиенте опроса
-
-**Начните здесь**
-
-- [Перенаправление на последний финализированный блок](https://docs.fastnear.com/ru/neardata/last-block-final) или [Перенаправление на последний оптимистичный блок](https://docs.fastnear.com/ru/neardata/last-block-optimistic) в зависимости от требуемой свежести.
-
-**Следующая страница при необходимости**
-
-- Следуйте по URL блока, который вернул маршрут перенаправления, и уже там читайте нужные данные.
-
-**Остановитесь, когда**
-
-- Клиент надёжно проходит по маршруту перенаправления и получает нужный ресурс блока.
-
-**Переходите дальше, когда**
-
-- Само перенаправление мешает клиенту. Тогда переходите на прямые маршруты блоков.
-
-### Перейти от опроса свежих блоков к точному RPC-разбору
-
-**Начните здесь**
-
-- Используйте подходящий маршрут NEAR Data, чтобы найти недавний блок или событие в семействе блоков, которое нужно исследовать.
-
-**Следующая страница при необходимости**
-
-- [Block by Height](https://docs.fastnear.com/ru/rpc/block/block-by-height), [Block by ID](https://docs.fastnear.com/ru/rpc/block/block-by-id) или другой RPC-метод, как только станет понятно, какой именно блок или следующий объект для проверки нужен.
-
-**Остановитесь, когда**
-
-- Уже можно чётко назвать недавний блок, который заслуживает проверки через RPC.
-
-**Переходите дальше, когда**
-
-- Пользователь просит точную структуру данных в терминах протокола, а не просто свежее чтение.
+Так вопрос остаётся максимально маленьким: сначала вы отвечаете «был ли затронут мой контракт?», а затем расширяетесь только тогда, когда один из sample-идентификаторов уже оправдывает более глубокий trace. Здесь NEAR Data выступает как discovery-layer, а не просто как block monitor.
 
 ## Частые ошибки
 
-- Воспринимать NEAR Data как push-стрим, а не как API для опроса.
-- Начинать с RPC, когда настоящая задача — мониторинг свежих блоков.
-- Забывать, что невалидный ключ может вернуть `401` ещё до перенаправления, а сами перенаправления подходят не каждому HTTP-клиенту.
-- Оставаться на NEAR Data после того, как пользователь уже попросил точные протокольные детали блока.
+- Воспринимать NEAR Data как push-стрим, а не как polling- или point-read API.
+- Начинать с RPC, не проверив, не отвечает ли уже один финализированный блок на вопрос о контракте.
+- Смотреть только на прямые транзакции и забывать, что контракты часто затрагиваются через receipts или state changes.
+- Предполагать, что сначала нужно проверить какой-то заранее выбранный shard id, а не само семейство блока.
+- Переходить к Transactions API или RPC до того, как вы извлекли из NEAR Data точные shard id, tx hash и receipt id.
 
 ## Полезные связанные страницы
 
 - [NEAR Data API](https://docs.fastnear.com/ru/neardata)
-- [RPC Reference](https://docs.fastnear.com/ru/rpc)
 - [Transactions API](https://docs.fastnear.com/ru/tx)
+- [RPC Reference](https://docs.fastnear.com/ru/rpc)
 - [Choosing the Right Surface](https://docs.fastnear.com/ru/agents/choosing-surfaces)
 - [Agent Playbooks](https://docs.fastnear.com/ru/agents/playbooks)

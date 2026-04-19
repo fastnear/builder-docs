@@ -73,16 +73,7 @@ pub enum ExecutionStatus {
 
 A single transaction can produce many outcomes:
 
-```mermaid
-flowchart TD
-    TX1[Transaction Hash: TX1] --> TO[TransactionOutcome]
-    TO -->|status: SuccessReceiptId R1| R1[ReceiptOutcome R1]
-    TO -->|receipt_ids: R1, R2| R2[ReceiptOutcome R2]
-    R1 -->|status: SuccessValue| R3[ReceiptOutcome R3]
-    R1 -->|receipt_ids: R3| done1[Done]
-    R2 -->|status: SuccessValue| done2[Done]
-    R3 -->|Refund| done3[Done]
-```
+For docs users, the important shape is simpler than the full outcome tree: one `tx_hash` gives you one `transaction_outcome` plus zero or more `receipts_outcome`. Your job is to combine those objects into one readable story of what happened.
 
 **Example outcome tree:**
 ```

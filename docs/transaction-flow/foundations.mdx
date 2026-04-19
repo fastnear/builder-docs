@@ -1,6 +1,6 @@
 ---
 title: Foundations
-description: Transaction structure, actions, and serialization formats in NEAR
+description: Transaction fields, actions, and serialization formats that show up in RPC submission and status responses
 slug: /transaction-flow/foundations
 sidebar_position: 1
 keywords:
@@ -13,7 +13,7 @@ keywords:
 
 # Foundations
 
-This section covers the fundamental building blocks of NEAR transactions: data structures, action types, account models, and serialization formats.
+Use this section to understand the fields you actually see in signed transactions, RPC submission, and status responses. The goal is not to memorize internal actors; it is to recognize what the signer, receiver, nonce, block hash, and action list mean when you inspect a transaction.
 
 ## What is a Transaction?
 
@@ -30,34 +30,16 @@ Every transaction in NEAR has these fundamental properties:
 The atomicity guarantee applies only within a single shard. Cross-shard operations (function calls to contracts on different shards) are executed asynchronously and do **not** have atomic semantics. See [Async Model](./async-model) for details.
 :::
 
-### The Transaction Lifecycle
+### What matters for docs users
 
 ```mermaid
 flowchart LR
-    subgraph Creation
-        A[Client Signs Tx]
-    end
-    subgraph Submission
-        B[RPC Layer]
-    end
-    subgraph Validation
-        C[Handler Actor]
-    end
-    subgraph Network
-        D[P2P Forward]
-    end
-    subgraph Block Production
-        E[Chunk Producer]
-    end
-    subgraph Execution
-        F[Runtime Applies Actions]
-    end
-    A -->|base64/borsh| B
-    B -->|struct| C
-    C -->|struct| D
-    D -->|borsh| E
-    E -->|struct| F
+    A["SignedTransaction fields"] --> B["Submit or inspect with RPC"]
+    B --> C["Get tx hash and actions"]
+    C --> D["Interpret outcomes and receipts"]
 ```
+
+For this docs site, that is the useful mental model. The internal handoff through pools, chunk producers, and runtime matters only if it changes the meaning of a field you are already reading.
 
 ## The SignedTransaction Data Structure
 

@@ -2,7 +2,7 @@
 sidebar_label: Examples
 slug: /tx/examples
 title: "Примеры Transactions API"
-description: "Пошаговые расследования и подробные разборы для работы с receipt, транзакциями, записями NEAR Social, promise-цепочками и расчётами NEAR Intents."
+description: "Пошаговые расследования транзакций сначала для типовых задач разработчика, а затем для более глубоких case study, когда они действительно нужны."
 displayed_sidebar: transactionsApiSidebar
 page_actions:
   - markdown
@@ -37,7 +37,7 @@ curl -s "$TX_BASE_URL/v0/transactions" \
 
 Это самое короткое расследование на странице. Переходите к RPC или к receipt ID только если этого вывода уже мало.
 
-Если нужен более развёрнутый разбор на той же поверхности, переходите к [Berry Club](/tx/examples/berry-club) для исторического восстановления доски или к [OutLayer](/tx/examples/outlayer) для трассировки воркера и callback-цепочки.
+Если нужен более развёрнутый case study на той же поверхности, переходите к [Berry Club case study](/tx/examples/berry-club) для исторического восстановления доски или к [OutLayer case study](/tx/examples/outlayer) для трассировки воркера и callback-цепочки.
 
 ## С чего начать
 
@@ -189,6 +189,140 @@ curl -s "$TX_BASE_URL/v0/receipt" \
 
 `POST /v0/transactions` — это самый чистый старт, когда у вас на руках только tx hash и нужен один читаемый ответ. RPC нужен как продолжение для точных семантик статуса. `POST /v0/receipt` — это handoff на случай, когда следующий вопрос уже относится не ко всей транзакции, а к одной receipt внутри неё.
 
+### Какая receipt выдала этот лог или event?
+
+Используйте это расследование, когда история звучит так: «у меня есть один tx hash и один фрагмент лога, и мне нужно точно понять, какая именно receipt его выдала».
+
+Это другой вопрос, чем более поздний сценарий «дошёл ли callback?». Здесь цель проще: привязать одну наблюдаемую строку лога к одному точному `receipt_id`, одному методу и одному исполнителю.
+
+<div className="fastnear-example-strategy">
+  <div className="fastnear-example-strategy__header">
+    <span className="fastnear-example-strategy__eyebrow">Стратегия</span>
+    <p className="fastnear-example-strategy__title">Один раз получите список receipt, отфильтруйте его по фрагменту лога и остановитесь, как только одна receipt окажется владельцем этого лога.</p>
+  </div>
+  <div className="fastnear-example-strategy__items">
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">01</span><span><span className="fastnear-example-strategy__code">POST /v0/transactions</span> даёт полный индексированный список receipt для одного tx hash, включая receipt-логи.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">02</span><span><span className="fastnear-example-strategy__code">jq</span> сужает этот список до receipt, в логах которых встречается нужный вам фрагмент.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span>Как только совпадение осталось одно, сохраняйте его <span className="fastnear-example-strategy__code">receipt_id</span>, executor и имя метода как точный ответ.</span></p>
+  </div>
+</div>
+
+**Цель**
+
+- Начать с одного mainnet tx hash и одного фрагмента лога и определить точную receipt, которая выдала этот лог.
+
+Для этого зафиксированного mainnet-примера используйте:
+
+- хеш транзакции: `2KhhB1uDScGCFQfVchep7DiZTGTxMcgfUYHNzwf5e6uL`
+- фрагмент лога: `Refund`
+- ожидаемый matching `receipt_id`: `9sLHQpaGz3NnMNMn8zGrDUSyktR1q6ts2otr9mHkfD1w`
+- ожидаемый executor: `wrap.near`
+- ожидаемый метод: `ft_resolve_transfer`
+
+Эта транзакция полезна тем, что в ней есть две разные logged receipt внутри одной истории:
+
+- ранний лог `Transfer ...` на receipt с `ft_transfer_call`
+- более поздний лог `Refund ...` на receipt с `ft_resolve_transfer`
+
+```mermaid
+flowchart LR
+    T["Один tx hash<br/>2KhhB1uD..."] --> L["Читаем все receipt-логи"]
+    L --> X["Ищем фрагмент:<br/>Refund"]
+    X --> R["Точная receipt<br/>9sLHQpaG..."]
+    R --> A["Ответ:<br/>wrap.near / ft_resolve_transfer"]
+```
+
+| Поверхность | Эндпоинт | Как используем | Зачем используем |
+| --- | --- | --- | --- |
+| Атрибуция лога | Transactions API [`POST /v0/transactions`](/tx/transactions) | Один раз получаем транзакцию и фильтруем её receipt по фрагменту лога вроде `Refund` | Даёт самый короткий путь от одной наблюдаемой строки лога к точной receipt, которая её выдала |
+| Необязательный следующий pivot | Transactions API [`POST /v0/receipt`](/tx/receipt) | Переиспользуем найденный `receipt_id` только если сама receipt становится следующим якорем | Позволяет сохранить receipt для следующего расследования, не раздувая сам пример |
+
+**Что должен включать полезный ответ**
+
+- какой `receipt_id` выдал лог
+- какой контракт исполнил эту receipt
+- какой метод там выполнился
+- точную строку лога, которая совпала
+- одно простое предложение вроде «лог `Refund` пришёл из `wrap.near` в receipt с методом `ft_resolve_transfer`»
+
+#### Shell-сценарий атрибуции лога
+
+Используйте этот сценарий, когда у вас уже есть tx hash и следующий вопрос звучит как «какая receipt это сказала?»
+
+**Что вы делаете**
+
+- Один раз получаете транзакцию и сохраняете список её receipt.
+- Фильтруете receipt по одному фрагменту лога.
+- Останавливаетесь, как только у вас есть один точный `receipt_id`, один executor и одно имя метода.
+
+```bash
+TX_BASE_URL=https://tx.main.fastnear.com
+TX_HASH=2KhhB1uDScGCFQfVchep7DiZTGTxMcgfUYHNzwf5e6uL
+LOG_FRAGMENT=Refund
+```
+
+1. Получите транзакцию и сохраните список receipt.
+
+```bash
+curl -s "$TX_BASE_URL/v0/transactions" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc --arg tx_hash "$TX_HASH" '{tx_hashes: [$tx_hash]}')" \
+  | tee /tmp/log-attribution-transaction.json >/dev/null
+```
+
+2. Отфильтруйте список receipt до логов, которые содержат нужный вам фрагмент.
+
+```bash
+jq --arg fragment "$LOG_FRAGMENT" '{
+  transaction: {
+    hash: .transactions[0].transaction.hash,
+    signer_id: .transactions[0].transaction.signer_id,
+    receiver_id: .transactions[0].transaction.receiver_id
+  },
+  matching_receipts: [
+    .transactions[0].receipts[]
+    | select(any(.execution_outcome.outcome.logs[]?; contains($fragment)))
+    | {
+        receipt_id: .receipt.receipt_id,
+        predecessor_id: .receipt.predecessor_id,
+        receiver_id: .receipt.receiver_id,
+        method_name: (.receipt.receipt.Action.actions[0].FunctionCall.method_name // "transfer"),
+        block_height: .execution_outcome.block_height,
+        logs: .execution_outcome.outcome.logs
+      }
+  ]
+}' /tmp/log-attribution-transaction.json
+
+# На что смотреть:
+# - фрагмент `Refund` совпадает ровно с одной receipt
+# - это receipt 9sLHQpaGz3NnMNMn8zGrDUSyktR1q6ts2otr9mHkfD1w
+# - receipt исполнилась на wrap.near
+# - имя метода — ft_resolve_transfer
+```
+
+3. Если хотите увидеть все logged receipt рядом, распечатайте только те receipt, где вообще были логи.
+
+```bash
+jq '{
+  logged_receipts: [
+    .transactions[0].receipts[]
+    | select((.execution_outcome.outcome.logs | length) > 0)
+    | {
+        receipt_id: .receipt.receipt_id,
+        receiver_id: .receipt.receiver_id,
+        method_name: (.receipt.receipt.Action.actions[0].FunctionCall.method_name // "transfer"),
+        logs: .execution_outcome.outcome.logs
+      }
+  ]
+}' /tmp/log-attribution-transaction.json
+```
+
+Это последнее сравнение полезно тем, что оно показывает: атрибуция лога здесь не строится на догадке. В этой транзакции есть больше одной logged receipt, и фрагмент `Refund` принадлежит одной конкретной более поздней receipt, а не транзакции в целом.
+
+**Зачем нужен следующий шаг?**
+
+Receipt-логи живут на уровне receipt, а не на каком-то абстрактном объекте верхнего уровня. `POST /v0/transactions` уже достаточно, чтобы привязать одну строку лога к одной точной receipt без ухода в более глубокую async-трассировку.
+
 ### Превратить один страшный receipt ID из логов в понятную человеческую историю
 
 Используйте это расследование, когда у вас на руках только один страшный `receipt_id` из логов, трассы или отчёта об ошибке, а нужно превратить его в простой ответ, который поймёт коллега без расшифровки receipt-полей.
@@ -245,19 +379,6 @@ flowchart LR
 - одно предложение простым языком, которое можно без правок вставить коллеге в чат
 
 #### Shell-сценарий: от страшного receipt ID к человеческой истории
-
-## Ошибки и async
-
-Здесь страница перестаёт быть просто поиском по объектам и начинает объяснять семантику исполнения в NEAR: атомарность пакета действий, более поздние async-сбои и порядок callback-ов.
-
-Используйте этот сценарий, когда у вас уже есть один сырой `receipt_id` из логов и нужно быстро превратить его в читаемое объяснение.
-
-**Что вы делаете**
-
-- Сначала разрешаете receipt.
-- Извлекаете `receipt.transaction_hash` через `jq`.
-- Переиспользуете этот хеш транзакции в `POST /v0/transactions`.
-- Завершаете одним человеческим резюме, которое можно вставить в чат или тикет.
 
 ```bash
 TX_BASE_URL=https://tx.main.fastnear.com
@@ -331,6 +452,12 @@ jq -r '
 **Зачем нужен следующий шаг?**
 
 `POST /v0/receipt` показывает, к чему привязан сырой receipt. `POST /v0/transactions` показывает, что signer на самом деле пытался сделать. Как только эти две части собраны вместе, чаще всего уже можно объяснить receipt одним предложением и только потом решать, нужны ли вообще контекст блока, история аккаунта или канонический RPC-статус.
+
+## Ошибки и async
+
+Здесь страница перестаёт быть просто поиском по объектам и начинает объяснять семантику исполнения в NEAR: атомарность пакета действий, более поздние async-сбои и то, дошёл ли callback обратно до исходного контракта.
+
+Используйте этот раздел, когда уже понятно, что транзакция жила дольше одной receipt, и следующий вопрос относится уже к форме исполнения, а не к простому поиску объекта.
 
 ### Доказать, что одно неудачное действие сорвало весь пакет
 
@@ -687,829 +814,175 @@ jq \
 
 Когда NEAR-приложение «как будто прошло успешно», а потом всё равно сломалось, надо спрашивать не только «какой был статус транзакции?», но и «какая receipt завершилась успешно, а какая позже упала?» Этот пример как раз даёт такой разрез: индексированный таймлайн receipt для общей формы, RPC status для точных семантик и никакого притворного живого read состояния роутера после того, как исторический контракт исчез.
 
-### Проследить асинхронную promise-цепочку и доказать порядок callback-ов
+### Дошёл ли callback вообще?
 
-Используйте это расследование, когда одна транзакция создаёт promise-работу на потом, вторая позже её resume-ит, и настоящий вопрос звучит не как «обе ли транзакции успешно прошли?», а как «выполнились ли cross-contract callback-и именно в том порядке, который я задумал?»
+Используйте это расследование, когда одна транзакция запустила downstream-работу на другом контракте, а настоящий вопрос звучит не как «успешно ли отработал receiver?», а как «вернулся ли callback обратно в исходный контракт?»
+
+Это самый короткий полезный сценарий про callback на странице:
+
+- стартуйте с одного tx hash
+- найдите downstream-receipt на другом контракте
+- найдите более поздний callback-receipt, который вернулся в исходный контракт
+- остановитесь, как только доказаны сам факт callback и его результат
 
 <div className="fastnear-example-strategy">
   <div className="fastnear-example-strategy__header">
     <span className="fastnear-example-strategy__eyebrow">Стратегия</span>
-    <p className="fastnear-example-strategy__title">Смотрите на два хеша как на одну async-историю: докажите, что работа была жива, восстановите запрошенный порядок и сравните его с видимым downstream-state.</p>
+    <p className="fastnear-example-strategy__title">Сначала используйте индексированный список receipt, а к RPC переходите только если нужна каноническая семантика callback-а.</p>
   </div>
   <div className="fastnear-example-strategy__items">
-    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">01</span><span><span className="fastnear-example-strategy__code">RPC call_function</span> на view отложенной работы доказывает, что promise-работа действительно уже была жива до resume-шага.</span></p>
-    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">02</span><span><span className="fastnear-example-strategy__code">POST /v0/transactions</span> даёт оба block-anchor и точный порядок, который запросила resume-транзакция.</span></p>
-    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span><span className="fastnear-example-strategy__code">RPC EXPERIMENTAL_tx_status</span> вместе с downstream-view доказывают, где callback-и реально выполнились и в каком видимом порядке.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">01</span><span><span className="fastnear-example-strategy__code">POST /v0/transactions</span> показывает downstream-вызов и более поздний receipt, который возвращается в исходный контракт.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">02</span><span><span className="fastnear-example-strategy__code">jq</span> сужает этот список receipt до одного downstream-вызова и одного callback-receipt.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span><span className="fastnear-example-strategy__code">RPC EXPERIMENTAL_tx_status</span> нужен только как дополнительное подтверждение, если вам важны канонический результат callback-а и его логи.</span></p>
   </div>
 </div>
 
 **Цель**
 
-- Превратить два хеша транзакций в одну читаемую историю доказательства: какая promise-работа была создана, какой порядок запросил resume-вызов и какой порядок позже стал виден в downstream-состоянии контракта.
+- Доказать на одном фиксированном mainnet-примере, что `wrap.near` отправил `ft_transfer_call` в `v2.ref-finance.near`, receiver выполнил `ft_on_transfer`, а затем `wrap.near` получил callback `ft_resolve_transfer` обратно.
 
-Если в кодовой базе или во вспомогательных скриптах это называется staged/release- или yield/resume-сценарием, это нормально. Но для документации полезнее более простая модель:
+Этот фиксированный mainnet-пример с callback был замечен **19 апреля 2026 года**:
 
-- **создать promise-работу**: одна транзакция готовит отложенную асинхронную работу на потом
-- **resume promise-работы**: более поздняя транзакция просит контракт продолжить эту работу в запрошенном порядке
-- **проследить async-путь**: деревья receipt показывают, где реально выполнились cross-contract callback-и
-- **посмотреть состояние**: downstream-состояние контракта показывает, какой порядок стал виден пользователю или интегратору
+- хеш транзакции: `2KhhB1uDScGCFQfVchep7DiZTGTxMcgfUYHNzwf5e6uL`
+- аккаунт-отправитель: `7c5206b1b75b8787420b09d8697e08180cdf896c5fcf15f6afbf5f33fcc3cf72`
+- исходный контракт: `wrap.near`
+- downstream-receiver: `v2.ref-finance.near`
+- верхнеуровневый метод: `ft_transfer_call`
+- downstream-метод: `ft_on_transfer`
+- callback-метод: `ft_resolve_transfer`
+- блок транзакции: `194692298`
+- блок downstream-receipt: `194692300`
+- блок callback-receipt: `194692301`
 
 ```mermaid
 flowchart LR
-    Y["Tx 1<br/>создаёт promise-работу"] --> H["Yielded promises становятся доступны<br/>staged_calls_for(...)"]
-    H --> R["Tx 2<br/>resume-ит promises в порядке beta -> alpha -> gamma"]
-    R --> C["Async cross-contract callback-и"]
-    C --> B["Recorder state<br/>beta"]
-    B --> A["Recorder state<br/>alpha"]
-    A --> G["Recorder state<br/>gamma"]
-    Y -. "здесь живёт главное receipt-tree-доказательство" .-> D["Original promise DAG"]
-    R -. "запрошенный порядок живёт здесь" .-> P["Resume payload"]
-    G -. "наблюдаемый порядок заканчивается здесь" .-> O["Наблюдаемый downstream-порядок"]
+    T["Одна mainnet-транзакция<br/>ft_transfer_call на wrap.near"] --> D["Downstream-receipt<br/>v2.ref-finance.near.ft_on_transfer"]
+    D --> F["Receiver упал<br/>E51: contract paused"]
+    F --> C["Callback-receipt обратно в wrap.near<br/>ft_resolve_transfer"]
+    C --> R["Лог refund на wrap.near"]
 ```
 
-Это различие важно, потому что одного факта успешности resume-транзакции всё равно недостаточно, чтобы доказать наблюдаемый порядок. Нужны ещё доказательства, что promise-работа действительно стала доступна до resume, и доказательства, что downstream-состояние изменилось в том же порядке, который запросил resume-вызов.
-
-Для NEAR-инженера здесь важна такая модель: resume-транзакция несёт **запрошенный порядок**, но главной опорной транзакцией расследования обычно всё равно остаётся исходная promise-транзакция, потому что возобновлённые callback-и продолжают жить на её исходном async receipt-tree. Именно downstream-состояние и позволяет затем сравнить запрошенный порядок с наблюдаемым.
+Здесь хорошо видна одна полезная деталь NEAR: downstream-сбой не означает, что callback исчез. В этом случае `v2.ref-finance.near` уронил свой `ft_on_transfer`, но `wrap.near` всё равно позже получил `ft_resolve_transfer` и залогировал refund.
 
 | Поверхность | Эндпоинт | Как используем | Зачем используем |
 | --- | --- | --- | --- |
-| Трассировка promise-цепочки | RPC [`EXPERIMENTAL_tx_status`](/rpc/transaction/experimental-tx-status) | Запрашиваем хеш исходной promise-транзакции и хеш более поздней resume-транзакции с `wait_until: "FINAL"`, обычно сначала через основной RPC, а при `UNKNOWN_TRANSACTION` — через архивный RPC | Граф квитанций — это основная поверхность доказательства порядка callback-ов и лучший способ понять, какие квитанции принадлежат какому async-дереву транзакции |
-| Проверка готовности promise-работы | RPC [`query(call_function)`](/rpc/contract/call-function) | Опрашиваем view-метод контракта, который показывает отложенную promise-работу, например `staged_calls_for({ caller_id })`, с `finality: "final"` до появления yield-нутых promises | Подтверждает, что promise-работа действительно стала доступна до того, как resume-транзакция попыталась её продолжить |
-| Якорь запрошенного порядка | Transactions API [`POST /v0/transactions`](/tx/transactions) | Забираем обе транзакции по хешам, чтобы получить `block_height`, `block_hash`, `receiver_id`, индексированный статус исполнения и payload resume-шага | Даёт каждой транзакции устойчивую привязку к блоку и сохраняет точный порядок, который запросил шаг resume |
-| Снимки downstream-состояния | RPC [`query(call_function)`](/rpc/contract/call-function) | Читаем состояние контракта recorder до resume, а затем опрашиваем его после resume до появления ожидаемых записей | Доказывает реальный порядок callback-ов в состоянии контракта, а не только в метаданных дерева квитанций |
-| Переход по квитанции обратно к транзакции | Transactions API [`POST /v0/receipt`](/tx/receipt) | Используем любой интересный ID отложенной или последующей квитанции, чтобы снова привязать его к исходной транзакции | Позволяет быстро перейти от одной квитанции в графе обратно к более широкому рассказу о транзакции |
-| Реконструкция по блокам | Transactions API [`POST /v0/block`](/tx/block) | Загружаем включающий блок и каскадные блоки с включёнными квитанциями | Восстанавливает временную шкалу исполнения по блокам, когда уже понятно, какие высоты важны |
-| Контекст активности аккаунтов | Transactions API [`POST /v0/account`](/tx/account) | Запрашиваем историю вызовов функций для контрактов, участвовавших в каскаде, в том же окне | Даёт более удобное для человека представление истории аккаунтов, которое можно сопоставить с трассой |
-| Повторное чтение состояния с привязкой к блоку | RPC [`query(call_function)`](/rpc/contract/call-function) | Повторно запускаем нужный view-метод recorder с `block_id`, закреплённым на интересных высотах | Превращает итоговое состояние во временной ряд, чтобы можно было сказать не только что изменилось, но и когда именно |
+| Индексированная цепочка receipt | Transactions API [`POST /v0/transactions`](/tx/transactions) | Стартуем с tx hash и печатаем только downstream-receipt на receiver и более поздний callback-receipt на исходном контракте | Даёт самый быстрый читаемый ответ на вопрос «вернулся ли callback?» |
+| Каноническое подтверждение receipt | RPC [`EXPERIMENTAL_tx_status`](/rpc/transaction/experimental-tx-status) | Переиспользуем тот же tx hash и sender только если нужен канонический статус callback-receipt и его логи | Полезно, когда индексированного ответа хватает для формы, но нужен протокольно-канонический proof |
 
 **Что должен включать полезный ответ**
 
-- одно итоговое предложение на простом языке, например: «первая транзакция создала три отложенных promises, вторая транзакция resume-нула их в порядке `beta -> alpha -> gamma`, а состояние recorder-контракта позже подтвердило тот же порядок callback-ов»
-- почему именно исходная promise-транзакция, а не только resume-транзакция, обычно является главной опорной транзакцией расследования
-- какой порядок callback-ов был запрошен и какой порядок downstream-эффектов в итоге наблюдался
-- в каких блоках стали видны изменения состояния
-- какие receipt-ы или account-pivot-ы стоит сохранить для следующего расследования
+- какой контракт получил downstream-вызов
+- какой метод выполнился на downstream-контракте
+- вернулся ли более поздний receipt в исходный контракт
+- какой callback-метод там выполнился и в каком блоке
+- одно простое предложение вроде «receiver упал, но исходный контракт всё равно получил callback и завершил перевод»
 
-## Доказательства по SocialDB
+#### Shell-сценарий проверки callback-а
 
-Эти примеры стартуют с читаемого состояния в NEAR Social и откатываются назад к точной записи, которая это состояние создала.
-
-### Доказать, что `mike.near` установил `profile.name` в `Mike Purvis`, а затем восстановить транзакцию записи профиля в SocialDB
-
-Используйте это расследование, когда история звучит так: «я вижу `Mike Purvis` в профиле NEAR Social аккаунта `mike.near`, но хочу точно доказать, когда это поле было записано и какая транзакция его записала».
-
-<div className="fastnear-example-strategy">
-  <div className="fastnear-example-strategy__header">
-    <span className="fastnear-example-strategy__eyebrow">Стратегия</span>
-    <p className="fastnear-example-strategy__title">Начните с читаемого значения поля, а затем превратите его field-level block в один receipt и одну транзакцию записи.</p>
-  </div>
-  <div className="fastnear-example-strategy__items">
-    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">01</span><span><span className="fastnear-example-strategy__code">NEAR Social POST /get</span> даёт текущее значение <span className="fastnear-example-strategy__code">profile.name</span> и field-level <span className="fastnear-example-strategy__code">:block</span>.</span></p>
-    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">02</span><span><span className="fastnear-example-strategy__code">POST /v0/block</span> превращает этот блок в конкретный receipt и хеш транзакции <span className="fastnear-example-strategy__code">mike.near -> social.near</span>.</span></p>
-    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span><span className="fastnear-example-strategy__code">POST /v0/transactions</span> доказывает payload записи, а <span className="fastnear-example-strategy__code">RPC call_function get</span> подтверждает, что поле и сейчас разрешается так же.</span></p>
-  </div>
-</div>
-
-**Цель**
-
-- Начать с одного читаемого поля профиля в SocialDB, а затем восстановить точный receipt и исходную транзакцию, которые его записали.
-
-**Официальные ссылки**
-
-- [API и поверхность контракта SocialDB](https://github.com/NearSocial/social-db#api)
-- [Живая поверхность чтения NEAR Social](https://api.near.social)
-
-Этот сценарий следует тому же рецепту доказательства, что и расследование по подписке, но добавляет ещё один важный нюанс SocialDB: для исторического доказательства `:block` на уровне конкретного поля обычно точнее, чем `:block` у родительского объекта. В этом живом примере `mike.near/profile/name` был записан на блоке `78675795`, тогда как более широкий объект `mike.near/profile` позже сдвинулся на другой блок из-за изменений в соседних полях. Роль FastNear в этом сценарии — превратить этот блок уровня поля в receipt, затем в транзакцию и потом в читаемый payload записи.
-
-Для этого живого примера текущее значение `profile.name` равно `Mike Purvis`, блок записи SocialDB на уровне поля равен `78675795`, ID receipt — `2gbAmEEdcCNARuCorquXStftqvWFmPG2GSaMJXFw5qiN`, хеш исходной транзакции — `6zMb9L6rLNufZGUgCmeHTh5LvFsn3R92dPxuubH6MRsZ`, а внешний блок транзакции — `78675794`.
-
-| Поверхность | Эндпоинт | Как используем | Зачем используем |
-| --- | --- | --- | --- |
-| Семантическое чтение поля | NEAR Social `POST /get` | Читаем `mike.near/profile/name` с включёнными метаданными блока | Даёт читаемое значение поля и опорный `:block` SocialDB на уровне поля, где это значение было записано |
-| Мост к receipt | Transactions API [`POST /v0/block`](/tx/block) | Используем блок уровня поля из SocialDB с `with_receipts: true`, а затем фильтруем receipt обратно до `mike.near -> social.near` | Превращает блок записи уровня поля в конкретный receipt и хеш исходной транзакции |
-| История транзакции | Transactions API [`POST /v0/transactions`](/tx/transactions) | Загружаем исходную транзакцию по хешу и декодируем payload первого `FunctionCall.args` | Доказывает, что базовая запись была вызовом `social.near set`, который нёс `profile.name` и окружающие поля профиля в одном payload |
-| Каноническое подтверждение текущего состояния | RPC [`query(call_function)`](/rpc/contract/call-function) | Напрямую вызываем `social.near get` с `final` | Подтверждает, что поле и сейчас имеет это значение, хотя предыдущие шаги уже доказали конкретную историческую запись |
-
-**Что должен включать полезный ответ**
-
-- разрешается ли `mike.near/profile/name` сейчас в `Mike Purvis`
-- высоту блока записи SocialDB на уровне поля (`78675795`) и объяснение, почему для этого вопроса этот якорь лучше, чем блок родительского профиля
-- конкретный ID receipt и хеш исходной транзакции за этой записью
-- доказательство того, что запись была вызовом `set`, который нёс `profile.name` и другие поля профиля в том же payload
-- различие между блоком исполнения receipt (`78675795`) и блоком включения внешней транзакции (`78675794`)
-
-#### Shell-сценарий доказательства поля профиля в NEAR Social
-
-Используйте этот сценарий, когда нужен конкретный и воспроизводимый путь доказательства: от читаемого поля профиля в NEAR Social до точной транзакции записи в SocialDB.
+Используйте этот сценарий, когда нужен один конкретный proof callback-а без превращения страницы в полный курс по теории promises.
 
 **Что вы делаете**
 
-- Читаете текущее поле `profile.name` из NEAR Social и сохраняете блок записи SocialDB на уровне поля.
-- Переиспользуете эту высоту блока в FastNear block receipts, чтобы получить ID receipt и хеш транзакции.
-- Переиспользуете хеш транзакции в `POST /v0/transactions`, чтобы доказать, что payload был записью `social.near set`, несущей `profile.name`.
-- Завершаете каноническим RPC-подтверждением того, что поле всё ещё разрешается в то же значение на `final`.
+- Один раз получаете транзакцию и сужаете список receipt до downstream-вызова и callback-receipt.
+- Переиспользуете ID callback-receipt только если ещё нужно каноническое RPC-подтверждение.
+- Останавливаетесь сразу, как только можете сказать, вернулся ли callback и что он сделал.
 
 ```bash
-SOCIAL_API_BASE_URL=https://api.near.social
 TX_BASE_URL=https://tx.main.fastnear.com
 RPC_URL=https://rpc.mainnet.fastnear.com
-ACCOUNT_ID=mike.near
-PROFILE_FIELD=profile/name
+TX_HASH=2KhhB1uDScGCFQfVchep7DiZTGTxMcgfUYHNzwf5e6uL
+SENDER_ACCOUNT_ID=7c5206b1b75b8787420b09d8697e08180cdf896c5fcf15f6afbf5f33fcc3cf72
+ORIGIN_CONTRACT_ID=wrap.near
+DOWNSTREAM_CONTRACT_ID=v2.ref-finance.near
 ```
 
-1. Прочитайте поле профиля из NEAR Social и сохраните блок записи SocialDB на уровне поля.
-
-```bash
-PROFILE_BLOCK_HEIGHT="$(
-  curl -s "$SOCIAL_API_BASE_URL/get" \
-    -H 'content-type: application/json' \
-    --data "$(jq -nc \
-      --arg account_id "$ACCOUNT_ID" \
-      --arg profile_field "$PROFILE_FIELD" '{
-        keys: [($account_id + "/" + $profile_field)],
-        options: {with_block_height: true}
-      }')" \
-    | tee /tmp/mike-profile-name.json \
-    | jq -r --arg account_id "$ACCOUNT_ID" \
-        '.[ $account_id ].profile.name[":block"]'
-)"
-
-jq --arg account_id "$ACCOUNT_ID" '{
-  current_name: .[$account_id].profile.name[""],
-  field_block_height: .[$account_id].profile.name[":block"],
-  parent_profile_block_height: .[$account_id].profile[":block"]
-}' /tmp/mike-profile-name.json
-
-# Ожидаемое current_name: "Mike Purvis"
-# Ожидаемая высота блока уровня поля: 78675795
-```
-
-2. Переиспользуйте эту высоту блока в FastNear block receipts и восстановите мост к receipt и транзакции.
-
-```bash
-PROFILE_TX_HASH="$(
-  curl -s "$TX_BASE_URL/v0/block" \
-    -H 'content-type: application/json' \
-    --data "$(jq -nc --argjson block_id "$PROFILE_BLOCK_HEIGHT" '{
-      block_id: $block_id,
-      with_transactions: false,
-      with_receipts: true
-    }')" \
-    | tee /tmp/mike-profile-block.json \
-    | jq -r --arg account_id "$ACCOUNT_ID" '
-        first(
-          .block_receipts[]
-          | select(.predecessor_id == $account_id and .receiver_id == "social.near")
-          | .transaction_hash
-        )'
-)"
-
-jq --arg account_id "$ACCOUNT_ID" '{
-  profile_receipt: (
-    first(
-      .block_receipts[]
-      | select(.predecessor_id == $account_id and .receiver_id == "social.near")
-      | {
-          receipt_id,
-          transaction_hash,
-          block_height,
-          tx_block_height
-        }
-    )
-  )
-}' /tmp/mike-profile-block.json
-
-# Ожидаемый receipt ID: 2gbAmEEdcCNARuCorquXStftqvWFmPG2GSaMJXFw5qiN
-# Ожидаемый хеш транзакции: 6zMb9L6rLNufZGUgCmeHTh5LvFsn3R92dPxuubH6MRsZ
-```
-
-3. Переиспользуйте полученный хеш транзакции в `POST /v0/transactions` и декодируйте payload записи SocialDB.
+1. Получите транзакцию и распечатайте downstream-receipt вместе с callback-receipt.
 
 ```bash
 curl -s "$TX_BASE_URL/v0/transactions" \
   -H 'content-type: application/json' \
-  --data "$(jq -nc --arg tx_hash "$PROFILE_TX_HASH" '{tx_hashes: [$tx_hash]}')" \
-  | tee /tmp/mike-profile-transaction.json >/dev/null
+  --data "$(jq -nc --arg tx_hash "$TX_HASH" '{tx_hashes: [$tx_hash]}')" \
+  | tee /tmp/callback-check-transaction.json >/dev/null
 
-jq '{
+CALLBACK_RECEIPT_ID="$(
+  jq -r --arg origin "$ORIGIN_CONTRACT_ID" '
+    first(
+      .transactions[0].receipts[]
+      | select(
+          .receipt.receiver_id == $origin
+          and (.receipt.receipt.Action.actions[0].FunctionCall.method_name // "") == "ft_resolve_transfer"
+        )
+      | .receipt.receipt_id
+    )
+  ' /tmp/callback-check-transaction.json
+)"
+
+jq --arg origin "$ORIGIN_CONTRACT_ID" --arg downstream "$DOWNSTREAM_CONTRACT_ID" '{
   transaction: {
     hash: .transactions[0].transaction.hash,
     signer_id: .transactions[0].transaction.signer_id,
     receiver_id: .transactions[0].transaction.receiver_id,
-    included_block_height: .transactions[0].execution_outcome.block_height
+    method_name: .transactions[0].transaction.actions[0].FunctionCall.method_name,
+    tx_block_height: .transactions[0].execution_outcome.block_height
   },
-  write_proof: (
-    .transactions[0].receipts[0].receipt.receipt.Action.actions[0].FunctionCall
-    | {
-        method_name,
-        profile_name: (.args | @base64d | fromjson | .data["mike.near"].profile.name),
-        description: (.args | @base64d | fromjson | .data["mike.near"].profile.description),
-        tags: (
-          .args
-          | @base64d
-          | fromjson
-          | .data["mike.near"].profile.tags
-          | keys
-        )
-      }
-  )
-}' /tmp/mike-profile-transaction.json
-```
-
-4. Завершите каноническим подтверждением текущего состояния через raw RPC.
-
-```bash
-SOCIAL_GET_ARGS_BASE64="$(
-  jq -nr --arg account_id "$ACCOUNT_ID" --arg profile_field "$PROFILE_FIELD" '{
-    keys: [($account_id + "/" + $profile_field)]
-  } | @base64'
-)"
-
-curl -s "$RPC_URL" \
-  -H 'content-type: application/json' \
-  --data "$(jq -nc --arg args_base64 "$SOCIAL_GET_ARGS_BASE64" '{
-    jsonrpc: "2.0",
-    id: "fastnear",
-    method: "query",
-    params: {
-      request_type: "call_function",
-      account_id: "social.near",
-      method_name: "get",
-      args_base64: $args_base64,
-      finality: "final"
-    }
-  }')" \
-  | tee /tmp/mike-profile-rpc.json >/dev/null
-
-jq --arg account_id "$ACCOUNT_ID" '{
-  finality: "final",
-  current_name: (
-    .result.result
-    | implode
-    | fromjson
-    | .[$account_id].profile.name
-  )
-}' /tmp/mike-profile-rpc.json
-```
-
-Этот последний шаг подтверждает, что поле и сейчас разрешается в `Mike Purvis`. Предыдущие шаги через NEAR Social и FastNear доказали, какая именно историческая запись установила это поле и какая транзакция несла эту запись.
-
-**Зачем нужен следующий шаг?**
-
-NEAR Social даёт семантическое значение поля. FastNear block receipts дают мост к конкретной записи. FastNear lookup транзакции превращает эту запись в читаемый payload профиля. RPC даёт каноническое подтверждение текущего состояния.
-
-### Доказать, что `mike.near` подписался на `mob.near`, а затем восстановить транзакцию записи в SocialDB
-
-Используйте это расследование, когда история звучит так: «я вижу, что `mike.near` подписан на `mob.near`, но хочу точно доказать, когда именно была записана эта связь и какая транзакция её записала».
-
-<div className="fastnear-example-strategy">
-  <div className="fastnear-example-strategy__header">
-    <span className="fastnear-example-strategy__eyebrow">Стратегия</span>
-    <p className="fastnear-example-strategy__title">Начните с семантической связи подписки, а затем используйте блок записи как мост назад к одному receipt и одной транзакции.</p>
-  </div>
-  <div className="fastnear-example-strategy__items">
-    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">01</span><span><span className="fastnear-example-strategy__code">NEAR Social POST /get</span> даёт читаемую связь подписки и SocialDB <span className="fastnear-example-strategy__code">:block</span>, где она была записана.</span></p>
-    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">02</span><span><span className="fastnear-example-strategy__code">POST /v0/block</span> превращает этот блок записи в конкретный receipt и хеш транзакции за этой связью.</span></p>
-    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span><span className="fastnear-example-strategy__code">POST /v0/transactions</span> доказывает payload с <span className="fastnear-example-strategy__code">graph.follow</span> и <span className="fastnear-example-strategy__code">index.graph</span>, а <span className="fastnear-example-strategy__code">RPC call_function get</span> подтверждает, что связь и сейчас существует.</span></p>
-  </div>
-</div>
-
-**Цель**
-
-- Начать с читаемой связи подписки из NEAR Social, а затем восстановить точный receipt и исходную транзакцию, которые записали её в SocialDB.
-
-**Официальные ссылки**
-
-- [API и поверхность контракта SocialDB](https://github.com/NearSocial/social-db#api)
-- [Живая поверхность чтения NEAR Social](https://api.near.social)
-
-Читаемая связь подписки приходит из данных NEAR Social, а не из FastNear. Ключевой мост здесь — метаданные SocialDB `:block`: они указывают на блок, в котором исполнился receipt, записавший это значение. Этот блок не совпадает с блоком, в который была включена внешняя транзакция. Роль FastNear в этом сценарии — превратить эту высоту блока в receipt, затем в транзакцию и, наконец, в читаемую историю исполнения.
-
-Для этого живого примера текущая связь выглядит как `mike.near -> mob.near`, блок записи SocialDB равен `79574924`, ID receipt — `UiyiQaqHbkkMxkrB6rDkYr7X5EQLt8QG9MDATrES7Th`, хеш исходной транзакции — `FLLmTvFx9vCof79scy2uUviF5WwYmevkz9TZ8azPGVQb`, а внешний блок транзакции — `79574923`.
-
-| Поверхность | Эндпоинт | Как используем | Зачем используем |
-| --- | --- | --- | --- |
-| Семантическое чтение связи | NEAR Social `POST /get` | Читаем `mike.near/graph/follow/mob.near` с включёнными метаданными блока | Даёт читаемую связь подписки и опорный `:block` из SocialDB, где это значение было записано |
-| Мост к receipt | Transactions API [`POST /v0/block`](/tx/block) | Используем высоту блока из SocialDB с `with_receipts: true`, а затем фильтруем receipt обратно до `mike.near -> social.near` | Превращает блок записи SocialDB в конкретный receipt и хеш исходной транзакции |
-| История транзакции | Transactions API [`POST /v0/transactions`](/tx/transactions) | Загружаем исходную транзакцию по хешу и декодируем payload первого `FunctionCall.args` | Доказывает, что базовая запись была вызовом `social.near set`, который записал и `graph.follow`, и записи `index.graph` |
-| Каноническое подтверждение текущего состояния | RPC [`query(call_function)`](/rpc/contract/call-function) | Напрямую вызываем `social.near get` с `final` | Подтверждает, что связь подписки существует и сейчас, хотя предыдущие шаги уже доказали конкретную историческую запись |
-
-**Что должен включать полезный ответ**
-
-- существует ли сейчас связь подписки `mike.near -> mob.near`
-- высоту блока записи SocialDB (`79574924`) и объяснение, почему это блок исполнения receipt
-- конкретный ID receipt и хеш исходной транзакции за этой записью
-- доказательство того, что запись была вызовом `set`, который нёс и `graph.follow.mob.near`, и соответствующую запись `index.graph`
-- различие между блоком исполнения receipt (`79574924`) и блоком включения внешней транзакции (`79574923`)
-
-#### Shell-сценарий доказательства подписки в NEAR Social
-
-Используйте этот сценарий, когда нужен конкретный и воспроизводимый путь доказательства: от читаемой связи подписки в NEAR Social до точной транзакции записи в SocialDB.
-
-**Что вы делаете**
-
-- Читаете текущую связь подписки из NEAR Social и сохраняете блок записи SocialDB.
-- Переиспользуете эту высоту блока в FastNear block receipts, чтобы получить ID receipt и хеш транзакции.
-- Переиспользуете хеш транзакции в `POST /v0/transactions`, чтобы доказать, что payload был записью `social.near set`.
-- Завершаете каноническим RPC-подтверждением того, что связь всё ещё существует на `final`.
-
-```bash
-SOCIAL_API_BASE_URL=https://api.near.social
-TX_BASE_URL=https://tx.main.fastnear.com
-RPC_URL=https://rpc.mainnet.fastnear.com
-ACCOUNT_ID=mike.near
-TARGET_ACCOUNT_ID=mob.near
-```
-
-1. Прочитайте связь подписки из NEAR Social и сохраните блок записи SocialDB.
-
-```bash
-FOLLOW_BLOCK_HEIGHT="$(
-  curl -s "$SOCIAL_API_BASE_URL/get" \
-    -H 'content-type: application/json' \
-    --data "$(jq -nc \
-      --arg account_id "$ACCOUNT_ID" \
-      --arg target_account_id "$TARGET_ACCOUNT_ID" '{
-        keys: [($account_id + "/graph/follow/" + $target_account_id)],
-        options: {with_block_height: true}
-      }')" \
-    | tee /tmp/mike-follow-edge.json \
-    | jq -r --arg account_id "$ACCOUNT_ID" --arg target_account_id "$TARGET_ACCOUNT_ID" \
-        '.[ $account_id ].graph.follow[ $target_account_id ][":block"]'
-)"
-
-jq --arg account_id "$ACCOUNT_ID" --arg target_account_id "$TARGET_ACCOUNT_ID" '{
-  follow_edge: .[$account_id].graph.follow[$target_account_id][""],
-  follow_block_height: .[$account_id].graph.follow[$target_account_id][":block"]
-}' /tmp/mike-follow-edge.json
-
-# Ожидаемая высота блока записи: 79574924
-```
-
-2. Переиспользуйте эту высоту блока в FastNear block receipts и восстановите мост к receipt и транзакции.
-
-```bash
-FOLLOW_TX_HASH="$(
-  curl -s "$TX_BASE_URL/v0/block" \
-    -H 'content-type: application/json' \
-    --data "$(jq -nc --argjson block_id "$FOLLOW_BLOCK_HEIGHT" '{
-      block_id: $block_id,
-      with_transactions: false,
-      with_receipts: true
-    }')" \
-    | tee /tmp/mike-follow-block.json \
-    | jq -r --arg account_id "$ACCOUNT_ID" '
-        first(
-          .block_receipts[]
-          | select(.predecessor_id == $account_id and .receiver_id == "social.near")
-          | .transaction_hash
-        )'
-)"
-
-jq --arg account_id "$ACCOUNT_ID" '{
-  follow_receipt: (
+  downstream_receipt: (
     first(
-      .block_receipts[]
-      | select(.predecessor_id == $account_id and .receiver_id == "social.near")
+      .transactions[0].receipts[]
+      | select(.receipt.receiver_id == $downstream)
       | {
-          receipt_id,
-          transaction_hash,
-          block_height,
-          tx_block_height
+          receipt_id: .receipt.receipt_id,
+          predecessor_id: .receipt.predecessor_id,
+          receiver_id: .receipt.receiver_id,
+          method_name: (.receipt.receipt.Action.actions[0].FunctionCall.method_name // "transfer"),
+          status: .execution_outcome.outcome.status,
+          block_height: .execution_outcome.block_height
         }
     )
-  )
-}' /tmp/mike-follow-block.json
-
-# Ожидаемый receipt ID: UiyiQaqHbkkMxkrB6rDkYr7X5EQLt8QG9MDATrES7Th
-# Ожидаемый хеш транзакции: FLLmTvFx9vCof79scy2uUviF5WwYmevkz9TZ8azPGVQb
-```
-
-3. Переиспользуйте полученный хеш транзакции в `POST /v0/transactions` и декодируйте payload записи SocialDB.
-
-```bash
-curl -s "$TX_BASE_URL/v0/transactions" \
-  -H 'content-type: application/json' \
-  --data "$(jq -nc --arg tx_hash "$FOLLOW_TX_HASH" '{tx_hashes: [$tx_hash]}')" \
-  | tee /tmp/mike-follow-transaction.json >/dev/null
-
-jq '{
-  transaction: {
-    hash: .transactions[0].transaction.hash,
-    signer_id: .transactions[0].transaction.signer_id,
-    receiver_id: .transactions[0].transaction.receiver_id,
-    included_block_height: .transactions[0].execution_outcome.block_height
-  },
-  write_proof: (
-    .transactions[0].receipts[0].receipt.receipt.Action.actions[0].FunctionCall
-    | {
-        method_name,
-        follow_edge: (.args | @base64d | fromjson | .data["mike.near"].graph.follow["mob.near"]),
-        index_graph: (
-          .args
-          | @base64d
-          | fromjson
-          | .data["mike.near"].index.graph
-          | fromjson
-          | map(select(.value.accountId == "mob.near"))
-        )
-      }
-  )
-}' /tmp/mike-follow-transaction.json
-```
-
-4. Завершите каноническим подтверждением текущего состояния через raw RPC.
-
-```bash
-SOCIAL_GET_ARGS_BASE64="$(
-  jq -nr --arg account_id "$ACCOUNT_ID" --arg target_account_id "$TARGET_ACCOUNT_ID" '{
-    keys: [($account_id + "/graph/follow/" + $target_account_id)]
-  } | @base64'
-)"
-
-curl -s "$RPC_URL" \
-  -H 'content-type: application/json' \
-  --data "$(jq -nc --arg args_base64 "$SOCIAL_GET_ARGS_BASE64" '{
-    jsonrpc: "2.0",
-    id: "fastnear",
-    method: "query",
-    params: {
-      request_type: "call_function",
-      account_id: "social.near",
-      method_name: "get",
-      args_base64: $args_base64,
-      finality: "final"
-    }
-  }')" \
-  | tee /tmp/mike-follow-rpc.json >/dev/null
-
-jq --arg account_id "$ACCOUNT_ID" --arg target_account_id "$TARGET_ACCOUNT_ID" '{
-  finality: "final",
-  current_follow_edge: (
-    .result.result
-    | implode
-    | fromjson
-    | .[$account_id].graph.follow[$target_account_id]
-  )
-}' /tmp/mike-follow-rpc.json
-```
-
-Этот последний шаг подтверждает, что связь подписки существует и сейчас. Предыдущие шаги через NEAR Social и FastNear доказали, какая именно историческая запись создала эту связь и какая транзакция несла эту запись.
-
-**Зачем нужен следующий шаг?**
-
-NEAR Social даёт семантическую связь. FastNear block receipts дают мост к конкретной записи. FastNear lookup транзакции превращает эту запись в читаемую историю. RPC даёт каноническое подтверждение текущего состояния.
-
-### Какая транзакция записала `mob.near/widget/Profile`?
-
-Используйте это расследование, когда вопрос звучит так: «я уже знаю, что `mob.near/widget/Profile` существует прямо сейчас. Какая именно транзакция записала ту версию виджета, на которую я смотрю?»
-
-Это естественное tx-продолжение к более лёгкому RPC-сценарию про виджет и к provenance-NFT-сценарию. Задача здесь прямолинейная:
-
-- стартуем с собственного SocialDB-блока виджета
-- превращаем этот блок в один `mob.near -> social.near` receipt
-- восстанавливаем исходную транзакцию
-- декодируем payload `set` и доказываем, что он действительно нёс исходник виджета
-
-<div className="fastnear-example-strategy">
-  <div className="fastnear-example-strategy__header">
-    <span className="fastnear-example-strategy__eyebrow">Стратегия</span>
-    <p className="fastnear-example-strategy__title">Смотрите на write-block виджета как на весь мост сразу: блок в receipt, receipt в транзакцию, транзакцию в исходник.</p>
-  </div>
-  <div className="fastnear-example-strategy__items">
-    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">01</span><span><span className="fastnear-example-strategy__code">POST /v0/block</span> начинает с блока виджета и сужает его до одного receipt <span className="fastnear-example-strategy__code">mob.near -> social.near</span>.</span></p>
-    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">02</span><span><span className="fastnear-example-strategy__code">POST /v0/transactions</span> превращает этот receipt в один читаемый payload <span className="fastnear-example-strategy__code">set</span> с исходником виджета.</span></p>
-    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span><span className="fastnear-example-strategy__code">RPC call_function get</span> — это финальное подтверждение текущего состояния, что виджет и сейчас существует.</span></p>
-  </div>
-</div>
-
-**Цель**
-
-- Превратить один SocialDB-блок уровня виджета в один читаемый ответ: какая транзакция записала `mob.near/widget/Profile`, какой receipt исполнил запись и какой именно исходник виджета лежал в payload.
-
-**Официальные ссылки**
-
-- [API SocialDB и поверхность контракта](https://github.com/NearSocial/social-db#api)
-
-Для этого живого якоря:
-
-- аккаунт: `mob.near`
-- виджет: `Profile`
-- блок записи в SocialDB: `86494825`
-- receipt ID: `CZyjiBjphzE95tFEqi1YH6eLCLhqknaW4SQ5R4L6pkC6`
-- хеш исходной транзакции: `9QDupdK2ewMxfSvMmdGEkdBcVnoL4TexmXY2FnMRxfia`
-- внешний блок транзакции: `86494824`
-
-| Поверхность | Эндпоинт | Как используем | Зачем используем |
-| --- | --- | --- | --- |
-| Мост от блока к receipt | Transactions API [`POST /v0/block`](/tx/block) | Берём блок `86494825` с `with_receipts: true`, а затем фильтруем его обратно до `mob.near -> social.near` | Превращает блок записи виджета в один конкретный receipt и один конкретный хеш транзакции |
-| История транзакции | Transactions API [`POST /v0/transactions`](/tx/transactions) | Загружаем исходную транзакцию и декодируем payload `FunctionCall.args` | Доказывает, что запись была вызовом `social.near set`, который нёс исходник `mob.near/widget/Profile` |
-| Каноническое подтверждение текущего состояния | RPC [`query(call_function)`](/rpc/contract/call-function) | Вызываем `social.near get` напрямую на `final` для того же пути виджета | Подтверждает, что виджет всё ещё существует сейчас, хотя предыдущие шаги уже доказали, какая историческая транзакция его записала |
-
-**Что должен включать полезный ответ**
-
-- высоту блока записи и объяснение, что это блок исполнения receipt, а не внешний блок транзакции
-- конкретный receipt ID и хеш исходной транзакции за этой записью виджета
-- доказательство, что payload записи был `set` с `mob.near/widget/Profile`
-- одно простое предложение вроде «`mob.near` записал `widget/Profile` в транзакции `9QDup...`, и в payload действительно лежал текущий исходник profile-виджета»
-
-#### Shell-сценарий доказательства записи виджета в NEAR Social
-
-Используйте этот сценарий, когда хотите превратить один блоковый якорь виджета в точную транзакцию, которая его записала.
-
-**Что вы делаете**
-
-- Стартуете с блока последней записи виджета.
-- Переиспользуете эту высоту в FastNear block receipts, чтобы получить receipt и мост к транзакции.
-- Переиспользуете хеш транзакции в `POST /v0/transactions`, чтобы декодировать записанный исходник виджета.
-- Завершаете сырым RPC-подтверждением, что виджет всё ещё существует сейчас.
-
-```bash
-TX_BASE_URL=https://tx.main.fastnear.com
-RPC_URL=https://rpc.mainnet.fastnear.com
-ACCOUNT_ID=mob.near
-WIDGET_NAME=Profile
-WIDGET_BLOCK_HEIGHT=86494825
-```
-
-1. Начните с блока последней записи виджета и восстановите SocialDB-receipt вместе с хешем транзакции.
-
-```bash
-WIDGET_TX_HASH="$(
-  curl -s "$TX_BASE_URL/v0/block" \
-    -H 'content-type: application/json' \
-    --data "$(jq -nc --argjson block_id "$WIDGET_BLOCK_HEIGHT" '{
-      block_id: $block_id,
-      with_transactions: false,
-      with_receipts: true
-    }')" \
-    | tee /tmp/mob-widget-block.json \
-    | jq -r --arg account_id "$ACCOUNT_ID" '
-        first(
-          .block_receipts[]
-          | select(.predecessor_id == $account_id and .receiver_id == "social.near")
-          | .transaction_hash
-        )'
-)"
-
-jq --arg account_id "$ACCOUNT_ID" '{
-  widget_write_receipt: (
+  ),
+  callback_receipt: (
     first(
-      .block_receipts[]
-      | select(.predecessor_id == $account_id and .receiver_id == "social.near")
+      .transactions[0].receipts[]
+      | select(
+          .receipt.receiver_id == $origin
+          and (.receipt.receipt.Action.actions[0].FunctionCall.method_name // "") == "ft_resolve_transfer"
+        )
       | {
-          receipt_id,
-          transaction_hash,
-          block_height,
-          tx_block_height
+          receipt_id: .receipt.receipt_id,
+          predecessor_id: .receipt.predecessor_id,
+          receiver_id: .receipt.receiver_id,
+          method_name: .receipt.receipt.Action.actions[0].FunctionCall.method_name,
+          logs: .execution_outcome.outcome.logs,
+          status: .execution_outcome.outcome.status,
+          block_height: .execution_outcome.block_height
         }
     )
-  )
-}' /tmp/mob-widget-block.json
-
-# Ожидаемый receipt ID: CZyjiBjphzE95tFEqi1YH6eLCLhqknaW4SQ5R4L6pkC6
-# Ожидаемый хеш транзакции: 9QDupdK2ewMxfSvMmdGEkdBcVnoL4TexmXY2FnMRxfia
-```
-
-2. Переиспользуйте хеш транзакции и декодируйте payload `set` из SocialDB.
-
-```bash
-curl -s "$TX_BASE_URL/v0/transactions" \
-  -H 'content-type: application/json' \
-  --data "$(jq -nc --arg tx_hash "$WIDGET_TX_HASH" '{tx_hashes: [$tx_hash]}')" \
-  | tee /tmp/mob-widget-transaction.json >/dev/null
-
-jq '{
-  transaction: {
-    hash: .transactions[0].transaction.hash,
-    signer_id: .transactions[0].transaction.signer_id,
-    receiver_id: .transactions[0].transaction.receiver_id,
-    included_block_height: .transactions[0].execution_outcome.block_height
-  },
-  write_proof: (
-    .transactions[0].transaction.actions[0].FunctionCall
-    | {
-        method_name,
-        widget_source_head: (
-          .args
-          | @base64d
-          | fromjson
-          | .data["mob.near"].widget.Profile[""]
-          | split("\n")[0:12]
+  ),
+  callback_ran: (
+    first(
+      .transactions[0].receipts[]
+      | select(
+          .receipt.receiver_id == $origin
+          and (.receipt.receipt.Action.actions[0].FunctionCall.method_name // "") == "ft_resolve_transfer"
         )
-      }
+      | true
+    ) // false
   )
-}' /tmp/mob-widget-transaction.json
+}' /tmp/callback-check-transaction.json
+
+# На что смотреть:
+# - downstream-receipt выполнил ft_on_transfer на v2.ref-finance.near
+# - более поздний callback-receipt выполнил ft_resolve_transfer на wrap.near
+# - callback_ran равно true, даже несмотря на downstream-сбой
 ```
 
-Во втором шаге и происходит главный payoff. Тут вы уже не просто говорите «в том блоке что-то обновило SocialDB». Тут вы доказываете, что транзакция `9QDup...` вызвала `social.near set` и пронесла в `args` настоящий исходник `mob.near/widget/Profile`.
-
-3. Завершите каноническим подтверждением текущего состояния через сырой RPC.
-
-```bash
-SOCIAL_GET_ARGS_BASE64="$(
-  jq -nr --arg account_id "$ACCOUNT_ID" --arg widget_name "$WIDGET_NAME" '{
-    keys: [($account_id + "/widget/" + $widget_name)]
-  } | @base64'
-)"
-
-curl -s "$RPC_URL" \
-  -H 'content-type: application/json' \
-  --data "$(jq -nc --arg args_base64 "$SOCIAL_GET_ARGS_BASE64" '{
-    jsonrpc: "2.0",
-    id: "fastnear",
-    method: "query",
-    params: {
-      request_type: "call_function",
-      account_id: "social.near",
-      method_name: "get",
-      args_base64: $args_base64,
-      finality: "final"
-    }
-  }')" \
-  | tee /tmp/mob-widget-rpc.json >/dev/null
-
-jq --arg account_id "$ACCOUNT_ID" --arg widget_name "$WIDGET_NAME" '{
-  finality: "final",
-  current_widget_head: (
-    .result.result
-    | implode
-    | fromjson
-    | .[$account_id].widget[$widget_name]
-    | split("\n")[0:5]
-  )
-}' /tmp/mob-widget-rpc.json
-```
-
-Этот последний шаг подтверждает, что виджет всё ещё существует сейчас. А предыдущие шаги по блоку и транзакции доказывают, какая именно историческая запись его создала.
-
-**Зачем нужен следующий шаг?**
-
-Блок записи виджета даёт вам мост. FastNear block receipts превращают этот мост в один receipt и один хеш транзакции. FastNear transaction lookup превращает хеш в читаемое доказательство записи. RPC после этого подтверждает, что виджет всё ещё существует сейчас.
-
-### Проследить один расчёт NEAR Intents и показать, что именно произошло
-
-Используйте это расследование, когда история звучит так: «у меня есть одна транзакция `intents.near`. Покажи, что реально произошло в сети, какие контракты участвовали и какие события это подтверждают».
-
-<div className="fastnear-example-strategy">
-  <div className="fastnear-example-strategy__header">
-    <span className="fastnear-example-strategy__eyebrow">Стратегия</span>
-    <p className="fastnear-example-strategy__title">Смотрите на один расчёт как на читаемую трассу, а не как на теорию протокола с первой строки.</p>
-  </div>
-  <div className="fastnear-example-strategy__items">
-    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">01</span><span><span className="fastnear-example-strategy__code">POST /v0/transactions</span> даёт каркас расчёта: входную точку, первые downstream-контракты и ранние логи.</span></p>
-    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">02</span><span><span className="fastnear-example-strategy__code">POST /v0/block</span> переиспользует тот же якорь, когда нужен контекст включающего блока вокруг этого расчёта.</span></p>
-    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span><span className="fastnear-example-strategy__code">RPC EXPERIMENTAL_tx_status</span> нужен там, где уже требуется канонический DAG по receipt и имена событий, которые доказывают реальное движение активов.</span></p>
-  </div>
-</div>
-
-**Цель**
-
-- Начать с одной фиксированной транзакции `intents.near` и превратить её в читаемую историю расчёта: какой метод запустил расчёт, какие downstream-контракты появились дальше и какие семейства событий объясняют движение активов.
-
-**Официальные ссылки**
-
-- [Обзор NEAR Intents](https://docs.near.org/chain-abstraction/intents/overview)
-- [Типы intent и исполнение](https://docs.near-intents.org/integration/verifier-contract/intent-types-and-execution)
-- [Абстракция аккаунтов](https://docs.near-intents.org/integration/verifier-contract/account-abstraction)
-
-Для живой трассировки ниже используйте этот фиксированный якорь расчёта из mainnet, зафиксированный **18 апреля 2026 года**:
-
-- хеш транзакции: `4cfei8p4HBeNxJnCLjfShhDYGmXZwFVwFgY1sYpyygE7`
-- аккаунт `signer` и `receiver`: `intents.near`
-- высота включающего блока: `194573310`
-
-Быстрая полезная модель здесь простая:
-
-- `intents.near` выполняет входную точку расчёта
-- последующие receipt расходятся по контрактам, которые реально переводят или выводят активы
-- журналы событий показывают, какие действия расчёта случились, через имена вроде `token_diff`, `intents_executed`, `mt_transfer` и `mt_withdraw`
-
-Для этого конкретного расчёта короткий человеческий ответ уже неплохой:
-
-- `intents.near` вызвал `execute_intents`
-- downstream receipt ушли в `v2_1.omni.hot.tg` и `bridge-refuel.hot.tg`
-- трасса выдала события `token_diff`, `intents_executed`, `mt_transfer`, `mt_withdraw` и `mt_burn`
-
-Если нужен протокольный фон, базовая форма сопоставления здесь — это двухсторонний `token_diff` intent: одна сторона подписывает желаемую разницу по активам, вторая сторона подписывает противоположную разницу, а затем совпавшая пара отправляется на расчёт. Но для рабочего расследования обычно понятнее начать с одной реальной транзакции расчёта и читать доказательства прямо с цепочки.
-
-```mermaid
-flowchart LR
-    T["Одна mainnet-транзакция<br/>4cfei8p4..."] --> I["intents.near<br/>execute_intents"]
-    I --> R["Последующие receipt"]
-    R --> C["Подключаются другие контракты"]
-    R --> E["Появляются журналы событий"]
-    E --> TD["token_diff"]
-    E --> IE["intents_executed"]
-    E --> MT["mt_transfer / mt_withdraw"]
-```
-
-Публичных FastNear-поверхностей уже достаточно, чтобы ответить на практический вопрос:
-
-| Поверхность | Эндпоинт | Как используем | Зачем используем |
-| --- | --- | --- | --- |
-| Каркас расчёта | Transactions API [`POST /v0/transactions`](/tx/transactions) | Начинаем с фиксированного хеша транзакции и печатаем основную транзакцию плюс первые последующие receipt | Даёт самый быстрый читаемый ответ на вопрос «во что этот расчёт пошёл дальше?» |
-| Контекст блока | Transactions API [`POST /v0/block`](/tx/block) | Загружаем включающий блок с receipt и затем фильтруем его обратно по тому же хешу транзакции | Показывает, в какой блок попал расчёт и какие receipt этой транзакции видны в блоке |
-| Каноническое доказательство по receipt и событиям | RPC [`EXPERIMENTAL_tx_status`](/rpc/transaction/experimental-tx-status) | Запрашиваем ту же транзакцию с `wait_until: "FINAL"` и смотрим `receipts_outcome` плюс логи `EVENT_JSON` | Даёт протокольно-канонический DAG, `executor_id` и имена событий, которые объясняют, что реально сделал расчёт |
-
-**Что должен включать полезный ответ**
-
-- какую входную точку расчёта вы увидели на `intents.near`
-- какие downstream-контракты и методы появились сразу после неё
-- какие семейства событий выпустила трассировка
-- одно итоговое предложение простым языком о том, что произошло
-
-Этот пример намеренно остаётся на публичных FastNear-поверхностях. NEAR Intents Explorer и 1Click Explorer тоже полезны, но их Explorer API защищён JWT и не подходит как дефолтный публичный сценарий в документации.
-
-#### Shell-сценарий расчёта NEAR Intents
-
-Используйте этот сценарий, когда нужен один конкретный расчёт через `intents.near`, который можно сразу разобрать через публичные FastNear-эндпоинты.
-
-**Что вы делаете**
-
-- Получаете читаемую историю расчёта через Transactions API.
-- Переиспользуете хеш включающего блока в `POST /v0/block`, чтобы исследовать сам блок.
-- Подтверждаете канонический DAG по receipt и семейства событий через `EXPERIMENTAL_tx_status`.
-
-```bash
-TX_BASE_URL=https://tx.main.fastnear.com
-RPC_URL=https://rpc.mainnet.fastnear.com
-INTENTS_TX_HASH=4cfei8p4HBeNxJnCLjfShhDYGmXZwFVwFgY1sYpyygE7
-INTENTS_SIGNER_ID=intents.near
-```
-
-1. Начните с самой транзакции расчёта и восстановите первый читаемый поток последующих receipt.
-
-```bash
-INTENTS_BLOCK_HASH="$(
-  curl -s "$TX_BASE_URL/v0/transactions" \
-    -H 'content-type: application/json' \
-    --data "$(jq -nc --arg tx_hash "$INTENTS_TX_HASH" '{tx_hashes: [$tx_hash]}')" \
-    | tee /tmp/intents-transaction.json \
-    | jq -r '.transactions[0].execution_outcome.block_hash'
-)"
-
-jq '{
-  transaction: {
-    hash: .transactions[0].transaction.hash,
-    signer_id: .transactions[0].transaction.signer_id,
-    receiver_id: .transactions[0].transaction.receiver_id,
-    included_block_height: .transactions[0].execution_outcome.block_height
-  },
-  receipt_flow: [
-    .transactions[0].receipts[:6][]
-    | {
-        receipt_id: .receipt.receipt_id,
-        receiver_id: .receipt.receiver_id,
-        block_height: .execution_outcome.block_height,
-        methods: (
-          [.receipt.receipt.Action.actions[]?.FunctionCall.method_name]
-          | map(select(. != null))
-        ),
-        first_log: (.execution_outcome.outcome.logs[0] // null)
-      }
-  ]
-}' /tmp/intents-transaction.json
-```
-
-Этот первый шаг уже даёт сильный операторский ответ: `intents.near` выполнил транзакцию расчёта, а ранние последующие receipt показывают, какие контракты вошли в каскад сразу после этого.
-
-2. Переиспользуйте хеш блока, чтобы исследовать включающий блок с включёнными receipt.
-
-```bash
-curl -s "$TX_BASE_URL/v0/block" \
-  -H 'content-type: application/json' \
-  --data "$(jq -nc --arg block_id "$INTENTS_BLOCK_HASH" '{
-    block_id: $block_id,
-    with_receipts: true,
-    with_transactions: false
-  }')" \
-  | tee /tmp/intents-block.json >/dev/null
-
-jq --arg tx_hash "$INTENTS_TX_HASH" '{
-  block_height: .block.block_height,
-  block_hash: .block.block_hash,
-  tx_receipts: [
-    .block_receipts[]
-    | select(.transaction_hash == $tx_hash)
-    | {
-        receipt_id,
-        predecessor_id,
-        receiver_id,
-        block_height
-      }
-  ]
-}' /tmp/intents-block.json
-```
-
-3. Подтвердите канонический DAG по receipt и извлеките семейства событий через RPC.
+2. Если нужен канонический результат callback-а и лог refund, подтвердите тот же receipt через RPC.
 
 ```bash
 curl -s "$RPC_URL" \
   -H 'content-type: application/json' \
   --data "$(jq -nc \
-    --arg tx_hash "$INTENTS_TX_HASH" \
-    --arg sender_account_id "$INTENTS_SIGNER_ID" '{
+    --arg tx_hash "$TX_HASH" \
+    --arg sender_account_id "$SENDER_ACCOUNT_ID" '{
       jsonrpc: "2.0",
       id: "fastnear",
       method: "EXPERIMENTAL_tx_status",
@@ -1519,115 +992,87 @@ curl -s "$RPC_URL" \
         wait_until: "FINAL"
       }
     }')" \
-  | tee /tmp/intents-rpc.json >/dev/null
+  | tee /tmp/callback-check-rpc.json >/dev/null
 
-jq '{
-  final_execution_status: .result.final_execution_status,
-  receipts_outcome: [
-    .result.receipts_outcome[:6][]
-    | {
-        receipt_id: .id,
-        executor_id: .outcome.executor_id,
-        first_log: (.outcome.logs[0] // null)
-      }
-  ]
-}' /tmp/intents-rpc.json
+jq --arg callback_receipt_id "$CALLBACK_RECEIPT_ID" '{
+  top_level_status: .result.status,
+  callback_receipt: (
+    first(
+      .result.receipts_outcome[]
+      | select(.id == $callback_receipt_id)
+      | {
+          receipt_id: .id,
+          executor_id: .outcome.executor_id,
+          logs: .outcome.logs,
+          status: .outcome.status
+        }
+    )
+  )
+}' /tmp/callback-check-rpc.json
 
-jq -r '
-  .result.receipts_outcome[]
-  | .outcome.logs[]
-  | select(startswith("EVENT_JSON:"))
-  | capture("event\":\"(?<event>[^\"]+)\"").event
-' /tmp/intents-rpc.json | sort -u
+# На что смотреть:
+# - downstream ft_on_transfer receipt упал на v2.ref-finance.near
+# - wrap.near всё равно позже получил ft_resolve_transfer
+# - лог callback-а показывает refund обратно отправителю
 ```
 
 **Зачем нужен следующий шаг?**
 
-`POST /v0/transactions` показывает, во что расчёт пошёл дальше. `POST /v0/block` показывает, где этот расчёт оказался в контексте блока. `EXPERIMENTAL_tx_status` — это каноническое продолжение, когда нужны `executor_id`, структура DAG по receipt и имена событий, чтобы объяснить, что реально произошло.
+Для вопросов про callback главный proof звучит не как «все ли receipt прошли успешно?», а как «получил ли исходный контракт свой callback-receipt обратно и что там случилось?» `POST /v0/transactions` даёт самый быстрый читаемый ответ. RPC нужен только как дополнительный слой подтверждения, если важны канонический результат callback-а и его логи.
 
-## Частые задачи
+## Расширенные сценарии и case study
 
-### Найти одну транзакцию
+Примеры ниже всё ещё полезны, но они длиннее или более специализированы, чем основные start-here-сценарии выше. `Berry Club` и `OutLayer` вынесены в отдельные case-study-страницы, паттерн provenance для SocialDB теперь живёт на отдельной расширенной странице, а последний пример здесь оставляет только компактный multi-contract follow-up.
 
-**Начните здесь**
+### Расширенный паттерн provenance для SocialDB
 
-- [Transactions by Hash](/tx/transactions), когда идентификатор транзакции уже известен.
+Если читаемый факт уже приходит из `api.near.social`, держите follow-up маленьким: сначала семантическое значение, затем `:block`, потом lookup по блоку и транзакции в FastNear. Для одного канонического примера такого сценария используйте [отдельную страницу паттерна provenance для SocialDB](/tx/socialdb-proofs).
 
-**Следующая страница при необходимости**
+### Расширенный сценарий: какие downstream-контракты затронула эта транзакция?
 
-- [Receipt Lookup](/tx/receipt), если важной стала последующая квитанция.
-- [Block](/tx/block), если нужен контекст блока.
-- [Transaction Status](/rpc/transaction/tx-status), если требуется каноническое подтверждение через RPC.
+Используйте этот сценарий, когда у вас уже есть один multi-contract tx hash и следующий вопрос звучит просто: «в какие контракты ушёл этот вызов после top-level action?»
 
-**Остановитесь, когда**
+Этот зафиксированный mainnet-якорь по-прежнему хорошо подходит как пример, хотя сама транзакция и относится к `intents.near`:
 
-- Уже можно объяснить результат, затронутые аккаунты и главный вывод по исполнению.
+- хеш транзакции: `4cfei8p4HBeNxJnCLjfShhDYGmXZwFVwFgY1sYpyygE7`
+- аккаунт `signer` и `receiver`: `intents.near`
+- высота включающего блока: `194573310`
 
-**Переходите дальше, когда**
+Короткий ответ для этой tx уже полезен:
 
-- Пользователь спрашивает о точной RPC-семантике статуса или поведения отправки.
-- Одного поиска по транзакции недостаточно, чтобы объяснить последующее исполнение.
+- top-level метод был `execute_intents`
+- ранние downstream-receipt затронули `v2_1.omni.hot.tg` и `bridge-refuel.hot.tg`
+- в более поздних логах были семейства событий вроде `token_diff`, `intents_executed`, `mt_transfer`, `mt_withdraw` и `mt_burn`
 
-### Исследовать квитанцию
+Для большинства вопросов достаточно Transactions API:
 
-**Начните здесь**
+```bash
+TX_BASE_URL=https://tx.main.fastnear.com
+TX_HASH=4cfei8p4HBeNxJnCLjfShhDYGmXZwFVwFgY1sYpyygE7
 
-- [Receipt Lookup](/tx/receipt), когда ID квитанции — лучший якорь для расследования.
+curl -s "$TX_BASE_URL/v0/transactions" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc --arg tx_hash "$TX_HASH" '{tx_hashes: [$tx_hash]}')" \
+  | jq '{
+      transaction: {
+        hash: .transactions[0].transaction.hash,
+        signer_id: .transactions[0].transaction.signer_id,
+        receiver_id: .transactions[0].transaction.receiver_id,
+        method_name: .transactions[0].transaction.actions[0].FunctionCall.method_name
+      },
+      downstream_receivers: (
+        [.transactions[0].receipts[] | .receipt.receiver_id]
+        | unique
+      ),
+      first_logs: (
+        [.transactions[0].receipts[] | .execution_outcome.outcome.logs[]?]
+        | .[:5]
+      )
+    }'
+```
 
-**Следующая страница при необходимости**
+Если нужен включающий блок, расширяйтесь один раз до Transactions API [`POST /v0/block`](/tx/block). Если нужен канонический DAG по receipt или сырые логи `EVENT_JSON`, расширяйтесь ещё на один шаг до RPC [`EXPERIMENTAL_tx_status`](/rpc/transaction/experimental-tx-status). Учебная идея здесь общая: начинайте с одного tx hash, перечислите downstream receiver-и и останавливайтесь, пока trace действительно не требует большего.
 
-- [Transactions by Hash](/tx/transactions), чтобы связать квитанцию с исходной транзакцией.
-- [Account History](/tx/account), если нужно увидеть активность вокруг одного из затронутых аккаунтов.
-
-**Остановитесь, когда**
-
-- Уже можно объяснить, где квитанция находится в цепочке исполнения и почему она важна.
-
-**Переходите дальше, когда**
-
-- Нужна точная каноническая проверка сверх индексированного вида квитанции. Переходите к [RPC Reference](/rpc).
-- Вопрос расширяется от одной квитанции к более широкому историческому расследованию.
-
-### Посмотреть недавнюю активность аккаунта
-
-**Начните здесь**
-
-- [Account History](/tx/account) для ленты активности по аккаунту.
-
-**Следующая страница при необходимости**
-
-- [Transactions by Hash](/tx/transactions) для конкретной транзакции из ленты.
-- [Receipt Lookup](/tx/receipt), если фокус смещается на одну квитанцию.
-
-**Остановитесь, когда**
-
-- История аккаунта уже отвечает на вопрос о том, что этот аккаунт делал.
-
-**Переходите дальше, когда**
-
-- Пользователя интересуют только переводы, а не более широкий контекст исполнения. Переходите к [Transfers API](/transfers).
-- Пользователю нужно точное текущее состояние или активы, а не история. Переходите к [RPC Reference](/rpc) или [FastNear API](/api).
-
-### Восстановить ограниченное окно по блокам
-
-**Начните здесь**
-
-- [Blocks](/tx/blocks) для ограниченного просмотра диапазона блоков.
-- [Block](/tx/block), когда известен точный блок, который нужно исследовать.
-
-**Следующая страница при необходимости**
-
-- [Transactions by Hash](/tx/transactions), чтобы провалиться в конкретный элемент из окна блоков.
-- [Receipt Lookup](/tx/receipt), если одной квитанции достаточно для следующего шага расследования.
-
-**Остановитесь, когда**
-
-- Ограниченное историческое окно уже отвечает на вопрос без перехода к более низкоуровневым протокольным деталям.
-
-**Переходите дальше, когда**
-
-- Пользователю нужны точные канонические поля блока или финальность транзакции. Переходите к [RPC Reference](/rpc).
-- На самом деле нужен polling по самым свежим блокам, а не индексированная история. Переходите к [NEAR Data API](/neardata).
 
 ## Частые ошибки
 

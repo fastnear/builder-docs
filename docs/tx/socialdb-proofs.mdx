@@ -1,0 +1,198 @@
+---
+slug: /tx/socialdb-proofs
+title: Advanced SocialDB Provenance Pattern
+description: One advanced pattern for starting from a readable SocialDB value and recovering the write transaction behind it.
+displayed_sidebar: transactionsApiSidebar
+page_actions:
+  - markdown
+---
+
+# Advanced SocialDB Provenance Pattern
+
+Use this page only when the starting point is already a readable SocialDB value from `api.near.social` and the next question is historical provenance.
+
+For FastNear-first jobs, start with [Transactions Examples](/tx/examples). Come here only when the question has become "which write made this readable SocialDB value true?"
+
+## Canonical example: prove that `mike.near` set `profile.name` to `Mike Purvis`
+
+Use this when the readable fact is already "the current `profile.name` is `Mike Purvis`" and the remaining question is which write made that field true.
+
+This is the one SocialDB nuance worth keeping: for historical proof, the field-level `:block` is usually the right bridge, not the parent object's `:block`.
+
+For this live anchor:
+
+- current `profile.name`: `Mike Purvis`
+- field-level SocialDB write block: `78675795`
+- receipt ID: `2gbAmEEdcCNARuCorquXStftqvWFmPG2GSaMJXFw5qiN`
+- originating transaction hash: `6zMb9L6rLNufZGUgCmeHTh5LvFsn3R92dPxuubH6MRsZ`
+- outer transaction block: `78675794`
+
+### Shell walkthrough
+
+1. Read the field from NEAR Social and capture the field-level write block.
+
+```bash
+SOCIAL_API_BASE_URL=https://api.near.social
+TX_BASE_URL=https://tx.main.fastnear.com
+RPC_URL=https://rpc.mainnet.fastnear.com
+ACCOUNT_ID=mike.near
+PROFILE_FIELD=profile/name
+
+PROFILE_BLOCK_HEIGHT="$(
+  curl -s "$SOCIAL_API_BASE_URL/get" \
+    -H 'content-type: application/json' \
+    --data "$(jq -nc \
+      --arg account_id "$ACCOUNT_ID" \
+      --arg profile_field "$PROFILE_FIELD" '{
+        keys: [($account_id + "/" + $profile_field)],
+        options: {with_block_height: true}
+      }')" \
+    | tee /tmp/mike-profile-name.json \
+    | jq -r --arg account_id "$ACCOUNT_ID" \
+        '.[ $account_id ].profile.name[":block"]'
+)"
+
+jq --arg account_id "$ACCOUNT_ID" '{
+  current_name: .[$account_id].profile.name[""],
+  field_block_height: .[$account_id].profile.name[":block"],
+  parent_profile_block_height: .[$account_id].profile[":block"]
+}' /tmp/mike-profile-name.json
+```
+
+2. Reuse that field-level block in FastNear block receipts and recover the receipt plus tx hash.
+
+```bash
+PROFILE_TX_HASH="$(
+  curl -s "$TX_BASE_URL/v0/block" \
+    -H 'content-type: application/json' \
+    --data "$(jq -nc --argjson block_id "$PROFILE_BLOCK_HEIGHT" '{
+      block_id: $block_id,
+      with_transactions: false,
+      with_receipts: true
+    }')" \
+    | tee /tmp/mike-profile-block.json \
+    | jq -r --arg account_id "$ACCOUNT_ID" '
+        first(
+          .block_receipts[]
+          | select(.predecessor_id == $account_id and .receiver_id == "social.near")
+          | .transaction_hash
+        )'
+)"
+
+jq --arg account_id "$ACCOUNT_ID" '{
+  profile_receipt: (
+    first(
+      .block_receipts[]
+      | select(.predecessor_id == $account_id and .receiver_id == "social.near")
+      | {
+          receipt_id,
+          transaction_hash,
+          block_height,
+          tx_block_height
+        }
+    )
+  )
+}' /tmp/mike-profile-block.json
+```
+
+3. Reuse that tx hash in `POST /v0/transactions` and decode the SocialDB write payload.
+
+```bash
+curl -s "$TX_BASE_URL/v0/transactions" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc --arg tx_hash "$PROFILE_TX_HASH" '{tx_hashes: [$tx_hash]}')" \
+  | tee /tmp/mike-profile-transaction.json >/dev/null
+
+jq '{
+  transaction: {
+    hash: .transactions[0].transaction.hash,
+    signer_id: .transactions[0].transaction.signer_id,
+    receiver_id: .transactions[0].transaction.receiver_id,
+    included_block_height: .transactions[0].execution_outcome.block_height
+  },
+  write_proof: (
+    .transactions[0].receipts[0].receipt.receipt.Action.actions[0].FunctionCall
+    | {
+        method_name,
+        profile_name: (.args | @base64d | fromjson | .data["mike.near"].profile.name),
+        description: (.args | @base64d | fromjson | .data["mike.near"].profile.description),
+        tags: (
+          .args
+          | @base64d
+          | fromjson
+          | .data["mike.near"].profile.tags
+          | keys
+        )
+      }
+  )
+}' /tmp/mike-profile-transaction.json
+```
+
+4. Finish with canonical current-state confirmation via raw RPC.
+
+```bash
+SOCIAL_GET_ARGS_BASE64="$(
+  jq -nr --arg account_id "$ACCOUNT_ID" --arg profile_field "$PROFILE_FIELD" '{
+    keys: [($account_id + "/" + $profile_field)]
+  } | @base64'
+)"
+
+curl -s "$RPC_URL" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc --arg args_base64 "$SOCIAL_GET_ARGS_BASE64" '{
+    jsonrpc: "2.0",
+    id: "fastnear",
+    method: "query",
+    params: {
+      request_type: "call_function",
+      account_id: "social.near",
+      method_name: "get",
+      args_base64: $args_base64,
+      finality: "final"
+    }
+  }')" \
+  | tee /tmp/mike-profile-rpc.json >/dev/null
+
+jq --arg account_id "$ACCOUNT_ID" '{
+  finality: "final",
+  current_name: (
+    .result.result
+    | implode
+    | fromjson
+    | .[$account_id].profile.name
+  )
+}' /tmp/mike-profile-rpc.json
+```
+
+That is the whole provenance pattern: readable value, field-level block, receipt bridge, transaction payload, then optional current-state confirmation.
+
+## Same pattern, different SocialDB keys
+
+Use the same bridge whenever you already have a readable SocialDB value and its write block:
+
+1. Read the semantic value and `:block` from NEAR Social, or start from a known widget write block.
+2. Use Transactions API [`POST /v0/block`](/tx/block) to recover the `*.near -> social.near` receipt and transaction hash.
+3. Use Transactions API [`POST /v0/transactions`](/tx/transactions) to decode the `social.near set` payload.
+4. Use RPC [`query(call_function)`](/rpc/contract/call-function) only if you still need canonical current-state confirmation.
+
+### Follow edge variant
+
+Use the same pattern for one readable follow edge:
+
+- current edge: `mike.near -> mob.near`
+- SocialDB write block: `79574924`
+- receipt ID: `UiyiQaqHbkkMxkrB6rDkYr7X5EQLt8QG9MDATrES7Th`
+- originating transaction hash: `FLLmTvFx9vCof79scy2uUviF5WwYmevkz9TZ8azPGVQb`
+
+The only meaningful difference from the profile example is the key and payload shape: read `mike.near/graph/follow/mob.near`, then decode both `graph.follow` and the matching `index.graph` entry from the write payload.
+
+### Widget source variant
+
+Use the same pattern again when the readable fact is a widget source key:
+
+- widget key: `mob.near/widget/Profile`
+- SocialDB write block: `86494825`
+- receipt ID: `CZyjiBjphzE95tFEqi1YH6eLCLhqknaW4SQ5R4L6pkC6`
+- originating transaction hash: `9QDupdK2ewMxfSvMmdGEkdBcVnoL4TexmXY2FnMRxfia`
+
+The main difference here is that you usually start from the widget's known write block, then decode `.data["mob.near"].widget.Profile[""]` from the originating `social.near set` payload.

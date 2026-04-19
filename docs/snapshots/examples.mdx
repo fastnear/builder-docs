@@ -12,6 +12,8 @@ page_actions:
 
 If the job is simply “bring a mainnet RPC node back fast,” start with one runnable command.
 
+These helpers are maintained by FastNear and are meant to optimize for recovery speed. If your environment requires change review, fetch the script first, inspect it, and only then execute it instead of piping it straight to `bash`.
+
 ```bash
 DATA_PATH=~/.near/data
 
@@ -108,79 +110,6 @@ curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/fastnear/
 
 Hot and cold archival data need to come from the same snapshot cut. Reusing one captured `LATEST` value across both commands keeps the archival dataset internally consistent and makes later nearcore configuration much less surprising.
 
-## Common jobs
-
-### Bootstrap an optimized mainnet `fast-rpc` node
-
-**Start here**
-
-- Use the optimized mainnet `fast-rpc` command anchor above.
-
-**Next page if needed**
-
-- [Mainnet snapshots](/snapshots/mainnet) if you need to tune `THREADS`, `BWLIMIT`, or a custom `DATA_PATH`.
-
-**Stop when**
-
-- You have the right `fast-rpc` command and environment variables for the target machine.
-
-**Switch when**
-
-- The real requirement is archival retention rather than fast sync.
-
-### Recover a standard RPC node to the default nearcore path
-
-**Start here**
-
-- Use the standard mainnet RPC command anchor above.
-
-**Next page if needed**
-
-- [Mainnet snapshots](/snapshots/mainnet) if you need to tune `DATA_PATH`, `THREADS`, or bandwidth settings further.
-
-**Stop when**
-
-- You can run the correct RPC recovery command with the expected data path.
-
-**Switch when**
-
-- The operator actually needs archival history or hot/cold data placement.
-
-### Bring up archival mainnet hot and cold data correctly
-
-**Start here**
-
-- Use the archival walkthrough above.
-
-**Next page if needed**
-
-- Fetch the latest archival snapshot height, then run separate hot-data and cold-data downloads with the correct paths.
-
-**Stop when**
-
-- The hot-data and cold-data plan is clear and the order of operations is correct.
-
-**Switch when**
-
-- The operator is really looking for general nearcore bootstrap guidance beyond FastNear snapshots.
-
-### Bootstrap testnet archival hot data
-
-**Start here**
-
-- [Testnet snapshots](/snapshots/testnet), archival section.
-
-**Next page if needed**
-
-- Fetch the latest testnet archival snapshot height before the download step.
-
-**Stop when**
-
-- You have the right testnet archival hot-data command and block anchor.
-
-**Switch when**
-
-- The user is not doing infrastructure bootstrap and should be routed back to API or RPC docs.
 
 ## Common mistakes
 

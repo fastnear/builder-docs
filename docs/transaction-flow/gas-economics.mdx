@@ -174,16 +174,12 @@ fn compute_gas_refund(
 
 ### Refund Flow
 
-```mermaid
-flowchart TD
-    A[Prepaid Gas] --> B[Execute Transaction]
-    B --> C{Gas Burnt}
-    C --> D[Gross Refund = Prepaid - Burnt]
-    D --> E[Apply NEP-536 Penalty]
-    E --> F[Net Refund]
-    F --> G[Convert to NEAR at Original Price]
-    G --> H[Refund Receipt to Signer]
-```
+For docs users, the refund path is simpler than the runtime code:
+
+1. gas is prepaid up front
+2. execution burns part of that gas
+3. unused gas becomes a refund amount
+4. the refund comes back as a later receipt
 
 ### Refund Types
 
@@ -243,14 +239,7 @@ All unused gas is currently refunded in full.
 
 Gas price adjusts based on block utilization:
 
-```mermaid
-flowchart LR
-    A[Block Utilization] --> B{> 50%?}
-    B -->|Yes| C[Gas Price Increases]
-    B -->|No| D[Gas Price Decreases]
-    C --> E[Discourages spam]
-    D --> F[Encourages usage]
-```
+When blocks are busier, protocol gas price rises. When blocks are quieter, it falls. For docs users, the important part is that this adjustment is protocol-driven, not a fee-bidding market.
 
 The adjustment follows an exponential smoothing algorithm bounded by protocol parameters.
 
@@ -397,19 +386,7 @@ console.log(`Tokens burnt: ${Number(outcome.tokens_burnt) / 1e24} NEAR`);
 
 Refunds arrive as receipts in subsequent blocks:
 
-```mermaid
-sequenceDiagram
-    participant User
-    participant ShardA as Shard A
-    participant ShardB as Shard B
-
-    User->>ShardA: Transaction (prepay 100 TGas)
-    ShardA->>ShardA: Execute (burn 30 TGas)
-    ShardA->>ShardB: Cross-shard receipt
-    ShardB->>ShardB: Execute
-    ShardB->>ShardA: Refund receipt (unused gas)
-    ShardA->>ShardA: Apply refund to User balance
-```
+Refunds often land in later blocks, especially when cross-shard receipts are involved. Do not expect the account balance view to reflect them immediately at the moment the first transaction outcome appears.
 
 Don't expect instant balance updates after transaction completion.
 

@@ -2,7 +2,7 @@
 sidebar_label: Examples
 slug: /neardata/examples
 title: NEAR Data Examples
-description: Plain-language workflows for polling optimistic and finalized blocks and handing off to RPC when needed.
+description: Plain-language workflows for checking whether a contract was touched in the latest finalized block and extracting the exact hashes worth following up.
 displayed_sidebar: nearDataApiSidebar
 page_actions:
   - markdown
@@ -10,84 +10,11 @@ page_actions:
 
 ## Quick start
 
-Start with the two helper routes that tell you what changed right now.
+Start with one recent finalized block and ask for the smallest possible touch summary first.
 
 ```bash
 NEARDATA_BASE_URL=https://mainnet.neardata.xyz
-
-curl -s -D - -o /dev/null "$NEARDATA_BASE_URL/v0/last_block/optimistic" \
-  | awk 'tolower($1) == "location:" {print "optimistic:", $2}' \
-  | tr -d '\r'
-
-curl -s -D - -o /dev/null "$NEARDATA_BASE_URL/v0/last_block/final" \
-  | awk 'tolower($1) == "location:" {print "final:", $2}' \
-  | tr -d '\r'
-```
-
-This gives you the current optimistic and final redirect targets before you fetch full block documents.
-
-## Worked investigation
-
-### Catch a new block early, then confirm it after finality
-
-Use this investigation when you want to notice a new block as early as possible, but the final answer still needs a finalized block and sometimes an exact RPC read.
-
-<div className="fastnear-example-strategy">
-  <div className="fastnear-example-strategy__header">
-    <span className="fastnear-example-strategy__eyebrow">Strategy</span>
-    <p className="fastnear-example-strategy__title">Let NEAR Data tell you something changed, then reuse the same block family for the stable confirmation.</p>
-  </div>
-  <div className="fastnear-example-strategy__items">
-    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">01</span><span><span className="fastnear-example-strategy__code">block-optimistic</span> or <span className="fastnear-example-strategy__code">last-block-optimistic</span> gives the earliest useful signal.</span></p>
-    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">02</span><span><span className="fastnear-example-strategy__code">block</span> or <span className="fastnear-example-strategy__code">last-block-final</span> confirms whether the same observation survived into finalized history.</span></p>
-    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span><span className="fastnear-example-strategy__code">RPC block</span> is only the last step, once you know the exact height or hash that matters.</span></p>
-  </div>
-</div>
-
-**Goal**
-
-- Notice one recent block-family change early, then confirm which finalized block caught up.
-
-| Surface | Endpoint | How we use it | Why we use it |
-| --- | --- | --- | --- |
-| Fastest detection | NEAR Data [`block-optimistic`](/neardata/block-optimistic) | Poll optimistic block reads to notice a new block-family change as early as possible | Gives the earliest useful signal before finalized confirmation exists |
-| Latest optimistic helper | NEAR Data [`last-block-optimistic`](/neardata/last-block-optimistic) | Use the redirect helper when the client should always follow the newest optimistic target | Keeps the polling client simple when “latest” matters more than explicit heights |
-| Stable confirmation | NEAR Data [`block`](/neardata/block) or [`last-block-final`](/neardata/last-block-final) | Re-check the same block family once finality catches up | Confirms that the observed optimistic change survived into finalized history |
-| Light block summary | NEAR Data [`block-headers`](/neardata/block-headers) | Read header-level data if only timing or progression is needed | Avoids wider block payloads when header-level confirmation is enough |
-| Exact RPC follow-up | RPC [Block by ID](/rpc/block/block-by-id) or [Block by Height](/rpc/block/block-by-height) | Fetch the exact block once you know which one matters | This is the point where RPC becomes useful if you need the protocol's own block object |
-
-**What a useful answer should include**
-
-- which optimistic redirect target and resolved block first triggered the investigation
-- when the finalized helper caught up and which block it resolved to
-- whether the exact RPC block changed the interpretation
-
-### Optimistic signal to finalized confirmation shell walkthrough
-
-Use this when you want to notice a fresh block-family change immediately, then prove which finalized block caught up and confirm that exact height in RPC.
-
-**What you're doing**
-
-- Inspect the redirect returned by `GET /v0/last_block/optimistic`.
-- Fetch the resolved optimistic block document and keep its height and hash.
-- Inspect the redirect returned by `GET /v0/last_block/final` and keep the finalized counterpart.
-- Compare the optimistic and finalized observations, then reuse the finalized height in RPC `block` by height.
-
-```bash
-NEARDATA_BASE_URL=https://mainnet.neardata.xyz
-RPC_URL=https://rpc.mainnet.fastnear.com
-
-OPTIMISTIC_LOCATION="$(
-  curl -s -D - -o /dev/null "$NEARDATA_BASE_URL/v0/last_block/optimistic" \
-    | awk 'tolower($1) == "location:" {print $2}' \
-    | tr -d '\r'
-)"
-
-printf 'Optimistic redirect target: %s\n' "$OPTIMISTIC_LOCATION"
-
-curl -s "$NEARDATA_BASE_URL$OPTIMISTIC_LOCATION" \
-  | tee /tmp/neardata-optimistic-block.json \
-  | jq '{height: .block.header.height, hash: .block.header.hash}'
+TARGET_ACCOUNT_ID=YOUR_CONTRACT_ID
 
 FINAL_LOCATION="$(
   curl -s -D - -o /dev/null "$NEARDATA_BASE_URL/v0/last_block/final" \
@@ -95,134 +22,225 @@ FINAL_LOCATION="$(
     | tr -d '\r'
 )"
 
+curl -s "$NEARDATA_BASE_URL$FINAL_LOCATION" \
+  | jq --arg target "$TARGET_ACCOUNT_ID" '{
+      height: .block.header.height,
+      hash: .block.header.hash,
+      direct_tx_count: ([.shards[].chunk.transactions[]?
+        | select((.transaction.receiver_id // .receiver_id) == $target)] | length),
+      incoming_receipt_count: ([.shards[].chunk.receipts[]?
+        | select(.receiver_id == $target)] | length),
+      outcome_hit_count: ([.shards[].receipt_execution_outcomes[]?
+        | select(
+            (.receipt.receiver_id // "") == $target
+            or (.execution_outcome.outcome.executor_id // "") == $target
+          )] | length),
+      state_change_count: ([.shards[].state_changes[]?
+        | select((.change.account_id // "") == $target)] | length)
+    } | . + {
+      touched: (
+        (.direct_tx_count > 0)
+        or (.incoming_receipt_count > 0)
+        or (.outcome_hit_count > 0)
+        or (.state_change_count > 0)
+      )
+    }'
+```
+
+This is the smallest useful NEAR Data summary for an app team: one finalized block, one yes-or-no answer, and a few counts before you widen.
+
+## Worked investigation
+
+### Did my contract get touched in the latest finalized block?
+
+Use this investigation when you want a concrete yes/no answer before you widen into Transactions API or RPC.
+
+<div className="fastnear-example-strategy">
+  <div className="fastnear-example-strategy__header">
+    <span className="fastnear-example-strategy__eyebrow">Strategy</span>
+    <p className="fastnear-example-strategy__title">Anchor on one finalized block, scan the whole block family for your target account, then keep only one small summary plus the identifiers worth following up.</p>
+  </div>
+  <div className="fastnear-example-strategy__items">
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">01</span><span><span className="fastnear-example-strategy__code">last-block-final</span> gives you one stable block height without guessing.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">02</span><span><span className="fastnear-example-strategy__code">block</span> is the main read: it already contains the transactions, receipts, receipt execution outcomes, and state changes you need to answer “touched or not?”.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span>Only if the answer is “yes” do you widen: keep the shard ids, tx hashes, and receipt ids you discovered, then hand those exact identifiers to [Transactions API](/tx) or [RPC Reference](/rpc).</span></p>
+  </div>
+</div>
+
+**Goal**
+
+- Decide whether one target contract was touched in the latest finalized block, and keep only the shard ids, counts, and sample identifiers worth investigating next.
+
+| Surface | Endpoint | How we use it | Why we use it |
+| --- | --- | --- | --- |
+| Latest stable anchor | NEAR Data [`last-block-final`](/neardata/last-block-final) | Get one finalized block height without guessing | Gives you a stable starting point for the whole question |
+| Whole block family | NEAR Data [`block`](/neardata/block) | Scan transactions, receipts, receipt execution outcomes, and state changes for the target account | This is the main answer surface for “was my contract touched?” |
+| Light block summary | NEAR Data [`block-headers`](/neardata/block-headers) | Use when you only need the height, hash, timing, or chunk headers | Avoids the wider block payload when contract-level filtering is not needed |
+| Optional shard follow-up | NEAR Data [`block-chunk`](/neardata/block-chunk) or [`block-shard`](/neardata/block-shard) | Re-open only the touched shard if you need deeper payload details | Useful after you already know which shard mattered |
+| Exact follow-up surfaces | [Transactions API](/tx) or [RPC Reference](/rpc) | Reuse the discovered tx hashes or receipt ids only if you need the full execution story | NEAR Data tells you whether widening is necessary at all |
+
+**What a useful answer should include**
+
+- finalized height and hash
+- touched or not touched
+- counts for direct txs, incoming receipts, outcome hits, and state changes
+- one sample tx hash or receipt id per category when present
+
+### Final block to contract-touch answer shell walkthrough
+
+Use this when the target account is already known and you want one recent finalized answer, not a long polling loop.
+
+**What you're doing**
+
+- Get the latest finalized block redirect target.
+- Fetch the full block document once.
+- Build one small touch summary for one `TARGET_ACCOUNT_ID`.
+- Return a yes/no answer plus the smallest useful counts and sample identifiers.
+
+```bash
+NEARDATA_BASE_URL=https://mainnet.neardata.xyz
+TARGET_ACCOUNT_ID=YOUR_CONTRACT_ID
+
+FINAL_LOCATION="$(
+  curl -s -D - -o /dev/null "$NEARDATA_BASE_URL/v0/last_block/final" \
+    | awk 'tolower($1) == "location:" {print $2}' \
+    | tr -d '\r'
+)"
+
+BLOCK_HEIGHT="$(printf '%s' "$FINAL_LOCATION" | sed -E 's#.*/([0-9]+)$#\1#')"
+
 printf 'Final redirect target: %s\n' "$FINAL_LOCATION"
+printf 'Final block height: %s\n' "$BLOCK_HEIGHT"
 
 curl -s "$NEARDATA_BASE_URL$FINAL_LOCATION" \
-  | tee /tmp/neardata-final-block.json \
-  | jq '{height: .block.header.height, hash: .block.header.hash}'
+  | tee /tmp/neardata-block.json >/dev/null
 
-jq -n \
-  --slurpfile optimistic /tmp/neardata-optimistic-block.json \
-  --slurpfile final /tmp/neardata-final-block.json '{
-    optimistic: {
-      height: $optimistic[0].block.header.height,
-      hash: $optimistic[0].block.header.hash
-    },
-    final: {
-      height: $final[0].block.header.height,
-      hash: $final[0].block.header.hash
-    },
-    same_height: (
-      $optimistic[0].block.header.height
-      == $final[0].block.header.height
-    )
-  }'
-
-BLOCK_HEIGHT="$(jq -r '.block.header.height' /tmp/neardata-final-block.json)"
-
-curl -s "$RPC_URL" \
-  -H 'content-type: application/json' \
-  --data "$(jq -nc --arg block_height "$BLOCK_HEIGHT" '{
-    jsonrpc: "2.0",
-    id: "fastnear",
-    method: "block",
-    params: {
-      block_id: ($block_height | tonumber)
+jq --arg target "$TARGET_ACCOUNT_ID" '
+  (
+    [
+      .shards[]
+      | .chunk.transactions[]?
+      | select((.transaction.receiver_id // .receiver_id) == $target)
+      | (.transaction.hash // .hash)
+    ]
+  ) as $txs
+  | (
+    [
+      .shards[]
+      | .chunk.receipts[]?
+      | select(.receiver_id == $target)
+      | .receipt_id
+    ]
+  ) as $receipts
+  | (
+    [
+      .shards[]
+      | .receipt_execution_outcomes[]?
+      | select(
+          (.receipt.receiver_id // "") == $target
+          or (.execution_outcome.outcome.executor_id // "") == $target
+        )
+      | .tx_hash
+      | select(. != null)
+    ]
+    | unique
+  ) as $outcomes
+  | (
+    [
+      .shards[]
+      | .state_changes[]?
+      | select((.change.account_id // "") == $target)
+      | .type
+    ]
+  ) as $state_changes
+  | {
+      height: .block.header.height,
+      hash: .block.header.hash,
+      touched: (
+        ($txs | length) > 0
+        or ($receipts | length) > 0
+        or ($outcomes | length) > 0
+        or ($state_changes | length) > 0
+      ),
+      direct_tx_count: ($txs | length),
+      incoming_receipt_count: ($receipts | length),
+      outcome_hit_count: ($outcomes | length),
+      state_change_count: ($state_changes | length),
+      sample_direct_tx: ($txs[0] // null),
+      sample_incoming_receipt: ($receipts[0] // null),
+      sample_outcome_tx_hash: ($outcomes[0] // null)
     }
-  }')" \
-  | jq '{height: .result.header.height, hash: .result.header.hash, chunks: (.result.chunks | length)}'
+' /tmp/neardata-block.json | tee /tmp/neardata-touch-summary.json
+```
+
+If you need richer shard-by-shard or full-list detail later, keep reusing `/tmp/neardata-block.json`. The point of this first pass is to answer “touched or not?” before you widen into longer arrays or deeper traces.
+
+Optional extension: if you still want the touched shard ids, compute them from the same cached block without changing the main answer shape:
+
+```bash
+jq --arg target "$TARGET_ACCOUNT_ID" '
+  [
+    .shards[]
+    | .shard_id as $shard_id
+    | select(
+        ([.chunk.transactions[]? | (.transaction.receiver_id // .receiver_id)] | index($target))
+        or ([.chunk.receipts[]? | .receiver_id] | index($target))
+        or ([.receipt_execution_outcomes[]? | .receipt.receiver_id, .execution_outcome.outcome.executor_id] | index($target))
+        or ([.state_changes[]? | .change.account_id] | index($target))
+      )
+    | $shard_id
+  ] | unique
+' /tmp/neardata-block.json
+```
+
+If that answer says `touched: true` and you want one shard-level follow-up, reopen only the first touched shard:
+
+```bash
+TOUCHED_SHARD_ID="$(
+  jq -r --arg target "$TARGET_ACCOUNT_ID" '
+    first(
+      .shards[]
+      | .shard_id as $shard_id
+      | select(
+          ([.chunk.transactions[]? | (.transaction.receiver_id // .receiver_id)] | index($target))
+          or ([.chunk.receipts[]? | .receiver_id] | index($target))
+          or ([.receipt_execution_outcomes[]? | .receipt.receiver_id, .execution_outcome.outcome.executor_id] | index($target))
+          or ([.state_changes[]? | .change.account_id] | index($target))
+        )
+      | $shard_id
+    ) // empty
+  ' /tmp/neardata-block.json
+)"
+
+if [ -n "$TOUCHED_SHARD_ID" ]; then
+  curl -s "$NEARDATA_BASE_URL/v0/block/$BLOCK_HEIGHT/chunk/$TOUCHED_SHARD_ID" \
+    | jq '{
+        shard_id: .header.shard_id,
+        chunk_hash: .header.chunk_hash,
+        tx_hashes: ([.transactions[]? | (.transaction.hash // .hash)] | .[:5]),
+        receipt_ids: ([.receipts[]? | .receipt_id] | .[:5]),
+        receipt_receivers: ([.receipts[]? | .receiver_id] | .[:5])
+      }'
+fi
 ```
 
 **Why this next step?**
 
-This gives you both sides of the story: the earliest optimistic anchor and the later finalized anchor. Once the finalized helper gives you a concrete block height, RPC is the natural next read if you want the exact block object the protocol would return.
+This keeps the question as small as possible: first answer “was my contract touched?”, then widen only if one of the sample identifiers justifies a deeper trace. NEAR Data is the discovery layer here, not just a block monitor.
 
-## Common jobs
-
-### Monitor the optimistic head
-
-**Start here**
-
-- [Optimistic block](/neardata/block-optimistic) for the freshest block-family read.
-
-**Next page if needed**
-
-- [Last optimistic block redirect](/neardata/last-block-optimistic) if your client wants a helper route that always points at the newest optimistic block.
-
-**Stop when**
-
-- You can report the latest optimistic head or detect freshness drift.
-
-**Switch when**
-
-- The user needs finalized stability instead of maximum freshness. Move to [Final block by height](/neardata/block) or [Last final block redirect](/neardata/last-block-final).
-
-### Track finalized block progress safely
-
-**Start here**
-
-- [Final block by height](/neardata/block) when you already know the height you want to confirm.
-- [Block headers](/neardata/block-headers) when header-level polling is enough.
-
-**Next page if needed**
-
-- [Last final block redirect](/neardata/last-block-final) when the client should follow the newest finalized block without computing the height first.
-
-**Stop when**
-
-- You can show finalized progress without pulling in deeper protocol detail.
-
-**Switch when**
-
-- The user needs exact block fields or transaction semantics. Move to [RPC Reference](/rpc).
-
-### Use redirect helpers in a polling client
-
-**Start here**
-
-- [Last final block redirect](/neardata/last-block-final) or [Last optimistic block redirect](/neardata/last-block-optimistic) depending on the freshness requirement.
-
-**Next page if needed**
-
-- Follow the block URL returned by the helper and keep reading from there.
-
-**Stop when**
-
-- The client can reliably follow the helper route and consume the final block resource.
-
-**Switch when**
-
-- Redirect behavior itself becomes a problem for the client. Move to the direct block routes instead.
-
-### Move from recent block polling to exact RPC inspection
-
-**Start here**
-
-- Use the relevant NEAR Data block route to find the recent block or block-family event of interest.
-
-**Next page if needed**
-
-- [Block by Height](/rpc/block/block-by-height), [Block by ID](/rpc/block/block-by-id), or another RPC method once you know the exact block or follow-up object you need.
-
-**Stop when**
-
-- You can clearly name the recent block that deserves RPC follow-up.
-
-**Switch when**
-
-- The user asks for the exact protocol structure, not just recent block polling.
 
 ## Common mistakes
 
-- Treating NEAR Data like a push stream instead of a polling API.
-- Starting with RPC when the real need is a recent block monitor.
-- Forgetting that redirect helpers may return `401` before redirecting if the key is invalid, or may be awkward for some HTTP clients.
-- Staying on NEAR Data when the user has already asked for exact protocol-native block details.
+- Treating NEAR Data like a push stream instead of a polling or point-read API.
+- Starting with RPC before checking whether one finalized block already answers the contract-touch question.
+- Looking only for direct transactions and forgetting that contracts are often touched through receipts or state changes.
+- Assuming one hard-coded shard id should be checked before you inspect the block family itself.
+- Widening to Transactions API or RPC before extracting the exact shard ids, tx hashes, or receipt ids from NEAR Data.
 
 ## Related guides
 
 - [NEAR Data API](/neardata)
-- [RPC Reference](/rpc)
 - [Transactions API](/tx)
+- [RPC Reference](/rpc)
 - [Choosing the Right Surface](/agents/choosing-surfaces)
 - [Agent Playbooks](/agents/playbooks)
