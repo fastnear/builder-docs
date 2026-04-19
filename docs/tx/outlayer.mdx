@@ -1,8 +1,8 @@
 ---
 sidebar_label: OutLayer
 slug: /tx/examples/outlayer
-title: "OutLayer: Trace one request from caller to callback"
-description: "Use Transactions API and RPC to trace a real OutLayer request from the initial FunctionCall through the worker transaction and into the callback and refund phase."
+title: "OutLayer: Trace request and worker resolution"
+description: "Use Transactions API to pair one caller-side OutLayer request with one later worker-side resolution and inspect the finish receipts."
 displayed_sidebar: transactionsApiSidebar
 page_actions:
   - markdown
@@ -10,265 +10,151 @@ keywords:
   - OutLayer
   - FastNear
   - NEAR
-  - RPC
   - Transactions API
-  - callback
-  - promise
   - receipt
+  - callback
 ---
 
 import Link from '@site/src/components/LocalizedLink';
 
-{/* FASTNEAR_AI_DISCOVERY: This case study shows how to use FastNear RPC and Transactions API to trace a live OutLayer execution in NEAR-native terms. It separates the visible request/worker/callback flow that FastNear can trace now from the documented under-the-hood yield/resume and CKD/MPC trust path. */}
+{/* FASTNEAR_AI_DISCOVERY: This example stays on observable transaction and receipt evidence. It shows how to pair one caller-side OutLayer request with one later worker-side resolution and inspect the finish receipts. It does not try to prove OutLayer's internal TEE, yield/resume, or CKD/MPC architecture from public chain data alone. */}
 
-# OutLayer: Trace one request from caller to callback
+# OutLayer: Trace request and worker resolution
 
-Use this when the question is: “I can see OutLayer on-chain. Which transaction opened the work, which later transaction came from the worker, and where did callback, charging, and refund behavior show up?”
+Use this when the question is: “Which transaction opened the OutLayer request, which later transaction came from the worker, and where did the finish receipts show callback, charging, or refund behavior?”
 
-This is the advanced async case study in the Transactions examples family. Keep the NEAR frame first: one caller-side `FunctionCall`, one later worker-side transaction, and receipt-level follow-up only when you need to inspect the finish.
+Treat this as a transaction-history problem first:
+
+- one caller-side `request_execution`
+- one later worker-side `submit_execution_output_and_resolve` or `resolve_execution`
+- receipt-level follow-up only when the finish path matters
 
 <div className="fastnear-example-strategy">
   <div className="fastnear-example-strategy__header">
     <span className="fastnear-example-strategy__eyebrow">Strategy</span>
-    <p className="fastnear-example-strategy__title">Find the caller tx and the worker tx first, then use receipts only when the finish path becomes the real question.</p>
+    <p className="fastnear-example-strategy__title">Find the two hashes first, hydrate them second, and inspect worker receipts only when you need the finish path.</p>
   </div>
   <div className="fastnear-example-strategy__items">
-    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">01</span><span><span className="fastnear-example-strategy__code">POST /v0/account</span> is the fastest way to discover the caller-side and worker-side hashes that belong to the same story.</span></p>
-    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">02</span><span><span className="fastnear-example-strategy__code">POST /v0/transactions</span> hydrates both hashes and shows the readable request, worker resolution, and early logs.</span></p>
-    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span>Only after that do you inspect receipt-level callback, charging, and refund behavior or fall back to exact RPC identity checks.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">01</span><span><span className="fastnear-example-strategy__code">POST /v0/account</span> on <span className="fastnear-example-strategy__code">outlayer.*</span> is the quickest hash-discovery surface.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">02</span><span><span className="fastnear-example-strategy__code">POST /v0/transactions</span> turns the caller hash and the worker hash into readable signer, method, and log evidence.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span>Inspect the worker transaction’s receipts only when the real question is about callback, charging, or refund behavior.</span></p>
   </div>
 </div>
 
-Useful references:
+**Goal**
 
-- <Link to="/tx/account">Account History</Link>
-- <Link to="/tx/transactions">Transactions by Hash</Link>
-- <Link to="/rpc/account/view-account">View Account</Link>
-- [OutLayer NEAR Integration](https://outlayer.fastnear.com/docs/near-integration)
-- [OutLayer Secrets / CKD](https://outlayer.fastnear.com/docs/secrets)
+- Recover one caller transaction, one worker transaction, and the finish receipts that belong to the same OutLayer request.
 
-## The short version
+| Surface | Endpoint | How we use it | Why we use it |
+| --- | --- | --- | --- |
+| Hash discovery | Transactions API [`POST /v0/account`](/tx/account) | Pull recent transaction hashes for `outlayer.near` | Gives the fastest contract-local search surface when you do not already know the pair of hashes |
+| Transaction hydration | Transactions API [`POST /v0/transactions`](/tx/transactions) | Hydrate the caller-side and worker-side hashes together | Turns the raw hashes into signer, receiver, action, and log evidence |
+| Finish-path inspection | Transactions API [`POST /v0/transactions`](/tx/transactions) | Reuse the worker hash and inspect its receipt list | Shows where callback, charging, and refund behavior materialized |
+| Optional identity check | RPC [`view_account`](/rpc/account/view-account) | Use RPC only if the next question is about contract identity rather than transaction history | Keeps current-state identity checks separate from history tracing |
 
-If you run into OutLayer on-chain, the practical questions are usually:
-
-- which transaction created the async work item?
-- which later transaction came from the worker?
-- where did callback, charging, and refund behavior show up?
-
-That is not a current-state question. It is an execution-history question.
-
-The useful FastNear move is to pair one caller-side `request_execution` transaction with one worker-side resolution transaction, and then drop to receipt inspection only for the finish.
-
-```mermaid
-sequenceDiagram
-    autonumber
-    participant Caller as "Caller"
-    participant Outlayer as "outlayer.*"
-    participant Worker as "worker.outlayer.*"
-    participant Near as "NEAR runtime"
-
-    Caller->>Outlayer: FunctionCall request_execution
-    Outlayer-->>Near: establish async work + accounting context
-    Worker->>Outlayer: resolve_execution or submit_execution_output_and_resolve
-    Outlayer-->>Near: completion logs, callback path, charging, refunds
-```
-
-Everything above is visible today with FastNear and RPC.
-
-## 1. Hydrate one request transaction and one worker resolution
-
-If you want the whole shape immediately, start with a known pair of hashes and hydrate both.
+## Verified shell walkthrough
 
 This pair worked on April 18, 2026:
 
-- `AJgn2DB7BaD3487wXii8rGM648eqvkFDqJ1zXCxfuRk4` — caller-side `request_execution`
-- `AVbxfPyN5P1ryFh7HPstWbjiSantPYWfMpiwKcJ7hXTs` — worker-side `submit_execution_output_and_resolve`
+- caller-side request: `AJgn2DB7BaD3487wXii8rGM648eqvkFDqJ1zXCxfuRk4`
+- worker-side resolution: `AVbxfPyN5P1ryFh7HPstWbjiSantPYWfMpiwKcJ7hXTs`
 
-```bash title="Hydrate a request hash and a worker-resolution hash"
-curl -sS https://tx.main.fastnear.com/v0/transactions \
+### 1. Hydrate the caller transaction and the worker transaction together
+
+```bash
+TX_BASE_URL=https://tx.main.fastnear.com
+REQUEST_TX_HASH=AJgn2DB7BaD3487wXii8rGM648eqvkFDqJ1zXCxfuRk4
+WORKER_TX_HASH=AVbxfPyN5P1ryFh7HPstWbjiSantPYWfMpiwKcJ7hXTs
+
+curl -sS "$TX_BASE_URL/v0/transactions" \
   -H 'content-type: application/json' \
-  --data '{
-    "tx_hashes":[
-      "AJgn2DB7BaD3487wXii8rGM648eqvkFDqJ1zXCxfuRk4",
-      "AVbxfPyN5P1ryFh7HPstWbjiSantPYWfMpiwKcJ7hXTs"
-    ]
-  }' | jq '.transactions[] | {
-    hash: .transaction.hash,
-    signer: .transaction.signer_id,
-    receiver: .transaction.receiver_id,
-    actions: [.transaction.actions[] | keys[0]],
-    logs: (.receipts[0].execution_outcome.outcome.logs[:2])
-  }'
-```
+  --data "$(jq -nc --arg request_tx_hash "$REQUEST_TX_HASH" --arg worker_tx_hash "$WORKER_TX_HASH" '{
+    tx_hashes: [$request_tx_hash, $worker_tx_hash]
+  }')" \
+  | tee /tmp/outlayer-pair.json >/dev/null
 
-In the sampled output:
-
-- the request hash came from `solarflux.near` to `outlayer.near`
-- the logs showed a resolved project: `zavodil.near/near-email`
-- the worker hash came from `worker.outlayer.near` to `outlayer.near`
-- the worker logs said `Stored pending output` and `Resolving execution ... (combined flow)`
-
-That is already the visible loop: the original `FunctionCall` established the async work item, the worker came back later as a separate signer, and the contract resolved the result on-chain.
-
-If you only copy one command from this page, copy this one.
-
-## 2. Find the two hashes yourself
-
-If you do not already have a pair of hashes, switch to <Link to="/tx/account">Transactions API: Account History</Link>.
-
-```bash title="Recent mainnet activity for outlayer.near"
-curl -sS https://tx.main.fastnear.com/v0/account \
-  -H 'content-type: application/json' \
-  --data '{"account_id":"outlayer.near","desc":true}' \
-  | jq '{txs_count, first: .account_txs[0]}'
-```
-
-On April 18, 2026 this surface reported more than 5,000 traced transactions for `outlayer.near`, and the newest sampled hash was:
-
-```text
-AVbxfPyN5P1ryFh7HPstWbjiSantPYWfMpiwKcJ7hXTs
-```
-
-That hash was not the original user request. It was already a worker-side follow-up.
-
-That is why account history is the right first search surface: you are not trying to summarize the contract, you are trying to find two concrete transactions in one execution story.
-
-```mermaid
-flowchart TD
-    A["Transactions API: /v0/account for outlayer.*"] --> B["Find recent transaction hashes"]
-    B --> C["Caller-side request_execution hash"]
-    B --> D["Worker-side resolution hash"]
-    C --> E["Hydrate both with /v0/transactions"]
-    D --> E
-    E --> F["Inspect logs, request_id, project/source, callback receipts, charging, refunds"]
-```
-
-## 3. Inspect the callback and refund phase
-
-If you want to go past “a worker called back,” inspect the receipt list on the hydrated worker transaction.
-
-```bash title="Show receipt-level follow-up for the worker resolution"
-curl -sS https://tx.main.fastnear.com/v0/transactions \
-  -H 'content-type: application/json' \
-  --data '{"tx_hashes":["AVbxfPyN5P1ryFh7HPstWbjiSantPYWfMpiwKcJ7hXTs"]}' \
-  | jq '.transactions[0] | {
-    hash: .transaction.hash,
-    receipts: [
-      .receipts[] | {
-        predecessor: .receipt.predecessor_id,
-        receiver: .receiver_id,
-        actions: [.receipt.receipt.Action.actions[] | keys[0]],
-        logs: .execution_outcome.outcome.logs
+jq '{
+  transactions: [
+    .transactions[]
+    | {
+        hash: .transaction.hash,
+        signer_id: .transaction.signer_id,
+        receiver_id: .transaction.receiver_id,
+        actions: [.transaction.actions[] | keys[0]],
+        first_logs: (.receipts[0].execution_outcome.outcome.logs[:2])
       }
-    ]
-  }'
+  ]
+}' /tmp/outlayer-pair.json
 ```
 
-What to look for:
+What this establishes:
 
-- `FunctionCall:on_execution_response`
+- the request transaction came from `solarflux.near` to `outlayer.near`
+- the request logs included the resolved project `zavodil.near/near-email`
+- the worker transaction came later from `worker.outlayer.near` to `outlayer.near`
+- the worker logs included `Stored pending output` and `Resolving execution ...`
+
+That is the core observable loop in NEAR terms: caller-side request first, worker-side resolution later.
+
+### 2. Inspect the worker receipts only when the finish path matters
+
+```bash
+jq --arg worker_tx_hash "$WORKER_TX_HASH" '
+  .transactions[]
+  | select(.transaction.hash == $worker_tx_hash)
+  | {
+      worker_tx_hash: .transaction.hash,
+      receipts: [
+        .receipts[]
+        | {
+            receipt_id: .receipt.receipt_id,
+            predecessor_id: .receipt.predecessor_id,
+            receiver_id: .receipt.receiver_id,
+            actions: [.receipt.receipt.Action.actions[] | keys[0]],
+            logs: .execution_outcome.outcome.logs
+          }
+      ]
+    }
+' /tmp/outlayer-pair.json
+```
+
+Look for:
+
+- `FunctionCall` receipts that continue the finish path
 - charging logs such as `[[yNEAR charged: "..."]]`
-- completion events such as `execution_completed`
-- follow-up `Transfer` receipts
+- follow-up `Transfer` receipts that suggest refund or settlement movement
 
-This is where `receipt` becomes the right abstraction: not at the beginning of the tutorial, but when you are debugging the actual finish path.
+This is the right point to care about receipts. Do not start here if the real question is still “which two transactions belong to the same OutLayer request?”
 
-## 4. Confirm the contract identity if you need it
+### 3. If you do not already know the two hashes, discover them first
 
-Use raw RPC when you want exact account identity and code-hash checks. This is the identity step, not the history step.
-
-```bash title="Mainnet: view_account for outlayer.near"
-curl -sS https://rpc.mainnet.fastnear.com \
+```bash
+curl -sS "$TX_BASE_URL/v0/account" \
   -H 'content-type: application/json' \
-  --data '{
-    "jsonrpc":"2.0",
-    "id":"1",
-    "method":"query",
-    "params":{
-      "request_type":"view_account",
-      "finality":"final",
-      "account_id":"outlayer.near"
-    }
-  }' | jq '.result | {amount, locked, code_hash, storage_usage}'
+  --data '{"account_id":"outlayer.near","desc":true,"limit":10}' \
+  | jq '{
+      txs_count,
+      recent_hashes: [.account_txs[:10][] | .transaction_hash]
+    }'
 ```
 
-```bash title="Testnet: view_account for outlayer.testnet"
-curl -sS https://rpc.testnet.fastnear.com \
-  -H 'content-type: application/json' \
-  --data '{
-    "jsonrpc":"2.0",
-    "id":"1",
-    "method":"query",
-    "params":{
-      "request_type":"view_account",
-      "finality":"final",
-      "account_id":"outlayer.testnet"
-    }
-  }' | jq '.result | {amount, locked, code_hash, storage_usage}'
-```
+Use this as a discovery surface only. For this example, `/v0/account` gives you candidate hashes, and `/v0/transactions` is the surface that turns those hashes into readable evidence.
 
-As of April 18, 2026, both contracts returned the same code hash:
+## Scope boundary
 
-```text
-94uKcoDB3QbEpxDj1xsw9CQwu9bAY1PoVPr2BZYRRv4K
-```
+This page intentionally stays on public chain evidence that FastNear and RPC can show directly:
 
-That is a strong hint that the same contract binary is deployed on both networks.
+- caller-side request transaction
+- later worker-side resolution transaction
+- finish-path receipts and logs
 
-## 5. What is happening under the hood?
+It does **not** try to prove OutLayer’s internal TEE execution model, same-account `yield/resume` usage, or CKD/MPC trust path from public transaction traces alone. Treat those as separate architecture questions and read them in the OutLayer docs, not as claims established by this trace.
 
-The visible story above is what a NEAR builder needs first. The deeper story explains why this flow is interesting.
+## Related pages
 
-### Observable now
-
-FastNear and RPC can already show you:
-
-- the caller-side `request_execution`
-- the worker-side `resolve_execution` or `submit_execution_output_and_resolve`
-- the finish receipts where callback, charging, and refund behavior materialize
-
-Your own integration is still ordinary NEAR async composition: call `outlayer.*`, then handle your callback.
-
-### Documented under the hood
-
-The OutLayer docs describe a deeper internal model: `outlayer.*` uses NEAR yield/resume semantics as its own internal async boundary, off-chain work runs inside TEE workers, and protected secrets use a separate keystore trust path backed by DAO-gated CKD requests to the NEAR MPC signer.
-
-The important precision for NEAR readers is that yield/resume is not being presented here as something your caller contract directly writes. NEAR's yield/resume primitives are same-account primitives, so if that mechanism is used here, the yielded and resumed actor is `outlayer.*`, not the original caller contract. For the raw runtime model, see <Link to="/transaction-flow/advanced-features">Advanced Features</Link>.
-
-The Secrets / CKD docs describe that keystore path as two-level: the keystore gets a derivation key through a DAO-gated MPC path, then uses that cached derivation capability for protected secrets during app executions. That is a trust-path explanation, not a claim that every ordinary OutLayer execution makes a fresh DAO -> MPC round trip.
-
-The live public gateway account for that keystore / DAO path is still unresolved in our current public chain evidence, so keep that part in the documented-under-the-hood bucket rather than the observable-now bucket.
-
-```mermaid
-flowchart TB
-    subgraph Observable["Observable now with FastNear / RPC"]
-        Caller["User or calling contract"] -->|FunctionCall request_execution| Entry["outlayer.*"]
-        Entry -->|later worker activity| Worker["worker.outlayer.*"]
-        Worker -->|resolve_execution or submit_execution_output_and_resolve| Entry
-        Entry -->|on_execution_response, charging, refund transfers| Finish["Callback / finish receipts"]
-    end
-
-    subgraph Internal["Documented under the hood"]
-        Yield["outlayer.* internal yield point"] --> TEE["TEE worker executes WASM"]
-        TEE -->|resume with output| Yield
-        TEE --> Keystore["TEE keystore for protected secrets"]
-        Keystore -->|documented DAO-gated request_key| DAO["DAO gateway (documented)"]
-        DAO -->|documented CKD request| MPC["v1.signer / v1.signer-prod.testnet"]
-        MPC -->|derivation key for keystore| Keystore
-    end
-
-    Entry -. same logical execution .-> Yield
-
-    classDef observable fill:#e7f1ff,stroke:#2563eb,color:#0f172a;
-    classDef internal fill:#fff4e5,stroke:#b45309,color:#0f172a;
-    class Caller,Entry,Worker,Finish observable;
-    class Yield,TEE,Keystore,DAO,MPC internal;
-```
-
-## Read deeper
-
-- <Link to="/tx">Transactions API</Link> for account history, receipts, and transaction hydration
-- <Link to="/transaction-flow/advanced-features">Advanced Features</Link> for NEAR yield/resume semantics
-- <Link to="/transaction-flow/async-model">Async Model</Link> for promise and callback vocabulary
-- [OutLayer NEAR Integration](https://outlayer.fastnear.com/docs/near-integration) for the documented contract-facing interface
-- [OutLayer Secrets / CKD](https://outlayer.fastnear.com/docs/secrets) for the documented keystore, DAO, and MPC trust path
+- <Link to="/tx/account">Transactions API: Account History</Link>
+- <Link to="/tx/transactions">Transactions API: Transactions by Hash</Link>
+- <Link to="/tx/receipt">Transactions API: Receipt by ID</Link>
+- <Link to="/rpc/account/view-account">RPC: View Account</Link>
+- [OutLayer NEAR Integration](https://outlayer.fastnear.com/docs/near-integration)
+- [OutLayer Secrets / CKD](https://outlayer.fastnear.com/docs/secrets)

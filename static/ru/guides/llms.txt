@@ -36,7 +36,7 @@
 - [Примеры Transfers API](https://docs.fastnear.com/ru/transfers/examples.md): Пошаговые сценарии для поиска переводов, пагинации через resume_token и перехода к истории транзакций.
 - [Примеры Transactions API](https://docs.fastnear.com/ru/tx/examples.md): Пошаговые расследования и подробные разборы для работы с receipt, транзакциями, записями NEAR Social, promise-цепочками и расчётами NEAR Intents.
 - [Berry Club: как восстанавливать исторические доски](https://docs.fastnear.com/ru/tx/examples/berry-club.md): Используйте Transactions API, RPC get_lines и проигрывание draw-вызовов, чтобы восстанавливать доски Berry Club по историческим эпохам.
-- [OutLayer: как проследить один запрос от вызова до callback](https://docs.fastnear.com/ru/tx/examples/outlayer.md): Используйте Transactions API и RPC, чтобы проследить реальный OutLayer-запрос от исходного FunctionCall через транзакцию воркера до callback- и refund-фазы.
+- [OutLayer: трассировка запроса и разрешения воркером](https://docs.fastnear.com/ru/tx/examples/outlayer.md): Используйте Transactions API, чтобы связать один caller-side запрос OutLayer с более поздним worker-side разрешением и разобрать завершающие receipts.
 
 ## Снапшоты
 

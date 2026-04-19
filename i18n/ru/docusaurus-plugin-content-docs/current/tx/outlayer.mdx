@@ -1,8 +1,8 @@
 ---
 sidebar_label: OutLayer
 slug: /tx/examples/outlayer
-title: "OutLayer: как проследить один запрос от вызова до callback"
-description: "Используйте Transactions API и RPC, чтобы проследить реальный OutLayer-запрос от исходного FunctionCall через транзакцию воркера до callback- и refund-фазы."
+title: "OutLayer: трассировка запроса и разрешения воркером"
+description: "Используйте Transactions API, чтобы связать один caller-side запрос OutLayer с более поздним worker-side разрешением и разобрать завершающие receipts."
 displayed_sidebar: transactionsApiSidebar
 page_actions:
   - markdown
@@ -10,265 +10,151 @@ keywords:
   - OutLayer
   - FastNear
   - NEAR
-  - RPC
   - Transactions API
-  - callback
-  - promise
   - receipt
+  - callback
 ---
 
 import Link from '@site/src/components/LocalizedLink';
 
-{/* FASTNEAR_AI_DISCOVERY: Этот подробный разбор показывает, как использовать FastNear RPC и Transactions API, чтобы разбирать живое исполнение OutLayer в терминах NEAR. Он отделяет видимый request/worker/callback-поток, который уже можно трассировать через FastNear, от задокументированного внутреннего пути yield/resume и CKD/MPC. */}
+{/* FASTNEAR_AI_DISCOVERY: Этот пример остаётся в пределах наблюдаемых транзакций и receipts. Он показывает, как связать один caller-side запрос OutLayer с более поздним worker-side разрешением и разобрать finish-receipts. Он не пытается доказывать внутреннюю TEE-, yield/resume- или CKD/MPC-архитектуру OutLayer только по публичным chain-данным. */}
 
-# OutLayer: как проследить один запрос от вызова до callback
+# OutLayer: трассировка запроса и разрешения воркером
 
-Используйте этот разбор, когда вопрос звучит так: «я вижу OutLayer в цепочке. Какая транзакция открыла работу, какая более поздняя транзакция пришла от воркера и где проявились callback, списание и возврат средств?»
+Используйте этот сценарий, когда вопрос звучит так: «какая транзакция открыла запрос OutLayer, какая более поздняя транзакция пришла от воркера и где в завершающих receipts видны callback, списание или возврат средств?»
 
-Это продвинутый разбор асинхронного исполнения в семействе Transactions examples. Держите NEAR-рамку первой: один `FunctionCall` со стороны вызывающего, одна более поздняя транзакция со стороны воркера, и квитанции только тогда, когда действительно нужно разбирать фазу завершения.
+Сначала смотрите на это как на задачу по истории транзакций:
+
+- один caller-side `request_execution`
+- одна более поздняя worker-side транзакция `submit_execution_output_and_resolve` или `resolve_execution`
+- переход к receipts только тогда, когда уже важен путь завершения
 
 <div className="fastnear-example-strategy">
   <div className="fastnear-example-strategy__header">
     <span className="fastnear-example-strategy__eyebrow">Стратегия</span>
-    <p className="fastnear-example-strategy__title">Сначала найдите caller-транзакцию и worker-транзакцию, а receipts подключайте только тогда, когда настоящим вопросом становится finish-путь.</p>
+    <p className="fastnear-example-strategy__title">Сначала найдите два хеша, затем раскройте их, а к worker-receipts переходите только тогда, когда нужен finish-путь.</p>
   </div>
   <div className="fastnear-example-strategy__items">
-    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">01</span><span><span className="fastnear-example-strategy__code">POST /v0/account</span> — самый быстрый способ найти caller-side и worker-side хеши из одной и той же истории.</span></p>
-    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">02</span><span><span className="fastnear-example-strategy__code">POST /v0/transactions</span> раскрывает оба хеша и показывает читаемые request, worker-resolution и ранние логи.</span></p>
-    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span>Только после этого имеет смысл разбирать callback, списание и refund на уровне receipts или уходить в точные RPC-проверки идентичности.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">01</span><span><span className="fastnear-example-strategy__code">POST /v0/account</span> по <span className="fastnear-example-strategy__code">outlayer.*</span> — самый быстрый surface для поиска хешей.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">02</span><span><span className="fastnear-example-strategy__code">POST /v0/transactions</span> превращает caller-хеш и worker-хеш в читаемые signer, method и log-доказательства.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span>Разбирайте receipts worker-транзакции только тогда, когда реальный вопрос уже касается callback, списания или возврата средств.</span></p>
   </div>
 </div>
 
-Полезные ссылки:
+**Цель**
 
-- <Link to="/tx/account">История аккаунта</Link>
-- <Link to="/tx/transactions">Транзакции по хешу</Link>
-- <Link to="/rpc/account/view-account">Просмотр аккаунта</Link>
-- [NEAR Integration в OutLayer](https://outlayer.fastnear.com/docs/near-integration)
-- [Secrets / CKD в OutLayer](https://outlayer.fastnear.com/docs/secrets)
+- Восстановить одну caller-side транзакцию, одну worker-side транзакцию и завершающие receipts, которые относятся к одному и тому же запросу OutLayer.
 
-## Короткая версия
+| Поверхность | Эндпоинт | Как используем | Зачем используем |
+| --- | --- | --- | --- |
+| Поиск хешей | Transactions API [`POST /v0/account`](/tx/account) | Забираем недавние хеши транзакций для `outlayer.near` | Даёт самый быстрый локальный по контракту surface, когда пара хешей ещё не известна |
+| Раскрытие транзакций | Transactions API [`POST /v0/transactions`](/tx/transactions) | Раскрываем caller-side и worker-side хеши вместе | Превращает сырые хеши в signer-, receiver-, action- и log-доказательства |
+| Разбор finish-пути | Transactions API [`POST /v0/transactions`](/tx/transactions) | Переиспользуем worker-хеш и читаем список его receipts | Показывает, где материализовались callback, списание и возврат средств |
+| Необязательная проверка идентичности | RPC [`view_account`](/rpc/account/view-account) | Идём в RPC только если следующий вопрос уже про идентичность контракта, а не про историю транзакций | Держит проверку текущего состояния отдельно от трассировки истории |
 
-Если вы видите активность OutLayer в цепочке, практические вопросы обычно такие:
-
-- какая транзакция создала асинхронную единицу работы?
-- какая более поздняя транзакция пришла от воркера?
-- где именно проявились callback, списание и возврат средств?
-
-Это не вопрос о текущем состоянии. Это вопрос об истории исполнения.
-
-Полезный ход через FastNear — связать одну транзакцию `request_execution` со стороны вызывающего с одной транзакцией разрешения со стороны воркера, а к receipt переходить только на этапе завершения.
-
-```mermaid
-sequenceDiagram
-    autonumber
-    participant Caller as "Вызывающая сторона"
-    participant Outlayer as "outlayer.*"
-    participant Worker as "worker.outlayer.*"
-    participant Near as "исполняющая среда NEAR"
-
-    Caller->>Outlayer: FunctionCall request_execution
-    Outlayer-->>Near: создаёт асинхронную работу и контекст учёта
-    Worker->>Outlayer: resolve_execution или submit_execution_output_and_resolve
-    Outlayer-->>Near: логи завершения, путь callback, списание, возвраты
-```
-
-Всё это уже видно сегодня через FastNear и RPC.
-
-## 1. Раскройте одну транзакцию запроса и одно разрешение воркера
-
-Если хотите сразу увидеть всю форму потока, начните с уже известной пары хешей и раскройте оба.
+## Проверенный shell-сценарий
 
 Эта пара работала 18 апреля 2026 года:
 
-- `AJgn2DB7BaD3487wXii8rGM648eqvkFDqJ1zXCxfuRk4` — `request_execution` со стороны вызывающего
-- `AVbxfPyN5P1ryFh7HPstWbjiSantPYWfMpiwKcJ7hXTs` — `submit_execution_output_and_resolve` со стороны воркера
+- caller-side запрос: `AJgn2DB7BaD3487wXii8rGM648eqvkFDqJ1zXCxfuRk4`
+- worker-side разрешение: `AVbxfPyN5P1ryFh7HPstWbjiSantPYWfMpiwKcJ7hXTs`
 
-```bash title="Раскройте хеш запроса и хеш разрешения воркера"
-curl -sS https://tx.main.fastnear.com/v0/transactions \
+### 1. Сразу раскройте caller-транзакцию и worker-транзакцию вместе
+
+```bash
+TX_BASE_URL=https://tx.main.fastnear.com
+REQUEST_TX_HASH=AJgn2DB7BaD3487wXii8rGM648eqvkFDqJ1zXCxfuRk4
+WORKER_TX_HASH=AVbxfPyN5P1ryFh7HPstWbjiSantPYWfMpiwKcJ7hXTs
+
+curl -sS "$TX_BASE_URL/v0/transactions" \
   -H 'content-type: application/json' \
-  --data '{
-    "tx_hashes":[
-      "AJgn2DB7BaD3487wXii8rGM648eqvkFDqJ1zXCxfuRk4",
-      "AVbxfPyN5P1ryFh7HPstWbjiSantPYWfMpiwKcJ7hXTs"
-    ]
-  }' | jq '.transactions[] | {
-    hash: .transaction.hash,
-    signer: .transaction.signer_id,
-    receiver: .transaction.receiver_id,
-    actions: [.transaction.actions[] | keys[0]],
-    logs: (.receipts[0].execution_outcome.outcome.logs[:2])
-  }'
-```
+  --data "$(jq -nc --arg request_tx_hash "$REQUEST_TX_HASH" --arg worker_tx_hash "$WORKER_TX_HASH" '{
+    tx_hashes: [$request_tx_hash, $worker_tx_hash]
+  }')" \
+  | tee /tmp/outlayer-pair.json >/dev/null
 
-В этом выборочном выводе:
-
-- хеш запроса шёл от `solarflux.near` к `outlayer.near`
-- в логах фигурировал разрешённый проект: `zavodil.near/near-email`
-- хеш воркера шёл от `worker.outlayer.near` к `outlayer.near`
-- в логах воркера было `Stored pending output` и `Resolving execution ... (combined flow)`
-
-Этого уже достаточно для видимой истории в терминах NEAR: исходный `FunctionCall` создал асинхронную единицу работы, позже воркер вернулся как отдельный подписант, а контракт разрешил результат в цепочке.
-
-Если копировать с этой страницы только одну команду, то именно эту.
-
-## 2. Найдите два нужных хеша сами
-
-Если пары хешей у вас ещё нет, переключитесь на <Link to="/tx/account">Transactions API: история аккаунта</Link>.
-
-```bash title="Недавняя mainnet-активность для outlayer.near"
-curl -sS https://tx.main.fastnear.com/v0/account \
-  -H 'content-type: application/json' \
-  --data '{"account_id":"outlayer.near","desc":true}' \
-  | jq '{txs_count, first: .account_txs[0]}'
-```
-
-18 апреля 2026 года эта поверхность показывала более 5 000 трассированных транзакций для `outlayer.near`, а самый свежий выборочный хеш был таким:
-
-```text
-AVbxfPyN5P1ryFh7HPstWbjiSantPYWfMpiwKcJ7hXTs
-```
-
-Этот хеш не был исходным пользовательским запросом. Это уже было последующее действие со стороны воркера.
-
-Именно поэтому история аккаунта — правильный первый поиск: здесь задача не в том, чтобы описать контракт целиком, а в том, чтобы найти две конкретные транзакции в одной истории исполнения.
-
-```mermaid
-flowchart TD
-    A["Transactions API: /v0/account для outlayer.*"] --> B["Найдите недавние хеши транзакций"]
-    B --> C["Хеш request_execution со стороны вызывающего"]
-    B --> D["Хеш разрешения со стороны воркера"]
-    C --> E["Раскройте оба через /v0/transactions"]
-    D --> E
-    E --> F["Проверьте логи, request_id, project/source, callback-receipt, списание и возвраты"]
-```
-
-## 3. Разберите фазу callback и возврата средств
-
-Если нужно пройти дальше, чем просто «воркер вернул результат», посмотрите список receipt у раскрытой воркерской транзакции.
-
-```bash title="Показать последующие действия на уровне receipt для разрешения воркером"
-curl -sS https://tx.main.fastnear.com/v0/transactions \
-  -H 'content-type: application/json' \
-  --data '{"tx_hashes":["AVbxfPyN5P1ryFh7HPstWbjiSantPYWfMpiwKcJ7hXTs"]}' \
-  | jq '.transactions[0] | {
-    hash: .transaction.hash,
-    receipts: [
-      .receipts[] | {
-        predecessor: .receipt.predecessor_id,
-        receiver: .receiver_id,
-        actions: [.receipt.receipt.Action.actions[] | keys[0]],
-        logs: .execution_outcome.outcome.logs
+jq '{
+  transactions: [
+    .transactions[]
+    | {
+        hash: .transaction.hash,
+        signer_id: .transaction.signer_id,
+        receiver_id: .transaction.receiver_id,
+        actions: [.transaction.actions[] | keys[0]],
+        first_logs: (.receipts[0].execution_outcome.outcome.logs[:2])
       }
-    ]
-  }'
+  ]
+}' /tmp/outlayer-pair.json
+```
+
+Что это доказывает:
+
+- запросная транзакция шла от `solarflux.near` к `outlayer.near`
+- в логах запроса фигурировал проект `zavodil.near/near-email`
+- worker-транзакция позже пришла от `worker.outlayer.near` к `outlayer.near`
+- в логах воркера были `Stored pending output` и `Resolving execution ...`
+
+Это и есть главный наблюдаемый цикл в терминах NEAR: сначала caller-side запрос, затем более позднее worker-side разрешение.
+
+### 2. Читайте worker-receipts только тогда, когда уже важен finish-путь
+
+```bash
+jq --arg worker_tx_hash "$WORKER_TX_HASH" '
+  .transactions[]
+  | select(.transaction.hash == $worker_tx_hash)
+  | {
+      worker_tx_hash: .transaction.hash,
+      receipts: [
+        .receipts[]
+        | {
+            receipt_id: .receipt.receipt_id,
+            predecessor_id: .receipt.predecessor_id,
+            receiver_id: .receipt.receiver_id,
+            actions: [.receipt.receipt.Action.actions[] | keys[0]],
+            logs: .execution_outcome.outcome.logs
+          }
+      ]
+    }
+' /tmp/outlayer-pair.json
 ```
 
 На что смотреть:
 
-- `FunctionCall:on_execution_response`
+- `FunctionCall`-receipts, которые продолжают finish-путь
 - логи списания вроде `[[yNEAR charged: "..."]]`
-- события завершения вроде `execution_completed`
-- последующие receipt `Transfer`
+- последующие `Transfer`-receipts, которые похожи на refund или settlement-движение
 
-Здесь понятие receipt как раз становится правильной абстракцией: не в начале урока, а тогда, когда уже отлаживается реальный путь завершения.
+Именно здесь receipts становятся правильной абстракцией. Не начинайте с них, если вопрос пока ещё звучит как «какие две транзакции относятся к одному запросу OutLayer?»
 
-## 4. Подтвердите контракт, если нужна точная проверка
+### 3. Если двух хешей у вас ещё нет, сначала найдите их
 
-Если нужна точная проверка аккаунта и `code_hash`, используйте сырой RPC. Это шаг для проверки идентичности, а не для восстановления истории исполнения.
-
-```bash title="Mainnet: view_account для outlayer.near"
-curl -sS https://rpc.mainnet.fastnear.com \
+```bash
+curl -sS "$TX_BASE_URL/v0/account" \
   -H 'content-type: application/json' \
-  --data '{
-    "jsonrpc":"2.0",
-    "id":"1",
-    "method":"query",
-    "params":{
-      "request_type":"view_account",
-      "finality":"final",
-      "account_id":"outlayer.near"
-    }
-  }' | jq '.result | {amount, locked, code_hash, storage_usage}'
+  --data '{"account_id":"outlayer.near","desc":true,"limit":10}' \
+  | jq '{
+      txs_count,
+      recent_hashes: [.account_txs[:10][] | .transaction_hash]
+    }'
 ```
 
-```bash title="Testnet: view_account для outlayer.testnet"
-curl -sS https://rpc.testnet.fastnear.com \
-  -H 'content-type: application/json' \
-  --data '{
-    "jsonrpc":"2.0",
-    "id":"1",
-    "method":"query",
-    "params":{
-      "request_type":"view_account",
-      "finality":"final",
-      "account_id":"outlayer.testnet"
-    }
-  }' | jq '.result | {amount, locked, code_hash, storage_usage}'
-```
+Используйте это только как surface для поиска хешей. В этом примере `/v0/account` даёт кандидатов, а `/v0/transactions` — это уже surface, который превращает их в читаемое доказательство.
 
-По состоянию на 18 апреля 2026 года оба контракта возвращали один и тот же `code_hash`:
+## Граница сценария
 
-```text
-94uKcoDB3QbEpxDj1xsw9CQwu9bAY1PoVPr2BZYRRv4K
-```
+Этот сценарий намеренно остаётся в рамках публичных chain-данных, которые FastNear и RPC умеют показывать напрямую:
 
-Это сильный сигнал, что на обеих сетях развёрнут один и тот же бинарник контракта.
+- caller-side транзакция запроса
+- более поздняя worker-side транзакция разрешения
+- finish-receipts и логи
 
-## 5. Что происходит внутри?
+Он **не** пытается доказывать внутреннюю TEE-модель OutLayer, использование same-account `yield/resume` или путь доверия через CKD/MPC только по публичной трассе транзакций. Это отдельные архитектурные вопросы, и читать их нужно в документации OutLayer, а не считать доказанными этим trace-сценарием.
 
-Видимая история выше — это то, что NEAR-разработчику нужно сначала. Более глубокий слой объясняет, почему этот поток вообще интересен.
+## Полезные связанные страницы
 
-### Что можно наблюдать уже сейчас
-
-Через FastNear и RPC уже видно:
-
-- вызывающую транзакцию `request_execution`
-- воркерскую `resolve_execution` или `submit_execution_output_and_resolve`
-- завершающие receipt, где материализуются callback, списание и возврат средств
-
-Интеграция вашего контракта при этом остаётся обычной асинхронной композицией в NEAR: вы вызываете `outlayer.*`, а потом обрабатываете свой callback.
-
-### Что задокументировано как внутренний механизм
-
-Документация OutLayer описывает более глубокий внутренний слой: `outlayer.*` использует семантику NEAR `yield/resume` как свою внутреннюю асинхронную границу, внешняя работа выполняется в TEE-воркерах, а защищённые секреты проходят через отдельный путь доверия, где TEE-keystore получает DAO-gated CKD через MPC signer.
-
-Для NEAR-разработчика здесь важна точность: мы не говорим, что ваш вызывающий контракт сам пишет `promise_yield_create`. Примитивы `yield/resume` в NEAR работают только в рамках одного и того же аккаунта, поэтому если этот механизм используется здесь, то yielding и resuming делает `outlayer.*`, а не исходный вызывающий контракт. Для сырой модели выполнения смотрите <Link to="/transaction-flow/advanced-features">Продвинутые возможности</Link>.
-
-Документация Secrets / CKD описывает этот путь keystore как двухуровневый: сначала keystore получает derivation key через DAO-gated путь к MPC, а затем использует уже полученную derivation capability для защищённых секретов во время исполнений приложения. Это объяснение доверительной модели, а не утверждение, что каждое обычное исполнение OutLayer делает новый DAO -> MPC round trip.
-
-Публичный gateway-аккаунт для этого пути keystore / DAO в наших текущих публичных chain-данных всё ещё не подтверждён, поэтому эту часть надо держать в корзине «задокументировано внутри», а не в корзине «уже наблюдается сейчас».
-
-```mermaid
-flowchart TB
-    subgraph Observable["Что уже можно наблюдать через FastNear / RPC"]
-        Caller["Пользователь или вызывающий контракт"] -->|FunctionCall request_execution| Entry["outlayer.*"]
-        Entry -->|поздняя активность воркера| Worker["worker.outlayer.*"]
-        Worker -->|resolve_execution или submit_execution_output_and_resolve| Entry
-        Entry -->|on_execution_response, списание, refund-переводы| Finish["Callback / finish receipt"]
-    end
-
-    subgraph Internal["Что задокументировано как внутренний слой"]
-        Yield["внутренняя yield-точка в outlayer.*"] --> TEE["TEE-воркер исполняет WASM"]
-        TEE -->|resume с результатом| Yield
-        TEE --> Keystore["TEE-keystore для защищённых секретов"]
-        Keystore -->|задокументированный DAO-gated request_key| DAO["DAO gateway (задокументирован)"]
-        DAO -->|задокументированный CKD request| MPC["v1.signer / v1.signer-prod.testnet"]
-        MPC -->|derivation key для keystore| Keystore
-    end
-
-    Entry -. та же логическая история исполнения .-> Yield
-
-    classDef observable fill:#e7f1ff,stroke:#2563eb,color:#0f172a;
-    classDef internal fill:#fff4e5,stroke:#b45309,color:#0f172a;
-    class Caller,Entry,Worker,Finish observable;
-    class Yield,TEE,Keystore,DAO,MPC internal;
-```
-
-## Куда читать дальше
-
-- <Link to="/tx">Transactions API</Link> для истории аккаунта, receipt и раскрытия транзакций
-- <Link to="/transaction-flow/advanced-features">Продвинутые возможности</Link> для семантики `yield/resume` в NEAR
-- <Link to="/transaction-flow/async-model">Асинхронная модель</Link> для лексики promise и callback
-- [NEAR Integration в OutLayer](https://outlayer.fastnear.com/docs/near-integration) для задокументированного контрактного интерфейса
-- [Secrets / CKD в OutLayer](https://outlayer.fastnear.com/docs/secrets) для задокументированного пути keystore, DAO и MPC
+- <Link to="/tx/account">Transactions API: история аккаунта</Link>
+- <Link to="/tx/transactions">Transactions API: транзакции по хешу</Link>
+- <Link to="/tx/receipt">Transactions API: receipt по ID</Link>
+- <Link to="/rpc/account/view-account">RPC: view_account</Link>
+- [NEAR Integration в OutLayer](https://outlayer.fastnear.com/docs/near-integration)
+- [Secrets / CKD в OutLayer](https://outlayer.fastnear.com/docs/secrets)
