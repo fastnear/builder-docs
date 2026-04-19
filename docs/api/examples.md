@@ -162,7 +162,7 @@ Use this when the user story is “this BOS widget is a real on-chain artifact. 
     <p className="fastnear-example-strategy__title">Read the exact widget first, then mint only after the provenance fields are deterministic.</p>
   </div>
   <div className="fastnear-example-strategy__items">
-    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">01</span><span><span className="fastnear-example-strategy__code">GET /v1/account/.../nft</span> checks whether the receiver already holds archive NFTs from this collection.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">01</span><span><span className="fastnear-example-strategy__code">GET /v1/account/.../nft</span> checks whether the receiver already shows a holding from this archive collection.</span></p>
     <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">02</span><span><span className="fastnear-example-strategy__code">RPC call_function get</span> on <span className="fastnear-example-strategy__code">social.near</span> reads the exact widget source and its SocialDB write block.</span></p>
     <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span>Hash the source, mint <span className="fastnear-example-strategy__code">nft_mint</span> on testnet, then verify the exact provenance fields through <span className="fastnear-example-strategy__code">nft_token</span>.</span></p>
   </div>
@@ -181,7 +181,7 @@ Use this when the user story is “this BOS widget is a real on-chain artifact. 
 
 **What you're doing**
 
-- Check whether the receiver already holds NFTs from the archive collection.
+- Check whether the receiver already shows a holding from the archive collection.
 - Read one exact BOS widget from `social.near`, including its widget-level SocialDB block.
 - Hash the widget source and turn that into provenance metadata.
 - Mint a testnet NFT whose metadata records the author, widget path, SocialDB block, and source hash.
@@ -204,24 +204,25 @@ RECEIVER_ACCOUNT_ID=YOUR_ACCOUNT_ID.testnet
 SIGNER_ACCOUNT_ID="$RECEIVER_ACCOUNT_ID"
 ```
 
-1. Use FastNear API to see whether the receiver already holds NFTs from the archive collection.
+1. Use FastNear API to see whether the receiver already shows a holding from the archive collection.
 
 ```bash
 curl -s "$API_BASE_URL/v1/account/$RECEIVER_ACCOUNT_ID/nft" \
   | tee /tmp/provenance-account-nfts.json >/dev/null
 
 jq --arg destination_collection_id "$DESTINATION_COLLECTION_ID" '{
-  existing_archive_tokens: [
+  existing_archive_collection_entries: [
     .tokens[]?
     | select(.contract_id == $destination_collection_id)
     | {
         contract_id,
-        token_id,
         last_update_block_height
       }
   ]
 }' /tmp/provenance-account-nfts.json
 ```
+
+This is a quick collection-presence check, not an exact token inventory. The exact minted token is verified later through `nft_token`.
 
 2. Read the exact widget body and widget-level SocialDB block from mainnet.
 
@@ -365,7 +366,7 @@ jq '{
 
 **Why this next step?**
 
-FastNear API gives you the quick receiver-side check. Mainnet RPC gives you the exact widget body and SocialDB block. The exact `nft_token` read on testnet confirms that minting turned that into a durable NFT record. If you later want to prove which historical transaction wrote the widget, hand off to the NEAR Social proof investigations on [Transactions API examples](/tx/examples).
+FastNear API gives you the quick receiver-side collection check. Mainnet RPC gives you the exact widget body and SocialDB block. The exact `nft_token` read on testnet confirms that minting turned that into a durable NFT record. If you later want to prove which historical transaction wrote the widget, hand off to the NEAR Social proof investigations on [Transactions API examples](/tx/examples).
 
 ## Common jobs
 

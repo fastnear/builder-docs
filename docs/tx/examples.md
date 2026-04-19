@@ -1186,10 +1186,6 @@ For this live anchor:
 
 #### NEAR Social widget write-proof shell walkthrough
 
-## Settlement Trace
-
-This is the richest single-trace investigation on the page: one live NEAR Intents settlement, from top-level tx to the receipts and events that explain it.
-
 Use this when you want to turn one widget block anchor into the exact transaction that wrote it.
 
 **What you're doing**

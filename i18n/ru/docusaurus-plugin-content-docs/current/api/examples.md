@@ -162,7 +162,7 @@ jq -n \
     <p className="fastnear-example-strategy__title">Сначала прочитайте точный виджет, а mint делайте только тогда, когда provenance-поля уже детерминированы.</p>
   </div>
   <div className="fastnear-example-strategy__items">
-    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">01</span><span><span className="fastnear-example-strategy__code">GET /v1/account/.../nft</span> проверяет, есть ли у получателя уже архивные NFT из этой коллекции.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">01</span><span><span className="fastnear-example-strategy__code">GET /v1/account/.../nft</span> проверяет, появляется ли у получателя уже запись об этой архивной коллекции.</span></p>
     <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">02</span><span><span className="fastnear-example-strategy__code">RPC call_function get</span> на <span className="fastnear-example-strategy__code">social.near</span> читает точный исходник виджета и блок его записи в SocialDB.</span></p>
     <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span>Захешируйте исходник, выполните <span className="fastnear-example-strategy__code">nft_mint</span> в testnet, а потом проверьте точные provenance-поля через <span className="fastnear-example-strategy__code">nft_token</span>.</span></p>
   </div>
@@ -181,7 +181,7 @@ jq -n \
 
 **Что вы делаете**
 
-- Через FastNear API проверяете, есть ли у получателя NFT из архивной коллекции.
+- Через FastNear API проверяете, появляется ли у получателя уже запись об архивной коллекции.
 - Читаете один точный BOS-виджет из `social.near`, включая SocialDB-блок именно этого виджета.
 - Хешируете исходник виджета и превращаете его в provenance-метаданные.
 - Выпускаете NFT в testnet, чьи метаданные фиксируют автора, widget-path, SocialDB-блок и хеш исходника.
@@ -204,24 +204,25 @@ RECEIVER_ACCOUNT_ID=YOUR_ACCOUNT_ID.testnet
 SIGNER_ACCOUNT_ID="$RECEIVER_ACCOUNT_ID"
 ```
 
-1. Через FastNear API посмотрите, держит ли получатель уже какие-то NFT из архивной коллекции.
+1. Через FastNear API посмотрите, появляется ли у получателя уже запись об архивной коллекции.
 
 ```bash
 curl -s "$API_BASE_URL/v1/account/$RECEIVER_ACCOUNT_ID/nft" \
   | tee /tmp/provenance-account-nfts.json >/dev/null
 
 jq --arg destination_collection_id "$DESTINATION_COLLECTION_ID" '{
-  existing_archive_tokens: [
+  existing_archive_collection_entries: [
     .tokens[]?
     | select(.contract_id == $destination_collection_id)
     | {
         contract_id,
-        token_id,
         last_update_block_height
       }
   ]
 }' /tmp/provenance-account-nfts.json
 ```
+
+Это быстрый чек наличия коллекции у получателя, а не точный список токенов. Точный выпущенный токен позже подтверждается через `nft_token`.
 
 2. Прочитайте точное тело виджета и widget-level SocialDB-блок из mainnet.
 
@@ -365,7 +366,7 @@ jq '{
 
 **Зачем нужен следующий шаг?**
 
-FastNear API даёт быстрый чек со стороны получателя. Mainnet RPC даёт точное тело виджета и его SocialDB-блок. Точное чтение `nft_token` в testnet подтверждает, что mint действительно превратил это в долговечную NFT-запись. Если позже понадобится доказать, какая именно историческая транзакция записала этот виджет, переходите к NEAR Social proof-расследованиям в [Transactions API examples](/tx/examples).
+FastNear API даёт быстрый чек наличия коллекции со стороны получателя. Mainnet RPC даёт точное тело виджета и его SocialDB-блок. Точное чтение `nft_token` в testnet подтверждает, что mint действительно превратил это в долговечную NFT-запись. Если позже понадобится доказать, какая именно историческая транзакция записала этот виджет, переходите к NEAR Social proof-расследованиям в [Transactions API examples](/tx/examples).
 
 ## Частые задачи
 
