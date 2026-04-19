@@ -8,6 +8,47 @@ page_actions:
   - markdown
 ---
 
+## Быстрый старт
+
+Начните с узкого окна исходящих переводов и сначала выведите строки, а уже потом переходите к receipts.
+
+```bash
+TRANSFERS_BASE_URL=https://transfers.main.fastnear.com
+ACCOUNT_ID=YOUR_ACCOUNT_ID
+FROM_TIMESTAMP_MS=1711929600000
+TO_TIMESTAMP_MS=1712016000000
+
+curl -s "$TRANSFERS_BASE_URL/v0/transfers" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc \
+    --arg account_id "$ACCOUNT_ID" \
+    --argjson from_timestamp_ms "$FROM_TIMESTAMP_MS" \
+    --argjson to_timestamp_ms "$TO_TIMESTAMP_MS" '{
+      account_id: $account_id,
+      direction: "sender",
+      from_timestamp_ms: $from_timestamp_ms,
+      to_timestamp_ms: $to_timestamp_ms,
+      desc: true,
+      limit: 10
+    }')" \
+  | jq '{
+      resume_token,
+      transfers: [
+        .transfers[]
+        | {
+            transaction_id,
+            receipt_id,
+            asset_id,
+            amount,
+            other_account_id,
+            block_height
+          }
+      ]
+    }'
+```
+
+Это самый короткий путь к вопросу «были ли здесь движения средств и какой receipt брать следующим?»
+
 ## Готовый сценарий
 
 ### Найти один подозрительный перевод, а затем пройти по его receipt

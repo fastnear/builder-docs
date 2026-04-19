@@ -8,9 +8,36 @@ page_actions:
   - markdown
 ---
 
-## Worked walkthroughs
+## Quick start
 
-Read this page as a short ladder: first resolve who the account is, then classify the wallet shape, then use one richer provenance flow when you want to turn a live BOS artifact into a minted record.
+Start with one identity lookup and one broad account read.
+
+```bash
+API_BASE_URL=https://api.fastnear.com
+PUBLIC_KEY='ed25519:YOUR_PUBLIC_KEY'
+
+ENCODED_PUBLIC_KEY="$(jq -rn --arg public_key "$PUBLIC_KEY" '$public_key | @uri')"
+
+ACCOUNT_ID="$(
+  curl -s "$API_BASE_URL/v1/public_key/$ENCODED_PUBLIC_KEY" \
+    | jq -r '.account_ids[0]'
+)"
+
+echo "$ACCOUNT_ID"
+
+curl -s "$API_BASE_URL/v1/account/$ACCOUNT_ID/full" \
+  | jq '{
+      account_id,
+      state,
+      token_count: (.tokens | length),
+      nft_count: (.nfts | length),
+      pool_count: (.pools | length)
+    }'
+```
+
+This is the shortest path to “which account is this key?” and “what does that wallet look like right now?”
+
+## Worked walkthroughs
 
 ### Resolve a public key, then fetch the account snapshot
 

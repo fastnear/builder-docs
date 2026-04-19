@@ -8,6 +8,35 @@ page_actions:
   - markdown
 ---
 
+## Быстрый старт
+
+Начните с одного tx hash и сначала получите самый короткий читаемый ответ.
+
+```bash
+TX_BASE_URL=https://tx.main.fastnear.com
+TX_HASH=AdgNifPYpoDNS5ckfBZm36Ai6LuL5bTstuKsVdGjKwGp
+
+curl -s "$TX_BASE_URL/v0/transactions" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc --arg tx_hash "$TX_HASH" '{tx_hashes: [$tx_hash]}')" \
+  | jq '{
+      transaction: {
+        hash: .transactions[0].transaction.hash,
+        signer_id: .transactions[0].transaction.signer_id,
+        receiver_id: .transactions[0].transaction.receiver_id,
+        included_block_height: .transactions[0].execution_outcome.block_height
+      },
+      actions: (
+        .transactions[0].transaction.actions
+        | map(if type == "string" then . else keys[0] end)
+      ),
+      first_receipt_id: .transactions[0].transaction_outcome.outcome.status.SuccessReceiptId,
+      receipt_count: (.transactions[0].receipts | length)
+    }'
+```
+
+Это самое короткое расследование на странице. Переходите к RPC или к receipt ID только если этого вывода уже мало.
+
 Если нужен более развёрнутый разбор на той же поверхности, переходите к [Berry Club](/tx/examples/berry-club) для исторического восстановления доски или к [OutLayer](/tx/examples/outlayer) для трассировки воркера и callback-цепочки.
 
 ## С чего начать

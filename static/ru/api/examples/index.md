@@ -1,8 +1,35 @@
 **Источник:** [https://docs.fastnear.com/ru/api/examples](https://docs.fastnear.com/ru/api/examples)
 
-## Готовые сценарии
+## Быстрый старт
 
-Читайте эту страницу как короткую лестницу: сначала определите, что это за аккаунт, затем классифицируйте форму кошелька, а потом переходите к более насыщенному сценарию происхождения, если хотите превратить живой BOS-артефакт в отчеканенную запись.
+Начните с одного поиска по публичному ключу и одного широкого чтения аккаунта.
+
+```bash
+API_BASE_URL=https://api.fastnear.com
+PUBLIC_KEY='ed25519:YOUR_PUBLIC_KEY'
+
+ENCODED_PUBLIC_KEY="$(jq -rn --arg public_key "$PUBLIC_KEY" '$public_key | @uri')"
+
+ACCOUNT_ID="$(
+  curl -s "$API_BASE_URL/v1/public_key/$ENCODED_PUBLIC_KEY" \
+    | jq -r '.account_ids[0]'
+)"
+
+echo "$ACCOUNT_ID"
+
+curl -s "$API_BASE_URL/v1/account/$ACCOUNT_ID/full" \
+  | jq '{
+      account_id,
+      state,
+      token_count: (.tokens | length),
+      nft_count: (.nfts | length),
+      pool_count: (.pools | length)
+    }'
+```
+
+Это самый короткий путь к вопросам «какой это аккаунт?» и «что сейчас видно по этому кошельку?»
+
+## Готовые сценарии
 
 ### Определить аккаунт по публичному ключу, а затем получить сводку по нему
 

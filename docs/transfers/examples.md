@@ -8,6 +8,47 @@ page_actions:
   - markdown
 ---
 
+## Quick start
+
+Start with one tight outgoing window and print the rows before you chase receipts.
+
+```bash
+TRANSFERS_BASE_URL=https://transfers.main.fastnear.com
+ACCOUNT_ID=YOUR_ACCOUNT_ID
+FROM_TIMESTAMP_MS=1711929600000
+TO_TIMESTAMP_MS=1712016000000
+
+curl -s "$TRANSFERS_BASE_URL/v0/transfers" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc \
+    --arg account_id "$ACCOUNT_ID" \
+    --argjson from_timestamp_ms "$FROM_TIMESTAMP_MS" \
+    --argjson to_timestamp_ms "$TO_TIMESTAMP_MS" '{
+      account_id: $account_id,
+      direction: "sender",
+      from_timestamp_ms: $from_timestamp_ms,
+      to_timestamp_ms: $to_timestamp_ms,
+      desc: true,
+      limit: 10
+    }')" \
+  | jq '{
+      resume_token,
+      transfers: [
+        .transfers[]
+        | {
+            transaction_id,
+            receipt_id,
+            asset_id,
+            amount,
+            other_account_id,
+            block_height
+          }
+      ]
+    }'
+```
+
+This is the shortest way to answer “did funds move here, and which receipt should I chase next?”
+
 ## Worked walkthrough
 
 ### Find one suspicious transfer, then chase its receipt

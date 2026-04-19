@@ -8,6 +8,19 @@ page_actions:
   - markdown
 ---
 
+## Quick start
+
+If the job is simply “bring a mainnet RPC node back fast,” start with one runnable command.
+
+```bash
+DATA_PATH=~/.near/data
+
+curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/fastnear/static/refs/heads/main/down_rclone.sh \
+  | DATA_PATH="$DATA_PATH" CHAIN_ID=mainnet RPC_TYPE=fast-rpc bash
+```
+
+This is the shortest recovery path on the page. The rest only matters when you need standard RPC or archival hot/cold recovery.
+
 ## Worked investigation
 
 ### Choose and execute the right mainnet recovery path

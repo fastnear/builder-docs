@@ -10,7 +10,37 @@ page_actions:
 
 # RPC Examples
 
-Use this page when you already know the answer lives in RPC and you want the shortest path to it. The goal is not to memorize every method. It is to start with the right RPC read or write, stop as soon as the response answers the question, and only switch to a higher-level API when that would save time.
+Use this page when you want one exact RPC answer fast. Start with one read, then move to transactions or raw state only when the simpler check stops being enough.
+
+## Quick start
+
+If you just landed here, start with one exact account read.
+
+```bash
+RPC_URL=https://rpc.mainnet.fastnear.com
+ACCOUNT_ID=near
+
+curl -s "$RPC_URL" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc --arg account_id "$ACCOUNT_ID" '{
+    jsonrpc: "2.0",
+    id: "fastnear",
+    method: "query",
+    params: {
+      request_type: "view_account",
+      finality: "final",
+      account_id: $account_id
+    }
+  }')" \
+  | jq '.result | {
+      amount,
+      locked,
+      code_hash,
+      storage_usage
+    }'
+```
+
+This is the smallest reliable RPC example on the page: one request, one exact answer, no receipt tree.
 
 ## Transaction Submission and Tracking
 

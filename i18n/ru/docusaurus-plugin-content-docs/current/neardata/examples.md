@@ -8,6 +8,24 @@ page_actions:
   - markdown
 ---
 
+## Быстрый старт
+
+Начните с двух helper-маршрутов, которые показывают, что изменилось прямо сейчас.
+
+```bash
+NEARDATA_BASE_URL=https://mainnet.neardata.xyz
+
+curl -s -D - -o /dev/null "$NEARDATA_BASE_URL/v0/last_block/optimistic" \
+  | awk 'tolower($1) == "location:" {print "optimistic:", $2}' \
+  | tr -d '\r'
+
+curl -s -D - -o /dev/null "$NEARDATA_BASE_URL/v0/last_block/final" \
+  | awk 'tolower($1) == "location:" {print "final:", $2}' \
+  | tr -d '\r'
+```
+
+Это даёт текущие optimistic и final redirect target до того, как вы запрашиваете полные документы блоков.
+
 ## Готовое расследование
 
 ### Поймать новый блок как можно раньше, а затем подтвердить его после finality

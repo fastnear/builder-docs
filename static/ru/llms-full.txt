@@ -994,9 +994,36 @@ https://test.api.fastnear.com
 
 **Источник:** [https://docs.fastnear.com/ru/api/examples](https://docs.fastnear.com/ru/api/examples)
 
-## Готовые сценарии
+## Быстрый старт
 
-Читайте эту страницу как короткую лестницу: сначала определите, что это за аккаунт, затем классифицируйте форму кошелька, а потом переходите к более насыщенному сценарию происхождения, если хотите превратить живой BOS-артефакт в отчеканенную запись.
+Начните с одного поиска по публичному ключу и одного широкого чтения аккаунта.
+
+```bash
+API_BASE_URL=https://api.fastnear.com
+PUBLIC_KEY='ed25519:YOUR_PUBLIC_KEY'
+
+ENCODED_PUBLIC_KEY="$(jq -rn --arg public_key "$PUBLIC_KEY" '$public_key | @uri')"
+
+ACCOUNT_ID="$(
+  curl -s "$API_BASE_URL/v1/public_key/$ENCODED_PUBLIC_KEY" \
+    | jq -r '.account_ids[0]'
+)"
+
+echo "$ACCOUNT_ID"
+
+curl -s "$API_BASE_URL/v1/account/$ACCOUNT_ID/full" \
+  | jq '{
+      account_id,
+      state,
+      token_count: (.tokens | length),
+      nft_count: (.nfts | length),
+      pool_count: (.pools | length)
+    }'
+```
+
+Это самый короткий путь к вопросам «какой это аккаунт?» и «что сейчас видно по этому кошельку?»
+
+## Готовые сценарии
 
 ### Определить аккаунт по публичному ключу, а затем получить сводку по нему
 
@@ -1609,6 +1636,33 @@ https://kv.test.fastnear.com
 - Markdown-маршрут: https://docs.fastnear.com/ru/fastdata/kv/examples.md
 
 **Источник:** [https://docs.fastnear.com/ru/fastdata/kv/examples](https://docs.fastnear.com/ru/fastdata/kv/examples)
+
+## Быстрый старт
+
+Если контракт, predecessor и точное имя строки уже известны, сначала прочитайте именно эту строку.
+
+```bash
+KV_BASE_URL=https://kv.test.fastnear.com
+CURRENT_ACCOUNT_ID=kv.gork-agent.testnet
+PREDECESSOR_ID=YOUR_TESTNET_ACCOUNT
+FASTDATA_ROW=value
+
+curl -s "$KV_BASE_URL/v0/latest/$CURRENT_ACCOUNT_ID/$PREDECESSOR_ID/$FASTDATA_ROW" \
+  | jq '{
+      latest_row: (
+        .entries[0]
+        | {
+            current_account_id,
+            predecessor_id,
+            block_height,
+            key,
+            value
+          }
+      )
+    }'
+```
+
+Это самое короткое чтение FastData на странице. Полный walkthrough ниже добавляет управляемую запись, историю точного ключа и привязку к транзакции.
 
 ## Готовое расследование
 
@@ -2233,6 +2287,24 @@ https://testnet.neardata.xyz
 
 **Источник:** [https://docs.fastnear.com/ru/neardata/examples](https://docs.fastnear.com/ru/neardata/examples)
 
+## Быстрый старт
+
+Начните с двух helper-маршрутов, которые показывают, что изменилось прямо сейчас.
+
+```bash
+NEARDATA_BASE_URL=https://mainnet.neardata.xyz
+
+curl -s -D - -o /dev/null "$NEARDATA_BASE_URL/v0/last_block/optimistic" \
+  | awk 'tolower($1) == "location:" {print "optimistic:", $2}' \
+  | tr -d '\r'
+
+curl -s -D - -o /dev/null "$NEARDATA_BASE_URL/v0/last_block/final" \
+  | awk 'tolower($1) == "location:" {print "final:", $2}' \
+  | tr -d '\r'
+```
+
+Это даёт текущие optimistic и final redirect target до того, как вы запрашиваете полные документы блоков.
+
 ## Готовое расследование
 
 ### Поймать новый блок как можно раньше, а затем подтвердить его после finality
@@ -2588,7 +2660,37 @@ https://archival-rpc.testnet.fastnear.com
 
 # Примеры RPC
 
-Используйте эту страницу, когда уже ясно, что ответ надо брать прямо из RPC, и нужен самый короткий путь по документации. Цель не в том, чтобы запомнить каждый метод, а в том, чтобы начать с правильного RPC-запроса, остановиться, как только ответ уже решает задачу, и переходить к более высокоуровневому API только тогда, когда это действительно экономит время.
+Используйте эту страницу, когда нужен быстрый точный ответ через RPC. Начните с одного чтения, а к транзакциям и сырому состоянию переходите только если простого запроса уже недостаточно.
+
+## Быстрый старт
+
+Если вы только открыли эту страницу, начните с одного точного чтения аккаунта.
+
+```bash
+RPC_URL=https://rpc.mainnet.fastnear.com
+ACCOUNT_ID=near
+
+curl -s "$RPC_URL" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc --arg account_id "$ACCOUNT_ID" '{
+    jsonrpc: "2.0",
+    id: "fastnear",
+    method: "query",
+    params: {
+      request_type: "view_account",
+      finality: "final",
+      account_id: $account_id
+    }
+  }')" \
+  | jq '.result | {
+      amount,
+      locked,
+      code_hash,
+      storage_usage
+    }'
+```
+
+Это самый маленький надёжный RPC-пример на странице: один запрос, один точный ответ, без дерева receipts.
 
 ## Отправка и отслеживание транзакции
 
@@ -4262,6 +4364,19 @@ sudo -v ; curl https://rclone.org/install.sh | sudo bash
 
 **Источник:** [https://docs.fastnear.com/ru/snapshots/examples](https://docs.fastnear.com/ru/snapshots/examples)
 
+## Быстрый старт
+
+Если задача звучит просто как «быстро вернуть mainnet RPC-узел», начните с одной рабочей команды.
+
+```bash
+DATA_PATH=~/.near/data
+
+curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/fastnear/static/refs/heads/main/down_rclone.sh \
+  | DATA_PATH="$DATA_PATH" CHAIN_ID=mainnet RPC_TYPE=fast-rpc bash
+```
+
+Это самый короткий путь восстановления на странице. Всё остальное нужно только если вам нужен standard RPC или архивный hot/cold-сценарий.
+
 ## Готовое расследование
 
 ### Выбрать и выполнить правильный сценарий восстановления mainnet
@@ -4748,6 +4863,47 @@ https://transfers.main.fastnear.com
 
 **Источник:** [https://docs.fastnear.com/ru/transfers/examples](https://docs.fastnear.com/ru/transfers/examples)
 
+## Быстрый старт
+
+Начните с узкого окна исходящих переводов и сначала выведите строки, а уже потом переходите к receipts.
+
+```bash
+TRANSFERS_BASE_URL=https://transfers.main.fastnear.com
+ACCOUNT_ID=YOUR_ACCOUNT_ID
+FROM_TIMESTAMP_MS=1711929600000
+TO_TIMESTAMP_MS=1712016000000
+
+curl -s "$TRANSFERS_BASE_URL/v0/transfers" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc \
+    --arg account_id "$ACCOUNT_ID" \
+    --argjson from_timestamp_ms "$FROM_TIMESTAMP_MS" \
+    --argjson to_timestamp_ms "$TO_TIMESTAMP_MS" '{
+      account_id: $account_id,
+      direction: "sender",
+      from_timestamp_ms: $from_timestamp_ms,
+      to_timestamp_ms: $to_timestamp_ms,
+      desc: true,
+      limit: 10
+    }')" \
+  | jq '{
+      resume_token,
+      transfers: [
+        .transfers[]
+        | {
+            transaction_id,
+            receipt_id,
+            asset_id,
+            amount,
+            other_account_id,
+            block_height
+          }
+      ]
+    }'
+```
+
+Это самый короткий путь к вопросу «были ли здесь движения средств и какой receipt брать следующим?»
+
 ## Готовый сценарий
 
 ### Найти один подозрительный перевод, а затем пройти по его receipt
@@ -4971,6 +5127,35 @@ https://tx.test.fastnear.com
 - Markdown-маршрут: https://docs.fastnear.com/ru/tx/examples.md
 
 **Источник:** [https://docs.fastnear.com/ru/tx/examples](https://docs.fastnear.com/ru/tx/examples)
+
+## Быстрый старт
+
+Начните с одного tx hash и сначала получите самый короткий читаемый ответ.
+
+```bash
+TX_BASE_URL=https://tx.main.fastnear.com
+TX_HASH=AdgNifPYpoDNS5ckfBZm36Ai6LuL5bTstuKsVdGjKwGp
+
+curl -s "$TX_BASE_URL/v0/transactions" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc --arg tx_hash "$TX_HASH" '{tx_hashes: [$tx_hash]}')" \
+  | jq '{
+      transaction: {
+        hash: .transactions[0].transaction.hash,
+        signer_id: .transactions[0].transaction.signer_id,
+        receiver_id: .transactions[0].transaction.receiver_id,
+        included_block_height: .transactions[0].execution_outcome.block_height
+      },
+      actions: (
+        .transactions[0].transaction.actions
+        | map(if type == "string" then . else keys[0] end)
+      ),
+      first_receipt_id: .transactions[0].transaction_outcome.outcome.status.SuccessReceiptId,
+      receipt_count: (.transactions[0].receipts | length)
+    }'
+```
+
+Это самое короткое расследование на странице. Переходите к RPC или к receipt ID только если этого вывода уже мало.
 
 Если нужен более развёрнутый разбор на той же поверхности, переходите к [Berry Club](https://docs.fastnear.com/ru/tx/examples/berry-club) для исторического восстановления доски или к [OutLayer](https://docs.fastnear.com/ru/tx/examples/outlayer) для трассировки воркера и callback-цепочки.
 

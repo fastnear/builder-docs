@@ -8,6 +8,33 @@ page_actions:
   - markdown
 ---
 
+## Быстрый старт
+
+Если контракт, predecessor и точное имя строки уже известны, сначала прочитайте именно эту строку.
+
+```bash
+KV_BASE_URL=https://kv.test.fastnear.com
+CURRENT_ACCOUNT_ID=kv.gork-agent.testnet
+PREDECESSOR_ID=YOUR_TESTNET_ACCOUNT
+FASTDATA_ROW=value
+
+curl -s "$KV_BASE_URL/v0/latest/$CURRENT_ACCOUNT_ID/$PREDECESSOR_ID/$FASTDATA_ROW" \
+  | jq '{
+      latest_row: (
+        .entries[0]
+        | {
+            current_account_id,
+            predecessor_id,
+            block_height,
+            key,
+            value
+          }
+      )
+    }'
+```
+
+Это самое короткое чтение FastData на странице. Полный walkthrough ниже добавляет управляемую запись, историю точного ключа и привязку к транзакции.
+
 ## Готовое расследование
 
 ### Сделать одну testnet-запись FastData и проверить точные индексированные ключи

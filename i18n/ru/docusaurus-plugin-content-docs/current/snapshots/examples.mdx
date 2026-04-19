@@ -8,6 +8,19 @@ page_actions:
   - markdown
 ---
 
+## Быстрый старт
+
+Если задача звучит просто как «быстро вернуть mainnet RPC-узел», начните с одной рабочей команды.
+
+```bash
+DATA_PATH=~/.near/data
+
+curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/fastnear/static/refs/heads/main/down_rclone.sh \
+  | DATA_PATH="$DATA_PATH" CHAIN_ID=mainnet RPC_TYPE=fast-rpc bash
+```
+
+Это самый короткий путь восстановления на странице. Всё остальное нужно только если вам нужен standard RPC или архивный hot/cold-сценарий.
+
 ## Готовое расследование
 
 ### Выбрать и выполнить правильный сценарий восстановления mainnet
