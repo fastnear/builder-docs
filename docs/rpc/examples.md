@@ -748,11 +748,9 @@ If that final object says `ready_to_publish_now: true`, RPC has already answered
 
 This keeps the whole question on exact on-chain reads. `social.near` itself answers whether the target account has room left and whether a delegated signer is already allowed to write. That is a better NEAR Social readiness check than guessing from wallet state alone.
 
-### Did `efiz.near` really publish `DonateNEARtoEfiz`, and what does it do?
+### What does `mob.near/widget/Profile` actually contain right now?
 
-Use this when the user story is lighter and more playful: “my friend says `efiz.near` once published a widget literally called `DonateNEARtoEfiz`. Check whether that is true, then show me what the widget actually does without leaving RPC.”
-
-This one is intentionally fun. It does not teach anything deep about async execution. It just shows how to use exact SocialDB reads to browse a BOS author's catalog and answer one very specific question from live on-chain data.
+Use this when the question is simple: “show me the live source for `mob.near/widget/Profile`, tell me when that widget key was last written, and keep me on exact RPC reads.”
 
 **Official references**
 
@@ -760,17 +758,17 @@ This one is intentionally fun. It does not teach anything deep about async execu
 
 **What you're doing**
 
-- Ask `social.near` for the widget catalog under `efiz.near`.
-- Keep the block heights, because they tell you when each widget key was last written.
-- Confirm that `DonateNEARtoEfiz` is really there, then read its exact source code through the same contract.
-- End with one clean handoff: if the next question becomes “which transaction wrote this widget?”, switch to the NEAR Social proof recipes in [Transactions Examples](/tx/examples).
+- Ask `social.near` for the widget catalog under `mob.near`.
+- Keep the block heights so you know when each widget key last changed.
+- Confirm that `Profile` is really there, then read its exact source through the same contract.
+- If the next question becomes “which transaction wrote this widget?”, switch to the NEAR Social proof recipes in [Transactions Examples](/tx/examples).
 
 ```bash
 export NETWORK_ID=mainnet
 export RPC_URL=https://rpc.mainnet.fastnear.com
 export SOCIAL_CONTRACT_ID=social.near
-export ACCOUNT_ID=efiz.near
-export WIDGET_NAME=DonateNEARtoEfiz
+export ACCOUNT_ID=mob.near
+export WIDGET_NAME=Profile
 ```
 
 1. List the widget catalog and keep the last-write block heights.
@@ -808,7 +806,7 @@ jq --arg account_id "$ACCOUNT_ID" '
   | .[$account_id].widget
   | to_entries
   | sort_by(.value * -1)
-  | map({
+ | map({
       widget_name: .key,
       last_write_block: .value
     })
@@ -816,9 +814,7 @@ jq --arg account_id "$ACCOUNT_ID" '
 ' /tmp/social-widget-keys.json
 ```
 
-That gives you a compact BOS inventory. At the time of writing, `efiz.near` had a wonderfully eclectic widget catalog including names like `ReversedFeed`, `HelloWorld`, `PotlockDonateAll`, and `DonateNEARtoEfiz`, but the live query is the real source of truth.
-
-2. Confirm that `DonateNEARtoEfiz` is really in the catalog, then print the exact source stored in SocialDB.
+2. Confirm that `Profile` is really in the catalog, then print the exact source stored in SocialDB.
 
 ```bash
 WIDGET_GET_ARGS_BASE64="$(
@@ -859,8 +855,6 @@ jq -r \
   ' /tmp/social-widget-source.json
 ```
 
-That prints the first 25 lines of the widget source so you can quickly tell what kind of component it is. In the live version at the time of writing, the source initializes `reciever: "efiz.near"` and builds a button that calls `donate` with the chosen amount. The widget name is not subtle.
-
 3. Pull the last-write block for the same widget so you keep one useful historical anchor.
 
 ```bash
@@ -875,13 +869,11 @@ jq -r \
   | xargs -I{} printf 'Last write block for %s/%s: %s\n' "$ACCOUNT_ID" "$WIDGET_NAME" "{}"
 ```
 
-At the time of writing, the live last-write block for `efiz.near/widget/DonateNEARtoEfiz` was `92543301`.
-
-If your next question becomes “which transaction wrote that version of the widget?”, keep that block height and switch to the NEAR Social proof workflows in [Transactions Examples](/tx/examples).
+At the time of writing, the live last-write block for `mob.near/widget/Profile` was `86494825`. Keep that block if you later want to prove which transaction wrote this version.
 
 **Why this next step?**
 
-This is a nice reminder that RPC can be fun, not just forensic. `keys` lets you browse a BOS author's catalog like a developer, and `get` lets you inspect the exact widget body that lives on chain. Sometimes the answer really is “yes, your friend did publish a widget called `DonateNEARtoEfiz`, and here is the code.”
+Sometimes the right RPC answer is just: here is the widget, here is the live source, and here is the block height to keep if provenance matters later.
 
 ## Common jobs
 

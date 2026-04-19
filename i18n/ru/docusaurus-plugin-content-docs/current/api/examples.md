@@ -10,6 +10,8 @@ page_actions:
 
 ## Готовые сценарии
 
+Эти сценарии выстроены от самого быстрого read-only-запроса к более насыщенному сценарию с изменением состояния.
+
 ### Определить аккаунт по публичному ключу, а затем получить сводку по нему
 
 Используйте этот сценарий, когда у вас сначала есть только публичный ключ, а следующий практический вопрос пользователя звучит как «какому аккаунту он соответствует?» и сразу после этого «что сейчас видно по этому аккаунту?»
@@ -49,176 +51,6 @@ curl -s "$API_BASE_URL/v1/account/$ACCOUNT_ID/full" \
 **Зачем нужен следующий шаг?**
 
 Поиск по публичному ключу говорит, с каким аккаунтом вы имеете дело. Полный снимок аккаунта — естественный следующий запрос, если нужны балансы, NFT, стейкинг и пулы в одном ответе. Если ключ сопоставляется не с одним, а с несколькими аккаунтами, переходите к [V1 Public Key Lookup All](/api/v1/public-key-all) или пройдитесь по каждому найденному `account_id`.
-
-### Проверить владение коллекцией, а затем выпустить производный NFT
-
-Используйте этот сценарий, когда история звучит так: «если аккаунт уже владеет хотя бы одним NFT из коллекции X, выпустить ещё один NFT, в чьих метаданных будет зафиксирована эта связь».
-
-**Сеть**
-
-- testnet
-
-**Официальные ссылки**
-
-- [Предразвёрнутый NFT-контракт](https://docs.near.org/tutorials/nfts/js/predeployed-contract)
-- [Стандарт NFT NEP-171](https://docs.near.org/primitives/nft/standard)
-
-Перед началом убедитесь, что аккаунт уже владеет хотя бы одним токеном из `nft.examples.testnet`. Если такого токена ещё нет, сначала выпустите его по гайду с предразвёрнутым контрактом, а затем вернитесь к этому сценарию.
-
-**Что вы делаете**
-
-- Используете FastNear API, чтобы быстро ответить на вопрос о допуске.
-- Расширяетесь до RPC `nft_tokens_for_owner`, чтобы получить точные `token_id` и метаданные из исходной коллекции.
-- Строите детерминированные производные метаданные на основе этого набора токенов.
-- Выпускаете производный токен и затем подтверждаете его тем же view-методом NFT.
-
-```bash
-API_BASE_URL=https://test.api.fastnear.com
-RPC_URL=https://rpc.testnet.fastnear.com
-ACCOUNT_ID=YOUR_ACCOUNT_ID.testnet
-SOURCE_COLLECTION_ID=nft.examples.testnet
-DESTINATION_COLLECTION_ID=nft.examples.testnet
-SIGNER_ACCOUNT_ID="$ACCOUNT_ID"
-TOKEN_ID="derivative-$(date +%s)"
-```
-
-1. Через FastNear API проверьте, есть ли у аккаунта хоть один NFT из исходной коллекции.
-
-```bash
-curl -s "$API_BASE_URL/v1/account/$ACCOUNT_ID/nft" \
-  | tee /tmp/testnet-account-nfts.json >/dev/null
-
-jq --arg source_collection_id "$SOURCE_COLLECTION_ID" '{
-  holds_collection: any(.tokens[]?; .contract_id == $source_collection_id),
-  matching_contracts: [
-    .tokens[]?
-    | select(.contract_id == $source_collection_id)
-  ]
-}' /tmp/testnet-account-nfts.json
-```
-
-2. Перейдите к RPC, чтобы получить точные `token_id` и исходные метаданные этой коллекции.
-
-```bash
-NFT_TOKENS_ARGS_BASE64="$(
-  jq -nc --arg account_id "$ACCOUNT_ID" '{
-    account_id: $account_id,
-    from_index: "0",
-    limit: 50
-  }' | base64 | tr -d '\n'
-)"
-
-curl -s "$RPC_URL" \
-  -H 'content-type: application/json' \
-  --data "$(jq -nc \
-    --arg account_id "$SOURCE_COLLECTION_ID" \
-    --arg args_base64 "$NFT_TOKENS_ARGS_BASE64" '{
-      jsonrpc: "2.0",
-      id: "fastnear",
-      method: "query",
-      params: {
-        request_type: "call_function",
-        account_id: $account_id,
-        method_name: "nft_tokens_for_owner",
-        args_base64: $args_base64,
-        finality: "final"
-      }
-    }')" \
-  | jq '.result.result | implode | fromjson' \
-  | tee /tmp/source-collection-tokens.json >/dev/null
-
-jq --arg source_collection_id "$SOURCE_COLLECTION_ID" '{
-  source_collection_id: $source_collection_id,
-  source_count: length,
-  source_token_ids: (map(.token_id) | sort | .[:5])
-}' /tmp/source-collection-tokens.json
-```
-
-3. Постройте детерминированные производные метаданные из этого набора токенов.
-
-```bash
-DERIVATIVE_METADATA_JSON="$(
-  jq -c --arg source_collection_id "$SOURCE_COLLECTION_ID" '{
-    title: ("Derivative witness for " + $source_collection_id),
-    description:
-      ("Minted because the holder currently owns "
-      + (length | tostring)
-      + " token(s) from "
-      + $source_collection_id),
-    media: (
-      map(.metadata.media)
-      | map(select(. != null))
-      | .[0]
-    ),
-    copies: 1,
-    extra: ({
-      source_collection_id: $source_collection_id,
-      source_count: length,
-      source_token_ids: (map(.token_id) | sort | .[:5])
-    } | @json)
-  }' /tmp/source-collection-tokens.json
-)"
-
-printf '%s\n' "$DERIVATIVE_METADATA_JSON" | jq '.'
-```
-
-4. Выпустите производный токен в целевой коллекции.
-
-```bash
-near call "$DESTINATION_COLLECTION_ID" nft_mint "$(jq -nc \
-  --arg token_id "$TOKEN_ID" \
-  --arg receiver_id "$ACCOUNT_ID" \
-  --argjson metadata "$DERIVATIVE_METADATA_JSON" '{
-    token_id: $token_id,
-    receiver_id: $receiver_id,
-    metadata: $metadata
-  }')" \
-  --accountId "$SIGNER_ACCOUNT_ID" \
-  --deposit 0.1 \
-  --networkId testnet
-```
-
-5. Подтвердите новый токен тем же NFT view-методом.
-
-Если сразу после возврата mint-транзакции токен ещё не виден, не считайте это ошибкой сразу же: опросите view-метод несколько раз.
-
-```bash
-for attempt in 1 2 3 4 5; do
-  curl -s "$RPC_URL" \
-    -H 'content-type: application/json' \
-    --data "$(jq -nc \
-      --arg account_id "$DESTINATION_COLLECTION_ID" \
-      --arg args_base64 "$NFT_TOKENS_ARGS_BASE64" '{
-        jsonrpc: "2.0",
-        id: "fastnear",
-        method: "query",
-        params: {
-          request_type: "call_function",
-          account_id: $account_id,
-          method_name: "nft_tokens_for_owner",
-          args_base64: $args_base64,
-          finality: "final"
-        }
-      }')" \
-    | jq '.result.result | implode | fromjson' \
-    | jq --arg token_id "$TOKEN_ID" '
-        map(select(.token_id == $token_id))
-      ' \
-    | tee /tmp/derivative-token-verification.json >/dev/null
-
-  if jq -e 'length > 0' /tmp/derivative-token-verification.json >/dev/null; then
-    break
-  fi
-
-  sleep 1
-done
-
-jq '.' /tmp/derivative-token-verification.json
-```
-
-**Зачем нужен следующий шаг?**
-
-FastNear API — это быстрый ответ на вопрос о допуске. Как только аккаунт проходит условие, правильным следующим шагом становится RPC, потому что именно там видны точные `token_id` и собственные NFT view-методы коллекции.
 
 ### У меня обычный стейкинг или liquid staking?
 
@@ -295,6 +127,209 @@ jq -n \
 **Зачем нужен следующий шаг?**
 
 Если классификация показывает `direct_only`, следующий практический вопрос обычно касается сроков `unstake` и `withdraw`. Если она показывает `liquid_only`, следующий вопрос обычно про `redeem`, `swap` или провайдерский путь выхода. Если результат `mixed`, эти пути лучше рассматривать раздельно, а не пытаться свести их к одному сценарию.
+
+### Заархивировать версию BOS-виджета как provenance NFT
+
+Используйте этот сценарий, когда история звучит так: «этот BOS-виджет — реальный on-chain-артефакт. Хочу выпустить NFT, который фиксирует, какую именно версию я заархивировал».
+
+**Сети**
+
+- mainnet для чтения виджета из `social.near`
+- testnet для безопасного mint provenance NFT в `nft.examples.testnet`
+
+**Официальные ссылки**
+
+- [Предразвёрнутый NFT-контракт](https://docs.near.org/tutorials/nfts/js/predeployed-contract)
+- [Стандарт NFT NEP-171](https://docs.near.org/primitives/nft/standard)
+- [API SocialDB и поверхность контракта](https://github.com/NearSocial/social-db#api)
+
+**Что вы делаете**
+
+- Через FastNear API проверяете, есть ли у получателя NFT из архивной коллекции.
+- Читаете один точный BOS-виджет из `social.near`, включая SocialDB-блок именно этого виджета.
+- Хешируете исходник виджета и превращаете его в provenance-метаданные.
+- Выпускаете NFT в testnet, чьи метаданные фиксируют автора, widget-path, SocialDB-блок и хеш исходника.
+- Подтверждаете, что выпущенный токен действительно несёт эти provenance-поля.
+
+Зафиксированный исходный виджет:
+
+- аккаунт автора: `mob.near`
+- путь виджета: `mob.near/widget/Profile`
+- SocialDB-блок уровня виджета: `86494825`
+
+```bash
+API_BASE_URL=https://test.api.fastnear.com
+MAINNET_RPC_URL=https://rpc.mainnet.fastnear.com
+TESTNET_RPC_URL=https://rpc.testnet.fastnear.com
+AUTHOR_ACCOUNT_ID=mob.near
+WIDGET_NAME=Profile
+DESTINATION_COLLECTION_ID=nft.examples.testnet
+RECEIVER_ACCOUNT_ID=YOUR_ACCOUNT_ID.testnet
+SIGNER_ACCOUNT_ID="$RECEIVER_ACCOUNT_ID"
+```
+
+1. Через FastNear API посмотрите, держит ли получатель уже какие-то NFT из архивной коллекции.
+
+```bash
+curl -s "$API_BASE_URL/v1/account/$RECEIVER_ACCOUNT_ID/nft" \
+  | tee /tmp/provenance-account-nfts.json >/dev/null
+
+jq --arg destination_collection_id "$DESTINATION_COLLECTION_ID" '{
+  existing_archive_tokens: [
+    .tokens[]?
+    | select(.contract_id == $destination_collection_id)
+    | {
+        contract_id,
+        token_id,
+        last_update_block_height
+      }
+  ]
+}' /tmp/provenance-account-nfts.json
+```
+
+2. Прочитайте точное тело виджета и widget-level SocialDB-блок из mainnet.
+
+```bash
+WIDGET_ARGS_BASE64="$(
+  jq -nc --arg author_account_id "$AUTHOR_ACCOUNT_ID" --arg widget_name "$WIDGET_NAME" '{
+    keys: [($author_account_id + "/widget/" + $widget_name)],
+    options: {with_block_height: true}
+  }' | base64 | tr -d '\n'
+)"
+
+curl -s "$MAINNET_RPC_URL" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc --arg args_base64 "$WIDGET_ARGS_BASE64" '{
+    jsonrpc: "2.0",
+    id: "fastnear",
+    method: "query",
+    params: {
+      request_type: "call_function",
+      account_id: "social.near",
+      method_name: "get",
+      args_base64: $args_base64,
+      finality: "final"
+    }
+  }')" \
+  | jq '.result.result | implode | fromjson' \
+  | tee /tmp/bos-widget.json >/dev/null
+
+jq --arg author_account_id "$AUTHOR_ACCOUNT_ID" --arg widget_name "$WIDGET_NAME" '{
+  widget_path: ($author_account_id + "/widget/" + $widget_name),
+  socialdb_block_height: .[$author_account_id].widget[$widget_name][":block"],
+  source_preview: (
+    .[$author_account_id].widget[$widget_name][""]
+    | split("\n")[0:8]
+  )
+}' /tmp/bos-widget.json
+```
+
+3. Захешируйте исходник виджета и постройте детерминированные provenance-метаданные.
+
+```bash
+jq -r --arg author_account_id "$AUTHOR_ACCOUNT_ID" --arg widget_name "$WIDGET_NAME" '
+  .[$author_account_id].widget[$widget_name][""]
+' /tmp/bos-widget.json > /tmp/bos-widget-source.jsx
+
+WIDGET_BLOCK_HEIGHT="$(
+  jq -r --arg author_account_id "$AUTHOR_ACCOUNT_ID" --arg widget_name "$WIDGET_NAME" '
+    .[$author_account_id].widget[$widget_name][":block"]
+  ' /tmp/bos-widget.json
+)"
+
+SOURCE_SHA256="$(shasum -a 256 /tmp/bos-widget-source.jsx | awk '{print $1}')"
+SOURCE_HASH_SHORT="$(printf '%s' "$SOURCE_SHA256" | cut -c1-12)"
+TOKEN_ID="bos-widget-$SOURCE_HASH_SHORT"
+
+PROVENANCE_METADATA_JSON="$(
+  jq -nc \
+    --arg author_account_id "$AUTHOR_ACCOUNT_ID" \
+    --arg widget_name "$WIDGET_NAME" \
+    --arg widget_path "$AUTHOR_ACCOUNT_ID/widget/$WIDGET_NAME" \
+    --arg block_height "$WIDGET_BLOCK_HEIGHT" \
+    --arg source_sha256 "$SOURCE_SHA256" '{
+      title: ("BOS widget archive: " + $widget_path),
+      description: ("Archived from social.near on mainnet at block " + $block_height),
+      copies: 1,
+      extra: ({
+        author_account_id: $author_account_id,
+        widget_name: $widget_name,
+        widget_path: $widget_path,
+        source_contract_id: "social.near",
+        source_network: "mainnet",
+        socialdb_block_height: ($block_height | tonumber),
+        source_sha256: $source_sha256
+      } | @json)
+    }'
+)"
+
+printf '%s\n' "$PROVENANCE_METADATA_JSON" | jq '.'
+```
+
+4. Выпустите provenance NFT в testnet.
+
+```bash
+near call "$DESTINATION_COLLECTION_ID" nft_mint "$(jq -nc \
+  --arg token_id "$TOKEN_ID" \
+  --arg receiver_id "$RECEIVER_ACCOUNT_ID" \
+  --argjson metadata "$PROVENANCE_METADATA_JSON" '{
+    token_id: $token_id,
+    receiver_id: $receiver_id,
+    metadata: $metadata
+  }')" \
+  --accountId "$SIGNER_ACCOUNT_ID" \
+  --deposit 0.1 \
+  --networkId testnet
+```
+
+5. Подтвердите, что выпущенный NFT действительно несёт ожидаемые provenance-поля.
+
+Не считайте отсутствие токена ошибкой мгновенно: после mint-транзакции опросите view-метод несколько раз.
+
+```bash
+NFT_TOKEN_ARGS_BASE64="$(
+  jq -nc --arg token_id "$TOKEN_ID" '{token_id: $token_id}' \
+    | base64 | tr -d '\n'
+)"
+
+for attempt in 1 2 3 4 5; do
+  curl -s "$TESTNET_RPC_URL" \
+    -H 'content-type: application/json' \
+    --data "$(jq -nc \
+      --arg account_id "$DESTINATION_COLLECTION_ID" \
+      --arg args_base64 "$NFT_TOKEN_ARGS_BASE64" '{
+        jsonrpc: "2.0",
+        id: "fastnear",
+        method: "query",
+        params: {
+          request_type: "call_function",
+          account_id: $account_id,
+          method_name: "nft_token",
+          args_base64: $args_base64,
+          finality: "final"
+        }
+      }')" \
+    | jq '.result.result | implode | fromjson' \
+    | tee /tmp/bos-widget-provenance-token.json >/dev/null
+
+  if jq -e '. != null' /tmp/bos-widget-provenance-token.json >/dev/null; then
+    break
+  fi
+
+  sleep 1
+done
+
+jq '{
+  token_id,
+  owner_id,
+  title: .metadata.title,
+  provenance: (.metadata.extra | fromjson)
+}' /tmp/bos-widget-provenance-token.json
+```
+
+**Зачем нужен следующий шаг?**
+
+FastNear API даёт быстрый чек со стороны получателя. Mainnet RPC даёт точное тело виджета и его SocialDB-блок. После этого mint в testnet превращает чтение в долговечную NFT-запись. Если позже понадобится доказать, какая именно историческая транзакция записала этот виджет, переходите к NEAR Social proof-расследованиям в [Transactions API examples](/tx/examples).
 
 ## Частые задачи
 

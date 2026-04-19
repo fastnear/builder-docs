@@ -31,7 +31,7 @@ Use this investigation when one contract storage key looks suspicious and you wa
 - the latest indexed value and what changed in history
 - whether `view_state` matched the indexed current value
 
-### Shell walkthrough
+### Exact key history shell walkthrough
 
 Use this when one fully qualified key is already known and you want to move cleanly from “what is the latest indexed row?” to “how did this exact key get here?”
 

@@ -10,6 +10,8 @@ page_actions:
 
 ## Worked walkthroughs
 
+These are ordered from the quickest read-only lookup to the more involved state-changing flow.
+
 ### Resolve a public key, then fetch the account snapshot
 
 Use this when you have a public key first and the next user-facing question is “which account is this?” followed immediately by “what does that account look like right now?”
@@ -49,176 +51,6 @@ curl -s "$API_BASE_URL/v1/account/$ACCOUNT_ID/full" \
 **Why this next step?**
 
 The public-key lookup tells you which account you are dealing with. The full account snapshot is the natural next read when you want balances, NFTs, staking, and pools in one response. If the key maps to multiple accounts instead of one, move to [V1 Public Key Lookup All](/api/v1/public-key-all) or loop through each returned `account_id`.
-
-### Check collection membership, then mint a derivative NFT
-
-Use this when the user story is “if this account already owns at least one NFT from collection X, mint one more NFT whose metadata records that relationship.”
-
-**Network**
-
-- testnet
-
-**Official references**
-
-- [Pre-deployed NFT contract](https://docs.near.org/tutorials/nfts/js/predeployed-contract)
-- [NEP-171 NFT standard](https://docs.near.org/primitives/nft/standard)
-
-Before you start, make sure the account already holds at least one token from `nft.examples.testnet`. If it does not, mint one first with the pre-deployed contract guide above and then come back to this workflow.
-
-**What you're doing**
-
-- Use FastNear API to answer the gate question quickly.
-- Switch to RPC `nft_tokens_for_owner` to recover exact token IDs and metadata from the source collection.
-- Build deterministic derived metadata from that source set.
-- Mint the derivative token, then verify it with the same NFT view method.
-
-```bash
-API_BASE_URL=https://test.api.fastnear.com
-RPC_URL=https://rpc.testnet.fastnear.com
-ACCOUNT_ID=YOUR_ACCOUNT_ID.testnet
-SOURCE_COLLECTION_ID=nft.examples.testnet
-DESTINATION_COLLECTION_ID=nft.examples.testnet
-SIGNER_ACCOUNT_ID="$ACCOUNT_ID"
-TOKEN_ID="derivative-$(date +%s)"
-```
-
-1. Use FastNear API to check whether the account holds any NFT from the source collection.
-
-```bash
-curl -s "$API_BASE_URL/v1/account/$ACCOUNT_ID/nft" \
-  | tee /tmp/testnet-account-nfts.json >/dev/null
-
-jq --arg source_collection_id "$SOURCE_COLLECTION_ID" '{
-  holds_collection: any(.tokens[]?; .contract_id == $source_collection_id),
-  matching_contracts: [
-    .tokens[]?
-    | select(.contract_id == $source_collection_id)
-  ]
-}' /tmp/testnet-account-nfts.json
-```
-
-2. Switch to RPC so you can recover exact token IDs and source metadata from that collection.
-
-```bash
-NFT_TOKENS_ARGS_BASE64="$(
-  jq -nc --arg account_id "$ACCOUNT_ID" '{
-    account_id: $account_id,
-    from_index: "0",
-    limit: 50
-  }' | base64 | tr -d '\n'
-)"
-
-curl -s "$RPC_URL" \
-  -H 'content-type: application/json' \
-  --data "$(jq -nc \
-    --arg account_id "$SOURCE_COLLECTION_ID" \
-    --arg args_base64 "$NFT_TOKENS_ARGS_BASE64" '{
-      jsonrpc: "2.0",
-      id: "fastnear",
-      method: "query",
-      params: {
-        request_type: "call_function",
-        account_id: $account_id,
-        method_name: "nft_tokens_for_owner",
-        args_base64: $args_base64,
-        finality: "final"
-      }
-    }')" \
-  | jq '.result.result | implode | fromjson' \
-  | tee /tmp/source-collection-tokens.json >/dev/null
-
-jq --arg source_collection_id "$SOURCE_COLLECTION_ID" '{
-  source_collection_id: $source_collection_id,
-  source_count: length,
-  source_token_ids: (map(.token_id) | sort | .[:5])
-}' /tmp/source-collection-tokens.json
-```
-
-3. Build deterministic derivative metadata from that source set.
-
-```bash
-DERIVATIVE_METADATA_JSON="$(
-  jq -c --arg source_collection_id "$SOURCE_COLLECTION_ID" '{
-    title: ("Derivative witness for " + $source_collection_id),
-    description:
-      ("Minted because the holder currently owns "
-      + (length | tostring)
-      + " token(s) from "
-      + $source_collection_id),
-    media: (
-      map(.metadata.media)
-      | map(select(. != null))
-      | .[0]
-    ),
-    copies: 1,
-    extra: ({
-      source_collection_id: $source_collection_id,
-      source_count: length,
-      source_token_ids: (map(.token_id) | sort | .[:5])
-    } | @json)
-  }' /tmp/source-collection-tokens.json
-)"
-
-printf '%s\n' "$DERIVATIVE_METADATA_JSON" | jq '.'
-```
-
-4. Mint the derivative token on the destination collection.
-
-```bash
-near call "$DESTINATION_COLLECTION_ID" nft_mint "$(jq -nc \
-  --arg token_id "$TOKEN_ID" \
-  --arg receiver_id "$ACCOUNT_ID" \
-  --argjson metadata "$DERIVATIVE_METADATA_JSON" '{
-    token_id: $token_id,
-    receiver_id: $receiver_id,
-    metadata: $metadata
-  }')" \
-  --accountId "$SIGNER_ACCOUNT_ID" \
-  --deposit 0.1 \
-  --networkId testnet
-```
-
-5. Verify the new token with the same NFT view method.
-
-Poll a few times instead of assuming failure if the token does not appear immediately after the mint transaction returns.
-
-```bash
-for attempt in 1 2 3 4 5; do
-  curl -s "$RPC_URL" \
-    -H 'content-type: application/json' \
-    --data "$(jq -nc \
-      --arg account_id "$DESTINATION_COLLECTION_ID" \
-      --arg args_base64 "$NFT_TOKENS_ARGS_BASE64" '{
-        jsonrpc: "2.0",
-        id: "fastnear",
-        method: "query",
-        params: {
-          request_type: "call_function",
-          account_id: $account_id,
-          method_name: "nft_tokens_for_owner",
-          args_base64: $args_base64,
-          finality: "final"
-        }
-      }')" \
-    | jq '.result.result | implode | fromjson' \
-    | jq --arg token_id "$TOKEN_ID" '
-        map(select(.token_id == $token_id))
-      ' \
-    | tee /tmp/derivative-token-verification.json >/dev/null
-
-  if jq -e 'length > 0' /tmp/derivative-token-verification.json >/dev/null; then
-    break
-  fi
-
-  sleep 1
-done
-
-jq '.' /tmp/derivative-token-verification.json
-```
-
-**Why this next step?**
-
-FastNear API is the quick gate check. Once the account qualifies, RPC is the right next step because that is where you can read exact token IDs and call the collection's own NFT views.
 
 ### Am I locked or liquid?
 
@@ -295,6 +127,209 @@ jq -n \
 **Why this next step?**
 
 If the classification is `direct_only`, the next operational question is usually about unstake and withdraw timing. If it is `liquid_only`, the next question is usually about redeeming or swapping the liquid token. If it is `mixed`, you should treat those as two separate exit paths rather than assuming one flow covers both.
+
+### Archive a BOS widget version as a provenance NFT
+
+Use this when the user story is “this BOS widget is a real on-chain artifact. Mint an NFT that records exactly which version I archived.”
+
+**Networks**
+
+- mainnet for reading the widget from `social.near`
+- testnet for safely minting the provenance NFT on `nft.examples.testnet`
+
+**Official references**
+
+- [Pre-deployed NFT contract](https://docs.near.org/tutorials/nfts/js/predeployed-contract)
+- [NEP-171 NFT standard](https://docs.near.org/primitives/nft/standard)
+- [SocialDB API and contract surface](https://github.com/NearSocial/social-db#api)
+
+**What you're doing**
+
+- Check whether the receiver already holds NFTs from the archive collection.
+- Read one exact BOS widget from `social.near`, including its widget-level SocialDB block.
+- Hash the widget source and turn that into provenance metadata.
+- Mint a testnet NFT whose metadata records the author, widget path, SocialDB block, and source hash.
+- Verify that the minted token still carries those provenance fields.
+
+Pinned source widget:
+
+- author account: `mob.near`
+- widget path: `mob.near/widget/Profile`
+- widget-level SocialDB block: `86494825`
+
+```bash
+API_BASE_URL=https://test.api.fastnear.com
+MAINNET_RPC_URL=https://rpc.mainnet.fastnear.com
+TESTNET_RPC_URL=https://rpc.testnet.fastnear.com
+AUTHOR_ACCOUNT_ID=mob.near
+WIDGET_NAME=Profile
+DESTINATION_COLLECTION_ID=nft.examples.testnet
+RECEIVER_ACCOUNT_ID=YOUR_ACCOUNT_ID.testnet
+SIGNER_ACCOUNT_ID="$RECEIVER_ACCOUNT_ID"
+```
+
+1. Use FastNear API to see whether the receiver already holds NFTs from the archive collection.
+
+```bash
+curl -s "$API_BASE_URL/v1/account/$RECEIVER_ACCOUNT_ID/nft" \
+  | tee /tmp/provenance-account-nfts.json >/dev/null
+
+jq --arg destination_collection_id "$DESTINATION_COLLECTION_ID" '{
+  existing_archive_tokens: [
+    .tokens[]?
+    | select(.contract_id == $destination_collection_id)
+    | {
+        contract_id,
+        token_id,
+        last_update_block_height
+      }
+  ]
+}' /tmp/provenance-account-nfts.json
+```
+
+2. Read the exact widget body and widget-level SocialDB block from mainnet.
+
+```bash
+WIDGET_ARGS_BASE64="$(
+  jq -nc --arg author_account_id "$AUTHOR_ACCOUNT_ID" --arg widget_name "$WIDGET_NAME" '{
+    keys: [($author_account_id + "/widget/" + $widget_name)],
+    options: {with_block_height: true}
+  }' | base64 | tr -d '\n'
+)"
+
+curl -s "$MAINNET_RPC_URL" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc --arg args_base64 "$WIDGET_ARGS_BASE64" '{
+    jsonrpc: "2.0",
+    id: "fastnear",
+    method: "query",
+    params: {
+      request_type: "call_function",
+      account_id: "social.near",
+      method_name: "get",
+      args_base64: $args_base64,
+      finality: "final"
+    }
+  }')" \
+  | jq '.result.result | implode | fromjson' \
+  | tee /tmp/bos-widget.json >/dev/null
+
+jq --arg author_account_id "$AUTHOR_ACCOUNT_ID" --arg widget_name "$WIDGET_NAME" '{
+  widget_path: ($author_account_id + "/widget/" + $widget_name),
+  socialdb_block_height: .[$author_account_id].widget[$widget_name][":block"],
+  source_preview: (
+    .[$author_account_id].widget[$widget_name][""]
+    | split("\n")[0:8]
+  )
+}' /tmp/bos-widget.json
+```
+
+3. Hash the widget source and build deterministic provenance metadata.
+
+```bash
+jq -r --arg author_account_id "$AUTHOR_ACCOUNT_ID" --arg widget_name "$WIDGET_NAME" '
+  .[$author_account_id].widget[$widget_name][""]
+' /tmp/bos-widget.json > /tmp/bos-widget-source.jsx
+
+WIDGET_BLOCK_HEIGHT="$(
+  jq -r --arg author_account_id "$AUTHOR_ACCOUNT_ID" --arg widget_name "$WIDGET_NAME" '
+    .[$author_account_id].widget[$widget_name][":block"]
+  ' /tmp/bos-widget.json
+)"
+
+SOURCE_SHA256="$(shasum -a 256 /tmp/bos-widget-source.jsx | awk '{print $1}')"
+SOURCE_HASH_SHORT="$(printf '%s' "$SOURCE_SHA256" | cut -c1-12)"
+TOKEN_ID="bos-widget-$SOURCE_HASH_SHORT"
+
+PROVENANCE_METADATA_JSON="$(
+  jq -nc \
+    --arg author_account_id "$AUTHOR_ACCOUNT_ID" \
+    --arg widget_name "$WIDGET_NAME" \
+    --arg widget_path "$AUTHOR_ACCOUNT_ID/widget/$WIDGET_NAME" \
+    --arg block_height "$WIDGET_BLOCK_HEIGHT" \
+    --arg source_sha256 "$SOURCE_SHA256" '{
+      title: ("BOS widget archive: " + $widget_path),
+      description: ("Archived from social.near on mainnet at block " + $block_height),
+      copies: 1,
+      extra: ({
+        author_account_id: $author_account_id,
+        widget_name: $widget_name,
+        widget_path: $widget_path,
+        source_contract_id: "social.near",
+        source_network: "mainnet",
+        socialdb_block_height: ($block_height | tonumber),
+        source_sha256: $source_sha256
+      } | @json)
+    }'
+)"
+
+printf '%s\n' "$PROVENANCE_METADATA_JSON" | jq '.'
+```
+
+4. Mint the provenance NFT on testnet.
+
+```bash
+near call "$DESTINATION_COLLECTION_ID" nft_mint "$(jq -nc \
+  --arg token_id "$TOKEN_ID" \
+  --arg receiver_id "$RECEIVER_ACCOUNT_ID" \
+  --argjson metadata "$PROVENANCE_METADATA_JSON" '{
+    token_id: $token_id,
+    receiver_id: $receiver_id,
+    metadata: $metadata
+  }')" \
+  --accountId "$SIGNER_ACCOUNT_ID" \
+  --deposit 0.1 \
+  --networkId testnet
+```
+
+5. Verify that the minted NFT carries the provenance fields you expect.
+
+Poll a few times instead of assuming failure if the token does not appear immediately after the mint transaction returns.
+
+```bash
+NFT_TOKEN_ARGS_BASE64="$(
+  jq -nc --arg token_id "$TOKEN_ID" '{token_id: $token_id}' \
+    | base64 | tr -d '\n'
+)"
+
+for attempt in 1 2 3 4 5; do
+  curl -s "$TESTNET_RPC_URL" \
+    -H 'content-type: application/json' \
+    --data "$(jq -nc \
+      --arg account_id "$DESTINATION_COLLECTION_ID" \
+      --arg args_base64 "$NFT_TOKEN_ARGS_BASE64" '{
+        jsonrpc: "2.0",
+        id: "fastnear",
+        method: "query",
+        params: {
+          request_type: "call_function",
+          account_id: $account_id,
+          method_name: "nft_token",
+          args_base64: $args_base64,
+          finality: "final"
+        }
+      }')" \
+    | jq '.result.result | implode | fromjson' \
+    | tee /tmp/bos-widget-provenance-token.json >/dev/null
+
+  if jq -e '. != null' /tmp/bos-widget-provenance-token.json >/dev/null; then
+    break
+  fi
+
+  sleep 1
+done
+
+jq '{
+  token_id,
+  owner_id,
+  title: .metadata.title,
+  provenance: (.metadata.extra | fromjson)
+}' /tmp/bos-widget-provenance-token.json
+```
+
+**Why this next step?**
+
+FastNear API gives you the quick receiver-side check. Mainnet RPC gives you the exact widget body and SocialDB block. Testnet minting turns that into a durable NFT record. If you later want to prove which historical transaction wrote the widget, hand off to the NEAR Social proof investigations on [Transactions API examples](/tx/examples).
 
 ## Common jobs
 

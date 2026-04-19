@@ -10,60 +10,147 @@ page_actions:
 
 ## Worked investigations
 
-### Trace an async promise chain and prove callback order
+These are intentionally ordered from the simplest anchor to the richest forensic workflow: start with one tx hash, then one receipt, then failure and async patterns, and only after that move into deeper SocialDB and NEAR Intents investigations.
 
-Use this investigation when one transaction creates promise work for later, a second transaction resumes it, and the real question is not “did both transactions succeed?” but “did the cross-contract callbacks actually run in the order I intended?”
+### I have one transaction hash. What happened?
+
+Use this investigation when the user story is as plain as it gets: “someone pasted me one transaction hash. I just want to know whether it worked, what it did, and which block it landed in.”
+
+This is the beginner-to-intermediate on-ramp for the page. Before receipts, promise chains, or forensics, there is one simpler skill every NEAR engineer needs: turn a bare tx hash into one short human story.
 
 **Goal**
 
-- Turn two transaction hashes into one readable proof story: what promise work was created, what order the resume call requested, and what order later showed up in downstream contract state.
+- Start from one transaction hash and recover the shortest useful answer: signer, receiver, action type, included block, and whether the transaction handed off into a successful execution path.
 
-If your codebase or helper scripts call this a “stage/release” or “yield/resume” flow, that is fine. For docs, the more useful mental model is simpler:
+For this pinned example:
 
-- **create promise work**: one transaction sets up deferred async work for later
-- **resume promise work**: a later transaction asks the contract to continue that work in a requested order
-- **trace the async path**: receipt trees show where the cross-contract callbacks actually ran
-- **observe state**: downstream contract state shows what order became visible to users or integrators
+- transaction hash: `AdgNifPYpoDNS5ckfBZm36Ai6LuL5bTstuKsVdGjKwGp`
+- signer: `mike.near`
+- receiver: `global-counter.mike.near`
+- included block height: `194263342`
+- first receipt ID: `5GhZcpfKWhrpaZo5Am74QfEUFQnZBz48G7hfoLPVDXcq`
+
+The plain-English answer for this one is simple: `mike.near` submitted a single `Transfer` action to `global-counter.mike.near`, the transaction landed in block `194263342`, and the chain handed it off into one successful receipt.
 
 ```mermaid
 flowchart LR
-    Y["Tx 1<br/>creates promise work"] --> H["Yielded promises become live<br/>staged_calls_for(...)"]
-    H --> R["Tx 2<br/>resumes promises in order beta -> alpha -> gamma"]
-    R --> C["Async cross-contract callbacks"]
-    C --> B["Recorder state<br/>beta"]
-    B --> A["Recorder state<br/>alpha"]
-    A --> G["Recorder state<br/>gamma"]
-    Y -. "main receipt-tree evidence lives here" .-> D["Original promise DAG"]
-    R -. "requested order lives here" .-> P["Resume payload"]
-    G -. "observed order ends here" .-> O["Observed downstream order"]
+    H["One tx hash<br/>AdgNifPY..."] --> T["Fetch transaction"]
+    T --> A["Read signer, receiver, actions, block"]
+    A --> S["Short human story"]
+    T -. "if needed later" .-> R["First receipt ID<br/>5GhZcpfK..."]
 ```
-
-That distinction matters because a successful resume transaction still does not prove the observed order by itself. You also need evidence that the promised work was really live before resume, and evidence that downstream state changed in the same order the resume call requested.
-
-For NEAR engineers, the important mental model is: the resume transaction tells you the **requested order**, but the original promise transaction usually remains the primary forensic anchor because the resumed callbacks still live on that original async receipt tree. Downstream contract state is what lets you compare requested order with observed order.
 
 | Surface | Endpoint | How we use it | Why we use it |
 | --- | --- | --- | --- |
-| Promise-chain trace capture | RPC [`EXPERIMENTAL_tx_status`](/rpc/transaction/experimental-tx-status) | Query the original promise transaction hash and the later resume transaction hash with `wait_until: "FINAL"`, usually hot RPC first and archival RPC on `UNKNOWN_TRANSACTION` | The receipt DAG is the primary proof surface for callback order and tells you which receipts belong to which async transaction tree |
-| Promise-readiness check | RPC [`query(call_function)`](/rpc/contract/call-function) | Poll the contract view that exposes deferred promise work, such as `staged_calls_for({ caller_id })`, with `finality: "final"` until the yielded promises appear | Confirms the promise work was really live before the resume transaction tried to continue it |
-| Requested-order anchor | Transactions API [`POST /v0/transactions`](/tx/transactions) | Fetch both transaction hashes to recover `block_height`, `block_hash`, `receiver_id`, indexed execution status, and the resume payload | Gives each transaction a durable block anchor and preserves the exact order the resume step requested |
-| Downstream state snapshots | RPC [`query(call_function)`](/rpc/contract/call-function) | Read the downstream recorder state before resume, then poll it after resume until the expected entries appear | Proves actual callback order in contract state, not just metadata in the receipt tree |
-| Receipt pivot | Transactions API [`POST /v0/receipt`](/tx/receipt) | Use any interesting yielded or downstream receipt ID to reconnect it to the originating transaction | Lets you move quickly from one receipt in the DAG back to the broader transaction story |
-| Per-block reconstruction | Transactions API [`POST /v0/block`](/tx/block) | Fetch the included block and the cascade blocks with receipts enabled | Reconstructs the block-by-block execution timeline once you know which blocks matter |
-| Account activity context | Transactions API [`POST /v0/account`](/tx/account) | Fetch function-call history for the contracts that participated in the cascade over the same window | Gives humans a simpler account-history view to compare against the trace |
-| Block-pinned state replay | RPC [`query(call_function)`](/rpc/contract/call-function) | Re-run the recorder view with `block_id` pinned to the interesting heights | Turns final state into a time series so you can say when state changed, not just what it became |
+| Readable transaction story | Transactions API [`POST /v0/transactions`](/tx/transactions) | Start from the tx hash and print signer, receiver, included block, action list, and first receipt handoff | Gives the fastest readable answer to “what did this tx do?” |
+| Canonical status follow-up | RPC [`EXPERIMENTAL_tx_status`](/rpc/transaction/experimental-tx-status) | Reuse the same tx hash and signer only if you need exact protocol-native status semantics | Useful when the next question becomes “success according to RPC, exactly?” |
+| Receipt handoff | Transactions API [`POST /v0/receipt`](/tx/receipt) | Reuse the first receipt ID if the next question turns into a receipt-level story | Provides the natural bridge to the next investigation when the transaction hash is no longer the best anchor |
 
 **What a useful answer should include**
 
-- a one-sentence conclusion in plain language, such as “the first transaction created three deferred promises, the second transaction resumed them in order `beta -> alpha -> gamma`, and the recorder state later confirmed that same callback order”
-- why the original promise transaction, not only the resume transaction, is usually the primary forensic anchor
-- the requested callback order and the observed downstream effect order
-- the blocks where the observable state changed
-- any receipt or account pivots the next investigator should keep
+- who signed the transaction
+- which account received it
+- which action type it carried
+- which block included it
+- one plain-English sentence that explains the transaction without receipt jargon
+
+### Transaction hash to human story shell walkthrough
+
+Use this when you want the shortest possible path from one tx hash to one readable answer.
+
+**What you're doing**
+
+- Fetch the transaction by hash and print the main story fields.
+- Confirm the final status only if you need exact RPC semantics.
+- Keep the first receipt ID only as the optional next step.
+
+```bash
+TX_BASE_URL=https://tx.main.fastnear.com
+RPC_URL=https://rpc.mainnet.fastnear.com
+TX_HASH=AdgNifPYpoDNS5ckfBZm36Ai6LuL5bTstuKsVdGjKwGp
+SIGNER_ACCOUNT_ID=mike.near
+```
+
+1. Fetch the transaction and print the basic story.
+
+```bash
+FIRST_RECEIPT_ID="$(
+  curl -s "$TX_BASE_URL/v0/transactions" \
+    -H 'content-type: application/json' \
+    --data "$(jq -nc --arg tx_hash "$TX_HASH" '{tx_hashes: [$tx_hash]}')" \
+    | tee /tmp/basic-tx-story.json \
+    | jq -r '.transactions[0].transaction_outcome.outcome.status.SuccessReceiptId'
+)"
+
+jq '{
+  transaction: {
+    hash: .transactions[0].transaction.hash,
+    signer_id: .transactions[0].transaction.signer_id,
+    receiver_id: .transactions[0].transaction.receiver_id,
+    included_block_height: .transactions[0].execution_outcome.block_height
+  },
+  actions: (
+    .transactions[0].transaction.actions
+    | map(if type == "string" then . else keys[0] end)
+  ),
+  first_receipt_id: .transactions[0].transaction_outcome.outcome.status.SuccessReceiptId,
+  receipt_count: (.transactions[0].receipts | length)
+}' /tmp/basic-tx-story.json
+
+# Expected action list: ["Transfer"]
+# Expected first receipt ID: 5GhZcpfKWhrpaZo5Am74QfEUFQnZBz48G7hfoLPVDXcq
+```
+
+2. If you need exact RPC status semantics, confirm them with `EXPERIMENTAL_tx_status`.
+
+```bash
+curl -s "$RPC_URL" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc \
+    --arg tx_hash "$TX_HASH" \
+    --arg signer_account_id "$SIGNER_ACCOUNT_ID" '{
+      jsonrpc: "2.0",
+      id: "fastnear",
+      method: "EXPERIMENTAL_tx_status",
+      params: {
+        tx_hash: $tx_hash,
+        sender_account_id: $signer_account_id,
+        wait_until: "FINAL"
+      }
+    }')" \
+  | jq '{
+      final_execution_status: .result.final_execution_status,
+      status: .result.status,
+      transaction_handoff: .result.transaction_outcome.outcome.status
+    }'
+```
+
+3. If the next question becomes “what was that first receipt?”, pivot once and stop.
+
+```bash
+curl -s "$TX_BASE_URL/v0/receipt" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc --arg receipt_id "$FIRST_RECEIPT_ID" '{receipt_id: $receipt_id}')" \
+  | jq '{
+      receipt_id: .receipt.receipt_id,
+      receiver_id: .receipt.receiver_id,
+      is_success: .receipt.is_success,
+      receipt_block_height: .receipt.block_height,
+      transaction_hash: .receipt.transaction_hash
+    }'
+```
+
+That last step is optional on purpose. If all you wanted was the transaction story, the first step was enough. Keep going only when the receipt itself becomes the new anchor.
+
+**Why this next step?**
+
+`POST /v0/transactions` is the cleanest starting point when all you have is a tx hash and need one readable answer. RPC is the follow-up for exact status semantics. `POST /v0/receipt` is the handoff when the next question stops being about the transaction as a whole and starts being about one receipt inside it.
 
 ### Turn one ugly receipt ID from logs into a human story
 
 Use this investigation when all you have is one ugly `receipt_id` from logs, traces, or an error report, and you want to turn it into a plain-English answer a teammate can understand.
+
+If you already have the transaction hash instead of the receipt ID, start with the simpler investigation just above and only drop down to this one when the receipt itself becomes the best anchor.
 
 **Goal**
 
@@ -101,6 +188,90 @@ flowchart LR
 - what the transaction actually did
 - whether the receipt was the main event or just one step in a larger cascade
 - one plain-English sentence that a teammate could read without decoding receipt jargon
+
+### Ugly receipt ID to human story shell walkthrough
+
+Use this when you already have one raw `receipt_id` from logs and want to turn it into a readable explanation fast.
+
+**What you're doing**
+
+- Resolve the receipt first.
+- Extract `receipt.transaction_hash` with `jq`.
+- Reuse that transaction hash in `POST /v0/transactions`.
+- Finish with one human summary you could paste into chat or a ticket.
+
+```bash
+TX_BASE_URL=https://tx.main.fastnear.com
+RECEIPT_ID='5GhZcpfKWhrpaZo5Am74QfEUFQnZBz48G7hfoLPVDXcq'
+```
+
+1. Resolve the receipt and figure out what object you are looking at.
+
+```bash
+TX_HASH="$(
+  curl -s "$TX_BASE_URL/v0/receipt" \
+    -H 'content-type: application/json' \
+    --data "$(jq -nc --arg receipt_id "$RECEIPT_ID" '{receipt_id: $receipt_id}')" \
+    | tee /tmp/receipt-lookup.json \
+    | jq -r '.receipt.transaction_hash'
+)"
+
+jq '{
+  receipt: {
+    receipt_id: .receipt.receipt_id,
+    predecessor_id: .receipt.predecessor_id,
+    receiver_id: .receipt.receiver_id,
+    receipt_type: .receipt.receipt_type,
+    is_success: .receipt.is_success,
+    receipt_block_height: .receipt.block_height,
+    transaction_hash: .receipt.transaction_hash,
+    tx_block_height: .receipt.tx_block_height
+  }
+}' /tmp/receipt-lookup.json
+```
+
+2. Reuse the transaction hash and turn the receipt into a readable transaction story.
+
+```bash
+curl -s "$TX_BASE_URL/v0/transactions" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc --arg tx_hash "$TX_HASH" '{tx_hashes: [$tx_hash]}')" \
+  | tee /tmp/receipt-parent-transaction.json >/dev/null
+
+jq '{
+  transaction: {
+    transaction_hash: .transactions[0].transaction.hash,
+    signer_id: .transactions[0].transaction.signer_id,
+    receiver_id: .transactions[0].transaction.receiver_id,
+    tx_block_height: .transactions[0].execution_outcome.block_height,
+    action_types: (
+      .transactions[0].transaction.actions
+      | map(if type == "string" then . else keys[0] end)
+    ),
+    transfer_deposit_yocto: (
+      .transactions[0].transaction.actions[0].Transfer.deposit // null
+    )
+  },
+  receipt_count: (.transactions[0].receipts | length)
+}' /tmp/receipt-parent-transaction.json
+```
+
+3. Turn that into one human sentence.
+
+```bash
+jq -r '
+  .transactions[0] as $tx
+  | "Receipt \($tx.execution_outcome.outcome.receipt_ids[0]) belongs to tx \($tx.transaction.hash): \($tx.transaction.signer_id) sent 5 NEAR to \($tx.transaction.receiver_id). The tx landed in block \($tx.execution_outcome.block_height), and the receipt executed successfully in block \($tx.receipts[0].execution_outcome.block_height)."
+' /tmp/receipt-parent-transaction.json
+```
+
+For another receipt, keep the same pattern but change the final sentence to match the action types you just printed.
+
+That is the core trick: you do not need to explain every receipt field. You need to recover just enough context to say what the signer did, where the receipt executed, and whether this receipt was the main event or only one step in a bigger cascade.
+
+**Why this next step?**
+
+`POST /v0/receipt` tells you what the raw receipt is attached to. `POST /v0/transactions` tells you what the signer was actually trying to do. Once you have those two pieces together, you can usually explain the receipt in one sentence before deciding whether you really need block context, account history, or canonical RPC status.
 
 ### Prove that one failed action reverted the whole batch
 
@@ -460,6 +631,57 @@ That last read is the practical proof that the first receipt's local state chang
 **Why this next step?**
 
 When a NEAR app “looked successful” and still broke later, the thing to ask is not just “what was the transaction status?” but “which receipt succeeded, and which later receipt failed?” This example gives you that exact split: indexed receipt timeline for the shape, RPC status for the exact semantics, and one contract-state read to prove the earlier side effect stuck.
+
+### Trace an async promise chain and prove callback order
+
+Use this investigation when one transaction creates promise work for later, a second transaction resumes it, and the real question is not “did both transactions succeed?” but “did the cross-contract callbacks actually run in the order I intended?”
+
+**Goal**
+
+- Turn two transaction hashes into one readable proof story: what promise work was created, what order the resume call requested, and what order later showed up in downstream contract state.
+
+If your codebase or helper scripts call this a “stage/release” or “yield/resume” flow, that is fine. For docs, the more useful mental model is simpler:
+
+- **create promise work**: one transaction sets up deferred async work for later
+- **resume promise work**: a later transaction asks the contract to continue that work in a requested order
+- **trace the async path**: receipt trees show where the cross-contract callbacks actually ran
+- **observe state**: downstream contract state shows what order became visible to users or integrators
+
+```mermaid
+flowchart LR
+    Y["Tx 1<br/>creates promise work"] --> H["Yielded promises become live<br/>staged_calls_for(...)"]
+    H --> R["Tx 2<br/>resumes promises in order beta -> alpha -> gamma"]
+    R --> C["Async cross-contract callbacks"]
+    C --> B["Recorder state<br/>beta"]
+    B --> A["Recorder state<br/>alpha"]
+    A --> G["Recorder state<br/>gamma"]
+    Y -. "main receipt-tree evidence lives here" .-> D["Original promise DAG"]
+    R -. "requested order lives here" .-> P["Resume payload"]
+    G -. "observed order ends here" .-> O["Observed downstream order"]
+```
+
+That distinction matters because a successful resume transaction still does not prove the observed order by itself. You also need evidence that the promised work was really live before resume, and evidence that downstream state changed in the same order the resume call requested.
+
+For NEAR engineers, the important mental model is: the resume transaction tells you the **requested order**, but the original promise transaction usually remains the primary forensic anchor because the resumed callbacks still live on that original async receipt tree. Downstream contract state is what lets you compare requested order with observed order.
+
+| Surface | Endpoint | How we use it | Why we use it |
+| --- | --- | --- | --- |
+| Promise-chain trace capture | RPC [`EXPERIMENTAL_tx_status`](/rpc/transaction/experimental-tx-status) | Query the original promise transaction hash and the later resume transaction hash with `wait_until: "FINAL"`, usually hot RPC first and archival RPC on `UNKNOWN_TRANSACTION` | The receipt DAG is the primary proof surface for callback order and tells you which receipts belong to which async transaction tree |
+| Promise-readiness check | RPC [`query(call_function)`](/rpc/contract/call-function) | Poll the contract view that exposes deferred promise work, such as `staged_calls_for({ caller_id })`, with `finality: "final"` until the yielded promises appear | Confirms the promise work was really live before the resume transaction tried to continue it |
+| Requested-order anchor | Transactions API [`POST /v0/transactions`](/tx/transactions) | Fetch both transaction hashes to recover `block_height`, `block_hash`, `receiver_id`, indexed execution status, and the resume payload | Gives each transaction a durable block anchor and preserves the exact order the resume step requested |
+| Downstream state snapshots | RPC [`query(call_function)`](/rpc/contract/call-function) | Read the downstream recorder state before resume, then poll it after resume until the expected entries appear | Proves actual callback order in contract state, not just metadata in the receipt tree |
+| Receipt pivot | Transactions API [`POST /v0/receipt`](/tx/receipt) | Use any interesting yielded or downstream receipt ID to reconnect it to the originating transaction | Lets you move quickly from one receipt in the DAG back to the broader transaction story |
+| Per-block reconstruction | Transactions API [`POST /v0/block`](/tx/block) | Fetch the included block and the cascade blocks with receipts enabled | Reconstructs the block-by-block execution timeline once you know which blocks matter |
+| Account activity context | Transactions API [`POST /v0/account`](/tx/account) | Fetch function-call history for the contracts that participated in the cascade over the same window | Gives humans a simpler account-history view to compare against the trace |
+| Block-pinned state replay | RPC [`query(call_function)`](/rpc/contract/call-function) | Re-run the recorder view with `block_id` pinned to the interesting heights | Turns final state into a time series so you can say when state changed, not just what it became |
+
+**What a useful answer should include**
+
+- a one-sentence conclusion in plain language, such as “the first transaction created three deferred promises, the second transaction resumed them in order `beta -> alpha -> gamma`, and the recorder state later confirmed that same callback order”
+- why the original promise transaction, not only the resume transaction, is usually the primary forensic anchor
+- the requested callback order and the observed downstream effect order
+- the blocks where the observable state changed
+- any receipt or account pivots the next investigator should keep
 
 ### Prove that `mike.near` set `profile.name` to `Mike Purvis`, then recover the SocialDB profile write transaction
 
@@ -843,50 +1065,50 @@ That last step confirms the follow edge still exists now. The earlier NEAR Socia
 
 NEAR Social gives you the semantic edge. FastNear block receipts give you the bridge to a specific write. FastNear transaction lookup turns that write into a readable story. RPC gives you canonical current-state confirmation.
 
-### Which transaction wrote `DonateNEARtoEfiz`?
+### Which transaction wrote `mob.near/widget/Profile`?
 
-Use this investigation when the user story is lighter and more playful: “the RPC examples page just showed me that `efiz.near/widget/DonateNEARtoEfiz` exists and that its last-write block is `92543301`. Which transaction actually wrote that widget?”
+Use this investigation when the question is “I already know `mob.near/widget/Profile` exists right now. Which transaction wrote the widget version I am looking at?”
 
-This one is fun, but the proof recipe is the same serious NEAR Social pattern:
+This is the natural tx-side companion to the lighter RPC widget inspection and the provenance-NFT workflow. The job is straightforward:
 
-- start from one SocialDB block anchor
-- bridge that block to one `efiz.near -> social.near` receipt
+- start from the widget's own SocialDB block
+- turn that block into one `mob.near -> social.near` receipt
 - recover the originating transaction
-- decode the `set` payload and prove it really stored the widget source
+- decode the `set` payload and prove it really carried the widget source
 
 **Goal**
 
-- Turn the widget's last-write block into one readable answer: which transaction wrote `DonateNEARtoEfiz`, which receipt executed the write, and what exact widget source was stored in that payload.
+- Turn one widget-level SocialDB block into one readable answer: which transaction wrote `mob.near/widget/Profile`, which receipt executed the write, and what exact widget source appeared in that payload.
 
 **Official references**
 
 - [SocialDB API and contract surface](https://github.com/NearSocial/social-db#api)
 
-This investigation picks up right where the playful RPC widget example leaves off. For this live anchor:
+For this live anchor:
 
-- account: `efiz.near`
-- widget: `DonateNEARtoEfiz`
-- SocialDB write block: `92543301`
-- receipt ID: `FsKL2B2azYBHBT2Ro7XqZtaBHdhHxN4VEUhqm5XZb76E`
-- originating transaction hash: `CUA61dRkeS9c9hc3MVdURRrb2unef9WXcxFFtWo2dQRf`
-- outer transaction block: `92543300`
+- account: `mob.near`
+- widget: `Profile`
+- SocialDB write block: `86494825`
+- receipt ID: `CZyjiBjphzE95tFEqi1YH6eLCLhqknaW4SQ5R4L6pkC6`
+- originating transaction hash: `9QDupdK2ewMxfSvMmdGEkdBcVnoL4TexmXY2FnMRxfia`
+- outer transaction block: `86494824`
 
 | Surface | Endpoint | How we use it | Why we use it |
 | --- | --- | --- | --- |
-| Block-to-receipt bridge | Transactions API [`POST /v0/block`](/tx/block) | Start from block `92543301` with `with_receipts: true`, then filter back down to `efiz.near -> social.near` | Turns the widget's last-write block into one concrete receipt and one concrete transaction hash |
-| Transaction story | Transactions API [`POST /v0/transactions`](/tx/transactions) | Fetch the originating transaction and decode the `FunctionCall.args` payload | Proves the write was a `social.near set` call carrying the `DonateNEARtoEfiz` source code |
+| Block-to-receipt bridge | Transactions API [`POST /v0/block`](/tx/block) | Start from block `86494825` with `with_receipts: true`, then filter back down to `mob.near -> social.near` | Turns the widget's write block into one concrete receipt and one concrete transaction hash |
+| Transaction story | Transactions API [`POST /v0/transactions`](/tx/transactions) | Fetch the originating transaction and decode the `FunctionCall.args` payload | Proves the write was a `social.near set` call carrying the `mob.near/widget/Profile` source code |
 | Canonical current-state confirmation | RPC [`query(call_function)`](/rpc/contract/call-function) | Call `social.near get` directly at `final` for the same widget path | Confirms that the widget still exists now, even though the earlier steps already proved which historical transaction wrote it |
 
 **What a useful answer should include**
 
 - the write block height and why it is the receipt execution block, not the outer transaction block
 - the specific receipt ID and originating transaction hash behind the widget write
-- proof that the write payload was a `set` call carrying `efiz.near/widget/DonateNEARtoEfiz`
-- one plain-English sentence like “`efiz.near` wrote `DonateNEARtoEfiz` in tx `CUA61...`, and the payload really did store the donation widget source”
+- proof that the write payload was a `set` call carrying `mob.near/widget/Profile`
+- one plain-English sentence like “`mob.near` wrote `widget/Profile` in tx `9QDup...`, and the payload really did store the current profile widget source”
 
-### DonateNEARtoEfiz write-proof shell walkthrough
+### NEAR Social widget write-proof shell walkthrough
 
-Use this when you want to turn one playful widget block anchor into the exact transaction that wrote it.
+Use this when you want to turn one widget block anchor into the exact transaction that wrote it.
 
 **What you're doing**
 
@@ -898,9 +1120,9 @@ Use this when you want to turn one playful widget block anchor into the exact tr
 ```bash
 TX_BASE_URL=https://tx.main.fastnear.com
 RPC_URL=https://rpc.mainnet.fastnear.com
-ACCOUNT_ID=efiz.near
-WIDGET_NAME=DonateNEARtoEfiz
-WIDGET_BLOCK_HEIGHT=92543301
+ACCOUNT_ID=mob.near
+WIDGET_NAME=Profile
+WIDGET_BLOCK_HEIGHT=86494825
 ```
 
 1. Start from the widget's last-write block and recover the SocialDB receipt plus transaction hash.
@@ -914,7 +1136,7 @@ WIDGET_TX_HASH="$(
       with_transactions: false,
       with_receipts: true
     }')" \
-    | tee /tmp/efiz-widget-block.json \
+    | tee /tmp/mob-widget-block.json \
     | jq -r --arg account_id "$ACCOUNT_ID" '
         first(
           .block_receipts[]
@@ -936,10 +1158,10 @@ jq --arg account_id "$ACCOUNT_ID" '{
         }
     )
   )
-}' /tmp/efiz-widget-block.json
+}' /tmp/mob-widget-block.json
 
-# Expected receipt ID: FsKL2B2azYBHBT2Ro7XqZtaBHdhHxN4VEUhqm5XZb76E
-# Expected transaction hash: CUA61dRkeS9c9hc3MVdURRrb2unef9WXcxFFtWo2dQRf
+# Expected receipt ID: CZyjiBjphzE95tFEqi1YH6eLCLhqknaW4SQ5R4L6pkC6
+# Expected transaction hash: 9QDupdK2ewMxfSvMmdGEkdBcVnoL4TexmXY2FnMRxfia
 ```
 
 2. Reuse the transaction hash and decode the SocialDB `set` payload.
@@ -948,7 +1170,7 @@ jq --arg account_id "$ACCOUNT_ID" '{
 curl -s "$TX_BASE_URL/v0/transactions" \
   -H 'content-type: application/json' \
   --data "$(jq -nc --arg tx_hash "$WIDGET_TX_HASH" '{tx_hashes: [$tx_hash]}')" \
-  | tee /tmp/efiz-widget-transaction.json >/dev/null
+  | tee /tmp/mob-widget-transaction.json >/dev/null
 
 jq '{
   transaction: {
@@ -965,15 +1187,15 @@ jq '{
           .args
           | @base64d
           | fromjson
-          | .data["efiz.near"].widget["DonateNEARtoEfiz"][""]
+          | .data["mob.near"].widget.Profile[""]
           | split("\n")[0:12]
         )
       }
   )
-}' /tmp/efiz-widget-transaction.json
+}' /tmp/mob-widget-transaction.json
 ```
 
-That second step is the payoff. You are no longer just saying “something in that block updated SocialDB.” You are proving that tx `CUA61...` called `social.near set` and carried the actual `DonateNEARtoEfiz` widget body in its args.
+That second step is the payoff. You are no longer just saying “something in that block updated SocialDB.” You are proving that tx `9QDup...` called `social.near set` and carried the actual `mob.near/widget/Profile` widget body in its args.
 
 3. Finish with canonical current-state confirmation via raw RPC.
 
@@ -998,7 +1220,7 @@ curl -s "$RPC_URL" \
       finality: "final"
     }
   }')" \
-  | tee /tmp/efiz-widget-rpc.json >/dev/null
+  | tee /tmp/mob-widget-rpc.json >/dev/null
 
 jq --arg account_id "$ACCOUNT_ID" --arg widget_name "$WIDGET_NAME" '{
   finality: "final",
@@ -1009,14 +1231,14 @@ jq --arg account_id "$ACCOUNT_ID" --arg widget_name "$WIDGET_NAME" '{
     | .[$account_id].widget[$widget_name]
     | split("\n")[0:5]
   )
-}' /tmp/efiz-widget-rpc.json
+}' /tmp/mob-widget-rpc.json
 ```
 
 That last step confirms the widget still exists now. The earlier block and transaction steps are what proved which historical write created it.
 
 **Why this next step?**
 
-The widget's last-write block gives you the bridge. FastNear block receipts turn that bridge into one receipt and one transaction hash. FastNear transaction lookup turns the hash into readable write proof. RPC then confirms that the widget still exists now.
+The widget's write block gives you the bridge. FastNear block receipts turn that bridge into one receipt and one transaction hash. FastNear transaction lookup turns the hash into readable write proof. RPC then confirms that the widget still exists now.
 
 ### Trace one NEAR Intents settlement and show what actually happened
 
@@ -1203,90 +1425,6 @@ jq -r '
 **Why this next step?**
 
 `POST /v0/transactions` tells you what the settlement called into. `POST /v0/block` shows where that settlement landed in block context. `EXPERIMENTAL_tx_status` is the canonical follow-up when you need executor IDs, receipt-DAG structure, and raw event names to explain what actually happened.
-
-### Ugly receipt ID to human story shell walkthrough
-
-Use this when you already have one raw `receipt_id` from logs and want to turn it into a readable explanation fast.
-
-**What you're doing**
-
-- Resolve the receipt first.
-- Extract `receipt.transaction_hash` with `jq`.
-- Reuse that transaction hash in `POST /v0/transactions`.
-- Finish with one human summary you could paste into chat or a ticket.
-
-```bash
-TX_BASE_URL=https://tx.main.fastnear.com
-RECEIPT_ID='5GhZcpfKWhrpaZo5Am74QfEUFQnZBz48G7hfoLPVDXcq'
-```
-
-1. Resolve the receipt and figure out what object you are looking at.
-
-```bash
-TX_HASH="$(
-  curl -s "$TX_BASE_URL/v0/receipt" \
-    -H 'content-type: application/json' \
-    --data "$(jq -nc --arg receipt_id "$RECEIPT_ID" '{receipt_id: $receipt_id}')" \
-    | tee /tmp/receipt-lookup.json \
-    | jq -r '.receipt.transaction_hash'
-)"
-
-jq '{
-  receipt: {
-    receipt_id: .receipt.receipt_id,
-    predecessor_id: .receipt.predecessor_id,
-    receiver_id: .receipt.receiver_id,
-    receipt_type: .receipt.receipt_type,
-    is_success: .receipt.is_success,
-    receipt_block_height: .receipt.block_height,
-    transaction_hash: .receipt.transaction_hash,
-    tx_block_height: .receipt.tx_block_height
-  }
-}' /tmp/receipt-lookup.json
-```
-
-2. Reuse the transaction hash and turn the receipt into a readable transaction story.
-
-```bash
-curl -s "$TX_BASE_URL/v0/transactions" \
-  -H 'content-type: application/json' \
-  --data "$(jq -nc --arg tx_hash "$TX_HASH" '{tx_hashes: [$tx_hash]}')" \
-  | tee /tmp/receipt-parent-transaction.json >/dev/null
-
-jq '{
-  transaction: {
-    transaction_hash: .transactions[0].transaction.hash,
-    signer_id: .transactions[0].transaction.signer_id,
-    receiver_id: .transactions[0].transaction.receiver_id,
-    tx_block_height: .transactions[0].execution_outcome.block_height,
-    action_types: (
-      .transactions[0].transaction.actions
-      | map(if type == "string" then . else keys[0] end)
-    ),
-    transfer_deposit_yocto: (
-      .transactions[0].transaction.actions[0].Transfer.deposit // null
-    )
-  },
-  receipt_count: (.transactions[0].receipts | length)
-}' /tmp/receipt-parent-transaction.json
-```
-
-3. Turn that into one human sentence.
-
-```bash
-jq -r '
-  .transactions[0] as $tx
-  | "Receipt \($tx.execution_outcome.outcome.receipt_ids[0]) belongs to tx \($tx.transaction.hash): \($tx.transaction.signer_id) sent 5 NEAR to \($tx.transaction.receiver_id). The tx landed in block \($tx.execution_outcome.block_height), and the receipt executed successfully in block \($tx.receipts[0].execution_outcome.block_height)."
-' /tmp/receipt-parent-transaction.json
-```
-
-For another receipt, keep the same pattern but change the final sentence to match the action types you just printed.
-
-That is the core trick: you do not need to explain every receipt field. You need to recover just enough context to say what the signer did, where the receipt executed, and whether this receipt was the main event or only one step in a bigger cascade.
-
-**Why this next step?**
-
-`POST /v0/receipt` tells you what the raw receipt is attached to. `POST /v0/transactions` tells you what the signer was actually trying to do. Once you have those two pieces together, you can usually explain the receipt in one sentence before deciding whether you really need block context, account history, or canonical RPC status.
 
 ## Common jobs
 

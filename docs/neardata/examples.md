@@ -32,7 +32,7 @@ Use this investigation when you want to notice a new block as early as possible,
 - when the same observation became finalized
 - whether the exact RPC block changed the interpretation
 
-### Shell walkthrough
+### Finalized block follow-up shell walkthrough
 
 Use this when you want the helper route to pick the latest finalized block for you, but you still want to confirm the exact block in RPC.
 
