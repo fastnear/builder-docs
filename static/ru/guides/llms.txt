@@ -31,7 +31,7 @@
 
 - [Примеры API](https://docs.fastnear.com/ru/api/examples.md): Пошаговые сценарии использования FastNear API для поиска аккаунтов, инвентаризации активов и проверки прямого стейкинга.
 - [Руководство по интернационализации](https://docs.fastnear.com/ru/internationalization.md): Руководство для сопровождающих по добавлению локалей Docusaurus, локализованных оверлеев FastNear и безопасного для discovery процесса перевода.
-- [Примеры NEAR Data](https://docs.fastnear.com/ru/neardata/examples.md): Пошаговые сценарии для проверки, был ли контракт затронут в последнем финализированном блоке, и извлечения точных идентификаторов для дальнейшего разбора.
+- [Примеры NEAR Data](https://docs.fastnear.com/ru/neardata/examples.md): Пошаговые сценарии для проверки contract touch, сравнения optimistic и final head, а также прохода по блокам вперёд.
 - [redocly-config](https://docs.fastnear.com/ru/redocly-config.md): Исторические заметки о прежнем бэкенде Redocly и о том, где он всё ещё важен для проверки документации FastNear.
 - [Примеры Transfers API](https://docs.fastnear.com/ru/transfers/examples.md): Пошаговые сценарии для фильтрации переводов, чтения humanized amount и running balances, а также перехода к receipt- или transaction-контексту.
 - [Примеры Transactions API](https://docs.fastnear.com/ru/tx/examples.md): Пошаговые расследования транзакций сначала для типовых задач разработчика.
