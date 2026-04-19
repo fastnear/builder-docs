@@ -28,7 +28,7 @@ Use this investigation when you want to notice a new block as early as possible,
 
 **Goal**
 
-- Notice a recent block quickly, then check the same thing again once finality catches up.
+- Notice one recent block-family change early, then confirm which finalized block caught up.
 
 | Surface | Endpoint | How we use it | Why we use it |
 | --- | --- | --- | --- |
@@ -40,24 +40,36 @@ Use this investigation when you want to notice a new block as early as possible,
 
 **What a useful answer should include**
 
-- which optimistic observation first triggered the investigation
-- when the same observation became finalized
+- which optimistic redirect target and resolved block first triggered the investigation
+- when the finalized helper caught up and which block it resolved to
 - whether the exact RPC block changed the interpretation
 
-### Finalized block follow-up shell walkthrough
+### Optimistic signal to finalized confirmation shell walkthrough
 
-Use this when you want the helper route to pick the latest finalized block for you, but you still want to confirm the exact block in RPC.
+Use this when you want to notice a fresh block-family change immediately, then prove which finalized block caught up and confirm that exact height in RPC.
 
 **What you're doing**
 
-- Inspect the redirect returned by `GET /v0/last_block/final`.
-- Fetch the resolved block document.
-- Extract `block.header.height` with `jq`.
-- Reuse that height in RPC `block` by height.
+- Inspect the redirect returned by `GET /v0/last_block/optimistic`.
+- Fetch the resolved optimistic block document and keep its height and hash.
+- Inspect the redirect returned by `GET /v0/last_block/final` and keep the finalized counterpart.
+- Compare the optimistic and finalized observations, then reuse the finalized height in RPC `block` by height.
 
 ```bash
 NEARDATA_BASE_URL=https://mainnet.neardata.xyz
 RPC_URL=https://rpc.mainnet.fastnear.com
+
+OPTIMISTIC_LOCATION="$(
+  curl -s -D - -o /dev/null "$NEARDATA_BASE_URL/v0/last_block/optimistic" \
+    | awk 'tolower($1) == "location:" {print $2}' \
+    | tr -d '\r'
+)"
+
+printf 'Optimistic redirect target: %s\n' "$OPTIMISTIC_LOCATION"
+
+curl -s "$NEARDATA_BASE_URL$OPTIMISTIC_LOCATION" \
+  | tee /tmp/neardata-optimistic-block.json \
+  | jq '{height: .block.header.height, hash: .block.header.hash}'
 
 FINAL_LOCATION="$(
   curl -s -D - -o /dev/null "$NEARDATA_BASE_URL/v0/last_block/final" \
@@ -65,11 +77,28 @@ FINAL_LOCATION="$(
     | tr -d '\r'
 )"
 
-printf 'Redirect target: %s\n' "$FINAL_LOCATION"
+printf 'Final redirect target: %s\n' "$FINAL_LOCATION"
 
 curl -s "$NEARDATA_BASE_URL$FINAL_LOCATION" \
   | tee /tmp/neardata-final-block.json \
   | jq '{height: .block.header.height, hash: .block.header.hash}'
+
+jq -n \
+  --slurpfile optimistic /tmp/neardata-optimistic-block.json \
+  --slurpfile final /tmp/neardata-final-block.json '{
+    optimistic: {
+      height: $optimistic[0].block.header.height,
+      hash: $optimistic[0].block.header.hash
+    },
+    final: {
+      height: $final[0].block.header.height,
+      hash: $final[0].block.header.hash
+    },
+    same_height: (
+      $optimistic[0].block.header.height
+      == $final[0].block.header.height
+    )
+  }'
 
 BLOCK_HEIGHT="$(jq -r '.block.header.height' /tmp/neardata-final-block.json)"
 
@@ -88,7 +117,7 @@ curl -s "$RPC_URL" \
 
 **Why this next step?**
 
-The redirect helper is the easiest way to poll for “latest finalized.” Once it gives you a concrete block height, RPC is the natural next read if you want the exact block object the protocol would return.
+This gives you both sides of the story: the earliest optimistic anchor and the later finalized anchor. Once the finalized helper gives you a concrete block height, RPC is the natural next read if you want the exact block object the protocol would return.
 
 ## Common jobs
 

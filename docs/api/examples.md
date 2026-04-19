@@ -164,7 +164,7 @@ Use this when the user story is “this BOS widget is a real on-chain artifact. 
   <div className="fastnear-example-strategy__items">
     <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">01</span><span><span className="fastnear-example-strategy__code">GET /v1/account/.../nft</span> checks whether the receiver already holds archive NFTs from this collection.</span></p>
     <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">02</span><span><span className="fastnear-example-strategy__code">RPC call_function get</span> on <span className="fastnear-example-strategy__code">social.near</span> reads the exact widget source and its SocialDB write block.</span></p>
-    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span>Hash the source, mint <span className="fastnear-example-strategy__code">nft_mint</span> on testnet, then verify the provenance fields through <span className="fastnear-example-strategy__code">nft_tokens_for_owner</span>.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span>Hash the source, mint <span className="fastnear-example-strategy__code">nft_mint</span> on testnet, then verify the exact provenance fields through <span className="fastnear-example-strategy__code">nft_token</span>.</span></p>
   </div>
 </div>
 
@@ -318,7 +318,7 @@ near call "$DESTINATION_COLLECTION_ID" nft_mint "$(jq -nc \
   --networkId testnet
 ```
 
-5. Verify that the minted NFT carries the provenance fields you expect.
+5. Verify through the exact `nft_token` read that the minted NFT carries the provenance fields you expect.
 
 Poll a few times instead of assuming failure if the token does not appear immediately after the mint transaction returns.
 
@@ -365,7 +365,7 @@ jq '{
 
 **Why this next step?**
 
-FastNear API gives you the quick receiver-side check. Mainnet RPC gives you the exact widget body and SocialDB block. Testnet minting turns that into a durable NFT record. If you later want to prove which historical transaction wrote the widget, hand off to the NEAR Social proof investigations on [Transactions API examples](/tx/examples).
+FastNear API gives you the quick receiver-side check. Mainnet RPC gives you the exact widget body and SocialDB block. The exact `nft_token` read on testnet confirms that minting turned that into a durable NFT record. If you later want to prove which historical transaction wrote the widget, hand off to the NEAR Social proof investigations on [Transactions API examples](/tx/examples).
 
 ## Common jobs
 

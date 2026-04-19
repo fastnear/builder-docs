@@ -164,7 +164,7 @@ jq -n \
   <div className="fastnear-example-strategy__items">
     <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">01</span><span><span className="fastnear-example-strategy__code">GET /v1/account/.../nft</span> проверяет, есть ли у получателя уже архивные NFT из этой коллекции.</span></p>
     <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">02</span><span><span className="fastnear-example-strategy__code">RPC call_function get</span> на <span className="fastnear-example-strategy__code">social.near</span> читает точный исходник виджета и блок его записи в SocialDB.</span></p>
-    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span>Захешируйте исходник, выполните <span className="fastnear-example-strategy__code">nft_mint</span> в testnet, а потом проверьте provenance-поля через <span className="fastnear-example-strategy__code">nft_tokens_for_owner</span>.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span>Захешируйте исходник, выполните <span className="fastnear-example-strategy__code">nft_mint</span> в testnet, а потом проверьте точные provenance-поля через <span className="fastnear-example-strategy__code">nft_token</span>.</span></p>
   </div>
 </div>
 
@@ -318,7 +318,7 @@ near call "$DESTINATION_COLLECTION_ID" nft_mint "$(jq -nc \
   --networkId testnet
 ```
 
-5. Подтвердите, что выпущенный NFT действительно несёт ожидаемые provenance-поля.
+5. Подтвердите через точное чтение `nft_token`, что выпущенный NFT действительно несёт ожидаемые provenance-поля.
 
 Не считайте отсутствие токена ошибкой мгновенно: после mint-транзакции опросите view-метод несколько раз.
 
@@ -365,7 +365,7 @@ jq '{
 
 **Зачем нужен следующий шаг?**
 
-FastNear API даёт быстрый чек со стороны получателя. Mainnet RPC даёт точное тело виджета и его SocialDB-блок. После этого mint в testnet превращает чтение в долговечную NFT-запись. Если позже понадобится доказать, какая именно историческая транзакция записала этот виджет, переходите к NEAR Social proof-расследованиям в [Transactions API examples](/tx/examples).
+FastNear API даёт быстрый чек со стороны получателя. Mainnet RPC даёт точное тело виджета и его SocialDB-блок. Точное чтение `nft_token` в testnet подтверждает, что mint действительно превратил это в долговечную NFT-запись. Если позже понадобится доказать, какая именно историческая транзакция записала этот виджет, переходите к NEAR Social proof-расследованиям в [Transactions API examples](/tx/examples).
 
 ## Частые задачи
 

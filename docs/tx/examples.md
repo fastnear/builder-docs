@@ -500,7 +500,7 @@ This is the opposite of the failed batch example above. There, one action failed
   <div className="fastnear-example-strategy__items">
     <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">01</span><span><span className="fastnear-example-strategy__code">POST /v0/transactions</span> gives the easiest first pass: which receipt ran first, and which receipt failed later.</span></p>
     <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">02</span><span><span className="fastnear-example-strategy__code">RPC EXPERIMENTAL_tx_status</span> proves the important NEAR nuance that top-level success and later descendant failure can both be true.</span></p>
-    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span><span className="fastnear-example-strategy__code">RPC call_function</span> on the router contract tells you whether the first receipt's own local state change stuck.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span>Once those two views agree on the split, stop. This example stays on preserved historical evidence rather than a live router-state read.</span></p>
   </div>
 </div>
 
@@ -529,26 +529,24 @@ This pinned async failure was captured on **April 18, 2026** on testnet:
 ```mermaid
 flowchart LR
     T["Signed tx<br/>kickoff_append(...)"] --> R["First receipt on seq-dr.mike.testnet<br/>SuccessValue + kickoff log"]
-    R --> S["Router stores local state<br/>kicked += late-failure"]
     R --> D["Detached cross-contract receipt<br/>append(...)"]
     D --> F["Later failure<br/>CodeDoesNotExist"]
-    S -. "state from the first receipt still sticks" .-> K["kicked() still contains late-failure"]
+    T -. "outer transaction still resolves" .-> X["RPC top-level status<br/>SuccessValue"]
 ```
 
 | Surface | Endpoint | How we use it | Why we use it |
 | --- | --- | --- | --- |
 | Transaction skeleton | Transactions API [`POST /v0/transactions`](/tx/transactions) | Fetch the pinned transaction and print the included block plus the per-receipt timeline | Gives the shortest readable overview of which receipt ran first and which receipt failed later |
 | Exact status semantics | RPC [`EXPERIMENTAL_tx_status`](/rpc/transaction/experimental-tx-status) | Inspect the top-level `status`, the first contract receipt outcome, and the later failed receipt outcome | Proves that top-level success and later descendant failure can coexist in one async story |
-| Current contract state | RPC [`query(call_function)`](/rpc/contract/call-function) | Call `seq-dr.mike.testnet.kicked()` | Shows that the first receipt's local state change stuck even though the later detached receipt failed |
 
-One NEAR detail matters here: receipt success is not transitive. `seq-dr.mike.testnet` returned success on its own receipt because `kickoff_append(...)` only logged and detached the next hop. The detached `append(...)` receipt was a separate piece of async work, so its later failure did not rewind the router's earlier state change.
+One NEAR detail matters here: receipt success is not transitive. `seq-dr.mike.testnet` returned success on its own receipt because `kickoff_append(...)` only logged and detached the next hop. The detached `append(...)` receipt was a separate piece of async work, so its later failure did not change the fact that the router's own receipt had already completed successfully.
 
 **What a useful answer should include**
 
 - that the signed transaction successfully handed off into the first router receipt
 - that the router receipt itself succeeded and emitted the `dishonest_router:kickoff:late-failure` log
 - that the later detached receipt to `asyncfail-in2hwikn.temp.mike.testnet` failed with `CodeDoesNotExist`
-- that the router's own state still contains `late-failure`, so the first receipt's local side effect stuck
+- that RPC still reports the outer transaction as `SuccessValue` even though a later detached receipt failed
 - one sentence explaining why this is different from a failed batched transaction
 
 #### Later receipt failure shell walkthrough
@@ -559,14 +557,13 @@ Use this when the user story is “the contract call looked fine, but something 
 
 - Read the transaction and its receipt timeline from the indexed view.
 - Use RPC transaction status to show that the top-level story still ended in `SuccessValue` even though a later receipt failed.
-- Read the router's current state to show that the first receipt's local side effect stuck.
+- Stop once those two preserved views agree on the split.
 
 ```bash
 TX_BASE_URL=https://tx.test.fastnear.com
 RPC_URL=https://rpc.testnet.fastnear.com
 TX_HASH=AUciGAq54XZtEuVXA9bSq4k6h13LmspoKtLegcWGRmQz
 SIGNER_ACCOUNT_ID=temp.mike.testnet
-ROUTER_ACCOUNT_ID=seq-dr.mike.testnet
 FIRST_RECEIPT_ID=6XgWxB9QVkgGKJaLcjDphGHYTK5d1suNe2cH1WHRWnoS
 FAILED_RECEIPT_ID=2A5JG8N1BxyR57WbrjqntTSf1UwR4RXR79MD2Zg3K2es
 ```
@@ -655,36 +652,11 @@ jq \
 # - the later append(...) receipt failed with CodeDoesNotExist
 ```
 
-3. Read the router's current state and confirm that the first receipt's local side effect stuck.
-
-```bash
-curl -s "$RPC_URL" \
-  -H 'content-type: application/json' \
-  --data "$(jq -nc --arg account_id "$ROUTER_ACCOUNT_ID" '{
-    jsonrpc: "2.0",
-    id: "fastnear",
-    method: "query",
-    params: {
-      request_type: "call_function",
-      account_id: $account_id,
-      method_name: "kicked",
-      args_base64: "e30=",
-      finality: "final"
-    }
-  }')" \
-  | tee /tmp/later-receipt-failure-kicked.json >/dev/null
-
-jq '{
-  kicked: (.result.result | implode | fromjson),
-  contains_late_failure: ((.result.result | implode | fromjson) | index("late-failure") != null)
-}' /tmp/later-receipt-failure-kicked.json
-```
-
-That last read is the practical proof that the first receipt's local state change stuck. The later failed receipt did not rewind the router's earlier `kicked.push(...)`.
+Stop here. As of **April 18, 2026**, `seq-dr.mike.testnet` no longer resolves on testnet, so a live router-state proof would no longer be truthful. The indexed receipt timeline plus `EXPERIMENTAL_tx_status` are the preserved historical evidence that still matters.
 
 **Why this next step?**
 
-When a NEAR app “looked successful” and still broke later, the thing to ask is not just “what was the transaction status?” but “which receipt succeeded, and which later receipt failed?” This example gives you that exact split: indexed receipt timeline for the shape, RPC status for the exact semantics, and one contract-state read to prove the earlier side effect stuck.
+When a NEAR app “looked successful” and still broke later, the thing to ask is not just “what was the transaction status?” but “which receipt succeeded, and which later receipt failed?” This example gives you that exact split: indexed receipt timeline for the shape, RPC status for the exact semantics, and no pretend live router-state read after the historical contract disappeared.
 
 ### Trace an async promise chain and prove callback order
 

@@ -45,6 +45,28 @@ Use this investigation when an operator says “I need this node back online” 
 - where data should land on disk
 - whether the operator should stay in FastNear snapshot docs or move to general nearcore bootstrap docs
 
+### Optimized mainnet `fast-rpc` command anchor
+
+Use this when you have already decided the target is a high-performance mainnet RPC node and just need the smallest runnable command anchor.
+
+```bash
+DATA_PATH=~/.near/data
+
+curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/fastnear/static/refs/heads/main/down_rclone.sh \
+  | DATA_PATH="$DATA_PATH" CHAIN_ID=mainnet RPC_TYPE=fast-rpc bash
+```
+
+### Standard mainnet RPC command anchor
+
+Use this when you want the default mainnet RPC recovery path without the optimized `fast-rpc` profile.
+
+```bash
+DATA_PATH=~/.near/data
+
+curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/fastnear/static/refs/heads/main/down_rclone.sh \
+  | DATA_PATH="$DATA_PATH" CHAIN_ID=mainnet bash
+```
+
 ### Mainnet archival recovery shell walkthrough
 
 Use this when you have already decided that archival mainnet is the right path and now need the exact command sequence with one shared block anchor.
@@ -79,11 +101,11 @@ Hot and cold archival data need to come from the same snapshot cut. Reusing one 
 
 **Start here**
 
-- [Mainnet snapshots](/snapshots/mainnet), specifically the optimized `fast-rpc` path.
+- Use the optimized mainnet `fast-rpc` command anchor above.
 
 **Next page if needed**
 
-- Revisit the standard mainnet RPC path if the node cannot support the optimized profile.
+- [Mainnet snapshots](/snapshots/mainnet) if you need to tune `THREADS`, `BWLIMIT`, or a custom `DATA_PATH`.
 
 **Stop when**
 
@@ -97,11 +119,11 @@ Hot and cold archival data need to come from the same snapshot cut. Reusing one 
 
 **Start here**
 
-- [Mainnet snapshots](/snapshots/mainnet) or [Testnet snapshots](/snapshots/testnet), depending on network, and choose the standard RPC snapshot path for that environment.
+- Use the standard mainnet RPC command anchor above.
 
 **Next page if needed**
 
-- Adjust `DATA_PATH`, `THREADS`, or bandwidth settings only after the standard path is clear.
+- [Mainnet snapshots](/snapshots/mainnet) if you need to tune `DATA_PATH`, `THREADS`, or bandwidth settings further.
 
 **Stop when**
 
@@ -115,7 +137,7 @@ Hot and cold archival data need to come from the same snapshot cut. Reusing one 
 
 **Start here**
 
-- [Mainnet snapshots](/snapshots/mainnet), archival section.
+- Use the archival walkthrough above.
 
 **Next page if needed**
 

@@ -32,6 +32,28 @@
 - куда на диске должны попасть данные
 - должен ли оператор оставаться в FastNear snapshot docs или переходить к общим гайдам nearcore по bootstrap
 
+### Минимальная команда для optimized mainnet `fast-rpc`
+
+Используйте этот якорь, когда уже ясно, что нужен высокопроизводительный mainnet RPC-узел, и требуется только минимальная рабочая команда.
+
+```bash
+DATA_PATH=~/.near/data
+
+curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/fastnear/static/refs/heads/main/down_rclone.sh \
+  | DATA_PATH="$DATA_PATH" CHAIN_ID=mainnet RPC_TYPE=fast-rpc bash
+```
+
+### Минимальная команда для стандартного mainnet RPC
+
+Используйте этот якорь, когда нужен обычный путь восстановления mainnet RPC без optimized-профиля `fast-rpc`.
+
+```bash
+DATA_PATH=~/.near/data
+
+curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/fastnear/static/refs/heads/main/down_rclone.sh \
+  | DATA_PATH="$DATA_PATH" CHAIN_ID=mainnet bash
+```
+
 ### Shell-сценарий архивного восстановления mainnet
 
 Используйте этот сценарий, когда вы уже решили, что нужен именно архивный путь для mainnet, и теперь нужна точная последовательность команд с одной общей опорной высотой блока.
@@ -66,11 +88,11 @@ curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/fastnear/
 
 **Начните здесь**
 
-- [Снапшоты mainnet](https://docs.fastnear.com/ru/snapshots/mainnet), конкретно путь для optimized `fast-rpc`.
+- Используйте якорь с optimized mainnet `fast-rpc` выше.
 
 **Следующая страница при необходимости**
 
-- Вернитесь к обычному сценарию mainnet RPC, если узел не подходит для optimized profile.
+- [Снапшоты mainnet](https://docs.fastnear.com/ru/snapshots/mainnet), если нужно дополнительно настроить `THREADS`, `BWLIMIT` или кастомный `DATA_PATH`.
 
 **Остановитесь, когда**
 
@@ -84,11 +106,11 @@ curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/fastnear/
 
 **Начните здесь**
 
-- [Снапшоты mainnet](https://docs.fastnear.com/ru/snapshots/mainnet) или [Снапшоты testnet](https://docs.fastnear.com/ru/snapshots/testnet) в зависимости от сети и выберите обычный RPC-сценарий для нужного окружения.
+- Используйте якорь со стандартным mainnet RPC выше.
 
 **Следующая страница при необходимости**
 
-- Настраивайте `DATA_PATH`, `THREADS` или ограничения по пропускной способности только после того, как понятен стандартный сценарий.
+- [Снапшоты mainnet](https://docs.fastnear.com/ru/snapshots/mainnet), если нужно дополнительно настроить `DATA_PATH`, `THREADS` или ограничения по пропускной способности.
 
 **Остановитесь, когда**
 
@@ -102,7 +124,7 @@ curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/fastnear/
 
 **Начните здесь**
 
-- [Снапшоты mainnet](https://docs.fastnear.com/ru/snapshots/mainnet), раздел архивного режима.
+- Используйте архивный walkthrough выше.
 
 **Следующая страница при необходимости**
 

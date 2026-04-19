@@ -15,7 +15,7 @@
 
 **Цель**
 
-- Быстро заметить недавний блок, а затем проверить то же самое, когда догонит finality.
+- Как можно раньше заметить одно свежее изменение в семействе блоков, а затем подтвердить, какой финализированный блок его догнал.
 
 | Поверхность | Эндпоинт | Как используем | Зачем используем |
 | --- | --- | --- | --- |
@@ -27,24 +27,36 @@
 
 **Что должен включать полезный ответ**
 
-- какое наблюдение по оптимистичному блоку впервые запустило расследование
-- когда то же наблюдение стало финализированным
+- какой redirect target и какой разрешённый оптимистичный блок впервые запустили расследование
+- когда helper для finality догнал его и в какой блок он разрешился
 - изменил ли точный разбор через RPC интерпретацию
 
-### Shell-сценарий проверки финализированного блока
+### Shell-сценарий от оптимистичного сигнала к финализированному подтверждению
 
-Используйте этот сценарий, когда вспомогательный маршрут сам выбирает для вас последний финализированный блок, но следующий шаг всё равно требует точной проверки через RPC.
+Используйте этот сценарий, когда нужно сразу заметить свежее изменение в семействе блоков, а затем доказать, какой финализированный блок его догнал, и подтвердить именно эту высоту через RPC.
 
 **Что вы делаете**
 
-- Смотрите redirect, который возвращает `GET /v0/last_block/final`.
-- Загружаете итоговый документ блока.
-- Извлекаете `block.header.height` через `jq`.
-- Переиспользуете эту высоту в RPC `block` по высоте.
+- Смотрите redirect, который возвращает `GET /v0/last_block/optimistic`.
+- Загружаете разрешённый оптимистичный блок и сохраняете его высоту и хеш.
+- Смотрите redirect, который возвращает `GET /v0/last_block/final`, и сохраняете финализированный counterpart.
+- Сравниваете оптимистичное и финализированное наблюдения, а затем переиспользуете финализированную высоту в RPC `block` по высоте.
 
 ```bash
 NEARDATA_BASE_URL=https://mainnet.neardata.xyz
 RPC_URL=https://rpc.mainnet.fastnear.com
+
+OPTIMISTIC_LOCATION="$(
+  curl -s -D - -o /dev/null "$NEARDATA_BASE_URL/v0/last_block/optimistic" \
+    | awk 'tolower($1) == "location:" {print $2}' \
+    | tr -d '\r'
+)"
+
+printf 'Optimistic redirect target: %s\n' "$OPTIMISTIC_LOCATION"
+
+curl -s "$NEARDATA_BASE_URL$OPTIMISTIC_LOCATION" \
+  | tee /tmp/neardata-optimistic-block.json \
+  | jq '{height: .block.header.height, hash: .block.header.hash}'
 
 FINAL_LOCATION="$(
   curl -s -D - -o /dev/null "$NEARDATA_BASE_URL/v0/last_block/final" \
@@ -52,11 +64,28 @@ FINAL_LOCATION="$(
     | tr -d '\r'
 )"
 
-printf 'Redirect target: %s\n' "$FINAL_LOCATION"
+printf 'Final redirect target: %s\n' "$FINAL_LOCATION"
 
 curl -s "$NEARDATA_BASE_URL$FINAL_LOCATION" \
   | tee /tmp/neardata-final-block.json \
   | jq '{height: .block.header.height, hash: .block.header.hash}'
+
+jq -n \
+  --slurpfile optimistic /tmp/neardata-optimistic-block.json \
+  --slurpfile final /tmp/neardata-final-block.json '{
+    optimistic: {
+      height: $optimistic[0].block.header.height,
+      hash: $optimistic[0].block.header.hash
+    },
+    final: {
+      height: $final[0].block.header.height,
+      hash: $final[0].block.header.hash
+    },
+    same_height: (
+      $optimistic[0].block.header.height
+      == $final[0].block.header.height
+    )
+  }'
 
 BLOCK_HEIGHT="$(jq -r '.block.header.height' /tmp/neardata-final-block.json)"
 
@@ -75,7 +104,7 @@ curl -s "$RPC_URL" \
 
 **Зачем нужен следующий шаг?**
 
-Helper route — самый простой способ опрашивать сценарий «последний финализированный блок». Как только он сообщил точную высоту блока, RPC становится естественным следующим шагом, если нужен точный блок-объект без догадок о том, что именно проверять.
+Так вы получаете обе стороны истории: самый ранний оптимистичный якорь и более поздний финализированный якорь. Как только helper для finality сообщил точную высоту блока, RPC становится естественным следующим шагом, если нужен точный блок-объект без догадок о том, что именно проверять.
 
 ## Частые задачи
 

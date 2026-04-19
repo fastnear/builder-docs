@@ -500,7 +500,7 @@ jq '{
   <div className="fastnear-example-strategy__items">
     <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">01</span><span><span className="fastnear-example-strategy__code">POST /v0/transactions</span> даёт самый удобный первый проход: какая receipt успела пройти первой и какая упала позже.</span></p>
     <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">02</span><span><span className="fastnear-example-strategy__code">RPC EXPERIMENTAL_tx_status</span> доказывает важную NEAR-деталь: верхнеуровневый успех и более поздний сбой потомка могут одновременно быть правдой.</span></p>
-    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span><span className="fastnear-example-strategy__code">RPC call_function</span> на роутере показывает, закрепилось ли собственное локальное изменение состояния из первой receipt.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span>Как только эти два представления сходятся на одном и том же разрезе истории, остановитесь. Этот пример держится за сохранённые исторические свидетельства, а не за живой read состояния роутера.</span></p>
   </div>
 </div>
 
@@ -529,26 +529,24 @@ jq '{
 ```mermaid
 flowchart LR
     T["Подписанная tx<br/>kickoff_append(...)"] --> R["Первая receipt на seq-dr.mike.testnet<br/>SuccessValue + kickoff log"]
-    R --> S["Роутер сохраняет локальное состояние<br/>kicked += late-failure"]
     R --> D["Detached cross-contract receipt<br/>append(...)"]
     D --> F["Более поздний сбой<br/>CodeDoesNotExist"]
-    S -. "состояние из первой receipt всё равно закрепилось" .-> K["kicked() всё ещё содержит late-failure"]
+    T -. "внешняя транзакция всё равно завершается" .-> X["RPC top-level status<br/>SuccessValue"]
 ```
 
 | Поверхность | Эндпоинт | Как используем | Зачем используем |
 | --- | --- | --- | --- |
 | Каркас транзакции | Transactions API [`POST /v0/transactions`](/tx/transactions) | Загружаем зафиксированную транзакцию и печатаем включающий блок плюс таймлайн receipt | Даёт самый короткий читаемый обзор: какая receipt отработала первой и какая упала позже |
 | Точные семантики статуса | RPC [`EXPERIMENTAL_tx_status`](/rpc/transaction/experimental-tx-status) | Смотрим верхнеуровневый `status`, outcome первой receipt контракта и outcome более поздней упавшей receipt | Доказывает, что верхнеуровневый успех и более поздний сбой потомка могут сосуществовать в одной async-истории |
-| Текущее состояние контракта | RPC [`query(call_function)`](/rpc/contract/call-function) | Вызываем `seq-dr.mike.testnet.kicked()` | Показывает, что локальное изменение состояния из первой receipt закрепилось, хотя более поздняя detached-receipt упала |
 
-Здесь важна одна NEAR-деталь: успех receipt не является транзитивным. `seq-dr.mike.testnet` вернул успех на своей собственной receipt, потому что `kickoff_append(...)` только залогировал событие и detached-нул следующий hop. Detached-receipt `append(...)` была уже отдельной частью async-работы, поэтому её более поздний сбой не откатил более раннее изменение состояния роутера.
+Здесь важна одна NEAR-деталь: успех receipt не является транзитивным. `seq-dr.mike.testnet` вернул успех на своей собственной receipt, потому что `kickoff_append(...)` только залогировал событие и detached-нул следующий hop. Detached-receipt `append(...)` была уже отдельной частью async-работы, поэтому её более поздний сбой не меняет того факта, что собственная receipt роутера уже успешно завершилась.
 
 **Что должен включать полезный ответ**
 
 - что подписанная транзакция успешно передала управление в первую router-receipt
 - что сама router-receipt завершилась успешно и выдала лог `dishonest_router:kickoff:late-failure`
 - что более поздняя detached-receipt в `asyncfail-in2hwikn.temp.mike.testnet` упала с `CodeDoesNotExist`
-- что собственное состояние роутера всё ещё содержит `late-failure`, то есть локальный побочный эффект первой receipt закрепился
+- что RPC всё ещё показывает верхнеуровневый `SuccessValue`, хотя более поздняя detached-receipt упала
 - одно предложение, которое объясняет, почему это отличается от неудачной батч-транзакции
 
 #### Shell-сценарий более позднего сбоя receipt
@@ -559,14 +557,13 @@ flowchart LR
 
 - Читаете транзакцию и её таймлайн receipt из индексированного представления.
 - Через RPC transaction status показываете, что верхнеуровневая история всё равно закончилась `SuccessValue`, хотя более поздняя receipt упала.
-- Читаете текущее состояние роутера, чтобы показать: локальный побочный эффект первой receipt закрепился.
+- Останавливаетесь, как только эти два сохранённых представления сходятся на одном и том же разрезе истории.
 
 ```bash
 TX_BASE_URL=https://tx.test.fastnear.com
 RPC_URL=https://rpc.testnet.fastnear.com
 TX_HASH=AUciGAq54XZtEuVXA9bSq4k6h13LmspoKtLegcWGRmQz
 SIGNER_ACCOUNT_ID=temp.mike.testnet
-ROUTER_ACCOUNT_ID=seq-dr.mike.testnet
 FIRST_RECEIPT_ID=6XgWxB9QVkgGKJaLcjDphGHYTK5d1suNe2cH1WHRWnoS
 FAILED_RECEIPT_ID=2A5JG8N1BxyR57WbrjqntTSf1UwR4RXR79MD2Zg3K2es
 ```
@@ -655,36 +652,11 @@ jq \
 # - более поздняя receipt append(...) упала с CodeDoesNotExist
 ```
 
-3. Прочитайте текущее состояние роутера и подтвердите, что локальный побочный эффект первой receipt закрепился.
-
-```bash
-curl -s "$RPC_URL" \
-  -H 'content-type: application/json' \
-  --data "$(jq -nc --arg account_id "$ROUTER_ACCOUNT_ID" '{
-    jsonrpc: "2.0",
-    id: "fastnear",
-    method: "query",
-    params: {
-      request_type: "call_function",
-      account_id: $account_id,
-      method_name: "kicked",
-      args_base64: "e30=",
-      finality: "final"
-    }
-  }')" \
-  | tee /tmp/later-receipt-failure-kicked.json >/dev/null
-
-jq '{
-  kicked: (.result.result | implode | fromjson),
-  contains_late_failure: ((.result.result | implode | fromjson) | index("late-failure") != null)
-}' /tmp/later-receipt-failure-kicked.json
-```
-
-Этот последний read и есть практическое доказательство того, что локальное изменение из первой receipt закрепилось. Более поздняя упавшая receipt не откатила более ранний `kicked.push(...)` внутри роутера.
+Остановитесь здесь. По состоянию на **18 апреля 2026 года** `seq-dr.mike.testnet` больше не резолвится в testnet, поэтому живое доказательство через текущее состояние роутера уже было бы неточным. Индексированный таймлайн receipt вместе с `EXPERIMENTAL_tx_status` и есть те сохранённые исторические свидетельства, которые здесь действительно важны.
 
 **Зачем нужен следующий шаг?**
 
-Когда NEAR-приложение «как будто прошло успешно», а потом всё равно сломалось, надо спрашивать не только «какой был статус транзакции?», но и «какая receipt завершилась успешно, а какая позже упала?» Этот пример как раз даёт такой разрез: индексированный таймлайн receipt для общей формы, RPC status для точных семантик и один read состояния контракта, чтобы доказать, что ранний побочный эффект закрепился.
+Когда NEAR-приложение «как будто прошло успешно», а потом всё равно сломалось, надо спрашивать не только «какой был статус транзакции?», но и «какая receipt завершилась успешно, а какая позже упала?» Этот пример как раз даёт такой разрез: индексированный таймлайн receipt для общей формы, RPC status для точных семантик и никакого притворного живого read состояния роутера после того, как исторический контракт исчез.
 
 ### Проследить асинхронную promise-цепочку и доказать порядок callback-ов
 
