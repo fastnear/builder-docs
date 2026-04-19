@@ -479,7 +479,7 @@ print(int.from_bytes(raw, "little", signed=True))
 PY
 ```
 
-For this contract, `STATE` is a one-byte signed counter, so decoding is trivial. On other contracts the layout may be more complex, but the rule stays the same: bytes first, schema second.
+For this contract, `STATE` is a one-byte signed counter, so decoding is trivial. On other contracts the layout may be much less friendly: near-sdk collections and Borsh-serialized structs often derive storage keys from prefixes and internal key schemes, so `view_state` only stays practical when you already know the exact layout you want. The rule stays the same: bytes first, schema second.
 
 3. Ask the contract the friendly way and compare.
 
