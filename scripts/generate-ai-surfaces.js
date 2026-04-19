@@ -106,6 +106,8 @@ const AUTHORED_MARKDOWN_LABELS = {
   en: {
     aiAndAgents: "AI & Agents",
     bestFor: "Best for:",
+    berryClubGalleryNote:
+      "Rendered snapshot gallery: launch, mid, and recent checkpoints from checked-in `src/data/berryClubSnapshots.json`.",
     guidesArchiveTitle: "FastNear Builder Docs Full Documentation Archive",
     guidesArchiveIntro:
       "AI-readable Markdown mirrors for authored docs plus canonical `/rpcs/**` and `/apis/**` routes.",
@@ -137,6 +139,8 @@ const AUTHORED_MARKDOWN_LABELS = {
   ru: {
     aiAndAgents: "AI и агенты",
     bestFor: "Лучше всего подходит для:",
+    berryClubGalleryNote:
+      "Галерея снимков: контрольные точки launch, mid и recent из сохранённого `src/data/berryClubSnapshots.json`.",
     guidesArchiveTitle: "Полный архив документации FastNear Builder Docs",
     guidesArchiveIntro:
       "AI-читабельные Markdown-копии авторских гайдов и канонических маршрутов `/rpcs/**` и `/apis/**`.",
@@ -654,6 +658,15 @@ function transformSimpleJsx(markdown, locale = DEFAULT_LOCALE) {
   return transformed;
 }
 
+function transformSpecialComponents(markdown, locale = DEFAULT_LOCALE) {
+  const labels = getAuthoredMarkdownLabels(locale);
+
+  return markdown.replace(
+    /<BerryClubSnapshotGallery\b[\s\S]*?\/>/g,
+    `\n\n${labels.berryClubGalleryNote}\n\n`
+  );
+}
+
 function removeImports(markdown) {
   return markdown.replace(/^import\s+.+?;?\n/gm, "");
 }
@@ -679,6 +692,7 @@ function renderAuthoredMarkdown(content, route, filePath, locale = DEFAULT_LOCAL
   let markdown = removeImports(content);
   markdown = transformCardGrid(markdown, locale);
   markdown = transformInlineLinks(markdown, locale);
+  markdown = transformSpecialComponents(markdown, locale);
   markdown = transformSimpleJsx(markdown, locale);
   markdown = rewriteRootRelativeMarkdownLinks(markdown, locale);
   assertNoUnsupportedJsx(markdown, filePath);

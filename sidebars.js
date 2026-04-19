@@ -58,8 +58,30 @@ function makeExamplesDoc(id) {
   };
 }
 
-function withExamplesFooter(items, examplesId) {
-  return [...items, makeExamplesDivider(), makeExamplesDoc(examplesId)];
+function makeExamplesCategory(id, items) {
+  return {
+    type: 'category',
+    label: 'Examples',
+    link: {
+      type: 'doc',
+      id,
+    },
+    items,
+    collapsed: false,
+    className: 'fastnear-sidebar-examples-category',
+  };
+}
+
+function makeExamplesFooterItem(config) {
+  if (typeof config === 'string') {
+    return makeExamplesDoc(config);
+  }
+
+  return makeExamplesCategory(config.id, config.items);
+}
+
+function withExamplesFooter(items, examplesConfig) {
+  return [...items, makeExamplesDivider(), makeExamplesFooterItem(examplesConfig)];
 }
 
 const rpcSidebar = withExamplesFooter(
@@ -193,7 +215,10 @@ const transactionsApiSidebar = withExamplesFooter(
     'tx/blocks',
     'tx/receipt',
   ],
-  'tx/examples'
+  {
+    id: 'tx/examples',
+    items: ['tx/berry-club', 'tx/outlayer'],
+  }
 );
 
 const transfersApiSidebar = hideEarlyApiFamilies

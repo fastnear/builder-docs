@@ -14,6 +14,18 @@ page_actions:
 
 Use this investigation when one contract storage key looks suspicious and you want the latest indexed value, the write history for that same key, and one final `view_state` check.
 
+<div className="fastnear-example-strategy">
+  <div className="fastnear-example-strategy__header">
+    <span className="fastnear-example-strategy__eyebrow">Strategy</span>
+    <p className="fastnear-example-strategy__title">Start with one exact key, widen only into that key’s history, then finish with one chain-state confirmation.</p>
+  </div>
+  <div className="fastnear-example-strategy__items">
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">01</span><span><span className="fastnear-example-strategy__code">get-latest-key</span> gives the newest indexed row for the exact key you care about.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">02</span><span><span className="fastnear-example-strategy__code">get-history-key</span> or <span className="fastnear-example-strategy__code">history-by-key</span> shows how that same key changed over time.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span><span className="fastnear-example-strategy__code">RPC view_state</span> is the final exact read when you need to compare index history with the chain right now.</span></p>
+  </div>
+</div>
+
 **Goal**
 
 - Explain what this storage key looks like in the index, how it changed, and whether `view_state` agrees right now.

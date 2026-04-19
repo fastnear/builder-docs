@@ -14,6 +14,18 @@ page_actions:
 
 Используйте это расследование, когда оператор говорит «мне нужно вернуть этот узел в онлайн» и нужно понять, правильный ли путь — optimized `fast-rpc`, обычный RPC или архивное восстановление с hot/cold-данными.
 
+<div className="fastnear-example-strategy">
+  <div className="fastnear-example-strategy__header">
+    <span className="fastnear-example-strategy__eyebrow">Стратегия</span>
+    <p className="fastnear-example-strategy__title">Сначала выберите класс восстановления, а затем выполните минимальную последовательность команд именно для него.</p>
+  </div>
+  <div className="fastnear-example-strategy__items">
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">01</span><span>Сначала решите, нужен ли вам optimized <span className="fastnear-example-strategy__code">fast-rpc</span>, обычный RPC или архивный режим.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">02</span><span>Если нужен архив, сначала зафиксируйте одну точную высоту snapshot-блока и дальше переиспользуйте только её.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span>Выполняйте только команды выбранного пути и не смешивайте optimized, standard и archival шаги в одном сценарии.</span></p>
+  </div>
+</div>
+
 **Цель**
 
 - Превратить расплывчатый запрос на восстановление в правильный сценарий снапшота mainnet и минимальную последовательность команд, с которой уже можно безопасно стартовать.

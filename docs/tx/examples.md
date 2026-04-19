@@ -2,21 +2,35 @@
 sidebar_label: Examples
 slug: /tx/examples
 title: Transactions Examples
-description: Plain-language investigations for following receipts, transactions, NEAR Social writes, promise chains, and NEAR Intents settlements.
+description: Plain-language investigations and case studies for following receipts, transactions, NEAR Social writes, promise chains, and NEAR Intents settlements.
 displayed_sidebar: transactionsApiSidebar
 page_actions:
   - markdown
 ---
 
-## Worked investigations
+If you want the longer case-study version of the same surface, jump to [Berry Club](/tx/examples/berry-club) for historical board reconstruction or [OutLayer](/tx/examples/outlayer) for worker and callback tracing.
 
-These are intentionally ordered from the simplest anchor to the richest forensic workflow: start with one tx hash, then one receipt, then failure and async patterns, and only after that move into deeper SocialDB and NEAR Intents investigations.
+## Start Here
+
+These are the smallest useful anchors on the page: start with one tx hash, then one receipt ID, and only go deeper when the simpler story stops being enough.
 
 ### I have one transaction hash. What happened?
 
 Use this investigation when the user story is as plain as it gets: “someone pasted me one transaction hash. I just want to know whether it worked, what it did, and which block it landed in.”
 
 This is the beginner-to-intermediate on-ramp for the page. Before receipts, promise chains, or forensics, there is one simpler skill every NEAR engineer needs: turn a bare tx hash into one short human story.
+
+<div className="fastnear-example-strategy">
+  <div className="fastnear-example-strategy__header">
+    <span className="fastnear-example-strategy__eyebrow">Strategy</span>
+    <p className="fastnear-example-strategy__title">Start with the readable tx record, then drop into RPC or receipts only if the first answer is not enough.</p>
+  </div>
+  <div className="fastnear-example-strategy__items">
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">01</span><span><span className="fastnear-example-strategy__code">POST /v0/transactions</span> gives signer, receiver, action types, block height, and the first receipt handoff.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">02</span><span><span className="fastnear-example-strategy__code">RPC EXPERIMENTAL_tx_status</span> is only for the exact protocol-side success semantics.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span><span className="fastnear-example-strategy__code">POST /v0/receipt</span> only matters if the first receipt becomes the new anchor.</span></p>
+  </div>
+</div>
 
 **Goal**
 
@@ -54,7 +68,7 @@ flowchart LR
 - which block included it
 - one plain-English sentence that explains the transaction without receipt jargon
 
-### Transaction hash to human story shell walkthrough
+#### Transaction hash to human story shell walkthrough
 
 Use this when you want the shortest possible path from one tx hash to one readable answer.
 
@@ -152,6 +166,18 @@ Use this investigation when all you have is one ugly `receipt_id` from logs, tra
 
 If you already have the transaction hash instead of the receipt ID, start with the simpler investigation just above and only drop down to this one when the receipt itself becomes the best anchor.
 
+<div className="fastnear-example-strategy">
+  <div className="fastnear-example-strategy__header">
+    <span className="fastnear-example-strategy__eyebrow">Strategy</span>
+    <p className="fastnear-example-strategy__title">Resolve the receipt first, then recover the parent transaction and stop once the story is readable.</p>
+  </div>
+  <div className="fastnear-example-strategy__items">
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">01</span><span><span className="fastnear-example-strategy__code">POST /v0/receipt</span> tells you which transaction and execution block the receipt belongs to.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">02</span><span><span className="fastnear-example-strategy__code">POST /v0/transactions</span> turns that raw receipt into signer, receiver, and action context.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span><span className="fastnear-example-strategy__code">RPC tx status</span> is optional follow-up only when “human story” turns into “exact protocol semantics.”</span></p>
+  </div>
+</div>
+
 **Goal**
 
 - Start from one receipt ID and recover the shortest useful story: who created it, where it executed, which transaction spawned it, and what that transaction was actually trying to do.
@@ -189,7 +215,11 @@ flowchart LR
 - whether the receipt was the main event or just one step in a larger cascade
 - one plain-English sentence that a teammate could read without decoding receipt jargon
 
-### Ugly receipt ID to human story shell walkthrough
+#### Ugly receipt ID to human story shell walkthrough
+
+## Failure and Async
+
+This is where the page stops being simple lookup and starts teaching NEAR execution semantics: atomic batches, later async failures, and callback order.
 
 Use this when you already have one raw `receipt_id` from logs and want to turn it into a readable explanation fast.
 
@@ -279,6 +309,18 @@ Use this investigation when one transaction tried to create and fund a new accou
 
 On NEAR, the actions inside one transaction batch execute in order inside the same first action receipt. If one action in that receipt fails, the earlier actions in that same batch do not stick. That is different from later async receipts or promise chains, where the first receipt can succeed and some later receipt can still fail independently.
 
+<div className="fastnear-example-strategy">
+  <div className="fastnear-example-strategy__header">
+    <span className="fastnear-example-strategy__eyebrow">Strategy</span>
+    <p className="fastnear-example-strategy__title">Prove what the batch tried, which action failed, and whether anything from the earlier actions actually stuck.</p>
+  </div>
+  <div className="fastnear-example-strategy__items">
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">01</span><span><span className="fastnear-example-strategy__code">POST /v0/transactions</span> shows the ordered batch exactly as the signer submitted it.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">02</span><span><span className="fastnear-example-strategy__code">RPC EXPERIMENTAL_tx_status</span> shows the failing <span className="fastnear-example-strategy__code">FunctionCall</span> and the protocol-side failure reason.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span><span className="fastnear-example-strategy__code">RPC view_account</span> on the intended new account proves whether the earlier create, fund, and key-add actions stuck at all.</span></p>
+  </div>
+</div>
+
 **Goal**
 
 - Prove, from one pinned testnet transaction, that the final `FunctionCall` failed and the earlier `CreateAccount`, `Transfer`, and `AddKey` actions did not stick.
@@ -328,7 +370,7 @@ One detail is worth calling out before the shell walkthrough: the indexed transa
 - proof that the intended new account still does not exist after finality
 - a short conclusion that the earlier `CreateAccount`, `Transfer`, and `AddKey` actions did not stick once the final `FunctionCall` failed
 
-### Failed batched transaction shell walkthrough
+#### Failed batched transaction shell walkthrough
 
 Use this when you want one concrete failed batch that you can inspect step by step with public FastNear testnet endpoints.
 
@@ -450,6 +492,18 @@ Use this investigation when one contract call logged success, changed its own lo
 
 This is the opposite of the failed batch example above. There, one action failed inside the first action receipt, so nothing in that batch stuck. Here, the first contract receipt really did succeed and its state change really did stick. The failure happened later, in a separate receipt.
 
+<div className="fastnear-example-strategy">
+  <div className="fastnear-example-strategy__header">
+    <span className="fastnear-example-strategy__eyebrow">Strategy</span>
+    <p className="fastnear-example-strategy__title">First get the human timeline, then prove where the async story split.</p>
+  </div>
+  <div className="fastnear-example-strategy__items">
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">01</span><span><span className="fastnear-example-strategy__code">POST /v0/transactions</span> gives the easiest first pass: which receipt ran first, and which receipt failed later.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">02</span><span><span className="fastnear-example-strategy__code">RPC EXPERIMENTAL_tx_status</span> proves the important NEAR nuance that top-level success and later descendant failure can both be true.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span><span className="fastnear-example-strategy__code">RPC call_function</span> on the router contract tells you whether the first receipt's own local state change stuck.</span></p>
+  </div>
+</div>
+
 **Goal**
 
 - Prove, from one pinned testnet transaction, that `seq-dr.mike.testnet.kickoff_append(...)` succeeded on its own receipt, then a detached `append(...)` call failed one block later with `CodeDoesNotExist`.
@@ -497,7 +551,7 @@ One NEAR detail matters here: receipt success is not transitive. `seq-dr.mike.te
 - that the router's own state still contains `late-failure`, so the first receipt's local side effect stuck
 - one sentence explaining why this is different from a failed batched transaction
 
-### Later receipt failure shell walkthrough
+#### Later receipt failure shell walkthrough
 
 Use this when the user story is “the contract call looked fine, but something failed later, and I need to prove exactly where the story split.”
 
@@ -636,6 +690,18 @@ When a NEAR app “looked successful” and still broke later, the thing to ask 
 
 Use this investigation when one transaction creates promise work for later, a second transaction resumes it, and the real question is not “did both transactions succeed?” but “did the cross-contract callbacks actually run in the order I intended?”
 
+<div className="fastnear-example-strategy">
+  <div className="fastnear-example-strategy__header">
+    <span className="fastnear-example-strategy__eyebrow">Strategy</span>
+    <p className="fastnear-example-strategy__title">Treat the two tx hashes as one async story: prove the work was live, recover the requested order, then compare it with observed downstream state.</p>
+  </div>
+  <div className="fastnear-example-strategy__items">
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">01</span><span><span className="fastnear-example-strategy__code">RPC call_function</span> on the deferred-work view proves the promise work was really live before the resume step.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">02</span><span><span className="fastnear-example-strategy__code">POST /v0/transactions</span> gives both block anchors and the exact order that the resume transaction requested.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span><span className="fastnear-example-strategy__code">RPC EXPERIMENTAL_tx_status</span> plus the downstream recorder view prove where the callbacks actually ran and in what visible order.</span></p>
+  </div>
+</div>
+
 **Goal**
 
 - Turn two transaction hashes into one readable proof story: what promise work was created, what order the resume call requested, and what order later showed up in downstream contract state.
@@ -683,9 +749,25 @@ For NEAR engineers, the important mental model is: the resume transaction tells 
 - the blocks where the observable state changed
 - any receipt or account pivots the next investigator should keep
 
+## SocialDB Proofs
+
+These examples start from readable NEAR Social state and walk back to the exact write that made it true.
+
 ### Prove that `mike.near` set `profile.name` to `Mike Purvis`, then recover the SocialDB profile write transaction
 
 Use this investigation when the user story is “I can see `Mike Purvis` on `mike.near`'s NEAR Social profile, but I want to prove exactly when that field was written and which transaction wrote it.”
+
+<div className="fastnear-example-strategy">
+  <div className="fastnear-example-strategy__header">
+    <span className="fastnear-example-strategy__eyebrow">Strategy</span>
+    <p className="fastnear-example-strategy__title">Start from the readable field value, then turn its field-level block into one receipt and one write transaction.</p>
+  </div>
+  <div className="fastnear-example-strategy__items">
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">01</span><span><span className="fastnear-example-strategy__code">NEAR Social POST /get</span> gives both the current <span className="fastnear-example-strategy__code">profile.name</span> value and the field-level <span className="fastnear-example-strategy__code">:block</span>.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">02</span><span><span className="fastnear-example-strategy__code">POST /v0/block</span> turns that block into the concrete <span className="fastnear-example-strategy__code">mike.near -> social.near</span> receipt and transaction hash.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span><span className="fastnear-example-strategy__code">POST /v0/transactions</span> proves the write payload, and <span className="fastnear-example-strategy__code">RPC call_function get</span> confirms the field still resolves that way now.</span></p>
+  </div>
+</div>
 
 **Goal**
 
@@ -715,7 +797,7 @@ For this live example, the current `profile.name` value is `Mike Purvis`, the fi
 - proof that the write was a `set` call carrying `profile.name` and other profile fields in the same payload
 - the distinction between the receipt execution block (`78675795`) and the outer transaction inclusion block (`78675794`)
 
-### NEAR Social profile-proof shell walkthrough
+#### NEAR Social profile-proof shell walkthrough
 
 Use this when you want a concrete, repeatable proof chain from one readable NEAR Social profile field to the exact SocialDB write transaction behind it.
 
@@ -879,6 +961,18 @@ NEAR Social gives you the semantic field value. FastNear block receipts give you
 
 Use this investigation when the user story is “I can see that `mike.near` follows `mob.near`, but I want to prove exactly when that follow edge was written and which transaction wrote it.”
 
+<div className="fastnear-example-strategy">
+  <div className="fastnear-example-strategy__header">
+    <span className="fastnear-example-strategy__eyebrow">Strategy</span>
+    <p className="fastnear-example-strategy__title">Start from the semantic follow edge, then use its write block as the bridge back to one receipt and one transaction.</p>
+  </div>
+  <div className="fastnear-example-strategy__items">
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">01</span><span><span className="fastnear-example-strategy__code">NEAR Social POST /get</span> gives the readable follow edge and the SocialDB <span className="fastnear-example-strategy__code">:block</span> where it was written.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">02</span><span><span className="fastnear-example-strategy__code">POST /v0/block</span> turns that write block into the specific receipt and transaction hash behind the edge.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span><span className="fastnear-example-strategy__code">POST /v0/transactions</span> proves the <span className="fastnear-example-strategy__code">graph.follow</span> plus <span className="fastnear-example-strategy__code">index.graph</span> payload, and <span className="fastnear-example-strategy__code">RPC call_function get</span> confirms the edge still exists now.</span></p>
+  </div>
+</div>
+
 **Goal**
 
 - Start from the readable NEAR Social follow edge, then recover the exact receipt and originating transaction that wrote it into SocialDB.
@@ -907,7 +1001,7 @@ For this live example, the current edge is `mike.near -> mob.near`, the SocialDB
 - proof that the write was a `set` call carrying both `graph.follow.mob.near` and the matching `index.graph` entry
 - the distinction between the receipt execution block (`79574924`) and the outer transaction inclusion block (`79574923`)
 
-### NEAR Social follow-proof shell walkthrough
+#### NEAR Social follow-proof shell walkthrough
 
 Use this when you want a concrete, repeatable proof chain from one readable NEAR Social follow edge to the exact SocialDB write transaction behind it.
 
@@ -1076,6 +1170,18 @@ This is the natural tx-side companion to the lighter RPC widget inspection and t
 - recover the originating transaction
 - decode the `set` payload and prove it really carried the widget source
 
+<div className="fastnear-example-strategy">
+  <div className="fastnear-example-strategy__header">
+    <span className="fastnear-example-strategy__eyebrow">Strategy</span>
+    <p className="fastnear-example-strategy__title">Treat the widget’s write block as the whole bridge: block to receipt, receipt to transaction, transaction to source code.</p>
+  </div>
+  <div className="fastnear-example-strategy__items">
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">01</span><span><span className="fastnear-example-strategy__code">POST /v0/block</span> starts from the widget block and narrows it to one <span className="fastnear-example-strategy__code">mob.near -> social.near</span> receipt.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">02</span><span><span className="fastnear-example-strategy__code">POST /v0/transactions</span> turns that receipt into one readable <span className="fastnear-example-strategy__code">set</span> payload carrying the widget source.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span><span className="fastnear-example-strategy__code">RPC call_function get</span> is the final current-state confirmation that the widget still exists now.</span></p>
+  </div>
+</div>
+
 **Goal**
 
 - Turn one widget-level SocialDB block into one readable answer: which transaction wrote `mob.near/widget/Profile`, which receipt executed the write, and what exact widget source appeared in that payload.
@@ -1106,7 +1212,11 @@ For this live anchor:
 - proof that the write payload was a `set` call carrying `mob.near/widget/Profile`
 - one plain-English sentence like “`mob.near` wrote `widget/Profile` in tx `9QDup...`, and the payload really did store the current profile widget source”
 
-### NEAR Social widget write-proof shell walkthrough
+#### NEAR Social widget write-proof shell walkthrough
+
+## Settlement Trace
+
+This is the richest single-trace investigation on the page: one live NEAR Intents settlement, from top-level tx to the receipts and events that explain it.
 
 Use this when you want to turn one widget block anchor into the exact transaction that wrote it.
 
@@ -1244,6 +1354,18 @@ The widget's write block gives you the bridge. FastNear block receipts turn that
 
 Use this investigation when the user story is “I have one `intents.near` transaction. Show me what actually happened on-chain, which contracts participated, and which events prove it.”
 
+<div className="fastnear-example-strategy">
+  <div className="fastnear-example-strategy__header">
+    <span className="fastnear-example-strategy__eyebrow">Strategy</span>
+    <p className="fastnear-example-strategy__title">Treat one settlement like a readable trace before you treat it like protocol theory.</p>
+  </div>
+  <div className="fastnear-example-strategy__items">
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">01</span><span><span className="fastnear-example-strategy__code">POST /v0/transactions</span> gives the settlement skeleton: entrypoint, first downstream contracts, and early logs.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">02</span><span><span className="fastnear-example-strategy__code">POST /v0/block</span> reuses the same anchor when you want the block-level context around that settlement.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span><span className="fastnear-example-strategy__code">RPC EXPERIMENTAL_tx_status</span> is where you go for the canonical receipt DAG and the event names that prove what actually moved.</span></p>
+  </div>
+</div>
+
 **Goal**
 
 - Start from one fixed `intents.near` transaction and turn it into a readable settlement story: which method kicked things off, which downstream contracts appeared, and which event families tell you what moved.
@@ -1302,7 +1424,7 @@ The public FastNear surfaces are enough to answer the practical question:
 
 This example intentionally stays on public FastNear surfaces. NEAR Intents Explorer and the 1Click Explorer are useful too, but their Explorer API is JWT-gated and not the right default for a public docs walkthrough.
 
-### NEAR Intents settlement shell walkthrough
+#### NEAR Intents settlement shell walkthrough
 
 Use this when you want one concrete `intents.near` settlement that you can inspect immediately with public FastNear endpoints.
 

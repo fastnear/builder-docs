@@ -14,6 +14,18 @@ page_actions:
 
 Use this investigation when you want to notice a new block as early as possible, but the final answer still needs a finalized block and sometimes an exact RPC read.
 
+<div className="fastnear-example-strategy">
+  <div className="fastnear-example-strategy__header">
+    <span className="fastnear-example-strategy__eyebrow">Strategy</span>
+    <p className="fastnear-example-strategy__title">Let NEAR Data tell you something changed, then reuse the same block family for the stable confirmation.</p>
+  </div>
+  <div className="fastnear-example-strategy__items">
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">01</span><span><span className="fastnear-example-strategy__code">block-optimistic</span> or <span className="fastnear-example-strategy__code">last-block-optimistic</span> gives the earliest useful signal.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">02</span><span><span className="fastnear-example-strategy__code">block</span> or <span className="fastnear-example-strategy__code">last-block-final</span> confirms whether the same observation survived into finalized history.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span><span className="fastnear-example-strategy__code">RPC block</span> is only the last step, once you know the exact height or hash that matters.</span></p>
+  </div>
+</div>
+
 **Goal**
 
 - Notice a recent block quickly, then check the same thing again once finality catches up.

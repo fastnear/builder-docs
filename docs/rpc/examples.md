@@ -12,11 +12,25 @@ page_actions:
 
 Use this page when you already know the answer lives in RPC and you want the shortest path to it. The goal is not to memorize every method. It is to start with the right RPC read or write, stop as soon as the response answers the question, and only switch to a higher-level API when that would save time.
 
-## Worked walkthroughs
+## Account and Key Mechanics
+
+Start here when the question is about exact permissions, exact key state, or one contract-level write flow.
 
 ### Audit and remove old Near Social function-call keys
 
 Use this when you know an account has accumulated older `social.near` function-call keys and you want to inspect them, choose one intentionally, and remove it with raw RPC submission.
+
+<div className="fastnear-example-strategy">
+  <div className="fastnear-example-strategy__header">
+    <span className="fastnear-example-strategy__eyebrow">Strategy</span>
+    <p className="fastnear-example-strategy__title">Use exact key reads to narrow the target first, then sign exactly one delete.</p>
+  </div>
+  <div className="fastnear-example-strategy__items">
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">01</span><span><span className="fastnear-example-strategy__code">RPC view_access_key_list</span> finds only the function-call keys scoped to <span className="fastnear-example-strategy__code">social.near</span>.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">02</span><span><span className="fastnear-example-strategy__code">RPC view_access_key</span> double-checks the one key you plan to remove, and <span className="fastnear-example-strategy__code">POST /v0/account</span> is only for optional account-level context.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span><span className="fastnear-example-strategy__code">RPC send_tx</span> submits the <span className="fastnear-example-strategy__code">DeleteKey</span>, then <span className="fastnear-example-strategy__code">RPC view_access_key_list</span> closes the loop.</span></p>
+  </div>
+</div>
 
 **What you're doing**
 
@@ -257,9 +271,239 @@ fi
 
 Re-running `view_access_key_list` closes the loop on the same RPC method you used for discovery. If the delete succeeded there, you do not need an indexed API to prove the cleanup.
 
+### Which transaction added this `social.near` function-call key, and who authorized it?
+
+Use this when you can already see a live access key on the account, but you want to trace it back to the `AddKey` transaction that created it and identify which public key actually authorized that change.
+
+<div className="fastnear-example-strategy">
+  <div className="fastnear-example-strategy__header">
+    <span className="fastnear-example-strategy__eyebrow">Strategy</span>
+    <p className="fastnear-example-strategy__title">Start from the live key, then walk backward only as far as you need.</p>
+  </div>
+  <div className="fastnear-example-strategy__items">
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">01</span><span><span className="fastnear-example-strategy__code">RPC view_access_key</span> gives the current stored nonce, which is the best historical clue you have.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">02</span><span><span className="fastnear-example-strategy__code">POST /v0/account</span> turns that nonce into a tight candidate window instead of a whole-account search.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span><span className="fastnear-example-strategy__code">POST /v0/transactions</span> tells you whether the key was added directly or through delegated authorization, and <span className="fastnear-example-strategy__code">POST /v0/receipt</span> is only for the exact <span className="fastnear-example-strategy__code">AddKey</span> execution block.</span></p>
+  </div>
+</div>
+
+**What you're doing**
+
+- Read the exact key first with RPC and keep its current nonce as the clue.
+- Convert that nonce into a tight block-height window for the likely `AddKey` receipt.
+- Search account history only inside that window instead of scanning the whole account.
+- Hydrate the candidate transaction and distinguish three different keys:
+  - the key that got added
+  - the top-level signer public key
+  - the delegated authorizing public key, if the change was wrapped in a `Delegate` action
+
+Three nonce details matter up front:
+
+- New access keys start with a nonce derived from block height at roughly `block_height * 1_000_000`, so dividing the current nonce by `1_000_000` gives a useful search window.
+- The `AddKey` action payload often shows `access_key.nonce: 0`. That is not the stored nonce you later see from `view_access_key`.
+- If the key has been used heavily since creation, widen the search window a bit more.
+
+```bash
+export NETWORK_ID=mainnet
+export RPC_URL=https://rpc.mainnet.fastnear.com
+export TX_BASE_URL=https://tx.main.fastnear.com
+export ACCOUNT_ID=YOUR_ACCOUNT_ID
+export TARGET_PUBLIC_KEY='ed25519:PASTE_THE_ACCESS_KEY_YOU_WANT_TO_TRACE'
+
+# Sample live key observed on April 18, 2026:
+# export ACCOUNT_ID=mike.near
+# export TARGET_PUBLIC_KEY='ed25519:7GZgXkMPEyGXqRhxaLvHxWn6fVfeyuQGMqnLVQAh7bs'
+```
+
+1. Read the exact key first, then turn its current nonce into a search window.
+
+```bash
+curl -s "$RPC_URL" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc \
+    --arg account_id "$ACCOUNT_ID" \
+    --arg public_key "$TARGET_PUBLIC_KEY" '{
+      jsonrpc: "2.0",
+      id: "fastnear",
+      method: "query",
+      params: {
+        request_type: "view_access_key",
+        account_id: $account_id,
+        public_key: $public_key,
+        finality: "final"
+      }
+    }')" \
+  | tee /tmp/key-origin-view.json >/dev/null
+
+CURRENT_NONCE="$(jq -r '.result.nonce' /tmp/key-origin-view.json)"
+ESTIMATED_RECEIPT_BLOCK="$(( CURRENT_NONCE / 1000000 + 1 ))"
+SEARCH_FROM="$(( ESTIMATED_RECEIPT_BLOCK - 20 ))"
+SEARCH_TO="$(( ESTIMATED_RECEIPT_BLOCK + 5 ))"
+
+jq -n \
+  --arg account_id "$ACCOUNT_ID" \
+  --arg target_public_key "$TARGET_PUBLIC_KEY" \
+  --argjson current_nonce "$CURRENT_NONCE" \
+  --argjson estimated_receipt_block "$ESTIMATED_RECEIPT_BLOCK" \
+  --argjson search_from "$SEARCH_FROM" \
+  --argjson search_to "$SEARCH_TO" \
+  --arg permission "$(jq -c '.result.permission' /tmp/key-origin-view.json)" '{
+    account_id: $account_id,
+    target_public_key: $target_public_key,
+    current_nonce: $current_nonce,
+    estimated_receipt_block: $estimated_receipt_block,
+    search_from_tx_block_height: $search_from,
+    search_to_tx_block_height: $search_to,
+    permission: ($permission | fromjson)
+  }'
+```
+
+If you use the sample key above, the estimated receipt block should land at `112057392`.
+
+2. Search account history only inside that block neighborhood.
+
+```bash
+curl -s "$TX_BASE_URL/v0/account" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc \
+    --arg account_id "$ACCOUNT_ID" \
+    --argjson from_tx_block_height "$SEARCH_FROM" \
+    --argjson to_tx_block_height "$SEARCH_TO" '{
+      account_id: $account_id,
+      is_real_signer: true,
+      from_tx_block_height: $from_tx_block_height,
+      to_tx_block_height: $to_tx_block_height,
+      desc: false,
+      limit: 50
+    }')" \
+  | tee /tmp/key-origin-candidates.json >/dev/null
+
+jq '{
+  txs_count,
+  candidate_txs: [
+    .account_txs[]
+    | {
+        transaction_hash,
+        tx_block_height,
+        is_signer,
+        is_real_signer,
+        is_predecessor,
+        is_receiver
+      }
+  ]
+}' /tmp/key-origin-candidates.json
+```
+
+With the sample `mike.near` key above, this window returns one candidate transaction: `6ZT8UGPRC6L3NGs2qHnECPVexKWNQ5LWLK9w95tgj3tV` at outer tx block `112057390`.
+
+3. Hydrate those candidates and keep only the transaction that actually added your target key.
+
+```bash
+TX_HASHES_JSON="$(
+  jq -c '[.account_txs[].transaction_hash]' /tmp/key-origin-candidates.json
+)"
+
+curl -s "$TX_BASE_URL/v0/transactions" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc --argjson tx_hashes "$TX_HASHES_JSON" '{tx_hashes: $tx_hashes}')" \
+  | tee /tmp/key-origin-transactions.json >/dev/null
+
+jq --arg target_public_key "$TARGET_PUBLIC_KEY" '
+  .transactions[]
+  | . as $tx
+  | (
+      ($tx.transaction.actions[]?
+        | .AddKey?
+        | select(.public_key == $target_public_key)
+        | {
+            authorization_mode: "direct",
+            top_level_signer_id: $tx.transaction.signer_id,
+            top_level_signer_public_key: $tx.transaction.public_key,
+            authorizing_public_key: $tx.transaction.public_key,
+            added_public_key: .public_key,
+            add_key_payload_nonce: .access_key.nonce,
+            permission: .access_key.permission
+          }),
+      ($tx.transaction.actions[]?
+        | .Delegate?
+        | .delegate_action as $delegate
+        | $delegate.actions[]?
+        | .AddKey?
+        | select(.public_key == $target_public_key)
+        | {
+            authorization_mode: "delegated",
+            top_level_signer_id: $tx.transaction.signer_id,
+            top_level_signer_public_key: $tx.transaction.public_key,
+            authorizing_public_key: $delegate.public_key,
+            added_public_key: .public_key,
+            add_key_payload_nonce: .access_key.nonce,
+            permission: .access_key.permission
+          })
+    )
+  | {
+      transaction_hash: $tx.transaction.hash,
+      tx_block_height: $tx.execution_outcome.block_height,
+      tx_block_hash: $tx.execution_outcome.block_hash,
+      receiver_id: $tx.transaction.receiver_id
+    } + .
+' /tmp/key-origin-transactions.json | tee /tmp/key-origin-match.json
+```
+
+If `authorization_mode` is `direct`, the top-level signer public key and the authorizing public key are the same. If `authorization_mode` is `delegated`, the key that actually authorized the `AddKey` lives inside `Delegate.delegate_action.public_key`.
+
+With the sample `mike.near` key above, the match is delegated:
+
+- `transaction_hash`: `6ZT8UGPRC6L3NGs2qHnECPVexKWNQ5LWLK9w95tgj3tV`
+- `top_level_signer_public_key`: `ed25519:Ez817Dgs2uYP5a6GoijzFarcS3SWPT5eEB82VJXsd4oM`
+- `authorizing_public_key`: `ed25519:GaYgzN1eZUgwA7t8a5pYxFGqtF4kon9dQaDMjPDejsiu`
+- `added_public_key`: `ed25519:7GZgXkMPEyGXqRhxaLvHxWn6fVfeyuQGMqnLVQAh7bs`
+
+4. Optional: if you need the exact `AddKey` receipt block too, pivot one more time by receipt ID.
+
+```bash
+ADD_KEY_RECEIPT_ID="$(
+  jq -r --arg target_public_key "$TARGET_PUBLIC_KEY" '
+    .transactions[]
+    | .receipts[]
+    | select(any((.receipt.receipt.Action.actions // [])[]; .AddKey.public_key? == $target_public_key))
+    | .receipt.receipt_id
+  ' /tmp/key-origin-transactions.json | head -n 1
+)"
+
+curl -s "$TX_BASE_URL/v0/receipt" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc --arg receipt_id "$ADD_KEY_RECEIPT_ID" '{receipt_id: $receipt_id}')" \
+  | jq '{
+      receipt_id: .receipt.receipt_id,
+      receipt_block_height: .receipt.block_height,
+      tx_block_height: .receipt.tx_block_height,
+      predecessor_id: .receipt.predecessor_id,
+      receiver_id: .receipt.receiver_id,
+      transaction_hash: .receipt.transaction_hash
+    }'
+```
+
+For the sample key above, the exact `AddKey` receipt is `C5jsTftYwPiibyxdoDKd4LXFFru8n4weDKLV4cfb1bcX` in receipt block `112057392`, while the outer transaction landed earlier in block `112057390`.
+
+**Why this next step?**
+
+Start with exact current key state because it gives you the nonce clue. A tight `/v0/account` window turns that clue into a small candidate set. `/v0/transactions` tells you whether the key was added directly or through delegated authorization. `/v0/receipt` is the optional last step when you need the exact `AddKey` receipt block, not just the outer transaction.
+
 ### Register FT storage if needed, then transfer tokens
 
 Use this when the user story is “send fungible tokens safely, but first prove whether the receiver is already registered for storage on that FT contract.”
+
+<div className="fastnear-example-strategy">
+  <div className="fastnear-example-strategy__header">
+    <span className="fastnear-example-strategy__eyebrow">Strategy</span>
+    <p className="fastnear-example-strategy__title">Read storage first, then spend the minimum write calls needed to make the transfer stick.</p>
+  </div>
+  <div className="fastnear-example-strategy__items">
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">01</span><span><span className="fastnear-example-strategy__code">RPC call_function storage_balance_of</span> tells you whether the receiver is already registered.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">02</span><span><span className="fastnear-example-strategy__code">RPC call_function storage_balance_bounds</span> only matters if you need the exact minimum deposit before writing.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span><span className="fastnear-example-strategy__code">RPC send_tx</span> submits <span className="fastnear-example-strategy__code">storage_deposit</span> and <span className="fastnear-example-strategy__code">ft_transfer</span>, then <span className="fastnear-example-strategy__code">RPC call_function ft_balance_of</span> proves the result.</span></p>
+  </div>
+</div>
 
 **Network**
 
@@ -558,9 +802,25 @@ curl -s "$RPC_URL" \
 
 This is a good RPC example because every step stays close to the contract itself: first check storage state, then send the minimum required change calls, then verify the post-transfer balance directly on the contract.
 
+## NEAR Social and BOS Exact Reads
+
+These stay on exact SocialDB reads and on-chain readiness checks until the question turns historical.
+
 ### Can this account still publish to NEAR Social right now?
 
 Use this when the user story is “I’m about to publish a profile change, widget update, or graph write under `mike.near`, and I want a plain go/no-go answer before I open wallet signing.”
+
+<div className="fastnear-example-strategy">
+  <div className="fastnear-example-strategy__header">
+    <span className="fastnear-example-strategy__eyebrow">Strategy</span>
+    <p className="fastnear-example-strategy__title">Ask <span className="fastnear-example-strategy__code">social.near</span> for the two things that matter before you sign anything.</p>
+  </div>
+  <div className="fastnear-example-strategy__items">
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">01</span><span><span className="fastnear-example-strategy__code">RPC view_account</span> makes sure the signer account exists and can actually submit a transaction.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">02</span><span><span className="fastnear-example-strategy__code">RPC call_function get_account_storage</span> tells you whether the target account has room left on <span className="fastnear-example-strategy__code">social.near</span>.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span><span className="fastnear-example-strategy__code">RPC call_function is_write_permission_granted</span> only comes into play when a different signer is trying to write on that account’s behalf.</span></p>
+  </div>
+</div>
 
 This is the same question real NEAR Social clients have to answer before they try a write:
 
@@ -751,6 +1011,18 @@ This keeps the whole question on exact on-chain reads. `social.near` itself answ
 ### What does `mob.near/widget/Profile` actually contain right now?
 
 Use this when the question is simple: “show me the live source for `mob.near/widget/Profile`, tell me when that widget key was last written, and keep me on exact RPC reads.”
+
+<div className="fastnear-example-strategy">
+  <div className="fastnear-example-strategy__header">
+    <span className="fastnear-example-strategy__eyebrow">Strategy</span>
+    <p className="fastnear-example-strategy__title">Stay on exact SocialDB reads, and only widen into history if the question turns forensic.</p>
+  </div>
+  <div className="fastnear-example-strategy__items">
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">01</span><span><span className="fastnear-example-strategy__code">RPC call_function keys</span> shows the widget catalog and the last-write blocks under <span className="fastnear-example-strategy__code">mob.near/widget/*</span>.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">02</span><span><span className="fastnear-example-strategy__code">RPC call_function get</span> reads the exact source for <span className="fastnear-example-strategy__code">widget/Profile</span>.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span>If the next question becomes “which transaction wrote this?”, hand off to the widget proof recipe in <span className="fastnear-example-strategy__code">/tx/examples</span>.</span></p>
+  </div>
+</div>
 
 **Official references**
 

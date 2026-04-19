@@ -14,6 +14,18 @@ page_actions:
 
 Используйте это расследование, когда один ключ хранилища контракта выглядит подозрительно и вы хотите увидеть его последнее индексированное значение, историю записей по тому же ключу и финальную проверку через `view_state`.
 
+<div className="fastnear-example-strategy">
+  <div className="fastnear-example-strategy__header">
+    <span className="fastnear-example-strategy__eyebrow">Стратегия</span>
+    <p className="fastnear-example-strategy__title">Начните с одного точного ключа, расширяйтесь только до его истории и завершайте одной проверкой текущего chain-state.</p>
+  </div>
+  <div className="fastnear-example-strategy__items">
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">01</span><span><span className="fastnear-example-strategy__code">get-latest-key</span> даёт самую новую индексированную запись по точному ключу.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">02</span><span><span className="fastnear-example-strategy__code">get-history-key</span> или <span className="fastnear-example-strategy__code">history-by-key</span> показывают, как тот же ключ менялся во времени.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span><span className="fastnear-example-strategy__code">RPC view_state</span> — это финальное точное чтение, когда нужно сравнить индексированную историю с тем, что цепочка возвращает прямо сейчас.</span></p>
+  </div>
+</div>
+
 **Цель**
 
 - Объяснить, как этот ключ выглядит в индексе, как он менялся и совпадает ли с этим `view_state` прямо сейчас.

@@ -10,11 +10,23 @@ page_actions:
 
 ## Worked walkthroughs
 
-These are ordered from the quickest read-only lookup to the more involved state-changing flow.
+Read this page as a short ladder: first resolve who the account is, then classify the wallet shape, then use one richer provenance flow when you want to turn a live BOS artifact into a minted record.
 
 ### Resolve a public key, then fetch the account snapshot
 
 Use this when you have a public key first and the next user-facing question is “which account is this?” followed immediately by “what does that account look like right now?”
+
+<div className="fastnear-example-strategy">
+  <div className="fastnear-example-strategy__header">
+    <span className="fastnear-example-strategy__eyebrow">Strategy</span>
+    <p className="fastnear-example-strategy__title">Resolve identity first, then reuse the same account ID for one readable wallet snapshot.</p>
+  </div>
+  <div className="fastnear-example-strategy__items">
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">01</span><span><span className="fastnear-example-strategy__code">GET /v1/public_key</span> gives the candidate <span className="fastnear-example-strategy__code">account_id</span> values for the key.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">02</span><span><span className="fastnear-example-strategy__code">jq</span> lifts the account you actually want to inspect next.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span><span className="fastnear-example-strategy__code">GET /v1/account/.../full</span> answers balances, NFTs, and staking in one response.</span></p>
+  </div>
+</div>
 
 **What you're doing**
 
@@ -55,6 +67,18 @@ The public-key lookup tells you which account you are dealing with. The full acc
 ### Am I locked or liquid?
 
 Use this when the user story is “show me whether this wallet is exposed through direct staking pools, liquid staking tokens, or both.”
+
+<div className="fastnear-example-strategy">
+  <div className="fastnear-example-strategy__header">
+    <span className="fastnear-example-strategy__eyebrow">Strategy</span>
+    <p className="fastnear-example-strategy__title">Compare staking positions and FT balances before you interpret the wallet.</p>
+  </div>
+  <div className="fastnear-example-strategy__items">
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">01</span><span><span className="fastnear-example-strategy__code">GET /v1/account/.../staking</span> finds direct pool exposure.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">02</span><span><span className="fastnear-example-strategy__code">GET /v1/account/.../ft</span> finds liquid staking tokens that sit beside or instead of direct pools.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span><span className="fastnear-example-strategy__code">jq</span> turns those two indexed reads into <span className="fastnear-example-strategy__code">direct_only</span>, <span className="fastnear-example-strategy__code">liquid_only</span>, or <span className="fastnear-example-strategy__code">mixed</span>.</span></p>
+  </div>
+</div>
 
 **Network**
 
@@ -131,6 +155,18 @@ If the classification is `direct_only`, the next operational question is usually
 ### Archive a BOS widget version as a provenance NFT
 
 Use this when the user story is “this BOS widget is a real on-chain artifact. Mint an NFT that records exactly which version I archived.”
+
+<div className="fastnear-example-strategy">
+  <div className="fastnear-example-strategy__header">
+    <span className="fastnear-example-strategy__eyebrow">Strategy</span>
+    <p className="fastnear-example-strategy__title">Read the exact widget first, then mint only after the provenance fields are deterministic.</p>
+  </div>
+  <div className="fastnear-example-strategy__items">
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">01</span><span><span className="fastnear-example-strategy__code">GET /v1/account/.../nft</span> checks whether the receiver already holds archive NFTs from this collection.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">02</span><span><span className="fastnear-example-strategy__code">RPC call_function get</span> on <span className="fastnear-example-strategy__code">social.near</span> reads the exact widget source and its SocialDB write block.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span>Hash the source, mint <span className="fastnear-example-strategy__code">nft_mint</span> on testnet, then verify the provenance fields through <span className="fastnear-example-strategy__code">nft_tokens_for_owner</span>.</span></p>
+  </div>
+</div>
 
 **Networks**
 

@@ -14,6 +14,18 @@ page_actions:
 
 Используйте этот сценарий, когда история звучит так: «я вижу, что средства двигались, но хочу получить точную опорную точку исполнения для этого движения, не затягивая сразу всю историю аккаунта».
 
+<div className="fastnear-example-strategy">
+  <div className="fastnear-example-strategy__header">
+    <span className="fastnear-example-strategy__eyebrow">Стратегия</span>
+    <p className="fastnear-example-strategy__title">Сначала оставайтесь на узкой истории движения, а затем один раз переключайтесь в историю исполнения.</p>
+  </div>
+  <div className="fastnear-example-strategy__items">
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">01</span><span><span className="fastnear-example-strategy__code">POST /v0/transfers</span> даёт узкое исходящее окно и конкретное движение, которое стоит догонять.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">02</span><span><span className="fastnear-example-strategy__code">jq</span> поднимает один <span className="fastnear-example-strategy__code">receipt_id</span>, не затягивая остальную историю аккаунта.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span><span className="fastnear-example-strategy__code">POST /v0/receipt</span> превращает это движение в опорную точку исполнения, которую уже можно продолжать в <span className="fastnear-example-strategy__code">/tx</span>.</span></p>
+  </div>
+</div>
+
 **Что вы делаете**
 
 - Запрашиваете ограниченное окно исходящих переводов одного аккаунта в mainnet.

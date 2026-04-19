@@ -14,6 +14,18 @@ page_actions:
 
 Use this when the user story is “I know funds moved, but I want the exact execution anchor behind that movement without dragging in the whole account history yet.”
 
+<div className="fastnear-example-strategy">
+  <div className="fastnear-example-strategy__header">
+    <span className="fastnear-example-strategy__eyebrow">Strategy</span>
+    <p className="fastnear-example-strategy__title">Stay narrow on movement first, then pivot once into execution history.</p>
+  </div>
+  <div className="fastnear-example-strategy__items">
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">01</span><span><span className="fastnear-example-strategy__code">POST /v0/transfers</span> gives you the tight outgoing window and the specific movement worth chasing.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">02</span><span><span className="fastnear-example-strategy__code">jq</span> lifts one <span className="fastnear-example-strategy__code">receipt_id</span> without dragging in the rest of the account history.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span><span className="fastnear-example-strategy__code">POST /v0/receipt</span> turns that movement into one execution anchor you can keep following in <span className="fastnear-example-strategy__code">/tx</span>.</span></p>
+  </div>
+</div>
+
 **What you're doing**
 
 - Query a bounded outgoing transfer window for one account on mainnet.

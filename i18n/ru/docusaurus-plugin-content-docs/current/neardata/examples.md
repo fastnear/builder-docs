@@ -14,6 +14,18 @@ page_actions:
 
 Используйте это расследование, когда нужно заметить новый блок как можно раньше, но финальный ответ всё равно должен опираться на финализированный блок и иногда на точное чтение через RPC.
 
+<div className="fastnear-example-strategy">
+  <div className="fastnear-example-strategy__header">
+    <span className="fastnear-example-strategy__eyebrow">Стратегия</span>
+    <p className="fastnear-example-strategy__title">Пусть NEAR Data сначала скажет, что что-то изменилось, а затем переиспользуйте то же семейство блоков для стабильного подтверждения.</p>
+  </div>
+  <div className="fastnear-example-strategy__items">
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">01</span><span><span className="fastnear-example-strategy__code">block-optimistic</span> или <span className="fastnear-example-strategy__code">last-block-optimistic</span> дают самый ранний полезный сигнал.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">02</span><span><span className="fastnear-example-strategy__code">block</span> или <span className="fastnear-example-strategy__code">last-block-final</span> подтверждают, что то же наблюдение дошло до финализированной истории.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span><span className="fastnear-example-strategy__code">RPC block</span> нужен только в самом конце, когда уже известна точная высота или хеш.</span></p>
+  </div>
+</div>
+
 **Цель**
 
 - Быстро заметить недавний блок, а затем проверить то же самое, когда догонит finality.

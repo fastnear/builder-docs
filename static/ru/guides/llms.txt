@@ -34,7 +34,9 @@
 - [Примеры NEAR Data](https://docs.fastnear.com/ru/neardata/examples.md): Пошаговые сценарии для polling по оптимистичным и финализированным блокам и перехода к RPC, когда это нужно.
 - [redocly-config](https://docs.fastnear.com/ru/redocly-config.md): Исторические заметки о прежнем бэкенде Redocly и о том, где он всё ещё важен для проверки документации FastNear.
 - [Примеры Transfers API](https://docs.fastnear.com/ru/transfers/examples.md): Пошаговые сценарии для поиска переводов, пагинации через resume_token и перехода к истории транзакций.
-- [Примеры Transactions API](https://docs.fastnear.com/ru/tx/examples.md): Пошаговые расследования для работы с receipt, транзакциями, записями NEAR Social, promise-цепочками и расчётами NEAR Intents.
+- [Примеры Transactions API](https://docs.fastnear.com/ru/tx/examples.md): Пошаговые расследования и подробные разборы для работы с receipt, транзакциями, записями NEAR Social, promise-цепочками и расчётами NEAR Intents.
+- [Berry Club: как восстанавливать исторические доски](https://docs.fastnear.com/ru/tx/examples/berry-club.md): Используйте Transactions API, RPC get_lines и проигрывание draw-вызовов, чтобы восстанавливать доски Berry Club по историческим эпохам.
+- [OutLayer: как проследить один запрос от вызова до callback](https://docs.fastnear.com/ru/tx/examples/outlayer.md): Используйте Transactions API и RPC, чтобы проследить реальный OutLayer-запрос от исходного FunctionCall через транзакцию воркера до callback- и refund-фазы.
 
 ## Снапшоты
 

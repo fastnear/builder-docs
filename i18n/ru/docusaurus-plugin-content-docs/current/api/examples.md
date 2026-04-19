@@ -10,11 +10,23 @@ page_actions:
 
 ## Готовые сценарии
 
-Эти сценарии выстроены от самого быстрого read-only-запроса к более насыщенному сценарию с изменением состояния.
+Читайте эту страницу как короткую лестницу: сначала определите, что это за аккаунт, затем классифицируйте форму кошелька, а потом переходите к более насыщенному сценарию происхождения, если хотите превратить живой BOS-артефакт в отчеканенную запись.
 
 ### Определить аккаунт по публичному ключу, а затем получить сводку по нему
 
 Используйте этот сценарий, когда у вас сначала есть только публичный ключ, а следующий практический вопрос пользователя звучит как «какому аккаунту он соответствует?» и сразу после этого «что сейчас видно по этому аккаунту?»
+
+<div className="fastnear-example-strategy">
+  <div className="fastnear-example-strategy__header">
+    <span className="fastnear-example-strategy__eyebrow">Стратегия</span>
+    <p className="fastnear-example-strategy__title">Сначала определите личность, а затем переиспользуйте тот же аккаунт для одной читаемой сводки по кошельку.</p>
+  </div>
+  <div className="fastnear-example-strategy__items">
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">01</span><span><span className="fastnear-example-strategy__code">GET /v1/public_key</span> возвращает кандидатные значения <span className="fastnear-example-strategy__code">account_id</span> для этого ключа.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">02</span><span><span className="fastnear-example-strategy__code">jq</span> поднимает тот аккаунт, который вы хотите смотреть дальше.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span><span className="fastnear-example-strategy__code">GET /v1/account/.../full</span> в одном ответе показывает балансы, NFT и стейкинг.</span></p>
+  </div>
+</div>
 
 **Что вы делаете**
 
@@ -55,6 +67,18 @@ curl -s "$API_BASE_URL/v1/account/$ACCOUNT_ID/full" \
 ### У меня обычный стейкинг или liquid staking?
 
 Используйте этот сценарий, когда история звучит так: «покажи, связан ли этот кошелёк с прямыми staking pool, liquid staking token или и с тем и с другим».
+
+<div className="fastnear-example-strategy">
+  <div className="fastnear-example-strategy__header">
+    <span className="fastnear-example-strategy__eyebrow">Стратегия</span>
+    <p className="fastnear-example-strategy__title">Сначала сравните staking-позиции и FT-балансы, а уже потом интерпретируйте кошелёк.</p>
+  </div>
+  <div className="fastnear-example-strategy__items">
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">01</span><span><span className="fastnear-example-strategy__code">GET /v1/account/.../staking</span> находит прямую экспозицию через пулы.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">02</span><span><span className="fastnear-example-strategy__code">GET /v1/account/.../ft</span> находит liquid staking token, которые лежат рядом с пулами или вместо них.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span><span className="fastnear-example-strategy__code">jq</span> превращает эти два индексированных чтения в <span className="fastnear-example-strategy__code">direct_only</span>, <span className="fastnear-example-strategy__code">liquid_only</span> или <span className="fastnear-example-strategy__code">mixed</span>.</span></p>
+  </div>
+</div>
 
 **Сеть**
 
@@ -131,6 +155,18 @@ jq -n \
 ### Заархивировать версию BOS-виджета как provenance NFT
 
 Используйте этот сценарий, когда история звучит так: «этот BOS-виджет — реальный on-chain-артефакт. Хочу выпустить NFT, который фиксирует, какую именно версию я заархивировал».
+
+<div className="fastnear-example-strategy">
+  <div className="fastnear-example-strategy__header">
+    <span className="fastnear-example-strategy__eyebrow">Стратегия</span>
+    <p className="fastnear-example-strategy__title">Сначала прочитайте точный виджет, а mint делайте только тогда, когда provenance-поля уже детерминированы.</p>
+  </div>
+  <div className="fastnear-example-strategy__items">
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">01</span><span><span className="fastnear-example-strategy__code">GET /v1/account/.../nft</span> проверяет, есть ли у получателя уже архивные NFT из этой коллекции.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">02</span><span><span className="fastnear-example-strategy__code">RPC call_function get</span> на <span className="fastnear-example-strategy__code">social.near</span> читает точный исходник виджета и блок его записи в SocialDB.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span>Захешируйте исходник, выполните <span className="fastnear-example-strategy__code">nft_mint</span> в testnet, а потом проверьте provenance-поля через <span className="fastnear-example-strategy__code">nft_tokens_for_owner</span>.</span></p>
+  </div>
+</div>
 
 **Сети**
 

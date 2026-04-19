@@ -4,11 +4,20 @@
 
 Используйте эту страницу, когда уже ясно, что ответ надо брать прямо из RPC, и нужен самый короткий путь по документации. Цель не в том, чтобы запомнить каждый метод, а в том, чтобы начать с правильного RPC-запроса, остановиться, как только ответ уже решает задачу, и переходить к более высокоуровневому API только тогда, когда это действительно экономит время.
 
-## Готовые сценарии
+## Механика аккаунтов и ключей
+
+Начинайте отсюда, когда вопрос касается точных прав, точного состояния ключей или одного сценария записи на уровне контракта.
 
 ### Проверить и удалить старые function-call-ключи Near Social
 
 Используйте этот сценарий, когда вы знаете, что на аккаунте накопились старые function-call-ключи для `social.near`, и хотите осмысленно их просмотреть, выбрать один конкретный ключ и удалить его через сырой RPC.
+
+    Стратегия
+    Сначала сузьте набор точными чтениями ключей, а уже потом подписывайте ровно одно удаление.
+
+    01RPC view_access_key_list находит только function-call-ключи, привязанные к social.near.
+    02RPC view_access_key перепроверяет конкретный ключ перед удалением, а POST /v0/account нужен только для необязательного контекста на уровне аккаунта.
+    03RPC send_tx отправляет DeleteKey, а RPC view_access_key_list подтверждает результат.
 
 **Что вы делаете**
 
@@ -248,9 +257,229 @@ fi
 
 Повторный вызов `view_access_key_list` замыкает сценарий тем же RPC-методом, с которого вы начинали поиск. Если ключ исчез именно там, дополнительный индексированный API уже не нужен, чтобы подтвердить удаление.
 
+### Какая транзакция добавила этот function-call-ключ для `social.near` и какой ключ его авторизовал?
+
+Используйте этот сценарий, когда ключ уже виден на аккаунте, но вы хотите вернуться назад до транзакции `AddKey`, которая его создала, и понять, каким public key это изменение было реально авторизовано.
+
+    Стратегия
+    Начинаем с уже существующего ключа и идём назад только настолько, насколько это действительно нужно.
+
+    01RPC view_access_key даёт текущий сохранённый nonce, а это лучшая историческая подсказка в этой истории.
+    02POST /v0/account превращает этот nonce в узкое окно кандидатов вместо полного поиска по истории аккаунта.
+    03POST /v0/transactions показывает, был ли ключ добавлен напрямую или через делегированную авторизацию, а POST /v0/receipt нужен только для точного блока исполнения AddKey.
+
+**Что вы делаете**
+
+- Сначала читаете точное состояние ключа через RPC и берёте его текущий nonce как улику.
+- Превращаете этот nonce в узкое окно высот блоков для вероятного `AddKey` receipt.
+- Ищете историю аккаунта только внутри этого окна, а не сканируете весь аккаунт.
+- Подтягиваете кандидата по транзакциям и различаете три разных ключа:
+  - ключ, который был добавлен
+  - public key верхнеуровневого signer
+  - public key, который реально авторизовал изменение, если оно было завернуто в `Delegate`
+
+Сразу важны три детали про nonce:
+
+- Новый access key получает стартовый nonce, производный от высоты блока примерно как `block_height * 1_000_000`, поэтому деление текущего nonce на `1_000_000` даёт полезное поисковое окно.
+- В payload действия `AddKey` часто будет `access_key.nonce: 0`. Это не тот сохранённый nonce, который вы потом видите через `view_access_key`.
+- Если после создания ключ уже успели очень активно использовать, просто расширьте окно поиска.
+
+```bash
+export NETWORK_ID=mainnet
+export RPC_URL=https://rpc.mainnet.fastnear.com
+export TX_BASE_URL=https://tx.main.fastnear.com
+export ACCOUNT_ID=YOUR_ACCOUNT_ID
+export TARGET_PUBLIC_KEY='ed25519:PASTE_THE_ACCESS_KEY_YOU_WANT_TO_TRACE'
+
+# Пример живого ключа, наблюдавшегося 18 апреля 2026 года:
+# export ACCOUNT_ID=mike.near
+# export TARGET_PUBLIC_KEY='ed25519:7GZgXkMPEyGXqRhxaLvHxWn6fVfeyuQGMqnLVQAh7bs'
+```
+
+1. Сначала прочитайте точное состояние ключа, затем превратите его текущий nonce в поисковое окно.
+
+```bash
+curl -s "$RPC_URL" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc \
+    --arg account_id "$ACCOUNT_ID" \
+    --arg public_key "$TARGET_PUBLIC_KEY" '{
+      jsonrpc: "2.0",
+      id: "fastnear",
+      method: "query",
+      params: {
+        request_type: "view_access_key",
+        account_id: $account_id,
+        public_key: $public_key,
+        finality: "final"
+      }
+    }')" \
+  | tee /tmp/key-origin-view.json >/dev/null
+
+CURRENT_NONCE="$(jq -r '.result.nonce' /tmp/key-origin-view.json)"
+ESTIMATED_RECEIPT_BLOCK="$(( CURRENT_NONCE / 1000000 + 1 ))"
+SEARCH_FROM="$(( ESTIMATED_RECEIPT_BLOCK - 20 ))"
+SEARCH_TO="$(( ESTIMATED_RECEIPT_BLOCK + 5 ))"
+
+jq -n \
+  --arg account_id "$ACCOUNT_ID" \
+  --arg target_public_key "$TARGET_PUBLIC_KEY" \
+  --argjson current_nonce "$CURRENT_NONCE" \
+  --argjson estimated_receipt_block "$ESTIMATED_RECEIPT_BLOCK" \
+  --argjson search_from "$SEARCH_FROM" \
+  --argjson search_to "$SEARCH_TO" \
+  --arg permission "$(jq -c '.result.permission' /tmp/key-origin-view.json)" '{
+    account_id: $account_id,
+    target_public_key: $target_public_key,
+    current_nonce: $current_nonce,
+    estimated_receipt_block: $estimated_receipt_block,
+    search_from_tx_block_height: $search_from,
+    search_to_tx_block_height: $search_to,
+    permission: ($permission | fromjson)
+  }'
+```
+
+Если использовать пример ключа выше, оценочный блок receipt должен получиться `112057392`.
+
+2. Ищите историю аккаунта только внутри этого диапазона блоков.
+
+```bash
+curl -s "$TX_BASE_URL/v0/account" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc \
+    --arg account_id "$ACCOUNT_ID" \
+    --argjson from_tx_block_height "$SEARCH_FROM" \
+    --argjson to_tx_block_height "$SEARCH_TO" '{
+      account_id: $account_id,
+      is_real_signer: true,
+      from_tx_block_height: $from_tx_block_height,
+      to_tx_block_height: $to_tx_block_height,
+      desc: false,
+      limit: 50
+    }')" \
+  | tee /tmp/key-origin-candidates.json >/dev/null
+
+jq '{
+  txs_count,
+  candidate_txs: [
+    .account_txs[]
+    | {
+        transaction_hash,
+        tx_block_height,
+        is_signer,
+        is_real_signer,
+        is_predecessor,
+        is_receiver
+      }
+  ]
+}' /tmp/key-origin-candidates.json
+```
+
+Для примерного ключа `mike.near` выше это окно возвращает одну кандидатную транзакцию: `6ZT8UGPRC6L3NGs2qHnECPVexKWNQ5LWLK9w95tgj3tV` во внешнем tx-блоке `112057390`.
+
+3. Подтяните этих кандидатов целиком и оставьте только ту транзакцию, которая действительно добавила ваш целевой ключ.
+
+```bash
+TX_HASHES_JSON="$(
+  jq -c '[.account_txs[].transaction_hash]' /tmp/key-origin-candidates.json
+)"
+
+curl -s "$TX_BASE_URL/v0/transactions" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc --argjson tx_hashes "$TX_HASHES_JSON" '{tx_hashes: $tx_hashes}')" \
+  | tee /tmp/key-origin-transactions.json >/dev/null
+
+jq --arg target_public_key "$TARGET_PUBLIC_KEY" '
+  .transactions[]
+  | . as $tx
+  | (
+      ($tx.transaction.actions[]?
+        | .AddKey?
+        | select(.public_key == $target_public_key)
+        | {
+            authorization_mode: "direct",
+            top_level_signer_id: $tx.transaction.signer_id,
+            top_level_signer_public_key: $tx.transaction.public_key,
+            authorizing_public_key: $tx.transaction.public_key,
+            added_public_key: .public_key,
+            add_key_payload_nonce: .access_key.nonce,
+            permission: .access_key.permission
+          }),
+      ($tx.transaction.actions[]?
+        | .Delegate?
+        | .delegate_action as $delegate
+        | $delegate.actions[]?
+        | .AddKey?
+        | select(.public_key == $target_public_key)
+        | {
+            authorization_mode: "delegated",
+            top_level_signer_id: $tx.transaction.signer_id,
+            top_level_signer_public_key: $tx.transaction.public_key,
+            authorizing_public_key: $delegate.public_key,
+            added_public_key: .public_key,
+            add_key_payload_nonce: .access_key.nonce,
+            permission: .access_key.permission
+          })
+    )
+  | {
+      transaction_hash: $tx.transaction.hash,
+      tx_block_height: $tx.execution_outcome.block_height,
+      tx_block_hash: $tx.execution_outcome.block_hash,
+      receiver_id: $tx.transaction.receiver_id
+    } + .
+' /tmp/key-origin-transactions.json | tee /tmp/key-origin-match.json
+```
+
+Если `authorization_mode` равен `direct`, то top-level signer public key и authorizing public key — это один и тот же ключ. Если `authorization_mode` равен `delegated`, то ключ, который реально авторизовал `AddKey`, находится внутри `Delegate.delegate_action.public_key`.
+
+Для примерного ключа `mike.near` выше совпадение оказывается делегированным:
+
+- `transaction_hash`: `6ZT8UGPRC6L3NGs2qHnECPVexKWNQ5LWLK9w95tgj3tV`
+- `top_level_signer_public_key`: `ed25519:Ez817Dgs2uYP5a6GoijzFarcS3SWPT5eEB82VJXsd4oM`
+- `authorizing_public_key`: `ed25519:GaYgzN1eZUgwA7t8a5pYxFGqtF4kon9dQaDMjPDejsiu`
+- `added_public_key`: `ed25519:7GZgXkMPEyGXqRhxaLvHxWn6fVfeyuQGMqnLVQAh7bs`
+
+4. Необязательно: если нужен ещё и точный блок `AddKey` receipt, сделайте ещё один шаг по `receipt_id`.
+
+```bash
+ADD_KEY_RECEIPT_ID="$(
+  jq -r --arg target_public_key "$TARGET_PUBLIC_KEY" '
+    .transactions[]
+    | .receipts[]
+    | select(any((.receipt.receipt.Action.actions // [])[]; .AddKey.public_key? == $target_public_key))
+    | .receipt.receipt_id
+  ' /tmp/key-origin-transactions.json | head -n 1
+)"
+
+curl -s "$TX_BASE_URL/v0/receipt" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc --arg receipt_id "$ADD_KEY_RECEIPT_ID" '{receipt_id: $receipt_id}')" \
+  | jq '{
+      receipt_id: .receipt.receipt_id,
+      receipt_block_height: .receipt.block_height,
+      tx_block_height: .receipt.tx_block_height,
+      predecessor_id: .receipt.predecessor_id,
+      receiver_id: .receipt.receiver_id,
+      transaction_hash: .receipt.transaction_hash
+    }'
+```
+
+Для примерного ключа выше точный `AddKey` receipt — это `C5jsTftYwPiibyxdoDKd4LXFFru8n4weDKLV4cfb1bcX` в receipt-блоке `112057392`, тогда как внешняя транзакция попала раньше, в блок `112057390`.
+
+**Зачем нужен следующий шаг?**
+
+Начинайте с точного текущего состояния ключа, потому что именно оно даёт вам nonce-подсказку. Узкое окно в `/v0/account` превращает эту подсказку в маленький набор кандидатов. `/v0/transactions` показывает, был ли ключ добавлен напрямую или через делегированную авторизацию. `/v0/receipt` — это необязательный последний шаг, если нужен именно точный блок исполнения `AddKey`, а не только внешняя транзакция.
+
 ### Проверить регистрацию FT storage и затем перевести токены
 
 Используйте этот сценарий, когда история звучит так: «безопасно отправить FT-токен, но сначала доказать, зарегистрирован ли получатель для storage на этом FT-контракте».
+
+    Стратегия
+    Сначала прочитайте storage-состояние, а затем тратьте только те write-вызовы, которые действительно нужны переводу.
+
+    01RPC call_function storage_balance_of показывает, зарегистрирован ли получатель уже сейчас.
+    02RPC call_function storage_balance_bounds нужен только тогда, когда перед записью надо узнать точный минимальный депозит.
+    03RPC send_tx отправляет storage_deposit и ft_transfer, а RPC call_function ft_balance_of доказывает итог.
 
 **Сеть**
 
@@ -548,9 +777,20 @@ curl -s "$RPC_URL" \
 
 Это хороший RPC-сценарий, потому что каждый шаг держится рядом с самим контрактом: сначала вы проверяете состояние storage, затем отправляете минимально необходимые change-call, а потом напрямую подтверждаете итоговое состояние на контракте.
 
+## Точные чтения NEAR Social и BOS
+
+Эти сценарии остаются на точных чтениях SocialDB и on-chain-проверках готовности, пока вопрос не становится историческим.
+
 ### Может ли этот аккаунт прямо сейчас публиковать в NEAR Social?
 
 Используйте этот сценарий, когда история звучит так: «я собираюсь опубликовать изменение профиля, обновление виджета или запись в графе под `mike.near` и хочу получить простой ответ “готово / не готово” ещё до открытия окна подписи».
+
+    Стратегия
+    Спросите у social.near ровно о двух вещах, которые важны до подписи.
+
+    01RPC view_account проверяет, что signer-аккаунт вообще существует и может отправить транзакцию.
+    02RPC call_function get_account_storage показывает, осталось ли у целевого аккаунта место на social.near.
+    03RPC call_function is_write_permission_granted нужен только тогда, когда писать пытается другой signer.
 
 Именно на такие вопросы и должен ответить клиент NEAR Social перед записью:
 
@@ -741,6 +981,13 @@ jq -n \
 ### Что прямо сейчас содержит `mob.near/widget/Profile`?
 
 Используйте этот сценарий, когда вопрос простой: «покажи живой исходник `mob.near/widget/Profile`, скажи, когда этот ключ виджета последний раз переписывали, и оставь меня на точных RPC-чтениях».
+
+    Стратегия
+    Оставайтесь на точных чтениях SocialDB и расширяйтесь в историю только тогда, когда вопрос уже стал форензикой.
+
+    01RPC call_function keys показывает каталог виджетов и блоки последней записи под mob.near/widget/*.
+    02RPC call_function get читает точный исходник widget/Profile.
+    03Если следующий вопрос становится «какая транзакция это записала?», переходите к доказательству записи виджета в /tx/examples.
 
 **Официальные ссылки**
 

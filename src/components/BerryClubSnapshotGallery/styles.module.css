@@ -1,0 +1,71 @@
+.gallery {
+  display: grid;
+  gap: 1.25rem;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  margin: 1.5rem 0;
+}
+
+.card {
+  background:
+    linear-gradient(180deg, rgba(255, 248, 240, 0.96), rgba(255, 255, 255, 0.98));
+  border: 1px solid rgba(170, 140, 116, 0.35);
+  border-radius: 16px;
+  box-shadow: 0 18px 48px rgba(83, 52, 28, 0.12);
+  padding: 1rem;
+}
+
+.cardHeader {
+  margin-bottom: 0.85rem;
+}
+
+.cardTitle {
+  font-size: 1rem;
+  line-height: 1.2;
+  margin: 0 0 0.75rem;
+}
+
+.metaList {
+  display: grid;
+  gap: 0.35rem;
+  margin: 0;
+}
+
+.metaItem {
+  align-items: baseline;
+  display: grid;
+  gap: 0.35rem;
+  grid-template-columns: minmax(72px, auto) 1fr;
+}
+
+.metaItem dt {
+  color: rgba(92, 67, 48, 0.78);
+  font-size: 0.78rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.metaItem dd {
+  color: rgba(33, 23, 15, 0.96);
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 0.78rem;
+  margin: 0;
+}
+
+.hashValue {
+  overflow-wrap: anywhere;
+}
+
+.board {
+  background: #0f0d08;
+  border: 1px solid rgba(22, 16, 10, 0.65);
+  border-radius: 12px;
+  display: grid;
+  grid-template-columns: repeat(50, minmax(0, 1fr));
+  overflow: hidden;
+  width: 100%;
+}
+
+.pixel {
+  aspect-ratio: 1 / 1;
+  min-width: 0;
+}

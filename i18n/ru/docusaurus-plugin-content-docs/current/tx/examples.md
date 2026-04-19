@@ -2,21 +2,35 @@
 sidebar_label: Examples
 slug: /tx/examples
 title: "Примеры Transactions API"
-description: "Пошаговые расследования для работы с receipt, транзакциями, записями NEAR Social, promise-цепочками и расчётами NEAR Intents."
+description: "Пошаговые расследования и подробные разборы для работы с receipt, транзакциями, записями NEAR Social, promise-цепочками и расчётами NEAR Intents."
 displayed_sidebar: transactionsApiSidebar
 page_actions:
   - markdown
 ---
 
-## Готовые расследования
+Если нужен более развёрнутый разбор на той же поверхности, переходите к [Berry Club](/tx/examples/berry-club) для исторического восстановления доски или к [OutLayer](/tx/examples/outlayer) для трассировки воркера и callback-цепочки.
 
-Эти расследования намеренно выстроены от самого простого якоря к самой насыщенной форензике: сначала один tx hash, затем один receipt, затем паттерны с ошибками и async, и только потом более глубокие расследования по SocialDB и NEAR Intents.
+## С чего начать
+
+Здесь собраны самые маленькие полезные якоря на странице: сначала один tx hash, потом один receipt ID, и только затем более глубокая форензика.
 
 ### У меня есть один хеш транзакции. Что вообще произошло?
 
 Используйте это расследование, когда история максимально простая: «мне прислали один хеш транзакции. Я просто хочу понять, сработала ли она, что именно сделала и в какой блок попала».
 
 Это и есть входной пример beginner-to-intermediate для этой страницы. До receipt, promise-цепочек и форензики есть один более базовый навык, который нужен любому NEAR-инженеру: превратить голый tx hash в одну короткую человеческую историю.
+
+<div className="fastnear-example-strategy">
+  <div className="fastnear-example-strategy__header">
+    <span className="fastnear-example-strategy__eyebrow">Стратегия</span>
+    <p className="fastnear-example-strategy__title">Начните с читаемой записи о транзакции и переходите в RPC или receipts только если первого ответа оказалось недостаточно.</p>
+  </div>
+  <div className="fastnear-example-strategy__items">
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">01</span><span><span className="fastnear-example-strategy__code">POST /v0/transactions</span> даёт signer, receiver, типы действий, высоту блока и первую receipt-точку передачи.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">02</span><span><span className="fastnear-example-strategy__code">RPC EXPERIMENTAL_tx_status</span> нужен только для точной протокольной семантики успеха.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span><span className="fastnear-example-strategy__code">POST /v0/receipt</span> имеет смысл только тогда, когда именно первая receipt становится новой опорной точкой.</span></p>
+  </div>
+</div>
 
 **Цель**
 
@@ -54,7 +68,7 @@ flowchart LR
 - в какой блок попала
 - одно простое предложение, которое объясняет транзакцию без receipt-жаргона
 
-### Shell-сценарий: от хеша транзакции к человеческой истории
+#### Shell-сценарий: от хеша транзакции к человеческой истории
 
 Используйте этот сценарий, когда нужен самый короткий путь от одного tx hash к одному читаемому ответу.
 
@@ -152,6 +166,18 @@ curl -s "$TX_BASE_URL/v0/receipt" \
 
 Если у вас уже есть хеш транзакции, а не receipt ID, начните с более простого расследования прямо выше и опускайтесь сюда только тогда, когда сама receipt становится лучшим якорем.
 
+<div className="fastnear-example-strategy">
+  <div className="fastnear-example-strategy__header">
+    <span className="fastnear-example-strategy__eyebrow">Стратегия</span>
+    <p className="fastnear-example-strategy__title">Сначала разрешите сам receipt, затем восстановите родительскую транзакцию и остановитесь, как только история стала читаемой.</p>
+  </div>
+  <div className="fastnear-example-strategy__items">
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">01</span><span><span className="fastnear-example-strategy__code">POST /v0/receipt</span> показывает, к какой транзакции и к какому блоку исполнения относится receipt.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">02</span><span><span className="fastnear-example-strategy__code">POST /v0/transactions</span> превращает этот сырой receipt в контекст signer, receiver и действий.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span><span className="fastnear-example-strategy__code">RPC tx status</span> — это уже необязательный следующий шаг, когда «человеческая история» превращается в «нужна точная семантика протокола».</span></p>
+  </div>
+</div>
+
 **Цель**
 
 - Начать с одного receipt ID и восстановить самую короткую полезную историю: кто его создал, где он исполнился, какая транзакция его породила и что эта транзакция вообще пыталась сделать.
@@ -189,7 +215,11 @@ flowchart LR
 - была ли квитанция главным событием или только шагом в большом каскаде
 - одно предложение простым языком, которое можно без правок вставить коллеге в чат
 
-### Shell-сценарий: от страшного receipt ID к человеческой истории
+#### Shell-сценарий: от страшного receipt ID к человеческой истории
+
+## Ошибки и async
+
+Здесь страница перестаёт быть просто поиском по объектам и начинает объяснять семантику исполнения в NEAR: атомарность пакета действий, более поздние async-сбои и порядок callback-ов.
 
 Используйте этот сценарий, когда у вас уже есть один сырой `receipt_id` из логов и нужно быстро превратить его в читаемое объяснение.
 
@@ -279,6 +309,18 @@ jq -r '
 
 В NEAR действия внутри одного пакета транзакции исполняются по порядку внутри первой квитанции с действиями. Если одно действие в этой квитанции падает, ранние действия из того же пакета тоже не закрепляются. Это отличается от более поздних асинхронных квитанций или promise-цепочек, где первая квитанция может пройти успешно, а уже следующая упасть отдельно.
 
+<div className="fastnear-example-strategy">
+  <div className="fastnear-example-strategy__header">
+    <span className="fastnear-example-strategy__eyebrow">Стратегия</span>
+    <p className="fastnear-example-strategy__title">Докажите, что пакет пытался сделать, какое действие упало и закрепилось ли что-нибудь из ранних шагов.</p>
+  </div>
+  <div className="fastnear-example-strategy__items">
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">01</span><span><span className="fastnear-example-strategy__code">POST /v0/transactions</span> показывает упорядоченный пакет ровно в том виде, в каком его подписал signer.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">02</span><span><span className="fastnear-example-strategy__code">RPC EXPERIMENTAL_tx_status</span> показывает падающий <span className="fastnear-example-strategy__code">FunctionCall</span> и точную причину отказа на уровне протокола.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span><span className="fastnear-example-strategy__code">RPC view_account</span> по предполагаемому новому аккаунту доказывает, закрепились ли вообще ранние create, fund и add-key действия.</span></p>
+  </div>
+</div>
+
 **Цель**
 
 - На примере одной зафиксированной транзакции из testnet доказать, что финальный `FunctionCall` упал, а ранние действия `CreateAccount`, `Transfer` и `AddKey` не закрепились.
@@ -328,7 +370,7 @@ flowchart LR
 - доказательство, что предполагаемый новый аккаунт всё ещё не существует после finality
 - короткий вывод, что ранние `CreateAccount`, `Transfer` и `AddKey` не закрепились после падения финального `FunctionCall`
 
-### Shell-сценарий неудачной транзакции с пакетом действий
+#### Shell-сценарий неудачной транзакции с пакетом действий
 
 Используйте этот сценарий, когда нужен один конкретный неудачный пакет действий, который можно разобрать по шагам через публичные FastNear testnet-эндпоинты.
 
@@ -450,6 +492,18 @@ jq '{
 
 Это противоположность примеру с неудачным пакетом действий выше. Там одно действие упало внутри первой action-receipt, поэтому не закрепилось ничего из этого пакета. Здесь первая receipt контракта действительно прошла успешно, и её изменение состояния действительно закрепилось. Сбой случился позже, в отдельной receipt.
 
+<div className="fastnear-example-strategy">
+  <div className="fastnear-example-strategy__header">
+    <span className="fastnear-example-strategy__eyebrow">Стратегия</span>
+    <p className="fastnear-example-strategy__title">Сначала получаем человеческий таймлайн, а уже потом доказываем, где именно async-история разошлась.</p>
+  </div>
+  <div className="fastnear-example-strategy__items">
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">01</span><span><span className="fastnear-example-strategy__code">POST /v0/transactions</span> даёт самый удобный первый проход: какая receipt успела пройти первой и какая упала позже.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">02</span><span><span className="fastnear-example-strategy__code">RPC EXPERIMENTAL_tx_status</span> доказывает важную NEAR-деталь: верхнеуровневый успех и более поздний сбой потомка могут одновременно быть правдой.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span><span className="fastnear-example-strategy__code">RPC call_function</span> на роутере показывает, закрепилось ли собственное локальное изменение состояния из первой receipt.</span></p>
+  </div>
+</div>
+
 **Цель**
 
 - Доказать по одной зафиксированной testnet-транзакции, что `seq-dr.mike.testnet.kickoff_append(...)` успешно отработал на своей собственной receipt, а потом отдельный detached-вызов `append(...)` упал через один блок с `CodeDoesNotExist`.
@@ -497,7 +551,7 @@ flowchart LR
 - что собственное состояние роутера всё ещё содержит `late-failure`, то есть локальный побочный эффект первой receipt закрепился
 - одно предложение, которое объясняет, почему это отличается от неудачной батч-транзакции
 
-### Shell-сценарий более позднего сбоя receipt
+#### Shell-сценарий более позднего сбоя receipt
 
 Используйте этот сценарий, когда история звучит так: «вызов контракта выглядел нормальным, но потом что-то упало, и мне надо точно доказать, где история разошлась».
 
@@ -636,6 +690,18 @@ jq '{
 
 Используйте это расследование, когда одна транзакция создаёт promise-работу на потом, вторая позже её resume-ит, и настоящий вопрос звучит не как «обе ли транзакции успешно прошли?», а как «выполнились ли cross-contract callback-и именно в том порядке, который я задумал?»
 
+<div className="fastnear-example-strategy">
+  <div className="fastnear-example-strategy__header">
+    <span className="fastnear-example-strategy__eyebrow">Стратегия</span>
+    <p className="fastnear-example-strategy__title">Смотрите на два хеша как на одну async-историю: докажите, что работа была жива, восстановите запрошенный порядок и сравните его с видимым downstream-state.</p>
+  </div>
+  <div className="fastnear-example-strategy__items">
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">01</span><span><span className="fastnear-example-strategy__code">RPC call_function</span> на view отложенной работы доказывает, что promise-работа действительно уже была жива до resume-шага.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">02</span><span><span className="fastnear-example-strategy__code">POST /v0/transactions</span> даёт оба block-anchor и точный порядок, который запросила resume-транзакция.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span><span className="fastnear-example-strategy__code">RPC EXPERIMENTAL_tx_status</span> вместе с downstream-view доказывают, где callback-и реально выполнились и в каком видимом порядке.</span></p>
+  </div>
+</div>
+
 **Цель**
 
 - Превратить два хеша транзакций в одну читаемую историю доказательства: какая promise-работа была создана, какой порядок запросил resume-вызов и какой порядок позже стал виден в downstream-состоянии контракта.
@@ -683,9 +749,25 @@ flowchart LR
 - в каких блоках стали видны изменения состояния
 - какие receipt-ы или account-pivot-ы стоит сохранить для следующего расследования
 
+## Доказательства по SocialDB
+
+Эти примеры стартуют с читаемого состояния в NEAR Social и откатываются назад к точной записи, которая это состояние создала.
+
 ### Доказать, что `mike.near` установил `profile.name` в `Mike Purvis`, а затем восстановить транзакцию записи профиля в SocialDB
 
 Используйте это расследование, когда история звучит так: «я вижу `Mike Purvis` в профиле NEAR Social аккаунта `mike.near`, но хочу точно доказать, когда это поле было записано и какая транзакция его записала».
+
+<div className="fastnear-example-strategy">
+  <div className="fastnear-example-strategy__header">
+    <span className="fastnear-example-strategy__eyebrow">Стратегия</span>
+    <p className="fastnear-example-strategy__title">Начните с читаемого значения поля, а затем превратите его field-level block в один receipt и одну транзакцию записи.</p>
+  </div>
+  <div className="fastnear-example-strategy__items">
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">01</span><span><span className="fastnear-example-strategy__code">NEAR Social POST /get</span> даёт текущее значение <span className="fastnear-example-strategy__code">profile.name</span> и field-level <span className="fastnear-example-strategy__code">:block</span>.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">02</span><span><span className="fastnear-example-strategy__code">POST /v0/block</span> превращает этот блок в конкретный receipt и хеш транзакции <span className="fastnear-example-strategy__code">mike.near -> social.near</span>.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span><span className="fastnear-example-strategy__code">POST /v0/transactions</span> доказывает payload записи, а <span className="fastnear-example-strategy__code">RPC call_function get</span> подтверждает, что поле и сейчас разрешается так же.</span></p>
+  </div>
+</div>
 
 **Цель**
 
@@ -715,7 +797,7 @@ flowchart LR
 - доказательство того, что запись была вызовом `set`, который нёс `profile.name` и другие поля профиля в том же payload
 - различие между блоком исполнения receipt (`78675795`) и блоком включения внешней транзакции (`78675794`)
 
-### Shell-сценарий доказательства поля профиля в NEAR Social
+#### Shell-сценарий доказательства поля профиля в NEAR Social
 
 Используйте этот сценарий, когда нужен конкретный и воспроизводимый путь доказательства: от читаемого поля профиля в NEAR Social до точной транзакции записи в SocialDB.
 
@@ -879,6 +961,18 @@ NEAR Social даёт семантическое значение поля. FastN
 
 Используйте это расследование, когда история звучит так: «я вижу, что `mike.near` подписан на `mob.near`, но хочу точно доказать, когда именно была записана эта связь и какая транзакция её записала».
 
+<div className="fastnear-example-strategy">
+  <div className="fastnear-example-strategy__header">
+    <span className="fastnear-example-strategy__eyebrow">Стратегия</span>
+    <p className="fastnear-example-strategy__title">Начните с семантической связи подписки, а затем используйте блок записи как мост назад к одному receipt и одной транзакции.</p>
+  </div>
+  <div className="fastnear-example-strategy__items">
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">01</span><span><span className="fastnear-example-strategy__code">NEAR Social POST /get</span> даёт читаемую связь подписки и SocialDB <span className="fastnear-example-strategy__code">:block</span>, где она была записана.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">02</span><span><span className="fastnear-example-strategy__code">POST /v0/block</span> превращает этот блок записи в конкретный receipt и хеш транзакции за этой связью.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span><span className="fastnear-example-strategy__code">POST /v0/transactions</span> доказывает payload с <span className="fastnear-example-strategy__code">graph.follow</span> и <span className="fastnear-example-strategy__code">index.graph</span>, а <span className="fastnear-example-strategy__code">RPC call_function get</span> подтверждает, что связь и сейчас существует.</span></p>
+  </div>
+</div>
+
 **Цель**
 
 - Начать с читаемой связи подписки из NEAR Social, а затем восстановить точный receipt и исходную транзакцию, которые записали её в SocialDB.
@@ -907,7 +1001,7 @@ NEAR Social даёт семантическое значение поля. FastN
 - доказательство того, что запись была вызовом `set`, который нёс и `graph.follow.mob.near`, и соответствующую запись `index.graph`
 - различие между блоком исполнения receipt (`79574924`) и блоком включения внешней транзакции (`79574923`)
 
-### Shell-сценарий доказательства подписки в NEAR Social
+#### Shell-сценарий доказательства подписки в NEAR Social
 
 Используйте этот сценарий, когда нужен конкретный и воспроизводимый путь доказательства: от читаемой связи подписки в NEAR Social до точной транзакции записи в SocialDB.
 
@@ -1076,6 +1170,18 @@ NEAR Social даёт семантическую связь. FastNear block recei
 - восстанавливаем исходную транзакцию
 - декодируем payload `set` и доказываем, что он действительно нёс исходник виджета
 
+<div className="fastnear-example-strategy">
+  <div className="fastnear-example-strategy__header">
+    <span className="fastnear-example-strategy__eyebrow">Стратегия</span>
+    <p className="fastnear-example-strategy__title">Смотрите на write-block виджета как на весь мост сразу: блок в receipt, receipt в транзакцию, транзакцию в исходник.</p>
+  </div>
+  <div className="fastnear-example-strategy__items">
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">01</span><span><span className="fastnear-example-strategy__code">POST /v0/block</span> начинает с блока виджета и сужает его до одного receipt <span className="fastnear-example-strategy__code">mob.near -> social.near</span>.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">02</span><span><span className="fastnear-example-strategy__code">POST /v0/transactions</span> превращает этот receipt в один читаемый payload <span className="fastnear-example-strategy__code">set</span> с исходником виджета.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span><span className="fastnear-example-strategy__code">RPC call_function get</span> — это финальное подтверждение текущего состояния, что виджет и сейчас существует.</span></p>
+  </div>
+</div>
+
 **Цель**
 
 - Превратить один SocialDB-блок уровня виджета в один читаемый ответ: какая транзакция записала `mob.near/widget/Profile`, какой receipt исполнил запись и какой именно исходник виджета лежал в payload.
@@ -1106,7 +1212,11 @@ NEAR Social даёт семантическую связь. FastNear block recei
 - доказательство, что payload записи был `set` с `mob.near/widget/Profile`
 - одно простое предложение вроде «`mob.near` записал `widget/Profile` в транзакции `9QDup...`, и в payload действительно лежал текущий исходник profile-виджета»
 
-### Shell-сценарий доказательства записи виджета в NEAR Social
+#### Shell-сценарий доказательства записи виджета в NEAR Social
+
+## Трассировка расчёта
+
+Это самое насыщенное расследование на странице: один живой расчёт NEAR Intents от верхнеуровневой транзакции до receipts и событий, которые его объясняют.
 
 Используйте этот сценарий, когда хотите превратить один блоковый якорь виджета в точную транзакцию, которая его записала.
 
@@ -1244,6 +1354,18 @@ jq --arg account_id "$ACCOUNT_ID" --arg widget_name "$WIDGET_NAME" '{
 
 Используйте это расследование, когда история звучит так: «у меня есть одна транзакция `intents.near`. Покажи, что реально произошло в сети, какие контракты участвовали и какие события это подтверждают».
 
+<div className="fastnear-example-strategy">
+  <div className="fastnear-example-strategy__header">
+    <span className="fastnear-example-strategy__eyebrow">Стратегия</span>
+    <p className="fastnear-example-strategy__title">Смотрите на один расчёт как на читаемую трассу, а не как на теорию протокола с первой строки.</p>
+  </div>
+  <div className="fastnear-example-strategy__items">
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">01</span><span><span className="fastnear-example-strategy__code">POST /v0/transactions</span> даёт каркас расчёта: входную точку, первые downstream-контракты и ранние логи.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">02</span><span><span className="fastnear-example-strategy__code">POST /v0/block</span> переиспользует тот же якорь, когда нужен контекст включающего блока вокруг этого расчёта.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span><span className="fastnear-example-strategy__code">RPC EXPERIMENTAL_tx_status</span> нужен там, где уже требуется канонический DAG по receipt и имена событий, которые доказывают реальное движение активов.</span></p>
+  </div>
+</div>
+
 **Цель**
 
 - Начать с одной фиксированной транзакции `intents.near` и превратить её в читаемую историю расчёта: какой метод запустил расчёт, какие downstream-контракты появились дальше и какие семейства событий объясняют движение активов.
@@ -1302,7 +1424,7 @@ flowchart LR
 
 Этот пример намеренно остаётся на публичных FastNear-поверхностях. NEAR Intents Explorer и 1Click Explorer тоже полезны, но их Explorer API защищён JWT и не подходит как дефолтный публичный сценарий в документации.
 
-### Shell-сценарий расчёта NEAR Intents
+#### Shell-сценарий расчёта NEAR Intents
 
 Используйте этот сценарий, когда нужен один конкретный расчёт через `intents.near`, который можно сразу разобрать через публичные FastNear-эндпоинты.
 

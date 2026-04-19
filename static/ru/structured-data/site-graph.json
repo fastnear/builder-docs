@@ -6456,6 +6456,32 @@
     },
     {
       "entityIds": {
+        "familyIds": [],
+        "mainEntityId": null,
+        "pageId": "https://docs.fastnear.com/ru/tx/examples/berry-club#page"
+      },
+      "indexable": true,
+      "markdownMirrorUrl": "https://docs.fastnear.com/ru/tx/examples/berry-club.md",
+      "pageSchemaType": "TechArticle",
+      "route": "/ru/tx/examples/berry-club",
+      "routeType": "docs",
+      "url": "https://docs.fastnear.com/ru/tx/examples/berry-club"
+    },
+    {
+      "entityIds": {
+        "familyIds": [],
+        "mainEntityId": null,
+        "pageId": "https://docs.fastnear.com/ru/tx/examples/outlayer#page"
+      },
+      "indexable": true,
+      "markdownMirrorUrl": "https://docs.fastnear.com/ru/tx/examples/outlayer.md",
+      "pageSchemaType": "TechArticle",
+      "route": "/ru/tx/examples/outlayer",
+      "routeType": "docs",
+      "url": "https://docs.fastnear.com/ru/tx/examples/outlayer"
+    },
+    {
+      "entityIds": {
         "familyIds": [
           "https://docs.fastnear.com/structured-data/families/api-transactions"
         ],
