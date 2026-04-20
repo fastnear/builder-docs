@@ -1,8 +1,10 @@
 **Источник:** [https://docs.fastnear.com/ru/tx/examples](https://docs.fastnear.com/ru/tx/examples)
 
-## Быстрый старт
+## Начните здесь
 
-Начните с одного tx hash и сначала получите самый короткий читаемый ответ.
+### У меня один хеш транзакции. Что произошло?
+
+Вставьте хеш в `POST /v0/transactions` — один ответ обычно содержит всю историю.
 
 ```bash
 TX_BASE_URL=https://tx.main.fastnear.com
@@ -12,930 +14,211 @@ curl -s "$TX_BASE_URL/v0/transactions" \
   -H 'content-type: application/json' \
   --data "$(jq -nc --arg tx_hash "$TX_HASH" '{tx_hashes: [$tx_hash]}')" \
   | jq '{
-      transaction: {
-        hash: .transactions[0].transaction.hash,
-        signer_id: .transactions[0].transaction.signer_id,
-        receiver_id: .transactions[0].transaction.receiver_id,
-        included_block_height: .transactions[0].execution_outcome.block_height
-      },
-      actions: (
-        .transactions[0].transaction.actions
-        | map(if type == "string" then . else keys[0] end)
-      ),
-      first_receipt_id: .transactions[0].transaction_outcome.outcome.status.SuccessReceiptId,
+      hash: .transactions[0].transaction.hash,
+      signer_id: .transactions[0].transaction.signer_id,
+      receiver_id: .transactions[0].transaction.receiver_id,
+      included_block_height: .transactions[0].execution_outcome.block_height,
+      actions: (.transactions[0].transaction.actions | map(if type == "string" then . else keys[0] end)),
+      first_receipt_id: .transactions[0].execution_outcome.outcome.status.SuccessReceiptId,
       receipt_count: (.transactions[0].receipts | length)
     }'
 ```
 
-## С чего начать
+Для зафиксированного хеша `mike.near` отправил один `Transfer` на `global-counter.mike.near` в блоке `194263342`, с передачей в receipt `5GhZcpfKWhrpaZo5Am74QfEUFQnZBz48G7hfoLPVDXcq`. Если `receipt_count > 1` или следующий вопрос касается поведения на уровне receipt, переходите к [Какой receipt испустил этот лог или событие?](#какой-receipt-испустил-этот-лог-или-событие) или [`POST /v0/receipt`](https://docs.fastnear.com/ru/tx/receipt).
 
-### У меня есть один хеш транзакции. Что вообще произошло?
+### Какой receipt испустил этот лог или событие?
 
-    Ход
-    Начните с читаемой записи о транзакции и переходите в RPC или receipts только если первого ответа оказалось недостаточно.
-
-    01POST /v0/transactions даёт signer, receiver, типы действий, высоту блока и первую receipt-точку передачи.
-    02RPC EXPERIMENTAL_tx_status нужен только для точной протокольной семантики успеха.
-    03POST /v0/receipt имеет смысл только тогда, когда именно первая receipt становится новой опорной точкой.
-
-Зафиксированный пример:
-
-- хеш транзакции: `AdgNifPYpoDNS5ckfBZm36Ai6LuL5bTstuKsVdGjKwGp`
-- signer: `mike.near`
-- receiver: `global-counter.mike.near`
-- высота включающего блока: `194263342`
-- ID первой receipt: `5GhZcpfKWhrpaZo5Am74QfEUFQnZBz48G7hfoLPVDXcq`
-
-Короткий ответ: `mike.near` отправил одну транзакцию с действием `Transfer` в адрес `global-counter.mike.near`, эта транзакция попала в блок `194263342`, и сеть передала её в одну успешную receipt.
-
-```mermaid
-flowchart LR
-    H["Один tx hash<br/>AdgNifPY..."] --> T["Получаем транзакцию"]
-    T --> A["Читаем signer, receiver, actions, block"]
-    A --> S["Короткая человеческая история"]
-    T -. "если потом понадобится" .-> R["Первая receipt<br/>5GhZcpfK..."]
-```
-
-| Поверхность | Эндпоинт | Как используем | Зачем используем |
-| --- | --- | --- | --- |
-| Читаемая история транзакции | Transactions API [`POST /v0/transactions`](https://docs.fastnear.com/ru/tx/transactions) | Стартуем с хеша транзакции и печатаем signer, receiver, включающий блок, список действий и handoff в первую receipt | Даёт самый быстрый читаемый ответ на вопрос «что вообще сделала эта транзакция?» |
-| Каноническое продолжение по статусу | RPC [`EXPERIMENTAL_tx_status`](https://docs.fastnear.com/ru/rpc/transaction/experimental-tx-status) | Переиспользуем тот же хеш транзакции и signer только если нужны точные протокольные семантики статуса | Полезно, когда следующий вопрос уже звучит как «а по RPC это точно успех?» |
-| Переход к receipt | Transactions API [`POST /v0/receipt`](https://docs.fastnear.com/ru/tx/receipt) | Переиспользуем ID первой receipt, если вопрос превращается в историю на уровне receipt | Даёт естественный мост к следующему расследованию, когда лучшим якорем становится уже не транзакция, а receipt |
-
-#### Shell-сценарий: от хеша транзакции к человеческой истории
-
-**Ход**
-
-- Получаете транзакцию по хешу и печатаете её основные поля.
-- Подтверждаете финальный статус только если нужны точные RPC-семантики.
-- Сохраняете первую receipt только как необязательный следующий шаг.
-
-```bash
-TX_BASE_URL=https://tx.main.fastnear.com
-RPC_URL=https://rpc.mainnet.fastnear.com
-TX_HASH=AdgNifPYpoDNS5ckfBZm36Ai6LuL5bTstuKsVdGjKwGp
-SIGNER_ACCOUNT_ID=mike.near
-```
-
-1. Получите транзакцию и распечатайте базовую историю.
-
-```bash
-FIRST_RECEIPT_ID="$(
-  curl -s "$TX_BASE_URL/v0/transactions" \
-    -H 'content-type: application/json' \
-    --data "$(jq -nc --arg tx_hash "$TX_HASH" '{tx_hashes: [$tx_hash]}')" \
-    | tee /tmp/basic-tx-story.json \
-    | jq -r '.transactions[0].transaction_outcome.outcome.status.SuccessReceiptId'
-)"
-
-jq '{
-  transaction: {
-    hash: .transactions[0].transaction.hash,
-    signer_id: .transactions[0].transaction.signer_id,
-    receiver_id: .transactions[0].transaction.receiver_id,
-    included_block_height: .transactions[0].execution_outcome.block_height
-  },
-  actions: (
-    .transactions[0].transaction.actions
-    | map(if type == "string" then . else keys[0] end)
-  ),
-  first_receipt_id: .transactions[0].transaction_outcome.outcome.status.SuccessReceiptId,
-  receipt_count: (.transactions[0].receipts | length)
-}' /tmp/basic-tx-story.json
-
-# Ожидаемый список действий: ["Transfer"]
-# Ожидаемая первая receipt: 5GhZcpfKWhrpaZo5Am74QfEUFQnZBz48G7hfoLPVDXcq
-```
-
-2. Если нужны точные RPC-семантики статуса, подтвердите их через `EXPERIMENTAL_tx_status`.
-
-```bash
-curl -s "$RPC_URL" \
-  -H 'content-type: application/json' \
-  --data "$(jq -nc \
-    --arg tx_hash "$TX_HASH" \
-    --arg signer_account_id "$SIGNER_ACCOUNT_ID" '{
-      jsonrpc: "2.0",
-      id: "fastnear",
-      method: "EXPERIMENTAL_tx_status",
-      params: {
-        tx_hash: $tx_hash,
-        sender_account_id: $signer_account_id,
-        wait_until: "FINAL"
-      }
-    }')" \
-  | jq '{
-      final_execution_status: .result.final_execution_status,
-      status: .result.status,
-      transaction_handoff: .result.transaction_outcome.outcome.status
-    }'
-```
-
-3. Если следующий вопрос уже звучит как «что это была за первая receipt?», один раз перейдите по ней и остановитесь.
-
-```bash
-curl -s "$TX_BASE_URL/v0/receipt" \
-  -H 'content-type: application/json' \
-  --data "$(jq -nc --arg receipt_id "$FIRST_RECEIPT_ID" '{receipt_id: $receipt_id}')" \
-  | jq '{
-      receipt_id: .receipt.receipt_id,
-      receiver_id: .receipt.receiver_id,
-      is_success: .receipt.is_success,
-      receipt_block_height: .receipt.block_height,
-      transaction_hash: .receipt.transaction_hash
-    }'
-```
-
-Последний шаг специально сделан необязательным. Если вам нужна была только история транзакции, уже первого шага достаточно. Двигайтесь дальше только когда сама receipt становится новым якорем.
-
-**Когда переходить дальше**
-
-`POST /v0/transactions` — это самый чистый старт, когда у вас на руках только tx hash и нужен один читаемый ответ. RPC нужен как продолжение для точных семантик статуса. `POST /v0/receipt` — это handoff на случай, когда следующий вопрос уже относится не ко всей транзакции, а к одной receipt внутри неё.
-
-### Какая receipt выдала этот лог или event?
-
-    Ход
-    Один раз получите список receipt, отфильтруйте его по фрагменту лога и остановитесь, как только одна receipt окажется владельцем этого лога.
-
-    01POST /v0/transactions даёт полный индексированный список receipt для одного tx hash, включая receipt-логи.
-    02jq сужает этот список до receipt, в логах которых встречается нужный вам фрагмент.
-    03Как только совпадение осталось одно, сохраняйте его receipt_id, executor и имя метода как точный ответ.
-
-Для этого зафиксированного mainnet-примера используйте:
-
-- хеш транзакции: `2KhhB1uDScGCFQfVchep7DiZTGTxMcgfUYHNzwf5e6uL`
-- фрагмент лога: `Refund`
-- ожидаемый matching `receipt_id`: `9sLHQpaGz3NnMNMn8zGrDUSyktR1q6ts2otr9mHkfD1w`
-- ожидаемый executor: `wrap.near`
-- ожидаемый метод: `ft_resolve_transfer`
-
-В этой транзакции есть две logged receipt внутри одной истории:
-
-- ранний лог `Transfer ...` на receipt с `ft_transfer_call`
-- более поздний лог `Refund ...` на receipt с `ft_resolve_transfer`
-
-```mermaid
-flowchart LR
-    T["Один tx hash<br/>2KhhB1uD..."] --> L["Читаем все receipt-логи"]
-    L --> X["Ищем фрагмент:<br/>Refund"]
-    X --> R["Точная receipt<br/>9sLHQpaG..."]
-    R --> A["Ответ:<br/>wrap.near / ft_resolve_transfer"]
-```
-
-| Поверхность | Эндпоинт | Как используем | Зачем используем |
-| --- | --- | --- | --- |
-| Атрибуция лога | Transactions API [`POST /v0/transactions`](https://docs.fastnear.com/ru/tx/transactions) | Один раз получаем транзакцию и фильтруем её receipt по фрагменту лога вроде `Refund` | Даёт самый короткий путь от одной наблюдаемой строки лога к точной receipt, которая её выдала |
-| Необязательный следующий pivot | Transactions API [`POST /v0/receipt`](https://docs.fastnear.com/ru/tx/receipt) | Переиспользуем найденный `receipt_id` только если сама receipt становится следующим якорем | Позволяет сохранить receipt для следующего расследования, не раздувая сам пример |
-
-#### Shell-сценарий атрибуции лога
-
-**Ход**
-
-- Один раз получаете транзакцию и сохраняете список её receipt.
-- Фильтруете receipt по одному фрагменту лога.
-- Останавливаетесь, как только у вас есть один точный `receipt_id`, один executor и одно имя метода.
+Выведите список всех receipt транзакции с логами и флагом, содержат ли их логи ваш фрагмент. Совпадение доказывается, а не угадывается: у зафиксированной транзакции один receipt логирует `Transfer`, другой — `Refund`, и только сторона `Refund` переключается в `true`.
 
 ```bash
 TX_BASE_URL=https://tx.main.fastnear.com
 TX_HASH=2KhhB1uDScGCFQfVchep7DiZTGTxMcgfUYHNzwf5e6uL
 LOG_FRAGMENT=Refund
-```
 
-1. Получите транзакцию и сохраните список receipt.
-
-```bash
 curl -s "$TX_BASE_URL/v0/transactions" \
   -H 'content-type: application/json' \
   --data "$(jq -nc --arg tx_hash "$TX_HASH" '{tx_hashes: [$tx_hash]}')" \
-  | tee /tmp/log-attribution-transaction.json >/dev/null
+  | jq --arg fragment "$LOG_FRAGMENT" '
+      [
+        .transactions[0].receipts[]
+        | select((.execution_outcome.outcome.logs | length) > 0)
+        | {
+            receipt_id: .receipt.receipt_id,
+            receiver_id: .receipt.receiver_id,
+            method_name: (.receipt.receipt.Action.actions[0]
+              | if type == "string" then . else (.FunctionCall.method_name // keys[0]) end),
+            matches_fragment: any(.execution_outcome.outcome.logs[]?; contains($fragment)),
+            logs: .execution_outcome.outcome.logs
+          }
+      ]'
 ```
 
-2. Отфильтруйте список receipt до логов, которые содержат нужный вам фрагмент.
+Фрагмент `Refund` атрибутируется receipt `9sLHQpaGz3NnMNMn8zGrDUSyktR1q6ts2otr9mHkfD1w` на `wrap.near`, метод `ft_resolve_transfer`. Логи receipt живут на receipts, а не на транзакции, поэтому одного прохода достаточно — более глубокая async-трассировка не нужна.
 
-```bash
-jq --arg fragment "$LOG_FRAGMENT" '{
-  transaction: {
-    hash: .transactions[0].transaction.hash,
-    signer_id: .transactions[0].transaction.signer_id,
-    receiver_id: .transactions[0].transaction.receiver_id
-  },
-  matching_receipts: [
-    .transactions[0].receipts[]
-    | select(any(.execution_outcome.outcome.logs[]?; contains($fragment)))
-    | {
-        receipt_id: .receipt.receipt_id,
-        predecessor_id: .receipt.predecessor_id,
-        receiver_id: .receipt.receiver_id,
-        method_name: (
-          .receipt.receipt.Action.actions[0]
-          | if type == "string" then .
-            else (.FunctionCall.method_name // keys[0])
-            end
-        ),
-        block_height: .execution_outcome.block_height,
-        logs: .execution_outcome.outcome.logs
-      }
-  ]
-}' /tmp/log-attribution-transaction.json
+### Превратить один неказистый receipt ID из логов в человекочитаемую историю
 
-# На что смотреть:
-# - фрагмент `Refund` совпадает ровно с одной receipt
-# - это receipt 9sLHQpaGz3NnMNMn8zGrDUSyktR1q6ts2otr9mHkfD1w
-# - receipt исполнилась на wrap.near
-# - имя метода — ft_resolve_transfer
-```
-
-3. Если хотите увидеть все logged receipt рядом, распечатайте только те receipt, где вообще были логи.
-
-```bash
-jq '{
-  logged_receipts: [
-    .transactions[0].receipts[]
-    | select((.execution_outcome.outcome.logs | length) > 0)
-    | {
-        receipt_id: .receipt.receipt_id,
-        receiver_id: .receipt.receiver_id,
-        method_name: (
-          .receipt.receipt.Action.actions[0]
-          | if type == "string" then .
-            else (.FunctionCall.method_name // keys[0])
-            end
-        ),
-        logs: .execution_outcome.outcome.logs
-      }
-  ]
-}' /tmp/log-attribution-transaction.json
-```
-
-Это последнее сравнение полезно тем, что оно показывает: атрибуция лога здесь не строится на догадке. В этой транзакции есть больше одной logged receipt, и фрагмент `Refund` принадлежит одной конкретной более поздней receipt, а не транзакции в целом.
-
-**Когда переходить дальше**
-
-Receipt-логи живут на уровне receipt, а не на каком-то абстрактном объекте верхнего уровня. `POST /v0/transactions` уже достаточно, чтобы привязать одну строку лога к одной точной receipt без ухода в более глубокую async-трассировку.
-
-### Превратить один страшный receipt ID из логов в понятную человеческую историю
-
-Есть только `receipt_id` из логов или трассы? Сначала разрешите сам receipt, затем восстановите родительскую транзакцию.
-
-Если у вас уже есть хеш транзакции, а не receipt ID, начните с более простого расследования прямо выше и опускайтесь сюда только тогда, когда сама receipt становится лучшим якорем.
-
-    Ход
-    Сначала разрешите сам receipt, затем восстановите родительскую транзакцию и остановитесь, как только история стала читаемой.
-
-    01POST /v0/receipt показывает, к какой транзакции и к какому блоку исполнения относится receipt.
-    02POST /v0/transactions превращает этот сырой receipt в контекст signer, receiver и действий.
-    03RPC tx status — это уже необязательный следующий шаг, когда «человеческая история» превращается в «нужна точная семантика протокола».
-
-Зафиксированный receipt из логов:
-
-- receipt ID: `5GhZcpfKWhrpaZo5Am74QfEUFQnZBz48G7hfoLPVDXcq`
-- хеш исходной транзакции: `AdgNifPYpoDNS5ckfBZm36Ai6LuL5bTstuKsVdGjKwGp`
-- signer: `mike.near`
-- receiver: `global-counter.mike.near`
-- высота блока транзакции: `194263342`
-- высота блока исполнения receipt: `194263343`
-
-Короткий ответ: `mike.near` подписал обычную транзакцию `Transfer` в адрес `global-counter.mike.near`, сеть превратила её в одну квитанцию с действием, а эта квитанция успешно исполнилась в следующем блоке.
-
-```mermaid
-flowchart LR
-    L["Один страшный receipt ID<br/>5GhZcpfK..."] --> R["Ищем receipt"]
-    R --> T["Восстанавливаем tx hash<br/>AdgNifPY..."]
-    T --> S["Читаем действия транзакции"]
-    S --> H["Человеческая история:<br/>mike.near отправил 5 NEAR в global-counter.mike.near"]
-```
-
-| Поверхность | Эндпоинт | Как используем | Зачем используем |
-| --- | --- | --- | --- |
-| Якорь по квитанции | Transactions API [`POST /v0/receipt`](https://docs.fastnear.com/ru/tx/receipt) | Сначала ищем ID квитанции и печатаем аккаунты, блок исполнения, флаг успеха и связанный хеш транзакции | Даёт самый короткий путь от сырого receipt ID к пониманию, что вообще за объект перед вами |
-| История транзакции | Transactions API [`POST /v0/transactions`](https://docs.fastnear.com/ru/tx/transactions) | Переиспользуем полученный хеш транзакции и печатаем signer, receiver, упорядоченные действия и включающий блок | Превращает сырую квитанцию в читаемую историю того, что signer на самом деле отправил |
-| Каноническое продолжение | RPC [`tx`](https://docs.fastnear.com/ru/rpc/transaction/tx-status) или [`EXPERIMENTAL_tx_status`](https://docs.fastnear.com/ru/rpc/transaction/experimental-tx-status) | Подтверждаем протокольные семантики только если индексированного ответа всё ещё недостаточно | Полезно, когда вопрос меняется с «расскажи мне историю» на «покажи точную RPC-семантику статуса» |
-
-#### Shell-сценарий: от страшного receipt ID к человеческой истории
+`POST /v0/receipt` возвращает запись receipt **и** его полную родительскую транзакцию в одном ответе, поэтому единственного запроса хватает на всю историю — дополнительный `/v0/transactions` не нужен.
 
 ```bash
 TX_BASE_URL=https://tx.main.fastnear.com
-RECEIPT_ID='5GhZcpfKWhrpaZo5Am74QfEUFQnZBz48G7hfoLPVDXcq'
-```
+RECEIPT_ID=5GhZcpfKWhrpaZo5Am74QfEUFQnZBz48G7hfoLPVDXcq
 
-1. Разрешите receipt и поймите, что за объект вы смотрите.
-
-```bash
-TX_HASH="$(
-  curl -s "$TX_BASE_URL/v0/receipt" \
-    -H 'content-type: application/json' \
-    --data "$(jq -nc --arg receipt_id "$RECEIPT_ID" '{receipt_id: $receipt_id}')" \
-    | tee /tmp/receipt-lookup.json \
-    | jq -r '.receipt.transaction_hash'
-)"
-
-jq '{
-  receipt: {
-    receipt_id: .receipt.receipt_id,
-    predecessor_id: .receipt.predecessor_id,
-    receiver_id: .receipt.receiver_id,
-    receipt_type: .receipt.receipt_type,
-    is_success: .receipt.is_success,
-    receipt_block_height: .receipt.block_height,
-    transaction_hash: .receipt.transaction_hash,
-    tx_block_height: .receipt.tx_block_height
-  }
-}' /tmp/receipt-lookup.json
-```
-
-2. Переиспользуйте хеш транзакции и превратите квитанцию в читаемую историю транзакции.
-
-```bash
-curl -s "$TX_BASE_URL/v0/transactions" \
+curl -s "$TX_BASE_URL/v0/receipt" \
   -H 'content-type: application/json' \
-  --data "$(jq -nc --arg tx_hash "$TX_HASH" '{tx_hashes: [$tx_hash]}')" \
-  | tee /tmp/receipt-parent-transaction.json >/dev/null
-
-jq '{
-  transaction: {
-    transaction_hash: .transactions[0].transaction.hash,
-    signer_id: .transactions[0].transaction.signer_id,
-    receiver_id: .transactions[0].transaction.receiver_id,
-    tx_block_height: .transactions[0].execution_outcome.block_height,
-    action_types: (
-      .transactions[0].transaction.actions
-      | map(if type == "string" then . else keys[0] end)
-    ),
-    transfer_deposit_yocto: (
-      .transactions[0].transaction.actions[0].Transfer.deposit // null
-    )
-  },
-  receipt_count: (.transactions[0].receipts | length)
-}' /tmp/receipt-parent-transaction.json
+  --data "$(jq -nc --arg receipt_id "$RECEIPT_ID" '{receipt_id: $receipt_id}')" \
+  | jq '{
+      receipt: {
+        receipt_id: .receipt.receipt_id,
+        type: .receipt.receipt_type,
+        is_success: .receipt.is_success,
+        receipt_block: .receipt.block_height,
+        tx_block: .receipt.tx_block_height,
+        predecessor_id: .receipt.predecessor_id,
+        receiver_id: .receipt.receiver_id,
+        transaction_hash: .receipt.transaction_hash
+      },
+      parent_transaction: {
+        signer_id: .transaction.transaction.signer_id,
+        receiver_id: .transaction.transaction.receiver_id,
+        action_types: (.transaction.transaction.actions | map(if type == "string" then . else keys[0] end))
+      }
+    }'
 ```
 
-3. Сведите это к одному человеческому предложению.
+Для зафиксированного receipt это возвращает `Action`-receipt от `mike.near` к `global-counter.mike.near`, который успешно выполнился в блоке `194263343`, через один блок после попадания родительской транзакции `AdgNifPY…`, — один `Transfer` (5 NEAR, в сыром `.transaction.transaction.actions` видимо как `5000000000000000000000000` yocto). Если интересным якорем становится родительская транзакция, хеш у вас уже есть — переиспользуйте его в [У меня один хеш транзакции. Что произошло?](#у-меня-один-хеш-транзакции-что-произошло).
 
-```bash
-jq -r '
-  def zeros($n):
-    reduce range(0; $n) as $i (""; . + "0");
-  def yocto_to_near($yocto):
-    ($yocto | tostring) as $digits
-    | if ($digits | length) <= 24 then
-        ("0." + zeros(24 - ($digits | length)) + $digits)
-      else
-        ($digits[0:(($digits | length) - 24)] + "." + $digits[-24:])
-      end
-    | sub("0+$"; "")
-    | sub("\\.$"; "");
-  .transactions[0] as $tx
-  | "Receipt \($tx.execution_outcome.outcome.receipt_ids[0]) относится к tx \($tx.transaction.hash): \($tx.transaction.signer_id) отправил \(yocto_to_near($tx.transaction.actions[0].Transfer.deposit)) NEAR в \($tx.transaction.receiver_id). Транзакция попала в блок \($tx.execution_outcome.block_height), а receipt успешно исполнился в блоке \($tx.receipts[0].execution_outcome.block_height)."
-' /tmp/receipt-parent-transaction.json
-```
+## Сбои и async
 
-Для другого receipt держитесь того же шаблона, но поменяйте финальное предложение так, чтобы оно соответствовало типам действий, которые вы только что напечатали.
+### Доказать, что один провалившийся action откатил весь batch
 
-В этом и состоит ключевой приём: не нужно объяснять каждое поле квитанции. Нужно восстановить ровно столько контекста, чтобы сказать, что сделал signer, где исполнился receipt и был ли этот receipt главным событием или только шагом в более крупном каскаде.
-
-**Когда переходить дальше**
-
-`POST /v0/receipt` показывает, к чему привязан сырой receipt. `POST /v0/transactions` показывает, что signer на самом деле пытался сделать. Как только эти две части собраны вместе, чаще всего уже можно объяснить receipt одним предложением и только потом решать, нужны ли вообще контекст блока, история аккаунта или канонический RPC-статус.
-
-## Ошибки и async
-
-Здесь страница перестаёт быть просто поиском по объектам и начинает объяснять семантику исполнения в NEAR: атомарность пакета действий, более поздние async-сбои и то, дошёл ли callback обратно до исходного контракта.
-
-### Доказать, что одно неудачное действие сорвало весь пакет
-
-Нужно проверить, закрепились ли ранние действия в неудачном батче? Используйте этот testnet-пример с `CreateAccount -> Transfer -> AddKey -> FunctionCall`.
-
-В NEAR действия внутри одного пакета транзакции исполняются по порядку внутри первой квитанции с действиями. Если одно действие в этой квитанции падает, ранние действия из того же пакета тоже не закрепляются. Это отличается от более поздних асинхронных квитанций или promise-цепочек, где первая квитанция может пройти успешно, а уже следующая упасть отдельно.
-
-    Ход
-    Докажите, что пакет пытался сделать, какое действие упало и закрепилось ли что-нибудь из ранних шагов.
-
-    01POST /v0/transactions показывает упорядоченный пакет ровно в том виде, в каком его подписал signer.
-    02RPC EXPERIMENTAL_tx_status показывает падающий FunctionCall и точную причину отказа на уровне протокола.
-    03RPC view_account по предполагаемому новому аккаунту доказывает, закрепились ли вообще ранние create, fund и add-key действия.
-
-**Официальные ссылки**
-
-- [Основы транзакций](https://docs.fastnear.com/ru/transaction-flow/foundations)
-- [Исполнение в рантайме](https://docs.fastnear.com/ru/transaction-flow/runtime-execution)
-
-Этот зафиксированный сбой был получен в **testnet 18 апреля 2026 года**:
-
-- хеш транзакции: `CrhH3xLzbNwNMGgZkgptXorwh8YmqxRGuA6Mc11MkU6M`
-- аккаунт signer: `temp.mike.testnet`
-- целевой новый аккаунт: `rollback-mo4vmkig.temp.mike.testnet`
-- высота включающего блока: `246365118`
-- хеш включающего блока: `6f5zTKDqQRwrxMywzvxeRvYcCERJmAnatJaqUEtQYUNM`
-- порядок действий: `CreateAccount -> Transfer -> AddKey -> FunctionCall`
-- упавший метод: `definitely_missing_method`
-- RPC-ошибка: `CodeDoesNotExist` на `rollback-mo4vmkig.temp.mike.testnet`
-
-```mermaid
-flowchart LR
-    T["Одна подписанная транзакция"] --> A["CreateAccount"]
-    A --> B["Transfer 0.01 NEAR"]
-    B --> C["AddKey"]
-    C --> D["FunctionCall definitely_missing_method()"]
-    D --> E["Сбой: CodeDoesNotExist"]
-    E --> R["Весь пакет не закрепился"]
-    R --> N["Новый аккаунт не появился"]
-    R --> K["Новый ключ не закрепился"]
-    R --> F["У получателя нет профинансированного состояния"]
-```
-
-| Поверхность | Эндпоинт | Как используем | Зачем используем |
-| --- | --- | --- | --- |
-| Задуманный пакет | Transactions API [`POST /v0/transactions`](https://docs.fastnear.com/ru/tx/transactions) | Загружаем зафиксированный хеш транзакции и печатаем упорядоченный список действий, получателя и метаданные включающего блока | Показывает, что именно signer пытался сделать, ещё до разговора о том, что закрепилось |
-| Точное место сбоя | RPC [`EXPERIMENTAL_tx_status`](https://docs.fastnear.com/ru/rpc/transaction/experimental-tx-status) | Запрашиваем ту же транзакцию с `wait_until: "FINAL"` и смотрим `status.Failure` | Показывает, какое действие упало и почему весь пакет не закрепился на уровне протокола |
-| Доказательство по состоянию после исполнения | RPC [`query(view_account)`](https://docs.fastnear.com/ru/rpc/account/view-account) | Запрашиваем предполагаемый новый аккаунт после finality | Если созданный аккаунт до сих пор не существует, значит ранние `CreateAccount`, `Transfer` и `AddKey` из того же пакета действий тоже не закрепились |
-
-Индексированная запись транзакции всё ещё показывает `transaction_outcome.outcome.status = SuccessReceiptId`, потому что подписанная транзакция успешно превратилась в свою первую квитанцию с действиями. Но доказательство того, что весь пакет не закрепился, приходит из верхнеуровневого RPC `status.Failure` для этой первой квитанции и из проверки состояния после исполнения, что целевой новый аккаунт так и не появился.
-
-#### Shell-сценарий неудачной транзакции с пакетом действий
-
-**Ход**
-
-- Читаете индексированную запись транзакции, чтобы восстановить задуманный пакет действий.
-- Через RPC transaction status доказываете, что финальный `FunctionCall` действительно упал и сорвал весь пакет.
-- Через один RPC-запрос к состоянию после исполнения доказываете, что новый аккаунт так и не появился после finality.
+Один batch отправил `CreateAccount → Transfer → AddKey → FunctionCall`, и финальный вызов попал в отсутствующий метод. Индексированная запись транзакции уже несёт упорядоченный batch *и* точный сбой на уровне receipt, поэтому одного запроса хватает, чтобы ответить «что пытались и что сломалось»; проверка через `view_account` затем доказывает, что предыдущие actions откатились.
 
 ```bash
 TX_BASE_URL=https://tx.test.fastnear.com
 RPC_URL=https://rpc.testnet.fastnear.com
 TX_HASH=CrhH3xLzbNwNMGgZkgptXorwh8YmqxRGuA6Mc11MkU6M
-SIGNER_ACCOUNT_ID=temp.mike.testnet
 NEW_ACCOUNT_ID=rollback-mo4vmkig.temp.mike.testnet
-```
 
-1. Получите транзакцию и распечатайте задуманный пакет действий.
-
-```bash
 curl -s "$TX_BASE_URL/v0/transactions" \
   -H 'content-type: application/json' \
   --data "$(jq -nc --arg tx_hash "$TX_HASH" '{tx_hashes: [$tx_hash]}')" \
-  | tee /tmp/failed-batch-transaction.json >/dev/null
-
-jq '{
-  transaction: {
-    hash: .transactions[0].transaction.hash,
-    signer_id: .transactions[0].transaction.signer_id,
-    receiver_id: .transactions[0].transaction.receiver_id,
-    included_block_height: .transactions[0].execution_outcome.block_height,
-    included_block_hash: .transactions[0].execution_outcome.block_hash
-  },
-  batch: {
-    action_count: (.transactions[0].transaction.actions | length),
-    action_types: (
-      .transactions[0].transaction.actions
-      | map(if type == "string" then . else keys[0] end)
-    ),
-    final_function_call_method_name: (
-      .transactions[0].transaction.actions[3].FunctionCall.method_name
-    )
-  },
-  first_receipt_handoff: .transactions[0].transaction_outcome.outcome.status
-}' /tmp/failed-batch-transaction.json
-
-# Ожидаемый порядок действий:
-# 1. CreateAccount
-# 2. Transfer
-# 3. AddKey
-# 4. FunctionCall
+  | jq '{
+      action_types: (.transactions[0].transaction.actions | map(if type == "string" then . else keys[0] end)),
+      final_method: .transactions[0].transaction.actions[3].FunctionCall.method_name,
+      tx_handoff: .transactions[0].execution_outcome.outcome.status,
+      receipt_failure: (
+        first(
+          .transactions[0].receipts[]
+          | select(.execution_outcome.outcome.status.Failure != null)
+          | .execution_outcome.outcome.status.Failure.ActionError
+        )
+      )
+    }'
 ```
 
-2. Запросите RPC transaction status и посмотрите точную верхнеуровневую ошибку.
+Статус на уровне транзакции — `SuccessReceiptId`: транзакция успешно передала свои batched actions в receipt. Сбой лежит слоем ниже на этом receipt: `index: 3` (именно `FunctionCall`), вид `CodeDoesNotExist` на `rollback-mo4vmkig.temp.mike.testnet`. `SuccessReceiptId` в tx-outcome означает «handoff прошёл», а не «всё завершилось» — реальная ловушка, если смотреть только на статус уровня транзакции.
 
-```bash
-curl -s "$RPC_URL" \
-  -H 'content-type: application/json' \
-  --data "$(jq -nc \
-    --arg tx_hash "$TX_HASH" \
-    --arg signer_account_id "$SIGNER_ACCOUNT_ID" '{
-      jsonrpc: "2.0",
-      id: "fastnear",
-      method: "EXPERIMENTAL_tx_status",
-      params: {
-        tx_hash: $tx_hash,
-        sender_account_id: $signer_account_id,
-        wait_until: "FINAL"
-      }
-    }')" \
-  | tee /tmp/failed-batch-rpc-status.json >/dev/null
-
-jq '{
-  final_execution_status: .result.final_execution_status,
-  failed_action_index: .result.status.Failure.ActionError.index,
-  failure: .result.status.Failure.ActionError.kind.FunctionCallError.CompilationError.CodeDoesNotExist
-}' /tmp/failed-batch-rpc-status.json
-
-# Ожидаемый failed_action_index: 3
-# Ожидаемый failure account_id: rollback-mo4vmkig.temp.mike.testnet
-```
-
-3. Запросите предполагаемый новый аккаунт после finality и докажите, что его всё ещё нет.
+Теперь докажите откат предыдущих actions: спросите аккаунт, который batch *пытался* создать:
 
 ```bash
 curl -s "$RPC_URL" \
   -H 'content-type: application/json' \
   --data "$(jq -nc --arg account_id "$NEW_ACCOUNT_ID" '{
-    jsonrpc: "2.0",
-    id: "fastnear",
-    method: "query",
-    params: {
-      request_type: "view_account",
-      account_id: $account_id,
-      finality: "final"
-    }
+    jsonrpc: "2.0", id: "fastnear", method: "query",
+    params: {request_type: "view_account", account_id: $account_id, finality: "final"}
   }')" \
-  | tee /tmp/failed-batch-view-account.json >/dev/null
-
-jq '{
-  error: .error.cause.name,
-  message: .error.data,
-  requested_account_id: .error.cause.info.requested_account_id,
-  proof_block_height: .error.cause.info.block_height
-}' /tmp/failed-batch-view-account.json
-
-# Ожидаемая ошибка: "UNKNOWN_ACCOUNT"
+  | jq '{error: .error.cause.name, requested_account_id: .error.cause.info.requested_account_id}'
 ```
 
-Этой одной проверки состояния после исполнения здесь достаточно. Если бы `CreateAccount` закрепился, `view_account` вернул бы аккаунт. Раз аккаунт до сих пор не существует, значит ранние `Transfer` и `AddKey` из той же квитанции с действиями тоже не закрепились.
+`UNKNOWN_ACCOUNT` — это и есть доказательство. Если бы `CreateAccount` закрепился, `view_account` вернул бы результат; раз нет — предыдущие `Transfer` и `AddKey` из того же batched-receipt тоже не закрепились.
 
-**Когда переходить дальше**
+### Почему этот вызов контракта выглядел успешным, но потом receipt упал?
 
-Для любой другой неудачной транзакции с несколькими действиями держитесь того же шаблона: сначала прочитайте, что транзакция пыталась сделать, через [`POST /v0/transactions`](https://docs.fastnear.com/ru/tx/transactions), затем подтвердите точную верхнеуровневую ошибку через RPC transaction status, а потом проверьте состояние после исполнения у аккаунта, ключа, контракта или другого объекта, который должен был измениться, если бы ранние действия закрепились.
-
-### Почему вызов контракта выглядел успешным, а потом упал более поздний receipt?
-
-Нужно доказать, что позже упал отдельный cross-contract receipt, хотя первый вызов выглядел успешным? Используйте этот зафиксированный testnet-пример.
-
-Это противоположность примеру с неудачным пакетом действий выше. Там одно действие упало внутри первой action-receipt, поэтому не закрепилось ничего из этого пакета. Здесь первая receipt контракта действительно прошла успешно, и её изменение состояния действительно закрепилось. Сбой случился позже, в отдельной receipt.
-
-    Ход
-    Сначала получаем человеческий таймлайн, а уже потом доказываем, где именно async-история разошлась.
-
-    01POST /v0/transactions даёт самый удобный первый проход: какая receipt успела пройти первой и какая упала позже.
-    02RPC EXPERIMENTAL_tx_status доказывает важную NEAR-деталь: верхнеуровневый успех и более поздний сбой потомка могут одновременно быть правдой.
-    03Как только эти два представления сходятся на одном и том же разрезе истории, остановитесь. Этот пример держится за сохранённые исторические свидетельства, а не за живой read состояния роутера.
-
-**Официальные ссылки**
-
-- [Основы транзакций](https://docs.fastnear.com/ru/transaction-flow/foundations)
-- [Исполнение в рантайме](https://docs.fastnear.com/ru/transaction-flow/runtime-execution)
-
-Этот зафиксированный асинхронный сбой был получен в **testnet 18 апреля 2026 года**:
-
-- хеш транзакции: `AUciGAq54XZtEuVXA9bSq4k6h13LmspoKtLegcWGRmQz`
-- аккаунт signer: `temp.mike.testnet`
-- первый контракт-получатель: `seq-dr.mike.testnet`
-- аккаунт detached-цели: `asyncfail-in2hwikn.temp.mike.testnet`
-- блок включения транзакции: `246368568`
-- успешная первая receipt: `6XgWxB9QVkgGKJaLcjDphGHYTK5d1suNe2cH1WHRWnoS` в блоке `246368569`
-- более поздняя упавшая receipt: `2A5JG8N1BxyR57WbrjqntTSf1UwR4RXR79MD2Zg3K2es` в блоке `246368570`
-- первый метод: `kickoff_append`
-- более поздний упавший метод: `append`
-- верхнеуровневый RPC `status`: `SuccessValue`
-
-```mermaid
-flowchart LR
-    T["Подписанная tx<br/>kickoff_append(...)"] --> R["Первая receipt на seq-dr.mike.testnet<br/>SuccessValue + kickoff log"]
-    R --> D["Detached cross-contract receipt<br/>append(...)"]
-    D --> F["Более поздний сбой<br/>CodeDoesNotExist"]
-    T -. "внешняя транзакция всё равно завершается" .-> X["RPC top-level status<br/>SuccessValue"]
-```
-
-| Поверхность | Эндпоинт | Как используем | Зачем используем |
-| --- | --- | --- | --- |
-| Каркас транзакции | Transactions API [`POST /v0/transactions`](https://docs.fastnear.com/ru/tx/transactions) | Загружаем зафиксированную транзакцию и печатаем включающий блок плюс таймлайн receipt | Даёт самый короткий читаемый обзор: какая receipt отработала первой и какая упала позже |
-| Точные семантики статуса | RPC [`EXPERIMENTAL_tx_status`](https://docs.fastnear.com/ru/rpc/transaction/experimental-tx-status) | Смотрим верхнеуровневый `status`, outcome первой receipt контракта и outcome более поздней упавшей receipt | Доказывает, что верхнеуровневый успех и более поздний сбой потомка могут сосуществовать в одной async-истории |
-
-Успех receipt не транзитивен. `seq-dr.mike.testnet` вернул успех на своей собственной receipt, потому что `kickoff_append(...)` только залогировал событие и detached-нул следующий hop. Detached-receipt `append(...)` была уже отдельной частью async-работы, поэтому её более поздний сбой не меняет того факта, что собственная receipt роутера уже успешно завершилась.
-
-#### Shell-сценарий более позднего сбоя receipt
-
-**Ход**
-
-- Читаете транзакцию и её таймлайн receipt из индексированного представления.
-- Через RPC transaction status показываете, что верхнеуровневая история всё равно закончилась `SuccessValue`, хотя более поздняя receipt упала.
-- Останавливаетесь, как только эти два сохранённых представления сходятся на одном и том же разрезе истории.
-
-```bash
-TX_BASE_URL=https://tx.test.fastnear.com
-RPC_URL=https://rpc.testnet.fastnear.com
-TX_HASH=AUciGAq54XZtEuVXA9bSq4k6h13LmspoKtLegcWGRmQz
-SIGNER_ACCOUNT_ID=temp.mike.testnet
-FIRST_RECEIPT_ID=6XgWxB9QVkgGKJaLcjDphGHYTK5d1suNe2cH1WHRWnoS
-FAILED_RECEIPT_ID=2A5JG8N1BxyR57WbrjqntTSf1UwR4RXR79MD2Zg3K2es
-```
-
-1. Получите транзакцию и распечатайте таймлайн receipt по порядку блоков.
-
-```bash
-curl -s "$TX_BASE_URL/v0/transactions" \
-  -H 'content-type: application/json' \
-  --data "$(jq -nc --arg tx_hash "$TX_HASH" '{tx_hashes: [$tx_hash]}')" \
-  | tee /tmp/later-receipt-failure-transaction.json >/dev/null
-
-jq '{
-  transaction: {
-    hash: .transactions[0].transaction.hash,
-    signer_id: .transactions[0].transaction.signer_id,
-    receiver_id: .transactions[0].transaction.receiver_id,
-    tx_block_height: .transactions[0].execution_outcome.block_height,
-    tx_handoff: .transactions[0].transaction_outcome.outcome.status
-  },
-  receipts: [
-    .transactions[0].receipts[]
-    | {
-        receipt_id: .receipt.receipt_id,
-        receiver_id: .receipt.receiver_id,
-        block_height: .execution_outcome.block_height,
-        method_name: (.receipt.receipt.Action.actions[0].FunctionCall.method_name // "system_transfer"),
-        status: .execution_outcome.outcome.status
-      }
-  ]
-}' /tmp/later-receipt-failure-transaction.json
-
-# На что смотреть:
-# - первая receipt контракта на seq-dr.mike.testnet успешно прошла в блоке 246368569
-# - более поздняя receipt append(...) упала в блоке 246368570
-```
-
-2. Запросите RPC transaction status и сравните верхнеуровневую историю с более поздней упавшей receipt.
-
-```bash
-curl -s "$RPC_URL" \
-  -H 'content-type: application/json' \
-  --data "$(jq -nc \
-    --arg tx_hash "$TX_HASH" \
-    --arg signer_account_id "$SIGNER_ACCOUNT_ID" '{
-      jsonrpc: "2.0",
-      id: "fastnear",
-      method: "EXPERIMENTAL_tx_status",
-      params: {
-        tx_hash: $tx_hash,
-        sender_account_id: $signer_account_id,
-        wait_until: "FINAL"
-      }
-    }')" \
-  | tee /tmp/later-receipt-failure-rpc.json >/dev/null
-
-jq \
-  --arg first_receipt_id "$FIRST_RECEIPT_ID" \
-  --arg failed_receipt_id "$FAILED_RECEIPT_ID" '{
-    top_level_status: .result.status,
-    transaction_handoff: .result.transaction_outcome.outcome.status,
-    first_contract_receipt: (
-      .result.receipts_outcome[]
-      | select(.id == $first_receipt_id)
-      | {
-          receipt_id: .id,
-          executor_id: .outcome.executor_id,
-          logs: .outcome.logs,
-          status: .outcome.status
-        }
-    ),
-    later_failed_receipt: (
-      .result.receipts_outcome[]
-      | select(.id == $failed_receipt_id)
-      | {
-          receipt_id: .id,
-          executor_id: .outcome.executor_id,
-          status: .outcome.status
-        }
-    )
-  }' /tmp/later-receipt-failure-rpc.json
-
-# На что смотреть:
-# - top_level_status всё ещё равен SuccessValue
-# - первая receipt контракта залогировала dishonest_router:kickoff:late-failure
-# - более поздняя receipt append(...) упала с CodeDoesNotExist
-```
-
-Остановитесь здесь. По состоянию на **18 апреля 2026 года** `seq-dr.mike.testnet` больше не резолвится в testnet, поэтому живое доказательство через текущее состояние роутера уже было бы неточным. Индексированный таймлайн receipt вместе с `EXPERIMENTAL_tx_status` и есть те сохранённые исторические свидетельства, которые здесь действительно важны.
-
-**Когда переходить дальше**
-
-Когда NEAR-приложение «как будто прошло успешно», а потом всё равно сломалось, надо спрашивать не только «какой был статус транзакции?», но и «какая receipt завершилась успешно, а какая позже упала?» Этот пример как раз даёт такой разрез: индексированный таймлайн receipt для общей формы, RPC status для точных семантик и никакого притворного живого read состояния роутера после того, как исторический контракт исчез.
-
-### Дошёл ли callback вообще?
-
-Нужно проверить, вернулся ли callback в исходный контракт? Начните с этого mainnet-примера.
-
-    Ход
-    Сначала используйте индексированный список receipt, а к RPC переходите только если нужна каноническая семантика callback-а.
-
-    01POST /v0/transactions показывает downstream-вызов и более поздний receipt, который возвращается в исходный контракт.
-    02jq сужает этот список receipt до одного downstream-вызова и одного callback-receipt.
-    03RPC EXPERIMENTAL_tx_status нужен только как дополнительное подтверждение, если вам важны канонический результат callback-а и его логи.
-
-Зафиксированный mainnet-пример с callback замечен **19 апреля 2026 года**:
-
-- хеш транзакции: `2KhhB1uDScGCFQfVchep7DiZTGTxMcgfUYHNzwf5e6uL`
-- аккаунт-отправитель: `7c5206b1b75b8787420b09d8697e08180cdf896c5fcf15f6afbf5f33fcc3cf72`
-- исходный контракт: `wrap.near`
-- downstream-receiver: `v2.ref-finance.near`
-- верхнеуровневый метод: `ft_transfer_call`
-- downstream-метод: `ft_on_transfer`
-- callback-метод: `ft_resolve_transfer`
-- блок транзакции: `194692298`
-- блок downstream-receipt: `194692300`
-- блок callback-receipt: `194692301`
-
-```mermaid
-flowchart LR
-    T["Одна mainnet-транзакция<br/>ft_transfer_call на wrap.near"] --> D["Downstream-receipt<br/>v2.ref-finance.near.ft_on_transfer"]
-    D --> F["Receiver упал<br/>E51: contract paused"]
-    F --> C["Callback-receipt обратно в wrap.near<br/>ft_resolve_transfer"]
-    C --> R["Лог refund на wrap.near"]
-```
-
-Здесь хорошо видна одна полезная деталь NEAR: downstream-сбой не означает, что callback исчез. В этом случае `v2.ref-finance.near` уронил свой `ft_on_transfer`, но `wrap.near` всё равно позже получил `ft_resolve_transfer` и залогировал refund.
-
-| Поверхность | Эндпоинт | Как используем | Зачем используем |
-| --- | --- | --- | --- |
-| Индексированная цепочка receipt | Transactions API [`POST /v0/transactions`](https://docs.fastnear.com/ru/tx/transactions) | Стартуем с tx hash и печатаем только downstream-receipt на receiver и более поздний callback-receipt на исходном контракте | Даёт самый быстрый читаемый ответ на вопрос «вернулся ли callback?» |
-| Каноническое подтверждение receipt | RPC [`EXPERIMENTAL_tx_status`](https://docs.fastnear.com/ru/rpc/transaction/experimental-tx-status) | Переиспользуем тот же tx hash и sender только если нужен канонический статус callback-receipt и его логи | Полезно, когда индексированного ответа хватает для формы, но нужен протокольно-канонический proof |
-
-#### Shell-сценарий проверки callback-а
-
-**Ход**
-
-- Один раз получаете транзакцию и сужаете список receipt до downstream-вызова и callback-receipt.
-- Переиспользуете ID callback-receipt только если ещё нужно каноническое RPC-подтверждение.
-- Останавливаетесь сразу, как только можете сказать, вернулся ли callback и что он сделал.
+Одна транзакция может закончиться тем, что внешний handoff рапортует `SuccessReceiptId`, а дочерний receipt при этом тихо падает — это и есть async-модель NEAR, и `/v0/transactions` выдаёт весь timeline за один запрос.
 
 ```bash
 TX_BASE_URL=https://tx.main.fastnear.com
-RPC_URL=https://rpc.mainnet.fastnear.com
 TX_HASH=2KhhB1uDScGCFQfVchep7DiZTGTxMcgfUYHNzwf5e6uL
-SENDER_ACCOUNT_ID=7c5206b1b75b8787420b09d8697e08180cdf896c5fcf15f6afbf5f33fcc3cf72
-ORIGIN_CONTRACT_ID=wrap.near
-DOWNSTREAM_CONTRACT_ID=v2.ref-finance.near
-```
 
-1. Получите транзакцию и сохраните receipt-цепочку.
-
-```bash
 curl -s "$TX_BASE_URL/v0/transactions" \
   -H 'content-type: application/json' \
   --data "$(jq -nc --arg tx_hash "$TX_HASH" '{tx_hashes: [$tx_hash]}')" \
-  | tee /tmp/callback-check-transaction.json >/dev/null
+  | jq '{
+      tx_handoff: .transactions[0].execution_outcome.outcome.status,
+      outer_method: .transactions[0].transaction.actions[0].FunctionCall.method_name,
+      descendant_failures: [
+        .transactions[0].receipts[]
+        | select(.execution_outcome.outcome.status.Failure != null)
+        | {
+            receiver_id: .receipt.receiver_id,
+            method_name: (.receipt.receipt.Action.actions[0].FunctionCall.method_name // "system"),
+            block_height: .execution_outcome.block_height,
+            failure: .execution_outcome.outcome.status.Failure
+          }
+      ],
+      receipt_timeline: [
+        .transactions[0].receipts[]
+        | {
+            receiver_id: .receipt.receiver_id,
+            method_name: (.receipt.receipt.Action.actions[0].FunctionCall.method_name // "system"),
+            status_class: (.execution_outcome.outcome.status | keys[0])
+          }
+      ]
+    }'
 ```
 
-2. Сначала ответьте на самый короткий полезный вопрос: вернулся ли callback вообще?
+Для зафиксированной транзакции mainnet `tx_handoff` — `SuccessReceiptId`: транзакция чисто запустила свой первый receipt. Если смотреть только сюда, можно назвать это победой. `descendant_failures` рассказывают вторую историю: `ft_on_transfer` на `v2.ref-finance.near` упал с `E51: contract paused` — DEX был на паузе во время этого свопа и не мог принять wrapped NEAR. А `receipt_timeline` показывает, как история разрешилась: callback `ft_resolve_transfer` на `wrap.near` всё равно отработал и вывел лог `Refund`, вернув wrapped NEAR отправителю.
+
+Успех receipt не транзитивен. Протокол может чисто отдать handoff и при этом увидеть, как отцеплённая работа провалится позже. Если ваше приложение «выглядело успешным», но деньги всё равно вернулись, пройдите этот же timeline — разделение видно на индексированном ответе без отдельного RPC status-запроса. Чтобы отдельно проверить, что ваш callback отработал, см. [Отработал ли мой callback?](#отработал-ли-мой-callback).
+
+### Отработал ли мой callback?
+
+Кросс-контрактные вызовы NEAR возвращаются через callback-receipt на исходном контракте. Отработал ли этот callback — это одна строка с `any(...)` против индексированного списка receipts; а полная история refund выпадает из того же ответа.
 
 ```bash
-jq --arg origin "$ORIGIN_CONTRACT_ID" '
-  [
-    .transactions[0].receipts[]
-    | select(
-        .receipt.receiver_id == $origin
-        and (.receipt.receipt.Action.actions[0].FunctionCall.method_name // "") == "ft_resolve_transfer"
-      )
-  ] | length > 0
-' /tmp/callback-check-transaction.json
-```
+TX_BASE_URL=https://tx.main.fastnear.com
+TX_HASH=2KhhB1uDScGCFQfVchep7DiZTGTxMcgfUYHNzwf5e6uL
+ORIGIN_CONTRACT_ID=wrap.near
+CALLBACK_METHOD=ft_resolve_transfer
 
-3. Если ответ `true`, распечатайте downstream-receipt вместе с callback-receipt.
-
-```bash
-
-CALLBACK_RECEIPT_ID="$(
-  jq -r --arg origin "$ORIGIN_CONTRACT_ID" '
-    first(
-      .transactions[0].receipts[]
-      | select(
-          .receipt.receiver_id == $origin
-          and (.receipt.receipt.Action.actions[0].FunctionCall.method_name // "") == "ft_resolve_transfer"
-        )
-      | .receipt.receipt_id
-    )
-  ' /tmp/callback-check-transaction.json
-)"
-
-jq --arg origin "$ORIGIN_CONTRACT_ID" --arg downstream "$DOWNSTREAM_CONTRACT_ID" '{
-  transaction: {
-    hash: .transactions[0].transaction.hash,
-    signer_id: .transactions[0].transaction.signer_id,
-    receiver_id: .transactions[0].transaction.receiver_id,
-    method_name: .transactions[0].transaction.actions[0].FunctionCall.method_name,
-    tx_block_height: .transactions[0].execution_outcome.block_height
-  },
-  downstream_receipt: (
-    first(
-      .transactions[0].receipts[]
-      | select(.receipt.receiver_id == $downstream)
-      | {
-          receipt_id: .receipt.receipt_id,
-          predecessor_id: .receipt.predecessor_id,
-          receiver_id: .receipt.receiver_id,
-          method_name: (
-            .receipt.receipt.Action.actions[0]
-            | if type == "string" then .
-              else (.FunctionCall.method_name // keys[0])
-              end
-          ),
-          status: .execution_outcome.outcome.status,
-          block_height: .execution_outcome.block_height
-        }
-    )
-  ),
-  callback_receipt: (
-    first(
-      .transactions[0].receipts[]
-      | select(
-          .receipt.receiver_id == $origin
-          and (.receipt.receipt.Action.actions[0].FunctionCall.method_name // "") == "ft_resolve_transfer"
-        )
-      | {
-          receipt_id: .receipt.receipt_id,
-          predecessor_id: .receipt.predecessor_id,
-          receiver_id: .receipt.receiver_id,
-          method_name: .receipt.receipt.Action.actions[0].FunctionCall.method_name,
-          logs: .execution_outcome.outcome.logs,
-          status: .execution_outcome.outcome.status,
-          block_height: .execution_outcome.block_height
-        }
-    )
-  ),
-  callback_ran: (
-    first(
-      .transactions[0].receipts[]
-      | select(
-          .receipt.receiver_id == $origin
-          and (.receipt.receipt.Action.actions[0].FunctionCall.method_name // "") == "ft_resolve_transfer"
-        )
-      | true
-    ) // false
-  )
-}' /tmp/callback-check-transaction.json
-
-# На что смотреть:
-# - downstream-receipt выполнил ft_on_transfer на v2.ref-finance.near
-# - более поздний callback-receipt выполнил ft_resolve_transfer на wrap.near
-# - callback_ran равно true, даже несмотря на downstream-сбой
-```
-
-4. Если нужен канонический результат callback-а и лог refund, подтвердите тот же receipt через RPC.
-
-```bash
-curl -s "$RPC_URL" \
+curl -s "$TX_BASE_URL/v0/transactions" \
   -H 'content-type: application/json' \
-  --data "$(jq -nc \
-    --arg tx_hash "$TX_HASH" \
-    --arg sender_account_id "$SENDER_ACCOUNT_ID" '{
-      jsonrpc: "2.0",
-      id: "fastnear",
-      method: "EXPERIMENTAL_tx_status",
-      params: {
-        tx_hash: $tx_hash,
-        sender_account_id: $sender_account_id,
-        wait_until: "FINAL"
-      }
-    }')" \
-  | tee /tmp/callback-check-rpc.json >/dev/null
-
-jq --arg callback_receipt_id "$CALLBACK_RECEIPT_ID" '{
-  top_level_status: .result.status,
-  callback_receipt: (
-    first(
-      .result.receipts_outcome[]
-      | select(.id == $callback_receipt_id)
-      | {
-          receipt_id: .id,
-          executor_id: .outcome.executor_id,
-          logs: .outcome.logs,
-          status: .outcome.status
-        }
-    )
-  )
-}' /tmp/callback-check-rpc.json
-
-# На что смотреть:
-# - downstream ft_on_transfer receipt упал на v2.ref-finance.near
-# - wrap.near всё равно позже получил ft_resolve_transfer
-# - лог callback-а показывает refund обратно отправителю
+  --data "$(jq -nc --arg tx_hash "$TX_HASH" '{tx_hashes: [$tx_hash]}')" \
+  | jq --arg origin "$ORIGIN_CONTRACT_ID" --arg callback "$CALLBACK_METHOD" '{
+      top_method: .transactions[0].transaction.actions[0].FunctionCall.method_name,
+      callback_ran: any(
+        .transactions[0].receipts[];
+        .receipt.receiver_id == $origin
+        and (.receipt.receipt.Action.actions[0].FunctionCall.method_name // "") == $callback
+      ),
+      receipt_chain: [
+        .transactions[0].receipts[]
+        | {
+            receiver_id: .receipt.receiver_id,
+            method: (.receipt.receipt.Action.actions[0].FunctionCall.method_name // "system"),
+            block: .execution_outcome.block_height,
+            status: (.execution_outcome.outcome.status | keys[0]),
+            logs: .execution_outcome.outcome.logs
+          }
+      ]
+    }'
 ```
 
-**Когда переходить дальше**
-
-Для вопросов про callback главный proof звучит не как «все ли receipt прошли успешно?», а как «получил ли исходный контракт свой callback-receipt обратно и что там случилось?» `POST /v0/transactions` даёт самый быстрый читаемый ответ. RPC нужен только как дополнительный слой подтверждения, если важны канонический результат callback-а и его логи.
+Для зафиксированной транзакции `ft_transfer_call` на `wrap.near` передаёт управление в `ft_on_transfer` на `v2.ref-finance.near`, который **падает**. Callback `ft_resolve_transfer` всё равно выполняется на `wrap.near` и логирует `Refund 7278020378457059679767103 from v2.ref-finance.near to …` обратно отправителю — поэтому `callback_ran: true`, несмотря на сбой дочернего receipt. Сбой ниже по цепочке не мешает исходному контракту увидеть свой callback; так async-обработка ошибок NEAR остаётся восстанавливаемой. Строки с `method: "system"` — это рантайм-возвраты газа, а не логика контракта. Чтобы привязать один из этих логов к породившему его receipt, см. [Какой receipt испустил этот лог или событие?](#какой-receipt-испустил-этот-лог-или-событие).
 
 ## Частые ошибки
 
-- Пытаться отправлять транзакцию через history API вместо сырого RPC.
+- Пытаться отправить транзакцию через history-API вместо raw RPC.
 - Использовать Transactions API, когда пользователю нужны только текущие балансы или активы.
-- Слишком рано уходить в сырой RPC до того, как индексированная история уже ответила на читаемый вопрос «что произошло?».
+- Спускаться в raw RPC до того, как индексированная история ответила на читаемый вопрос «что произошло?».
 
-## Полезные связанные страницы
+## Связанные страницы
 
 - [Transactions API](https://docs.fastnear.com/ru/tx)
 - [RPC Reference](https://docs.fastnear.com/ru/rpc)
 - [FastNear API](https://docs.fastnear.com/ru/api)
 - [NEAR Data API](https://docs.fastnear.com/ru/neardata)
 - [Berry Club: живая доска и один путь исторической реконструкции](https://docs.fastnear.com/ru/tx/examples/berry-club)
-- [OutLayer: связать одну транзакцию запроса с одним ответом воркера](https://docs.fastnear.com/ru/tx/examples/outlayer)
 - [Расширенный поиск записи SocialDB](https://docs.fastnear.com/ru/tx/socialdb-proofs)
 - [Choosing the Right Surface](https://docs.fastnear.com/ru/agents/choosing-surfaces)
 - [Agent Playbooks](https://docs.fastnear.com/ru/agents/playbooks)

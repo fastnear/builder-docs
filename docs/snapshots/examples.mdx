@@ -8,36 +8,13 @@ page_actions:
   - markdown
 ---
 
-## Quick start
+## Mainnet recovery paths
 
-Need a mainnet RPC node back fast? Start with one runnable command.
+Pick one class — optimized `fast-rpc`, standard RPC, or archival — and run only that path's commands. Mixing classes produces inconsistent node data.
 
-These helpers are maintained by FastNear and are meant to optimize for recovery speed. If your environment requires change review, fetch the script first, inspect it, and only then execute it instead of piping it straight to `bash`.
+FastNear maintains these helpers for recovery speed. If your environment requires change review, fetch the script and inspect it before running it (instead of piping straight to `bash`).
 
-```bash
-DATA_PATH=~/.near/data
-
-curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/fastnear/static/refs/heads/main/down_rclone.sh \
-  | DATA_PATH="$DATA_PATH" CHAIN_ID=mainnet RPC_TYPE=fast-rpc bash
-```
-
-## Example
-
-### Choose and execute the right mainnet recovery path
-
-<div className="fastnear-example-strategy">
-  <div className="fastnear-example-strategy__header">
-    <span className="fastnear-example-strategy__eyebrow">Flow</span>
-    <p className="fastnear-example-strategy__title">Pick the recovery class first, then run the smallest command sequence that matches that class.</p>
-  </div>
-  <div className="fastnear-example-strategy__items">
-    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">01</span><span>Decide whether the real need is optimized <span className="fastnear-example-strategy__code">fast-rpc</span>, standard RPC, or archival recovery.</span></p>
-    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">02</span><span>If the answer is archival, capture one exact snapshot block height first and keep reusing it.</span></p>
-    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span>Run only the commands for that chosen path, instead of mixing optimized, standard, and archival steps together.</span></p>
-  </div>
-</div>
-
-### Optimized mainnet `fast-rpc` command anchor
+### Optimized mainnet `fast-rpc`
 
 ```bash
 DATA_PATH=~/.near/data
@@ -46,7 +23,7 @@ curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/fastnear/
   | DATA_PATH="$DATA_PATH" CHAIN_ID=mainnet RPC_TYPE=fast-rpc bash
 ```
 
-### Standard mainnet RPC command anchor
+### Standard mainnet RPC
 
 ```bash
 DATA_PATH=~/.near/data
@@ -55,15 +32,9 @@ curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/fastnear/
   | DATA_PATH="$DATA_PATH" CHAIN_ID=mainnet bash
 ```
 
-### Mainnet archival recovery shell walkthrough
+### Mainnet archival
 
-For archival recovery, capture one snapshot height and reuse it for both hot and cold data.
-
-**Flow**
-
-- Fetch the latest archival mainnet snapshot height once.
-- Store it in `LATEST`.
-- Reuse that exact block height for both the hot-data and cold-data downloads.
+Archival needs two downloads that must come from the *same* snapshot cut. Capture one `LATEST` value and reuse it for both hot and cold data — mixing heights yields an internally inconsistent dataset and surprises nearcore at config time.
 
 ```bash
 HOT_DATA_PATH=~/.near/data
@@ -78,11 +49,6 @@ curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/fastnear/
 curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/fastnear/static/refs/heads/main/down_rclone_archival.sh \
   | DATA_TYPE=cold-data DATA_PATH="$COLD_DATA_PATH" CHAIN_ID=mainnet BLOCK="$LATEST" bash
 ```
-
-**When to pivot**
-
-Hot and cold archival data need to come from the same snapshot cut. Reusing one captured `LATEST` value across both commands keeps the archival dataset internally consistent and makes later nearcore configuration much less surprising.
-
 
 ## Common mistakes
 
