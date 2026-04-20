@@ -2,13 +2,48 @@
 sidebar_label: Examples
 slug: /fastdata/kv/examples
 title: KV FastData Examples
-description: Task-first KV FastData examples for scoped writes, key history, and exact state checks.
+description: Task-first KV FastData examples for exact-key checks, scoped writes, key history, and exact state follow-up.
 displayed_sidebar: kvFastDataSidebar
 page_actions:
   - markdown
 ---
 
-## Example
+## Examples
+
+### Check one exact key, then replay its history
+
+When you already know the contract, predecessor, and exact key, start narrow. `latest` answers the present-tense question; `history` shows whether that one row changed over time.
+
+```bash
+CURRENT_ACCOUNT_ID=social.near
+PREDECESSOR_ID=james.near
+KEY='graph/follow/sleet.near'
+FASTNEAR_API_KEY=your_api_key
+
+ENCODED_KEY="$(jq -rn --arg key "$KEY" '$key | @uri')"
+
+LATEST="$(curl -s "https://kv.main.fastnear.com/v0/latest/$CURRENT_ACCOUNT_ID/$PREDECESSOR_ID/$ENCODED_KEY" \
+  -H "Authorization: Bearer $FASTNEAR_API_KEY")"
+
+echo "$LATEST" | jq '{
+  latest: (
+    .entries[0]
+    | {
+        current_account_id,
+        predecessor_id,
+        block_height,
+        key,
+        value
+      }
+  )
+}'
+
+curl -s "https://kv.main.fastnear.com/v0/history/$CURRENT_ACCOUNT_ID/$PREDECESSOR_ID/$ENCODED_KEY" \
+  -H "Authorization: Bearer $FASTNEAR_API_KEY" \
+  | jq '{writes: [.entries[] | {block_height, value}]}'
+```
+
+For an exact follow-edge style key like this, `latest` tells you the current indexed value in one row and `history` shows whether the edge was written once or toggled over time. Start here when you already know the storage path; widen to predecessor scans only when you need discovery rather than proof.
 
 ### Inspect one predecessor's indexed writes, then narrow to the key that changed
 
@@ -16,7 +51,7 @@ page_actions:
 
 ```bash
 PREDECESSOR_ID=jemartel.near
-FASTNEAR_API_KEY=${FASTNEAR_API_KEY:-your_api_key_here}
+FASTNEAR_API_KEY=your_api_key
 
 FIRST="$(curl -s "https://kv.main.fastnear.com/v0/all/$PREDECESSOR_ID" \
   -H "Authorization: Bearer $FASTNEAR_API_KEY" \

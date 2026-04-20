@@ -16,7 +16,7 @@ page_actions:
 
 ```bash
 ACCOUNT_ID=root.near
-FASTNEAR_API_KEY=${FASTNEAR_API_KEY:-your_api_key_here}
+FASTNEAR_API_KEY=your_api_key
 
 curl -s "https://api.fastnear.com/v1/account/$ACCOUNT_ID/full" \
   -H "Authorization: Bearer $FASTNEAR_API_KEY" \
@@ -37,7 +37,7 @@ Look up which account a key belongs to, then read that account's holdings in one
 
 ```bash
 PUBLIC_KEY='ed25519:CCaThr3uokqnUs6Z5vVnaDcJdrfuTpYJHJWcAGubDjT'
-FASTNEAR_API_KEY=${FASTNEAR_API_KEY:-your_api_key_here}
+FASTNEAR_API_KEY=your_api_key
 
 LOOKUP="$(curl -s "https://api.fastnear.com/v1/public_key/$(jq -rn --arg k "$PUBLIC_KEY" '$k | @uri')" \
   -H "Authorization: Bearer $FASTNEAR_API_KEY")"
@@ -59,7 +59,7 @@ NEAR account state has three buckets that wallet UIs tend to conflate: `balance`
 
 ```bash
 ACCOUNT_ID=root.near
-FASTNEAR_API_KEY=${FASTNEAR_API_KEY:-your_api_key_here}
+FASTNEAR_API_KEY=your_api_key
 
 curl -s "https://api.fastnear.com/v1/account/$ACCOUNT_ID/full" \
   -H "Authorization: Bearer $FASTNEAR_API_KEY" \
@@ -92,7 +92,7 @@ Every entry under `/full`'s `tokens`, `nfts`, and `pools` arrays carries its own
 
 ```bash
 ACCOUNT_ID=root.near
-FASTNEAR_API_KEY=${FASTNEAR_API_KEY:-your_api_key_here}
+FASTNEAR_API_KEY=your_api_key
 
 curl -s "https://api.fastnear.com/v1/account/$ACCOUNT_ID/full" \
   -H "Authorization: Bearer $FASTNEAR_API_KEY" \
@@ -114,7 +114,7 @@ curl -s "https://api.fastnear.com/v1/account/$ACCOUNT_ID/full" \
 
 For `root.near`, this returns 254 total entries across FT, NFT, and pool contracts, 158 with a tracked block, and a most-recent block of `194301659`. That's enough to tell you the wallet is still active without touching transaction history.
 
-This is the right question for "is this wallet abandoned?" or "has anything moved since block X?" — cheap, one call, no transaction history needed. For the transaction that caused the latest change, widen to the [Transactions API](/tx). Entries with `last_update_block_height: null` predate the indexer's per-row tracking (typically older airdrops) and are ignored here rather than counted as recent.
+This is the right question for "has this wallet been recently active?" or "has anything moved since block X?" — cheap, one call, no transaction history needed. For the transaction that caused the latest change, widen to the [Transactions API](/tx). Entries with `last_update_block_height: null` predate the indexer's per-row tracking (typically older airdrops) and are ignored here rather than counted as recent.
 
 ### Show NFT collections this wallet holds from a specific publisher
 
@@ -123,7 +123,7 @@ NEAR account names encode a hierarchy: `mint.sharddog.near` is a subaccount of `
 ```bash
 ACCOUNT_ID=root.near
 PUBLISHER=sharddog.near
-FASTNEAR_API_KEY=${FASTNEAR_API_KEY:-your_api_key_here}
+FASTNEAR_API_KEY=your_api_key
 
 curl -s "https://api.fastnear.com/v1/account/$ACCOUNT_ID/nft" \
   -H "Authorization: Bearer $FASTNEAR_API_KEY" \
@@ -155,7 +155,7 @@ Direct pool positions live on `/staking`; liquid staking tokens (stNEAR, LiNEAR,
 ```bash
 ACCOUNT_ID=root.near
 LIQUID_PROVIDERS_JSON='["meta-pool.near","lst.rhealab.near","linear-protocol.near"]'
-FASTNEAR_API_KEY=${FASTNEAR_API_KEY:-your_api_key_here}
+FASTNEAR_API_KEY=your_api_key
 
 STAKING="$(curl -s "https://api.fastnear.com/v1/account/$ACCOUNT_ID/staking" \
   -H "Authorization: Bearer $FASTNEAR_API_KEY")"

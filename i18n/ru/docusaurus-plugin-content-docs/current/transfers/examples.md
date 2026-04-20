@@ -16,7 +16,7 @@ page_actions:
 
 ```bash
 ACCOUNT_ID=root.near
-FASTNEAR_API_KEY=${FASTNEAR_API_KEY:-your_api_key_here}
+FASTNEAR_API_KEY=your_api_key
 
 curl -s "https://transfers.main.fastnear.com/v0/transfers" \
   -H "Authorization: Bearer $FASTNEAR_API_KEY" \
@@ -42,7 +42,7 @@ curl -s "https://transfers.main.fastnear.com/v0/transfers" \
 
 ```bash
 ACCOUNT_ID=root.near
-FASTNEAR_API_KEY=${FASTNEAR_API_KEY:-your_api_key_here}
+FASTNEAR_API_KEY=your_api_key
 
 FEED="$(curl -s "https://transfers.main.fastnear.com/v0/transfers" \
   -H "Authorization: Bearer $FASTNEAR_API_KEY" \
@@ -76,7 +76,7 @@ curl -s "https://tx.main.fastnear.com/v0/receipt" \
   | jq '.receipt | {receipt_id, transaction_hash, receiver_id, predecessor_id, tx_block_height, is_success}'
 ```
 
-Это тот же переход, что описан в [Превратить один неказистый receipt ID из логов в человекочитаемую историю](/tx/examples#превратить-один-неказистый-receipt-id-из-логов-в-человекочитаемую-историю) — один запрос возвращает и квитанцию, и её родительскую транзакцию целиком.
+Это тот же переход, что описан в [Превратить один receipt ID в читаемую историю транзакции](/tx/examples#receipt-id-to-readable-story) — один запрос возвращает и квитанцию, и её родительскую транзакцию целиком.
 
 ## Частые ошибки
 

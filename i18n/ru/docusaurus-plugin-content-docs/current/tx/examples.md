@@ -16,7 +16,7 @@ page_actions:
 
 ```bash
 TX_HASH=7ZKnhzt2MqMNmsk13dV8GAjGu3Db8aHzSBHeNeu9MJCq
-FASTNEAR_API_KEY=${FASTNEAR_API_KEY:-your_api_key_here}
+FASTNEAR_API_KEY=your_api_key
 
 curl -s "https://tx.main.fastnear.com/v0/transactions" \
   -H "Authorization: Bearer $FASTNEAR_API_KEY" \
@@ -42,7 +42,7 @@ curl -s "https://tx.main.fastnear.com/v0/transactions" \
 ```bash
 TX_HASH=2KhhB1uDScGCFQfVchep7DiZTGTxMcgfUYHNzwf5e6uL
 LOG_FRAGMENT=Refund
-FASTNEAR_API_KEY=${FASTNEAR_API_KEY:-your_api_key_here}
+FASTNEAR_API_KEY=your_api_key
 
 curl -s "https://tx.main.fastnear.com/v0/transactions" \
   -H "Authorization: Bearer $FASTNEAR_API_KEY" \
@@ -65,13 +65,13 @@ curl -s "https://tx.main.fastnear.com/v0/transactions" \
 
 Фрагмент `Refund` атрибутируется receipt `9sLHQpaGz3NnMNMn8zGrDUSyktR1q6ts2otr9mHkfD1w` на `wrap.near`, метод `ft_resolve_transfer`. Логи receipt живут на receipts, а не на транзакции, поэтому одного прохода достаточно — более глубокая async-трассировка не нужна.
 
-### Превратить один неказистый receipt ID из логов в человекочитаемую историю
+### Превратить один receipt ID в читаемую историю транзакции {#receipt-id-to-readable-story}
 
 `POST /v0/receipt` возвращает запись receipt **и** его полную родительскую транзакцию в одном ответе, поэтому единственного запроса хватает на всю историю — дополнительный `/v0/transactions` не нужен.
 
 ```bash
 RECEIPT_ID=B8QzHQZ6VnUVy8zaVXCEkWuSs7MPb34yoHYixZV3Zdj1
-FASTNEAR_API_KEY=${FASTNEAR_API_KEY:-your_api_key_here}
+FASTNEAR_API_KEY=your_api_key
 
 curl -s "https://tx.main.fastnear.com/v0/receipt" \
   -H "Authorization: Bearer $FASTNEAR_API_KEY" \
@@ -107,7 +107,7 @@ curl -s "https://tx.main.fastnear.com/v0/receipt" \
 ```bash
 TX_HASH=CrhH3xLzbNwNMGgZkgptXorwh8YmqxRGuA6Mc11MkU6M
 NEW_ACCOUNT_ID=rollback-mo4vmkig.temp.mike.testnet
-FASTNEAR_API_KEY=${FASTNEAR_API_KEY:-your_api_key_here}
+FASTNEAR_API_KEY=your_api_key
 
 curl -s "https://tx.test.fastnear.com/v0/transactions" \
   -H "Authorization: Bearer $FASTNEAR_API_KEY" \
@@ -152,7 +152,7 @@ curl -s "https://rpc.testnet.fastnear.com" \
 TX_HASH=2KhhB1uDScGCFQfVchep7DiZTGTxMcgfUYHNzwf5e6uL
 ORIGIN_CONTRACT_ID=wrap.near
 CALLBACK_METHOD=ft_resolve_transfer
-FASTNEAR_API_KEY=${FASTNEAR_API_KEY:-your_api_key_here}
+FASTNEAR_API_KEY=your_api_key
 
 curl -s "https://tx.main.fastnear.com/v0/transactions" \
   -H "Authorization: Bearer $FASTNEAR_API_KEY" \
@@ -195,7 +195,7 @@ curl -s "https://tx.main.fastnear.com/v0/transactions" \
 ```bash
 REQUEST_TX=BZDQAxEdpQ9wUGXmXTa2APwFLDTTqTy5ucrBPsfgZeyz
 WORKER_TX=3NYD4Mkn5cwkuVkGP9PPoiJ9PB5Vr7v6r8CwSswtHVA3
-FASTNEAR_API_KEY=${FASTNEAR_API_KEY:-your_api_key_here}
+FASTNEAR_API_KEY=your_api_key
 
 curl -s "https://tx.main.fastnear.com/v0/transactions" \
   -H "Authorization: Bearer $FASTNEAR_API_KEY" \

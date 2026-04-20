@@ -16,7 +16,7 @@ page_actions:
 
 ```bash
 ACCOUNT_ID=root.near
-FASTNEAR_API_KEY=${FASTNEAR_API_KEY:-your_api_key_here}
+FASTNEAR_API_KEY=your_api_key
 
 curl -s "https://transfers.main.fastnear.com/v0/transfers" \
   -H "Authorization: Bearer $FASTNEAR_API_KEY" \
@@ -42,7 +42,7 @@ For `root.near`, the latest rows mix `FtTransfer` and `MtTransfer` assets. `asse
 
 ```bash
 ACCOUNT_ID=root.near
-FASTNEAR_API_KEY=${FASTNEAR_API_KEY:-your_api_key_here}
+FASTNEAR_API_KEY=your_api_key
 
 FEED="$(curl -s "https://transfers.main.fastnear.com/v0/transfers" \
   -H "Authorization: Bearer $FASTNEAR_API_KEY" \
@@ -76,7 +76,7 @@ curl -s "https://tx.main.fastnear.com/v0/receipt" \
   | jq '.receipt | {receipt_id, transaction_hash, receiver_id, predecessor_id, tx_block_height, is_success}'
 ```
 
-That's the same handoff covered in [Turn one ugly receipt ID from logs into a human story](/tx/examples#turn-one-ugly-receipt-id-from-logs-into-a-human-story) — one call gets the receipt and its full parent transaction.
+That's the same handoff covered in [Turn one receipt ID into a readable transaction story](/tx/examples#receipt-id-to-readable-story) — one call gets the receipt and its full parent transaction.
 
 ## Common mistakes
 

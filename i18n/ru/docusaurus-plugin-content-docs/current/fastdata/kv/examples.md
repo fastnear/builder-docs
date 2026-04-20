@@ -2,13 +2,48 @@
 sidebar_label: Examples
 slug: /fastdata/kv/examples
 title: "Примеры KV FastData"
-description: "Практические примеры KV FastData: scoped-записи, история ключа и переход к точному состоянию."
+description: "Практические примеры KV FastData: точные ключи, scoped-записи, история ключа и переход к точному состоянию."
 displayed_sidebar: kvFastDataSidebar
 page_actions:
   - markdown
 ---
 
-## Пример
+## Примеры
+
+### Проверить один точный ключ и сразу посмотреть его историю
+
+Если контракт, `predecessor_id` и точный ключ уже известны, начинайте с узкого запроса. `latest` отвечает на вопрос о текущем состоянии, а `history` показывает, менялась ли именно эта строка со временем.
+
+```bash
+CURRENT_ACCOUNT_ID=social.near
+PREDECESSOR_ID=james.near
+KEY='graph/follow/sleet.near'
+FASTNEAR_API_KEY=your_api_key
+
+ENCODED_KEY="$(jq -rn --arg key "$KEY" '$key | @uri')"
+
+LATEST="$(curl -s "https://kv.main.fastnear.com/v0/latest/$CURRENT_ACCOUNT_ID/$PREDECESSOR_ID/$ENCODED_KEY" \
+  -H "Authorization: Bearer $FASTNEAR_API_KEY")"
+
+echo "$LATEST" | jq '{
+  latest: (
+    .entries[0]
+    | {
+        current_account_id,
+        predecessor_id,
+        block_height,
+        key,
+        value
+      }
+  )
+}'
+
+curl -s "https://kv.main.fastnear.com/v0/history/$CURRENT_ACCOUNT_ID/$PREDECESSOR_ID/$ENCODED_KEY" \
+  -H "Authorization: Bearer $FASTNEAR_API_KEY" \
+  | jq '{writes: [.entries[] | {block_height, value}]}'
+```
+
+Для точного ключа вроде этого follow-edge `latest` даёт текущее индексированное значение одной строкой, а `history` показывает, была ли запись однократной или переключалась со временем. Начинайте отсюда, когда путь в storage уже известен; расширяйтесь до выборок по `predecessor_id` только тогда, когда нужно не доказательство, а поиск.
 
 ### Посмотреть индексированные записи одного `predecessor_id` и сузиться до изменившегося ключа
 
@@ -16,7 +51,7 @@ page_actions:
 
 ```bash
 PREDECESSOR_ID=jemartel.near
-FASTNEAR_API_KEY=${FASTNEAR_API_KEY:-your_api_key_here}
+FASTNEAR_API_KEY=your_api_key
 
 FIRST="$(curl -s "https://kv.main.fastnear.com/v0/all/$PREDECESSOR_ID" \
   -H "Authorization: Bearer $FASTNEAR_API_KEY" \
