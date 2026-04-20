@@ -225,6 +225,172 @@ That last step is intentionally optional. The RPC truth is already enough for su
 - Use `send_tx` when you really do want one blocking call to wait up to a chosen threshold.
 - Use `EXPERIMENTAL_tx_status` when the normal polling loop stops being enough and the receipt tree becomes the real question.
 
+## Tip Block Inspection
+
+### Describe the first action of the first transaction at the current tip
+
+Need one plain-English description of what the tip block starts with? Read the true tip with `status`, choose the first non-empty chunk from `block`, then inspect that chunk directly.
+
+<div className="fastnear-example-strategy">
+  <div className="fastnear-example-strategy__header">
+    <span className="fastnear-example-strategy__eyebrow">Flow</span>
+    <p className="fastnear-example-strategy__title">Use `status` for the live head, `block` for the ordered chunk list, then `chunk` for the first transaction and its first action.</p>
+  </div>
+  <div className="fastnear-example-strategy__items">
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">01</span><span><span className="fastnear-example-strategy__code">RPC status</span> gives the node's current head hash.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">02</span><span><span className="fastnear-example-strategy__code">RPC block</span> gives the chunk list, so you can pick the first chunk whose <span className="fastnear-example-strategy__code">tx_root</span> is not the empty sentinel.</span></p>
+    <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span><span className="fastnear-example-strategy__code">RPC chunk</span> gives the transactions and actions. Use <span className="fastnear-example-strategy__code">transactions[0].actions[0]</span> as the exact answer.</span></p>
+  </div>
+</div>
+
+**Flow**
+
+- Read the live head hash with `status`.
+- Fetch that exact block with `block`.
+- Scan the block's chunks in returned order and keep the first non-empty chunk.
+- Fetch that chunk and read the first transaction's first action.
+- Print one human sentence for that action.
+
+`block` is only enough to choose the chunk. The transaction list lives on `chunk`, so you do not need `tx` for this job.
+
+```bash
+RPC_URL=https://rpc.mainnet.fastnear.com
+EMPTY_TX_ROOT=11111111111111111111111111111111
+```
+
+1. Read the node's true tip and keep the latest block hash.
+
+```bash
+BLOCK_HASH="$(
+  curl -s "$RPC_URL" \
+    -H 'content-type: application/json' \
+    --data '{
+      "jsonrpc": "2.0",
+      "id": "fastnear",
+      "method": "status",
+      "params": []
+    }' \
+    | tee /tmp/tip-status.json \
+    | jq -r '.result.sync_info.latest_block_hash'
+)"
+
+jq '{
+  latest_block_height: .result.sync_info.latest_block_height,
+  latest_block_hash: .result.sync_info.latest_block_hash
+}' /tmp/tip-status.json
+```
+
+2. Fetch that block and pick the first non-empty chunk in returned order.
+
+```bash
+curl -s "$RPC_URL" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc --arg block_hash "$BLOCK_HASH" '{
+    jsonrpc: "2.0",
+    id: "fastnear",
+    method: "block",
+    params: {
+      block_id: $block_hash
+    }
+  }')" \
+  | tee /tmp/tip-block.json >/dev/null
+
+CHUNK_HASH="$(
+  jq -r --arg empty_tx_root "$EMPTY_TX_ROOT" '
+    first(
+      .result.chunks[]
+      | select(.tx_root != $empty_tx_root)
+      | .chunk_hash
+    ) // empty
+  ' /tmp/tip-block.json
+)"
+
+jq --arg empty_tx_root "$EMPTY_TX_ROOT" '{
+  block: {
+    height: .result.header.height,
+    hash: .result.header.hash
+  },
+  first_non_empty_chunk: (
+    first(
+      .result.chunks[]
+      | select(.tx_root != $empty_tx_root)
+      | {
+          chunk_hash,
+          shard_id,
+          tx_root
+        }
+    ) // null
+  )
+}' /tmp/tip-block.json
+
+if [ -z "$CHUNK_HASH" ]; then
+  echo "tip block had no transactions, rerun on the next block"
+fi
+```
+
+That empty-block branch is intentional. A true tip block can be valid and still have no transactions.
+
+3. If `CHUNK_HASH` is non-empty, fetch the chosen chunk and print the first transaction plus its first action type.
+
+```bash
+if [ -n "$CHUNK_HASH" ]; then
+  curl -s "$RPC_URL" \
+    -H 'content-type: application/json' \
+    --data "$(jq -nc --arg chunk_hash "$CHUNK_HASH" '{
+      jsonrpc: "2.0",
+      id: "fastnear",
+      method: "chunk",
+      params: {
+        chunk_id: $chunk_hash
+      }
+    }')" \
+    | tee /tmp/tip-chunk.json >/dev/null
+
+  jq '{
+    chunk: {
+      chunk_hash: .result.header.chunk_hash,
+      shard_id: .result.header.shard_id,
+      height_included: .result.header.height_included
+    },
+    first_transaction: {
+      hash: .result.transactions[0].hash,
+      signer_id: .result.transactions[0].signer_id,
+      receiver_id: .result.transactions[0].receiver_id
+    },
+    first_action_type: (.result.transactions[0].actions[0] | keys[0])
+  }' /tmp/tip-chunk.json
+fi
+```
+
+4. If the chunk fetch ran, turn that first action into one human sentence.
+
+```bash
+if [ -n "$CHUNK_HASH" ]; then
+  FIRST_ACTION_TYPE="$(jq -r '.result.transactions[0].actions[0] | keys[0]' /tmp/tip-chunk.json)"
+  SIGNER_ID="$(jq -r '.result.transactions[0].signer_id' /tmp/tip-chunk.json)"
+  RECEIVER_ID="$(jq -r '.result.transactions[0].receiver_id' /tmp/tip-chunk.json)"
+
+  if [ "$FIRST_ACTION_TYPE" = "FunctionCall" ]; then
+    METHOD_NAME="$(jq -r '.result.transactions[0].actions[0].FunctionCall.method_name' /tmp/tip-chunk.json)"
+    RENDERED_ARGS="$(
+      jq -r '
+        .result.transactions[0].actions[0].FunctionCall.args as $raw
+        | try ($raw | @base64d | fromjson | tojson) catch $raw
+      ' /tmp/tip-chunk.json
+    )"
+
+    printf '%s\n' "$SIGNER_ID called $METHOD_NAME on $RECEIVER_ID with args: $RENDERED_ARGS"
+  else
+    printf '%s\n' "$SIGNER_ID sent $FIRST_ACTION_TYPE to $RECEIVER_ID"
+  fi
+fi
+```
+
+That last step deliberately stays simple:
+
+- if the first action is `FunctionCall`, print the method plus decoded JSON args when they decode cleanly
+- otherwise print the action type, signer, and receiver without adding more protocol interpretation
+
 ## Account and Key Mechanics
 
 ### Audit and remove old Near Social function-call keys
