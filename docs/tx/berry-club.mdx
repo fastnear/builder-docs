@@ -50,7 +50,7 @@ This is the shortest useful read:
 
 ```bash
 ARGS_BASE64="$(jq -nc '{lines: [range(0;50)]}' | base64 | tr -d '\n')"
-FASTNEAR_API_KEY=${FASTNEAR_API_KEY:-your_api_key_here}
+FASTNEAR_API_KEY=your_api_key
 
 curl -sS https://rpc.mainnet.fastnear.com \
   -H "Authorization: Bearer $FASTNEAR_API_KEY" \
@@ -83,7 +83,7 @@ When you need history, keep the flow short:
 This example uses a narrow window around block `97601515`:
 
 ```bash
-FASTNEAR_API_KEY=${FASTNEAR_API_KEY:-your_api_key_here}
+FASTNEAR_API_KEY=your_api_key
 
 curl -sS https://tx.main.fastnear.com/v0/account \
   -H "Authorization: Bearer $FASTNEAR_API_KEY" \
@@ -105,7 +105,7 @@ If you do not know the window yet, <Link to="/tx/blocks">`/v0/blocks`</Link> can
 Hydrate the candidate hashes and keep only top-level `draw` calls:
 
 ```bash
-FASTNEAR_API_KEY=${FASTNEAR_API_KEY:-your_api_key_here}
+FASTNEAR_API_KEY=your_api_key
 
 curl -sS https://tx.main.fastnear.com/v0/transactions \
   -H "Authorization: Bearer $FASTNEAR_API_KEY" \

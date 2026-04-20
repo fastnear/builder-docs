@@ -17,7 +17,7 @@ NEAR Data returns each block fully hydrated as one JSON document — header plus
 `/v0/last_block/final` 302-redirects to the current finalized block. Before filtering for a specific contract, it's worth seeing what one block looks like at the protocol level: transactions arrive sharded, so the tx count for a block is a sum across shards — not a single top-level number.
 
 ```bash
-FASTNEAR_API_KEY=${FASTNEAR_API_KEY:-your_api_key_here}
+FASTNEAR_API_KEY=your_api_key
 
 curl -sL "https://mainnet.neardata.xyz/v0/last_block/final" \
   -H "Authorization: Bearer $FASTNEAR_API_KEY" \
@@ -37,7 +37,7 @@ A live block shows 9 shards and a handful of transactions scattered across them 
 
 ```bash
 TARGET_CONTRACT=intents.near
-FASTNEAR_API_KEY=${FASTNEAR_API_KEY:-your_api_key_here}
+FASTNEAR_API_KEY=your_api_key
 
 curl -sL "https://mainnet.neardata.xyz/v0/last_block/final" \
   -H "Authorization: Bearer $FASTNEAR_API_KEY" \
@@ -62,7 +62,7 @@ Optimistic blocks ship at `/v0/block_opt/{height}` about a second ahead of `/v0/
 
 ```bash
 TARGET_CONTRACT=intents.near
-FASTNEAR_API_KEY=${FASTNEAR_API_KEY:-your_api_key_here}
+FASTNEAR_API_KEY=your_api_key
 
 count_touches() {
   jq --arg contract "$1" '
@@ -97,7 +97,7 @@ Most finalized blocks show no state mutation for any given contract — activity
 
 ```bash
 TARGET_CONTRACT=intents.near
-FASTNEAR_API_KEY=${FASTNEAR_API_KEY:-your_api_key_here}
+FASTNEAR_API_KEY=your_api_key
 
 HEAD="$(curl -sL "https://mainnet.neardata.xyz/v0/last_block/final" \
   -H "Authorization: Bearer $FASTNEAR_API_KEY" | jq '.block.header.height')"

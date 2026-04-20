@@ -30,7 +30,7 @@ If you already know one exact key, start with the latest indexed row and stop as
 CURRENT_ACCOUNT_ID=social.near
 PREDECESSOR_ID=james.near
 KEY='graph/follow/sleet.near'
-FASTNEAR_API_KEY=${FASTNEAR_API_KEY:-your_api_key_here}
+FASTNEAR_API_KEY=your_api_key
 
 ENCODED_KEY="$(jq -rn --arg key "$KEY" '$key | @uri')"
 

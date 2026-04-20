@@ -51,7 +51,7 @@ If you control the client, use the header form.
 ## Authorization header example
 
 ```bash
-FASTNEAR_API_KEY=${FASTNEAR_API_KEY:-your_api_key_here}
+FASTNEAR_API_KEY=your_api_key
 
 curl "https://rpc.mainnet.fastnear.com" \
   -H "Authorization: Bearer $FASTNEAR_API_KEY" \
@@ -62,7 +62,7 @@ curl "https://rpc.mainnet.fastnear.com" \
 ## `?apiKey=` query parameter example
 
 ```bash
-FASTNEAR_API_KEY=${FASTNEAR_API_KEY:-your_api_key_here}
+FASTNEAR_API_KEY=your_api_key
 
 curl "https://rpc.mainnet.fastnear.com?apiKey=$FASTNEAR_API_KEY" \
   -H "Content-Type: application/json" \

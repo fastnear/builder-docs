@@ -50,7 +50,7 @@ import BerryClubLiveBoard from '@site/src/components/BerryClubLiveBoard';
 
 ```bash
 ARGS_BASE64="$(jq -nc '{lines: [range(0;50)]}' | base64 | tr -d '\n')"
-FASTNEAR_API_KEY=${FASTNEAR_API_KEY:-your_api_key_here}
+FASTNEAR_API_KEY=your_api_key
 
 curl -sS https://rpc.mainnet.fastnear.com \
   -H "Authorization: Bearer $FASTNEAR_API_KEY" \
@@ -83,7 +83,7 @@ curl -sS https://rpc.mainnet.fastnear.com \
 В этом примере используется узкое окно вокруг блока `97601515`:
 
 ```bash
-FASTNEAR_API_KEY=${FASTNEAR_API_KEY:-your_api_key_here}
+FASTNEAR_API_KEY=your_api_key
 
 curl -sS https://tx.main.fastnear.com/v0/account \
   -H "Authorization: Bearer $FASTNEAR_API_KEY" \
@@ -105,7 +105,7 @@ curl -sS https://tx.main.fastnear.com/v0/account \
 Раскройте кандидатные хеши и оставьте только верхнеуровневые вызовы `draw`:
 
 ```bash
-FASTNEAR_API_KEY=${FASTNEAR_API_KEY:-your_api_key_here}
+FASTNEAR_API_KEY=your_api_key
 
 curl -sS https://tx.main.fastnear.com/v0/transactions \
   -H "Authorization: Bearer $FASTNEAR_API_KEY" \
