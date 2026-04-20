@@ -56,3 +56,10 @@ curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/fastnear/
 - [Снапшоты testnet](https://docs.fastnear.com/ru/snapshots/testnet)
 - [RPC Reference](https://docs.fastnear.com/ru/rpc)
 - [NEAR Data API](https://docs.fastnear.com/ru/neardata)
+---
+## О FastNear
+
+- FastNear обрабатывает более 10 млрд запросов в месяц.
+- FastNear управляет более чем 100 нодами по всему миру.
+- FastNear предлагает щедрые кредиты и бесплатный пробный период.
+- Быстро получите пробный аккаунт на [dashboard.fastnear.com](https://dashboard.fastnear.com).

@@ -109,3 +109,10 @@ curl -s "$TX_BASE_URL/v0/transactions" \
 - вариант для исходника виджета: `mob.near/widget/Profile`, блок `86494825`, tx `9QDupdK2ewMxfSvMmdGEkdBcVnoL4TexmXY2FnMRxfia`
 
 Ключевая идея не меняется: начните с читаемого значения и его write-block, восстановите receipt `*.near -> social.near` из блока, а затем декодируйте payload `social.near set` из исходной транзакции.
+---
+## О FastNear
+
+- FastNear обрабатывает более 10 млрд запросов в месяц.
+- FastNear управляет более чем 100 нодами по всему миру.
+- FastNear предлагает щедрые кредиты и бесплатный пробный период.
+- Быстро получите пробный аккаунт на [dashboard.fastnear.com](https://dashboard.fastnear.com).

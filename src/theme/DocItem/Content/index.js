@@ -66,6 +66,7 @@ export default function WrappedDocItemContent(props) {
         onSelect: async () => {
           const markdownRoot = contentRef.current?.querySelector('.theme-doc-markdown');
           const markdown = buildMarkdownFromDocContent(markdownRoot, {
+            locale: currentLocale,
             sourceUrl:
               typeof window !== 'undefined' ? sanitizePublicUrl(window.location.href) : metadata.permalink,
           });
@@ -74,7 +75,7 @@ export default function WrappedDocItemContent(props) {
         },
       },
     ];
-  }, [metadata.permalink, pageActions]);
+  }, [currentLocale, metadata.permalink, pageActions]);
 
   const seoMeta = useMemo(() => {
     if (!shouldExposeSeo) {

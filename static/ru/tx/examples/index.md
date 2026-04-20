@@ -132,48 +132,9 @@ curl -s "$RPC_URL" \
 
 `UNKNOWN_ACCOUNT` — это и есть доказательство. Если бы `CreateAccount` закрепился, `view_account` вернул бы результат; раз нет — предыдущие `Transfer` и `AddKey` из того же batched-receipt тоже не закрепились.
 
-### Почему этот вызов контракта выглядел успешным, но потом receipt упал?
+### Когда транзакция выглядит успешной — что на самом деле произошло?
 
-Одна транзакция может закончиться тем, что внешний handoff рапортует `SuccessReceiptId`, а дочерний receipt при этом тихо падает — это и есть async-модель NEAR, и `/v0/transactions` выдаёт весь timeline за один запрос.
-
-```bash
-TX_BASE_URL=https://tx.main.fastnear.com
-TX_HASH=2KhhB1uDScGCFQfVchep7DiZTGTxMcgfUYHNzwf5e6uL
-
-curl -s "$TX_BASE_URL/v0/transactions" \
-  -H 'content-type: application/json' \
-  --data "$(jq -nc --arg tx_hash "$TX_HASH" '{tx_hashes: [$tx_hash]}')" \
-  | jq '{
-      tx_handoff: .transactions[0].execution_outcome.outcome.status,
-      outer_method: .transactions[0].transaction.actions[0].FunctionCall.method_name,
-      descendant_failures: [
-        .transactions[0].receipts[]
-        | select(.execution_outcome.outcome.status.Failure != null)
-        | {
-            receiver_id: .receipt.receiver_id,
-            method_name: (.receipt.receipt.Action.actions[0].FunctionCall.method_name // "system"),
-            block_height: .execution_outcome.block_height,
-            failure: .execution_outcome.outcome.status.Failure
-          }
-      ],
-      receipt_timeline: [
-        .transactions[0].receipts[]
-        | {
-            receiver_id: .receipt.receiver_id,
-            method_name: (.receipt.receipt.Action.actions[0].FunctionCall.method_name // "system"),
-            status_class: (.execution_outcome.outcome.status | keys[0])
-          }
-      ]
-    }'
-```
-
-Для зафиксированной транзакции mainnet `tx_handoff` — `SuccessReceiptId`: транзакция чисто запустила свой первый receipt. Если смотреть только сюда, можно назвать это победой. `descendant_failures` рассказывают вторую историю: `ft_on_transfer` на `v2.ref-finance.near` упал с `E51: contract paused` — DEX был на паузе во время этого свопа и не мог принять wrapped NEAR. А `receipt_timeline` показывает, как история разрешилась: callback `ft_resolve_transfer` на `wrap.near` всё равно отработал и вывел лог `Refund`, вернув wrapped NEAR отправителю.
-
-Успех receipt не транзитивен. Протокол может чисто отдать handoff и при этом увидеть, как отцеплённая работа провалится позже. Если ваше приложение «выглядело успешным», но деньги всё равно вернулись, пройдите этот же timeline — разделение видно на индексированном ответе без отдельного RPC status-запроса. Чтобы отдельно проверить, что ваш callback отработал, см. [Отработал ли мой callback?](#отработал-ли-мой-callback).
-
-### Отработал ли мой callback?
-
-Кросс-контрактные вызовы NEAR возвращаются через callback-receipt на исходном контракте. Отработал ли этот callback — это одна строка с `any(...)` против индексированного списка receipts; а полная история refund выпадает из того же ответа.
+Внешний `execution_outcome.outcome.status` рапортует `SuccessReceiptId`, как только сработал handoff первого receipt, — и ничего не говорит о том, успешны ли дочерние receipts и отработал ли callback на исходном контракте. Один pipeline над `/v0/transactions` отвечает сразу на все три вопроса.
 
 ```bash
 TX_BASE_URL=https://tx.main.fastnear.com
@@ -185,30 +146,38 @@ curl -s "$TX_BASE_URL/v0/transactions" \
   -H 'content-type: application/json' \
   --data "$(jq -nc --arg tx_hash "$TX_HASH" '{tx_hashes: [$tx_hash]}')" \
   | jq --arg origin "$ORIGIN_CONTRACT_ID" --arg callback "$CALLBACK_METHOD" '{
-      top_method: .transactions[0].transaction.actions[0].FunctionCall.method_name,
-      callback_ran: any(
-        .transactions[0].receipts[];
-        .receipt.receiver_id == $origin
-        and (.receipt.receipt.Action.actions[0].FunctionCall.method_name // "") == $callback
-      ),
-      receipt_chain: [
+      outer: {
+        method: .transactions[0].transaction.actions[0].FunctionCall.method_name,
+        tx_handoff: (.transactions[0].execution_outcome.outcome.status | keys[0])
+      },
+      callback: {
+        expected_on: $origin,
+        method: $callback,
+        ran: any(
+          .transactions[0].receipts[];
+          .receipt.receiver_id == $origin
+          and (.receipt.receipt.Action.actions[0].FunctionCall.method_name // "") == $callback
+        )
+      },
+      descendant_failures: [
         .transactions[0].receipts[]
+        | select(.execution_outcome.outcome.status.Failure != null)
         | {
             receiver_id: .receipt.receiver_id,
             method: (.receipt.receipt.Action.actions[0].FunctionCall.method_name // "system"),
-            block: .execution_outcome.block_height,
-            status: (.execution_outcome.outcome.status | keys[0]),
-            logs: .execution_outcome.outcome.logs
+            cause: .execution_outcome.outcome.status.Failure
           }
       ]
     }'
 ```
 
-Для зафиксированной транзакции `ft_transfer_call` на `wrap.near` передаёт управление в `ft_on_transfer` на `v2.ref-finance.near`, который **падает**. Callback `ft_resolve_transfer` всё равно выполняется на `wrap.near` и логирует `Refund 7278020378457059679767103 from v2.ref-finance.near to …` обратно отправителю — поэтому `callback_ran: true`, несмотря на сбой дочернего receipt. Сбой ниже по цепочке не мешает исходному контракту увидеть свой callback; так async-обработка ошибок NEAR остаётся восстанавливаемой. Строки с `method: "system"` — это рантайм-возвраты газа, а не логика контракта. Чтобы привязать один из этих логов к породившему его receipt, см. [Какой receipt испустил этот лог или событие?](#какой-receipt-испустил-этот-лог-или-событие).
+Для зафиксированной транзакции `outer.method` — `ft_transfer_call`, а `outer.tx_handoff` — `SuccessReceiptId`: транзакция чисто запустила свой первый receipt, и если смотреть только сюда, можно назвать это победой. `descendant_failures` рассказывают вторую историю: `ft_on_transfer` на `v2.ref-finance.near` упал с `E51: contract paused` — DEX был на паузе во время этого свопа и не мог принять wrapped NEAR. `callback.ran: true` — третью: callback `ft_resolve_transfer` на `wrap.near` всё равно отработал. Сбой ниже по цепочке никогда не мешает callback исходного контракта — именно так NEP-141 возвращает отправителю средства, когда получатель их отклонил.
+
+Успех receipt не транзитивен. Протокол может чисто отдать handoff и при этом увидеть, как отцеплённая работа провалится позже; callback исходного контракта отработает в любом случае. Прочитайте эти три поля вместе — и async-история становится читаемой без ручного обхода цепочки receipts. Чтобы вытянуть сам лог `Refund`, переходите к [Какой receipt испустил этот лог или событие?](#какой-receipt-испустил-этот-лог-или-событие).
 
 ### Сопоставить запрос OutLayer с его TEE-разрешением
 
-[OutLayer](https://outlayer.fastnear.com) разделяет один логический вызов на две транзакции: пользователь вызывает `request_execution` на `outlayer.near`, worker в Intel TDX запускает нужный WASM off-chain, и позже `worker.outlayer.near` вызывает `submit_execution_output_and_resolve` с результатом. Один batch на `/v0/transactions` с обоими хешами возвращает всё сопоставление — метод, корреляционные идентификаторы и TEE-отпечаток — без отдельного worker-запроса.
+[OutLayer](https://outlayer.fastnear.com) разделяет один логический вызов на две транзакции: пользователь подписывает `request_execution` на `outlayer.near`, worker в Intel TDX запускает нужный WASM off-chain, затем `worker.outlayer.near` присылает результат через `submit_execution_output_and_resolve`. Обе половины несут один и тот же `request_id` — передайте оба tx-хеша в один запрос `/v0/transactions` и извлеките это поле с каждой стороны, чтобы подтвердить пару.
 
 ```bash
 TX_BASE_URL=https://tx.main.fastnear.com
@@ -221,30 +190,25 @@ curl -s "$TX_BASE_URL/v0/transactions" \
   | jq '[
       .transactions[]
       | {
+          role: (if .transaction.actions[0].FunctionCall.method_name == "request_execution"
+                 then "request" else "worker" end),
           hash: .transaction.hash,
           signer: .transaction.signer_id,
           method: .transaction.actions[0].FunctionCall.method_name,
           block: .execution_outcome.block_height,
-          evidence: (
+          request_id: (
             if .transaction.actions[0].FunctionCall.method_name == "request_execution"
-            then (.receipts[0].execution_outcome.outcome.logs
-                  | map(select(startswith("EVENT_JSON"))) | .[0]
-                  | sub("EVENT_JSON:"; "") | fromjson | .data[0] as $e
-                  | ($e.request_data | fromjson) as $r
-                  | {request_id: $r.request_id, sender_id: $r.sender_id, project_id: $r.project_id,
-                     data_id: $e.data_id, code_hash: $r.code_source.WasmUrl.hash,
-                     input_preview: ($r.input_data | .[0:80] + "…")})
+            then (.receipts[0].execution_outcome.outcome.logs[] | select(startswith("EVENT_JSON"))
+                  | sub("EVENT_JSON:"; "") | fromjson | .data[0].request_data | fromjson | .request_id)
             else (.receipts[0].receipt.receipt.Action.actions[0].FunctionCall.args
-                  | @base64d | fromjson
-                  | {request_id, success: .output.Json.success, encrypted_bytes: (.output.Json.encrypted_data | length),
-                     instructions: .resources_used.instructions, time_ms: .resources_used.time_ms})
+                  | @base64d | fromjson | .request_id)
             end
           )
         }
     ]'
 ```
 
-Обе строки несут `request_id: 1868`. Half-запрос, подписанный `retrorn.near` в блоке `194832281`, вызывает проект `zavodil.near/near-email` с действием `delete_email` и 32-байтным `data_id` — это идентификатор payload yield/resume NEAR, который контракт использует внутри, чтобы приостановить on-chain-обещание, пока worker выполняется. Half-worker попадает через 11 блоков и рапортует `success: true`, `instructions: 53075053`, `time_ms: 2401` и 21 568-байтный зашифрованный результат; эти цифры `resources_used` — тот самый TEE-отпечаток, который можно сверить с лимитами из запроса. `/v0/transactions` отдаёт исторические пары бессрочно, поэтому archival RPC для самой трассировки не нужен — тянитесь к [archival RPC](https://archival-rpc.mainnet.fastnear.com) только когда нужно сверять состояние контракта на высоте блока запроса.
+Обе строки несут `request_id: 1868`, подтверждая пару. Половина-запрос, подписанная `retrorn.near` в блоке `194832281`, лежит в логе `EVENT_JSON:` её receipt (это yield/resume-паттерн NEAR — on-chain-обещание приостанавливается, пока TDX-worker выполняется). Половина-worker приходит через 11 блоков с `submit_execution_output_and_resolve`, подписанной `worker.outlayer.near`, и её `request_id` достаётся прямо из base64-обёрнутых `FunctionCall.args`. Те же два payload несут и более богатый отпечаток — `sender_id`, `project_id`, `code_hash`, `resources_used.instructions`, `resources_used.time_ms`, размер зашифрованного результата в байтах — если нужно проверить, что именно исполнилось; этот минимальный pipeline лишь подтверждает, что половины принадлежат друг другу. `/v0/transactions` отдаёт исторические пары бессрочно, поэтому archival RPC для самой трассировки не нужен даже через недели.
 
 ## Частые ошибки
 
@@ -262,3 +226,10 @@ curl -s "$TX_BASE_URL/v0/transactions" \
 - [Расширенный поиск записи SocialDB](https://docs.fastnear.com/ru/tx/socialdb-proofs)
 - [Choosing the Right Surface](https://docs.fastnear.com/ru/agents/choosing-surfaces)
 - [Agent Playbooks](https://docs.fastnear.com/ru/agents/playbooks)
+---
+## О FastNear
+
+- FastNear обрабатывает более 10 млрд запросов в месяц.
+- FastNear управляет более чем 100 нодами по всему миру.
+- FastNear предлагает щедрые кредиты и бесплатный пробный период.
+- Быстро получите пробный аккаунт на [dashboard.fastnear.com](https://dashboard.fastnear.com).

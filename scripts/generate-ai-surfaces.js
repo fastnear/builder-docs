@@ -3,6 +3,7 @@
 const fs = require("fs");
 const path = require("path");
 const { isSecretQueryParam } = require("../src/utils/fastnearOperationUrlState");
+const AI_MARKDOWN_FOOTER_COPY = require("../src/data/fastnearAiMarkdownFooter.json");
 
 const {
   DEFAULT_LOCALE,
@@ -410,6 +411,32 @@ function getDocsPageSchemaType(entry) {
 
 function normalizeMarkdown(markdown) {
   return markdown.replace(/[ \t]+\n/g, "\n").replace(/\n{3,}/g, "\n\n").trim();
+}
+
+function getFastnearAiFooterCopy(locale = DEFAULT_LOCALE) {
+  return (
+    AI_MARKDOWN_FOOTER_COPY[locale] ||
+    AI_MARKDOWN_FOOTER_COPY[DEFAULT_LOCALE] ||
+    AI_MARKDOWN_FOOTER_COPY.en
+  );
+}
+
+function buildFastnearAiFooter(locale = DEFAULT_LOCALE) {
+  const footerCopy = getFastnearAiFooterCopy(locale);
+  const sections = [
+    `## ${footerCopy.title}`,
+    "",
+    ...footerCopy.bullets.map((bullet) => `- ${bullet}`),
+  ];
+
+  return `${normalizeMarkdown(sections.join("\n"))}\n`;
+}
+
+function appendFastnearAiFooter(markdown, locale = DEFAULT_LOCALE) {
+  const normalizedBody = normalizeMarkdown(markdown || "");
+  const footer = buildFastnearAiFooter(locale).trim();
+
+  return `${normalizeMarkdown([normalizedBody, "---", "", footer].filter(Boolean).join("\n"))}\n`;
 }
 
 function rewriteRootRelativeMarkdownLinks(markdown, locale = DEFAULT_LOCALE) {
@@ -1405,12 +1432,15 @@ function createAuthoredDocEntries(locale = DEFAULT_LOCALE) {
           return null;
         }
 
+        const markdownBody = buildOperationMarkdownForRoute(pageModel, route, locale);
+
         return {
           description: pageModel.info.summary || pageModel.info.description || "",
           htmlPath: route,
           group: getDocSectionLabel(baseRoute, locale),
           kind: "wrapper",
-          markdown: buildOperationMarkdownForRoute(pageModel, route, locale),
+          markdownBody,
+          markdown: appendFastnearAiFooter(markdownBody, locale),
           markdownPath: buildMarkdownMirrorPath(route),
           markdownPaths: buildMarkdownMirrorAliases(route),
           route,
@@ -1418,14 +1448,16 @@ function createAuthoredDocEntries(locale = DEFAULT_LOCALE) {
         };
       }
 
-      const markdown = renderAuthoredMarkdown(content, route, relativePath, locale);
+      const markdownBody = renderAuthoredMarkdown(content, route, relativePath, locale);
       return {
         description:
-          data.description || getFirstMeaningfulParagraph(markdown).replace(/^\*\*Source:\*\*.+$/m, "").trim(),
+          data.description ||
+          getFirstMeaningfulParagraph(markdownBody).replace(/^\*\*Source:\*\*.+$/m, "").trim(),
         htmlPath: route,
         group: getDocSectionLabel(baseRoute, locale),
         kind: "authored",
-        markdown,
+        markdownBody,
+        markdown: appendFastnearAiFooter(markdownBody, locale),
         markdownPath: buildMarkdownMirrorPath(route),
         markdownPaths: buildMarkdownMirrorAliases(route),
         route,
@@ -1445,6 +1477,7 @@ function createCanonicalEntries(locale = DEFAULT_LOCALE) {
       const route = localizeRoute(baseRoute, locale);
       const topLevel = baseRoute.split("/")[1];
       const groupKey = baseRoute.split("/")[2];
+      const markdownBody = buildOperationMarkdownForRoute(localizedPageModel, route, locale);
 
       return {
         description: localizedPageModel.info.summary || localizedPageModel.info.description || "",
@@ -1454,7 +1487,8 @@ function createCanonicalEntries(locale = DEFAULT_LOCALE) {
             : API_SERVICE_LABELS[locale]?.[groupKey] || API_SERVICE_LABELS[DEFAULT_LOCALE]?.[groupKey] || groupKey,
         htmlPath: route,
         kind: topLevel === "rpcs" ? "rpc" : "api",
-        markdown: buildOperationMarkdownForRoute(localizedPageModel, route, locale),
+        markdownBody,
+        markdown: appendFastnearAiFooter(markdownBody, locale),
         markdownPath: buildMarkdownMirrorPath(route),
         markdownPaths: buildMarkdownMirrorAliases(route),
         route,
@@ -1703,10 +1737,10 @@ function buildFullArchive(entries, locale = DEFAULT_LOCALE) {
       `- ${labels.markdownPath}: ${buildAbsoluteUrl(entry.markdownPath)}`,
       ""
     );
-    sections.push(entry.markdown.trim(), "");
+    sections.push((entry.markdownBody || entry.markdown).trim(), "");
   }
 
-  return `${normalizeMarkdown(sections.join("\n"))}\n`;
+  return appendFastnearAiFooter(sections.join("\n"), locale);
 }
 
 function main() {

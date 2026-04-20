@@ -128,3 +128,10 @@ curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/fastnear/
 ```bash
 curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/fastnear/static/refs/heads/main/down_rclone_archival.sh | DATA_TYPE=cold-data DATA_PATH=/mnt/hdds/cold-data CHAIN_ID=mainnet BLOCK=$LATEST bash
 ```
+---
+## О FastNear
+
+- FastNear обрабатывает более 10 млрд запросов в месяц.
+- FastNear управляет более чем 100 нодами по всему миру.
+- FastNear предлагает щедрые кредиты и бесплатный пробный период.
+- Быстро получите пробный аккаунт на [dashboard.fastnear.com](https://dashboard.fastnear.com).

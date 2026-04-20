@@ -996,6 +996,26 @@ https://test.api.fastnear.com
 
 ## Примеры
 
+### Свести один аккаунт за один вызов
+
+`/v1/account/{id}/full` — это агрегатор аккаунтов в FastNear API: один вызов собирает NEAR-состояние аккаунта, каждый FT-контракт, которого он касался, каждую NFT-коллекцию, которую он получил, и каждый валидаторский пул, в который делегировал. Если у вас уже есть `account_id`, это самый быстрый ответ на вопрос «что это за аккаунт?».
+
+```bash
+API_BASE_URL=https://api.fastnear.com
+ACCOUNT_ID=mike.near
+
+curl -s "$API_BASE_URL/v1/account/$ACCOUNT_ID/full" \
+  | jq '{
+      account_id,
+      near_balance_yocto: .state.balance,
+      ft_contracts: (.tokens | length),
+      nft_contracts: (.nfts | length),
+      staking_pool_contracts: (.pools | length)
+    }'
+```
+
+Для `mike.near`: 40 FT-контрактов в списке, 40 NFT-коллекций, 5 валидаторских пулов. Одни только счётчики контрактов говорят, что это активный mainnet-аккаунт. Все примеры ниже погружаются в какую-то одну из этих поверхностей — начинайте отсюда, когда на руках только ID аккаунта.
+
 ### Определить аккаунт по публичному ключу и сразу получить сводку
 
 Найдите, какому аккаунту принадлежит ключ, и прочитайте его активы за один следующий запрос.
@@ -1015,6 +1035,98 @@ curl -s "$API_BASE_URL/v1/account/$ACCOUNT_ID/full" \
 ```
 
 Если `matched` больше 1, переключайтесь на [V1 Public Key Lookup All](https://docs.fastnear.com/ru/api/v1/public-key-all) и пройдитесь по каждому найденному аккаунту.
+
+### Сколько NEAR на этом аккаунте реально доступно к переводу?
+
+Состояние аккаунта NEAR делится на три ведра, которые UI кошельков обычно сливает в одно: `balance` — это свободная часть (не в стейкинге), `locked` — NEAR, привязанный к валидаторскому стейку или lockup-контракту, а `storage_bytes` подразумевает ещё отдельную долю, пришпиленную к trie по текущей ставке 10^19 yoctoNEAR за байт. Один pipeline над `/full` разводит их по полкам.
+
+```bash
+API_BASE_URL=https://api.fastnear.com
+ACCOUNT_ID=mike.near
+
+curl -s "$API_BASE_URL/v1/account/$ACCOUNT_ID/full" \
+  | jq '
+      (.state.balance | tonumber) as $amount
+      | (.state.locked  | tonumber) as $locked
+      | (.state.storage_bytes * 10000000000000000000) as $pinned
+      | 1e24 as $ynear
+      | {
+          account_id,
+          near: {
+            total_owned:       (($amount + $locked) / $ynear),
+            unstaked:          ($amount / $ynear),
+            stake_or_lockup:   ($locked / $ynear),
+            pinned_to_storage: ($pinned / $ynear),
+            spendable:         (($amount - $pinned) / $ynear)
+          }
+        }'
+```
+
+Для `mike.near`: ~2613.49 NEAR всего, всё в свободной части, ~5.58 NEAR закреплено за 558 КБ on-chain-состояния, ~2607.91 NEAR доступно к переводу. Новым аккаунтам это особенно заметно — свежесозданный именованный аккаунт ~182 байта «съедает» ~0.00182 NEAR под storage, и именно поэтому CLI-утилиты не дают отправить полный баланс.
+
+Наведите тот же pipeline на валидаторский пул вроде `astro-stakers.poolv1.near`, и пропорции перевернутся: ~730 тыс. свободных, ~27.68 млн в `locked`. Этот `locked` — собственный протокольный валидаторский стейк пула, а не средства делегатов (те учитываются внутри состояния контракта пула). Одно и то же поле означает разное на разных типах аккаунтов.
+
+jq считает в IEEE-754 double, поэтому NEAR-значения выше — только для отображения; для точной бухгалтерии сохраняйте сами yocto-строки.
+
+### Когда в этом аккаунте что-либо последний раз менялось?
+
+У каждой записи в массивах `tokens`, `nfts` и `pools` внутри `/full` есть собственное `last_update_block_height` — блок, в котором индексер последний раз видел изменение этой строки для этого аккаунта. Максимум по всем трём массивам даёт дешёвый сигнал «последняя активность» без похода в Transactions API.
+
+```bash
+API_BASE_URL=https://api.fastnear.com
+ACCOUNT_ID=mike.near
+
+curl -s "$API_BASE_URL/v1/account/$ACCOUNT_ID/full" \
+  | jq '
+      [
+        (.tokens // [])[].last_update_block_height,
+        (.nfts   // [])[].last_update_block_height,
+        (.pools  // [])[].last_update_block_height
+      ] as $heights
+      | ($heights | map(select(. != null))) as $tracked
+      | {
+          account_id,
+          total_entries:        ($heights | length),
+          tracked_entries:      ($tracked | length),
+          most_recent_block:    ($tracked | max),
+          oldest_tracked_block: ($tracked | min)
+        }'
+```
+
+Для `mike.near` относительно текущего tip это возвращает 85 записей по FT-, NFT- и pool-контрактам, 34 с отслеживаемым блоком и самый свежий блок `194711866` — примерно 125 тыс. блоков назад, или около 35 часов при темпе NEAR ~1 блок/сек. Для `root.near`: 254 записи, 158 отслеживаемых.
+
+Это правильный вопрос для «заброшен ли этот кошелёк?» или «двигалось ли что-то после блока X?» — дёшево, один запрос, без истории транзакций. Чтобы достать саму транзакцию, вызвавшую последнее изменение, расширяйте поверхность до [Transactions API](https://docs.fastnear.com/ru/tx). Записи с `last_update_block_height: null` относятся ко времени до per-row-отслеживания индексером (обычно старые airdrops) и здесь игнорируются, а не считаются свежими.
+
+### Показать NFT-коллекции этого кошелька от конкретного издателя
+
+Имена аккаунтов на NEAR кодируют иерархию: `mint.sharddog.near` — это подаккаунт `sharddog.near`, который, в свою очередь, — подаккаунт `near`. Издатели, выпускающие несколько NFT-коллекций, обычно разворачивают каждую как отдельный подаккаунт, поэтому один фильтр по суффиксу над NFT-списком аккаунта вытаскивает всё опубликованное под одним деревом — без внешнего реестра коллекций.
+
+```bash
+API_BASE_URL=https://api.fastnear.com
+ACCOUNT_ID=mike.near
+PUBLISHER=sharddog.near
+
+curl -s "$API_BASE_URL/v1/account/$ACCOUNT_ID/nft" \
+  | jq --arg publisher "$PUBLISHER" '
+      ("." + $publisher) as $suffix
+      | {
+          account_id: .account_id,
+          publisher: $publisher,
+          collections: [
+            .tokens[]
+            | select(.contract_id | endswith($suffix))
+            | {
+                contract_id,
+                last_update_block_height,
+                status: (if .last_update_block_height == null then "dormant" else "active" end)
+              }
+          ] | sort_by(.last_update_block_height // 0)
+        }'
+```
+
+Для `mike.near` и `sharddog.near` это возвращает четыре контракта-подаккаунта: `comic`, `mintv2`, `mint` и `claim`. Два с ненулевым `last_update_block_height` (`mint` на `115715361` и `claim` на `119718026`) — те, где позиция кошелька действительно менялась. Два других — спящие, типично для одноразовых drop-контрактов, в которые аккаунт что-то получил и больше не возвращался.
+
+Поменяйте `PUBLISHER` на любой аккаунт, чтобы сфокусировать фильтр на другом дереве издателя.
 
 ### Показывает ли кошелёк прямой стейкинг, liquid staking-токены или оба варианта?
 
@@ -1671,118 +1783,127 @@ https://testnet.neardata.xyz
 
 ## Примеры
 
-Каждый гидратированный документ блока NEAR Data несёт транзакции, receipts, результаты исполнения и state changes с разбивкой по shard. Три сценария ниже используют один `bash`-помощник, который сворачивает эти четыре сигнала в одну сводку с полями для перехода дальше. Определите его один раз и прогоняйте блоки через него:
+NEAR Data возвращает каждый блок полностью гидратированным одним JSON-документом — header плюс per-shard chunks, receipts, результаты исполнения и state changes, — так что один `curl` уже даёт всё необходимое, чтобы отфильтровать нужный контракт без второго запроса.
+
+### На каком блоке NEAR сейчас?
+
+`/v0/last_block/final` отдаёт 302-редирект на текущий финализированный блок. Прежде чем фильтровать по конкретному контракту, полезно увидеть, как выглядит один блок на уровне протокола: транзакции приходят с разбивкой по shard, поэтому общее число транзакций в блоке — это сумма по shards, а не одно поле верхнего уровня.
 
 ```bash
-contract_touch_summary() {
-  jq -r --arg contract "$1" '
-    [ .shards[] | {
-        shard_id,
-        direct_txs: ([.chunk.transactions[]? | select(.transaction.receiver_id == $contract)] | length),
-        incoming_receipts: ([.chunk.receipts[]? | select(.receiver_id == $contract)] | length),
-        execution_outcomes: ([.receipt_execution_outcomes[]? | select(.execution_outcome.outcome.executor_id == $contract)] | length),
-        state_changes: ([.state_changes[]? | select(.change.account_id? == $contract)] | length),
-        sample_tx_hash: ([.chunk.transactions[]? | select(.transaction.receiver_id == $contract) | .transaction.hash] | .[0]),
-        sample_receipt_id: (
-          [ .chunk.receipts[]? | select(.receiver_id == $contract) | .receipt_id ] +
-          [ .receipt_execution_outcomes[]? | select(.execution_outcome.outcome.executor_id == $contract) | .execution_outcome.id ] +
-          [ .state_changes[]? | select(.change.account_id? == $contract) | (.cause.receipt_hash? // empty) ]
-          | .[0]
-        )
-      }
-      | select(.direct_txs + .incoming_receipts + .execution_outcomes + .state_changes > 0)
-    ] as $rows
-    | {
-        height: .block.header.height,
-        hash: .block.header.hash,
-        contract: $contract,
-        touched: (($rows | length) > 0),
-        shards: ($rows | map(.shard_id)),
-        evidence: {
-          direct_txs: (($rows | map(.direct_txs) | add) // 0),
-          incoming_receipts: (($rows | map(.incoming_receipts) | add) // 0),
-          execution_outcomes: (($rows | map(.execution_outcomes) | add) // 0),
-          state_changes: (($rows | map(.state_changes) | add) // 0)
-        },
-        sample_tx_hash: ([ $rows[] | .sample_tx_hash | select(.) ] | .[0]),
-        sample_receipt_id: ([ $rows[] | .sample_receipt_id | select(.) ] | .[0])
-      }'
-}
+NEARDATA_BASE_URL=https://mainnet.neardata.xyz
+
+curl -sL "$NEARDATA_BASE_URL/v0/last_block/final" \
+  | jq '{
+      height: .block.header.height,
+      timestamp_nanosec: .block.header.timestamp_nanosec,
+      txs_per_shard: [.shards[] | {shard_id, tx_count: (.chunk.transactions | length)}],
+      total_txs: ([.shards[].chunk.transactions[]?] | length)
+    }'
 ```
+
+Живой блок показывает 9 shards и горсть транзакций, распределённых по ним — большинство shards в любом блоке пустые, а активность концентрируется на тех shards, где живут загруженные контракты. `timestamp_nanosec` — это Unix-время в наносекундах (делите на 1e9, чтобы получить секунды). С этим одним вызовом у вас уже есть всё необходимое для дальнейшего копания — примеры фильтрации ниже просто применяют jq к тому же ответу.
 
 ### Был ли мой контракт затронут в последнем финализированном блоке?
 
-`/v0/last_block/final` отдаёт 302-редирект на текущий финализированный блок; пройдите по нему и направьте результат сразу в помощник.
+`/v0/last_block/final` отдаёт 302-редирект на текущий финализированный блок. Контракт может проявиться либо в `transactions` chunk (когда он `receiver_id`), либо в `receipts` (когда прилетает cross-shard-вызов), поэтому один проход jq по shards покрывает оба случая.
 
 ```bash
 NEARDATA_BASE_URL=https://mainnet.neardata.xyz
 TARGET_CONTRACT=intents.near
 
 curl -sL "$NEARDATA_BASE_URL/v0/last_block/final" \
-  | contract_touch_summary "$TARGET_CONTRACT"
+  | jq --arg contract "$TARGET_CONTRACT" '{
+      height: .block.header.height,
+      contract: $contract,
+      touched_shards: [
+        .shards[] | {
+          shard_id,
+          txs:      [.chunk.transactions[]? | select(.transaction.receiver_id == $contract) | .transaction.hash],
+          receipts: [.chunk.receipts[]?     | select(.receiver_id == $contract)             | .receipt_id]
+        } | select((.txs | length) + (.receipts | length) > 0)
+      ]
+    }'
 ```
 
-Читайте `touched: false` как полный и однозначный ответ для тихого блока. При `true` поля перехода (`sample_tx_hash`, `sample_receipt_id`) сразу ведут вас в [/tx/examples](https://docs.fastnear.com/ru/tx/examples) за человекочитаемой историей. Один запрос заменяет ручной просмотр chunks — и учтите: `touched: true` с `state_changes: 0` — это реальная форма: receipt может попасть в chunk, не вызвав в том же блоке мутации состояния.
+`touched_shards: []` — полный ответ для тихого блока. Непустой список называет shards, где контракт появился, и отдаёт конкретные `tx`-хеши или `receipt_id` — передавайте хеш в [Transactions API](https://docs.fastnear.com/ru/tx), когда нужна человекочитаемая история. Receipts без парных `txs` — это нормально: cross-contract-вызов приходит как incoming receipt в этом блоке, даже если исходная транзакция была раньше.
 
-### Увидел ли я активность в optimistic-режиме, и пережила ли она finality?
+### Увидел ли я активность в optimistic-режиме, и догнала ли её finality?
 
-Optimistic-блоки живут по адресу `/v0/block_opt/{height}`; как только finality догоняет (обычно в пределах одного блока, ~1 с на mainnet), та же высота становится доступна и по `/v0/block/{height}`. Прогоните помощник на обеих и сравните.
+Optimistic-блоки ходят по `/v0/block_opt/{height}` примерно на секунду впереди `/v0/block/{height}`. Цикл мониторинга может действовать по optimistic-сигналу и ожидать, что тот же ответ придёт на финализированный эндпоинт через один блок — если только стресс сети не расширит разрыв, и тогда финализированный fetch вернёт `null`, а вы подождёте.
 
 ```bash
+NEARDATA_BASE_URL=https://mainnet.neardata.xyz
+TARGET_CONTRACT=intents.near
+
+count_touches() {
+  jq --arg contract "$1" '
+    [.shards[]
+     | ([.chunk.transactions[]? | select(.transaction.receiver_id == $contract)] | length)
+     + ([.chunk.receipts[]?     | select(.receiver_id == $contract)]             | length)]
+    | add // 0'
+}
+
 OPT_LOCATION="$(
   curl -s -D - -o /dev/null "$NEARDATA_BASE_URL/v0/last_block/optimistic" \
     | awk 'tolower($1) == "location:" {print $2}' | tr -d '\r'
 )"
 OPT_HEIGHT="${OPT_LOCATION##*/}"
 
-echo "Optimistic view at $OPT_HEIGHT:"
-curl -s "$NEARDATA_BASE_URL$OPT_LOCATION" | contract_touch_summary "$TARGET_CONTRACT"
-
-echo "Finalized view at $OPT_HEIGHT:"
+echo "optimistic @ $OPT_HEIGHT: $(curl -s "$NEARDATA_BASE_URL$OPT_LOCATION" | count_touches "$TARGET_CONTRACT") touches"
 FINAL="$(curl -s "$NEARDATA_BASE_URL/v0/block/$OPT_HEIGHT")"
-if [ "$(echo "$FINAL" | jq 'type')" = '"null"' ]; then
-  echo "finality has not caught up to $OPT_HEIGHT yet"
+if [ "$(printf '%s' "$FINAL" | jq 'type')" = '"null"' ]; then
+  echo "finalized @ $OPT_HEIGHT: not caught up yet"
 else
-  echo "$FINAL" | contract_touch_summary "$TARGET_CONTRACT"
+  echo "finalized @ $OPT_HEIGHT: $(printf '%s' "$FINAL" | count_touches "$TARGET_CONTRACT") touches"
 fi
 ```
 
-На здоровой сети обе сводки совпадают сразу; ценность — в самом шаблоне, а не в драматичной разнице. Цикл мониторинга, который реагирует на optimistic-сигнал, знает: тот же ответ — на один блок от надёжного. Ветку `finality has not caught up` используйте, когда действительно нужно отличить «увидено optimistically» от «подтверждено» — во время стресса сети этот разрыв расширяется.
+На здоровом mainnet оба счётчика совпадают в пределах секунды. Ценность — в самом шаблоне: optimistic-поток даёт ответ, на который можно реагировать сразу, а финализированный приходит через блок как надёжное подтверждение.
 
-### Какой shard действительно изменил мой контракт в этом блоке?
+### Какой shard действительно изменил состояние моего контракта?
 
-Блоки тонкие — в большинстве финализированных блоков нет мутаций состояния ни для одного конкретного контракта. Идите назад от финализированной головы, пока помощник не покажет `state_changes > 0`, затем откройте «победивший» shard через `/v0/block/{height}/shard/{shard_id}` ради самого payload мутации.
+В большинстве финализированных блоков нет мутации состояния ни для одного конкретного контракта — активность разрежена и привязана к shard. Идите назад от финализированной головы, пока состояние контракта реально не изменится, и откройте этот shard для payload мутации. Вызов уровня блока говорит, *на каком* shard это случилось; вызов уровня shard — *как*.
 
 ```bash
-HEAD="$(curl -sL "$NEARDATA_BASE_URL/v0/last_block/final" | jq '.block.header.height')"
-TARGET_HEIGHT=""
-WINNING_SHARD=""
+NEARDATA_BASE_URL=https://mainnet.neardata.xyz
+TARGET_CONTRACT=intents.near
 
-for OFFSET in 0 1 2 3 4 5 6 7 8 9; do
+HEAD="$(curl -sL "$NEARDATA_BASE_URL/v0/last_block/final" | jq '.block.header.height')"
+FOUND_HEIGHT=""
+FOUND_SHARD=""
+
+for OFFSET in $(seq 0 15); do
   H=$((HEAD - OFFSET))
-  SUMMARY="$(curl -s "$NEARDATA_BASE_URL/v0/block/$H" | contract_touch_summary "$TARGET_CONTRACT")"
-  if [ "$(echo "$SUMMARY" | jq '.evidence.state_changes')" -gt 0 ]; then
-    TARGET_HEIGHT=$H
-    WINNING_SHARD="$(echo "$SUMMARY" | jq -r '.shards[0]')"
-    echo "$SUMMARY"
+  SHARD="$(curl -s "$NEARDATA_BASE_URL/v0/block/$H" \
+    | jq -r --arg contract "$TARGET_CONTRACT" '
+        .shards[]
+        | select([.state_changes[]? | select(.change.account_id? == $contract)] | length > 0)
+        | .shard_id
+      ' | head -1)"
+  if [ -n "$SHARD" ]; then
+    FOUND_HEIGHT=$H; FOUND_SHARD=$SHARD
     break
   fi
 done
 
-curl -s "$NEARDATA_BASE_URL/v0/block/$TARGET_HEIGHT/shard/$WINNING_SHARD" \
-  | jq --arg contract "$TARGET_CONTRACT" '{
-      shard_id,
-      chunk_hash: .chunk.header.chunk_hash,
-      matching_state_changes: [.state_changes[] | select(.change.account_id? == $contract) | {type, cause_type: (.cause | keys[0]), account_id: .change.account_id}][0:3],
-      matching_execution_outcomes: [.receipt_execution_outcomes[] | select(.execution_outcome.outcome.executor_id == $contract) | {receipt_id: .execution_outcome.id, status: (.execution_outcome.outcome.status | keys[0]), predecessor_id: .receipt.predecessor_id}][0:3]
-    }'
+if [ -z "$FOUND_HEIGHT" ]; then
+  echo "no state mutation for $TARGET_CONTRACT in the last 16 finalized blocks"
+else
+  curl -s "$NEARDATA_BASE_URL/v0/block/$FOUND_HEIGHT/shard/$FOUND_SHARD" \
+    | jq --arg contract "$TARGET_CONTRACT" --argjson height "$FOUND_HEIGHT" --argjson shard_id "$FOUND_SHARD" '{
+        height: $height,
+        shard_id: $shard_id,
+        state_changes:      [.state_changes[]              | select(.change.account_id?                        == $contract) | {type, cause: (.cause | keys[0])}][0:3],
+        execution_outcomes: [.receipt_execution_outcomes[] | select(.execution_outcome.outcome.executor_id     == $contract) | {receipt_id: .execution_outcome.id, status: (.execution_outcome.outcome.status | keys[0])}][0:3]
+      }'
+fi
 ```
 
-На mainnet `intents.near` стабильно выполняется на shard 7, поэтому обход назад обычно попадает в цель за несколько блоков. Payload shard затем называет конкретные типы state-change (`account_update`, `data_update` и т. п.) и результаты исполнения receipt, которые их породили, — shard-локальное доказательство без догадок. Для менее активных контрактов расширьте диапазон `OFFSET`.
+На mainnet `intents.near` живёт на shard 7, поэтому обход назад обычно попадает в цель за несколько блоков. Payload shard называет конкретные типы state-change (`account_update`, `data_update` и т. п.) и результаты receipt, которые их породили, — shard-локальное доказательство без догадок. Для менее активных контрактов расширьте диапазон `OFFSET`.
 
 ## Когда расширить поверхность
 
-- Используйте [Transactions API](https://docs.fastnear.com/ru/tx), когда у вас уже есть `tx_hash` и нужен человекочитаемый рассказ о транзакции.
+- Используйте [Transactions API](https://docs.fastnear.com/ru/tx), когда у вас уже есть `tx_hash` и нужна человекочитаемая история транзакции.
 - Используйте [RPC Reference](https://docs.fastnear.com/ru/rpc), когда следующий вопрос касается точной протокольной семантики receipt или блока.
 - Используйте [Block Headers](https://docs.fastnear.com/ru/neardata/block-headers), когда нужна только динамика head/finality, а не проверка contract-touch.
 
@@ -1947,6 +2068,27 @@ https://archival-rpc.testnet.fastnear.com
 
 Начинайте с RPC-метода, который отвечает на вопрос. Используйте `tx`, чтобы отследить включение и финальность по хешу транзакции, и расширяйте поверхность только когда нужны дерево receipts, сырой state или трассировка на уровне shard.
 
+## Состояние аккаунта
+
+### Показать баланс и storage аккаунта на finality
+
+`view_account` — канонический RPC-запрос для текущего состояния аккаунта. Один вызов возвращает свободный баланс, сумму, заблокированную в валидаторском стейке или lockup-контракте, использованное storage и блок, на котором было сделано чтение. `finality: "final"` гарантирует, что вы читаете стабильное состояние, а не optimistic-представление.
+
+```bash
+RPC_URL=https://rpc.mainnet.fastnear.com
+ACCOUNT_ID=mike.near
+
+curl -s "$RPC_URL" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc --arg account_id "$ACCOUNT_ID" '{
+    jsonrpc:"2.0",id:"fastnear",method:"query",
+    params:{request_type:"view_account",account_id:$account_id,finality:"final"}
+  }')" \
+  | jq '.result | {amount, locked, storage_usage, block_height, block_hash}'
+```
+
+Для `mike.near` это возвращает `amount` (yoctoNEAR в свободной части), `locked: "0"` (ничего в валидаторском стейке или lockup-контракте) и `storage_usage: 558441` — 558 КБ on-chain-состояния. Пара `block_height`/`block_hash` фиксирует точку чтения; чтобы прочитать несколько аккаунтов *на одном и том же* блоке, переиспользуйте возвращённый `block_hash` как `block_id` в последующих запросах.
+
 ## Включение транзакции и финальность
 
 ### Отследить транзакцию от хеша до финальности
@@ -1983,7 +2125,7 @@ curl -s "$RPC_URL" \
 
 ### Описать первый action первой транзакции на текущем tip
 
-Пройдите `status` → `block` → `chunk`, пропуская пустые chunks по дороге. Большинство chunks в tip-блоке пустые — их `tx_root` равен сентинелу `11111111111111111111111111111111`, поэтому селектору нужен фильтр.
+Блок NEAR — это header поверх N shard chunks, а не плоский список транзакций. `block` возвращает headers chunks; сами транзакции лежат уровнем ниже, внутри `chunk`. Шортката `block → tx` нет — блок не несёт хешей транзакций, поэтому `tx` (которому нужен hash) в этой цепочке не участвует. Канонический проход — `status` → `block` → `chunk`, пропуская пустые chunks по дороге. Большинство chunks в tip-блоке пустые — их `tx_root` равен сентинелу `11111111111111111111111111111111`, поэтому селектору нужен фильтр.
 
 ```bash
 RPC_URL=https://rpc.mainnet.fastnear.com
@@ -2029,9 +2171,16 @@ fi
 
 ## Механика аккаунтов и ключей
 
-### Аудит старых function-call-ключей Near Social
+### Определить function-call-ключи, которые стоит удалить
 
-У создателей накапливаются Social function-call-ключи от каждого кошелька и каждого BOS-шлюза, которым они пользовались. `view_access_key_list` возвращает их все; один фильтр сужает до `social.near`, а **младшие шесть цифр nonce** заодно служат счётчиком использования — новые ключи стартуют с `block_height * 10^6` и инкрементируются на единицу за каждую транзакцию.
+Каждый кошелёк, шлюз и dapp-сессия, в которую вы заходите, обычно оставляет за собой function-call-ключ. Большинством из них вы больше никогда не воспользуетесь. `view_access_key_list` возвращает все ключи аккаунта; структура nonce показывает, какие из них устарели.
+
+Новые ключи стартуют с `block_height * 10^6`, и значение инкрементируется на единицу за каждую транзакцию, которую ключ подписывает, поэтому:
+
+- `nonce / 10^6` → блок, в котором ключ был добавлен
+- `nonce % 10^6` → сколько раз ключ был использован
+
+Любой ключ с `tx_count: 0` был создан и ни разу не использовался — самый очевидный кандидат на очистку. Следующий по порядку — ключи, заскоупленные на контракт, с которым вы больше не работаете. Фильтр ниже сужает до `social.near`, но чтобы аудитировать другой контракт, меняется только строка `RECEIVER_ID`.
 
 ```bash
 RPC_URL=https://rpc.mainnet.fastnear.com
@@ -2047,13 +2196,13 @@ curl -s "$RPC_URL" \
   | jq --arg receiver "$RECEIVER_ID" '
       {
         total_keys: (.result.keys | length),
-        social_fcks: [
+        fcks_for_receiver: [
           .result.keys[]
           | select((.access_key.permission | type) == "object")
           | select(.access_key.permission.FunctionCall.receiver_id == $receiver)
           | {
               public_key,
-              created_near_block: (.access_key.nonce / 1000000 | floor),
+              added_at_block: (.access_key.nonce / 1000000 | floor),
               tx_count: (.access_key.nonce % 1000000),
               method_names: (.access_key.permission.FunctionCall.method_names | if . == [] then "ANY" else . end),
               allowance: (.access_key.permission.FunctionCall.allowance // "unlimited")
@@ -2062,119 +2211,17 @@ curl -s "$RPC_URL" \
       }'
 ```
 
-Для `mike.near` это возвращает десятки function-call-ключей на `social.near`. Записи с `tx_count: 0` были созданы и ни разу не использовались — прямые кандидаты на очистку. `method_names: "ANY"` означает, что ключ может вызвать любой метод на `social.near`; сужение до списка вида `["find_grants", "insert_grant", "delete_grant"]` означает, что ключ был заскоуплен на write-поверхность конкретного dapp.
+Для `mike.near` это возвращает десятки function-call-ключей на `social.near`. Записи с `tx_count: 0` были созданы и ни разу не использовались — прямые кандидаты на удаление. `method_names: "ANY"` означает, что ключ может вызвать любой метод на `social.near`; сужение до списка вида `["find_grants", "insert_grant", "delete_grant"]` означает, что ключ был заскоуплен на write-поверхность одного dapp.
 
-Чтобы удалить такой ключ, подпишите action `DeleteKey` **full-access**-ключом — function-call-ключ не может авторизовать `DeleteKey` — и отправьте через [`send_tx`](https://docs.fastnear.com/ru/rpc/transaction/send-tx). Повторный запуск того же списка подтверждает удаление. Само подписание — стандартная near-api-js-история и не самая интересная часть аудита.
-
-### Какая транзакция добавила этот `social.near` function-call-ключ и кто её авторизовал?
-
-Тот же nonce, что считает использование, заодно якорит `AddKey` во времени блоков: новые ключи стартуют примерно с `block_height * 10^6`, так что деление текущего nonce на миллион даёт плотное окно поиска. Один раз гидратируйте кандидатов — и ответ уже несёт достаточно, чтобы отличить прямой `AddKey` от делегированной (meta-tx) авторизации, то есть показать, *какой ключ подписал решение*, а не только какой аккаунт оплатил gas.
-
-```bash
-RPC_URL=https://rpc.mainnet.fastnear.com
-TX_BASE_URL=https://tx.main.fastnear.com
-ACCOUNT_ID=mike.near
-TARGET_PUBLIC_KEY=ed25519:7GZgXkMPEyGXqRhxaLvHxWn6fVfeyuQGMqnLVQAh7bs
-
-CURRENT_NONCE="$(curl -s "$RPC_URL" -H 'content-type: application/json' \
-  --data "$(jq -nc --arg account_id "$ACCOUNT_ID" --arg public_key "$TARGET_PUBLIC_KEY" '{
-    jsonrpc:"2.0",id:"fastnear",method:"query",
-    params:{request_type:"view_access_key",account_id:$account_id,public_key:$public_key,finality:"final"}
-  }')" \
-  | jq -r '.result.nonce')"
-
-ADD_KEY_BLOCK=$((CURRENT_NONCE / 1000000))
-
-TX_HASHES="$(curl -s "$TX_BASE_URL/v0/account" -H 'content-type: application/json' \
-  --data "$(jq -nc --arg account_id "$ACCOUNT_ID" \
-    --argjson from $((ADD_KEY_BLOCK - 20)) --argjson to $((ADD_KEY_BLOCK + 5)) '{
-      account_id: $account_id, is_real_signer: true,
-      from_tx_block_height: $from, to_tx_block_height: $to, desc: false, limit: 50
-    }')" \
-  | jq -c '[.account_txs[].transaction_hash]')"
-
-curl -s "$TX_BASE_URL/v0/transactions" -H 'content-type: application/json' \
-  --data "$(jq -nc --argjson tx_hashes "$TX_HASHES" '{tx_hashes: $tx_hashes}')" \
-  | jq --arg target "$TARGET_PUBLIC_KEY" '
-      [ .transactions[]
-        | . as $tx
-        | (
-            ($tx.transaction.actions[]? | .AddKey? | select(.public_key == $target)
-              | {mode: "direct", authorizing_public_key: $tx.transaction.public_key, permission: .access_key.permission}),
-            ($tx.transaction.actions[]? | .Delegate? | .delegate_action as $d
-              | $d.actions[]? | .AddKey? | select(.public_key == $target)
-              | {mode: "delegated", authorizing_public_key: $d.public_key, permission: .access_key.permission})
-          )
-        | {
-            transaction_hash: $tx.transaction.hash,
-            tx_block_height: $tx.execution_outcome.block_height,
-            signer_id: $tx.transaction.signer_id,
-            receiver_id: $tx.transaction.receiver_id,
-            add_key_receipt: ([$tx.receipts[]
-              | select(any((.receipt.receipt.Action.actions // [])[]?; .AddKey.public_key? == $target))
-              | {receipt_id: .receipt.receipt_id, receipt_block: .execution_outcome.block_height}][0])
-          } + .
-      ]'
-```
-
-Для ключа `ed25519:7GZg…` аккаунта `mike.near` (первый `social.near` FCK из аудита выше) это разрешается в транзакцию `6ZT8UGPRC6L3NGs2qHnECPVexKWNQ5LWLK9w95tgj3tV` на внешнем блоке tx `112057390`. Внешний signer — `app.herewallet.near`, это relayer HERE Wallet, и `mode: "delegated"` рассказывает остальную историю: relayer оплатил gas, но *авторизующий* ключ внутри Delegate — `ed25519:GaYgzN1eZUgwA7t8a5pYxFGqtF4kon9dQaDMjPDejsiu`, full-access-ключ `mike.near`, который подписал сам `AddKey`. Это та разница meta-tx, которую верхнеуровневый `signer_id` в одиночку скрыл бы.
-
-`add_key_receipt` замыкает картину: `AddKey` выполнился в блоке `112057392`, через два блока после внешней tx, потому что Delegate прыгает из shard relayer в shard целевого аккаунта. Расширьте окно `-20/+5`, если ключом с момента создания пользовались активно.
-
-### Зарегистрировать FT-хранилище при необходимости и затем перевести токены
-
-Токены NEP-141 требуют, чтобы каждый получатель предварительно зарегистрировал storage на контракте, прежде чем сможет держать баланс. Два view-вызова авторитетно отвечают на вопрос регистрации *до* отправки — пропуск этой проверки и есть причина, по которой `ft_transfer` в итоге тихо возвращается отправителю.
-
-```bash
-RPC_URL=https://rpc.testnet.fastnear.com
-TOKEN_CONTRACT_ID=ft.predeployed.examples.testnet
-RECEIVER_ACCOUNT_ID=mike.testnet
-
-ACCOUNT_ARGS_B64="$(jq -nc --arg account_id "$RECEIVER_ACCOUNT_ID" '{account_id:$account_id}' | base64 | tr -d '\n')"
-
-REGISTERED="$(curl -s "$RPC_URL" -H 'content-type: application/json' \
-  --data "$(jq -nc --arg contract "$TOKEN_CONTRACT_ID" --arg args "$ACCOUNT_ARGS_B64" '{
-    jsonrpc:"2.0",id:"fastnear",method:"query",
-    params:{request_type:"call_function",account_id:$contract,method_name:"storage_balance_of",args_base64:$args,finality:"final"}
-  }')" \
-  | jq '(.result.result | implode | fromjson) != null')"
-
-MIN_DEPOSIT="$(curl -s "$RPC_URL" -H 'content-type: application/json' \
-  --data "$(jq -nc --arg contract "$TOKEN_CONTRACT_ID" '{
-    jsonrpc:"2.0",id:"fastnear",method:"query",
-    params:{request_type:"call_function",account_id:$contract,method_name:"storage_balance_bounds",args_base64:"e30=",finality:"final"}
-  }')" \
-  | jq -r '.result.result | implode | fromjson | .min')"
-
-jq -n --argjson registered "$REGISTERED" --arg min "$MIN_DEPOSIT" '{
-  registered: $registered,
-  min_storage_deposit_yocto: $min
-}'
-```
-
-Для зафиксированного testnet-контракта `storage_balance_of({account_id: "mike.testnet"})` возвращает `null` (не зарегистрирован), а `storage_balance_bounds` возвращает `{min: "1250000000000000000000", max: "1250000000000000000000"}` — плоскую комиссию регистрации 0.00125 NEAR. Это собственный ответ контракта, и большего на read-стороне до записи не нужно.
-
-Write-сторона — это две подписанных function call (near-api-js `transactions.functionCall` или любая NEAR-библиотека подписи работает одинаково):
-
-- `storage_deposit({account_id: "<receiver>", registration_only: true})` с депозитом `<min>` yocto и 100 Tgas — пропустите, если `registered: true`.
-- `ft_transfer({receiver_id: "<receiver>", amount: "<yocto>", memo: "..."})` с депозитом 1 yocto (требует NEP-141) и 100 Tgas.
-
-Отправьте каждую подписанную транзакцию через [`send_tx`](https://docs.fastnear.com/ru/rpc/transaction/send-tx) с `wait_until: "FINAL"`. После этого подтвердите через собственный view-метод контракта — индексированная история не нужна, чтобы доказать, что перевод закрепился:
-
-```bash
-curl -s "$RPC_URL" -H 'content-type: application/json' \
-  --data "$(jq -nc --arg contract "$TOKEN_CONTRACT_ID" --arg args "$ACCOUNT_ARGS_B64" '{
-    jsonrpc:"2.0",id:"fastnear",method:"query",
-    params:{request_type:"call_function",account_id:$contract,method_name:"ft_balance_of",args_base64:$args,finality:"final"}
-  }')" \
-  | jq '{receiver_balance: (.result.result | implode | fromjson)}'
-```
+Чтобы удалить такой ключ, подпишите action `DeleteKey` **full-access**-ключом (function-call-ключ не может авторизовать `DeleteKey`) и отправьте через [`send_tx`](https://docs.fastnear.com/ru/rpc/transaction/send-tx). Повторный запуск того же запроса подтвердит, что ключа больше нет.
 
 ## Чтение контрактов и сырой state
 
-### Как прочитать сырое storage контракта напрямую?
+### Прочитать storage контракта, не запуская его
 
-Два RPC-метода отвечают на один и тот же вопрос о counter с разных слоёв: `view_state` достаёт сырые байты trie без запуска кода, а `call_function` запускает собственный view-метод контракта. Когда они совпадают, вы доказали, что view-метод контракта соответствует его сохранённому состоянию.
+View-метод вроде `get_num` всё равно заставляет узел загрузить wasm-контракта и выполнить его. Если ключ storage уже известен, `view_state` возвращает сырые сериализованные байты напрямую — без исполнения и без зависимости от того, выставил ли контракт getter для этого поля вообще.
+
+Контракты на `near-sdk-rs` хранят верхнеуровневую `#[near_bindgen]`-структуру под ключом `STATE`. Передайте `STATE` как `prefix_base64` (`U1RBVEU=` — это base64 тех же четырёх ASCII-байт), и узел вернёт сериализованное значение.
 
 ```bash
 RPC_URL=https://rpc.testnet.fastnear.com
@@ -2187,26 +2234,14 @@ RAW_B64="$(curl -s "$RPC_URL" -H 'content-type: application/json' \
   }')" \
   | jq -r '.result.values[0].value')"
 
-RAW_I8="$(python3 -c "import base64,sys;print(int.from_bytes(base64.b64decode('$RAW_B64'),'little',signed=True))")"
+DECODED_I8="$(python3 -c "import base64; print(int.from_bytes(base64.b64decode('$RAW_B64'),'little',signed=True))")"
 
-METHOD_VALUE="$(curl -s "$RPC_URL" -H 'content-type: application/json' \
-  --data "$(jq -nc --arg contract "$CONTRACT_ID" '{
-    jsonrpc:"2.0",id:"fastnear",method:"query",
-    params:{request_type:"call_function",account_id:$contract,method_name:"get_num",args_base64:"e30=",finality:"final"}
-  }')" \
-  | jq -r '.result.result | implode | fromjson')"
-
-jq -n --arg raw_b64 "$RAW_B64" --argjson raw_i8 "$RAW_I8" --argjson method "$METHOD_VALUE" '{
-  raw_state_b64: $raw_b64,
-  raw_state_decoded: $raw_i8,
-  view_method_value: $method,
-  agree: ($raw_i8 == $method)
-}'
+jq -n --arg raw "$RAW_B64" --argjson val "$DECODED_I8" '{raw_bytes_base64: $raw, decoded_i8: $val}'
 ```
 
-Для живого counter `view_state` по ключу `STATE` (base64 `U1RBVEU=`) возвращает `"CQ=="` — один байт `0x09`, декодируется как signed i8 в `9`; `get_num` тоже возвращает `9`. Они совпадают, потому что контракт хранит `val: i8` по этому ключу. `signed=True` важен: отрицательный counter выглядел бы как `"/w=="` (байт `0xff` → i8 `-1`, а не u8 `255`).
+Для живого counter это возвращает `"CQ=="` — один байт `0x09`, декодируется как signed i8 в `9`. Это то же число, которое вернул бы `get_num`, только прочитанное прямо из trie без запуска кода контракта. `signed=True` важен: отрицательный counter сериализовался бы как `"/w=="` (байт `0xff` → i8 `-1`, а не u8 `255`).
 
-`view_state` — правильный инструмент, когда у контракта нет view-метода для нужных данных, когда нужно сверить view-метод с реальным storage или когда нужна семья ключей, которую контракт не раскрывает публично. Для всего остального `call_function` требует меньше церемоний. Если следующий вопрос становится историческим, а не текущим, расширяйте поверхность до [KV FastData API](https://docs.fastnear.com/ru/fastdata/kv).
+Тянитесь к `view_state`, когда контракт не выставляет view-метод для нужных данных или когда нужна семья ключей, которую контракт не публикует. Для большинства чтений `call_function` всё равно требует меньше церемоний. Если вопрос становится историческим, а не текущим, расширяйте поверхность до [KV FastData API](https://docs.fastnear.com/ru/fastdata/kv).
 
 ## NEAR Social и точные чтения BOS
 
@@ -3023,48 +3058,9 @@ curl -s "$RPC_URL" \
 
 `UNKNOWN_ACCOUNT` — это и есть доказательство. Если бы `CreateAccount` закрепился, `view_account` вернул бы результат; раз нет — предыдущие `Transfer` и `AddKey` из того же batched-receipt тоже не закрепились.
 
-### Почему этот вызов контракта выглядел успешным, но потом receipt упал?
+### Когда транзакция выглядит успешной — что на самом деле произошло?
 
-Одна транзакция может закончиться тем, что внешний handoff рапортует `SuccessReceiptId`, а дочерний receipt при этом тихо падает — это и есть async-модель NEAR, и `/v0/transactions` выдаёт весь timeline за один запрос.
-
-```bash
-TX_BASE_URL=https://tx.main.fastnear.com
-TX_HASH=2KhhB1uDScGCFQfVchep7DiZTGTxMcgfUYHNzwf5e6uL
-
-curl -s "$TX_BASE_URL/v0/transactions" \
-  -H 'content-type: application/json' \
-  --data "$(jq -nc --arg tx_hash "$TX_HASH" '{tx_hashes: [$tx_hash]}')" \
-  | jq '{
-      tx_handoff: .transactions[0].execution_outcome.outcome.status,
-      outer_method: .transactions[0].transaction.actions[0].FunctionCall.method_name,
-      descendant_failures: [
-        .transactions[0].receipts[]
-        | select(.execution_outcome.outcome.status.Failure != null)
-        | {
-            receiver_id: .receipt.receiver_id,
-            method_name: (.receipt.receipt.Action.actions[0].FunctionCall.method_name // "system"),
-            block_height: .execution_outcome.block_height,
-            failure: .execution_outcome.outcome.status.Failure
-          }
-      ],
-      receipt_timeline: [
-        .transactions[0].receipts[]
-        | {
-            receiver_id: .receipt.receiver_id,
-            method_name: (.receipt.receipt.Action.actions[0].FunctionCall.method_name // "system"),
-            status_class: (.execution_outcome.outcome.status | keys[0])
-          }
-      ]
-    }'
-```
-
-Для зафиксированной транзакции mainnet `tx_handoff` — `SuccessReceiptId`: транзакция чисто запустила свой первый receipt. Если смотреть только сюда, можно назвать это победой. `descendant_failures` рассказывают вторую историю: `ft_on_transfer` на `v2.ref-finance.near` упал с `E51: contract paused` — DEX был на паузе во время этого свопа и не мог принять wrapped NEAR. А `receipt_timeline` показывает, как история разрешилась: callback `ft_resolve_transfer` на `wrap.near` всё равно отработал и вывел лог `Refund`, вернув wrapped NEAR отправителю.
-
-Успех receipt не транзитивен. Протокол может чисто отдать handoff и при этом увидеть, как отцеплённая работа провалится позже. Если ваше приложение «выглядело успешным», но деньги всё равно вернулись, пройдите этот же timeline — разделение видно на индексированном ответе без отдельного RPC status-запроса. Чтобы отдельно проверить, что ваш callback отработал, см. [Отработал ли мой callback?](#отработал-ли-мой-callback).
-
-### Отработал ли мой callback?
-
-Кросс-контрактные вызовы NEAR возвращаются через callback-receipt на исходном контракте. Отработал ли этот callback — это одна строка с `any(...)` против индексированного списка receipts; а полная история refund выпадает из того же ответа.
+Внешний `execution_outcome.outcome.status` рапортует `SuccessReceiptId`, как только сработал handoff первого receipt, — и ничего не говорит о том, успешны ли дочерние receipts и отработал ли callback на исходном контракте. Один pipeline над `/v0/transactions` отвечает сразу на все три вопроса.
 
 ```bash
 TX_BASE_URL=https://tx.main.fastnear.com
@@ -3076,30 +3072,38 @@ curl -s "$TX_BASE_URL/v0/transactions" \
   -H 'content-type: application/json' \
   --data "$(jq -nc --arg tx_hash "$TX_HASH" '{tx_hashes: [$tx_hash]}')" \
   | jq --arg origin "$ORIGIN_CONTRACT_ID" --arg callback "$CALLBACK_METHOD" '{
-      top_method: .transactions[0].transaction.actions[0].FunctionCall.method_name,
-      callback_ran: any(
-        .transactions[0].receipts[];
-        .receipt.receiver_id == $origin
-        and (.receipt.receipt.Action.actions[0].FunctionCall.method_name // "") == $callback
-      ),
-      receipt_chain: [
+      outer: {
+        method: .transactions[0].transaction.actions[0].FunctionCall.method_name,
+        tx_handoff: (.transactions[0].execution_outcome.outcome.status | keys[0])
+      },
+      callback: {
+        expected_on: $origin,
+        method: $callback,
+        ran: any(
+          .transactions[0].receipts[];
+          .receipt.receiver_id == $origin
+          and (.receipt.receipt.Action.actions[0].FunctionCall.method_name // "") == $callback
+        )
+      },
+      descendant_failures: [
         .transactions[0].receipts[]
+        | select(.execution_outcome.outcome.status.Failure != null)
         | {
             receiver_id: .receipt.receiver_id,
             method: (.receipt.receipt.Action.actions[0].FunctionCall.method_name // "system"),
-            block: .execution_outcome.block_height,
-            status: (.execution_outcome.outcome.status | keys[0]),
-            logs: .execution_outcome.outcome.logs
+            cause: .execution_outcome.outcome.status.Failure
           }
       ]
     }'
 ```
 
-Для зафиксированной транзакции `ft_transfer_call` на `wrap.near` передаёт управление в `ft_on_transfer` на `v2.ref-finance.near`, который **падает**. Callback `ft_resolve_transfer` всё равно выполняется на `wrap.near` и логирует `Refund 7278020378457059679767103 from v2.ref-finance.near to …` обратно отправителю — поэтому `callback_ran: true`, несмотря на сбой дочернего receipt. Сбой ниже по цепочке не мешает исходному контракту увидеть свой callback; так async-обработка ошибок NEAR остаётся восстанавливаемой. Строки с `method: "system"` — это рантайм-возвраты газа, а не логика контракта. Чтобы привязать один из этих логов к породившему его receipt, см. [Какой receipt испустил этот лог или событие?](#какой-receipt-испустил-этот-лог-или-событие).
+Для зафиксированной транзакции `outer.method` — `ft_transfer_call`, а `outer.tx_handoff` — `SuccessReceiptId`: транзакция чисто запустила свой первый receipt, и если смотреть только сюда, можно назвать это победой. `descendant_failures` рассказывают вторую историю: `ft_on_transfer` на `v2.ref-finance.near` упал с `E51: contract paused` — DEX был на паузе во время этого свопа и не мог принять wrapped NEAR. `callback.ran: true` — третью: callback `ft_resolve_transfer` на `wrap.near` всё равно отработал. Сбой ниже по цепочке никогда не мешает callback исходного контракта — именно так NEP-141 возвращает отправителю средства, когда получатель их отклонил.
+
+Успех receipt не транзитивен. Протокол может чисто отдать handoff и при этом увидеть, как отцеплённая работа провалится позже; callback исходного контракта отработает в любом случае. Прочитайте эти три поля вместе — и async-история становится читаемой без ручного обхода цепочки receipts. Чтобы вытянуть сам лог `Refund`, переходите к [Какой receipt испустил этот лог или событие?](#какой-receipt-испустил-этот-лог-или-событие).
 
 ### Сопоставить запрос OutLayer с его TEE-разрешением
 
-[OutLayer](https://outlayer.fastnear.com) разделяет один логический вызов на две транзакции: пользователь вызывает `request_execution` на `outlayer.near`, worker в Intel TDX запускает нужный WASM off-chain, и позже `worker.outlayer.near` вызывает `submit_execution_output_and_resolve` с результатом. Один batch на `/v0/transactions` с обоими хешами возвращает всё сопоставление — метод, корреляционные идентификаторы и TEE-отпечаток — без отдельного worker-запроса.
+[OutLayer](https://outlayer.fastnear.com) разделяет один логический вызов на две транзакции: пользователь подписывает `request_execution` на `outlayer.near`, worker в Intel TDX запускает нужный WASM off-chain, затем `worker.outlayer.near` присылает результат через `submit_execution_output_and_resolve`. Обе половины несут один и тот же `request_id` — передайте оба tx-хеша в один запрос `/v0/transactions` и извлеките это поле с каждой стороны, чтобы подтвердить пару.
 
 ```bash
 TX_BASE_URL=https://tx.main.fastnear.com
@@ -3112,30 +3116,25 @@ curl -s "$TX_BASE_URL/v0/transactions" \
   | jq '[
       .transactions[]
       | {
+          role: (if .transaction.actions[0].FunctionCall.method_name == "request_execution"
+                 then "request" else "worker" end),
           hash: .transaction.hash,
           signer: .transaction.signer_id,
           method: .transaction.actions[0].FunctionCall.method_name,
           block: .execution_outcome.block_height,
-          evidence: (
+          request_id: (
             if .transaction.actions[0].FunctionCall.method_name == "request_execution"
-            then (.receipts[0].execution_outcome.outcome.logs
-                  | map(select(startswith("EVENT_JSON"))) | .[0]
-                  | sub("EVENT_JSON:"; "") | fromjson | .data[0] as $e
-                  | ($e.request_data | fromjson) as $r
-                  | {request_id: $r.request_id, sender_id: $r.sender_id, project_id: $r.project_id,
-                     data_id: $e.data_id, code_hash: $r.code_source.WasmUrl.hash,
-                     input_preview: ($r.input_data | .[0:80] + "…")})
+            then (.receipts[0].execution_outcome.outcome.logs[] | select(startswith("EVENT_JSON"))
+                  | sub("EVENT_JSON:"; "") | fromjson | .data[0].request_data | fromjson | .request_id)
             else (.receipts[0].receipt.receipt.Action.actions[0].FunctionCall.args
-                  | @base64d | fromjson
-                  | {request_id, success: .output.Json.success, encrypted_bytes: (.output.Json.encrypted_data | length),
-                     instructions: .resources_used.instructions, time_ms: .resources_used.time_ms})
+                  | @base64d | fromjson | .request_id)
             end
           )
         }
     ]'
 ```
 
-Обе строки несут `request_id: 1868`. Half-запрос, подписанный `retrorn.near` в блоке `194832281`, вызывает проект `zavodil.near/near-email` с действием `delete_email` и 32-байтным `data_id` — это идентификатор payload yield/resume NEAR, который контракт использует внутри, чтобы приостановить on-chain-обещание, пока worker выполняется. Half-worker попадает через 11 блоков и рапортует `success: true`, `instructions: 53075053`, `time_ms: 2401` и 21 568-байтный зашифрованный результат; эти цифры `resources_used` — тот самый TEE-отпечаток, который можно сверить с лимитами из запроса. `/v0/transactions` отдаёт исторические пары бессрочно, поэтому archival RPC для самой трассировки не нужен — тянитесь к [archival RPC](https://archival-rpc.mainnet.fastnear.com) только когда нужно сверять состояние контракта на высоте блока запроса.
+Обе строки несут `request_id: 1868`, подтверждая пару. Половина-запрос, подписанная `retrorn.near` в блоке `194832281`, лежит в логе `EVENT_JSON:` её receipt (это yield/resume-паттерн NEAR — on-chain-обещание приостанавливается, пока TDX-worker выполняется). Половина-worker приходит через 11 блоков с `submit_execution_output_and_resolve`, подписанной `worker.outlayer.near`, и её `request_id` достаётся прямо из base64-обёрнутых `FunctionCall.args`. Те же два payload несут и более богатый отпечаток — `sender_id`, `project_id`, `code_hash`, `resources_used.instructions`, `resources_used.time_ms`, размер зашифрованного результата в байтах — если нужно проверить, что именно исполнилось; этот минимальный pipeline лишь подтверждает, что половины принадлежат друг другу. `/v0/transactions` отдаёт исторические пары бессрочно, поэтому archival RPC для самой трассировки не нужен даже через недели.
 
 ## Частые ошибки
 
@@ -33138,3 +33137,10 @@ curl -s "$TX_BASE_URL/v0/transactions" \
   "refName": "TransfersResponse"
 }
 ```
+---
+## О FastNear
+
+- FastNear обрабатывает более 10 млрд запросов в месяц.
+- FastNear управляет более чем 100 нодами по всему миру.
+- FastNear предлагает щедрые кредиты и бесплатный пробный период.
+- Быстро получите пробный аккаунт на [dashboard.fastnear.com](https://dashboard.fastnear.com).

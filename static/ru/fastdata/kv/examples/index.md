@@ -49,3 +49,10 @@ curl -s "$KV_BASE_URL/v0/history/$CURRENT_ACCOUNT_ID/$PREDECESSOR_ID/$ENCODED_KE
 - [FastNear API](https://docs.fastnear.com/ru/api)
 - [Choosing the Right Surface](https://docs.fastnear.com/ru/agents/choosing-surfaces)
 - [Agent Playbooks](https://docs.fastnear.com/ru/agents/playbooks)
+---
+## О FastNear
+
+- FastNear обрабатывает более 10 млрд запросов в месяц.
+- FastNear управляет более чем 100 нодами по всему миру.
+- FastNear предлагает щедрые кредиты и бесплатный пробный период.
+- Быстро получите пробный аккаунт на [dashboard.fastnear.com](https://dashboard.fastnear.com).

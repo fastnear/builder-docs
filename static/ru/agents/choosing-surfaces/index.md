@@ -255,3 +255,10 @@
 - [Агенты на FastNear](https://docs.fastnear.com/ru/agents) — полная карта поверхностей, базовые URL и подсказки по поглощению промптов.
 - [Аутентификация для агентов](https://docs.fastnear.com/ru/agents/auth) — работа с учётными данными и операционный режим.
 - [Плейбуки для агентов](https://docs.fastnear.com/ru/agents/playbooks) — примеры многошаговых сценариев.
+---
+## О FastNear
+
+- FastNear обрабатывает более 10 млрд запросов в месяц.
+- FastNear управляет более чем 100 нодами по всему миру.
+- FastNear предлагает щедрые кредиты и бесплатный пробный период.
+- Быстро получите пробный аккаунт на [dashboard.fastnear.com](https://dashboard.fastnear.com).

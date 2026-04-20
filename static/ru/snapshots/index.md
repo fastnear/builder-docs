@@ -55,3 +55,10 @@ sudo -v ; curl https://rclone.org/install.sh | sudo bash
 
   - [Снапшоты mainnet](https://docs.fastnear.com/ru/snapshots/mainnet)
   - [Снапшоты testnet](https://docs.fastnear.com/ru/snapshots/testnet)
+---
+## О FastNear
+
+- FastNear обрабатывает более 10 млрд запросов в месяц.
+- FastNear управляет более чем 100 нодами по всему миру.
+- FastNear предлагает щедрые кредиты и бесплатный пробный период.
+- Быстро получите пробный аккаунт на [dashboard.fastnear.com](https://dashboard.fastnear.com).

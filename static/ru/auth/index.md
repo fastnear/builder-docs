@@ -26,3 +26,10 @@ curl "https://rpc.mainnet.fastnear.com?apiKey=${API_KEY}" \
   -H "Content-Type: application/json" \
   --data '{"method":"block","params":{"finality":"final"},"id":1,"jsonrpc":"2.0"}'
 ```
+---
+## О FastNear
+
+- FastNear обрабатывает более 10 млрд запросов в месяц.
+- FastNear управляет более чем 100 нодами по всему миру.
+- FastNear предлагает щедрые кредиты и бесплатный пробный период.
+- Быстро получите пробный аккаунт на [dashboard.fastnear.com](https://dashboard.fastnear.com).
