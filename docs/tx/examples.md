@@ -214,6 +214,46 @@ curl -s "$TX_BASE_URL/v0/transactions" \
 
 For the pinned tx, `ft_transfer_call` on `wrap.near` hands off to `v2.ref-finance.near`'s `ft_on_transfer`, which **fails**. The callback `ft_resolve_transfer` still runs on `wrap.near` and logs `Refund 7278020378457059679767103 from v2.ref-finance.near to …` back to the sender — so `callback_ran: true` even though the downstream receipt failed. A downstream failure never prevents the origin contract from seeing its callback; that's how NEAR async error handling stays recoverable. The `method: "system"` rows are runtime gas refunds, not contract logic. To attribute one of the logs above to its emitting receipt, see [Which receipt emitted this log or event?](#which-receipt-emitted-this-log-or-event).
 
+### Pair one OutLayer request with its TEE worker resolution
+
+[OutLayer](https://outlayer.fastnear.com) splits one logical call across two transactions: a user calls `request_execution` on `outlayer.near`, an Intel TDX worker runs the requested WASM off-chain, and `worker.outlayer.near` later calls `submit_execution_output_and_resolve` with the result. One `/v0/transactions` batch with both hashes returns the full pairing — method, correlation IDs, and TEE fingerprint — without a separate worker query.
+
+```bash
+TX_BASE_URL=https://tx.main.fastnear.com
+REQUEST_TX=BZDQAxEdpQ9wUGXmXTa2APwFLDTTqTy5ucrBPsfgZeyz
+WORKER_TX=3NYD4Mkn5cwkuVkGP9PPoiJ9PB5Vr7v6r8CwSswtHVA3
+
+curl -s "$TX_BASE_URL/v0/transactions" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc --arg a "$REQUEST_TX" --arg b "$WORKER_TX" '{tx_hashes: [$a, $b]}')" \
+  | jq '[
+      .transactions[]
+      | {
+          hash: .transaction.hash,
+          signer: .transaction.signer_id,
+          method: .transaction.actions[0].FunctionCall.method_name,
+          block: .execution_outcome.block_height,
+          evidence: (
+            if .transaction.actions[0].FunctionCall.method_name == "request_execution"
+            then (.receipts[0].execution_outcome.outcome.logs
+                  | map(select(startswith("EVENT_JSON"))) | .[0]
+                  | sub("EVENT_JSON:"; "") | fromjson | .data[0] as $e
+                  | ($e.request_data | fromjson) as $r
+                  | {request_id: $r.request_id, sender_id: $r.sender_id, project_id: $r.project_id,
+                     data_id: $e.data_id, code_hash: $r.code_source.WasmUrl.hash,
+                     input_preview: ($r.input_data | .[0:80] + "…")})
+            else (.receipts[0].receipt.receipt.Action.actions[0].FunctionCall.args
+                  | @base64d | fromjson
+                  | {request_id, success: .output.Json.success, encrypted_bytes: (.output.Json.encrypted_data | length),
+                     instructions: .resources_used.instructions, time_ms: .resources_used.time_ms})
+            end
+          )
+        }
+    ]'
+```
+
+Both rows carry `request_id: 1868`. The request half, signed by `retrorn.near` in block `194832281`, calls the `zavodil.near/near-email` project with a `delete_email` action and a 32-byte `data_id` — that's NEAR's yield/resume payload identifier, used internally to pause the on-chain promise while the worker runs. The worker half lands 11 blocks later and reports `success: true`, `instructions: 53075053`, `time_ms: 2401`, and a 21,568-byte encrypted result; those `resources_used` figures are the TEE fingerprint you can audit against the request's stated limits. `/v0/transactions` serves historical pairs indefinitely, so you don't need archival RPC to trace this even weeks later — reach for [archival RPC](https://archival-rpc.mainnet.fastnear.com) only when cross-checking contract state at the request's block height.
+
 ## Common mistakes
 
 - Trying to submit a transaction from the history API instead of raw RPC.
