@@ -16,7 +16,7 @@ page_actions:
 
 ```bash
 ACCOUNT_ID=root.near
-FASTNEAR_API_KEY=your_api_key
+FASTNEAR_API_KEY=
 
 curl -s "https://api.fastnear.com/v1/account/$ACCOUNT_ID/full" \
   -H "Authorization: Bearer $FASTNEAR_API_KEY" \
@@ -37,7 +37,7 @@ curl -s "https://api.fastnear.com/v1/account/$ACCOUNT_ID/full" \
 
 ```bash
 PUBLIC_KEY='ed25519:CCaThr3uokqnUs6Z5vVnaDcJdrfuTpYJHJWcAGubDjT'
-FASTNEAR_API_KEY=your_api_key
+FASTNEAR_API_KEY=
 
 LOOKUP="$(curl -s "https://api.fastnear.com/v1/public_key/$(jq -rn --arg k "$PUBLIC_KEY" '$k | @uri')" \
   -H "Authorization: Bearer $FASTNEAR_API_KEY")"
@@ -59,7 +59,7 @@ curl -s "https://api.fastnear.com/v1/account/$ACCOUNT_ID/full" \
 
 ```bash
 ACCOUNT_ID=root.near
-FASTNEAR_API_KEY=your_api_key
+FASTNEAR_API_KEY=
 
 curl -s "https://api.fastnear.com/v1/account/$ACCOUNT_ID/full" \
   -H "Authorization: Bearer $FASTNEAR_API_KEY" \
@@ -92,7 +92,7 @@ jq считает в IEEE-754 double, поэтому NEAR-значения вы�
 
 ```bash
 ACCOUNT_ID=root.near
-FASTNEAR_API_KEY=your_api_key
+FASTNEAR_API_KEY=
 
 curl -s "https://api.fastnear.com/v1/account/$ACCOUNT_ID/full" \
   -H "Authorization: Bearer $FASTNEAR_API_KEY" \
@@ -123,7 +123,7 @@ curl -s "https://api.fastnear.com/v1/account/$ACCOUNT_ID/full" \
 ```bash
 ACCOUNT_ID=root.near
 PUBLISHER=sharddog.near
-FASTNEAR_API_KEY=your_api_key
+FASTNEAR_API_KEY=
 
 curl -s "https://api.fastnear.com/v1/account/$ACCOUNT_ID/nft" \
   -H "Authorization: Bearer $FASTNEAR_API_KEY" \
@@ -155,7 +155,7 @@ curl -s "https://api.fastnear.com/v1/account/$ACCOUNT_ID/nft" \
 ```bash
 ACCOUNT_ID=root.near
 LIQUID_PROVIDERS_JSON='["meta-pool.near","lst.rhealab.near","linear-protocol.near"]'
-FASTNEAR_API_KEY=your_api_key
+FASTNEAR_API_KEY=
 
 STAKING="$(curl -s "https://api.fastnear.com/v1/account/$ACCOUNT_ID/staking" \
   -H "Authorization: Bearer $FASTNEAR_API_KEY")"

@@ -18,7 +18,7 @@ page_actions:
 CURRENT_ACCOUNT_ID=social.near
 PREDECESSOR_ID=james.near
 KEY='graph/follow/sleet.near'
-FASTNEAR_API_KEY=your_api_key
+FASTNEAR_API_KEY=
 
 ENCODED_KEY="$(jq -rn --arg key "$KEY" '$key | @uri')"
 
@@ -51,7 +51,7 @@ curl -s "https://kv.main.fastnear.com/v0/history/$CURRENT_ACCOUNT_ID/$PREDECESSO
 
 ```bash
 PREDECESSOR_ID=jemartel.near
-FASTNEAR_API_KEY=your_api_key
+FASTNEAR_API_KEY=
 
 FIRST="$(curl -s "https://kv.main.fastnear.com/v0/all/$PREDECESSOR_ID" \
   -H "Authorization: Bearer $FASTNEAR_API_KEY" \

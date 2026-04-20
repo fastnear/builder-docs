@@ -101,7 +101,7 @@ Bad pattern:
 Public endpoints often work without a key. Add a key for higher limits, a shared authenticated posture, or paid access patterns. The same key works across every FastNear API above, including the regular and archival RPC hosts; send it either as an HTTP header or a URL parameter:
 
 ```bash title="Authorization header"
-FASTNEAR_API_KEY=your_api_key
+FASTNEAR_API_KEY=
 
 curl "https://rpc.mainnet.fastnear.com" \
   -H "Authorization: Bearer $FASTNEAR_API_KEY" \
@@ -110,7 +110,7 @@ curl "https://rpc.mainnet.fastnear.com" \
 ```
 
 ```bash title="URL parameter"
-FASTNEAR_API_KEY=your_api_key
+FASTNEAR_API_KEY=
 
 curl "https://rpc.mainnet.fastnear.com?apiKey=$FASTNEAR_API_KEY"
 ```

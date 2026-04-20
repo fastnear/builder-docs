@@ -20,7 +20,7 @@ page_actions:
 
 ```bash
 ACCOUNT_ID=root.near
-FASTNEAR_API_KEY=your_api_key
+FASTNEAR_API_KEY=
 
 curl -s "https://rpc.mainnet.fastnear.com" \
   -H "Authorization: Bearer $FASTNEAR_API_KEY" \
@@ -43,7 +43,7 @@ curl -s "https://rpc.mainnet.fastnear.com" \
 ```bash
 TX_HASH=CVyG2xLJ6fuKCtULAxMnWTh2GL5ey2UUiTcgYT3M6Pow
 SIGNER_ACCOUNT_ID=mike.testnet
-FASTNEAR_API_KEY=your_api_key
+FASTNEAR_API_KEY=
 
 curl -s "https://archival-rpc.testnet.fastnear.com" \
   -H "Authorization: Bearer $FASTNEAR_API_KEY" \
@@ -75,7 +75,7 @@ curl -s "https://archival-rpc.testnet.fastnear.com" \
 
 ```bash
 EMPTY_TX_ROOT=11111111111111111111111111111111
-FASTNEAR_API_KEY=your_api_key
+FASTNEAR_API_KEY=
 
 BLOCK_HASH="$(curl -s "https://rpc.mainnet.fastnear.com" -H "Authorization: Bearer $FASTNEAR_API_KEY" -H 'content-type: application/json' \
   --data '{"jsonrpc":"2.0","id":"fastnear","method":"status","params":[]}' \
@@ -131,7 +131,7 @@ fi
 ```bash
 ACCOUNT_ID=root.near
 RECEIVER_ID=social.near
-FASTNEAR_API_KEY=your_api_key
+FASTNEAR_API_KEY=
 
 curl -s "https://rpc.mainnet.fastnear.com" \
   -H "Authorization: Bearer $FASTNEAR_API_KEY" \
@@ -172,7 +172,7 @@ View-метод вроде `get_num` всё равно заставляет уз
 
 ```bash
 CONTRACT_ID=counter.near-examples.testnet
-FASTNEAR_API_KEY=your_api_key
+FASTNEAR_API_KEY=
 
 RAW_B64="$(curl -s "https://rpc.testnet.fastnear.com" -H "Authorization: Bearer $FASTNEAR_API_KEY" -H 'content-type: application/json' \
   --data "$(jq -nc --arg contract "$CONTRACT_ID" '{
@@ -201,7 +201,7 @@ jq -n --arg raw "$RAW_B64" --argjson val "$DECODED_I8" '{raw_bytes_base64: $raw,
 ```bash
 ACCOUNT_ID=root.near         # account you're writing under
 SIGNER_ACCOUNT_ID=root.near  # account signing the transaction
-FASTNEAR_API_KEY=your_api_key
+FASTNEAR_API_KEY=
 
 STORAGE_ARGS_B64="$(jq -nc --arg account_id "$ACCOUNT_ID" '{account_id:$account_id}' | base64 | tr -d '\n')"
 
@@ -243,7 +243,7 @@ SocialDB хранит BOS-виджеты как ключи `<account>/widget/<na
 ```bash
 ACCOUNT_ID=mob.near
 WIDGET_NAME=Profile
-FASTNEAR_API_KEY=your_api_key
+FASTNEAR_API_KEY=
 
 KEYS_ARGS="$(jq -nc --arg account_id "$ACCOUNT_ID" '{
   keys: [($account_id + "/widget/*")],

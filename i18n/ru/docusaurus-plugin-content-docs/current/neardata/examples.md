@@ -17,7 +17,7 @@ NEAR Data возвращает каждый блок полностью гидр
 `/v0/last_block/final` отдаёт 302-редирект на текущий финализированный блок. Прежде чем фильтровать по конкретному контракту, полезно увидеть, как выглядит один блок на уровне протокола: транзакции приходят с разбивкой по shard, поэтому общее число транзакций в блоке — это сумма по shards, а не одно поле верхнего уровня.
 
 ```bash
-FASTNEAR_API_KEY=your_api_key
+FASTNEAR_API_KEY=
 
 curl -sL "https://mainnet.neardata.xyz/v0/last_block/final" \
   -H "Authorization: Bearer $FASTNEAR_API_KEY" \
@@ -37,7 +37,7 @@ curl -sL "https://mainnet.neardata.xyz/v0/last_block/final" \
 
 ```bash
 TARGET_CONTRACT=intents.near
-FASTNEAR_API_KEY=your_api_key
+FASTNEAR_API_KEY=
 
 curl -sL "https://mainnet.neardata.xyz/v0/last_block/final" \
   -H "Authorization: Bearer $FASTNEAR_API_KEY" \
@@ -62,7 +62,7 @@ Optimistic-блоки ходят по `/v0/block_opt/{height}` примерно 
 
 ```bash
 TARGET_CONTRACT=intents.near
-FASTNEAR_API_KEY=your_api_key
+FASTNEAR_API_KEY=
 
 count_touches() {
   jq --arg contract "$1" '
@@ -97,7 +97,7 @@ fi
 
 ```bash
 TARGET_CONTRACT=intents.near
-FASTNEAR_API_KEY=your_api_key
+FASTNEAR_API_KEY=
 
 HEAD="$(curl -sL "https://mainnet.neardata.xyz/v0/last_block/final" \
   -H "Authorization: Bearer $FASTNEAR_API_KEY" | jq '.block.header.height')"

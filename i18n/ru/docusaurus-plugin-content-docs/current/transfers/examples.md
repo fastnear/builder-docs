@@ -16,7 +16,7 @@ page_actions:
 
 ```bash
 ACCOUNT_ID=root.near
-FASTNEAR_API_KEY=your_api_key
+FASTNEAR_API_KEY=
 
 curl -s "https://transfers.main.fastnear.com/v0/transfers" \
   -H "Authorization: Bearer $FASTNEAR_API_KEY" \
@@ -42,7 +42,7 @@ curl -s "https://transfers.main.fastnear.com/v0/transfers" \
 
 ```bash
 ACCOUNT_ID=root.near
-FASTNEAR_API_KEY=your_api_key
+FASTNEAR_API_KEY=
 
 FEED="$(curl -s "https://transfers.main.fastnear.com/v0/transfers" \
   -H "Authorization: Bearer $FASTNEAR_API_KEY" \

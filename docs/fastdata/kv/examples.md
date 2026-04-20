@@ -18,7 +18,7 @@ When you already know the contract, predecessor, and exact key, start narrow. `l
 CURRENT_ACCOUNT_ID=social.near
 PREDECESSOR_ID=james.near
 KEY='graph/follow/sleet.near'
-FASTNEAR_API_KEY=your_api_key
+FASTNEAR_API_KEY=
 
 ENCODED_KEY="$(jq -rn --arg key "$KEY" '$key | @uri')"
 
@@ -51,7 +51,7 @@ For an exact follow-edge style key like this, `latest` tells you the current ind
 
 ```bash
 PREDECESSOR_ID=jemartel.near
-FASTNEAR_API_KEY=your_api_key
+FASTNEAR_API_KEY=
 
 FIRST="$(curl -s "https://kv.main.fastnear.com/v0/all/$PREDECESSOR_ID" \
   -H "Authorization: Bearer $FASTNEAR_API_KEY" \
