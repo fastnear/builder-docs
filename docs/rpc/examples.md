@@ -19,10 +19,11 @@ Start with the RPC method that answers the question. Use `tx` to track inclusion
 `view_account` is the canonical RPC query for an account's current state. One call returns the unstaked balance, any stake-locked amount, storage consumed, and the block the reading was taken at. `finality: "final"` ensures you're reading stable state, not an optimistic view.
 
 ```bash
-RPC_URL=https://rpc.mainnet.fastnear.com
-ACCOUNT_ID=mike.near
+ACCOUNT_ID=root.near
+FASTNEAR_API_KEY=${FASTNEAR_API_KEY:-your_api_key_here}
 
-curl -s "$RPC_URL" \
+curl -s "https://rpc.mainnet.fastnear.com" \
+  -H "Authorization: Bearer $FASTNEAR_API_KEY" \
   -H 'content-type: application/json' \
   --data "$(jq -nc --arg account_id "$ACCOUNT_ID" '{
     jsonrpc:"2.0",id:"fastnear",method:"query",
@@ -31,7 +32,7 @@ curl -s "$RPC_URL" \
   | jq '.result | {amount, locked, storage_usage, block_height, block_hash}'
 ```
 
-For `mike.near`, this returns `amount` (yoctoNEAR held unstaked), `locked: "0"` (nothing in validator stake or a lockup contract), and `storage_usage: 558441` — 558 KB of on-chain state. The `block_height`/`block_hash` pair anchors the reading; to read multiple accounts at the *same* block, reuse the returned `block_hash` as `block_id` on follow-up queries.
+For `root.near`, this returns `amount` (yoctoNEAR held unstaked), `locked: "0"` (nothing in validator stake or a lockup contract), and `storage_usage: 28677` — about 28.7 KB of on-chain state. The `block_height`/`block_hash` pair anchors the reading; to read multiple accounts at the *same* block, reuse the returned `block_hash` as `block_id` on follow-up queries.
 
 ## Transaction Inclusion and Finality
 
@@ -40,11 +41,12 @@ For `mike.near`, this returns `amount` (yoctoNEAR held unstaked), `locked: "0"` 
 Have a tx hash? Poll `tx` with the smallest `wait_until` threshold that answers your question.
 
 ```bash
-RPC_URL=https://rpc.testnet.fastnear.com
 TX_HASH=CVyG2xLJ6fuKCtULAxMnWTh2GL5ey2UUiTcgYT3M6Pow
 SIGNER_ACCOUNT_ID=mike.testnet
+FASTNEAR_API_KEY=${FASTNEAR_API_KEY:-your_api_key_here}
 
-curl -s "$RPC_URL" \
+curl -s "https://archival-rpc.testnet.fastnear.com" \
+  -H "Authorization: Bearer $FASTNEAR_API_KEY" \
   -H 'content-type: application/json' \
   --data "$(jq -nc --arg tx_hash "$TX_HASH" --arg signer_id "$SIGNER_ACCOUNT_ID" '{
     jsonrpc: "2.0", id: "fastnear", method: "tx",
@@ -72,14 +74,14 @@ Two handoffs from here:
 A NEAR block is a header over N shard chunks, not a flat list of transactions. `block` returns chunk headers; the transactions live one level down, inside `chunk`. There's no `block → tx` shortcut — the block doesn't carry transaction hashes, so `tx` (which needs a hash) doesn't enter this flow at all. The canonical walk is `status` → `block` → `chunk`, skipping empty chunks along the way. Most chunks in a tip block are empty — their `tx_root` is the sentinel `11111111111111111111111111111111` — so the selector has to filter.
 
 ```bash
-RPC_URL=https://rpc.mainnet.fastnear.com
 EMPTY_TX_ROOT=11111111111111111111111111111111
+FASTNEAR_API_KEY=${FASTNEAR_API_KEY:-your_api_key_here}
 
-BLOCK_HASH="$(curl -s "$RPC_URL" -H 'content-type: application/json' \
+BLOCK_HASH="$(curl -s "https://rpc.mainnet.fastnear.com" -H "Authorization: Bearer $FASTNEAR_API_KEY" -H 'content-type: application/json' \
   --data '{"jsonrpc":"2.0","id":"fastnear","method":"status","params":[]}' \
   | jq -r '.result.sync_info.latest_block_hash')"
 
-CHUNK_HASH="$(curl -s "$RPC_URL" -H 'content-type: application/json' \
+CHUNK_HASH="$(curl -s "https://rpc.mainnet.fastnear.com" -H "Authorization: Bearer $FASTNEAR_API_KEY" -H 'content-type: application/json' \
   --data "$(jq -nc --arg block_hash "$BLOCK_HASH" '{
     jsonrpc:"2.0",id:"fastnear",method:"block",params:{block_id:$block_hash}
   }')" \
@@ -89,7 +91,7 @@ CHUNK_HASH="$(curl -s "$RPC_URL" -H 'content-type: application/json' \
 if [ -z "$CHUNK_HASH" ]; then
   echo "tip block had no transactions in any chunk — rerun on the next head"
 else
-  curl -s "$RPC_URL" -H 'content-type: application/json' \
+  curl -s "https://rpc.mainnet.fastnear.com" -H "Authorization: Bearer $FASTNEAR_API_KEY" -H 'content-type: application/json' \
     --data "$(jq -nc --arg chunk_hash "$CHUNK_HASH" '{
       jsonrpc:"2.0",id:"fastnear",method:"chunk",params:{chunk_id:$chunk_hash}
     }')" \
@@ -127,11 +129,12 @@ New keys start at `block_height * 10^6` and the value increments by one per tran
 Any key with `tx_count: 0` was created and never used — the clearest candidate for cleanup. Keys scoped to a contract you no longer interact with are the next tier. The filter below narrows to `social.near`, but `RECEIVER_ID` is the only line that changes to audit a different contract.
 
 ```bash
-RPC_URL=https://rpc.mainnet.fastnear.com
-ACCOUNT_ID=mike.near
+ACCOUNT_ID=root.near
 RECEIVER_ID=social.near
+FASTNEAR_API_KEY=${FASTNEAR_API_KEY:-your_api_key_here}
 
-curl -s "$RPC_URL" \
+curl -s "https://rpc.mainnet.fastnear.com" \
+  -H "Authorization: Bearer $FASTNEAR_API_KEY" \
   -H 'content-type: application/json' \
   --data "$(jq -nc --arg account_id "$ACCOUNT_ID" '{
     jsonrpc:"2.0",id:"fastnear",method:"query",
@@ -155,7 +158,7 @@ curl -s "$RPC_URL" \
       }'
 ```
 
-For `mike.near`, this returns dozens of `social.near` function-call keys. Entries with `tx_count: 0` were created and never used — prime removal candidates. `method_names: "ANY"` means the key can call any method on `social.near`; a narrowed list like `["find_grants", "insert_grant", "delete_grant"]` means the key was scoped to one dapp's write surface.
+For `root.near`, this returns 235 total keys, including 34 function-call keys for `social.near`; 21 of those were created and never used (`tx_count: 0`) and are prime cleanup candidates. `method_names: "ANY"` means the key can call any method on `social.near`; a narrowed list like `["find_grants", "insert_grant", "delete_grant"]` means the key was scoped to one dapp's write surface.
 
 To remove one, sign a `DeleteKey` action with a **full-access** key (a function-call key cannot authorize `DeleteKey`) and submit via [`send_tx`](/rpc/transaction/send-tx). Re-run the query to confirm the key is gone.
 
@@ -168,10 +171,10 @@ A view method like `get_num` still makes the node load the contract's wasm and r
 Contracts built with `near-sdk-rs` store the top-level `#[near_bindgen]` struct under the key `STATE`. Pass `STATE` as `prefix_base64` (`U1RBVEU=` is base64 for those four ASCII bytes) and the node returns the serialized value.
 
 ```bash
-RPC_URL=https://rpc.testnet.fastnear.com
 CONTRACT_ID=counter.near-examples.testnet
+FASTNEAR_API_KEY=${FASTNEAR_API_KEY:-your_api_key_here}
 
-RAW_B64="$(curl -s "$RPC_URL" -H 'content-type: application/json' \
+RAW_B64="$(curl -s "https://rpc.testnet.fastnear.com" -H "Authorization: Bearer $FASTNEAR_API_KEY" -H 'content-type: application/json' \
   --data "$(jq -nc --arg contract "$CONTRACT_ID" '{
     jsonrpc:"2.0",id:"fastnear",method:"query",
     params:{request_type:"view_state",account_id:$contract,prefix_base64:"U1RBVEU=",finality:"final"}
@@ -196,13 +199,13 @@ These stay on exact SocialDB reads and on-chain readiness checks until the quest
 `social.near` knows two things a wallet UI can only guess at: how much storage each account has left, and whether a delegated signer is allowed to write under it. Two view calls collapse the readiness question to a single boolean.
 
 ```bash
-RPC_URL=https://rpc.mainnet.fastnear.com
-ACCOUNT_ID=mike.near         # account you're writing under
-SIGNER_ACCOUNT_ID=mike.near  # account signing the transaction
+ACCOUNT_ID=root.near         # account you're writing under
+SIGNER_ACCOUNT_ID=root.near  # account signing the transaction
+FASTNEAR_API_KEY=${FASTNEAR_API_KEY:-your_api_key_here}
 
 STORAGE_ARGS_B64="$(jq -nc --arg account_id "$ACCOUNT_ID" '{account_id:$account_id}' | base64 | tr -d '\n')"
 
-STORAGE="$(curl -s "$RPC_URL" -H 'content-type: application/json' \
+STORAGE="$(curl -s "https://rpc.mainnet.fastnear.com" -H "Authorization: Bearer $FASTNEAR_API_KEY" -H 'content-type: application/json' \
   --data "$(jq -nc --arg args "$STORAGE_ARGS_B64" '{
     jsonrpc:"2.0",id:"fastnear",method:"query",
     params:{request_type:"call_function",account_id:"social.near",method_name:"get_account_storage",args_base64:$args,finality:"final"}
@@ -213,7 +216,7 @@ if [ "$SIGNER_ACCOUNT_ID" = "$ACCOUNT_ID" ]; then
   PERMISSION=true
 else
   PERM_ARGS_B64="$(jq -nc --arg pred "$SIGNER_ACCOUNT_ID" --arg key "$ACCOUNT_ID" '{predecessor_id:$pred,key:$key}' | base64 | tr -d '\n')"
-  PERMISSION="$(curl -s "$RPC_URL" -H 'content-type: application/json' \
+  PERMISSION="$(curl -s "https://rpc.mainnet.fastnear.com" -H "Authorization: Bearer $FASTNEAR_API_KEY" -H 'content-type: application/json' \
     --data "$(jq -nc --arg args "$PERM_ARGS_B64" '{
       jsonrpc:"2.0",id:"fastnear",method:"query",
       params:{request_type:"call_function",account_id:"social.near",method_name:"is_write_permission_granted",args_base64:$args,finality:"final"}
@@ -231,23 +234,23 @@ jq -n --argjson storage "$STORAGE" --argjson permission "$PERMISSION" \
   }'
 ```
 
-For `mike.near` signing under itself, this returns `storage: {used_bytes: 139803, available_bytes: 83891}`, `permission_granted: true` (owner write), and `ready_to_publish: true`. If `storage` comes back `null` or `available_bytes: 0`, the account needs a `storage_deposit` on `social.near` before any new write can stick. If the signer differs from the target, the permission branch asks `is_write_permission_granted({predecessor_id, key})` — the same on-chain answer a dapp sees before writing on a user's behalf. See the [SocialDB API](https://github.com/NearSocial/social-db#api) for the full contract surface.
+For `root.near` signing under itself, this returns `storage: {used_bytes: 136245, available_bytes: 42484}`, `permission_granted: true` (owner write), and `ready_to_publish: true`. If `storage` comes back `null` or `available_bytes: 0`, the account needs a `storage_deposit` on `social.near` before any new write can stick. If the signer differs from the target, the permission branch asks `is_write_permission_granted({predecessor_id, key})` — the same on-chain answer a dapp sees before writing on a user's behalf. See the [SocialDB API](https://github.com/NearSocial/social-db#api) for the full contract surface.
 
 ### What does `mob.near/widget/Profile` actually contain right now?
 
 SocialDB stores BOS widgets as `<account>/widget/<name>` keys on `social.near`. One `keys` call with the `BlockHeight` return type returns the catalog plus per-widget last-write anchors; one `get` call returns the exact source.
 
 ```bash
-RPC_URL=https://rpc.mainnet.fastnear.com
 ACCOUNT_ID=mob.near
 WIDGET_NAME=Profile
+FASTNEAR_API_KEY=${FASTNEAR_API_KEY:-your_api_key_here}
 
 KEYS_ARGS="$(jq -nc --arg account_id "$ACCOUNT_ID" '{
   keys: [($account_id + "/widget/*")],
   options: {return_type: "BlockHeight"}
 }' | base64 | tr -d '\n')"
 
-curl -s "$RPC_URL" -H 'content-type: application/json' \
+curl -s "https://rpc.mainnet.fastnear.com" -H "Authorization: Bearer $FASTNEAR_API_KEY" -H 'content-type: application/json' \
   --data "$(jq -nc --arg args "$KEYS_ARGS" '{
     jsonrpc:"2.0",id:"fastnear",method:"query",
     params:{request_type:"call_function",account_id:"social.near",method_name:"keys",args_base64:$args,finality:"final"}
@@ -264,7 +267,7 @@ GET_ARGS="$(jq -nc --arg account_id "$ACCOUNT_ID" --arg widget "$WIDGET_NAME" '{
   keys: [($account_id + "/widget/" + $widget)]
 }' | base64 | tr -d '\n')"
 
-curl -s "$RPC_URL" -H 'content-type: application/json' \
+curl -s "https://rpc.mainnet.fastnear.com" -H "Authorization: Bearer $FASTNEAR_API_KEY" -H 'content-type: application/json' \
   --data "$(jq -nc --arg args "$GET_ARGS" '{
     jsonrpc:"2.0",id:"fastnear",method:"query",
     params:{request_type:"call_function",account_id:"social.near",method_name:"get",args_base64:$args,finality:"final"}

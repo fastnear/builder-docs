@@ -178,7 +178,10 @@ You never "call" another contract. You send them a letter and ask them to send o
 
 ```bash
 # Submit and get hash immediately
+FASTNEAR_API_KEY=${FASTNEAR_API_KEY:-your_api_key_here}
+
 curl -X POST https://rpc.mainnet.fastnear.com \
+  -H "Authorization: Bearer $FASTNEAR_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "jsonrpc": "2.0",
@@ -194,7 +197,10 @@ curl -X POST https://rpc.mainnet.fastnear.com \
 #### Submit Transaction (Wait for Final)
 
 ```bash
+FASTNEAR_API_KEY=${FASTNEAR_API_KEY:-your_api_key_here}
+
 curl -X POST https://rpc.mainnet.fastnear.com \
+  -H "Authorization: Bearer $FASTNEAR_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "jsonrpc": "2.0",
@@ -207,7 +213,10 @@ curl -X POST https://rpc.mainnet.fastnear.com \
 #### Check Transaction Status
 
 ```bash
-curl -X POST https://rpc.mainnet.fastnear.com \
+FASTNEAR_API_KEY=${FASTNEAR_API_KEY:-your_api_key_here}
+
+curl -X POST https://archival-rpc.mainnet.fastnear.com \
+  -H "Authorization: Bearer $FASTNEAR_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "jsonrpc": "2.0",
@@ -224,7 +233,10 @@ curl -X POST https://rpc.mainnet.fastnear.com \
 #### View Access Key (for nonce)
 
 ```bash
+FASTNEAR_API_KEY=${FASTNEAR_API_KEY:-your_api_key_here}
+
 curl -X POST https://rpc.mainnet.fastnear.com \
+  -H "Authorization: Bearer $FASTNEAR_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "jsonrpc": "2.0",
@@ -245,7 +257,10 @@ curl -X POST https://rpc.mainnet.fastnear.com \
 #### Get Recent Block Hash
 
 ```bash
+FASTNEAR_API_KEY=${FASTNEAR_API_KEY:-your_api_key_here}
+
 curl -X POST https://rpc.mainnet.fastnear.com \
+  -H "Authorization: Bearer $FASTNEAR_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "jsonrpc": "2.0",

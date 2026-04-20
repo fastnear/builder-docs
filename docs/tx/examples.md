@@ -15,10 +15,11 @@ page_actions:
 Paste the hash into `POST /v0/transactions` and one response usually holds the whole story.
 
 ```bash
-TX_BASE_URL=https://tx.main.fastnear.com
-TX_HASH=AdgNifPYpoDNS5ckfBZm36Ai6LuL5bTstuKsVdGjKwGp
+TX_HASH=7ZKnhzt2MqMNmsk13dV8GAjGu3Db8aHzSBHeNeu9MJCq
+FASTNEAR_API_KEY=${FASTNEAR_API_KEY:-your_api_key_here}
 
-curl -s "$TX_BASE_URL/v0/transactions" \
+curl -s "https://tx.main.fastnear.com/v0/transactions" \
+  -H "Authorization: Bearer $FASTNEAR_API_KEY" \
   -H 'content-type: application/json' \
   --data "$(jq -nc --arg tx_hash "$TX_HASH" '{tx_hashes: [$tx_hash]}')" \
   | jq '{
@@ -32,18 +33,19 @@ curl -s "$TX_BASE_URL/v0/transactions" \
     }'
 ```
 
-For the pinned hash, `mike.near` sent a single `Transfer` to `global-counter.mike.near` in block `194263342`, handing off into receipt `5GhZcpfKWhrpaZo5Am74QfEUFQnZBz48G7hfoLPVDXcq`. When `receipt_count > 1` or the next question is about receipt-level behavior, jump to [Which receipt emitted this log or event?](#which-receipt-emitted-this-log-or-event) or [`POST /v0/receipt`](/tx/receipt).
+For the pinned hash, `root.near` sent a single `Transfer` to `escrow.ai.near` in block `188976785`, handing off into receipt `B8QzHQZ6VnUVy8zaVXCEkWuSs7MPb34yoHYixZV3Zdj1`. When `receipt_count > 1` or the next question is about receipt-level behavior, jump to [Which receipt emitted this log or event?](#which-receipt-emitted-this-log-or-event) or [`POST /v0/receipt`](/tx/receipt).
 
 ### Which receipt emitted this log or event?
 
 List every logged receipt in the transaction with a flag for whether its logs contain your fragment. The match is provable rather than guessed: this pinned tx logs a `Transfer` on one receipt and a `Refund` on another, and only the `Refund` side flips to `true`.
 
 ```bash
-TX_BASE_URL=https://tx.main.fastnear.com
 TX_HASH=2KhhB1uDScGCFQfVchep7DiZTGTxMcgfUYHNzwf5e6uL
 LOG_FRAGMENT=Refund
+FASTNEAR_API_KEY=${FASTNEAR_API_KEY:-your_api_key_here}
 
-curl -s "$TX_BASE_URL/v0/transactions" \
+curl -s "https://tx.main.fastnear.com/v0/transactions" \
+  -H "Authorization: Bearer $FASTNEAR_API_KEY" \
   -H 'content-type: application/json' \
   --data "$(jq -nc --arg tx_hash "$TX_HASH" '{tx_hashes: [$tx_hash]}')" \
   | jq --arg fragment "$LOG_FRAGMENT" '
@@ -68,10 +70,11 @@ The `Refund` fragment attributes to receipt `9sLHQpaGz3NnMNMn8zGrDUSyktR1q6ts2ot
 `POST /v0/receipt` returns the receipt record **and** its full parent transaction in one response, so a single call covers the whole story — no follow-up `/v0/transactions` fetch needed.
 
 ```bash
-TX_BASE_URL=https://tx.main.fastnear.com
-RECEIPT_ID=5GhZcpfKWhrpaZo5Am74QfEUFQnZBz48G7hfoLPVDXcq
+RECEIPT_ID=B8QzHQZ6VnUVy8zaVXCEkWuSs7MPb34yoHYixZV3Zdj1
+FASTNEAR_API_KEY=${FASTNEAR_API_KEY:-your_api_key_here}
 
-curl -s "$TX_BASE_URL/v0/receipt" \
+curl -s "https://tx.main.fastnear.com/v0/receipt" \
+  -H "Authorization: Bearer $FASTNEAR_API_KEY" \
   -H 'content-type: application/json' \
   --data "$(jq -nc --arg receipt_id "$RECEIPT_ID" '{receipt_id: $receipt_id}')" \
   | jq '{
@@ -93,7 +96,7 @@ curl -s "$TX_BASE_URL/v0/receipt" \
     }'
 ```
 
-For the pinned receipt, this returns an `Action` receipt from `mike.near` to `global-counter.mike.near` that executed successfully in block `194263343`, one block after its parent tx `AdgNifPY…` landed — a single `Transfer` (5 NEAR, visible as `5000000000000000000000000` yocto in the raw `.transaction.transaction.actions`). If the parent tx becomes the interesting anchor, you already have the hash — reuse it with [I have one transaction hash. What happened?](#i-have-one-transaction-hash-what-happened).
+For the pinned receipt, this returns an `Action` receipt from `root.near` to `escrow.ai.near` that executed successfully in block `188976786`, one block after its parent tx `7ZKnhzt2…` landed — a single `Transfer` (3.5 NEAR, visible as `3500000000000000000000000` yocto in the raw `.transaction.transaction.actions`). If the parent tx becomes the interesting anchor, you already have the hash — reuse it with [I have one transaction hash. What happened?](#i-have-one-transaction-hash-what-happened).
 
 ## Failure and Async
 
@@ -102,12 +105,12 @@ For the pinned receipt, this returns an `Action` receipt from `mike.near` to `gl
 One batch submitted `CreateAccount → Transfer → AddKey → FunctionCall` and the final call hit a missing method. The indexed tx record already carries the ordered batch *and* the exact receipt-level failure, so one call answers "what was tried and what broke"; a `view_account` check then proves the earlier actions rolled back.
 
 ```bash
-TX_BASE_URL=https://tx.test.fastnear.com
-RPC_URL=https://rpc.testnet.fastnear.com
 TX_HASH=CrhH3xLzbNwNMGgZkgptXorwh8YmqxRGuA6Mc11MkU6M
 NEW_ACCOUNT_ID=rollback-mo4vmkig.temp.mike.testnet
+FASTNEAR_API_KEY=${FASTNEAR_API_KEY:-your_api_key_here}
 
-curl -s "$TX_BASE_URL/v0/transactions" \
+curl -s "https://tx.test.fastnear.com/v0/transactions" \
+  -H "Authorization: Bearer $FASTNEAR_API_KEY" \
   -H 'content-type: application/json' \
   --data "$(jq -nc --arg tx_hash "$TX_HASH" '{tx_hashes: [$tx_hash]}')" \
   | jq '{
@@ -129,7 +132,8 @@ The tx-level status is `SuccessReceiptId` — the transaction successfully hande
 Now prove the earlier actions rolled back by asking for the account the batch *tried* to create:
 
 ```bash
-curl -s "$RPC_URL" \
+curl -s "https://rpc.testnet.fastnear.com" \
+  -H "Authorization: Bearer $FASTNEAR_API_KEY" \
   -H 'content-type: application/json' \
   --data "$(jq -nc --arg account_id "$NEW_ACCOUNT_ID" '{
     jsonrpc: "2.0", id: "fastnear", method: "query",
@@ -145,12 +149,13 @@ curl -s "$RPC_URL" \
 A tx's outer `execution_outcome.outcome.status` reports `SuccessReceiptId` whenever the first receipt handoff worked — it says nothing about whether downstream receipts succeeded or whether the origin callback ran. One pipeline over `/v0/transactions` answers all three questions at once.
 
 ```bash
-TX_BASE_URL=https://tx.main.fastnear.com
 TX_HASH=2KhhB1uDScGCFQfVchep7DiZTGTxMcgfUYHNzwf5e6uL
 ORIGIN_CONTRACT_ID=wrap.near
 CALLBACK_METHOD=ft_resolve_transfer
+FASTNEAR_API_KEY=${FASTNEAR_API_KEY:-your_api_key_here}
 
-curl -s "$TX_BASE_URL/v0/transactions" \
+curl -s "https://tx.main.fastnear.com/v0/transactions" \
+  -H "Authorization: Bearer $FASTNEAR_API_KEY" \
   -H 'content-type: application/json' \
   --data "$(jq -nc --arg tx_hash "$TX_HASH" '{tx_hashes: [$tx_hash]}')" \
   | jq --arg origin "$ORIGIN_CONTRACT_ID" --arg callback "$CALLBACK_METHOD" '{
@@ -188,11 +193,12 @@ Receipt success is not transitive. A protocol can hand off cleanly and still see
 [OutLayer](https://outlayer.fastnear.com) splits one logical call across two transactions: a user signs `request_execution` on `outlayer.near`, an Intel TDX worker runs the requested WASM off-chain, then `worker.outlayer.near` submits the result with `submit_execution_output_and_resolve`. Both halves carry the same `request_id` — passing the two tx hashes to `/v0/transactions` in one call and extracting that field from each proves the pair.
 
 ```bash
-TX_BASE_URL=https://tx.main.fastnear.com
 REQUEST_TX=BZDQAxEdpQ9wUGXmXTa2APwFLDTTqTy5ucrBPsfgZeyz
 WORKER_TX=3NYD4Mkn5cwkuVkGP9PPoiJ9PB5Vr7v6r8CwSswtHVA3
+FASTNEAR_API_KEY=${FASTNEAR_API_KEY:-your_api_key_here}
 
-curl -s "$TX_BASE_URL/v0/transactions" \
+curl -s "https://tx.main.fastnear.com/v0/transactions" \
+  -H "Authorization: Bearer $FASTNEAR_API_KEY" \
   -H 'content-type: application/json' \
   --data "$(jq -nc --arg a "$REQUEST_TX" --arg b "$WORKER_TX" '{tx_hashes: [$a, $b]}')" \
   | jq '[

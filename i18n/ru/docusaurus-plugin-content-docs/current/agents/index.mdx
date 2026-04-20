@@ -101,14 +101,18 @@ page_actions:
 Публичные эндпоинты часто работают и без ключа. Добавьте ключ, если нужны повышенные лимиты, единая аутентифицированная модель или платные сценарии. Один и тот же ключ работает со всеми API FastNear выше, включая обычные и архивные RPC-хосты; передавайте его либо в HTTP-заголовке, либо в URL-параметре:
 
 ```bash title="Заголовок Authorization"
+FASTNEAR_API_KEY=${FASTNEAR_API_KEY:-your_api_key_here}
+
 curl "https://rpc.mainnet.fastnear.com" \
-  -H "Authorization: Bearer ${API_KEY}" \
+  -H "Authorization: Bearer $FASTNEAR_API_KEY" \
   -H "Content-Type: application/json" \
   --data '{"method":"block","params":{"finality":"final"},"id":1,"jsonrpc":"2.0"}'
 ```
 
 ```bash title="URL-параметр"
-curl "https://rpc.mainnet.fastnear.com?apiKey=${API_KEY}"
+FASTNEAR_API_KEY=${FASTNEAR_API_KEY:-your_api_key_here}
+
+curl "https://rpc.mainnet.fastnear.com?apiKey=$FASTNEAR_API_KEY"
 ```
 
 Получить ключ: [dashboard.fastnear.com](https://dashboard.fastnear.com). Операционный режим для неинтерактивных сред: [Аутентификация для агентов](/agents/auth) — ключи должны жить в переменных окружения или менеджере секретов, а не в браузерном хранилище, логах чатов или промптах. Полный сценарий и детали заголовков: [Аутентификация и доступ](/auth).

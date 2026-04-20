@@ -36,8 +36,8 @@ Avoid browser-only agent architectures that need the FastNear key in client-side
 
 | Transport | Use it when... | Notes |
 | --- | --- | --- |
-| `Authorization: Bearer ${API_KEY}` | you control the HTTP client or backend | Best default for agents. Less likely to leak into URL logs, analytics, or copied links. |
-| `?apiKey=${API_KEY}` | you are using simple curl or a system that cannot easily set headers | Still valid, but URLs tend to travel further through logs and tooling. Use it intentionally. |
+| `Authorization: Bearer ${FASTNEAR_API_KEY}` | you control the HTTP client or backend | Best default for agents. Less likely to leak into URL logs, analytics, or copied links. |
+| `?apiKey=${FASTNEAR_API_KEY}` | you are using simple curl or a system that cannot easily set headers | Still valid, but URLs tend to travel further through logs and tooling. Use it intentionally. |
 
 If you have a choice, use the header form.
 

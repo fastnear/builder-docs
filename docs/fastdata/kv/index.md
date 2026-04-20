@@ -27,14 +27,15 @@ https://kv.test.fastnear.com
 If you already know one exact key, start with the latest indexed row and stop as soon as it answers the question.
 
 ```bash
-KV_BASE_URL=https://kv.main.fastnear.com
 CURRENT_ACCOUNT_ID=social.near
 PREDECESSOR_ID=james.near
 KEY='graph/follow/sleet.near'
+FASTNEAR_API_KEY=${FASTNEAR_API_KEY:-your_api_key_here}
 
 ENCODED_KEY="$(jq -rn --arg key "$KEY" '$key | @uri')"
 
-curl -s "$KV_BASE_URL/v0/latest/$CURRENT_ACCOUNT_ID/$PREDECESSOR_ID/$ENCODED_KEY" \
+curl -s "https://kv.main.fastnear.com/v0/latest/$CURRENT_ACCOUNT_ID/$PREDECESSOR_ID/$ENCODED_KEY" \
+  -H "Authorization: Bearer $FASTNEAR_API_KEY" \
   | jq '{
       latest: (
         .entries[0]

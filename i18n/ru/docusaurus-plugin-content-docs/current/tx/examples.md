@@ -15,10 +15,11 @@ page_actions:
 Вставьте хеш в `POST /v0/transactions` — один ответ обычно содержит всю историю.
 
 ```bash
-TX_BASE_URL=https://tx.main.fastnear.com
-TX_HASH=AdgNifPYpoDNS5ckfBZm36Ai6LuL5bTstuKsVdGjKwGp
+TX_HASH=7ZKnhzt2MqMNmsk13dV8GAjGu3Db8aHzSBHeNeu9MJCq
+FASTNEAR_API_KEY=${FASTNEAR_API_KEY:-your_api_key_here}
 
-curl -s "$TX_BASE_URL/v0/transactions" \
+curl -s "https://tx.main.fastnear.com/v0/transactions" \
+  -H "Authorization: Bearer $FASTNEAR_API_KEY" \
   -H 'content-type: application/json' \
   --data "$(jq -nc --arg tx_hash "$TX_HASH" '{tx_hashes: [$tx_hash]}')" \
   | jq '{
@@ -32,18 +33,19 @@ curl -s "$TX_BASE_URL/v0/transactions" \
     }'
 ```
 
-Для зафиксированного хеша `mike.near` отправил один `Transfer` на `global-counter.mike.near` в блоке `194263342`, с передачей в receipt `5GhZcpfKWhrpaZo5Am74QfEUFQnZBz48G7hfoLPVDXcq`. Если `receipt_count > 1` или следующий вопрос касается поведения на уровне receipt, переходите к [Какой receipt испустил этот лог или событие?](#какой-receipt-испустил-этот-лог-или-событие) или [`POST /v0/receipt`](/tx/receipt).
+Для зафиксированного хеша `root.near` отправил один `Transfer` на `escrow.ai.near` в блоке `188976785`, с передачей в receipt `B8QzHQZ6VnUVy8zaVXCEkWuSs7MPb34yoHYixZV3Zdj1`. Если `receipt_count > 1` или следующий вопрос касается поведения на уровне receipt, переходите к [Какой receipt испустил этот лог или событие?](#какой-receipt-испустил-этот-лог-или-событие) или [`POST /v0/receipt`](/tx/receipt).
 
 ### Какой receipt испустил этот лог или событие?
 
 Выведите список всех receipt транзакции с логами и флагом, содержат ли их логи ваш фрагмент. Совпадение доказывается, а не угадывается: у зафиксированной транзакции один receipt логирует `Transfer`, другой — `Refund`, и только сторона `Refund` переключается в `true`.
 
 ```bash
-TX_BASE_URL=https://tx.main.fastnear.com
 TX_HASH=2KhhB1uDScGCFQfVchep7DiZTGTxMcgfUYHNzwf5e6uL
 LOG_FRAGMENT=Refund
+FASTNEAR_API_KEY=${FASTNEAR_API_KEY:-your_api_key_here}
 
-curl -s "$TX_BASE_URL/v0/transactions" \
+curl -s "https://tx.main.fastnear.com/v0/transactions" \
+  -H "Authorization: Bearer $FASTNEAR_API_KEY" \
   -H 'content-type: application/json' \
   --data "$(jq -nc --arg tx_hash "$TX_HASH" '{tx_hashes: [$tx_hash]}')" \
   | jq --arg fragment "$LOG_FRAGMENT" '
@@ -68,10 +70,11 @@ curl -s "$TX_BASE_URL/v0/transactions" \
 `POST /v0/receipt` возвращает запись receipt **и** его полную родительскую транзакцию в одном ответе, поэтому единственного запроса хватает на всю историю — дополнительный `/v0/transactions` не нужен.
 
 ```bash
-TX_BASE_URL=https://tx.main.fastnear.com
-RECEIPT_ID=5GhZcpfKWhrpaZo5Am74QfEUFQnZBz48G7hfoLPVDXcq
+RECEIPT_ID=B8QzHQZ6VnUVy8zaVXCEkWuSs7MPb34yoHYixZV3Zdj1
+FASTNEAR_API_KEY=${FASTNEAR_API_KEY:-your_api_key_here}
 
-curl -s "$TX_BASE_URL/v0/receipt" \
+curl -s "https://tx.main.fastnear.com/v0/receipt" \
+  -H "Authorization: Bearer $FASTNEAR_API_KEY" \
   -H 'content-type: application/json' \
   --data "$(jq -nc --arg receipt_id "$RECEIPT_ID" '{receipt_id: $receipt_id}')" \
   | jq '{
@@ -93,7 +96,7 @@ curl -s "$TX_BASE_URL/v0/receipt" \
     }'
 ```
 
-Для зафиксированного receipt это возвращает `Action`-receipt от `mike.near` к `global-counter.mike.near`, который успешно выполнился в блоке `194263343`, через один блок после попадания родительской транзакции `AdgNifPY…`, — один `Transfer` (5 NEAR, в сыром `.transaction.transaction.actions` видимо как `5000000000000000000000000` yocto). Если интересным якорем становится родительская транзакция, хеш у вас уже есть — переиспользуйте его в [У меня один хеш транзакции. Что произошло?](#у-меня-один-хеш-транзакции-что-произошло).
+Для зафиксированного receipt это возвращает `Action`-receipt от `root.near` к `escrow.ai.near`, который успешно выполнился в блоке `188976786`, через один блок после попадания родительской транзакции `7ZKnhzt2…`, — один `Transfer` (3.5 NEAR, в сыром `.transaction.transaction.actions` видимо как `3500000000000000000000000` yocto). Если интересным якорем становится родительская транзакция, хеш у вас уже есть — переиспользуйте его в [У меня один хеш транзакции. Что произошло?](#у-меня-один-хеш-транзакции-что-произошло).
 
 ## Сбои и async
 
@@ -102,12 +105,12 @@ curl -s "$TX_BASE_URL/v0/receipt" \
 Один batch отправил `CreateAccount → Transfer → AddKey → FunctionCall`, и финальный вызов попал в отсутствующий метод. Индексированная запись транзакции уже несёт упорядоченный batch *и* точный сбой на уровне receipt, поэтому одного запроса хватает, чтобы ответить «что пытались и что сломалось»; проверка через `view_account` затем доказывает, что предыдущие actions откатились.
 
 ```bash
-TX_BASE_URL=https://tx.test.fastnear.com
-RPC_URL=https://rpc.testnet.fastnear.com
 TX_HASH=CrhH3xLzbNwNMGgZkgptXorwh8YmqxRGuA6Mc11MkU6M
 NEW_ACCOUNT_ID=rollback-mo4vmkig.temp.mike.testnet
+FASTNEAR_API_KEY=${FASTNEAR_API_KEY:-your_api_key_here}
 
-curl -s "$TX_BASE_URL/v0/transactions" \
+curl -s "https://tx.test.fastnear.com/v0/transactions" \
+  -H "Authorization: Bearer $FASTNEAR_API_KEY" \
   -H 'content-type: application/json' \
   --data "$(jq -nc --arg tx_hash "$TX_HASH" '{tx_hashes: [$tx_hash]}')" \
   | jq '{
@@ -129,7 +132,8 @@ curl -s "$TX_BASE_URL/v0/transactions" \
 Теперь докажите откат предыдущих actions: спросите аккаунт, который batch *пытался* создать:
 
 ```bash
-curl -s "$RPC_URL" \
+curl -s "https://rpc.testnet.fastnear.com" \
+  -H "Authorization: Bearer $FASTNEAR_API_KEY" \
   -H 'content-type: application/json' \
   --data "$(jq -nc --arg account_id "$NEW_ACCOUNT_ID" '{
     jsonrpc: "2.0", id: "fastnear", method: "query",
@@ -145,12 +149,13 @@ curl -s "$RPC_URL" \
 Внешний `execution_outcome.outcome.status` рапортует `SuccessReceiptId`, как только сработал handoff первого receipt, — и ничего не говорит о том, успешны ли дочерние receipts и отработал ли callback на исходном контракте. Один pipeline над `/v0/transactions` отвечает сразу на все три вопроса.
 
 ```bash
-TX_BASE_URL=https://tx.main.fastnear.com
 TX_HASH=2KhhB1uDScGCFQfVchep7DiZTGTxMcgfUYHNzwf5e6uL
 ORIGIN_CONTRACT_ID=wrap.near
 CALLBACK_METHOD=ft_resolve_transfer
+FASTNEAR_API_KEY=${FASTNEAR_API_KEY:-your_api_key_here}
 
-curl -s "$TX_BASE_URL/v0/transactions" \
+curl -s "https://tx.main.fastnear.com/v0/transactions" \
+  -H "Authorization: Bearer $FASTNEAR_API_KEY" \
   -H 'content-type: application/json' \
   --data "$(jq -nc --arg tx_hash "$TX_HASH" '{tx_hashes: [$tx_hash]}')" \
   | jq --arg origin "$ORIGIN_CONTRACT_ID" --arg callback "$CALLBACK_METHOD" '{
@@ -188,11 +193,12 @@ curl -s "$TX_BASE_URL/v0/transactions" \
 [OutLayer](https://outlayer.fastnear.com) разделяет один логический вызов на две транзакции: пользователь подписывает `request_execution` на `outlayer.near`, worker в Intel TDX запускает нужный WASM off-chain, затем `worker.outlayer.near` присылает результат через `submit_execution_output_and_resolve`. Обе половины несут один и тот же `request_id` — передайте оба tx-хеша в один запрос `/v0/transactions` и извлеките это поле с каждой стороны, чтобы подтвердить пару.
 
 ```bash
-TX_BASE_URL=https://tx.main.fastnear.com
 REQUEST_TX=BZDQAxEdpQ9wUGXmXTa2APwFLDTTqTy5ucrBPsfgZeyz
 WORKER_TX=3NYD4Mkn5cwkuVkGP9PPoiJ9PB5Vr7v6r8CwSswtHVA3
+FASTNEAR_API_KEY=${FASTNEAR_API_KEY:-your_api_key_here}
 
-curl -s "$TX_BASE_URL/v0/transactions" \
+curl -s "https://tx.main.fastnear.com/v0/transactions" \
+  -H "Authorization: Bearer $FASTNEAR_API_KEY" \
   -H 'content-type: application/json' \
   --data "$(jq -nc --arg a "$REQUEST_TX" --arg b "$WORKER_TX" '{tx_hashes: [$a, $b]}')" \
   | jq '[

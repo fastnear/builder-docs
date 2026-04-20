@@ -390,7 +390,10 @@ flowchart TD
 Clients can poll the `tx` RPC method with `wait_until: FINAL` to get all outcomes:
 
 ```bash
-curl -X POST https://rpc.mainnet.fastnear.com \
+FASTNEAR_API_KEY=${FASTNEAR_API_KEY:-your_api_key_here}
+
+curl -X POST https://archival-rpc.mainnet.fastnear.com \
+  -H "Authorization: Bearer $FASTNEAR_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "jsonrpc": "2.0",

@@ -17,9 +17,10 @@ NEAR Data returns each block fully hydrated as one JSON document — header plus
 `/v0/last_block/final` 302-redirects to the current finalized block. Before filtering for a specific contract, it's worth seeing what one block looks like at the protocol level: transactions arrive sharded, so the tx count for a block is a sum across shards — not a single top-level number.
 
 ```bash
-NEARDATA_BASE_URL=https://mainnet.neardata.xyz
+FASTNEAR_API_KEY=${FASTNEAR_API_KEY:-your_api_key_here}
 
-curl -sL "$NEARDATA_BASE_URL/v0/last_block/final" \
+curl -sL "https://mainnet.neardata.xyz/v0/last_block/final" \
+  -H "Authorization: Bearer $FASTNEAR_API_KEY" \
   | jq '{
       height: .block.header.height,
       timestamp_nanosec: .block.header.timestamp_nanosec,
@@ -35,10 +36,11 @@ A live block shows 9 shards and a handful of transactions scattered across them 
 `/v0/last_block/final` 302-redirects to the current finalized block. Contracts can show up in a chunk's `transactions` (when they are the `receiver_id`) or in its `receipts` (when a cross-shard call lands), so one jq pass over the shards covers both.
 
 ```bash
-NEARDATA_BASE_URL=https://mainnet.neardata.xyz
 TARGET_CONTRACT=intents.near
+FASTNEAR_API_KEY=${FASTNEAR_API_KEY:-your_api_key_here}
 
-curl -sL "$NEARDATA_BASE_URL/v0/last_block/final" \
+curl -sL "https://mainnet.neardata.xyz/v0/last_block/final" \
+  -H "Authorization: Bearer $FASTNEAR_API_KEY" \
   | jq --arg contract "$TARGET_CONTRACT" '{
       height: .block.header.height,
       contract: $contract,
@@ -59,8 +61,8 @@ curl -sL "$NEARDATA_BASE_URL/v0/last_block/final" \
 Optimistic blocks ship at `/v0/block_opt/{height}` about a second ahead of `/v0/block/{height}`. A monitoring loop can act on the optimistic signal and expect the same answer to arrive at the finalized endpoint one block later — unless network stress widens the gap, in which case the finalized fetch returns `null` and you wait.
 
 ```bash
-NEARDATA_BASE_URL=https://mainnet.neardata.xyz
 TARGET_CONTRACT=intents.near
+FASTNEAR_API_KEY=${FASTNEAR_API_KEY:-your_api_key_here}
 
 count_touches() {
   jq --arg contract "$1" '
@@ -71,13 +73,15 @@ count_touches() {
 }
 
 OPT_LOCATION="$(
-  curl -s -D - -o /dev/null "$NEARDATA_BASE_URL/v0/last_block/optimistic" \
+  curl -s -D - -o /dev/null -H "Authorization: Bearer $FASTNEAR_API_KEY" "https://mainnet.neardata.xyz/v0/last_block/optimistic" \
     | awk 'tolower($1) == "location:" {print $2}' | tr -d '\r'
 )"
 OPT_HEIGHT="${OPT_LOCATION##*/}"
 
-echo "optimistic @ $OPT_HEIGHT: $(curl -s "$NEARDATA_BASE_URL$OPT_LOCATION" | count_touches "$TARGET_CONTRACT") touches"
-FINAL="$(curl -s "$NEARDATA_BASE_URL/v0/block/$OPT_HEIGHT")"
+echo "optimistic @ $OPT_HEIGHT: $(curl -s "https://mainnet.neardata.xyz$OPT_LOCATION" \
+  -H "Authorization: Bearer $FASTNEAR_API_KEY" | count_touches "$TARGET_CONTRACT") touches"
+FINAL="$(curl -s "https://mainnet.neardata.xyz/v0/block/$OPT_HEIGHT" \
+  -H "Authorization: Bearer $FASTNEAR_API_KEY")"
 if [ "$(printf '%s' "$FINAL" | jq 'type')" = '"null"' ]; then
   echo "finalized @ $OPT_HEIGHT: not caught up yet"
 else
@@ -92,16 +96,18 @@ On a healthy mainnet the two counts match within a second. The value is in the *
 Most finalized blocks show no state mutation for any given contract — activity is sparse and shard-local. Walk back from the finalized head until the contract's state actually changes, then open that shard for the mutation payload. The block-level call tells you *which* shard; the shard-level call tells you *how*.
 
 ```bash
-NEARDATA_BASE_URL=https://mainnet.neardata.xyz
 TARGET_CONTRACT=intents.near
+FASTNEAR_API_KEY=${FASTNEAR_API_KEY:-your_api_key_here}
 
-HEAD="$(curl -sL "$NEARDATA_BASE_URL/v0/last_block/final" | jq '.block.header.height')"
+HEAD="$(curl -sL "https://mainnet.neardata.xyz/v0/last_block/final" \
+  -H "Authorization: Bearer $FASTNEAR_API_KEY" | jq '.block.header.height')"
 FOUND_HEIGHT=""
 FOUND_SHARD=""
 
 for OFFSET in $(seq 0 15); do
   H=$((HEAD - OFFSET))
-  SHARD="$(curl -s "$NEARDATA_BASE_URL/v0/block/$H" \
+  SHARD="$(curl -s "https://mainnet.neardata.xyz/v0/block/$H" \
+    -H "Authorization: Bearer $FASTNEAR_API_KEY" \
     | jq -r --arg contract "$TARGET_CONTRACT" '
         .shards[]
         | select([.state_changes[]? | select(.change.account_id? == $contract)] | length > 0)
@@ -116,7 +122,8 @@ done
 if [ -z "$FOUND_HEIGHT" ]; then
   echo "no state mutation for $TARGET_CONTRACT in the last 16 finalized blocks"
 else
-  curl -s "$NEARDATA_BASE_URL/v0/block/$FOUND_HEIGHT/shard/$FOUND_SHARD" \
+  curl -s "https://mainnet.neardata.xyz/v0/block/$FOUND_HEIGHT/shard/$FOUND_SHARD" \
+    -H "Authorization: Bearer $FASTNEAR_API_KEY" \
     | jq --arg contract "$TARGET_CONTRACT" --argjson height "$FOUND_HEIGHT" --argjson shard_id "$FOUND_SHARD" '{
         height: $height,
         shard_id: $shard_id,

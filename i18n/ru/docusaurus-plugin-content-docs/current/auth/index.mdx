@@ -43,8 +43,10 @@ import IconExternalLink from '@theme/Icon/ExternalLink';
 ## Через заголовок Authorization
 
 ```bash
+FASTNEAR_API_KEY=${FASTNEAR_API_KEY:-your_api_key_here}
+
 curl "https://rpc.mainnet.fastnear.com" \
-  -H "Authorization: Bearer ${API_KEY}" \
+  -H "Authorization: Bearer $FASTNEAR_API_KEY" \
   -H "Content-Type: application/json" \
   --data '{"method":"block","params":{"finality":"final"},"id":1,"jsonrpc":"2.0"}'
 ```
@@ -52,7 +54,9 @@ curl "https://rpc.mainnet.fastnear.com" \
 ## Через URL-параметр `?apiKey=`
 
 ```bash
-curl "https://rpc.mainnet.fastnear.com?apiKey=${API_KEY}" \
+FASTNEAR_API_KEY=${FASTNEAR_API_KEY:-your_api_key_here}
+
+curl "https://rpc.mainnet.fastnear.com?apiKey=$FASTNEAR_API_KEY" \
   -H "Content-Type: application/json" \
   --data '{"method":"block","params":{"finality":"final"},"id":1,"jsonrpc":"2.0"}'
 ```

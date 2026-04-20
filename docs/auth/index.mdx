@@ -35,24 +35,26 @@ Live example pages also support `Copy example URL` for sharing prefilled request
 
 - One FastNear API key works across RPC and API endpoints.
 - Many public reads still work without a key.
-- Prefer `Authorization: Bearer ${API_KEY}` for production backends.
-- Use `?apiKey=${API_KEY}` when headers are awkward or you are doing quick curl/debug work.
+- Prefer `Authorization: Bearer ${FASTNEAR_API_KEY}` for production backends.
+- Use `?apiKey=${FASTNEAR_API_KEY}` when headers are awkward or you are doing quick curl/debug work.
 - Agents and automations should keep the key in env vars or a secret manager, not in browser storage.
 
 ## Choose the auth form
 
 | Form | Best for | Notes |
 | --- | --- | --- |
-| `Authorization: Bearer ${API_KEY}` | production backends, workers, automations, and proxies | Best default. Keeps credentials out of copied URLs and most URL logs. |
-| `?apiKey=${API_KEY}` | simple curl, one-off debugging, systems that cannot set headers easily | Valid, but the key may end up in shell history, logs, analytics, or copied links. |
+| `Authorization: Bearer ${FASTNEAR_API_KEY}` | production backends, workers, automations, and proxies | Best default. Keeps credentials out of copied URLs and most URL logs. |
+| `?apiKey=${FASTNEAR_API_KEY}` | simple curl, one-off debugging, systems that cannot set headers easily | Valid, but the key may end up in shell history, logs, analytics, or copied links. |
 
 If you control the client, use the header form.
 
 ## Authorization header example
 
 ```bash
+FASTNEAR_API_KEY=${FASTNEAR_API_KEY:-your_api_key_here}
+
 curl "https://rpc.mainnet.fastnear.com" \
-  -H "Authorization: Bearer ${API_KEY}" \
+  -H "Authorization: Bearer $FASTNEAR_API_KEY" \
   -H "Content-Type: application/json" \
   --data '{"method":"block","params":{"finality":"final"},"id":1,"jsonrpc":"2.0"}'
 ```
@@ -60,7 +62,9 @@ curl "https://rpc.mainnet.fastnear.com" \
 ## `?apiKey=` query parameter example
 
 ```bash
-curl "https://rpc.mainnet.fastnear.com?apiKey=${API_KEY}" \
+FASTNEAR_API_KEY=${FASTNEAR_API_KEY:-your_api_key_here}
+
+curl "https://rpc.mainnet.fastnear.com?apiKey=$FASTNEAR_API_KEY" \
   -H "Content-Type: application/json" \
   --data '{"method":"block","params":{"finality":"final"},"id":1,"jsonrpc":"2.0"}'
 ```

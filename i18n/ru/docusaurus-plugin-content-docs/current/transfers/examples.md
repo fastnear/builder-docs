@@ -15,10 +15,11 @@ page_actions:
 `/v0/transfers` всего с `account_id` и `desc: true` возвращает самые свежие переводы, касающиеся этого аккаунта, по всем типам активов, в обоих направлениях сразу. В каждой строке уже есть `human_amount`, `asset_id` и `transaction_id`, так что этот поток заодно служит быстрым сканом активности до того, как вы достанете фильтры.
 
 ```bash
-TRANSFERS_BASE_URL=https://transfers.main.fastnear.com
 ACCOUNT_ID=root.near
+FASTNEAR_API_KEY=${FASTNEAR_API_KEY:-your_api_key_here}
 
-curl -s "$TRANSFERS_BASE_URL/v0/transfers" \
+curl -s "https://transfers.main.fastnear.com/v0/transfers" \
+  -H "Authorization: Bearer $FASTNEAR_API_KEY" \
   -H 'content-type: application/json' \
   --data "$(jq -nc --arg account_id "$ACCOUNT_ID" '{account_id: $account_id, desc: true, limit: 5}')" \
   | jq '{
@@ -40,11 +41,11 @@ curl -s "$TRANSFERS_BASE_URL/v0/transfers" \
 `/v0/transfers` возвращает отфильтрованную ленту плюс `resume_token`, который вы переиспользуете *без изменения фильтров*, чтобы продолжать листать. В каждой строке уже есть `human_amount`, `usd_amount`, `transaction_id` и `receipt_id` — большинство audit-вопросов закрываются без второго запроса.
 
 ```bash
-TRANSFERS_BASE_URL=https://transfers.main.fastnear.com
-TX_BASE_URL=https://tx.main.fastnear.com
 ACCOUNT_ID=root.near
+FASTNEAR_API_KEY=${FASTNEAR_API_KEY:-your_api_key_here}
 
-FEED="$(curl -s "$TRANSFERS_BASE_URL/v0/transfers" \
+FEED="$(curl -s "https://transfers.main.fastnear.com/v0/transfers" \
+  -H "Authorization: Bearer $FASTNEAR_API_KEY" \
   -H 'content-type: application/json' \
   --data "$(jq -nc --arg account_id "$ACCOUNT_ID" '{
     account_id: $account_id,
@@ -68,7 +69,8 @@ echo "$FEED" | jq '{
 ```bash
 RECEIPT_ID="$(echo "$FEED" | jq -r '.transfers[0].receipt_id')"
 
-curl -s "$TX_BASE_URL/v0/receipt" \
+curl -s "https://tx.main.fastnear.com/v0/receipt" \
+  -H "Authorization: Bearer $FASTNEAR_API_KEY" \
   -H 'content-type: application/json' \
   --data "$(jq -nc --arg receipt_id "$RECEIPT_ID" '{receipt_id: $receipt_id}')" \
   | jq '.receipt | {receipt_id, transaction_hash, receiver_id, predecessor_id, tx_block_height, is_success}'

@@ -15,10 +15,11 @@ page_actions:
 `all-by-predecessor` возвращает последние индексированные записи одного аккаунта по каждому контракту, которого он касался. Выберите интересный ключ и прогоните его через `history`, чтобы увидеть, как эта строка менялась со временем.
 
 ```bash
-KV_BASE_URL=https://kv.main.fastnear.com
 PREDECESSOR_ID=jemartel.near
+FASTNEAR_API_KEY=${FASTNEAR_API_KEY:-your_api_key_here}
 
-FIRST="$(curl -s "$KV_BASE_URL/v0/all/$PREDECESSOR_ID" \
+FIRST="$(curl -s "https://kv.main.fastnear.com/v0/all/$PREDECESSOR_ID" \
+  -H "Authorization: Bearer $FASTNEAR_API_KEY" \
   -H 'content-type: application/json' \
   --data '{"include_metadata":true,"limit":10}')"
 
@@ -37,7 +38,8 @@ CURRENT_ACCOUNT_ID="$(echo "$FIRST" | jq -r '.entries[0].current_account_id')"
 EXACT_KEY="$(echo "$FIRST" | jq -r '.entries[0].key')"
 ENCODED_KEY="$(jq -rn --arg key "$EXACT_KEY" '$key | @uri')"
 
-curl -s "$KV_BASE_URL/v0/history/$CURRENT_ACCOUNT_ID/$PREDECESSOR_ID/$ENCODED_KEY" \
+curl -s "https://kv.main.fastnear.com/v0/history/$CURRENT_ACCOUNT_ID/$PREDECESSOR_ID/$ENCODED_KEY" \
+  -H "Authorization: Bearer $FASTNEAR_API_KEY" \
   | jq '{entries: [.entries[] | {block_height, value}]}'
 ```
 

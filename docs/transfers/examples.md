@@ -15,10 +15,11 @@ page_actions:
 `/v0/transfers` with just `account_id` and `desc: true` returns the most recent transfers touching that account across every asset type, both directions mixed. Each row already carries `human_amount`, `asset_id`, and `transaction_id`, so the feed doubles as a quick activity scan before you reach for filters.
 
 ```bash
-TRANSFERS_BASE_URL=https://transfers.main.fastnear.com
 ACCOUNT_ID=root.near
+FASTNEAR_API_KEY=${FASTNEAR_API_KEY:-your_api_key_here}
 
-curl -s "$TRANSFERS_BASE_URL/v0/transfers" \
+curl -s "https://transfers.main.fastnear.com/v0/transfers" \
+  -H "Authorization: Bearer $FASTNEAR_API_KEY" \
   -H 'content-type: application/json' \
   --data "$(jq -nc --arg account_id "$ACCOUNT_ID" '{account_id: $account_id, desc: true, limit: 5}')" \
   | jq '{
@@ -40,11 +41,11 @@ For `root.near`, the latest rows mix `FtTransfer` and `MtTransfer` assets. `asse
 `/v0/transfers` returns a filtered feed plus a `resume_token` you replay with *unchanged* filters to keep paging. Each row already carries `human_amount`, `usd_amount`, `transaction_id`, and `receipt_id`, so most audit questions land without a second call.
 
 ```bash
-TRANSFERS_BASE_URL=https://transfers.main.fastnear.com
-TX_BASE_URL=https://tx.main.fastnear.com
 ACCOUNT_ID=root.near
+FASTNEAR_API_KEY=${FASTNEAR_API_KEY:-your_api_key_here}
 
-FEED="$(curl -s "$TRANSFERS_BASE_URL/v0/transfers" \
+FEED="$(curl -s "https://transfers.main.fastnear.com/v0/transfers" \
+  -H "Authorization: Bearer $FASTNEAR_API_KEY" \
   -H 'content-type: application/json' \
   --data "$(jq -nc --arg account_id "$ACCOUNT_ID" '{
     account_id: $account_id,
@@ -68,7 +69,8 @@ When one row needs its execution anchor, take its `receipt_id` straight to `/v0/
 ```bash
 RECEIPT_ID="$(echo "$FEED" | jq -r '.transfers[0].receipt_id')"
 
-curl -s "$TX_BASE_URL/v0/receipt" \
+curl -s "https://tx.main.fastnear.com/v0/receipt" \
+  -H "Authorization: Bearer $FASTNEAR_API_KEY" \
   -H 'content-type: application/json' \
   --data "$(jq -nc --arg receipt_id "$RECEIPT_ID" '{receipt_id: $receipt_id}')" \
   | jq '.receipt | {receipt_id, transaction_hash, receiver_id, predecessor_id, tx_block_height, is_success}'
