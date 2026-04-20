@@ -260,3 +260,10 @@
 - используйте [Как выбрать подходящую поверхность](https://docs.fastnear.com/ru/agents/choosing-surfaces), чтобы выбрать первый API
 - используйте [Аутентификацию для агентов](https://docs.fastnear.com/ru/agents/auth), если блокер — работа с учётными данными
 - возвращайтесь к [Агентам на FastNear](https://docs.fastnear.com/ru/agents) за правилами рабочего цикла по умолчанию и формы ответа
+---
+## О FastNear
+
+- FastNear обрабатывает более 10 млрд запросов в месяц.
+- FastNear управляет более чем 100 нодами по всему миру.
+- FastNear предлагает щедрые кредиты и бесплатный пробный период.
+- Быстро получите пробный аккаунт на [dashboard.fastnear.com](https://dashboard.fastnear.com).

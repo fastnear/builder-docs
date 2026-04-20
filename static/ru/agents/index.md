@@ -137,3 +137,10 @@ curl "https://rpc.mainnet.fastnear.com?apiKey=${API_KEY}"
 - Нужна глубина маршрутизации и компромиссы? [Как выбрать подходящую поверхность](https://docs.fastnear.com/ru/agents/choosing-surfaces)
 - Нужен режим работы с учётными данными и обращение с секретами? [Аутентификация для агентов](https://docs.fastnear.com/ru/agents/auth)
 - Нужны примеры сценариев? [Плейбуки для агентов](https://docs.fastnear.com/ru/agents/playbooks)
+---
+## О FastNear
+
+- FastNear обрабатывает более 10 млрд запросов в месяц.
+- FastNear управляет более чем 100 нодами по всему миру.
+- FastNear предлагает щедрые кредиты и бесплатный пробный период.
+- Быстро получите пробный аккаунт на [dashboard.fastnear.com](https://dashboard.fastnear.com).

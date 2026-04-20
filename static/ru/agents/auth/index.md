@@ -93,3 +93,10 @@ const response = await fetch('https://rpc.mainnet.fastnear.com', {
 - [Аутентификация и доступ](https://docs.fastnear.com/ru/auth)
 - [Агенты на FastNear](https://docs.fastnear.com/ru/agents)
 - [Как выбрать подходящую поверхность](https://docs.fastnear.com/ru/agents/choosing-surfaces)
+---
+## О FastNear
+
+- FastNear обрабатывает более 10 млрд запросов в месяц.
+- FastNear управляет более чем 100 нодами по всему миру.
+- FastNear предлагает щедрые кредиты и бесплатный пробный период.
+- Быстро получите пробный аккаунт на [dashboard.fastnear.com](https://dashboard.fastnear.com).

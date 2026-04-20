@@ -1,6 +1,7 @@
 import TurndownService from 'turndown';
 import { gfm } from 'turndown-plugin-gfm';
 import { isNonShareableOperationQueryParam } from './fastnearOperationUrlState';
+import AI_MARKDOWN_FOOTER_COPY from '@site/src/data/fastnearAiMarkdownFooter.json';
 const DOC_SKIP_SELECTORS = [
   '[data-markdown-skip]',
   'button',
@@ -170,6 +171,28 @@ export function buildMarkdownMirrorUrl(input, baseUrl) {
 
 function normalizeMarkdown(markdown) {
   return markdown.replace(/\n{3,}/g, '\n\n').trim();
+}
+
+function getFastnearAiFooterCopy(locale = 'en') {
+  return AI_MARKDOWN_FOOTER_COPY[locale] || AI_MARKDOWN_FOOTER_COPY.en;
+}
+
+function buildFastnearAiFooter(locale = 'en') {
+  const footerCopy = getFastnearAiFooterCopy(locale);
+  const sections = [
+    `## ${footerCopy.title}`,
+    '',
+    ...footerCopy.bullets.map((bullet) => `- ${bullet}`),
+  ];
+
+  return `${normalizeMarkdown(sections.join('\n'))}\n`;
+}
+
+function appendFastnearAiFooter(markdown, locale = 'en') {
+  const normalizedBody = normalizeMarkdown(markdown || '');
+  const footer = buildFastnearAiFooter(locale).trim();
+
+  return `${normalizeMarkdown([normalizedBody, '---', '', footer].filter(Boolean).join('\n'))}\n`;
 }
 
 function toAbsoluteUrl(href, baseUrl) {
@@ -462,14 +485,14 @@ function formatResponseReference(response, locale = 'en') {
   return lines.filter(Boolean).join('\n');
 }
 
-export function buildMarkdownFromDocContent(rootElement, { sourceUrl } = {}) {
+export function buildMarkdownFromDocContent(rootElement, { locale = 'en', sourceUrl } = {}) {
   if (!rootElement) {
     return '';
   }
 
   const clone = prepareDocClone(rootElement, sourceUrl);
   const markdown = turndownService.turndown(clone.innerHTML);
-  return `${normalizeMarkdown(markdown)}\n`;
+  return appendFastnearAiFooter(markdown, locale);
 }
 
 export function buildOperationMarkdown({
@@ -535,5 +558,5 @@ export function buildOperationMarkdown({
   sections.push('');
   sections.push(formatResponseReference(pageModel.responses?.[0], locale));
 
-  return `${normalizeMarkdown(sections.filter(Boolean).join('\n'))}\n`;
+  return appendFastnearAiFooter(sections.filter(Boolean).join('\n'), locale);
 }
