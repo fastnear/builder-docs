@@ -12,6 +12,27 @@ page_actions:
 
 Начинайте с RPC-метода, который отвечает на вопрос. Используйте `tx`, чтобы отследить включение и финальность по хешу транзакции, и расширяйте поверхность только когда нужны дерево receipts, сырой state или трассировка на уровне shard.
 
+## Состояние аккаунта
+
+### Показать баланс и storage аккаунта на finality
+
+`view_account` — канонический RPC-запрос для текущего состояния аккаунта. Один вызов возвращает свободный баланс, сумму, заблокированную в валидаторском стейке или lockup-контракте, использованное storage и блок, на котором было сделано чтение. `finality: "final"` гарантирует, что вы читаете стабильное состояние, а не optimistic-представление.
+
+```bash
+RPC_URL=https://rpc.mainnet.fastnear.com
+ACCOUNT_ID=mike.near
+
+curl -s "$RPC_URL" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc --arg account_id "$ACCOUNT_ID" '{
+    jsonrpc:"2.0",id:"fastnear",method:"query",
+    params:{request_type:"view_account",account_id:$account_id,finality:"final"}
+  }')" \
+  | jq '.result | {amount, locked, storage_usage, block_height, block_hash}'
+```
+
+Для `mike.near` это возвращает `amount` (yoctoNEAR в свободной части), `locked: "0"` (ничего в валидаторском стейке или lockup-контракте) и `storage_usage: 558441` — 558 КБ on-chain-состояния. Пара `block_height`/`block_hash` фиксирует точку чтения; чтобы прочитать несколько аккаунтов *на одном и том же* блоке, переиспользуйте возвращённый `block_hash` как `block_id` в последующих запросах.
+
 ## Включение транзакции и финальность
 
 ### Отследить транзакцию от хеша до финальности
@@ -48,7 +69,7 @@ curl -s "$RPC_URL" \
 
 ### Описать первый action первой транзакции на текущем tip
 
-Пройдите `status` → `block` → `chunk`, пропуская пустые chunks по дороге. Большинство chunks в tip-блоке пустые — их `tx_root` равен сентинелу `11111111111111111111111111111111`, поэтому селектору нужен фильтр.
+Блок NEAR — это header поверх N shard chunks, а не плоский список транзакций. `block` возвращает headers chunks; сами транзакции лежат уровнем ниже, внутри `chunk`. Шортката `block → tx` нет — блок не несёт хешей транзакций, поэтому `tx` (которому нужен hash) в этой цепочке не участвует. Канонический проход — `status` → `block` → `chunk`, пропуская пустые chunks по дороге. Большинство chunks в tip-блоке пустые — их `tx_root` равен сентинелу `11111111111111111111111111111111`, поэтому селектору нужен фильтр.
 
 ```bash
 RPC_URL=https://rpc.mainnet.fastnear.com
@@ -94,9 +115,16 @@ fi
 
 ## Механика аккаунтов и ключей
 
-### Аудит старых function-call-ключей Near Social
+### Определить function-call-ключи, которые стоит удалить
 
-У создателей накапливаются Social function-call-ключи от каждого кошелька и каждого BOS-шлюза, которым они пользовались. `view_access_key_list` возвращает их все; один фильтр сужает до `social.near`, а **младшие шесть цифр nonce** заодно служат счётчиком использования — новые ключи стартуют с `block_height * 10^6` и инкрементируются на единицу за каждую транзакцию.
+Каждый кошелёк, шлюз и dapp-сессия, в которую вы заходите, обычно оставляет за собой function-call-ключ. Большинством из них вы больше никогда не воспользуетесь. `view_access_key_list` возвращает все ключи аккаунта; структура nonce показывает, какие из них устарели.
+
+Новые ключи стартуют с `block_height * 10^6`, и значение инкрементируется на единицу за каждую транзакцию, которую ключ подписывает, поэтому:
+
+- `nonce / 10^6` → блок, в котором ключ был добавлен
+- `nonce % 10^6` → сколько раз ключ был использован
+
+Любой ключ с `tx_count: 0` был создан и ни разу не использовался — самый очевидный кандидат на очистку. Следующий по порядку — ключи, заскоупленные на контракт, с которым вы больше не работаете. Фильтр ниже сужает до `social.near`, но чтобы аудитировать другой контракт, меняется только строка `RECEIVER_ID`.
 
 ```bash
 RPC_URL=https://rpc.mainnet.fastnear.com
@@ -112,13 +140,13 @@ curl -s "$RPC_URL" \
   | jq --arg receiver "$RECEIVER_ID" '
       {
         total_keys: (.result.keys | length),
-        social_fcks: [
+        fcks_for_receiver: [
           .result.keys[]
           | select((.access_key.permission | type) == "object")
           | select(.access_key.permission.FunctionCall.receiver_id == $receiver)
           | {
               public_key,
-              created_near_block: (.access_key.nonce / 1000000 | floor),
+              added_at_block: (.access_key.nonce / 1000000 | floor),
               tx_count: (.access_key.nonce % 1000000),
               method_names: (.access_key.permission.FunctionCall.method_names | if . == [] then "ANY" else . end),
               allowance: (.access_key.permission.FunctionCall.allowance // "unlimited")
@@ -127,119 +155,17 @@ curl -s "$RPC_URL" \
       }'
 ```
 
-Для `mike.near` это возвращает десятки function-call-ключей на `social.near`. Записи с `tx_count: 0` были созданы и ни разу не использовались — прямые кандидаты на очистку. `method_names: "ANY"` означает, что ключ может вызвать любой метод на `social.near`; сужение до списка вида `["find_grants", "insert_grant", "delete_grant"]` означает, что ключ был заскоуплен на write-поверхность конкретного dapp.
+Для `mike.near` это возвращает десятки function-call-ключей на `social.near`. Записи с `tx_count: 0` были созданы и ни разу не использовались — прямые кандидаты на удаление. `method_names: "ANY"` означает, что ключ может вызвать любой метод на `social.near`; сужение до списка вида `["find_grants", "insert_grant", "delete_grant"]` означает, что ключ был заскоуплен на write-поверхность одного dapp.
 
-Чтобы удалить такой ключ, подпишите action `DeleteKey` **full-access**-ключом — function-call-ключ не может авторизовать `DeleteKey` — и отправьте через [`send_tx`](/rpc/transaction/send-tx). Повторный запуск того же списка подтверждает удаление. Само подписание — стандартная near-api-js-история и не самая интересная часть аудита.
-
-### Какая транзакция добавила этот `social.near` function-call-ключ и кто её авторизовал?
-
-Тот же nonce, что считает использование, заодно якорит `AddKey` во времени блоков: новые ключи стартуют примерно с `block_height * 10^6`, так что деление текущего nonce на миллион даёт плотное окно поиска. Один раз гидратируйте кандидатов — и ответ уже несёт достаточно, чтобы отличить прямой `AddKey` от делегированной (meta-tx) авторизации, то есть показать, *какой ключ подписал решение*, а не только какой аккаунт оплатил gas.
-
-```bash
-RPC_URL=https://rpc.mainnet.fastnear.com
-TX_BASE_URL=https://tx.main.fastnear.com
-ACCOUNT_ID=mike.near
-TARGET_PUBLIC_KEY=ed25519:7GZgXkMPEyGXqRhxaLvHxWn6fVfeyuQGMqnLVQAh7bs
-
-CURRENT_NONCE="$(curl -s "$RPC_URL" -H 'content-type: application/json' \
-  --data "$(jq -nc --arg account_id "$ACCOUNT_ID" --arg public_key "$TARGET_PUBLIC_KEY" '{
-    jsonrpc:"2.0",id:"fastnear",method:"query",
-    params:{request_type:"view_access_key",account_id:$account_id,public_key:$public_key,finality:"final"}
-  }')" \
-  | jq -r '.result.nonce')"
-
-ADD_KEY_BLOCK=$((CURRENT_NONCE / 1000000))
-
-TX_HASHES="$(curl -s "$TX_BASE_URL/v0/account" -H 'content-type: application/json' \
-  --data "$(jq -nc --arg account_id "$ACCOUNT_ID" \
-    --argjson from $((ADD_KEY_BLOCK - 20)) --argjson to $((ADD_KEY_BLOCK + 5)) '{
-      account_id: $account_id, is_real_signer: true,
-      from_tx_block_height: $from, to_tx_block_height: $to, desc: false, limit: 50
-    }')" \
-  | jq -c '[.account_txs[].transaction_hash]')"
-
-curl -s "$TX_BASE_URL/v0/transactions" -H 'content-type: application/json' \
-  --data "$(jq -nc --argjson tx_hashes "$TX_HASHES" '{tx_hashes: $tx_hashes}')" \
-  | jq --arg target "$TARGET_PUBLIC_KEY" '
-      [ .transactions[]
-        | . as $tx
-        | (
-            ($tx.transaction.actions[]? | .AddKey? | select(.public_key == $target)
-              | {mode: "direct", authorizing_public_key: $tx.transaction.public_key, permission: .access_key.permission}),
-            ($tx.transaction.actions[]? | .Delegate? | .delegate_action as $d
-              | $d.actions[]? | .AddKey? | select(.public_key == $target)
-              | {mode: "delegated", authorizing_public_key: $d.public_key, permission: .access_key.permission})
-          )
-        | {
-            transaction_hash: $tx.transaction.hash,
-            tx_block_height: $tx.execution_outcome.block_height,
-            signer_id: $tx.transaction.signer_id,
-            receiver_id: $tx.transaction.receiver_id,
-            add_key_receipt: ([$tx.receipts[]
-              | select(any((.receipt.receipt.Action.actions // [])[]?; .AddKey.public_key? == $target))
-              | {receipt_id: .receipt.receipt_id, receipt_block: .execution_outcome.block_height}][0])
-          } + .
-      ]'
-```
-
-Для ключа `ed25519:7GZg…` аккаунта `mike.near` (первый `social.near` FCK из аудита выше) это разрешается в транзакцию `6ZT8UGPRC6L3NGs2qHnECPVexKWNQ5LWLK9w95tgj3tV` на внешнем блоке tx `112057390`. Внешний signer — `app.herewallet.near`, это relayer HERE Wallet, и `mode: "delegated"` рассказывает остальную историю: relayer оплатил gas, но *авторизующий* ключ внутри Delegate — `ed25519:GaYgzN1eZUgwA7t8a5pYxFGqtF4kon9dQaDMjPDejsiu`, full-access-ключ `mike.near`, который подписал сам `AddKey`. Это та разница meta-tx, которую верхнеуровневый `signer_id` в одиночку скрыл бы.
-
-`add_key_receipt` замыкает картину: `AddKey` выполнился в блоке `112057392`, через два блока после внешней tx, потому что Delegate прыгает из shard relayer в shard целевого аккаунта. Расширьте окно `-20/+5`, если ключом с момента создания пользовались активно.
-
-### Зарегистрировать FT-хранилище при необходимости и затем перевести токены
-
-Токены NEP-141 требуют, чтобы каждый получатель предварительно зарегистрировал storage на контракте, прежде чем сможет держать баланс. Два view-вызова авторитетно отвечают на вопрос регистрации *до* отправки — пропуск этой проверки и есть причина, по которой `ft_transfer` в итоге тихо возвращается отправителю.
-
-```bash
-RPC_URL=https://rpc.testnet.fastnear.com
-TOKEN_CONTRACT_ID=ft.predeployed.examples.testnet
-RECEIVER_ACCOUNT_ID=mike.testnet
-
-ACCOUNT_ARGS_B64="$(jq -nc --arg account_id "$RECEIVER_ACCOUNT_ID" '{account_id:$account_id}' | base64 | tr -d '\n')"
-
-REGISTERED="$(curl -s "$RPC_URL" -H 'content-type: application/json' \
-  --data "$(jq -nc --arg contract "$TOKEN_CONTRACT_ID" --arg args "$ACCOUNT_ARGS_B64" '{
-    jsonrpc:"2.0",id:"fastnear",method:"query",
-    params:{request_type:"call_function",account_id:$contract,method_name:"storage_balance_of",args_base64:$args,finality:"final"}
-  }')" \
-  | jq '(.result.result | implode | fromjson) != null')"
-
-MIN_DEPOSIT="$(curl -s "$RPC_URL" -H 'content-type: application/json' \
-  --data "$(jq -nc --arg contract "$TOKEN_CONTRACT_ID" '{
-    jsonrpc:"2.0",id:"fastnear",method:"query",
-    params:{request_type:"call_function",account_id:$contract,method_name:"storage_balance_bounds",args_base64:"e30=",finality:"final"}
-  }')" \
-  | jq -r '.result.result | implode | fromjson | .min')"
-
-jq -n --argjson registered "$REGISTERED" --arg min "$MIN_DEPOSIT" '{
-  registered: $registered,
-  min_storage_deposit_yocto: $min
-}'
-```
-
-Для зафиксированного testnet-контракта `storage_balance_of({account_id: "mike.testnet"})` возвращает `null` (не зарегистрирован), а `storage_balance_bounds` возвращает `{min: "1250000000000000000000", max: "1250000000000000000000"}` — плоскую комиссию регистрации 0.00125 NEAR. Это собственный ответ контракта, и большего на read-стороне до записи не нужно.
-
-Write-сторона — это две подписанных function call (near-api-js `transactions.functionCall` или любая NEAR-библиотека подписи работает одинаково):
-
-- `storage_deposit({account_id: "<receiver>", registration_only: true})` с депозитом `<min>` yocto и 100 Tgas — пропустите, если `registered: true`.
-- `ft_transfer({receiver_id: "<receiver>", amount: "<yocto>", memo: "..."})` с депозитом 1 yocto (требует NEP-141) и 100 Tgas.
-
-Отправьте каждую подписанную транзакцию через [`send_tx`](/rpc/transaction/send-tx) с `wait_until: "FINAL"`. После этого подтвердите через собственный view-метод контракта — индексированная история не нужна, чтобы доказать, что перевод закрепился:
-
-```bash
-curl -s "$RPC_URL" -H 'content-type: application/json' \
-  --data "$(jq -nc --arg contract "$TOKEN_CONTRACT_ID" --arg args "$ACCOUNT_ARGS_B64" '{
-    jsonrpc:"2.0",id:"fastnear",method:"query",
-    params:{request_type:"call_function",account_id:$contract,method_name:"ft_balance_of",args_base64:$args,finality:"final"}
-  }')" \
-  | jq '{receiver_balance: (.result.result | implode | fromjson)}'
-```
+Чтобы удалить такой ключ, подпишите action `DeleteKey` **full-access**-ключом (function-call-ключ не может авторизовать `DeleteKey`) и отправьте через [`send_tx`](/rpc/transaction/send-tx). Повторный запуск того же запроса подтвердит, что ключа больше нет.
 
 ## Чтение контрактов и сырой state
 
-### Как прочитать сырое storage контракта напрямую?
+### Прочитать storage контракта, не запуская его
 
-Два RPC-метода отвечают на один и тот же вопрос о counter с разных слоёв: `view_state` достаёт сырые байты trie без запуска кода, а `call_function` запускает собственный view-метод контракта. Когда они совпадают, вы доказали, что view-метод контракта соответствует его сохранённому состоянию.
+View-метод вроде `get_num` всё равно заставляет узел загрузить wasm-контракта и выполнить его. Если ключ storage уже известен, `view_state` возвращает сырые сериализованные байты напрямую — без исполнения и без зависимости от того, выставил ли контракт getter для этого поля вообще.
+
+Контракты на `near-sdk-rs` хранят верхнеуровневую `#[near_bindgen]`-структуру под ключом `STATE`. Передайте `STATE` как `prefix_base64` (`U1RBVEU=` — это base64 тех же четырёх ASCII-байт), и узел вернёт сериализованное значение.
 
 ```bash
 RPC_URL=https://rpc.testnet.fastnear.com
@@ -252,26 +178,14 @@ RAW_B64="$(curl -s "$RPC_URL" -H 'content-type: application/json' \
   }')" \
   | jq -r '.result.values[0].value')"
 
-RAW_I8="$(python3 -c "import base64,sys;print(int.from_bytes(base64.b64decode('$RAW_B64'),'little',signed=True))")"
+DECODED_I8="$(python3 -c "import base64; print(int.from_bytes(base64.b64decode('$RAW_B64'),'little',signed=True))")"
 
-METHOD_VALUE="$(curl -s "$RPC_URL" -H 'content-type: application/json' \
-  --data "$(jq -nc --arg contract "$CONTRACT_ID" '{
-    jsonrpc:"2.0",id:"fastnear",method:"query",
-    params:{request_type:"call_function",account_id:$contract,method_name:"get_num",args_base64:"e30=",finality:"final"}
-  }')" \
-  | jq -r '.result.result | implode | fromjson')"
-
-jq -n --arg raw_b64 "$RAW_B64" --argjson raw_i8 "$RAW_I8" --argjson method "$METHOD_VALUE" '{
-  raw_state_b64: $raw_b64,
-  raw_state_decoded: $raw_i8,
-  view_method_value: $method,
-  agree: ($raw_i8 == $method)
-}'
+jq -n --arg raw "$RAW_B64" --argjson val "$DECODED_I8" '{raw_bytes_base64: $raw, decoded_i8: $val}'
 ```
 
-Для живого counter `view_state` по ключу `STATE` (base64 `U1RBVEU=`) возвращает `"CQ=="` — один байт `0x09`, декодируется как signed i8 в `9`; `get_num` тоже возвращает `9`. Они совпадают, потому что контракт хранит `val: i8` по этому ключу. `signed=True` важен: отрицательный counter выглядел бы как `"/w=="` (байт `0xff` → i8 `-1`, а не u8 `255`).
+Для живого counter это возвращает `"CQ=="` — один байт `0x09`, декодируется как signed i8 в `9`. Это то же число, которое вернул бы `get_num`, только прочитанное прямо из trie без запуска кода контракта. `signed=True` важен: отрицательный counter сериализовался бы как `"/w=="` (байт `0xff` → i8 `-1`, а не u8 `255`).
 
-`view_state` — правильный инструмент, когда у контракта нет view-метода для нужных данных, когда нужно сверить view-метод с реальным storage или когда нужна семья ключей, которую контракт не раскрывает публично. Для всего остального `call_function` требует меньше церемоний. Если следующий вопрос становится историческим, а не текущим, расширяйте поверхность до [KV FastData API](/fastdata/kv).
+Тянитесь к `view_state`, когда контракт не выставляет view-метод для нужных данных или когда нужна семья ключей, которую контракт не публикует. Для большинства чтений `call_function` всё равно требует меньше церемоний. Если вопрос становится историческим, а не текущим, расширяйте поверхность до [KV FastData API](/fastdata/kv).
 
 ## NEAR Social и точные чтения BOS
 

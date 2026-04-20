@@ -10,117 +10,126 @@ page_actions:
 
 ## Примеры
 
-Каждый гидратированный документ блока NEAR Data несёт транзакции, receipts, результаты исполнения и state changes с разбивкой по shard. Три сценария ниже используют один `bash`-помощник, который сворачивает эти четыре сигнала в одну сводку с полями для перехода дальше. Определите его один раз и прогоняйте блоки через него:
+NEAR Data возвращает каждый блок полностью гидратированным одним JSON-документом — header плюс per-shard chunks, receipts, результаты исполнения и state changes, — так что один `curl` уже даёт всё необходимое, чтобы отфильтровать нужный контракт без второго запроса.
+
+### На каком блоке NEAR сейчас?
+
+`/v0/last_block/final` отдаёт 302-редирект на текущий финализированный блок. Прежде чем фильтровать по конкретному контракту, полезно увидеть, как выглядит один блок на уровне протокола: транзакции приходят с разбивкой по shard, поэтому общее число транзакций в блоке — это сумма по shards, а не одно поле верхнего уровня.
 
 ```bash
-contract_touch_summary() {
-  jq -r --arg contract "$1" '
-    [ .shards[] | {
-        shard_id,
-        direct_txs: ([.chunk.transactions[]? | select(.transaction.receiver_id == $contract)] | length),
-        incoming_receipts: ([.chunk.receipts[]? | select(.receiver_id == $contract)] | length),
-        execution_outcomes: ([.receipt_execution_outcomes[]? | select(.execution_outcome.outcome.executor_id == $contract)] | length),
-        state_changes: ([.state_changes[]? | select(.change.account_id? == $contract)] | length),
-        sample_tx_hash: ([.chunk.transactions[]? | select(.transaction.receiver_id == $contract) | .transaction.hash] | .[0]),
-        sample_receipt_id: (
-          [ .chunk.receipts[]? | select(.receiver_id == $contract) | .receipt_id ] +
-          [ .receipt_execution_outcomes[]? | select(.execution_outcome.outcome.executor_id == $contract) | .execution_outcome.id ] +
-          [ .state_changes[]? | select(.change.account_id? == $contract) | (.cause.receipt_hash? // empty) ]
-          | .[0]
-        )
-      }
-      | select(.direct_txs + .incoming_receipts + .execution_outcomes + .state_changes > 0)
-    ] as $rows
-    | {
-        height: .block.header.height,
-        hash: .block.header.hash,
-        contract: $contract,
-        touched: (($rows | length) > 0),
-        shards: ($rows | map(.shard_id)),
-        evidence: {
-          direct_txs: (($rows | map(.direct_txs) | add) // 0),
-          incoming_receipts: (($rows | map(.incoming_receipts) | add) // 0),
-          execution_outcomes: (($rows | map(.execution_outcomes) | add) // 0),
-          state_changes: (($rows | map(.state_changes) | add) // 0)
-        },
-        sample_tx_hash: ([ $rows[] | .sample_tx_hash | select(.) ] | .[0]),
-        sample_receipt_id: ([ $rows[] | .sample_receipt_id | select(.) ] | .[0])
-      }'
-}
+NEARDATA_BASE_URL=https://mainnet.neardata.xyz
+
+curl -sL "$NEARDATA_BASE_URL/v0/last_block/final" \
+  | jq '{
+      height: .block.header.height,
+      timestamp_nanosec: .block.header.timestamp_nanosec,
+      txs_per_shard: [.shards[] | {shard_id, tx_count: (.chunk.transactions | length)}],
+      total_txs: ([.shards[].chunk.transactions[]?] | length)
+    }'
 ```
+
+Живой блок показывает 9 shards и горсть транзакций, распределённых по ним — большинство shards в любом блоке пустые, а активность концентрируется на тех shards, где живут загруженные контракты. `timestamp_nanosec` — это Unix-время в наносекундах (делите на 1e9, чтобы получить секунды). С этим одним вызовом у вас уже есть всё необходимое для дальнейшего копания — примеры фильтрации ниже просто применяют jq к тому же ответу.
 
 ### Был ли мой контракт затронут в последнем финализированном блоке?
 
-`/v0/last_block/final` отдаёт 302-редирект на текущий финализированный блок; пройдите по нему и направьте результат сразу в помощник.
+`/v0/last_block/final` отдаёт 302-редирект на текущий финализированный блок. Контракт может проявиться либо в `transactions` chunk (когда он `receiver_id`), либо в `receipts` (когда прилетает cross-shard-вызов), поэтому один проход jq по shards покрывает оба случая.
 
 ```bash
 NEARDATA_BASE_URL=https://mainnet.neardata.xyz
 TARGET_CONTRACT=intents.near
 
 curl -sL "$NEARDATA_BASE_URL/v0/last_block/final" \
-  | contract_touch_summary "$TARGET_CONTRACT"
+  | jq --arg contract "$TARGET_CONTRACT" '{
+      height: .block.header.height,
+      contract: $contract,
+      touched_shards: [
+        .shards[] | {
+          shard_id,
+          txs:      [.chunk.transactions[]? | select(.transaction.receiver_id == $contract) | .transaction.hash],
+          receipts: [.chunk.receipts[]?     | select(.receiver_id == $contract)             | .receipt_id]
+        } | select((.txs | length) + (.receipts | length) > 0)
+      ]
+    }'
 ```
 
-Читайте `touched: false` как полный и однозначный ответ для тихого блока. При `true` поля перехода (`sample_tx_hash`, `sample_receipt_id`) сразу ведут вас в [/tx/examples](/tx/examples) за человекочитаемой историей. Один запрос заменяет ручной просмотр chunks — и учтите: `touched: true` с `state_changes: 0` — это реальная форма: receipt может попасть в chunk, не вызвав в том же блоке мутации состояния.
+`touched_shards: []` — полный ответ для тихого блока. Непустой список называет shards, где контракт появился, и отдаёт конкретные `tx`-хеши или `receipt_id` — передавайте хеш в [Transactions API](/tx), когда нужна человекочитаемая история. Receipts без парных `txs` — это нормально: cross-contract-вызов приходит как incoming receipt в этом блоке, даже если исходная транзакция была раньше.
 
-### Увидел ли я активность в optimistic-режиме, и пережила ли она finality?
+### Увидел ли я активность в optimistic-режиме, и догнала ли её finality?
 
-Optimistic-блоки живут по адресу `/v0/block_opt/{height}`; как только finality догоняет (обычно в пределах одного блока, ~1 с на mainnet), та же высота становится доступна и по `/v0/block/{height}`. Прогоните помощник на обеих и сравните.
+Optimistic-блоки ходят по `/v0/block_opt/{height}` примерно на секунду впереди `/v0/block/{height}`. Цикл мониторинга может действовать по optimistic-сигналу и ожидать, что тот же ответ придёт на финализированный эндпоинт через один блок — если только стресс сети не расширит разрыв, и тогда финализированный fetch вернёт `null`, а вы подождёте.
 
 ```bash
+NEARDATA_BASE_URL=https://mainnet.neardata.xyz
+TARGET_CONTRACT=intents.near
+
+count_touches() {
+  jq --arg contract "$1" '
+    [.shards[]
+     | ([.chunk.transactions[]? | select(.transaction.receiver_id == $contract)] | length)
+     + ([.chunk.receipts[]?     | select(.receiver_id == $contract)]             | length)]
+    | add // 0'
+}
+
 OPT_LOCATION="$(
   curl -s -D - -o /dev/null "$NEARDATA_BASE_URL/v0/last_block/optimistic" \
     | awk 'tolower($1) == "location:" {print $2}' | tr -d '\r'
 )"
 OPT_HEIGHT="${OPT_LOCATION##*/}"
 
-echo "Optimistic view at $OPT_HEIGHT:"
-curl -s "$NEARDATA_BASE_URL$OPT_LOCATION" | contract_touch_summary "$TARGET_CONTRACT"
-
-echo "Finalized view at $OPT_HEIGHT:"
+echo "optimistic @ $OPT_HEIGHT: $(curl -s "$NEARDATA_BASE_URL$OPT_LOCATION" | count_touches "$TARGET_CONTRACT") touches"
 FINAL="$(curl -s "$NEARDATA_BASE_URL/v0/block/$OPT_HEIGHT")"
-if [ "$(echo "$FINAL" | jq 'type')" = '"null"' ]; then
-  echo "finality has not caught up to $OPT_HEIGHT yet"
+if [ "$(printf '%s' "$FINAL" | jq 'type')" = '"null"' ]; then
+  echo "finalized @ $OPT_HEIGHT: not caught up yet"
 else
-  echo "$FINAL" | contract_touch_summary "$TARGET_CONTRACT"
+  echo "finalized @ $OPT_HEIGHT: $(printf '%s' "$FINAL" | count_touches "$TARGET_CONTRACT") touches"
 fi
 ```
 
-На здоровой сети обе сводки совпадают сразу; ценность — в самом шаблоне, а не в драматичной разнице. Цикл мониторинга, который реагирует на optimistic-сигнал, знает: тот же ответ — на один блок от надёжного. Ветку `finality has not caught up` используйте, когда действительно нужно отличить «увидено optimistically» от «подтверждено» — во время стресса сети этот разрыв расширяется.
+На здоровом mainnet оба счётчика совпадают в пределах секунды. Ценность — в самом шаблоне: optimistic-поток даёт ответ, на который можно реагировать сразу, а финализированный приходит через блок как надёжное подтверждение.
 
-### Какой shard действительно изменил мой контракт в этом блоке?
+### Какой shard действительно изменил состояние моего контракта?
 
-Блоки тонкие — в большинстве финализированных блоков нет мутаций состояния ни для одного конкретного контракта. Идите назад от финализированной головы, пока помощник не покажет `state_changes > 0`, затем откройте «победивший» shard через `/v0/block/{height}/shard/{shard_id}` ради самого payload мутации.
+В большинстве финализированных блоков нет мутации состояния ни для одного конкретного контракта — активность разрежена и привязана к shard. Идите назад от финализированной головы, пока состояние контракта реально не изменится, и откройте этот shard для payload мутации. Вызов уровня блока говорит, *на каком* shard это случилось; вызов уровня shard — *как*.
 
 ```bash
-HEAD="$(curl -sL "$NEARDATA_BASE_URL/v0/last_block/final" | jq '.block.header.height')"
-TARGET_HEIGHT=""
-WINNING_SHARD=""
+NEARDATA_BASE_URL=https://mainnet.neardata.xyz
+TARGET_CONTRACT=intents.near
 
-for OFFSET in 0 1 2 3 4 5 6 7 8 9; do
+HEAD="$(curl -sL "$NEARDATA_BASE_URL/v0/last_block/final" | jq '.block.header.height')"
+FOUND_HEIGHT=""
+FOUND_SHARD=""
+
+for OFFSET in $(seq 0 15); do
   H=$((HEAD - OFFSET))
-  SUMMARY="$(curl -s "$NEARDATA_BASE_URL/v0/block/$H" | contract_touch_summary "$TARGET_CONTRACT")"
-  if [ "$(echo "$SUMMARY" | jq '.evidence.state_changes')" -gt 0 ]; then
-    TARGET_HEIGHT=$H
-    WINNING_SHARD="$(echo "$SUMMARY" | jq -r '.shards[0]')"
-    echo "$SUMMARY"
+  SHARD="$(curl -s "$NEARDATA_BASE_URL/v0/block/$H" \
+    | jq -r --arg contract "$TARGET_CONTRACT" '
+        .shards[]
+        | select([.state_changes[]? | select(.change.account_id? == $contract)] | length > 0)
+        | .shard_id
+      ' | head -1)"
+  if [ -n "$SHARD" ]; then
+    FOUND_HEIGHT=$H; FOUND_SHARD=$SHARD
     break
   fi
 done
 
-curl -s "$NEARDATA_BASE_URL/v0/block/$TARGET_HEIGHT/shard/$WINNING_SHARD" \
-  | jq --arg contract "$TARGET_CONTRACT" '{
-      shard_id,
-      chunk_hash: .chunk.header.chunk_hash,
-      matching_state_changes: [.state_changes[] | select(.change.account_id? == $contract) | {type, cause_type: (.cause | keys[0]), account_id: .change.account_id}][0:3],
-      matching_execution_outcomes: [.receipt_execution_outcomes[] | select(.execution_outcome.outcome.executor_id == $contract) | {receipt_id: .execution_outcome.id, status: (.execution_outcome.outcome.status | keys[0]), predecessor_id: .receipt.predecessor_id}][0:3]
-    }'
+if [ -z "$FOUND_HEIGHT" ]; then
+  echo "no state mutation for $TARGET_CONTRACT in the last 16 finalized blocks"
+else
+  curl -s "$NEARDATA_BASE_URL/v0/block/$FOUND_HEIGHT/shard/$FOUND_SHARD" \
+    | jq --arg contract "$TARGET_CONTRACT" --argjson height "$FOUND_HEIGHT" --argjson shard_id "$FOUND_SHARD" '{
+        height: $height,
+        shard_id: $shard_id,
+        state_changes:      [.state_changes[]              | select(.change.account_id?                        == $contract) | {type, cause: (.cause | keys[0])}][0:3],
+        execution_outcomes: [.receipt_execution_outcomes[] | select(.execution_outcome.outcome.executor_id     == $contract) | {receipt_id: .execution_outcome.id, status: (.execution_outcome.outcome.status | keys[0])}][0:3]
+      }'
+fi
 ```
 
-На mainnet `intents.near` стабильно выполняется на shard 7, поэтому обход назад обычно попадает в цель за несколько блоков. Payload shard затем называет конкретные типы state-change (`account_update`, `data_update` и т. п.) и результаты исполнения receipt, которые их породили, — shard-локальное доказательство без догадок. Для менее активных контрактов расширьте диапазон `OFFSET`.
+На mainnet `intents.near` живёт на shard 7, поэтому обход назад обычно попадает в цель за несколько блоков. Payload shard называет конкретные типы state-change (`account_update`, `data_update` и т. п.) и результаты receipt, которые их породили, — shard-локальное доказательство без догадок. Для менее активных контрактов расширьте диапазон `OFFSET`.
 
 ## Когда расширить поверхность
 
-- Используйте [Transactions API](/tx), когда у вас уже есть `tx_hash` и нужен человекочитаемый рассказ о транзакции.
+- Используйте [Transactions API](/tx), когда у вас уже есть `tx_hash` и нужна человекочитаемая история транзакции.
 - Используйте [RPC Reference](/rpc), когда следующий вопрос касается точной протокольной семантики receipt или блока.
 - Используйте [Block Headers](/neardata/block-headers), когда нужна только динамика head/finality, а не проверка contract-touch.

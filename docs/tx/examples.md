@@ -140,48 +140,9 @@ curl -s "$RPC_URL" \
 
 `UNKNOWN_ACCOUNT` is the proof. If `CreateAccount` had stuck, `view_account` would resolve; because it does not, the earlier `Transfer` and `AddKey` from the same batched receipt did not stick either.
 
-### Why did this contract call look successful, but a later receipt failed?
+### When a tx looks successful, what actually happened?
 
-A single tx can end with the outer handoff reporting `SuccessReceiptId` while a descendant receipt quietly fails — that's NEAR's async model, and `/v0/transactions` surfaces the whole timeline in one call.
-
-```bash
-TX_BASE_URL=https://tx.main.fastnear.com
-TX_HASH=2KhhB1uDScGCFQfVchep7DiZTGTxMcgfUYHNzwf5e6uL
-
-curl -s "$TX_BASE_URL/v0/transactions" \
-  -H 'content-type: application/json' \
-  --data "$(jq -nc --arg tx_hash "$TX_HASH" '{tx_hashes: [$tx_hash]}')" \
-  | jq '{
-      tx_handoff: .transactions[0].execution_outcome.outcome.status,
-      outer_method: .transactions[0].transaction.actions[0].FunctionCall.method_name,
-      descendant_failures: [
-        .transactions[0].receipts[]
-        | select(.execution_outcome.outcome.status.Failure != null)
-        | {
-            receiver_id: .receipt.receiver_id,
-            method_name: (.receipt.receipt.Action.actions[0].FunctionCall.method_name // "system"),
-            block_height: .execution_outcome.block_height,
-            failure: .execution_outcome.outcome.status.Failure
-          }
-      ],
-      receipt_timeline: [
-        .transactions[0].receipts[]
-        | {
-            receiver_id: .receipt.receiver_id,
-            method_name: (.receipt.receipt.Action.actions[0].FunctionCall.method_name // "system"),
-            status_class: (.execution_outcome.outcome.status | keys[0])
-          }
-      ]
-    }'
-```
-
-For the pinned mainnet tx, `tx_handoff` is `SuccessReceiptId` — the tx kicked off its first receipt cleanly. Read that alone and you'd call it a win. `descendant_failures` tells a second story: `ft_on_transfer` on `v2.ref-finance.near` panicked with `E51: contract paused` — the DEX had been paused when this swap ran, so it couldn't accept the wrapped NEAR. The `receipt_timeline` then shows how the story resolved: wrap.near's callback `ft_resolve_transfer` ran anyway and emitted a `Refund` log returning the wrapped NEAR to the sender.
-
-Receipt success is not transitive. A protocol can hand off cleanly and still see the detached work fail later. If your app "looked successful" but money came back anyway, walk this same timeline — the split is visible on the indexed response without a separate RPC status call. To check specifically that your callback ran, see [Did my callback run at all?](#did-my-callback-run-at-all).
-
-### Did my callback run at all?
-
-NEAR cross-contract calls return through a callback receipt on the origin contract. Whether that callback actually ran is a one-line `any(...)` check against the indexed receipt list — and the full refund story falls out of the same response.
+A tx's outer `execution_outcome.outcome.status` reports `SuccessReceiptId` whenever the first receipt handoff worked — it says nothing about whether downstream receipts succeeded or whether the origin callback ran. One pipeline over `/v0/transactions` answers all three questions at once.
 
 ```bash
 TX_BASE_URL=https://tx.main.fastnear.com
@@ -193,30 +154,38 @@ curl -s "$TX_BASE_URL/v0/transactions" \
   -H 'content-type: application/json' \
   --data "$(jq -nc --arg tx_hash "$TX_HASH" '{tx_hashes: [$tx_hash]}')" \
   | jq --arg origin "$ORIGIN_CONTRACT_ID" --arg callback "$CALLBACK_METHOD" '{
-      top_method: .transactions[0].transaction.actions[0].FunctionCall.method_name,
-      callback_ran: any(
-        .transactions[0].receipts[];
-        .receipt.receiver_id == $origin
-        and (.receipt.receipt.Action.actions[0].FunctionCall.method_name // "") == $callback
-      ),
-      receipt_chain: [
+      outer: {
+        method: .transactions[0].transaction.actions[0].FunctionCall.method_name,
+        tx_handoff: (.transactions[0].execution_outcome.outcome.status | keys[0])
+      },
+      callback: {
+        expected_on: $origin,
+        method: $callback,
+        ran: any(
+          .transactions[0].receipts[];
+          .receipt.receiver_id == $origin
+          and (.receipt.receipt.Action.actions[0].FunctionCall.method_name // "") == $callback
+        )
+      },
+      descendant_failures: [
         .transactions[0].receipts[]
+        | select(.execution_outcome.outcome.status.Failure != null)
         | {
             receiver_id: .receipt.receiver_id,
             method: (.receipt.receipt.Action.actions[0].FunctionCall.method_name // "system"),
-            block: .execution_outcome.block_height,
-            status: (.execution_outcome.outcome.status | keys[0]),
-            logs: .execution_outcome.outcome.logs
+            cause: .execution_outcome.outcome.status.Failure
           }
       ]
     }'
 ```
 
-For the pinned tx, `ft_transfer_call` on `wrap.near` hands off to `v2.ref-finance.near`'s `ft_on_transfer`, which **fails**. The callback `ft_resolve_transfer` still runs on `wrap.near` and logs `Refund 7278020378457059679767103 from v2.ref-finance.near to …` back to the sender — so `callback_ran: true` even though the downstream receipt failed. A downstream failure never prevents the origin contract from seeing its callback; that's how NEAR async error handling stays recoverable. The `method: "system"` rows are runtime gas refunds, not contract logic. To attribute one of the logs above to its emitting receipt, see [Which receipt emitted this log or event?](#which-receipt-emitted-this-log-or-event).
+For the pinned tx, `outer.method` is `ft_transfer_call` and `outer.tx_handoff` is `SuccessReceiptId` — the tx kicked off its first receipt cleanly, and read alone you'd call it a win. `descendant_failures` tells a second story: `ft_on_transfer` on `v2.ref-finance.near` panicked with `E51: contract paused` — the DEX was paused when this swap ran, so it couldn't accept the wrapped NEAR. `callback.ran: true` tells a third: `wrap.near`'s `ft_resolve_transfer` fired anyway. A downstream failure never prevents the origin contract's callback from running — that's the mechanism by which NEP-141 refunds the sender when the receiver rejects.
+
+Receipt success is not transitive. A protocol can hand off cleanly and still see the detached work fail later; the origin callback runs either way. Read these three fields together and the async story is legible without chasing the receipt chain by hand. To surface the `Refund` log line itself, pivot to [Which receipt emitted this log or event?](#which-receipt-emitted-this-log-or-event).
 
 ### Pair one OutLayer request with its TEE worker resolution
 
-[OutLayer](https://outlayer.fastnear.com) splits one logical call across two transactions: a user calls `request_execution` on `outlayer.near`, an Intel TDX worker runs the requested WASM off-chain, and `worker.outlayer.near` later calls `submit_execution_output_and_resolve` with the result. One `/v0/transactions` batch with both hashes returns the full pairing — method, correlation IDs, and TEE fingerprint — without a separate worker query.
+[OutLayer](https://outlayer.fastnear.com) splits one logical call across two transactions: a user signs `request_execution` on `outlayer.near`, an Intel TDX worker runs the requested WASM off-chain, then `worker.outlayer.near` submits the result with `submit_execution_output_and_resolve`. Both halves carry the same `request_id` — passing the two tx hashes to `/v0/transactions` in one call and extracting that field from each proves the pair.
 
 ```bash
 TX_BASE_URL=https://tx.main.fastnear.com
@@ -229,30 +198,25 @@ curl -s "$TX_BASE_URL/v0/transactions" \
   | jq '[
       .transactions[]
       | {
+          role: (if .transaction.actions[0].FunctionCall.method_name == "request_execution"
+                 then "request" else "worker" end),
           hash: .transaction.hash,
           signer: .transaction.signer_id,
           method: .transaction.actions[0].FunctionCall.method_name,
           block: .execution_outcome.block_height,
-          evidence: (
+          request_id: (
             if .transaction.actions[0].FunctionCall.method_name == "request_execution"
-            then (.receipts[0].execution_outcome.outcome.logs
-                  | map(select(startswith("EVENT_JSON"))) | .[0]
-                  | sub("EVENT_JSON:"; "") | fromjson | .data[0] as $e
-                  | ($e.request_data | fromjson) as $r
-                  | {request_id: $r.request_id, sender_id: $r.sender_id, project_id: $r.project_id,
-                     data_id: $e.data_id, code_hash: $r.code_source.WasmUrl.hash,
-                     input_preview: ($r.input_data | .[0:80] + "…")})
+            then (.receipts[0].execution_outcome.outcome.logs[] | select(startswith("EVENT_JSON"))
+                  | sub("EVENT_JSON:"; "") | fromjson | .data[0].request_data | fromjson | .request_id)
             else (.receipts[0].receipt.receipt.Action.actions[0].FunctionCall.args
-                  | @base64d | fromjson
-                  | {request_id, success: .output.Json.success, encrypted_bytes: (.output.Json.encrypted_data | length),
-                     instructions: .resources_used.instructions, time_ms: .resources_used.time_ms})
+                  | @base64d | fromjson | .request_id)
             end
           )
         }
     ]'
 ```
 
-Both rows carry `request_id: 1868`. The request half, signed by `retrorn.near` in block `194832281`, calls the `zavodil.near/near-email` project with a `delete_email` action and a 32-byte `data_id` — that's NEAR's yield/resume payload identifier, used internally to pause the on-chain promise while the worker runs. The worker half lands 11 blocks later and reports `success: true`, `instructions: 53075053`, `time_ms: 2401`, and a 21,568-byte encrypted result; those `resources_used` figures are the TEE fingerprint you can audit against the request's stated limits. `/v0/transactions` serves historical pairs indefinitely, so you don't need archival RPC to trace this even weeks later — reach for [archival RPC](https://archival-rpc.mainnet.fastnear.com) only when cross-checking contract state at the request's block height.
+Both rows carry `request_id: 1868`, confirming the pair. The request half, signed by `retrorn.near` in block `194832281`, lives in an `EVENT_JSON:` log on its receipt (that's NEAR's yield/resume pattern — the on-chain promise pauses while the TDX worker runs). The worker half lands 11 blocks later with `submit_execution_output_and_resolve`, signed by `worker.outlayer.near`, and its `request_id` decodes straight out of the base64 `FunctionCall.args`. The same two payloads also carry the richer fingerprint — `sender_id`, `project_id`, `code_hash`, `resources_used.instructions`, `resources_used.time_ms`, encrypted-result byte count — if you want to audit what actually ran; this minimal pipeline just confirms they belong together. `/v0/transactions` serves historical pairs indefinitely, so you don't need archival RPC weeks later.
 
 ## Common mistakes
 

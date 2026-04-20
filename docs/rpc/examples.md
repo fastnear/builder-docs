@@ -12,6 +12,27 @@ page_actions:
 
 Start with the RPC method that answers the question. Use `tx` to track inclusion and finality from a tx hash, and widen only when you need receipt trees, raw state, or shard-level tracing.
 
+## Account State
+
+### Show an account's balance and storage at finality
+
+`view_account` is the canonical RPC query for an account's current state. One call returns the unstaked balance, any stake-locked amount, storage consumed, and the block the reading was taken at. `finality: "final"` ensures you're reading stable state, not an optimistic view.
+
+```bash
+RPC_URL=https://rpc.mainnet.fastnear.com
+ACCOUNT_ID=mike.near
+
+curl -s "$RPC_URL" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc --arg account_id "$ACCOUNT_ID" '{
+    jsonrpc:"2.0",id:"fastnear",method:"query",
+    params:{request_type:"view_account",account_id:$account_id,finality:"final"}
+  }')" \
+  | jq '.result | {amount, locked, storage_usage, block_height, block_hash}'
+```
+
+For `mike.near`, this returns `amount` (yoctoNEAR held unstaked), `locked: "0"` (nothing in validator stake or a lockup contract), and `storage_usage: 558441` — 558 KB of on-chain state. The `block_height`/`block_hash` pair anchors the reading; to read multiple accounts at the *same* block, reuse the returned `block_hash` as `block_id` on follow-up queries.
+
 ## Transaction Inclusion and Finality
 
 ### Track a transaction from hash to finality
@@ -48,7 +69,7 @@ Two handoffs from here:
 
 ### Describe the first action of the first transaction at the current tip
 
-Walk `status` → `block` → `chunk`, skipping empty chunks along the way. Most chunks in a tip block are empty — their `tx_root` is the sentinel `11111111111111111111111111111111` — so the selector has to filter.
+A NEAR block is a header over N shard chunks, not a flat list of transactions. `block` returns chunk headers; the transactions live one level down, inside `chunk`. There's no `block → tx` shortcut — the block doesn't carry transaction hashes, so `tx` (which needs a hash) doesn't enter this flow at all. The canonical walk is `status` → `block` → `chunk`, skipping empty chunks along the way. Most chunks in a tip block are empty — their `tx_root` is the sentinel `11111111111111111111111111111111` — so the selector has to filter.
 
 ```bash
 RPC_URL=https://rpc.mainnet.fastnear.com
@@ -94,9 +115,16 @@ A live run returns the current tip's first chunk, first transaction, and first a
 
 ## Account and Key Mechanics
 
-### Audit old Near Social function-call keys
+### Identify function-call keys you might want to remove
 
-Creators accumulate Social function-call keys from every wallet and BOS gateway they've used. `view_access_key_list` returns all of them; one filter narrows to `social.near`, and the **low six digits of the nonce** double as a usage counter — new keys start at `block_height * 10^6` and increment by one per transaction.
+Every wallet, gateway, and dapp session you sign into tends to leave behind a function-call key. Most of them you'll never use again. `view_access_key_list` returns every key on an account; the structure of the nonce tells you which ones are stale.
+
+New keys start at `block_height * 10^6` and the value increments by one per transaction the key signs, so:
+
+- `nonce / 10^6` → the block the key was added at
+- `nonce % 10^6` → the number of times the key has been used
+
+Any key with `tx_count: 0` was created and never used — the clearest candidate for cleanup. Keys scoped to a contract you no longer interact with are the next tier. The filter below narrows to `social.near`, but `RECEIVER_ID` is the only line that changes to audit a different contract.
 
 ```bash
 RPC_URL=https://rpc.mainnet.fastnear.com
@@ -112,13 +140,13 @@ curl -s "$RPC_URL" \
   | jq --arg receiver "$RECEIVER_ID" '
       {
         total_keys: (.result.keys | length),
-        social_fcks: [
+        fcks_for_receiver: [
           .result.keys[]
           | select((.access_key.permission | type) == "object")
           | select(.access_key.permission.FunctionCall.receiver_id == $receiver)
           | {
               public_key,
-              created_near_block: (.access_key.nonce / 1000000 | floor),
+              added_at_block: (.access_key.nonce / 1000000 | floor),
               tx_count: (.access_key.nonce % 1000000),
               method_names: (.access_key.permission.FunctionCall.method_names | if . == [] then "ANY" else . end),
               allowance: (.access_key.permission.FunctionCall.allowance // "unlimited")
@@ -127,119 +155,17 @@ curl -s "$RPC_URL" \
       }'
 ```
 
-For `mike.near`, this returns dozens of `social.near` function-call keys. Entries with `tx_count: 0` were created and never used — prime candidates for cleanup. `method_names: "ANY"` means the key can call any method on `social.near`; a narrowed list like `["find_grants", "insert_grant", "delete_grant"]` means the key was scoped to a specific dapp's write surface.
+For `mike.near`, this returns dozens of `social.near` function-call keys. Entries with `tx_count: 0` were created and never used — prime removal candidates. `method_names: "ANY"` means the key can call any method on `social.near`; a narrowed list like `["find_grants", "insert_grant", "delete_grant"]` means the key was scoped to one dapp's write surface.
 
-To delete one, sign a `DeleteKey` action with a **full-access** key — a function-call key cannot authorize `DeleteKey` — then submit via [`send_tx`](/rpc/transaction/send-tx). Re-run the same list to confirm the deletion. The signing itself is standard near-api-js territory and not the interesting part of the audit.
-
-### Which transaction added this `social.near` function-call key, and who authorized it?
-
-The same nonce that tracks usage also anchors the `AddKey` in block time: new keys start at roughly `block_height * 10^6`, so dividing the current nonce by a million gives a tight search window. Hydrate the candidates once, and the response carries enough to distinguish a direct `AddKey` from a delegated (meta-tx) authorization — which tells you *which key signed the decision*, not just which account paid gas.
-
-```bash
-RPC_URL=https://rpc.mainnet.fastnear.com
-TX_BASE_URL=https://tx.main.fastnear.com
-ACCOUNT_ID=mike.near
-TARGET_PUBLIC_KEY=ed25519:7GZgXkMPEyGXqRhxaLvHxWn6fVfeyuQGMqnLVQAh7bs
-
-CURRENT_NONCE="$(curl -s "$RPC_URL" -H 'content-type: application/json' \
-  --data "$(jq -nc --arg account_id "$ACCOUNT_ID" --arg public_key "$TARGET_PUBLIC_KEY" '{
-    jsonrpc:"2.0",id:"fastnear",method:"query",
-    params:{request_type:"view_access_key",account_id:$account_id,public_key:$public_key,finality:"final"}
-  }')" \
-  | jq -r '.result.nonce')"
-
-ADD_KEY_BLOCK=$((CURRENT_NONCE / 1000000))
-
-TX_HASHES="$(curl -s "$TX_BASE_URL/v0/account" -H 'content-type: application/json' \
-  --data "$(jq -nc --arg account_id "$ACCOUNT_ID" \
-    --argjson from $((ADD_KEY_BLOCK - 20)) --argjson to $((ADD_KEY_BLOCK + 5)) '{
-      account_id: $account_id, is_real_signer: true,
-      from_tx_block_height: $from, to_tx_block_height: $to, desc: false, limit: 50
-    }')" \
-  | jq -c '[.account_txs[].transaction_hash]')"
-
-curl -s "$TX_BASE_URL/v0/transactions" -H 'content-type: application/json' \
-  --data "$(jq -nc --argjson tx_hashes "$TX_HASHES" '{tx_hashes: $tx_hashes}')" \
-  | jq --arg target "$TARGET_PUBLIC_KEY" '
-      [ .transactions[]
-        | . as $tx
-        | (
-            ($tx.transaction.actions[]? | .AddKey? | select(.public_key == $target)
-              | {mode: "direct", authorizing_public_key: $tx.transaction.public_key, permission: .access_key.permission}),
-            ($tx.transaction.actions[]? | .Delegate? | .delegate_action as $d
-              | $d.actions[]? | .AddKey? | select(.public_key == $target)
-              | {mode: "delegated", authorizing_public_key: $d.public_key, permission: .access_key.permission})
-          )
-        | {
-            transaction_hash: $tx.transaction.hash,
-            tx_block_height: $tx.execution_outcome.block_height,
-            signer_id: $tx.transaction.signer_id,
-            receiver_id: $tx.transaction.receiver_id,
-            add_key_receipt: ([$tx.receipts[]
-              | select(any((.receipt.receipt.Action.actions // [])[]?; .AddKey.public_key? == $target))
-              | {receipt_id: .receipt.receipt_id, receipt_block: .execution_outcome.block_height}][0])
-          } + .
-      ]'
-```
-
-For `mike.near`'s `ed25519:7GZg…` key (the first `social.near` FCK from the audit above), this resolves to transaction `6ZT8UGPRC6L3NGs2qHnECPVexKWNQ5LWLK9w95tgj3tV` at outer tx block `112057390`. The outer signer is `app.herewallet.near` — HERE Wallet's relayer — and `mode: "delegated"` tells the rest of the story: the relayer paid gas, but the *authorizing* key inside the Delegate is `ed25519:GaYgzN1eZUgwA7t8a5pYxFGqtF4kon9dQaDMjPDejsiu`, a `mike.near` full-access key that signed the underlying `AddKey`. That's the meta-tx distinction the top-level `signer_id` alone would hide.
-
-`add_key_receipt` completes the picture: the `AddKey` executed in block `112057392`, two blocks after the outer tx, because the Delegate hops from the relayer's shard to the target account's. Widen the `-20/+5` window if the key has been used heavily since creation.
-
-### Register FT storage if needed, then transfer tokens
-
-NEP-141 tokens require each recipient to pre-register storage on the contract before they can hold a balance. Two view calls answer the registration question authoritatively *before* you send — skipping that check is how `ft_transfer` ends up quietly refunded to the sender.
-
-```bash
-RPC_URL=https://rpc.testnet.fastnear.com
-TOKEN_CONTRACT_ID=ft.predeployed.examples.testnet
-RECEIVER_ACCOUNT_ID=mike.testnet
-
-ACCOUNT_ARGS_B64="$(jq -nc --arg account_id "$RECEIVER_ACCOUNT_ID" '{account_id:$account_id}' | base64 | tr -d '\n')"
-
-REGISTERED="$(curl -s "$RPC_URL" -H 'content-type: application/json' \
-  --data "$(jq -nc --arg contract "$TOKEN_CONTRACT_ID" --arg args "$ACCOUNT_ARGS_B64" '{
-    jsonrpc:"2.0",id:"fastnear",method:"query",
-    params:{request_type:"call_function",account_id:$contract,method_name:"storage_balance_of",args_base64:$args,finality:"final"}
-  }')" \
-  | jq '(.result.result | implode | fromjson) != null')"
-
-MIN_DEPOSIT="$(curl -s "$RPC_URL" -H 'content-type: application/json' \
-  --data "$(jq -nc --arg contract "$TOKEN_CONTRACT_ID" '{
-    jsonrpc:"2.0",id:"fastnear",method:"query",
-    params:{request_type:"call_function",account_id:$contract,method_name:"storage_balance_bounds",args_base64:"e30=",finality:"final"}
-  }')" \
-  | jq -r '.result.result | implode | fromjson | .min')"
-
-jq -n --argjson registered "$REGISTERED" --arg min "$MIN_DEPOSIT" '{
-  registered: $registered,
-  min_storage_deposit_yocto: $min
-}'
-```
-
-For the pinned testnet contract, `storage_balance_of({account_id: "mike.testnet"})` returns `null` (not registered) and `storage_balance_bounds` returns `{min: "1250000000000000000000", max: "1250000000000000000000"}` — a flat 0.00125 NEAR registration fee. That's the contract's own answer, and it's all the read side you need before you write.
-
-The write side is two signed function calls (near-api-js `transactions.functionCall` or any NEAR signer library works identically):
-
-- `storage_deposit({account_id: "<receiver>", registration_only: true})` with deposit `<min>` yocto and 100 Tgas — skip if `registered: true`.
-- `ft_transfer({receiver_id: "<receiver>", amount: "<yocto>", memo: "..."})` with deposit 1 yocto (required by NEP-141) and 100 Tgas.
-
-Submit each signed transaction through [`send_tx`](/rpc/transaction/send-tx) with `wait_until: "FINAL"`. Verify afterward with the contract's own view method — no need for indexed history to prove the transfer stuck:
-
-```bash
-curl -s "$RPC_URL" -H 'content-type: application/json' \
-  --data "$(jq -nc --arg contract "$TOKEN_CONTRACT_ID" --arg args "$ACCOUNT_ARGS_B64" '{
-    jsonrpc:"2.0",id:"fastnear",method:"query",
-    params:{request_type:"call_function",account_id:$contract,method_name:"ft_balance_of",args_base64:$args,finality:"final"}
-  }')" \
-  | jq '{receiver_balance: (.result.result | implode | fromjson)}'
-```
+To remove one, sign a `DeleteKey` action with a **full-access** key (a function-call key cannot authorize `DeleteKey`) and submit via [`send_tx`](/rpc/transaction/send-tx). Re-run the query to confirm the key is gone.
 
 ## Contract Reads and Raw State
 
-### How do I read a contract's raw storage directly?
+### Read a contract's storage without executing it
 
-Two RPC methods answer the same counter question from different layers: `view_state` pulls raw trie bytes without executing code, and `call_function` runs the contract's own view method. When they agree, you've proved the contract's view method matches its stored state.
+A view method like `get_num` still makes the node load the contract's wasm and run it. If you already know the storage key, `view_state` returns the raw serialized bytes directly — no execution, and no dependency on whether the contract exposes a getter for that field at all.
+
+Contracts built with `near-sdk-rs` store the top-level `#[near_bindgen]` struct under the key `STATE`. Pass `STATE` as `prefix_base64` (`U1RBVEU=` is base64 for those four ASCII bytes) and the node returns the serialized value.
 
 ```bash
 RPC_URL=https://rpc.testnet.fastnear.com
@@ -252,26 +178,14 @@ RAW_B64="$(curl -s "$RPC_URL" -H 'content-type: application/json' \
   }')" \
   | jq -r '.result.values[0].value')"
 
-RAW_I8="$(python3 -c "import base64,sys;print(int.from_bytes(base64.b64decode('$RAW_B64'),'little',signed=True))")"
+DECODED_I8="$(python3 -c "import base64; print(int.from_bytes(base64.b64decode('$RAW_B64'),'little',signed=True))")"
 
-METHOD_VALUE="$(curl -s "$RPC_URL" -H 'content-type: application/json' \
-  --data "$(jq -nc --arg contract "$CONTRACT_ID" '{
-    jsonrpc:"2.0",id:"fastnear",method:"query",
-    params:{request_type:"call_function",account_id:$contract,method_name:"get_num",args_base64:"e30=",finality:"final"}
-  }')" \
-  | jq -r '.result.result | implode | fromjson')"
-
-jq -n --arg raw_b64 "$RAW_B64" --argjson raw_i8 "$RAW_I8" --argjson method "$METHOD_VALUE" '{
-  raw_state_b64: $raw_b64,
-  raw_state_decoded: $raw_i8,
-  view_method_value: $method,
-  agree: ($raw_i8 == $method)
-}'
+jq -n --arg raw "$RAW_B64" --argjson val "$DECODED_I8" '{raw_bytes_base64: $raw, decoded_i8: $val}'
 ```
 
-For the live counter, `view_state` at key `STATE` (base64 `U1RBVEU=`) returns `"CQ=="` — one byte `0x09`, decoded as signed i8 to `9`; `get_num` also returns `9`. They agree because the contract stores `val: i8` at that key. The `signed=True` matters: a negative counter would show up as `"/w=="` (byte `0xff` → i8 `-1`, not u8 `255`).
+For the live counter, this returns `"CQ=="` — one byte `0x09`, decoded as signed i8 to `9`. That's the same number `get_num` would return, but read straight from the trie without running any contract code. `signed=True` matters: a negative counter serializes as `"/w=="` (byte `0xff` → i8 `-1`, not u8 `255`).
 
-`view_state` is the right tool when a contract lacks a view method for the data you need, when you want to verify a view method against actual storage, or when you need a key family the contract doesn't expose publicly. For everything else, `call_function` is lower ceremony. If the next question becomes historical rather than current, widen to [KV FastData API](/fastdata/kv).
+Reach for `view_state` when a contract doesn't expose a view method for the data you need, or when you want a key family the contract doesn't publish. For most reads `call_function` is still lower ceremony. If the question turns historical rather than current, widen to [KV FastData API](/fastdata/kv).
 
 ## NEAR Social and BOS Exact Reads
 

@@ -10,117 +10,126 @@ page_actions:
 
 ## Examples
 
-Each hydrated NEAR Data block document carries per-shard transactions, receipts, execution outcomes, and state changes. The three scenarios below share one `bash` helper that rolls those four signals into a single summary with handoff fields. Define it once, then pipe blocks through it:
+NEAR Data returns each block fully hydrated as one JSON document — header plus per-shard chunks, receipts, execution outcomes, and state changes — so a single `curl` gives you everything you need to filter for a specific contract without a second call.
+
+### What block is NEAR on right now?
+
+`/v0/last_block/final` 302-redirects to the current finalized block. Before filtering for a specific contract, it's worth seeing what one block looks like at the protocol level: transactions arrive sharded, so the tx count for a block is a sum across shards — not a single top-level number.
 
 ```bash
-contract_touch_summary() {
-  jq -r --arg contract "$1" '
-    [ .shards[] | {
-        shard_id,
-        direct_txs: ([.chunk.transactions[]? | select(.transaction.receiver_id == $contract)] | length),
-        incoming_receipts: ([.chunk.receipts[]? | select(.receiver_id == $contract)] | length),
-        execution_outcomes: ([.receipt_execution_outcomes[]? | select(.execution_outcome.outcome.executor_id == $contract)] | length),
-        state_changes: ([.state_changes[]? | select(.change.account_id? == $contract)] | length),
-        sample_tx_hash: ([.chunk.transactions[]? | select(.transaction.receiver_id == $contract) | .transaction.hash] | .[0]),
-        sample_receipt_id: (
-          [ .chunk.receipts[]? | select(.receiver_id == $contract) | .receipt_id ] +
-          [ .receipt_execution_outcomes[]? | select(.execution_outcome.outcome.executor_id == $contract) | .execution_outcome.id ] +
-          [ .state_changes[]? | select(.change.account_id? == $contract) | (.cause.receipt_hash? // empty) ]
-          | .[0]
-        )
-      }
-      | select(.direct_txs + .incoming_receipts + .execution_outcomes + .state_changes > 0)
-    ] as $rows
-    | {
-        height: .block.header.height,
-        hash: .block.header.hash,
-        contract: $contract,
-        touched: (($rows | length) > 0),
-        shards: ($rows | map(.shard_id)),
-        evidence: {
-          direct_txs: (($rows | map(.direct_txs) | add) // 0),
-          incoming_receipts: (($rows | map(.incoming_receipts) | add) // 0),
-          execution_outcomes: (($rows | map(.execution_outcomes) | add) // 0),
-          state_changes: (($rows | map(.state_changes) | add) // 0)
-        },
-        sample_tx_hash: ([ $rows[] | .sample_tx_hash | select(.) ] | .[0]),
-        sample_receipt_id: ([ $rows[] | .sample_receipt_id | select(.) ] | .[0])
-      }'
-}
+NEARDATA_BASE_URL=https://mainnet.neardata.xyz
+
+curl -sL "$NEARDATA_BASE_URL/v0/last_block/final" \
+  | jq '{
+      height: .block.header.height,
+      timestamp_nanosec: .block.header.timestamp_nanosec,
+      txs_per_shard: [.shards[] | {shard_id, tx_count: (.chunk.transactions | length)}],
+      total_txs: ([.shards[].chunk.transactions[]?] | length)
+    }'
 ```
+
+A live block shows 9 shards and a handful of transactions scattered across them — most shards are empty in any given block, and activity tends to cluster on whichever shards host the busy contracts. `timestamp_nanosec` is a Unix time in nanoseconds (divide by 1e9 for seconds). With this one call you already have everything needed to dig deeper — the filtering examples below are just jq over this same response.
 
 ### Did my contract get touched in the latest finalized block?
 
-`/v0/last_block/final` 302-redirects to the current finalized block; follow it and pipe straight through the helper.
+`/v0/last_block/final` 302-redirects to the current finalized block. Contracts can show up in a chunk's `transactions` (when they are the `receiver_id`) or in its `receipts` (when a cross-shard call lands), so one jq pass over the shards covers both.
 
 ```bash
 NEARDATA_BASE_URL=https://mainnet.neardata.xyz
 TARGET_CONTRACT=intents.near
 
 curl -sL "$NEARDATA_BASE_URL/v0/last_block/final" \
-  | contract_touch_summary "$TARGET_CONTRACT"
+  | jq --arg contract "$TARGET_CONTRACT" '{
+      height: .block.header.height,
+      contract: $contract,
+      touched_shards: [
+        .shards[] | {
+          shard_id,
+          txs:      [.chunk.transactions[]? | select(.transaction.receiver_id == $contract) | .transaction.hash],
+          receipts: [.chunk.receipts[]?     | select(.receiver_id == $contract)             | .receipt_id]
+        } | select((.txs | length) + (.receipts | length) > 0)
+      ]
+    }'
 ```
 
-Read `touched: false` as a complete, unambiguous answer for a quiet block. On `true`, the handoff fields (`sample_tx_hash`, `sample_receipt_id`) drop you straight into [/tx/examples](/tx/examples) for the readable story. One call replaces scanning chunks by hand — and note that `touched: true` with `state_changes: 0` is a real shape: a receipt can land in a chunk without producing state mutation in the same block.
+`touched_shards: []` is a complete answer for a quiet block. A non-empty list names the shards where the contract showed up and gives you the concrete `tx` hashes or `receipt_id`s — pipe a hash into the [Transactions API](/tx) when you want the human-readable story. Receipts without matching `txs` are normal: a cross-contract call shows up as an incoming receipt in this block even if the originating transaction landed earlier.
 
-### Did I see activity optimistically, and did it survive finality?
+### Did activity show up optimistically, and did finality catch up?
 
-Optimistic blocks live at `/v0/block_opt/{height}`; once finality catches up (usually within one block, ~1s on mainnet), the same height is also served at `/v0/block/{height}`. Run the helper on both and compare.
+Optimistic blocks ship at `/v0/block_opt/{height}` about a second ahead of `/v0/block/{height}`. A monitoring loop can act on the optimistic signal and expect the same answer to arrive at the finalized endpoint one block later — unless network stress widens the gap, in which case the finalized fetch returns `null` and you wait.
 
 ```bash
+NEARDATA_BASE_URL=https://mainnet.neardata.xyz
+TARGET_CONTRACT=intents.near
+
+count_touches() {
+  jq --arg contract "$1" '
+    [.shards[]
+     | ([.chunk.transactions[]? | select(.transaction.receiver_id == $contract)] | length)
+     + ([.chunk.receipts[]?     | select(.receiver_id == $contract)]             | length)]
+    | add // 0'
+}
+
 OPT_LOCATION="$(
   curl -s -D - -o /dev/null "$NEARDATA_BASE_URL/v0/last_block/optimistic" \
     | awk 'tolower($1) == "location:" {print $2}' | tr -d '\r'
 )"
 OPT_HEIGHT="${OPT_LOCATION##*/}"
 
-echo "Optimistic view at $OPT_HEIGHT:"
-curl -s "$NEARDATA_BASE_URL$OPT_LOCATION" | contract_touch_summary "$TARGET_CONTRACT"
-
-echo "Finalized view at $OPT_HEIGHT:"
+echo "optimistic @ $OPT_HEIGHT: $(curl -s "$NEARDATA_BASE_URL$OPT_LOCATION" | count_touches "$TARGET_CONTRACT") touches"
 FINAL="$(curl -s "$NEARDATA_BASE_URL/v0/block/$OPT_HEIGHT")"
-if [ "$(echo "$FINAL" | jq 'type')" = '"null"' ]; then
-  echo "finality has not caught up to $OPT_HEIGHT yet"
+if [ "$(printf '%s' "$FINAL" | jq 'type')" = '"null"' ]; then
+  echo "finalized @ $OPT_HEIGHT: not caught up yet"
 else
-  echo "$FINAL" | contract_touch_summary "$TARGET_CONTRACT"
+  echo "finalized @ $OPT_HEIGHT: $(printf '%s' "$FINAL" | count_touches "$TARGET_CONTRACT") touches"
 fi
 ```
 
-On a healthy network the two summaries match immediately; the value is in the pattern, not the dramatic difference. A monitoring loop that reacts to the optimistic signal knows the same answer is one block away from durable. Use the `finality has not caught up` branch when you really do need to distinguish "seen optimistically" from "confirmed" — during chain stress, that gap widens.
+On a healthy mainnet the two counts match within a second. The value is in the *pattern* — the optimistic stream gives you an answer you can act on immediately, with the finalized stream arriving a block later as durable confirmation.
 
-### Which shard actually changed my contract in this block?
+### Which shard actually changed my contract's state?
 
-Blocks are thin — most finalized blocks show no state mutation for any given contract. Walk back from the finalized head until the helper reports `state_changes > 0`, then open the winning shard with `/v0/block/{height}/shard/{shard_id}` for the actual mutation payload.
+Most finalized blocks show no state mutation for any given contract — activity is sparse and shard-local. Walk back from the finalized head until the contract's state actually changes, then open that shard for the mutation payload. The block-level call tells you *which* shard; the shard-level call tells you *how*.
 
 ```bash
-HEAD="$(curl -sL "$NEARDATA_BASE_URL/v0/last_block/final" | jq '.block.header.height')"
-TARGET_HEIGHT=""
-WINNING_SHARD=""
+NEARDATA_BASE_URL=https://mainnet.neardata.xyz
+TARGET_CONTRACT=intents.near
 
-for OFFSET in 0 1 2 3 4 5 6 7 8 9; do
+HEAD="$(curl -sL "$NEARDATA_BASE_URL/v0/last_block/final" | jq '.block.header.height')"
+FOUND_HEIGHT=""
+FOUND_SHARD=""
+
+for OFFSET in $(seq 0 15); do
   H=$((HEAD - OFFSET))
-  SUMMARY="$(curl -s "$NEARDATA_BASE_URL/v0/block/$H" | contract_touch_summary "$TARGET_CONTRACT")"
-  if [ "$(echo "$SUMMARY" | jq '.evidence.state_changes')" -gt 0 ]; then
-    TARGET_HEIGHT=$H
-    WINNING_SHARD="$(echo "$SUMMARY" | jq -r '.shards[0]')"
-    echo "$SUMMARY"
+  SHARD="$(curl -s "$NEARDATA_BASE_URL/v0/block/$H" \
+    | jq -r --arg contract "$TARGET_CONTRACT" '
+        .shards[]
+        | select([.state_changes[]? | select(.change.account_id? == $contract)] | length > 0)
+        | .shard_id
+      ' | head -1)"
+  if [ -n "$SHARD" ]; then
+    FOUND_HEIGHT=$H; FOUND_SHARD=$SHARD
     break
   fi
 done
 
-curl -s "$NEARDATA_BASE_URL/v0/block/$TARGET_HEIGHT/shard/$WINNING_SHARD" \
-  | jq --arg contract "$TARGET_CONTRACT" '{
-      shard_id,
-      chunk_hash: .chunk.header.chunk_hash,
-      matching_state_changes: [.state_changes[] | select(.change.account_id? == $contract) | {type, cause_type: (.cause | keys[0]), account_id: .change.account_id}][0:3],
-      matching_execution_outcomes: [.receipt_execution_outcomes[] | select(.execution_outcome.outcome.executor_id == $contract) | {receipt_id: .execution_outcome.id, status: (.execution_outcome.outcome.status | keys[0]), predecessor_id: .receipt.predecessor_id}][0:3]
-    }'
+if [ -z "$FOUND_HEIGHT" ]; then
+  echo "no state mutation for $TARGET_CONTRACT in the last 16 finalized blocks"
+else
+  curl -s "$NEARDATA_BASE_URL/v0/block/$FOUND_HEIGHT/shard/$FOUND_SHARD" \
+    | jq --arg contract "$TARGET_CONTRACT" --argjson height "$FOUND_HEIGHT" --argjson shard_id "$FOUND_SHARD" '{
+        height: $height,
+        shard_id: $shard_id,
+        state_changes:      [.state_changes[]              | select(.change.account_id?                        == $contract) | {type, cause: (.cause | keys[0])}][0:3],
+        execution_outcomes: [.receipt_execution_outcomes[] | select(.execution_outcome.outcome.executor_id     == $contract) | {receipt_id: .execution_outcome.id, status: (.execution_outcome.outcome.status | keys[0])}][0:3]
+      }'
+fi
 ```
 
-On mainnet, `intents.near` consistently executes on shard 7, so the walk-back typically lands within a few blocks. The shard payload then names the actual state-change types (`account_update`, `data_update`, and the like) and the receipt execution outcomes that produced them — shard-local proof without guessing. Widen the `OFFSET` range for less-active contracts.
+On mainnet, `intents.near` lives on shard 7, so the walk typically lands within a handful of blocks. The shard payload names the actual state-change types (`account_update`, `data_update`, etc.) and the receipt outcomes that caused them — shard-local proof without guessing. Widen the offset range for contracts with lighter traffic.
 
 ## When to widen
 
-- Use [Transactions API](/tx) once you have a `tx_hash` and want the human-readable transaction story.
-- Use [RPC Reference](/rpc) when the next question is about exact protocol-native receipt or block semantics.
+- Use the [Transactions API](/tx) once you have a `tx_hash` and want the human-readable transaction story.
+- Use the [RPC Reference](/rpc) when the next question is about exact protocol-native receipt or block semantics.
 - Use [Block Headers](/neardata/block-headers) when you only need head progression or finality lag, not contract-touch inspection.

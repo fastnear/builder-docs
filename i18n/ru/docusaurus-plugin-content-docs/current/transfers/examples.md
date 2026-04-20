@@ -8,7 +8,32 @@ page_actions:
   - markdown
 ---
 
-## Пример
+## Примеры
+
+### Какая у этого аккаунта свежая активность по переводам?
+
+`/v0/transfers` всего с `account_id` и `desc: true` возвращает самые свежие переводы, касающиеся этого аккаунта, по всем типам активов, в обоих направлениях сразу. В каждой строке уже есть `human_amount`, `asset_id` и `transaction_id`, так что этот поток заодно служит быстрым сканом активности до того, как вы достанете фильтры.
+
+```bash
+TRANSFERS_BASE_URL=https://transfers.main.fastnear.com
+ACCOUNT_ID=root.near
+
+curl -s "$TRANSFERS_BASE_URL/v0/transfers" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc --arg account_id "$ACCOUNT_ID" '{account_id: $account_id, desc: true, limit: 5}')" \
+  | jq '{
+      recent: [.transfers[] | {
+        block_height,
+        asset_id,
+        human_amount,
+        other_account_id,
+        transfer_type,
+        tx: .transaction_id
+      }]
+    }'
+```
+
+Для `root.near` последние строки смешивают активы `FtTransfer` и `MtTransfer`. `asset_id` использует URI по NEP-стандартам (`native:near`, `nep141:...`, `nep245:...`), так что одно поле уже подсказывает, к какому стандарту тянуться дальше. Положительный `human_amount` означает, что аккаунт получил; отрицательный — что отправил. `other_account_id: null` — норма для multi-token-форм, где контрагент сидит внутри границы контракта, а не как отдельный аккаунт верхнего уровня.
 
 ### Отфильтровать и листать ленту переводов одного аккаунта
 

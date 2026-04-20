@@ -8,7 +8,32 @@ page_actions:
   - markdown
 ---
 
-## Example
+## Examples
+
+### What's this account's recent transfer activity?
+
+`/v0/transfers` with just `account_id` and `desc: true` returns the most recent transfers touching that account across every asset type, both directions mixed. Each row already carries `human_amount`, `asset_id`, and `transaction_id`, so the feed doubles as a quick activity scan before you reach for filters.
+
+```bash
+TRANSFERS_BASE_URL=https://transfers.main.fastnear.com
+ACCOUNT_ID=root.near
+
+curl -s "$TRANSFERS_BASE_URL/v0/transfers" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc --arg account_id "$ACCOUNT_ID" '{account_id: $account_id, desc: true, limit: 5}')" \
+  | jq '{
+      recent: [.transfers[] | {
+        block_height,
+        asset_id,
+        human_amount,
+        other_account_id,
+        transfer_type,
+        tx: .transaction_id
+      }]
+    }'
+```
+
+For `root.near`, the latest rows mix `FtTransfer` and `MtTransfer` assets. `asset_id` uses NEP-standard URIs (`native:near`, `nep141:...`, `nep245:...`), so one field tells you which standard to reach for next. Positive `human_amount` means the account received; negative means it sent. `other_account_id: null` is normal for multi-token shapes where the counterparty sits inside a contract boundary rather than as a top-level account.
 
 ### Filter and page a transfer feed for one account
 
