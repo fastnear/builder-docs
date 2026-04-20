@@ -82,7 +82,7 @@ Use [FastNear API](/api) for higher-level account views, [NEAR Data API](/nearda
 
 ## Need a workflow?
 
-Use [KV FastData Examples](/fastdata/kv/examples) for plain-language flows like exact-key lookups, key-history investigation, predecessor-scoped inspection, and canonical RPC follow-up.
+Use [KV FastData Examples](/fastdata/kv/examples) for worked examples like exact-key lookups, key-history investigation, predecessor-scoped inspection, and canonical RPC follow-up.
 
 ## Default workflow
 

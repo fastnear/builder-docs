@@ -51,7 +51,7 @@ https://tx.test.fastnear.com
 
 ## Need a workflow?
 
-Use [Transactions API Examples](/tx/examples) for plain-language flows like transaction lookups, receipt investigation, account activity, and block-window history.
+Use [Transactions API Examples](/tx/examples) for worked examples like transaction lookups, receipt investigation, account activity, and block-window history.
 
 ## Troubleshooting
 

@@ -2,23 +2,21 @@
 sidebar_label: Examples
 slug: /neardata/examples
 title: "Примеры NEAR Data"
-description: "Пошаговые сценарии для мониторинга недавней активности контракта, подтверждения optimistic-наблюдений и проверки изменений на уровне shard."
+description: "Практические примеры для мониторинга недавней активности контракта, подтверждения optimistic-наблюдений и проверки изменений на уровне shard."
 displayed_sidebar: nearDataApiSidebar
 page_actions:
   - markdown
 ---
 
-NEAR Data особенно хороша там, где вопрос касается недавней активности сети: появился ли контракт в самом новом семействе блоков, пережил ли optimistic-сигнал finality и какой shard действительно понёс изменение.
+Используйте NEAR Data, когда вопрос касается недавней активности сети: появился ли контракт в самом новом семействе блоков, пережил ли optimistic-сигнал finality и какой shard действительно понёс изменение.
 
-## Готовые расследования
+## Примеры
 
 ### Был ли мой контракт затронут в последнем финализированном блоке?
 
-Используйте это, когда приложению, боту или инструменту поддержки нужен один быстрый ответ о живом контракте. Мы будем проверять `intents.near`, но та же сводка работает для любого аккаунта контракта.
-
 <div className="fastnear-example-strategy">
   <div className="fastnear-example-strategy__header">
-    <span className="fastnear-example-strategy__eyebrow">Стратегия</span>
+    <span className="fastnear-example-strategy__eyebrow">Ход</span>
     <p className="fastnear-example-strategy__title">Сначала дайте NEAR Data ответить на задачу мониторинга, а уже потом сохраняйте tx hash или receipt ID для следующей поверхности, если это вообще понадобится.</p>
   </div>
   <div className="fastnear-example-strategy__items">
@@ -82,7 +80,7 @@ curl -s "$NEARDATA_BASE_URL$FINAL_LOCATION" \
   | contract_touch_summary "$TARGET_CONTRACT"
 ```
 
-Читать ответ стоит так:
+Читайте ответ так:
 
 - `touched: false` означает, что самый новый финализированный блок не упомянул и не изменил контракт ни одним из отслеживаемых способов.
 - `sample_tx_hash` означает, что у вас уже есть хороший якорь для следующего шага на `/tx`.
@@ -90,11 +88,9 @@ curl -s "$NEARDATA_BASE_URL$FINAL_LOCATION" \
 
 ### Увидел ли я активность в optimistic-режиме, и пережила ли она finality?
 
-Используйте это, когда нужен ранний сигнал по живому контракту, но стабильный ответ всё равно должен пройти через финализированное подтверждение.
-
 <div className="fastnear-example-strategy">
   <div className="fastnear-example-strategy__header">
-    <span className="fastnear-example-strategy__eyebrow">Стратегия</span>
+    <span className="fastnear-example-strategy__eyebrow">Ход</span>
     <p className="fastnear-example-strategy__title">Используйте один и тот же словарь contract-touch на обеих поверхностях, чтобы сравнение было честным.</p>
   </div>
   <div className="fastnear-example-strategy__items">
@@ -168,11 +164,9 @@ fi
 
 ### Какой shard действительно изменил мой контракт в этом блоке?
 
-Используйте это, когда недавний блок уже показал активность контракта, и теперь нужно доказательство на уровне shard того, где именно изменение реально приземлилось.
-
 <div className="fastnear-example-strategy">
   <div className="fastnear-example-strategy__header">
-    <span className="fastnear-example-strategy__eyebrow">Стратегия</span>
+    <span className="fastnear-example-strategy__eyebrow">Ход</span>
     <p className="fastnear-example-strategy__title">Сначала используйте весь блок, чтобы найти нужный shard, а затем дайте <span className="fastnear-example-strategy__code">block-shard</span> доказать само изменение.</p>
   </div>
   <div className="fastnear-example-strategy__items">

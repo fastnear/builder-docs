@@ -2,23 +2,19 @@
 sidebar_label: Examples
 slug: /api/examples
 title: API Examples
-description: Plain-language workflows for using FastNear API docs for account lookups, holdings checks, NFT gating, and staking classification.
+description: Task-first FastNear API examples for account lookup, holdings, staking, and BOS provenance.
 displayed_sidebar: fastnearApiSidebar
 page_actions:
   - markdown
 ---
 
-## Worked walkthroughs
-
-Read this page as a short ladder: first resolve who the account is, then classify the wallet shape, then use one richer provenance flow when you want to turn a live BOS artifact into a minted record.
+## Examples
 
 ### Resolve a public key, then fetch the account snapshot
 
-Use this when you have a public key first and the next user-facing question is “which account is this?” followed immediately by “what does that account look like right now?”
-
 <div className="fastnear-example-strategy">
   <div className="fastnear-example-strategy__header">
-    <span className="fastnear-example-strategy__eyebrow">Strategy</span>
+    <span className="fastnear-example-strategy__eyebrow">Flow</span>
     <p className="fastnear-example-strategy__title">Resolve identity first, then reuse the same account ID for one readable wallet snapshot.</p>
   </div>
   <div className="fastnear-example-strategy__items">
@@ -28,7 +24,7 @@ Use this when you have a public key first and the next user-facing question is �
   </div>
 </div>
 
-**What you're doing**
+**Flow**
 
 - Resolve the public key to one or more account IDs.
 - Extract the first matching account ID with `jq`.
@@ -60,17 +56,15 @@ curl -s "$API_BASE_URL/v1/account/$ACCOUNT_ID/full" \
     }'
 ```
 
-**Why this next step?**
+**When to pivot**
 
 The public-key lookup tells you which account you are dealing with. The full account snapshot is the natural next read when you want balances, NFTs, staking, and pools in one response. If the key maps to multiple accounts instead of one, move to [V1 Public Key Lookup All](/api/v1/public-key-all) or loop through each returned `account_id`.
 
 ### Does this wallet show direct staking, liquid staking tokens, or both?
 
-Use this when the user story is “show me whether this wallet currently shows direct staking pool positions, liquid staking tokens, or both.”
-
 <div className="fastnear-example-strategy">
   <div className="fastnear-example-strategy__header">
-    <span className="fastnear-example-strategy__eyebrow">Strategy</span>
+    <span className="fastnear-example-strategy__eyebrow">Flow</span>
     <p className="fastnear-example-strategy__title">Compare staking positions and FT balances before you interpret the wallet.</p>
   </div>
   <div className="fastnear-example-strategy__items">
@@ -91,7 +85,7 @@ Use this when the user story is “show me whether this wallet currently shows d
 
 This example is intentionally observational. It classifies what FastNear can see from staking positions and FT balances today. It does not prove every possible synthetic or off-platform staking exposure.
 
-**What you're doing**
+**Flow**
 
 - Read indexed direct staking positions from the account staking endpoint.
 - Read indexed FT balances from the account FT endpoint.
@@ -148,17 +142,15 @@ jq -n \
     }'
 ```
 
-**Why this next step?**
+**When to pivot**
 
 If the classification is `direct_only`, the next operational question is usually about unstake and withdraw timing. If it is `liquid_only`, the next question is usually about redeeming or swapping the liquid token. If it is `mixed`, you should treat those as two separate exit paths rather than assuming one flow covers both.
 
 ### Archive a BOS widget version as a provenance NFT
 
-Use this when the user story is “this BOS widget is a real on-chain artifact. Mint an NFT that records exactly which version I archived.”
-
 <div className="fastnear-example-strategy">
   <div className="fastnear-example-strategy__header">
-    <span className="fastnear-example-strategy__eyebrow">Strategy</span>
+    <span className="fastnear-example-strategy__eyebrow">Flow</span>
     <p className="fastnear-example-strategy__title">Read the exact widget first, then mint only after the provenance fields are deterministic.</p>
   </div>
   <div className="fastnear-example-strategy__items">
@@ -179,7 +171,7 @@ Use this when the user story is “this BOS widget is a real on-chain artifact. 
 - [NEP-171 NFT standard](https://docs.near.org/primitives/nft/standard)
 - [SocialDB API and contract surface](https://github.com/NearSocial/social-db#api)
 
-**What you're doing**
+**Flow**
 
 - Check whether the receiver already holds NFTs from the archive collection.
 - Read one exact BOS widget from `social.near`, including its widget-level SocialDB block.
@@ -363,7 +355,7 @@ jq '{
 }' /tmp/bos-widget-provenance-token.json
 ```
 
-**Why this next step?**
+**When to pivot**
 
 FastNear API gives you the quick receiver-side check. Mainnet RPC gives you the exact widget body and SocialDB block. Testnet minting turns that into a durable NFT record. If you later want to prove which historical transaction wrote the widget, hand off to the NEAR Social proof investigations on [Transactions API examples](/tx/examples).
 

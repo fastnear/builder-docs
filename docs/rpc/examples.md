@@ -2,7 +2,7 @@
 sidebar_label: Examples
 slug: /rpc/examples
 title: RPC Examples
-description: Plain-language workflows for using FastNear RPC docs for exact state checks, block inspection, contract views, and transaction submission.
+description: Task-first RPC examples for state checks, block inspection, contract reads, and transaction submission.
 displayed_sidebar: rpcSidebar
 page_actions:
   - markdown
@@ -10,17 +10,15 @@ page_actions:
 
 # RPC Examples
 
-Use this page when you already know the answer lives in RPC and you want the shortest path to it. The goal is not to memorize every method. It is to start with the right RPC read or write, stop as soon as the response answers the question, and only switch to a higher-level API when that would save time.
+Start with the RPC method that answers the question. Submit with `broadcast_tx_async`, track with `tx`, and widen only when you need receipt trees, raw state, or shard-level tracing.
 
 ## Transaction Submission and Tracking
 
-Start here when the real question is not just “how do I send this?” but “which RPC endpoint should I use, and how do I track the transaction all the way to done?”
-
 ### Submit a transaction, then track it from hash to final execution
 
-Use this when the user story is simple: “I have a signed transaction. Which endpoint do I call first, and what should I poll after I get the hash?” Not every tx question wants the same RPC method. The practical pattern is to submit fast, then track deliberately.
+Need the default RPC submission flow? Submit with `broadcast_tx_async`, then poll `tx`. Use `EXPERIMENTAL_tx_status` only when you need the receipt tree.
 
-This walkthrough is intentionally pinned and historical. It uses one real mainnet transaction that wrote a NEAR Social follow edge:
+Pinned mainnet transaction:
 
 - transaction hash: `FLLmTvFx9vCof79scy2uUviF5WwYmevkz9TZ8azPGVQb`
 - signer: `mike.near`
@@ -28,11 +26,9 @@ This walkthrough is intentionally pinned and historical. It uses one real mainne
 - included block height: `79574923`
 - receipt execution block for the SocialDB write: `79574924`
 
-Because this transaction is already old and finalized, you cannot literally replay its true pending window. That is fine. The point here is to teach the right submission and tracking pattern, then inspect one pinned transaction with the same tools.
-
 <div className="fastnear-example-strategy">
   <div className="fastnear-example-strategy__header">
-    <span className="fastnear-example-strategy__eyebrow">Strategy</span>
+    <span className="fastnear-example-strategy__eyebrow">Flow</span>
     <p className="fastnear-example-strategy__title">Submit fast, poll the simpler status path first, and only drop into the receipt tree when the headline status stops being enough.</p>
   </div>
   <div className="fastnear-example-strategy__items">
@@ -42,7 +38,7 @@ Because this transaction is already old and finalized, you cannot literally repl
   </div>
 </div>
 
-**What you're deciding**
+**Decision points**
 
 - which submission endpoint to reach for first
 - what to poll after you have a tx hash
@@ -78,13 +74,11 @@ flowchart LR
 | `EXECUTED_OPTIMISTIC` | execution has happened with optimistic finality | `tx` or `send_tx` |
 | `FINAL` | all relevant execution has completed and finalized | `tx` by default, `EXPERIMENTAL_tx_status` when you need more detail |
 
-The key practical distinction is simple:
-
 - use `broadcast_tx_async` when the tx hash is enough to keep going
 - use `tx` as the normal tracking loop
 - use `EXPERIMENTAL_tx_status` when the next question is about the receipt tree rather than the headline status
 
-**What you're doing**
+**Flow**
 
 - Show what a live submission would look like with `broadcast_tx_async`.
 - Poll the pinned tx with `tx` at two thresholds: `INCLUDED_FINAL` and `FINAL`.
@@ -202,7 +196,7 @@ curl -s "$RPC_URL" \
 
 This is where you go when “did it finish?” turns into “show me the receipt tree and the full async execution story.”
 
-5. Optional: pivot to Transactions API only when you want the readable story surface.
+5. Pivot to Transactions API only when you want the readable story surface.
 
 ```bash
 curl -s "$TX_BASE_URL/v0/transactions" \
@@ -233,15 +227,11 @@ That last step is intentionally optional. The RPC truth is already enough for su
 
 ## Account and Key Mechanics
 
-Start here when the question is about exact permissions, exact key state, or one contract-level write flow.
-
 ### Audit and remove old Near Social function-call keys
-
-Use this when you know an account has accumulated older `social.near` function-call keys and you want to inspect them, choose one intentionally, and remove it with raw RPC submission.
 
 <div className="fastnear-example-strategy">
   <div className="fastnear-example-strategy__header">
-    <span className="fastnear-example-strategy__eyebrow">Strategy</span>
+    <span className="fastnear-example-strategy__eyebrow">Flow</span>
     <p className="fastnear-example-strategy__title">Use exact key reads to narrow the target first, then sign exactly one delete.</p>
   </div>
   <div className="fastnear-example-strategy__items">
@@ -251,7 +241,7 @@ Use this when you know an account has accumulated older `social.near` function-c
   </div>
 </div>
 
-**What you're doing**
+**Flow**
 
 - Use RPC itself to list every access key on the account.
 - Narrow that list to function-call keys scoped to `social.near`.
@@ -328,7 +318,7 @@ curl -s "$RPC_URL" \
   | jq '{nonce: .result.nonce, permission: .result.permission}'
 ```
 
-3. Optional: pull recent function-call activity for the account to decide whether you want to investigate more before cleanup.
+3. Pull recent function-call activity for the account only if you want more context before cleanup.
 
 ```bash
 curl -s "$TX_BASE_URL/v0/account" \
@@ -486,17 +476,15 @@ else
 fi
 ```
 
-**Why this next step?**
+**When to pivot**
 
 Re-running `view_access_key_list` closes the loop on the same RPC method you used for discovery. If the delete succeeded there, you do not need an indexed API to prove the cleanup.
 
 ### Which transaction added this `social.near` function-call key, and who authorized it?
 
-Use this when you can already see a live access key on the account, but you want to trace it back to the `AddKey` transaction that created it and identify which public key actually authorized that change.
-
 <div className="fastnear-example-strategy">
   <div className="fastnear-example-strategy__header">
-    <span className="fastnear-example-strategy__eyebrow">Strategy</span>
+    <span className="fastnear-example-strategy__eyebrow">Flow</span>
     <p className="fastnear-example-strategy__title">Start from the live key, then walk backward only as far as you need.</p>
   </div>
   <div className="fastnear-example-strategy__items">
@@ -506,7 +494,7 @@ Use this when you can already see a live access key on the account, but you want
   </div>
 </div>
 
-**What you're doing**
+**Flow**
 
 - Read the exact key first with RPC and keep its current nonce as the clue.
 - Convert that nonce into a tight block-height window for the likely `AddKey` receipt.
@@ -677,7 +665,7 @@ With the sample `mike.near` key above, the match is delegated:
 - `authorizing_public_key`: `ed25519:GaYgzN1eZUgwA7t8a5pYxFGqtF4kon9dQaDMjPDejsiu`
 - `added_public_key`: `ed25519:7GZgXkMPEyGXqRhxaLvHxWn6fVfeyuQGMqnLVQAh7bs`
 
-4. Optional: if you need the exact `AddKey` receipt block too, pivot one more time by receipt ID.
+4. If you need the exact `AddKey` receipt block too, pivot one more time by receipt ID.
 
 ```bash
 ADD_KEY_RECEIPT_ID="$(
@@ -704,17 +692,15 @@ curl -s "$TX_BASE_URL/v0/receipt" \
 
 For the sample key above, the exact `AddKey` receipt is `C5jsTftYwPiibyxdoDKd4LXFFru8n4weDKLV4cfb1bcX` in receipt block `112057392`, while the outer transaction landed earlier in block `112057390`.
 
-**Why this next step?**
+**When to pivot**
 
 Start with exact current key state because it gives you the nonce clue. A tight `/v0/account` window turns that clue into a small candidate set. `/v0/transactions` tells you whether the key was added directly or through delegated authorization. `/v0/receipt` is the optional last step when you need the exact `AddKey` receipt block, not just the outer transaction.
 
 ### Register FT storage if needed, then transfer tokens
 
-Use this when the user story is “send fungible tokens safely, but first prove whether the receiver is already registered for storage on that FT contract.”
-
 <div className="fastnear-example-strategy">
   <div className="fastnear-example-strategy__header">
-    <span className="fastnear-example-strategy__eyebrow">Strategy</span>
+    <span className="fastnear-example-strategy__eyebrow">Flow</span>
     <p className="fastnear-example-strategy__title">Read storage first, then spend the minimum write calls needed to make the transfer stick.</p>
   </div>
   <div className="fastnear-example-strategy__items">
@@ -735,7 +721,7 @@ Use this when the user story is “send fungible tokens safely, but first prove 
 
 This walkthrough uses the safe public contract `ft.predeployed.examples.testnet`. Before you start, make sure the sender already holds some `gtNEAR` there. If not, mint a small balance first with the pre-deployed contract guide above and then come back to this flow.
 
-**What you're doing**
+**Flow**
 
 - Use exact RPC view calls to check whether the receiver already has FT storage on the contract.
 - If needed, fetch the minimum storage requirement.
@@ -1017,26 +1003,22 @@ curl -s "$RPC_URL" \
     }'
 ```
 
-**Why this next step?**
+**When to pivot**
 
 This is a good RPC example because every step stays close to the contract itself: first check storage state, then send the minimum required change calls, then verify the post-transfer balance directly on the contract.
 
 ## Contract Reads and Raw State
 
-Start here when the question is “does this contract method tell me enough?” versus “should I read the storage directly?”
-
 ### How do I read a contract's raw storage directly?
 
-Use this when the public view method is missing, or when you need to verify the storage layout itself instead of trusting the method alone.
-
-This walkthrough uses the live public testnet contract `counter.near-examples.testnet`. The number can change over time. That is fine. The point is that you read the raw storage first, then confirm that the contract's public view method agrees:
+This walkthrough uses the live public testnet contract `counter.near-examples.testnet`. The number can change over time. The useful part is the shape of the read:
 
 - `view_state` reads the raw `STATE` entry directly from contract storage
 - `call_function get_num` asks the contract for the same current number through its public view API
 
 <div className="fastnear-example-strategy">
   <div className="fastnear-example-strategy__header">
-    <span className="fastnear-example-strategy__eyebrow">Strategy</span>
+    <span className="fastnear-example-strategy__eyebrow">Flow</span>
     <p className="fastnear-example-strategy__title">Read the storage the hard way first, then let the contract confirm the same answer through its view method.</p>
   </div>
   <div className="fastnear-example-strategy__items">
@@ -1046,7 +1028,7 @@ This walkthrough uses the live public testnet contract `counter.near-examples.te
   </div>
 </div>
 
-The mental model matters more than the counter itself:
+Keep the distinction straight:
 
 - `view_state` is a direct storage read from the trie
 - `call_function` executes a read-only method on the contract
@@ -1063,7 +1045,7 @@ flowchart LR
     X --> A["Same current counter value"]
 ```
 
-**What you're doing**
+**Flow**
 
 - Read the raw `STATE` key from contract storage.
 - Decode the returned bytes into the current signed counter value.
@@ -1195,17 +1177,13 @@ If `agrees_now` is `true`, you have proved the point of the example:
 - `view_state` answered the question by reading storage directly
 - `call_function get_num` answered the same question by running the contract’s public read method
 
-**Why this next step?**
+**When to pivot**
 
 Use `view_state` when the real question is about exact storage, missing view methods, or verifying a known key family. Use `call_function` when you want the contract’s public read API. If the next question becomes historical instead of “what is it right now?”, that is the moment to widen into [KV FastData API](/fastdata/kv).
 
 ## Chunk and Shard Tracing
 
-Start here when the question is no longer just “did this transaction succeed?” but “which shard-local chunk actually executed each leg of the work?”
-
 ### Trace a generated transfer receipt from one shard chunk to another
-
-Use this when the contract call itself was only the start of the story. In this pinned mainnet case, the signed transaction starts on shard `11`, then a generated `Transfer` receipt finishes on shard `6`. That cross-shard handoff is exactly why chunk-level inspection matters.
 
 This walkthrough is pinned to:
 
@@ -1217,7 +1195,7 @@ This walkthrough is pinned to:
 
 <div className="fastnear-example-strategy">
   <div className="fastnear-example-strategy__header">
-    <span className="fastnear-example-strategy__eyebrow">Strategy</span>
+    <span className="fastnear-example-strategy__eyebrow">Flow</span>
     <p className="fastnear-example-strategy__title">Recover the receipt chain first, inspect the generated receipt directly, then map each leg back to the shard chunk that actually carried it.</p>
   </div>
   <div className="fastnear-example-strategy__items">
@@ -1236,7 +1214,7 @@ flowchart LR
     C --> D["Chunk EPau...<br/>block 194623172<br/>shard 6<br/>receipt executes"]
 ```
 
-**What you're doing**
+**Flow**
 
 - Recover the receipt chain from the transaction first.
 - Inspect the generated `Transfer` receipt body directly.
@@ -1441,7 +1419,7 @@ This confirms the cross-shard hop:
 - that chunk lives on shard `6`, not shard `11`
 - the signed transaction started on one shard, but the later receipt finished on another
 
-**Why this next step?**
+**When to pivot**
 
 Use [`Chunk by Block and Shard`](/rpc/protocol/chunk-by-block-shard) when you know the block and shard coordinates and want to ask “what did this shard execute in this block?” Use [`Chunk by Hash`](/rpc/protocol/chunk-by-hash) when another tool has already handed you the exact chunk hash. Use [`EXPERIMENTAL_tx_status`](/rpc/transaction/experimental-tx-status) and [`EXPERIMENTAL_receipt`](/rpc/transaction/experimental-receipt) when the real question is receipt-driven tracing. If you also need state changes and produced receipts, widen to [Block Shard](/neardata/block-shard).
 
@@ -1451,11 +1429,9 @@ These stay on exact SocialDB reads and on-chain readiness checks until the quest
 
 ### Can this account still publish to NEAR Social right now?
 
-Use this when the user story is “I’m about to publish a profile change, widget update, or graph write under `mike.near`, and I want a plain go/no-go answer before I open wallet signing.”
-
 <div className="fastnear-example-strategy">
   <div className="fastnear-example-strategy__header">
-    <span className="fastnear-example-strategy__eyebrow">Strategy</span>
+    <span className="fastnear-example-strategy__eyebrow">Flow</span>
     <p className="fastnear-example-strategy__title">Ask <span className="fastnear-example-strategy__code">social.near</span> for the two things that matter before you sign anything.</p>
   </div>
   <div className="fastnear-example-strategy__items">
@@ -1465,7 +1441,7 @@ Use this when the user story is “I’m about to publish a profile change, widg
   </div>
 </div>
 
-This is the same question real NEAR Social clients have to answer before they try a write:
+Required checks:
 
 - does the target account already have storage on `social.near`?
 - if it does, is there still room left in that storage?
@@ -1475,7 +1451,7 @@ This is the same question real NEAR Social clients have to answer before they tr
 
 - [SocialDB API and contract surface](https://github.com/NearSocial/social-db#api)
 
-**What you're doing**
+**Flow**
 
 - Check that the signer account itself exists and can pay gas.
 - Ask `social.near` how much storage the target account has left.
@@ -1647,17 +1623,15 @@ jq -n \
 
 If that final object says `ready_to_publish_now: true`, RPC has already answered the question. If it says `false`, you know whether the blocker is storage, delegated permission, or both.
 
-**Why this next step?**
+**When to pivot**
 
 This keeps the whole question on exact on-chain reads. `social.near` itself answers whether the target account has room left and whether a delegated signer is already allowed to write. That is a better NEAR Social readiness check than guessing from wallet state alone.
 
 ### What does `mob.near/widget/Profile` actually contain right now?
 
-Use this when the question is simple: “show me the live source for `mob.near/widget/Profile`, tell me when that widget key was last written, and keep me on exact RPC reads.”
-
 <div className="fastnear-example-strategy">
   <div className="fastnear-example-strategy__header">
-    <span className="fastnear-example-strategy__eyebrow">Strategy</span>
+    <span className="fastnear-example-strategy__eyebrow">Flow</span>
     <p className="fastnear-example-strategy__title">Stay on exact SocialDB reads, and only widen into history if the question turns forensic.</p>
   </div>
   <div className="fastnear-example-strategy__items">
@@ -1671,7 +1645,7 @@ Use this when the question is simple: “show me the live source for `mob.near/w
 
 - [SocialDB API and contract surface](https://github.com/NearSocial/social-db#api)
 
-**What you're doing**
+**Flow**
 
 - Ask `social.near` for the widget catalog under `mob.near`.
 - Keep the block heights so you know when each widget key last changed.
@@ -1786,7 +1760,7 @@ jq -r \
 
 At the time of writing, the live last-write block for `mob.near/widget/Profile` was `86494825`. Keep that block if you later want to prove which transaction wrote this version.
 
-**Why this next step?**
+**When to pivot**
 
 Sometimes the right RPC answer is just: here is the widget, here is the live source, and here is the block height to keep if provenance matters later.
 

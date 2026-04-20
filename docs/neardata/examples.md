@@ -2,23 +2,19 @@
 sidebar_label: Examples
 slug: /neardata/examples
 title: NEAR Data Examples
-description: Plain-language workflows for recent contract-touch monitoring, optimistic confirmation, and shard-local change inspection.
+description: Task-first NEAR Data examples for live monitoring, optimistic checks, and shard-local proof.
 displayed_sidebar: nearDataApiSidebar
 page_actions:
   - markdown
 ---
 
-NEAR Data is strongest when the real question is about recent chain activity: did a contract show up in the newest block family, did an optimistic signal survive finality, and which shard actually carried the change?
-
-## Worked investigations
+## Examples
 
 ### Did my contract get touched in the latest finalized block?
 
-Use this when your app, bot, or support tool needs one fast answer about a live contract. We will check `intents.near`, but the same summary works for any contract account.
-
 <div className="fastnear-example-strategy">
   <div className="fastnear-example-strategy__header">
-    <span className="fastnear-example-strategy__eyebrow">Strategy</span>
+    <span className="fastnear-example-strategy__eyebrow">Flow</span>
     <p className="fastnear-example-strategy__title">Let NEAR Data answer the monitoring question first, then keep one tx hash or receipt ID for the next surface only if you need it.</p>
   </div>
   <div className="fastnear-example-strategy__items">
@@ -28,7 +24,7 @@ Use this when your app, bot, or support tool needs one fast answer about a live 
   </div>
 </div>
 
-This can honestly return `touched: false` in a quiet block. That is still a useful answer: nothing in the newest finalized block currently needs deeper tracing.
+`touched: false` is a complete answer for a quiet block.
 
 ```bash
 NEARDATA_BASE_URL=https://mainnet.neardata.xyz
@@ -82,7 +78,7 @@ curl -s "$NEARDATA_BASE_URL$FINAL_LOCATION" \
   | contract_touch_summary "$TARGET_CONTRACT"
 ```
 
-Read the answer like this:
+Read it as:
 
 - `touched: false` means the newest finalized block did not mention or mutate the contract in any of the monitored ways.
 - `sample_tx_hash` means you already have a good `/tx` anchor for the next question.
@@ -90,11 +86,9 @@ Read the answer like this:
 
 ### Did I see activity optimistically, and did it survive finality?
 
-Use this when you want an early signal for a live contract, but the stable answer still needs finalized confirmation.
-
 <div className="fastnear-example-strategy">
   <div className="fastnear-example-strategy__header">
-    <span className="fastnear-example-strategy__eyebrow">Strategy</span>
+    <span className="fastnear-example-strategy__eyebrow">Flow</span>
     <p className="fastnear-example-strategy__title">Use the same contract-touch vocabulary on both surfaces so the comparison stays honest.</p>
   </div>
   <div className="fastnear-example-strategy__items">
@@ -168,11 +162,9 @@ That is the practical split:
 
 ### Which shard actually changed my contract in this block?
 
-Use this when a recent block already showed contract activity and you now want the shard-local proof of where the change actually landed.
-
 <div className="fastnear-example-strategy">
   <div className="fastnear-example-strategy__header">
-    <span className="fastnear-example-strategy__eyebrow">Strategy</span>
+    <span className="fastnear-example-strategy__eyebrow">Flow</span>
     <p className="fastnear-example-strategy__title">Use the full block to find the winning shard, then let <span className="fastnear-example-strategy__code">block-shard</span> prove the actual mutation.</p>
   </div>
   <div className="fastnear-example-strategy__items">

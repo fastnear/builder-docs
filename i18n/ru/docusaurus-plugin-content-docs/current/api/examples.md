@@ -2,23 +2,19 @@
 sidebar_label: Examples
 slug: /api/examples
 title: "Примеры API"
-description: "Пошаговые сценарии использования FastNear API для поиска аккаунтов, проверки активов, NFT-gating и классификации стейкинга."
+description: "Практические примеры FastNear API для поиска аккаунтов, проверки активов, NFT-gating и классификации стейкинга."
 displayed_sidebar: fastnearApiSidebar
 page_actions:
   - markdown
 ---
 
-## Готовые сценарии
-
-Читайте эту страницу как короткую лестницу: сначала определите, что это за аккаунт, затем классифицируйте форму кошелька, а потом переходите к более насыщенному сценарию происхождения, если хотите превратить живой BOS-артефакт в отчеканенную запись.
+## Примеры
 
 ### Определить аккаунт по публичному ключу, а затем получить сводку по нему
 
-Используйте этот сценарий, когда у вас сначала есть только публичный ключ, а следующий практический вопрос пользователя звучит как «какому аккаунту он соответствует?» и сразу после этого «что сейчас видно по этому аккаунту?»
-
 <div className="fastnear-example-strategy">
   <div className="fastnear-example-strategy__header">
-    <span className="fastnear-example-strategy__eyebrow">Стратегия</span>
+    <span className="fastnear-example-strategy__eyebrow">Ход</span>
     <p className="fastnear-example-strategy__title">Сначала определите личность, а затем переиспользуйте тот же аккаунт для одной читаемой сводки по кошельку.</p>
   </div>
   <div className="fastnear-example-strategy__items">
@@ -28,7 +24,7 @@ page_actions:
   </div>
 </div>
 
-**Что вы делаете**
+**Ход**
 
 - Ищете по публичному ключу один или несколько `account_id`.
 - Извлекаете первый найденный `account_id` через `jq`.
@@ -60,17 +56,15 @@ curl -s "$API_BASE_URL/v1/account/$ACCOUNT_ID/full" \
     }'
 ```
 
-**Зачем нужен следующий шаг?**
+**Когда переходить дальше**
 
 Поиск по публичному ключу говорит, с каким аккаунтом вы имеете дело. Полный снимок аккаунта — естественный следующий запрос, если нужны балансы, NFT, стейкинг и пулы в одном ответе. Если ключ сопоставляется не с одним, а с несколькими аккаунтами, переходите к [V1 Public Key Lookup All](/api/v1/public-key-all) или пройдитесь по каждому найденному `account_id`.
 
 ### Показывает ли этот кошелёк прямой стейкинг, ликвидные стейкинг-токены или и то и другое?
 
-Используйте этот сценарий, когда история звучит так: «покажи, видно ли по этому кошельку прямые позиции в staking pool, ликвидные стейкинг-токены или и то и другое».
-
 <div className="fastnear-example-strategy">
   <div className="fastnear-example-strategy__header">
-    <span className="fastnear-example-strategy__eyebrow">Стратегия</span>
+    <span className="fastnear-example-strategy__eyebrow">Ход</span>
     <p className="fastnear-example-strategy__title">Сначала сравните staking-позиции и FT-балансы, а уже потом интерпретируйте кошелёк.</p>
   </div>
   <div className="fastnear-example-strategy__items">
@@ -91,7 +85,7 @@ curl -s "$API_BASE_URL/v1/account/$ACCOUNT_ID/full" \
 
 Этот пример намеренно остаётся наблюдательным. Он классифицирует то, что FastNear видит сейчас по staking-позициям и FT-балансам. Он не доказывает каждую возможную синтетическую или внешнюю форму стейкинг-экспозиции.
 
-**Что вы делаете**
+**Ход**
 
 - Читаете индексированные прямые staking-позиции через staking-эндпоинт аккаунта.
 - Читаете индексированные FT-балансы через FT-эндпоинт аккаунта.
@@ -148,17 +142,15 @@ jq -n \
     }'
 ```
 
-**Зачем нужен следующий шаг?**
+**Когда переходить дальше**
 
 Если классификация показывает `direct_only`, следующий практический вопрос обычно касается сроков `unstake` и `withdraw`. Если она показывает `liquid_only`, следующий вопрос обычно про `redeem`, `swap` или провайдерский путь выхода. Если результат `mixed`, эти пути лучше рассматривать раздельно, а не пытаться свести их к одному сценарию.
 
 ### Заархивировать версию BOS-виджета как provenance NFT
 
-Используйте этот сценарий, когда история звучит так: «этот BOS-виджет — реальный on-chain-артефакт. Хочу выпустить NFT, который фиксирует, какую именно версию я заархивировал».
-
 <div className="fastnear-example-strategy">
   <div className="fastnear-example-strategy__header">
-    <span className="fastnear-example-strategy__eyebrow">Стратегия</span>
+    <span className="fastnear-example-strategy__eyebrow">Ход</span>
     <p className="fastnear-example-strategy__title">Сначала прочитайте точный виджет, а mint делайте только тогда, когда provenance-поля уже детерминированы.</p>
   </div>
   <div className="fastnear-example-strategy__items">
@@ -179,7 +171,7 @@ jq -n \
 - [Стандарт NFT NEP-171](https://docs.near.org/primitives/nft/standard)
 - [API SocialDB и поверхность контракта](https://github.com/NearSocial/social-db#api)
 
-**Что вы делаете**
+**Ход**
 
 - Через FastNear API проверяете, есть ли у получателя NFT из архивной коллекции.
 - Читаете один точный BOS-виджет из `social.near`, включая SocialDB-блок именно этого виджета.
@@ -363,7 +355,7 @@ jq '{
 }' /tmp/bos-widget-provenance-token.json
 ```
 
-**Зачем нужен следующий шаг?**
+**Когда переходить дальше**
 
 FastNear API даёт быстрый чек со стороны получателя. Mainnet RPC даёт точное тело виджета и его SocialDB-блок. После этого mint в testnet превращает чтение в долговечную NFT-запись. Если позже понадобится доказать, какая именно историческая транзакция записала этот виджет, переходите к NEAR Social proof-расследованиям в [Transactions API examples](/tx/examples).
 

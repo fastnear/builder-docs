@@ -268,6 +268,20 @@ RPC source files now live under `docs/rpc/<category>/` and publish at `/rpc/<cat
 
 Use the generated `pageModelId` from `mike-docs`. The canonical hosted `/rpcs/...` and `/apis/...` routes are generated automatically; do not hand-edit files under `src/pages/rpcs/**` or `src/pages/apis/**`.
 
+### Examples Voice And Shape
+
+Examples pages are reference workflows for technical readers. Keep them task-first and concise.
+
+- Start with the job and the first surface, not page philosophy.
+- Prefer exact endpoint or method names in the first sentence.
+- Use short imperative or declarative sentences.
+- Cut phrases like `plain-language`, `user story`, `the point here is`, and other author-to-author narration.
+- Avoid stacked framing. The heading plus one short lead line plus the `Flow` block is usually enough.
+- Keep pinned example metadata to the few facts the commands actually depend on.
+- Keep tables or Mermaid diagrams only when they reduce confusion. If the `Flow` block and commands already make the path obvious, cut them.
+- Do not add `Goal` or `Capture` sections unless they carry information the example does not already make obvious.
+- Every line before the first command should earn its place by doing one of three jobs: choose the surface, explain the signal to look for, or justify why the example is pinned.
+
 ## Canonical Route Contract
 
 These hosted paths remain the stable embed and reference contract:

@@ -60,7 +60,7 @@ https://transfers.main.fastnear.com
 
 ## Нужен сценарий?
 
-Используйте [Transfers API Examples](https://docs.fastnear.com/ru/transfers/examples) для простых пошаговых сценариев: узкие поиски переводов, пагинация через `resume_token` и переход к более широкому расследованию транзакций.
+Используйте [Transfers API Examples](https://docs.fastnear.com/ru/transfers/examples) для практических примеров: узкие поиски переводов, пагинация через `resume_token` и переход к более широкому расследованию транзакций.
 
 ## Устранение неполадок
 

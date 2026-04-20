@@ -58,7 +58,7 @@ https://test.api.fastnear.com
 
 ## Need a workflow?
 
-Use [FastNear API Examples](/api/examples) for plain-language flows like account summaries, key-to-account resolution, and asset-specific follow-up.
+Use [FastNear API Examples](/api/examples) for worked examples like account summaries, key-to-account resolution, and asset-specific follow-up.
 
 ## Troubleshooting
 

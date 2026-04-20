@@ -68,7 +68,7 @@ When that happens, widen to [Transactions API](/tx) or [FastNear API](/api) inst
 
 ## Need a workflow?
 
-Use [Transfers API Examples](/transfers/examples) for plain-language flows like narrow transfer searches, `resume_token` pagination, and escalation into broader transaction investigation.
+Use [Transfers API Examples](/transfers/examples) for worked examples like narrow transfer searches, `resume_token` pagination, and escalation into broader transaction investigation.
 
 ## Troubleshooting
 

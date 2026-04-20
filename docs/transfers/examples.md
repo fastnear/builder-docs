@@ -2,21 +2,19 @@
 sidebar_label: Examples
 slug: /transfers/examples
 title: Transfers Examples
-description: Plain-language workflows for finding transfers, paginating with resume_token, and pivoting into transaction history.
+description: Task-first transfer examples for filtering feeds, paging, and pivoting into transaction history.
 displayed_sidebar: transfersApiSidebar
 page_actions:
   - markdown
 ---
 
-## Worked walkthrough
+## Example
 
 ### Filter and page a transfer feed for one account
 
-Use this when the user story is “show me the meaningful transfer feed for this account, let me keep paging it cleanly, and only chase one row if that row needs the execution story.”
-
 <div className="fastnear-example-strategy">
   <div className="fastnear-example-strategy__header">
-    <span className="fastnear-example-strategy__eyebrow">Strategy</span>
+    <span className="fastnear-example-strategy__eyebrow">Flow</span>
     <p className="fastnear-example-strategy__title">Build the account feed first, then lift one receipt only if one row needs more story.</p>
   </div>
   <div className="fastnear-example-strategy__items">
@@ -30,10 +28,10 @@ Use this when the user story is “show me the meaningful transfer feed for this
 
 - mainnet only today
 
-**What you're doing**
+**Flow**
 
 - Fetch the first page of one filtered transfer feed for a single account.
-- Use the feed parameters themselves as the main teaching surface: `account_id`, `direction`, `asset_id`, `min_amount`, `desc`, and `limit`.
+- Use the feed parameters themselves as the core levers: `account_id`, `direction`, `asset_id`, `min_amount`, `desc`, and `limit`.
 - Inspect the returned rows plus `resume_token` before you decide whether any row deserves deeper execution history.
 - Only if one row does deserve that deeper story, reuse its `receipt_id` in Transactions API.
 
@@ -93,7 +91,7 @@ curl -s "$TX_BASE_URL/v0/receipt" \
     }'
 ```
 
-**Why this next step?**
+**When to pivot**
 
 The transfer query answers the first question directly: what does this account’s filtered feed look like right now, and how do you keep paging it without losing your place? Only after the feed tells you which row matters should you switch to `receipt_id` and chase execution history in `/tx`.
 

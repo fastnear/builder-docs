@@ -2,21 +2,19 @@
 sidebar_label: Examples
 slug: /fastdata/kv/examples
 title: KV FastData Examples
-description: Plain-language workflows for checking exact storage keys, following indexed write history, and confirming current state with RPC.
+description: Task-first KV FastData examples for scoped writes, key history, and exact state checks.
 displayed_sidebar: kvFastDataSidebar
 page_actions:
   - markdown
 ---
 
-## Worked investigation
+## Example
 
 ### Inspect one predecessor’s indexed writes, then narrow to the key that changed
 
-Use this investigation when you know the predecessor first and the real question is “what did this predecessor write, which row is interesting, and what happened to that key afterward?”
-
 <div className="fastnear-example-strategy">
   <div className="fastnear-example-strategy__header">
-    <span className="fastnear-example-strategy__eyebrow">Strategy</span>
+    <span className="fastnear-example-strategy__eyebrow">Flow</span>
     <p className="fastnear-example-strategy__title">Start from predecessor scope, narrow to one exact key only after it earns your attention, then use RPC only for the final exact check.</p>
   </div>
   <div className="fastnear-example-strategy__items">
@@ -26,28 +24,9 @@ Use this investigation when you know the predecessor first and the real question
   </div>
 </div>
 
-**Goal**
-
-- Explain what one predecessor wrote, which exact key became the focus, how that key changed, and whether you even need a canonical `view_state` check at the end.
-
-| Surface | Endpoint | How we use it | Why we use it |
-| --- | --- | --- | --- |
-| Latest indexed rows by scope | KV FastData [`all-by-predecessor`](/fastdata/kv/all-by-predecessor) | Start with the predecessor’s current indexed writes across the contracts it touched | Answers the scope-first question before you pretend the exact key is already known |
-| Indexed key history | KV FastData [`get-history-key`](/fastdata/kv/get-history-key) or [`history-by-predecessor`](/fastdata/kv/history-by-predecessor) | Pull the history for the exact key or keep the predecessor-wide write story broader for one more step | Shows whether the interesting row is stable, recent, or part of a larger write pattern |
-| Exact state check | RPC [`view_state`](/rpc/contract/view-state) | Confirm the current on-chain state once the indexed pattern is clear | Separates indexed storage history from the exact state the chain would return now |
-
-**What a useful answer should include**
-
-- which predecessor scope you started from
-- which exact key became the real focus
-- how that key changed in history
-- whether a final `view_state` check is still necessary
-
 ### Predecessor-scope shell walkthrough
 
-Use this when one predecessor is already known and you want to move cleanly from “what did this predecessor write?” to “how did this exact key get here?”
-
-**What you're doing**
+**Flow**
 
 - Read the latest indexed rows for one predecessor across the contracts it touched.
 - Lift one interesting `current_account_id` plus exact `key` with `jq`.
@@ -96,7 +75,7 @@ curl -s "$KV_BASE_URL/v0/history/$CURRENT_ACCOUNT_ID/$PREDECESSOR_ID/$ENCODED_KE
     }'
 ```
 
-**Why this next step?**
+**When to pivot**
 
 The first lookup answers the scope-first question: what does this predecessor write right now? Narrowing from that feed to one exact key answers the more specific question: how did this row get here? If the write pattern is still broader than one key, stay on [History by Predecessor](/fastdata/kv/history-by-predecessor) a little longer before you switch to exact-key history or RPC.
 

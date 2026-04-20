@@ -82,7 +82,7 @@ curl -s "$KV_BASE_URL/v0/latest/$CURRENT_ACCOUNT_ID/$PREDECESSOR_ID/$ENCODED_KEY
 
 ## Нужен сценарий?
 
-Используйте [примеры KV FastData](/fastdata/kv/examples) для простых пошаговых сценариев: поиска по точному ключу, истории ключей, анализа по `predecessor_id` и перехода к каноническому RPC.
+Используйте [примеры KV FastData](/fastdata/kv/examples) для практических примеров: поиска по точному ключу, истории ключей, анализа по `predecessor_id` и перехода к каноническому RPC.
 
 ## Рабочий цикл по умолчанию
 

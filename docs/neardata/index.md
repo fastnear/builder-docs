@@ -49,7 +49,7 @@ https://testnet.neardata.xyz
 
 ## Need a workflow?
 
-Use [NEAR Data API Examples](/neardata/examples) for compact workflows like contract-touch detection, optimistic-versus-finalized comparison, and shard-local change inspection.
+Use [NEAR Data API Examples](/neardata/examples) for worked examples like contract-touch detection, optimistic-versus-finalized comparison, and shard-local change inspection.
 
 ## Troubleshooting
 

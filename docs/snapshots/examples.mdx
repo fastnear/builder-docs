@@ -2,7 +2,7 @@
 sidebar_label: Examples
 slug: /snapshots/examples
 title: Snapshot Examples
-description: Plain-language operator workflows for choosing the right FastNear snapshot recovery path.
+description: Task-first snapshot recovery examples for optimized, standard, and archival node recovery.
 displayed_sidebar: snapshotsSidebars
 page_actions:
   - markdown
@@ -10,7 +10,7 @@ page_actions:
 
 ## Quick start
 
-If the job is simply “bring a mainnet RPC node back fast,” start with one runnable command.
+Need a mainnet RPC node back fast? Start with one runnable command.
 
 These helpers are maintained by FastNear and are meant to optimize for recovery speed. If your environment requires change review, fetch the script first, inspect it, and only then execute it instead of piping it straight to `bash`.
 
@@ -21,17 +21,13 @@ curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/fastnear/
   | DATA_PATH="$DATA_PATH" CHAIN_ID=mainnet RPC_TYPE=fast-rpc bash
 ```
 
-This is the shortest recovery path on the page. The rest only matters when you need standard RPC or archival hot/cold recovery.
-
-## Worked investigation
+## Example
 
 ### Choose and execute the right mainnet recovery path
 
-Use this investigation when an operator says “I need this node back online” and you need to decide whether the right path is optimized `fast-rpc`, standard RPC, or archival hot/cold recovery.
-
 <div className="fastnear-example-strategy">
   <div className="fastnear-example-strategy__header">
-    <span className="fastnear-example-strategy__eyebrow">Strategy</span>
+    <span className="fastnear-example-strategy__eyebrow">Flow</span>
     <p className="fastnear-example-strategy__title">Pick the recovery class first, then run the smallest command sequence that matches that class.</p>
   </div>
   <div className="fastnear-example-strategy__items">
@@ -41,28 +37,7 @@ Use this investigation when an operator says “I need this node back online” 
   </div>
 </div>
 
-**Goal**
-
-- Turn a vague recovery request into the right mainnet snapshot path and the minimum command sequence to get moving safely.
-
-| Path or command | How we use it | Why we use it |
-| --- | --- | --- |
-| Mainnet optimized `fast-rpc` path | Choose it first when the goal is the fastest high-performance RPC recovery and the node can support the optimized profile | It is the preferred fast recovery path when archival retention is not required |
-| Mainnet standard RPC path | Use it when the operator needs a simpler RPC recovery without the optimized profile | It gives a straightforward default recovery route into the normal nearcore data path |
-| Latest archival block lookup | Fetch the latest archival snapshot height before archival recovery | Anchors the hot/cold downloads to a specific archival snapshot block |
-| Archival hot-data command | Run it first and place the result on NVMe | Hot archival data must land on the fast storage tier to support the node correctly |
-| Archival cold-data command | Run it after hot data and place it on the cold storage tier | Completes archival recovery without forcing all archival data onto the expensive hot tier |
-
-**What a useful answer should include**
-
-- which recovery path was chosen and why
-- which critical env vars matter for the chosen path
-- where data should land on disk
-- whether the operator should stay in FastNear snapshot docs or move to general nearcore bootstrap docs
-
 ### Optimized mainnet `fast-rpc` command anchor
-
-Use this when you have already decided the target is a high-performance mainnet RPC node and just need the smallest runnable command anchor.
 
 ```bash
 DATA_PATH=~/.near/data
@@ -73,8 +48,6 @@ curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/fastnear/
 
 ### Standard mainnet RPC command anchor
 
-Use this when you want the default mainnet RPC recovery path without the optimized `fast-rpc` profile.
-
 ```bash
 DATA_PATH=~/.near/data
 
@@ -84,9 +57,9 @@ curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/fastnear/
 
 ### Mainnet archival recovery shell walkthrough
 
-Use this when you have already decided that archival mainnet is the right path and now need the exact command sequence with one shared block anchor.
+For archival recovery, capture one snapshot height and reuse it for both hot and cold data.
 
-**What you're doing**
+**Flow**
 
 - Fetch the latest archival mainnet snapshot height once.
 - Store it in `LATEST`.
@@ -106,7 +79,7 @@ curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/fastnear/
   | DATA_TYPE=cold-data DATA_PATH="$COLD_DATA_PATH" CHAIN_ID=mainnet BLOCK="$LATEST" bash
 ```
 
-**Why this next step?**
+**When to pivot**
 
 Hot and cold archival data need to come from the same snapshot cut. Reusing one captured `LATEST` value across both commands keeps the archival dataset internally consistent and makes later nearcore configuration much less surprising.
 

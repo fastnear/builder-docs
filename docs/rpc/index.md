@@ -46,7 +46,7 @@ https://archival-rpc.testnet.fastnear.com
 
 ## Need a workflow?
 
-Use [RPC Examples](/rpc/examples) for plain-language flows like exact state checks, block inspection, contract view calls, and send-and-confirm transaction work.
+Use [RPC Examples](/rpc/examples) for worked examples like exact state checks, block inspection, contract view calls, and send-and-confirm transaction work.
 
 ## Use RPC when
 

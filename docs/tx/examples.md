@@ -2,7 +2,7 @@
 sidebar_label: Examples
 slug: /tx/examples
 title: Transactions Examples
-description: Plain-language transaction investigations for common developer jobs first.
+description: Task-first transaction investigations for hashes, receipts, async failures, and callbacks.
 displayed_sidebar: transactionsApiSidebar
 page_actions:
   - markdown
@@ -35,21 +35,13 @@ curl -s "$TX_BASE_URL/v0/transactions" \
     }'
 ```
 
-This is the shortest investigation on the page. Only move to RPC or receipt IDs if this output is not enough.
-
 ## Start Here
-
-These are the smallest useful anchors on the page: start with one tx hash, then one receipt ID, and only go deeper when the simpler story stops being enough.
 
 ### I have one transaction hash. What happened?
 
-Use this investigation when the user story is as plain as it gets: “someone pasted me one transaction hash. I just want to know whether it worked, what it did, and which block it landed in.”
-
-This is the beginner-to-intermediate on-ramp for the page. Before receipts, promise chains, or forensics, there is one simpler skill every NEAR engineer needs: turn a bare tx hash into one short human story.
-
 <div className="fastnear-example-strategy">
   <div className="fastnear-example-strategy__header">
-    <span className="fastnear-example-strategy__eyebrow">Strategy</span>
+    <span className="fastnear-example-strategy__eyebrow">Flow</span>
     <p className="fastnear-example-strategy__title">Start with the readable tx record, then drop into RPC or receipts only if the first answer is not enough.</p>
   </div>
   <div className="fastnear-example-strategy__items">
@@ -59,11 +51,7 @@ This is the beginner-to-intermediate on-ramp for the page. Before receipts, prom
   </div>
 </div>
 
-**Goal**
-
-- Start from one transaction hash and recover the shortest useful answer: signer, receiver, action type, included block, and whether the transaction handed off into a successful execution path.
-
-For this pinned example:
+Pinned example:
 
 - transaction hash: `AdgNifPYpoDNS5ckfBZm36Ai6LuL5bTstuKsVdGjKwGp`
 - signer: `mike.near`
@@ -71,7 +59,7 @@ For this pinned example:
 - included block height: `194263342`
 - first receipt ID: `5GhZcpfKWhrpaZo5Am74QfEUFQnZBz48G7hfoLPVDXcq`
 
-The plain-English answer for this one is simple: `mike.near` submitted a single `Transfer` action to `global-counter.mike.near`, the transaction landed in block `194263342`, and the chain handed it off into one successful receipt.
+Short answer: `mike.near` submitted a single `Transfer` action to `global-counter.mike.near`, the transaction landed in block `194263342`, and the chain handed it off into one successful receipt.
 
 ```mermaid
 flowchart LR
@@ -87,19 +75,9 @@ flowchart LR
 | Canonical status follow-up | RPC [`EXPERIMENTAL_tx_status`](/rpc/transaction/experimental-tx-status) | Reuse the same tx hash and signer only if you need exact protocol-native status semantics | Useful when the next question becomes “success according to RPC, exactly?” |
 | Receipt handoff | Transactions API [`POST /v0/receipt`](/tx/receipt) | Reuse the first receipt ID if the next question turns into a receipt-level story | Provides the natural bridge to the next investigation when the transaction hash is no longer the best anchor |
 
-**What a useful answer should include**
-
-- who signed the transaction
-- which account received it
-- which action type it carried
-- which block included it
-- one plain-English sentence that explains the transaction without receipt jargon
-
 #### Transaction hash to human story shell walkthrough
 
-Use this when you want the shortest possible path from one tx hash to one readable answer.
-
-**What you're doing**
+**Flow**
 
 - Fetch the transaction by hash and print the main story fields.
 - Confirm the final status only if you need exact RPC semantics.
@@ -183,19 +161,15 @@ curl -s "$TX_BASE_URL/v0/receipt" \
 
 That last step is optional on purpose. If all you wanted was the transaction story, the first step was enough. Keep going only when the receipt itself becomes the new anchor.
 
-**Why this next step?**
+**When to pivot**
 
 `POST /v0/transactions` is the cleanest starting point when all you have is a tx hash and need one readable answer. RPC is the follow-up for exact status semantics. `POST /v0/receipt` is the handoff when the next question stops being about the transaction as a whole and starts being about one receipt inside it.
 
 ### Which receipt emitted this log or event?
 
-Use this investigation when the user story is “I have one tx hash and one log fragment, and I need to know exactly which receipt emitted it.”
-
-This is a different question from “did the callback run?” later on the page. Here the goal is simpler: attribute one observed log line to one exact receipt ID, one method, and one executor.
-
 <div className="fastnear-example-strategy">
   <div className="fastnear-example-strategy__header">
-    <span className="fastnear-example-strategy__eyebrow">Strategy</span>
+    <span className="fastnear-example-strategy__eyebrow">Flow</span>
     <p className="fastnear-example-strategy__title">Fetch the receipt list once, filter by the log fragment, and stop as soon as one receipt owns that log.</p>
   </div>
   <div className="fastnear-example-strategy__items">
@@ -204,10 +178,6 @@ This is a different question from “did the callback run?” later on the page.
     <p className="fastnear-example-strategy__item"><span className="fastnear-example-strategy__step">03</span><span>Once one receipt matches, keep its <span className="fastnear-example-strategy__code">receipt_id</span>, executor, and method name as the exact answer.</span></p>
   </div>
 </div>
-
-**Goal**
-
-- Start from one mainnet tx hash plus one log fragment and identify the exact receipt that emitted that log.
 
 For this pinned mainnet example, use:
 
@@ -222,32 +192,9 @@ This transaction is useful because it has two different logged receipts in the s
 - one `Transfer ...` log on the earlier `ft_transfer_call` receipt
 - one `Refund ...` log on the later `ft_resolve_transfer` receipt
 
-```mermaid
-flowchart LR
-    T["One tx hash<br/>2KhhB1uD..."] --> L["Read all receipt logs"]
-    L --> X["Match fragment:<br/>Refund"]
-    X --> R["Exact receipt<br/>9sLHQpaG..."]
-    R --> A["Answer:<br/>wrap.near / ft_resolve_transfer"]
-```
-
-| Surface | Endpoint | How we use it | Why we use it |
-| --- | --- | --- | --- |
-| Log attribution | Transactions API [`POST /v0/transactions`](/tx/transactions) | Fetch the tx once and filter its receipts by a log fragment such as `Refund` | Gives the shortest path from one observed log line to the exact receipt that emitted it |
-| Optional next pivot | Transactions API [`POST /v0/receipt`](/tx/receipt) | Reuse the matching `receipt_id` only if the receipt itself becomes the next anchor | Keeps the receipt ready for later investigation without making this example longer than needed |
-
-**What a useful answer should include**
-
-- which receipt ID emitted the log
-- which contract executed that receipt
-- which method ran there
-- the exact matching log line
-- one plain sentence such as “the `Refund` log came from `wrap.near` in the `ft_resolve_transfer` receipt”
-
 #### Log-attribution shell walkthrough
 
-Use this when you already have one tx hash and the next question is “which receipt said that?”
-
-**What you're doing**
+**Flow**
 
 - Fetch the transaction once and keep the receipt list locally.
 - Filter the receipts by one log fragment.
@@ -327,19 +274,16 @@ jq '{
 
 That final comparison is useful because it proves the log attribution is not guesswork. This transaction has more than one logged receipt, and the `Refund` fragment belongs to one exact later receipt, not to the transaction as a whole.
 
-**Why this next step?**
+**When to pivot**
 
 Receipt logs live on receipts, not on some abstract top-level transaction object. `POST /v0/transactions` is enough to attribute one log line to one exact receipt without dropping into a deeper async trace.
 
 ### Turn one ugly receipt ID from logs into a human story
-
-Use this investigation when all you have is one ugly `receipt_id` from logs, traces, or an error report, and you want to turn it into a plain-English answer a teammate can understand.
-
-If you already have the transaction hash instead of the receipt ID, start with the simpler investigation just above and only drop down to this one when the receipt itself becomes the best anchor.
+If you already have the transaction hash instead of the receipt ID, start with the simpler investigation just above.
 
 <div className="fastnear-example-strategy">
   <div className="fastnear-example-strategy__header">
-    <span className="fastnear-example-strategy__eyebrow">Strategy</span>
+    <span className="fastnear-example-strategy__eyebrow">Flow</span>
     <p className="fastnear-example-strategy__title">Resolve the receipt first, then recover the parent transaction and stop once the story is readable.</p>
   </div>
   <div className="fastnear-example-strategy__items">
@@ -349,11 +293,7 @@ If you already have the transaction hash instead of the receipt ID, start with t
   </div>
 </div>
 
-**Goal**
-
-- Start from one receipt ID and recover the shortest useful story: who created it, where it executed, which transaction spawned it, and what that transaction was actually trying to do.
-
-For this pinned example, the “ugly receipt ID from logs” is:
+Pinned receipt from logs:
 
 - receipt ID: `5GhZcpfKWhrpaZo5Am74QfEUFQnZBz48G7hfoLPVDXcq`
 - originating transaction hash: `AdgNifPYpoDNS5ckfBZm36Ai6LuL5bTstuKsVdGjKwGp`
@@ -362,29 +302,7 @@ For this pinned example, the “ugly receipt ID from logs” is:
 - transaction block height: `194263342`
 - receipt execution block height: `194263343`
 
-The human story behind that one receipt is simple: `mike.near` signed a plain `Transfer` transaction to `global-counter.mike.near`, the network turned it into one action receipt, and that receipt executed successfully in the next block.
-
-```mermaid
-flowchart LR
-    L["One ugly receipt ID<br/>5GhZcpfK..."] --> R["Lookup receipt"]
-    R --> T["Recover tx hash<br/>AdgNifPY..."]
-    T --> S["Read transaction actions"]
-    S --> H["Human story:<br/>mike.near sent 5 NEAR to global-counter.mike.near"]
-```
-
-| Surface | Endpoint | How we use it | Why we use it |
-| --- | --- | --- | --- |
-| Receipt anchor | Transactions API [`POST /v0/receipt`](/tx/receipt) | Look up the receipt ID first and print the accounts, execution block, success flag, and linked transaction hash | Gives you the shortest path from a raw receipt ID to “what object am I even looking at?” |
-| Transaction story | Transactions API [`POST /v0/transactions`](/tx/transactions) | Reuse the recovered transaction hash and print signer, receiver, ordered actions, and included block | Turns the raw receipt into a readable story of what the signer actually submitted |
-| Canonical follow-up | RPC [`tx`](/rpc/transaction/tx-status) or [`EXPERIMENTAL_tx_status`](/rpc/transaction/experimental-tx-status) | Confirm protocol-native semantics only if the indexed answer is still not enough | Useful when the question shifts from “tell me the story” to “show me the exact RPC status semantics” |
-
-**What a useful answer should include**
-
-- which accounts created and executed the receipt
-- which transaction hash the receipt belongs to
-- what the transaction actually did
-- whether the receipt was the main event or just one step in a larger cascade
-- one plain-English sentence that a teammate could read without decoding receipt jargon
+Short answer: `mike.near` signed a plain `Transfer` transaction to `global-counter.mike.near`, the network turned it into one action receipt, and that receipt executed successfully in the next block.
 
 #### Ugly receipt ID to human story shell walkthrough
 
@@ -468,25 +386,18 @@ For another receipt, keep the same pattern but change the final sentence to matc
 
 That is the core trick: you do not need to explain every receipt field. You need to recover just enough context to say what the signer did, where the receipt executed, and whether this receipt was the main event or only one step in a bigger cascade.
 
-**Why this next step?**
+**When to pivot**
 
 `POST /v0/receipt` tells you what the raw receipt is attached to. `POST /v0/transactions` tells you what the signer was actually trying to do. Once you have those two pieces together, you can usually explain the receipt in one sentence before deciding whether you really need block context, account history, or canonical RPC status.
 
 ## Failure and Async
 
-This is where the page stops being simple lookup and starts teaching NEAR execution semantics: atomic batches, later async failures, and whether a callback ever made it back to the originating contract.
-
-Use this section when you already know the transaction worked across more than one receipt and the next question is about execution shape rather than simple identity lookup.
-
 ### Prove that one failed action reverted the whole batch
-
-Use this investigation when one transaction tried to create and fund a new account, add a key, and then call a method on that same new account. The final action failed because the fresh account had no contract code. The real question is simple: did the earlier actions stick, or did the whole batch revert?
-
-On NEAR, the actions inside one transaction batch execute in order inside the same first action receipt. If one action in that receipt fails, the earlier actions in that same batch do not stick. That is different from later async receipts or promise chains, where the first receipt can succeed and some later receipt can still fail independently.
+One batch created an account, funded it, added a key, and then called a missing method. The question is whether the earlier actions stuck or the whole batch reverted.
 
 <div className="fastnear-example-strategy">
   <div className="fastnear-example-strategy__header">
-    <span className="fastnear-example-strategy__eyebrow">Strategy</span>
+    <span className="fastnear-example-strategy__eyebrow">Flow</span>
     <p className="fastnear-example-strategy__title">Prove what the batch tried, which action failed, and whether anything from the earlier actions actually stuck.</p>
   </div>
   <div className="fastnear-example-strategy__items">
@@ -496,16 +407,12 @@ On NEAR, the actions inside one transaction batch execute in order inside the sa
   </div>
 </div>
 
-**Goal**
-
-- Prove, from one pinned testnet transaction, that the final `FunctionCall` failed and the earlier `CreateAccount`, `Transfer`, and `AddKey` actions did not stick.
-
 **Official references**
 
 - [Transaction foundations](/transaction-flow/foundations)
 - [Runtime execution](/transaction-flow/runtime-execution)
 
-This pinned failure was captured on **April 18, 2026** on testnet:
+Pinned testnet failure observed on **April 18, 2026**:
 
 - transaction hash: `CrhH3xLzbNwNMGgZkgptXorwh8YmqxRGuA6Mc11MkU6M`
 - signer account: `temp.mike.testnet`
@@ -535,21 +442,11 @@ flowchart LR
 | Exact failure | RPC [`EXPERIMENTAL_tx_status`](/rpc/transaction/experimental-tx-status) | Query the same transaction with `wait_until: "FINAL"` and inspect `status.Failure` | Tells you which action failed and why the whole batch reverted at the protocol level |
 | Post-state proof | RPC [`query(view_account)`](/rpc/account/view-account) | Query the intended new account after finality | If the created account still does not exist, then the earlier `CreateAccount`, `Transfer`, and `AddKey` from that same batch did not stick either |
 
-One detail is worth calling out before the shell walkthrough: the indexed transaction record still shows `transaction_outcome.outcome.status = SuccessReceiptId`, because the signed transaction successfully became its first action receipt. The proof that the batch reverted comes from the RPC top-level `status.Failure` on that first receipt, plus the post-state check that the intended new account never existed.
-
-**What a useful answer should include**
-
-- the exact action order the signer submitted
-- which action index failed and why
-- the included block height and hash for the batch
-- proof that the intended new account still does not exist after finality
-- a short conclusion that the earlier `CreateAccount`, `Transfer`, and `AddKey` actions did not stick once the final `FunctionCall` failed
+The indexed transaction record still shows `transaction_outcome.outcome.status = SuccessReceiptId`, because the signed transaction did become its first action receipt. The proof that the batch reverted comes from the RPC top-level `status.Failure` on that first receipt plus the post-state check that the intended new account never existed.
 
 #### Failed batched transaction shell walkthrough
 
-Use this when you want one concrete failed batch that you can inspect step by step with public FastNear testnet endpoints.
-
-**What you're doing**
+**Flow**
 
 - Read the indexed transaction record to recover the intended action batch.
 - Use RPC transaction status to prove the final `FunctionCall` failed and reverted the batch.
@@ -657,19 +554,16 @@ jq '{
 
 That one post-state check is enough here. If `CreateAccount` had stuck, `view_account` would resolve. Because the account still does not exist, the earlier `Transfer` and `AddKey` from the same batched receipt did not stick either.
 
-**Why this next step?**
+**When to pivot**
 
 For another failed batch, keep the same pattern: read what the transaction tried to do from [`POST /v0/transactions`](/tx/transactions), confirm the exact top-level failure with RPC transaction status, then inspect post-state on the account, key, contract, or other object that would have changed if the earlier actions had stuck.
 
 ### Why did this contract call look successful, but a later receipt failed?
-
-Use this investigation when one contract call logged success, changed its own local state, and even the top-level RPC `status` looks successful, but the app still broke because a later detached cross-contract receipt failed.
-
-This is the opposite of the failed batch example above. There, one action failed inside the first action receipt, so nothing in that batch stuck. Here, the first contract receipt really did succeed and its state change really did stick. The failure happened later, in a separate receipt.
+The first contract receipt succeeded. The failure happened later, in a separate detached receipt.
 
 <div className="fastnear-example-strategy">
   <div className="fastnear-example-strategy__header">
-    <span className="fastnear-example-strategy__eyebrow">Strategy</span>
+    <span className="fastnear-example-strategy__eyebrow">Flow</span>
     <p className="fastnear-example-strategy__title">First get the human timeline, then prove where the async story split.</p>
   </div>
   <div className="fastnear-example-strategy__items">
@@ -679,16 +573,12 @@ This is the opposite of the failed batch example above. There, one action failed
   </div>
 </div>
 
-**Goal**
-
-- Prove, from one pinned testnet transaction, that `seq-dr.mike.testnet.kickoff_append(...)` succeeded on its own receipt, then a detached `append(...)` call failed one block later with `CodeDoesNotExist`.
-
 **Official references**
 
 - [Transaction foundations](/transaction-flow/foundations)
 - [Runtime execution](/transaction-flow/runtime-execution)
 
-This pinned async failure was captured on **April 18, 2026** on testnet:
+Pinned async testnet failure observed on **April 18, 2026**:
 
 - transaction hash: `AUciGAq54XZtEuVXA9bSq4k6h13LmspoKtLegcWGRmQz`
 - signer account: `temp.mike.testnet`
@@ -714,21 +604,11 @@ flowchart LR
 | Transaction skeleton | Transactions API [`POST /v0/transactions`](/tx/transactions) | Fetch the pinned transaction and print the included block plus the per-receipt timeline | Gives the shortest readable overview of which receipt ran first and which receipt failed later |
 | Exact status semantics | RPC [`EXPERIMENTAL_tx_status`](/rpc/transaction/experimental-tx-status) | Inspect the top-level `status`, the first contract receipt outcome, and the later failed receipt outcome | Proves that top-level success and later descendant failure can coexist in one async story |
 
-One NEAR detail matters here: receipt success is not transitive. `seq-dr.mike.testnet` returned success on its own receipt because `kickoff_append(...)` only logged and detached the next hop. The detached `append(...)` receipt was a separate piece of async work, so its later failure did not change the fact that the router's own receipt had already completed successfully.
-
-**What a useful answer should include**
-
-- that the signed transaction successfully handed off into the first router receipt
-- that the router receipt itself succeeded and emitted the `dishonest_router:kickoff:late-failure` log
-- that the later detached receipt to `asyncfail-in2hwikn.temp.mike.testnet` failed with `CodeDoesNotExist`
-- that RPC still reports the outer transaction as `SuccessValue` even though a later detached receipt failed
-- one sentence explaining why this is different from a failed batched transaction
+Receipt success is not transitive. `seq-dr.mike.testnet` returned success on its own receipt because `kickoff_append(...)` only logged and detached the next hop. The detached `append(...)` receipt was separate async work, so its later failure did not change the fact that the router's own receipt had already completed successfully.
 
 #### Later receipt failure shell walkthrough
 
-Use this when the user story is “the contract call looked fine, but something failed later, and I need to prove exactly where the story split.”
-
-**What you're doing**
+**Flow**
 
 - Read the transaction and its receipt timeline from the indexed view.
 - Use RPC transaction status to show that the top-level story still ended in `SuccessValue` even though a later receipt failed.
@@ -829,24 +709,16 @@ jq \
 
 Stop here. As of **April 18, 2026**, `seq-dr.mike.testnet` no longer resolves on testnet, so a live router-state proof would no longer be truthful. The indexed receipt timeline plus `EXPERIMENTAL_tx_status` are the preserved historical evidence that still matters.
 
-**Why this next step?**
+**When to pivot**
 
 When a NEAR app “looked successful” and still broke later, the thing to ask is not just “what was the transaction status?” but “which receipt succeeded, and which later receipt failed?” This example gives you that exact split: indexed receipt timeline for the shape, RPC status for the exact semantics, and no pretend live router-state read after the historical contract disappeared.
 
 ### Did my callback run at all?
-
-Use this investigation when one transaction kicked off downstream work on another contract and the real question is not “did the receiver succeed?” but “did the originating contract ever get its callback receipt back?”
-
-This is the smallest useful callback proof on the page:
-
-- start from one tx hash
-- identify the downstream receipt on the other contract
-- look for the later callback receipt back on the origin contract
-- stop once callback existence and callback outcome are proven
+Start from the indexed receipt chain. Use RPC only if you need canonical callback semantics.
 
 <div className="fastnear-example-strategy">
   <div className="fastnear-example-strategy__header">
-    <span className="fastnear-example-strategy__eyebrow">Strategy</span>
+    <span className="fastnear-example-strategy__eyebrow">Flow</span>
     <p className="fastnear-example-strategy__title">Use the indexed receipt list first, then drop to RPC only if you need canonical callback semantics.</p>
   </div>
   <div className="fastnear-example-strategy__items">
@@ -856,11 +728,7 @@ This is the smallest useful callback proof on the page:
   </div>
 </div>
 
-**Goal**
-
-- Prove, from one pinned mainnet transaction, that `wrap.near` sent an `ft_transfer_call` to `v2.ref-finance.near`, the receiver ran `ft_on_transfer`, and `wrap.near` later got the `ft_resolve_transfer` callback back.
-
-This pinned mainnet callback example was observed on **April 19, 2026**:
+Pinned mainnet callback example observed on **April 19, 2026**:
 
 - transaction hash: `2KhhB1uDScGCFQfVchep7DiZTGTxMcgfUYHNzwf5e6uL`
 - sender account: `7c5206b1b75b8787420b09d8697e08180cdf896c5fcf15f6afbf5f33fcc3cf72`
@@ -881,26 +749,16 @@ flowchart LR
     C --> R["Refund log on wrap.near"]
 ```
 
-One useful NEAR detail shows up here: a downstream failure does not mean the callback vanished. In this case, `v2.ref-finance.near` failed its `ft_on_transfer` receipt, but `wrap.near` still later received `ft_resolve_transfer` and logged the refund.
+A downstream failure does not mean the callback vanished. In this case, `v2.ref-finance.near` failed its `ft_on_transfer` receipt, but `wrap.near` still later received `ft_resolve_transfer` and logged the refund.
 
 | Surface | Endpoint | How we use it | Why we use it |
 | --- | --- | --- | --- |
 | Indexed receipt chain | Transactions API [`POST /v0/transactions`](/tx/transactions) | Start from the tx hash and print only the downstream receiver receipt plus the later callback receipt on the origin contract | Gives the fastest readable answer to “did the callback come back?” |
 | Canonical receipt confirmation | RPC [`EXPERIMENTAL_tx_status`](/rpc/transaction/experimental-tx-status) | Reuse the same tx hash and sender only if you need the callback receipt's canonical status and logs | Useful when the indexed answer is enough for shape but you still want protocol-native proof |
 
-**What a useful answer should include**
-
-- which contract received the downstream call
-- which method ran on that downstream contract
-- whether a later receipt returned to the originating contract
-- which callback method ran there and in which block
-- one plain sentence such as “the receiver failed, but the origin contract still got its callback and settled the transfer”
-
 #### Callback-existence shell walkthrough
 
-Use this when you want one concrete callback proof without turning the page into a full promise-theory exercise.
-
-**What you're doing**
+**Flow**
 
 - Fetch the transaction once and narrow the receipt list down to the downstream call plus the callback receipt.
 - Reuse the callback receipt ID only if you still need canonical RPC confirmation.
@@ -1059,7 +917,7 @@ jq --arg callback_receipt_id "$CALLBACK_RECEIPT_ID" '{
 # - the callback log shows the refund back to the sender
 ```
 
-**Why this next step?**
+**When to pivot**
 
 For callback questions, the important proof is not “did every receipt succeed?” but “did the origin contract get its callback receipt back, and what happened there?” `POST /v0/transactions` gives the fastest readable answer. RPC is only the optional confirmation layer when you need the callback receipt's canonical outcome and logs.
 
