@@ -73,16 +73,7 @@ pub enum ExecutionStatus {
 
 A single transaction can produce many outcomes:
 
-```mermaid
-flowchart TD
-    TX1[Transaction Hash: TX1] --> TO[TransactionOutcome]
-    TO -->|status: SuccessReceiptId R1| R1[ReceiptOutcome R1]
-    TO -->|receipt_ids: R1, R2| R2[ReceiptOutcome R2]
-    R1 -->|status: SuccessValue| R3[ReceiptOutcome R3]
-    R1 -->|receipt_ids: R3| done1[Done]
-    R2 -->|status: SuccessValue| done2[Done]
-    R3 -->|Refund| done3[Done]
-```
+For docs users, the important shape is simpler than the full outcome tree: one `tx_hash` gives you one `transaction_outcome` plus zero or more `receipts_outcome`. Your job is to combine those objects into one readable story of what happened.
 
 **Example outcome tree:**
 ```
@@ -138,18 +129,24 @@ pub enum FinalExecutionStatus {
 
 ## Querying Outcomes
 
+These RPC reads work on the public FastNear RPC hosts. If `FASTNEAR_API_KEY` is already set in your shell, the snippets forward it automatically as a bearer header.
+
 ### The `tx` RPC Method
 
 ```bash
-curl -X POST https://rpc.mainnet.fastnear.com \
+AUTH_HEADER=()
+if [ -n "${FASTNEAR_API_KEY:-}" ]; then AUTH_HEADER=(-H "Authorization: Bearer $FASTNEAR_API_KEY"); fi
+
+curl -X POST https://archival-rpc.mainnet.fastnear.com \
+  "${AUTH_HEADER[@]}" \
   -H "Content-Type: application/json" \
   -d '{
     "jsonrpc": "2.0",
     "id": "1",
     "method": "tx",
     "params": {
-      "tx_hash": "6zgh2u9DqHHiXzdy9ouTP7oGky2T4nugqzqt9wJZwNFm",
-      "sender_account_id": "sender.near",
+      "tx_hash": "7ZKnhzt2MqMNmsk13dV8GAjGu3Db8aHzSBHeNeu9MJCq",
+      "sender_account_id": "root.near",
       "wait_until": "FINAL"
     }
   }'

@@ -1,0 +1,66 @@
+---
+sidebar_label: Examples
+slug: /snapshots/examples
+title: "Примеры snapshot"
+description: "Практические примеры восстановления узла: optimized, standard и archival."
+displayed_sidebar: snapshotsSidebars
+page_actions:
+  - markdown
+---
+
+## Пути восстановления mainnet
+
+Выберите один класс — optimized `fast-rpc`, standard RPC или archival — и выполняйте только команды этого пути. Смешивание классов приводит к несогласованным данным узла.
+
+FastNear поддерживает эти скрипты ради скорости восстановления. Если в вашей среде требуется review изменений, скачайте скрипт и проверьте его перед запуском (вместо прямой передачи через pipe в `bash`).
+
+### Optimized mainnet `fast-rpc`
+
+```bash
+DATA_PATH=~/.near/data
+
+curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/fastnear/static/refs/heads/main/down_rclone.sh \
+  | DATA_PATH="$DATA_PATH" CHAIN_ID=mainnet RPC_TYPE=fast-rpc bash
+```
+
+### Standard mainnet RPC
+
+```bash
+DATA_PATH=~/.near/data
+
+curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/fastnear/static/refs/heads/main/down_rclone.sh \
+  | DATA_PATH="$DATA_PATH" CHAIN_ID=mainnet bash
+```
+
+### Archival mainnet
+
+Для archival нужны две загрузки из *одного и того же* среза снапшота. Зафиксируйте одно значение `LATEST` и переиспользуйте его и для hot-, и для cold-data — смешивание высот даёт внутренне несогласованный набор данных и удивляет nearcore на этапе настройки.
+
+```bash
+HOT_DATA_PATH=~/.near/data
+COLD_DATA_PATH=/mnt/hdds/cold-data
+
+LATEST="$(curl -s "https://snapshot.neardata.xyz/mainnet/archival/latest.txt")"
+echo "Latest archival mainnet snapshot block: $LATEST"
+
+curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/fastnear/static/refs/heads/main/down_rclone_archival.sh \
+  | DATA_TYPE=hot-data DATA_PATH="$HOT_DATA_PATH" CHAIN_ID=mainnet BLOCK="$LATEST" bash
+
+curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/fastnear/static/refs/heads/main/down_rclone_archival.sh \
+  | DATA_TYPE=cold-data DATA_PATH="$COLD_DATA_PATH" CHAIN_ID=mainnet BLOCK="$LATEST" bash
+```
+
+## Частые ошибки
+
+- Использовать документацию по снапшотам, когда задача на самом деле про чтение данных цепочки.
+- Выбирать archival-восстановление, когда достаточно standard или optimized RPC.
+- Забывать про разделение hot/cold-хранилища для archival-данных.
+- Переходить к командам до выбора сети и цели узла.
+
+## Связанные страницы
+
+- [Обзор snapshot](/snapshots)
+- [Снапшоты mainnet](/snapshots/mainnet)
+- [Снапшоты testnet](/snapshots/testnet)
+- [RPC Reference](/rpc)
+- [NEAR Data API](/neardata)

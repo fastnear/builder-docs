@@ -3,6 +3,7 @@
 const fs = require("fs");
 const path = require("path");
 const { isSecretQueryParam } = require("../src/utils/fastnearOperationUrlState");
+const AI_MARKDOWN_FOOTER_COPY = require("../src/data/fastnearAiMarkdownFooter.json");
 
 const {
   DEFAULT_LOCALE,
@@ -106,6 +107,10 @@ const AUTHORED_MARKDOWN_LABELS = {
   en: {
     aiAndAgents: "AI & Agents",
     bestFor: "Best for:",
+    berryClubLiveBoardNote:
+      "Live board card: fetches `berryclub.ek.near` `get_lines` from mainnet RPC and renders the current 50x50 grid in the docs UI.",
+    berryClubGalleryNote:
+      "Rendered snapshot gallery: launch, mid, and recent checkpoints from checked-in `src/data/berryClubSnapshots.json`.",
     guidesArchiveTitle: "FastNear Builder Docs Full Documentation Archive",
     guidesArchiveIntro:
       "AI-readable Markdown mirrors for authored docs plus canonical `/rpcs/**` and `/apis/**` routes.",
@@ -137,6 +142,10 @@ const AUTHORED_MARKDOWN_LABELS = {
   ru: {
     aiAndAgents: "AI и агенты",
     bestFor: "Лучше всего подходит для:",
+    berryClubLiveBoardNote:
+      "Карточка живой доски: запрашивает `berryclub.ek.near` `get_lines` через mainnet RPC и рендерит текущую сетку 50x50 в интерфейсе документации.",
+    berryClubGalleryNote:
+      "Галерея снимков: контрольные точки launch, mid и recent из сохранённого `src/data/berryClubSnapshots.json`.",
     guidesArchiveTitle: "Полный архив документации FastNear Builder Docs",
     guidesArchiveIntro:
       "AI-читабельные Markdown-копии авторских гайдов и канонических маршрутов `/rpcs/**` и `/apis/**`.",
@@ -404,6 +413,32 @@ function normalizeMarkdown(markdown) {
   return markdown.replace(/[ \t]+\n/g, "\n").replace(/\n{3,}/g, "\n\n").trim();
 }
 
+function getFastnearAiFooterCopy(locale = DEFAULT_LOCALE) {
+  return (
+    AI_MARKDOWN_FOOTER_COPY[locale] ||
+    AI_MARKDOWN_FOOTER_COPY[DEFAULT_LOCALE] ||
+    AI_MARKDOWN_FOOTER_COPY.en
+  );
+}
+
+function buildFastnearAiFooter(locale = DEFAULT_LOCALE) {
+  const footerCopy = getFastnearAiFooterCopy(locale);
+  const sections = [
+    `## ${footerCopy.title}`,
+    "",
+    ...footerCopy.bullets.map((bullet) => `- ${bullet}`),
+  ];
+
+  return `${normalizeMarkdown(sections.join("\n"))}\n`;
+}
+
+function appendFastnearAiFooter(markdown, locale = DEFAULT_LOCALE) {
+  const normalizedBody = normalizeMarkdown(markdown || "");
+  const footer = buildFastnearAiFooter(locale).trim();
+
+  return `${normalizeMarkdown([normalizedBody, "---", "", footer].filter(Boolean).join("\n"))}\n`;
+}
+
 function rewriteRootRelativeMarkdownLinks(markdown, locale = DEFAULT_LOCALE) {
   return markdown.replace(
     /(!?\[[^\]]*]\()((?:<)?\/[^)\s>]+(?:>)?)(\))/g,
@@ -654,6 +689,18 @@ function transformSimpleJsx(markdown, locale = DEFAULT_LOCALE) {
   return transformed;
 }
 
+function transformSpecialComponents(markdown, locale = DEFAULT_LOCALE) {
+  const labels = getAuthoredMarkdownLabels(locale);
+
+  return markdown.replace(
+    /<BerryClubLiveBoard\b[\s\S]*?\/>/g,
+    `\n\n${labels.berryClubLiveBoardNote}\n\n`
+  ).replace(
+    /<BerryClubSnapshotGallery\b[\s\S]*?\/>/g,
+    `\n\n${labels.berryClubGalleryNote}\n\n`
+  );
+}
+
 function removeImports(markdown) {
   return markdown.replace(/^import\s+.+?;?\n/gm, "");
 }
@@ -679,6 +726,7 @@ function renderAuthoredMarkdown(content, route, filePath, locale = DEFAULT_LOCAL
   let markdown = removeImports(content);
   markdown = transformCardGrid(markdown, locale);
   markdown = transformInlineLinks(markdown, locale);
+  markdown = transformSpecialComponents(markdown, locale);
   markdown = transformSimpleJsx(markdown, locale);
   markdown = rewriteRootRelativeMarkdownLinks(markdown, locale);
   assertNoUnsupportedJsx(markdown, filePath);
@@ -1384,12 +1432,15 @@ function createAuthoredDocEntries(locale = DEFAULT_LOCALE) {
           return null;
         }
 
+        const markdownBody = buildOperationMarkdownForRoute(pageModel, route, locale);
+
         return {
           description: pageModel.info.summary || pageModel.info.description || "",
           htmlPath: route,
           group: getDocSectionLabel(baseRoute, locale),
           kind: "wrapper",
-          markdown: buildOperationMarkdownForRoute(pageModel, route, locale),
+          markdownBody,
+          markdown: appendFastnearAiFooter(markdownBody, locale),
           markdownPath: buildMarkdownMirrorPath(route),
           markdownPaths: buildMarkdownMirrorAliases(route),
           route,
@@ -1397,14 +1448,16 @@ function createAuthoredDocEntries(locale = DEFAULT_LOCALE) {
         };
       }
 
-      const markdown = renderAuthoredMarkdown(content, route, relativePath, locale);
+      const markdownBody = renderAuthoredMarkdown(content, route, relativePath, locale);
       return {
         description:
-          data.description || getFirstMeaningfulParagraph(markdown).replace(/^\*\*Source:\*\*.+$/m, "").trim(),
+          data.description ||
+          getFirstMeaningfulParagraph(markdownBody).replace(/^\*\*Source:\*\*.+$/m, "").trim(),
         htmlPath: route,
         group: getDocSectionLabel(baseRoute, locale),
         kind: "authored",
-        markdown,
+        markdownBody,
+        markdown: appendFastnearAiFooter(markdownBody, locale),
         markdownPath: buildMarkdownMirrorPath(route),
         markdownPaths: buildMarkdownMirrorAliases(route),
         route,
@@ -1424,6 +1477,7 @@ function createCanonicalEntries(locale = DEFAULT_LOCALE) {
       const route = localizeRoute(baseRoute, locale);
       const topLevel = baseRoute.split("/")[1];
       const groupKey = baseRoute.split("/")[2];
+      const markdownBody = buildOperationMarkdownForRoute(localizedPageModel, route, locale);
 
       return {
         description: localizedPageModel.info.summary || localizedPageModel.info.description || "",
@@ -1433,7 +1487,8 @@ function createCanonicalEntries(locale = DEFAULT_LOCALE) {
             : API_SERVICE_LABELS[locale]?.[groupKey] || API_SERVICE_LABELS[DEFAULT_LOCALE]?.[groupKey] || groupKey,
         htmlPath: route,
         kind: topLevel === "rpcs" ? "rpc" : "api",
-        markdown: buildOperationMarkdownForRoute(localizedPageModel, route, locale),
+        markdownBody,
+        markdown: appendFastnearAiFooter(markdownBody, locale),
         markdownPath: buildMarkdownMirrorPath(route),
         markdownPaths: buildMarkdownMirrorAliases(route),
         route,
@@ -1682,10 +1737,10 @@ function buildFullArchive(entries, locale = DEFAULT_LOCALE) {
       `- ${labels.markdownPath}: ${buildAbsoluteUrl(entry.markdownPath)}`,
       ""
     );
-    sections.push(entry.markdown.trim(), "");
+    sections.push((entry.markdownBody || entry.markdown).trim(), "");
   }
 
-  return `${normalizeMarkdown(sections.join("\n"))}\n`;
+  return appendFastnearAiFooter(sections.join("\n"), locale);
 }
 
 function main() {

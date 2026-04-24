@@ -1,6 +1,6 @@
 ---
 title: Block Chunk
-description: Fetch one chunk from a finalized block.
+description: Fetch the lightweight per-shard chunk view for a finalized block.
 slug: /neardata/block-chunk
 hide_table_of_contents: true
 ---
@@ -9,5 +9,8 @@ import FastnearDirectOperation from '@site/src/components/FastnearDirectOperatio
 
 # Block Chunk
 
+This is the lightweight per-shard view of a finalized block: the chunk header, the transactions included for that shard, and the incoming receipts it executed.
+
+Use this when you want shard-local execution without the fuller shard envelope. It is a good fit for chunk-aware tracing, indexing, or analytics that only need the chunk payload. If you also need state changes and the receipts produced by that shard's execution, use [Block Shard](/neardata/block-shard). For a worked receipt-to-chunk tracing flow, see [RPC Examples](/rpc/examples).
 
 <FastnearDirectOperation pageModelId="neardata-v0-block-chunk" renderDescription />

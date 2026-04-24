@@ -22,6 +22,37 @@ https://kv.main.fastnear.com
 https://kv.test.fastnear.com
 ```
 
+## Quick start
+
+If you already know one exact key, start with the latest indexed row and stop as soon as it answers the question.
+
+```bash
+CURRENT_ACCOUNT_ID=social.near
+PREDECESSOR_ID=james.near
+KEY='graph/follow/sleet.near'
+AUTH_HEADER=()
+if [ -n "${FASTNEAR_API_KEY:-}" ]; then AUTH_HEADER=(-H "Authorization: Bearer $FASTNEAR_API_KEY"); fi
+
+ENCODED_KEY="$(jq -rn --arg key "$KEY" '$key | @uri')"
+
+curl -s "https://kv.main.fastnear.com/v0/latest/$CURRENT_ACCOUNT_ID/$PREDECESSOR_ID/$ENCODED_KEY" \
+  "${AUTH_HEADER[@]}" \
+  | jq '{
+      latest: (
+        .entries[0]
+        | {
+            current_account_id,
+            predecessor_id,
+            block_height,
+            key,
+            value
+          }
+      )
+    }'
+```
+
+This is the narrowest useful KV read: one exact key, one latest indexed row. If the next question becomes “how did this key change over time?”, move to [GET History by Exact Key](/fastdata/kv/get-history-key) or the fuller [KV FastData Examples](/fastdata/kv/examples).
+
 ## Use this API when
 
 - you want latest indexed state for one key or a known key family
@@ -50,6 +81,10 @@ Use [FastNear API](/api) for higher-level account views, [NEAR Data API](/nearda
 - [Latest by Account](/fastdata/kv/latest-by-account) or [History by Account](/fastdata/kv/history-by-account) when the scope is account-centric
 - [All by Predecessor](/fastdata/kv/all-by-predecessor) or [History by Predecessor](/fastdata/kv/history-by-predecessor) when the predecessor is the right scope
 - [Multi Lookup](/fastdata/kv/multi) when you already know several exact keys
+
+## Need a workflow?
+
+Use [KV FastData Examples](/fastdata/kv/examples) for worked examples like exact-key lookups, key-history investigation, predecessor-scoped inspection, and canonical RPC follow-up.
 
 ## Default workflow
 

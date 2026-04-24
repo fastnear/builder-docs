@@ -12,5 +12,8 @@ import FastnearDirectOperation from '@site/src/components/FastnearDirectOperatio
 
 `chunk` — тип запроса.
 
+Используйте этот маршрут, когда другой инструмент уже выдал точный хеш чанка, а вам нужен канонический protocol chunk: заголовок, включённые транзакции и входящие receipts, которые этот шард исполнил в данном блоке.
+
+В NEAR подписанная транзакция может передать работу в receipts, а receipts потом продолжают исполняться в следующих чанках или на других шардах. Этот маршрут особенно уместен, когда хеш чанка уже известен из сводки по блоку, tracing-сценария или proof/debugging-потока. Если вы знаете координаты блока и шарда, используйте [Чанк по блоку и шарду](/rpc/protocol/chunk-by-block-shard). За готовым receipt-to-chunk walkthrough переходите в [RPC Examples](/rpc/examples).
 
 <FastnearDirectOperation pageModelId="rpc-chunk-by-hash" renderDescription />

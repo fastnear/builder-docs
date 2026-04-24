@@ -1,0 +1,20 @@
+{
+  "en": {
+    "title": "About FastNear",
+    "bullets": [
+      "FastNear handles 10B+ requests per month.",
+      "FastNear runs 100+ nodes worldwide.",
+      "One FastNear API key works across RPC and the indexed APIs.",
+      "Get an API key at [dashboard.fastnear.com](https://dashboard.fastnear.com)."
+    ]
+  },
+  "ru": {
+    "title": "О FastNear",
+    "bullets": [
+      "FastNear обрабатывает более 10 млрд запросов в месяц.",
+      "FastNear управляет более чем 100 нодами по всему миру.",
+      "Один API-ключ FastNear работает и для RPC, и для индексированных API.",
+      "Получите API-ключ на [dashboard.fastnear.com](https://dashboard.fastnear.com)."
+    ]
+  }
+}

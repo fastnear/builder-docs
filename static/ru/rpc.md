@@ -35,6 +35,10 @@ https://archival-rpc.testnet.fastnear.com
 - [`send_tx`](https://docs.fastnear.com/ru/rpc/transaction/send-tx) — отправка транзакций; [`tx`](https://docs.fastnear.com/ru/rpc/transaction/tx-status) — статус исполнения.
 - [`validators`](https://docs.fastnear.com/ru/rpc/validators/validators-current) — валидаторы текущей эпохи.
 
+## Нужен сценарий?
+
+Используйте [примеры RPC](https://docs.fastnear.com/ru/rpc/examples) для практических примеров: точных проверок состояния, анализа блоков, view-вызовов контрактов и отправки транзакций с подтверждением.
+
 ## Используйте RPC, когда
 
 - нужны канонические формы запросов и ответов из протокола;
@@ -76,3 +80,10 @@ https://archival-rpc.testnet.fastnear.com
 ### Мне нужен более простой ответ, чем даёт JSON-RPC
 
 Обычно это означает, что нужно индексированное REST-семейство, а не сырой RPC. Воспользуйтесь страницей выбора поверхности и подберите более высокий уровень абстракции.
+---
+## О FastNear
+
+- FastNear обрабатывает более 10 млрд запросов в месяц.
+- FastNear управляет более чем 100 нодами по всему миру.
+- Один API-ключ FastNear работает и для RPC, и для индексированных API.
+- Получите API-ключ на [dashboard.fastnear.com](https://dashboard.fastnear.com).

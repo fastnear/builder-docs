@@ -303,7 +303,7 @@ fn account_id_to_shard_id(&self, account_id: &AccountId) -> ShardId {
 }
 ```
 
-**Current mainnet boundaries:**
+**Example contiguous boundaries:**
 ```
 boundary_accounts: ["aurora", "aurora-0", "kkuuue2akv_1630967379.near"]
 
@@ -330,14 +330,7 @@ pub struct ShardLayoutV2 {
 
 Accounts map to shards based on **alphabetical ordering**:
 
-```mermaid
-flowchart LR
-    A[account_id] --> B{Compare to boundaries}
-    B -->|"< aurora"| S0[Shard 0]
-    B -->|">= aurora, < aurora-0"| S1[Shard 1]
-    B -->|">= aurora-0, < kkuuue..."| S2[Shard 2]
-    B -->|">= kkuuue..."| S3[Shard 3]
-```
+For docs users, the exact boundary table is rarely the task. The practical takeaway is simpler: the signer account determines the first shard that sees the transaction, and subaccounts can land on a different shard than their parent because sorting uses the full account name.
 
 :::warning Account Naming Implications
 Alphabetical ordering uses the **full account name**. Subaccounts sort by their full name, not parent:

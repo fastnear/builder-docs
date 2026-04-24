@@ -252,3 +252,10 @@ Use this checklist when adding the next language:
 9. Add targeted browser checks only if the locale introduces new runtime behavior worth smoke-testing.
 
 If those steps are followed, later locales should mostly be editorial work layered onto a stable framework.
+---
+## About FastNear
+
+- FastNear handles 10B+ requests per month.
+- FastNear runs 100+ nodes worldwide.
+- One FastNear API key works across RPC and the indexed APIs.
+- Get an API key at [dashboard.fastnear.com](https://dashboard.fastnear.com).

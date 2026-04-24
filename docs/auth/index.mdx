@@ -25,34 +25,36 @@ import IconExternalLink from '@theme/Icon/ExternalLink';
 
 # Auth & Access
 
-One FastNear API key works across the RPC and API endpoints. Many public reads still work without one, but the auth model stays simple when you do need a key: use the same credential everywhere and send it either as a Bearer header or an `apiKey` query parameter.
+One FastNear API key works across the RPC and API endpoints. Keep the auth model simple: use the same credential everywhere and send it either as a Bearer header or an `apiKey` query parameter.
 
-Get a key at <Link href="https://dashboard.fastnear.com">dashboard.fastnear.com<IconExternalLink /></Link>.
+Get a key in <Link href="https://dashboard.fastnear.com">FastNear Dashboard<IconExternalLink /></Link>.
 
 Live example pages also support `Copy example URL` for sharing prefilled requests. Shared example URLs run automatically on load whenever they include operation state, and saved API keys and tokens are never included in those public docs URLs.
 
 ## If you only need the rule
 
 - One FastNear API key works across RPC and API endpoints.
-- Many public reads still work without a key.
-- Prefer `Authorization: Bearer ${API_KEY}` for production backends.
-- Use `?apiKey=${API_KEY}` when headers are awkward or you are doing quick curl/debug work.
+- Set `FASTNEAR_API_KEY` in your shell, runtime, or secret manager.
+- Prefer `Authorization: Bearer ${FASTNEAR_API_KEY}` for production backends.
+- Use `?apiKey=${FASTNEAR_API_KEY}` when headers are awkward or you are doing quick curl/debug work.
 - Agents and automations should keep the key in env vars or a secret manager, not in browser storage.
 
 ## Choose the auth form
 
 | Form | Best for | Notes |
 | --- | --- | --- |
-| `Authorization: Bearer ${API_KEY}` | production backends, workers, automations, and proxies | Best default. Keeps credentials out of copied URLs and most URL logs. |
-| `?apiKey=${API_KEY}` | simple curl, one-off debugging, systems that cannot set headers easily | Valid, but the key may end up in shell history, logs, analytics, or copied links. |
+| `Authorization: Bearer ${FASTNEAR_API_KEY}` | production backends, workers, automations, and proxies | Best default. Keeps credentials out of copied URLs and most URL logs. |
+| `?apiKey=${FASTNEAR_API_KEY}` | simple curl, one-off debugging, systems that cannot set headers easily | Valid, but the key may end up in shell history, logs, analytics, or copied links. |
 
 If you control the client, use the header form.
 
 ## Authorization header example
 
 ```bash
+: "${FASTNEAR_API_KEY:?Set FASTNEAR_API_KEY in your shell before running this example.}"
+
 curl "https://rpc.mainnet.fastnear.com" \
-  -H "Authorization: Bearer ${API_KEY}" \
+  -H "Authorization: Bearer $FASTNEAR_API_KEY" \
   -H "Content-Type: application/json" \
   --data '{"method":"block","params":{"finality":"final"},"id":1,"jsonrpc":"2.0"}'
 ```
@@ -60,7 +62,9 @@ curl "https://rpc.mainnet.fastnear.com" \
 ## `?apiKey=` query parameter example
 
 ```bash
-curl "https://rpc.mainnet.fastnear.com?apiKey=${API_KEY}" \
+: "${FASTNEAR_API_KEY:?Set FASTNEAR_API_KEY in your shell before running this example.}"
+
+curl "https://rpc.mainnet.fastnear.com?apiKey=$FASTNEAR_API_KEY" \
   -H "Content-Type: application/json" \
   --data '{"method":"block","params":{"finality":"final"},"id":1,"jsonrpc":"2.0"}'
 ```
@@ -68,8 +72,8 @@ curl "https://rpc.mainnet.fastnear.com?apiKey=${API_KEY}" \
 ## Where this applies
 
 - [RPC Reference](/rpc) uses the shared FastNear key model on both the regular and archival hosts.
-- API families reuse the same key shape even when public reads often work without a key.
-- The docs UI can forward an optional FastNear key for supported pages, but that browser storage behavior is a docs convenience, not a production pattern.
+- API families reuse the same key shape across the REST surfaces.
+- The docs UI can forward a saved FastNear key for supported pages, but that browser storage behavior is a docs convenience, not a production pattern.
 
 For agent and automation runtimes, use [Auth for Agents](/agents/auth).
 

@@ -47,7 +47,18 @@ sudo -v ; curl https://rclone.org/install.sh | sudo bash
 
 Требования к узлам смотрите в [nearcore](https://github.com/near/nearcore?tab=readme-ov-file#about-near), а исходники скриптов загрузки, которые используются в этих руководствах, — в [fastnear/static](https://github.com/fastnear/static).
 
+## Нужен сценарий?
+
+Используйте [примеры снапшотов](https://docs.fastnear.com/ru/snapshots/examples) для практических примеров: выбора между оптимизированным `fast-rpc`, стандартным восстановлением RPC и архивными путями с разделением горячих и холодных данных.
+
 ## Выберите сеть
 
   - [Снапшоты mainnet](https://docs.fastnear.com/ru/snapshots/mainnet)
   - [Снапшоты testnet](https://docs.fastnear.com/ru/snapshots/testnet)
+---
+## О FastNear
+
+- FastNear обрабатывает более 10 млрд запросов в месяц.
+- FastNear управляет более чем 100 нодами по всему миру.
+- Один API-ключ FastNear работает и для RPC, и для индексированных API.
+- Получите API-ключ на [dashboard.fastnear.com](https://dashboard.fastnear.com).

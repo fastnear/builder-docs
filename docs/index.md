@@ -165,7 +165,7 @@ import Link from '@site/src/components/LocalizedLink';
       </div>
       <div className="fastnear-home-utility-card">
         <span className="fastnear-home-utility-card__eyebrow">Keys and billing</span>
-        <Link className="fastnear-home-utility-card__title" to="https://dashboard.fastnear.com">Dashboard</Link>
+        <Link className="fastnear-home-utility-card__title" to="https://dashboard.fastnear.com">FastNear Dashboard</Link>
         <p>Sign in, create keys, and move to higher-limit usage patterns when you need them.</p>
       </div>
       <div className="fastnear-home-utility-card">

@@ -12,5 +12,8 @@ import FastnearDirectOperation from '@site/src/components/FastnearDirectOperatio
 
 `chunk` — тип запроса.
 
+Используйте этот маршрут, когда вы знаете координаты блока и шарда и хотите посмотреть, что именно этот шард исполнил в данном блоке.
+
+Это самый естественный RPC-маршрут для cross-shard debugging, потому что он отвечает на практический вопрос: «что исполнил шард X в блоке Y?» В ответе вы получаете заголовок чанка, а также транзакции и receipts в этой единице исполнения конкретного шарда. Если у вас уже есть точный хеш чанка, используйте [Чанк по хешу](/rpc/protocol/chunk-by-hash). Если нужна более полная shard-оболочка со state changes и produced receipts, переходите к [Block Shard](/neardata/block-shard). За готовым tracing-примером переходите в [RPC Examples](/rpc/examples).
 
 <FastnearDirectOperation pageModelId="rpc-chunk-by-block-shard" renderDescription />

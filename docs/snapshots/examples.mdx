@@ -1,0 +1,66 @@
+---
+sidebar_label: Examples
+slug: /snapshots/examples
+title: Snapshot Examples
+description: Task-first snapshot recovery examples for optimized, standard, and archival node recovery.
+displayed_sidebar: snapshotsSidebars
+page_actions:
+  - markdown
+---
+
+## Mainnet recovery paths
+
+Pick one class — optimized `fast-rpc`, standard RPC, or archival — and run only that path's commands. Mixing classes produces inconsistent node data.
+
+FastNear maintains these helpers for recovery speed. If your environment requires change review, fetch the script and inspect it before running it (instead of piping straight to `bash`).
+
+### Optimized mainnet `fast-rpc`
+
+```bash
+DATA_PATH=~/.near/data
+
+curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/fastnear/static/refs/heads/main/down_rclone.sh \
+  | DATA_PATH="$DATA_PATH" CHAIN_ID=mainnet RPC_TYPE=fast-rpc bash
+```
+
+### Standard mainnet RPC
+
+```bash
+DATA_PATH=~/.near/data
+
+curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/fastnear/static/refs/heads/main/down_rclone.sh \
+  | DATA_PATH="$DATA_PATH" CHAIN_ID=mainnet bash
+```
+
+### Mainnet archival
+
+Archival needs two downloads that must come from the *same* snapshot cut. Capture one `LATEST` value and reuse it for both hot and cold data — mixing heights yields an internally inconsistent dataset and surprises nearcore at config time.
+
+```bash
+HOT_DATA_PATH=~/.near/data
+COLD_DATA_PATH=/mnt/hdds/cold-data
+
+LATEST="$(curl -s "https://snapshot.neardata.xyz/mainnet/archival/latest.txt")"
+echo "Latest archival mainnet snapshot block: $LATEST"
+
+curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/fastnear/static/refs/heads/main/down_rclone_archival.sh \
+  | DATA_TYPE=hot-data DATA_PATH="$HOT_DATA_PATH" CHAIN_ID=mainnet BLOCK="$LATEST" bash
+
+curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/fastnear/static/refs/heads/main/down_rclone_archival.sh \
+  | DATA_TYPE=cold-data DATA_PATH="$COLD_DATA_PATH" CHAIN_ID=mainnet BLOCK="$LATEST" bash
+```
+
+## Common mistakes
+
+- Using snapshot docs when the task is really about reading chain data.
+- Choosing archival recovery when a standard or optimized RPC path would do.
+- Forgetting the hot/cold storage split for archival data.
+- Jumping into commands before deciding the network and node goal.
+
+## Related guides
+
+- [Snapshots overview](/snapshots)
+- [Mainnet snapshots](/snapshots/mainnet)
+- [Testnet snapshots](/snapshots/testnet)
+- [RPC Reference](/rpc)
+- [NEAR Data API](/neardata)

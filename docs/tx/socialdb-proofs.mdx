@@ -1,0 +1,162 @@
+---
+slug: /tx/socialdb-proofs
+title: Advanced SocialDB Write Lookup
+description: One small advanced playbook for starting from a readable SocialDB value and recovering the write transaction behind it.
+displayed_sidebar: transactionsApiSidebar
+page_actions:
+  - markdown
+---
+
+# Advanced SocialDB Write Lookup
+
+Use this page only when the starting point is already a readable SocialDB value from `api.near.social` and the next question is historical write lookup.
+
+These shell steps work against the public SocialDB and FastNear endpoints. If `FASTNEAR_API_KEY` is already set in your shell, the FastNear calls will forward it automatically as a bearer header.
+
+For FastNear-first jobs, start with [Transactions Examples](/tx/examples). Come here only when the question has become "which write made this readable SocialDB value true?"
+
+## Canonical example: prove that `root.near` set `profile.name` to `Illia`
+
+Use this when the readable fact is already "the current `profile.name` is `Illia`" and the remaining question is which write made that field true.
+
+This is the one SocialDB nuance worth keeping: for historical proof, the field-level `:block` is usually the right bridge, not the parent object's `:block`.
+
+For this live anchor:
+
+- current `profile.name`: `Illia`
+- field-level SocialDB write block: `75590392`
+- receipt ID: `GYvnvBxWA46UGa3aGEkqUBeT7hxhVXk2iZScJFZWU8Se`
+- originating transaction hash: `7HtFWv51k5Bispmh1WYPbAVkxr2X4AL6n98DhcQwVw7w`
+- outer transaction block: `75590391`
+
+### Shell walkthrough
+
+1. Read the field from NEAR Social and capture the field-level write block.
+
+```bash
+ACCOUNT_ID=root.near
+PROFILE_FIELD=profile/name
+
+PROFILE="$(curl -s "https://api.near.social/get" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc --arg account_id "$ACCOUNT_ID" --arg profile_field "$PROFILE_FIELD" '{
+    keys: [($account_id + "/" + $profile_field)],
+    options: {with_block_height: true}
+  }')")"
+
+echo "$PROFILE" | jq --arg account_id "$ACCOUNT_ID" '{
+  current_name: .[$account_id].profile.name[""],
+  field_block_height: .[$account_id].profile.name[":block"],
+  parent_profile_block_height: .[$account_id].profile[":block"]
+}'
+
+PROFILE_BLOCK_HEIGHT="$(echo "$PROFILE" | jq -r --arg account_id "$ACCOUNT_ID" '.[$account_id].profile.name[":block"]')"
+```
+
+2. Reuse that field-level block in FastNear block receipts and recover the receipt plus tx hash.
+
+```bash
+ACCOUNT_ID=root.near
+PROFILE_FIELD=profile/name
+AUTH_HEADER=()
+if [ -n "${FASTNEAR_API_KEY:-}" ]; then AUTH_HEADER=(-H "Authorization: Bearer $FASTNEAR_API_KEY"); fi
+PROFILE_BLOCK_HEIGHT="$(
+  curl -s "https://api.near.social/get" \
+    -H 'content-type: application/json' \
+    --data "$(jq -nc --arg account_id "$ACCOUNT_ID" --arg profile_field "$PROFILE_FIELD" '{
+      keys: [($account_id + "/" + $profile_field)],
+      options: {with_block_height: true}
+    }')" \
+    | jq -r --arg account_id "$ACCOUNT_ID" '.[$account_id].profile.name[":block"]'
+)"
+BLOCK_RECEIPTS="$(curl -s "https://tx.main.fastnear.com/v0/block" \
+  "${AUTH_HEADER[@]}" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc --argjson block_id "$PROFILE_BLOCK_HEIGHT" '{
+    block_id: $block_id,
+    with_transactions: false,
+    with_receipts: true
+  }')")"
+
+echo "$BLOCK_RECEIPTS" | jq --arg account_id "$ACCOUNT_ID" '{
+  profile_receipt: (
+    first(
+      .block_receipts[]
+      | select(.predecessor_id == $account_id and .receiver_id == "social.near")
+      | {receipt_id, transaction_hash, block_height, tx_block_height}
+    )
+  )
+}'
+
+PROFILE_TX_HASH="$(echo "$BLOCK_RECEIPTS" | jq -r --arg account_id "$ACCOUNT_ID" '
+  first(
+    .block_receipts[]
+    | select(.predecessor_id == $account_id and .receiver_id == "social.near")
+    | .transaction_hash
+  )')"
+```
+
+3. Reuse that tx hash in `POST /v0/transactions` and decode the SocialDB write payload.
+
+```bash
+ACCOUNT_ID=root.near
+PROFILE_FIELD=profile/name
+AUTH_HEADER=()
+if [ -n "${FASTNEAR_API_KEY:-}" ]; then AUTH_HEADER=(-H "Authorization: Bearer $FASTNEAR_API_KEY"); fi
+PROFILE_BLOCK_HEIGHT="$(
+  curl -s "https://api.near.social/get" \
+    -H 'content-type: application/json' \
+    --data "$(jq -nc --arg account_id "$ACCOUNT_ID" --arg profile_field "$PROFILE_FIELD" '{
+      keys: [($account_id + "/" + $profile_field)],
+      options: {with_block_height: true}
+    }')" \
+    | jq -r --arg account_id "$ACCOUNT_ID" '.[$account_id].profile.name[":block"]'
+)"
+PROFILE_TX_HASH="$(
+  curl -s "https://tx.main.fastnear.com/v0/block" \
+    "${AUTH_HEADER[@]}" \
+    -H 'content-type: application/json' \
+    --data "$(jq -nc --argjson block_id "$PROFILE_BLOCK_HEIGHT" '{
+      block_id: $block_id,
+      with_transactions: false,
+      with_receipts: true
+    }')" \
+    | jq -r --arg account_id "$ACCOUNT_ID" '
+        first(
+          .block_receipts[]
+          | select(.predecessor_id == $account_id and .receiver_id == "social.near")
+          | .transaction_hash
+        )'
+)"
+curl -s "https://tx.main.fastnear.com/v0/transactions" \
+  "${AUTH_HEADER[@]}" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc --arg tx_hash "$PROFILE_TX_HASH" '{tx_hashes: [$tx_hash]}')" \
+  | jq --arg account_id "$ACCOUNT_ID" '{
+      transaction: {
+        hash: .transactions[0].transaction.hash,
+        signer_id: .transactions[0].transaction.signer_id,
+        receiver_id: .transactions[0].transaction.receiver_id,
+        included_block_height: .transactions[0].execution_outcome.block_height
+      },
+      write_proof: (
+        .transactions[0].receipts[0].receipt.receipt.Action.actions[0].FunctionCall
+        | (.args | @base64d | fromjson | .data[$account_id].profile) as $profile
+        | {
+            method_name,
+            profile_name: $profile.name,
+            image_fields: (($profile.image // {}) | keys),
+            linktree_keys: (($profile.linktree // {}) | keys)
+          }
+      )
+    }'
+```
+
+That is the whole lookup pattern: readable value, field-level block, receipt bridge, and transaction payload.
+
+The same bridge works for other readable SocialDB values too:
+
+- follow edge variant: `root.near -> mob.near`, block `79152039`, tx `DvNoqtDrruhmcq7mPpxdFacph2ZCqSzMFF5ZqMRFG78q`
+- widget source variant: `root.near/widget/Profile`, block `76029540`, tx `ELS3DrE4Upoc91ZnBh4thVugxCUBAbaLFB4nyKsoyRNP`
+
+The key idea does not change: start from the readable value and its write block, recover the `*.near -> social.near` receipt from the block, then decode the `social.near set` payload from the originating transaction.

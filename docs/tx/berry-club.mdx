@@ -1,0 +1,152 @@
+---
+sidebar_label: Berry Club
+slug: /tx/examples/berry-club
+title: "Berry Club: Read the live board, then reconstruct one era"
+description: "Read the live Berry Club board with RPC get_lines, then use Transactions API to reconstruct one older era."
+displayed_sidebar: transactionsApiSidebar
+page_actions:
+  - markdown
+keywords:
+  - Berry Club
+  - FastNear
+  - Transactions API
+  - RPC
+  - get_lines
+  - draw
+  - pixel board
+---
+
+import Link from '@site/src/components/LocalizedLink';
+import BerryClubLiveBoard from '@site/src/components/BerryClubLiveBoard';
+
+{/* FASTNEAR_AI_DISCOVERY: This walkthrough shows the shortest useful Berry Club flow: read the live board with RPC get_lines, then use Transactions API only when you need to reconstruct one older era from draw calls. */}
+
+# Berry Club: Read the live board, then reconstruct one era
+
+Use this walkthrough when the live board is easy to read, but you need one historical reconstruction path behind it.
+
+Start with the live board. If that already answers the question, stop there.
+
+Only switch to Transactions API when the question becomes historical: “what did Berry Club look like during one older era, and which `draw` calls made it look that way?”
+
+These shell examples work against the public RPC and Transactions endpoints. If `FASTNEAR_API_KEY` is already set in your shell, the FastNear calls will forward it automatically as a bearer header.
+
+<BerryClubLiveBoard
+  uiText={{
+    title: 'Live Berry Club board',
+    blockHeightLabel: 'Block',
+    blockHashLabel: 'Block hash',
+    sourceLabel: 'Source',
+    sourceValue: 'Mainnet RPC get_lines',
+    loadingLabel: 'Loading live board...',
+    refreshingLabel: 'Refreshing live board from RPC...',
+    fallbackLabel: 'Showing the latest saved snapshot while the live RPC read updates.',
+    errorLabel: 'Live RPC read failed.',
+    emptyLabel: 'No board data available yet.',
+  }}
+/>
+
+## 1. Read the live board
+
+This is the shortest useful read:
+
+```bash
+ARGS_BASE64="$(jq -nc '{lines: [range(0;50)]}' | base64 | tr -d '\n')"
+AUTH_HEADER=()
+if [ -n "${FASTNEAR_API_KEY:-}" ]; then AUTH_HEADER=(-H "Authorization: Bearer $FASTNEAR_API_KEY"); fi
+
+curl -sS https://rpc.mainnet.fastnear.com \
+  "${AUTH_HEADER[@]}" \
+  -H 'content-type: application/json' \
+  --data "{
+    \"jsonrpc\": \"2.0\",
+    \"id\": \"berry-live-board\",
+    \"method\": \"query\",
+    \"params\": {
+      \"request_type\": \"call_function\",
+      \"finality\": \"final\",
+      \"account_id\": \"berryclub.ek.near\",
+      \"method_name\": \"get_lines\",
+      \"args_base64\": \"$ARGS_BASE64\"
+    }
+  }" | jq '.result | {block_height, line_count: (.result | implode | fromjson | length)}'
+```
+
+That gives you the current 50x50 board from the contract itself. The only decode step is turning each returned base64 line into 50 pixel colors.
+
+## 2. Reconstruct one older era
+
+When you need history, keep the flow short:
+
+1. bound one era
+2. list candidate `draw` transactions for `berryclub.ek.near`
+3. hydrate those hashes
+4. replay the `pixels` arrays oldest-first
+
+This example uses a narrow window around block `97601515`:
+
+```bash
+AUTH_HEADER=()
+if [ -n "${FASTNEAR_API_KEY:-}" ]; then AUTH_HEADER=(-H "Authorization: Bearer $FASTNEAR_API_KEY"); fi
+
+curl -sS https://tx.main.fastnear.com/v0/account \
+  "${AUTH_HEADER[@]}" \
+  -H 'content-type: application/json' \
+  --data '{
+    "account_id": "berryclub.ek.near",
+    "is_function_call": true,
+    "is_receiver": true,
+    "is_real_receiver": true,
+    "from_tx_block_height": 97576515,
+    "to_tx_block_height": 97601516,
+    "desc": false,
+    "limit": 200
+  }' | jq '.account_txs | map({transaction_hash, tx_block_height}) | .[-5:]'
+```
+
+If you do not know the window yet, <Link to="/tx/blocks">`/v0/blocks`</Link> can help you choose one first. It is not part of the core Berry Club flow.
+
+Hydrate the candidate hashes and keep only top-level `draw` calls:
+
+```bash
+AUTH_HEADER=()
+if [ -n "${FASTNEAR_API_KEY:-}" ]; then AUTH_HEADER=(-H "Authorization: Bearer $FASTNEAR_API_KEY"); fi
+
+curl -sS https://tx.main.fastnear.com/v0/transactions \
+  "${AUTH_HEADER[@]}" \
+  -H 'content-type: application/json' \
+  --data '{
+    "tx_hashes": [
+      "Hq5qwsuiM2emJrqczWM9awCa7o6sTBYqYpcifUX2SUhQ",
+      "8tBip5M2TrozhSyepAA3tYXpyKooi5t7b9c64wXjFvfL"
+    ]
+  }' | jq '.transactions[]
+    | select(.transaction.receiver_id == "berryclub.ek.near")
+    | .transaction.actions[]?.FunctionCall
+    | select(.method_name == "draw")
+    | {method_name, args: (.args | @base64d | fromjson)}'
+```
+
+Replay the `pixels` arrays oldest-first:
+
+```javascript
+const board = Array.from({ length: 50 }, () => Array(50).fill(0));
+
+for (const drawTx of drawTransactionsOldestFirst) {
+  for (const pixel of drawTx.args.pixels) {
+    if (pixel.x < 0 || pixel.x >= 50 || pixel.y < 0 || pixel.y >= 50) {
+      continue;
+    }
+
+    board[pixel.y][pixel.x] = pixel.color;
+  }
+}
+```
+
+That is the whole historical pattern. Berry Club does not expose a ready-made “board at block N” endpoint, so older eras come from replaying `draw` writes.
+
+## Related guides
+
+- <Link to="/rpc/contract/call-function">RPC: call_function</Link>
+- <Link to="/tx/account">Transactions API: Account History</Link>
+- <Link to="/tx/transactions">Transactions API: Transactions by Hash</Link>

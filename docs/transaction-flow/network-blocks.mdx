@@ -202,21 +202,11 @@ pub enum InsertTransactionResult {
 
 ## Round-Robin Fair Selection
 
-When a chunk producer builds a chunk, they use a **round-robin algorithm** that gives each account a fair chance:
+For docs users, the exact scheduler is less important than three user-visible consequences:
 
-```mermaid
-flowchart TD
-    A[Start at randomized position] --> B[For each account/key group]
-    B --> C[Pop lowest-nonce transaction]
-    C --> D{Valid?}
-    D -->|Yes| E[Add to chunk]
-    D -->|No| F[Drop or skip]
-    E --> G{Limits reached?}
-    F --> G
-    G -->|No| H[Rotate to next group]
-    H --> B
-    G -->|Yes| I[Chunk complete]
-```
+- inclusion is fair rather than fee-bid driven
+- transactions for the same account/key still respect nonce order
+- full chunks delay inclusion instead of reordering for higher bids
 
 ### Selection Properties
 
@@ -277,21 +267,7 @@ A chunk contains:
 - Gas used and limits
 
 ### Production Flow
-
-```mermaid
-sequenceDiagram
-    participant BP as Block Producer
-    participant CP as Chunk Producer
-    participant Net as Network
-
-    BP->>CP: Signal "produce chunk for shard X at height H"
-    CP->>CP: Select transactions from pool
-    CP->>CP: Execute transactions (create receipts)
-    CP->>CP: Create chunk header and body
-    CP->>BP: Send chunk
-    BP->>BP: Assemble block with all chunks
-    BP->>Net: Propagate block
-```
+From a docs perspective, chunk production matters only because it determines when a transaction or receipt first becomes visible in block-scoped data. You usually do not need the producer handshake; you need the resulting block height, shard placement, and receipt timing.
 
 ### Chunk Header
 
@@ -319,31 +295,14 @@ Once transactions become receipts, they're executed in a **strict three-phase or
 
 **Source:** `runtime/runtime/src/lib.rs`, function `process_receipts()`
 
-```mermaid
-flowchart TD
-    subgraph Phase1[Phase 1: LOCAL RECEIPTS]
-        L1[Receipts from THIS block's transactions]
-        L2[Order: Transaction inclusion order]
-    end
+For docs users, keep the ordering rule simpler than the runtime implementation:
 
-    subgraph Phase2[Phase 2: DELAYED RECEIPTS]
-        D1[Backlog from previous blocks]
-        D2[Order: Strict FIFO queue]
-    end
+1. local receipts from this block's transactions
+2. delayed receipts from older backlog
+3. incoming cross-shard receipts
+4. yield timeouts
 
-    subgraph Phase3[Phase 3: INCOMING RECEIPTS]
-        I1[Cross-shard receipts arriving THIS block]
-        I2[Order: Chunk order - deterministic]
-    end
-
-    subgraph Phase4[Phase 4: YIELD TIMEOUTS]
-        Y1[NEP-519 promises that expired]
-    end
-
-    Phase1 --> Phase2
-    Phase2 --> Phase3
-    Phase3 --> Phase4
-```
+The exact phase boundary matters only when you are explaining why one receipt became visible before another.
 
 ### Phase Details
 

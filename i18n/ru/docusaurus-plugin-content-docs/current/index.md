@@ -54,7 +54,7 @@ import Link from '@site/src/components/LocalizedLink';
           </div>
         </div>
         <p className="fastnear-home-auth-callout__copy">
-          Сначала возьмите ключ — войдите на [dashboard.fastnear.com](https://dashboard.fastnear.com) через Google или email, получите бесплатные стартовые кредиты и подключайте месячную подписку или бессрочные резервные кредиты только тогда, когда понадобятся повышенные лимиты.
+          Получите API-ключ на <Link href="https://dashboard.fastnear.com">dashboard.fastnear.com</Link> и используйте его во всех запросах к FastNear из одного и того же рабочего окружения.
         </p>
       </div>
     </div>
@@ -172,7 +172,7 @@ import Link from '@site/src/components/LocalizedLink';
       </div>
       <div className="fastnear-home-utility-card">
         <span className="fastnear-home-utility-card__eyebrow">Ключи и оплата</span>
-        <Link className="fastnear-home-utility-card__title" to="https://dashboard.fastnear.com">Dashboard</Link>
+        <Link className="fastnear-home-utility-card__title" to="https://dashboard.fastnear.com">FastNear Dashboard</Link>
         <p>Войдите, создайте ключи и переходите на сценарии с более высокими лимитами, когда понадобится.</p>
       </div>
       <div className="fastnear-home-utility-card">

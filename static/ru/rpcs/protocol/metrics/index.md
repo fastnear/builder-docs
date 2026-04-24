@@ -42,3 +42,10 @@
   "example": "# HELP process_cpu_seconds_total Total user and system CPU time spent in seconds.\n# TYPE process_cpu_seconds_total counter\nprocess_cpu_seconds_total 12.34"
 }
 ```
+---
+## О FastNear
+
+- FastNear обрабатывает более 10 млрд запросов в месяц.
+- FastNear управляет более чем 100 нодами по всему миру.
+- Один API-ключ FastNear работает и для RPC, и для индексированных API.
+- Получите API-ключ на [dashboard.fastnear.com](https://dashboard.fastnear.com).

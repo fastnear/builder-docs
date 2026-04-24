@@ -1,6 +1,6 @@
 ---
 title: Block Shard
-description: Fetch one shard from a finalized block.
+description: Fetch the fuller per-shard envelope for a finalized block.
 slug: /neardata/block-shard
 hide_table_of_contents: true
 ---
@@ -9,5 +9,8 @@ import FastnearDirectOperation from '@site/src/components/FastnearDirectOperatio
 
 # Block Shard
 
+Use this when chunk data alone is not enough and you need the fuller shard envelope for a finalized block.
+
+`Block Shard` goes one step wider than [Block Chunk](/neardata/block-chunk): you still get the shard's chunk payload, but you also see shard state changes and the receipts that execution produced. That makes it the better surface for debugging, indexers, and analytics when execution outcomes matter, not just included transactions and incoming receipts. For a worked tracing flow that starts from a transaction and ends on a destination chunk, see [RPC Examples](/rpc/examples).
 
 <FastnearDirectOperation pageModelId="neardata-v0-block-shard" renderDescription />

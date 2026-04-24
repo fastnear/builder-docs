@@ -268,6 +268,24 @@ RPC source files now live under `docs/rpc/<category>/` and publish at `/rpc/<cat
 
 Use the generated `pageModelId` from `mike-docs`. The canonical hosted `/rpcs/...` and `/apis/...` routes are generated automatically; do not hand-edit files under `src/pages/rpcs/**` or `src/pages/apis/**`.
 
+### Examples Voice And Shape
+
+Examples pages are reference workflows for technical readers. A good example answers a real question a reader arrives with, and the RPC calls teach something about how NEAR actually works along the way. Keep them task-first and concise.
+
+- Start with the job and the first surface, not page philosophy.
+- Prefer exact endpoint or method names in the first sentence.
+- Use short imperative or declarative sentences.
+- Cut phrases like `plain-language`, `user story`, `the point here is`, and other author-to-author narration.
+- Avoid stacked framing. The heading plus one short lead line plus the `Flow` block is usually enough.
+- Keep pinned example metadata to the few facts the commands actually depend on.
+- Keep tables or Mermaid diagrams only when they reduce confusion. If the `Flow` block and commands already make the path obvious, cut them.
+- Do not add `Goal` or `Capture` sections unless they carry information the example does not already make obvious.
+- Every line before the first command should earn its place by doing one of three jobs: choose the surface, explain the signal to look for, or justify why the example is pinned.
+- Use examples to teach NEAR, not to verify the RPC. Pick a question a real reader would arrive with, not one contrived to exercise the RPC's correctness. "Which function-call keys might I want to remove" is real; "prove that `view_state` and `call_function` agree on the counter" is an RPC self-test — it adds surface without signal.
+- Give each subsection one question. If a single `###` is trying to answer several at once (cleanup *and* forensic attribution *and* a separate write flow), split it. Forensic trails — multi-hop joins, Delegate unwrapping, archival attribution — belong on their own pages, not as tails on lighter-weight sections.
+- Lead with the mental model when the RPC surface surprises a reasonable intuition. If the natural first guess (`block → tx`) doesn't match the actual path (`block → chunk → transactions`), say why up front. Otherwise readers spend the example wondering whether the author took a wrong turn.
+- Keep each example to one jq pipeline shaping one RPC response. When an example needs shell-variable joins across three RPCs to produce an answer, that's a signal it's really multiple examples.
+
 ## Canonical Route Contract
 
 These hosted paths remain the stable embed and reference contract:

@@ -477,6 +477,35 @@ pre code {
   background: rgba(243, 245, 255, 0.12);
 }
 
+.theme-doc-sidebar-item-link.fastnear-sidebar-examples-divider,
+.navbar-sidebar .fastnear-sidebar-examples-divider {
+  list-style: none;
+  margin: 1rem 0 0;
+  padding: 0;
+  pointer-events: none;
+}
+
+.theme-doc-sidebar-item-link.fastnear-sidebar-examples-divider > div,
+.navbar-sidebar .fastnear-sidebar-examples-divider > div {
+  border-top: 1px solid rgba(17, 17, 17, 0.08);
+  margin: 0 1rem;
+}
+
+.theme-doc-sidebar-item-link.fastnear-sidebar-examples-link,
+.navbar-sidebar .fastnear-sidebar-examples-link {
+  margin-top: 0.35rem;
+}
+
+.theme-doc-sidebar-item-category.fastnear-sidebar-examples-category,
+.navbar-sidebar .fastnear-sidebar-examples-category {
+  margin-top: 0.35rem;
+}
+
+[data-theme='dark'] .theme-doc-sidebar-item-link.fastnear-sidebar-examples-divider > div,
+[data-theme='dark'] .navbar-sidebar .fastnear-sidebar-examples-divider > div {
+  border-top-color: rgba(243, 245, 255, 0.12);
+}
+
 /* Swap toggle icons: show destination mode instead of current mode */
 [data-theme-choice='light'] [class*='lightToggleIcon'] {
   display: none !important;
@@ -1665,6 +1694,95 @@ html[data-theme='light'] .fastnear-home-button--primary:focus-visible {
   text-decoration: none;
 }
 
+.fastnear-example-strategy {
+  margin: 1rem 0 1.35rem;
+  padding: 16px 18px;
+  border: 1px solid rgb(15 23 42 / 8%);
+  border-radius: 18px;
+  background:
+    linear-gradient(180deg, rgb(255 255 255 / 94%), rgb(244 247 255 / 98%));
+  box-shadow: 0 10px 24px rgb(15 23 42 / 6%);
+}
+
+.fastnear-example-strategy__header {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.fastnear-example-strategy__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  padding: 3px 8px;
+  border: 1px solid rgb(15 86 179 / 14%);
+  border-radius: 999px;
+  background: rgb(255 255 255 / 72%);
+  color: #3654a8;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.fastnear-example-strategy__title {
+  margin: 0;
+  color: #14213d;
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+.fastnear-example-strategy__items {
+  display: grid;
+  gap: 8px;
+}
+
+.fastnear-example-strategy__item {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  gap: 10px;
+  margin: 0;
+  padding: 10px 12px;
+  border: 1px solid rgb(54 84 168 / 10%);
+  border-radius: 12px;
+  background: rgb(255 255 255 / 58%);
+  color: #42526f;
+  line-height: 1.6;
+}
+
+.fastnear-example-strategy__step {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2rem;
+  height: 2rem;
+  border: 1px solid rgb(15 86 179 / 14%);
+  border-radius: 10px;
+  background: linear-gradient(180deg, rgb(255 255 255 / 86%), rgb(224 231 255 / 86%));
+  color: #3654a8;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+.fastnear-example-strategy__item span:last-child {
+  min-width: 0;
+}
+
+.fastnear-example-strategy__code {
+  white-space: nowrap;
+}
+
+.fastnear-example-strategy__code {
+  padding: 0.12rem 0.38rem;
+  border: 1px solid rgb(54 84 168 / 10%);
+  border-radius: 8px;
+  background: rgb(255 255 255 / 72%);
+  color: #233252;
+}
+
 .fastnear-home-hero__panel {
   display: grid;
   align-content: start;
@@ -1995,6 +2113,41 @@ html[data-theme='light'] .fastnear-home-button--primary:focus-visible {
 
 [data-theme='dark'] .fastnear-home-auth-callout__link:hover {
   color: #ffffff;
+}
+
+[data-theme='dark'] .fastnear-example-strategy {
+  border-color: rgb(148 163 184 / 20%);
+  background:
+    linear-gradient(180deg, rgb(30 41 59 / 96%), rgb(26 35 50 / 98%));
+  box-shadow: 0 18px 34px rgb(0 0 0 / 22%);
+}
+
+[data-theme='dark'] .fastnear-example-strategy__eyebrow {
+  border-color: rgb(148 163 184 / 26%);
+  background: rgb(15 23 42 / 56%);
+  color: #c4d3ff;
+}
+
+[data-theme='dark'] .fastnear-example-strategy__title {
+  color: #f3f5ff;
+}
+
+[data-theme='dark'] .fastnear-example-strategy__item {
+  border-color: rgb(148 163 184 / 18%);
+  background: rgb(15 23 42 / 34%);
+  color: rgb(226 232 240 / 86%);
+}
+
+[data-theme='dark'] .fastnear-example-strategy__step {
+  border-color: rgb(148 163 184 / 20%);
+  background: linear-gradient(180deg, rgb(15 23 42 / 82%), rgb(30 41 59 / 88%));
+  color: #c4d3ff;
+}
+
+[data-theme='dark'] .fastnear-example-strategy__code {
+  border-color: rgb(148 163 184 / 18%);
+  background: rgb(15 23 42 / 62%);
+  color: #e8eefc;
 }
 
 [data-theme='dark'] .fastnear-home-route-card__title {

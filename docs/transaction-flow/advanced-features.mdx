@@ -161,22 +161,13 @@ submit(signed_tx);
 
 ### Step 3: Runtime Processing
 
-```mermaid
-sequenceDiagram
-    participant User as Alice (sender)
-    participant Relayer as Relayer
-    participant RT as Runtime
-    participant Contract as contract.near
+For docs users, the relayer flow is the only part worth keeping in short-term memory:
 
-    User->>Relayer: SignedDelegateAction
-    Relayer->>RT: Transaction (Delegate action)
-    RT->>RT: Verify delegate signature (NEP-461)
-    RT->>RT: Check expiration
-    RT->>RT: Validate access key & nonce
-    RT->>Contract: Execute inner actions as Alice
-    Contract-->>RT: Result
-    RT-->>Relayer: Gas refund
-```
+1. the user signs a `DelegateAction`
+2. the relayer wraps and submits it
+3. the runtime verifies signature, expiry, and access-key rules
+4. the inner actions execute as the user
+5. gas refund returns to the relayer
 
 **Source:** `runtime/runtime/src/actions.rs`
 
@@ -415,26 +406,12 @@ pub fn on_oracle_data(&mut self) {
 
 ### Flow Diagram
 
-```mermaid
-sequenceDiagram
-    participant User
-    participant Contract
-    participant Oracle as Off-Chain Oracle
-    participant RT as Runtime
+For docs users, the yield/resume path is:
 
-    User->>Contract: request_oracle_data("ETH/USD")
-    Contract->>RT: promise_yield_create()
-    RT-->>Contract: data_id
-    Contract->>Contract: Store data_id, emit event
-    Contract-->>User: Transaction complete (yield pending)
-
-    Note over Oracle: Monitors events, fetches data
-
-    Oracle->>Contract: resume_oracle(data_id, price_data)
-    Contract->>RT: promise_yield_resume()
-    RT->>Contract: on_oracle_data() callback
-    Contract->>Contract: Process price data
-```
+1. the contract yields and gets a `data_id`
+2. some external system keeps that `data_id`
+3. the external system later resumes with payload data
+4. the callback runs with either data or failure
 
 ## Timeout Mechanism
 

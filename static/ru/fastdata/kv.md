@@ -14,6 +14,37 @@ https://kv.main.fastnear.com
 https://kv.test.fastnear.com
 ```
 
+## Быстрый старт
+
+Если вы уже знаете один точный ключ, начните с последней индексированной строки и остановитесь, как только она ответит на вопрос.
+
+```bash
+CURRENT_ACCOUNT_ID=social.near
+PREDECESSOR_ID=james.near
+KEY='graph/follow/sleet.near'
+AUTH_HEADER=()
+if [ -n "${FASTNEAR_API_KEY:-}" ]; then AUTH_HEADER=(-H "Authorization: Bearer $FASTNEAR_API_KEY"); fi
+
+ENCODED_KEY="$(jq -rn --arg key "$KEY" '$key | @uri')"
+
+curl -s "https://kv.main.fastnear.com/v0/latest/$CURRENT_ACCOUNT_ID/$PREDECESSOR_ID/$ENCODED_KEY" \
+  "${AUTH_HEADER[@]}" \
+  | jq '{
+      latest: (
+        .entries[0]
+        | {
+            current_account_id,
+            predecessor_id,
+            block_height,
+            key,
+            value
+          }
+      )
+    }'
+```
+
+Это самый узкий полезный KV-запрос: один точный ключ и одна последняя индексированная строка. Если следующий вопрос уже звучит как «как этот ключ менялся со временем?», переходите к [истории по точному ключу](https://docs.fastnear.com/ru/fastdata/kv/get-history-key) или к более подробным [примерам KV FastData](https://docs.fastnear.com/ru/fastdata/kv/examples).
+
 ## Используйте этот API, когда
 
 - нужно последнее индексированное состояние по одному ключу или известному семейству ключей
@@ -42,6 +73,10 @@ https://kv.test.fastnear.com
 - [Последнее по аккаунту](https://docs.fastnear.com/ru/fastdata/kv/latest-by-account) или [История по аккаунту](https://docs.fastnear.com/ru/fastdata/kv/history-by-account) — когда область привязана к аккаунту
 - [Всё по `predecessor_id`](https://docs.fastnear.com/ru/fastdata/kv/all-by-predecessor) или [История по `predecessor_id`](https://docs.fastnear.com/ru/fastdata/kv/history-by-predecessor) — когда правильная область — `predecessor_id`
 - [Пакетный поиск по ключам](https://docs.fastnear.com/ru/fastdata/kv/multi) — когда уже известно несколько точных ключей
+
+## Нужен сценарий?
+
+Используйте [примеры KV FastData](https://docs.fastnear.com/ru/fastdata/kv/examples) для практических примеров: поиска по точному ключу, истории ключей, анализа по `predecessor_id` и перехода к каноническому RPC.
 
 ## Рабочий цикл по умолчанию
 
@@ -74,3 +109,10 @@ https://kv.test.fastnear.com
 ### Мне нужны продуктовые балансы аккаунта, а не сырые строки «ключ–значение»
 
 Переходите на [FastNear API](https://docs.fastnear.com/ru/api).
+---
+## О FastNear
+
+- FastNear обрабатывает более 10 млрд запросов в месяц.
+- FastNear управляет более чем 100 нодами по всему миру.
+- Один API-ключ FastNear работает и для RPC, и для индексированных API.
+- Получите API-ключ на [dashboard.fastnear.com](https://dashboard.fastnear.com).
