@@ -1,17 +1,47 @@
 **Источник:** [https://docs.fastnear.com/ru/transfers/examples](https://docs.fastnear.com/ru/transfers/examples)
 
-## Пример
+## Примеры
+
+Эти shell-примеры работают и на публичных Transfers и Transactions endpoint-ах. Если `FASTNEAR_API_KEY` уже задан в окружении, сниппеты автоматически пробросят его как bearer-заголовок.
+
+### Какая у этого аккаунта свежая активность по переводам?
+
+`/v0/transfers` всего с `account_id` и `desc: true` возвращает самые свежие переводы, касающиеся этого аккаунта, по всем типам активов, в обоих направлениях сразу. В каждой строке уже есть `human_amount`, `asset_id` и `transaction_id`, так что этот поток заодно служит быстрым сканом активности до того, как вы достанете фильтры.
+
+```bash
+ACCOUNT_ID=root.near
+AUTH_HEADER=()
+if [ -n "${FASTNEAR_API_KEY:-}" ]; then AUTH_HEADER=(-H "Authorization: Bearer $FASTNEAR_API_KEY"); fi
+
+curl -s "https://transfers.main.fastnear.com/v0/transfers" \
+  "${AUTH_HEADER[@]}" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc --arg account_id "$ACCOUNT_ID" '{account_id: $account_id, desc: true, limit: 5}')" \
+  | jq '{
+      recent: [.transfers[] | {
+        block_height,
+        asset_id,
+        human_amount,
+        other_account_id,
+        transfer_type,
+        tx: .transaction_id
+      }]
+    }'
+```
+
+Для `root.near` последние строки смешивают активы `FtTransfer` и `MtTransfer`. `asset_id` использует URI по NEP-стандартам (`native:near`, `nep141:...`, `nep245:...`), так что одно поле уже подсказывает, к какому стандарту тянуться дальше. Положительный `human_amount` означает, что аккаунт получил; отрицательный — что отправил. `other_account_id: null` — норма для multi-token-форм, где контрагент сидит внутри границы контракта, а не как отдельный аккаунт верхнего уровня.
 
 ### Отфильтровать и листать ленту переводов одного аккаунта
 
 `/v0/transfers` возвращает отфильтрованную ленту плюс `resume_token`, который вы переиспользуете *без изменения фильтров*, чтобы продолжать листать. В каждой строке уже есть `human_amount`, `usd_amount`, `transaction_id` и `receipt_id` — большинство audit-вопросов закрываются без второго запроса.
 
 ```bash
-TRANSFERS_BASE_URL=https://transfers.main.fastnear.com
-TX_BASE_URL=https://tx.main.fastnear.com
 ACCOUNT_ID=root.near
+AUTH_HEADER=()
+if [ -n "${FASTNEAR_API_KEY:-}" ]; then AUTH_HEADER=(-H "Authorization: Bearer $FASTNEAR_API_KEY"); fi
 
-FEED="$(curl -s "$TRANSFERS_BASE_URL/v0/transfers" \
+FEED="$(curl -s "https://transfers.main.fastnear.com/v0/transfers" \
+  "${AUTH_HEADER[@]}" \
   -H 'content-type: application/json' \
   --data "$(jq -nc --arg account_id "$ACCOUNT_ID" '{
     account_id: $account_id,
@@ -33,15 +63,30 @@ echo "$FEED" | jq '{
 Когда одной строке нужна точка исполнения, возьмите её `receipt_id` и сразу обратитесь к `/v0/receipt`:
 
 ```bash
+ACCOUNT_ID=root.near
+AUTH_HEADER=()
+if [ -n "${FASTNEAR_API_KEY:-}" ]; then AUTH_HEADER=(-H "Authorization: Bearer $FASTNEAR_API_KEY"); fi
+FEED="$(curl -s "https://transfers.main.fastnear.com/v0/transfers" \
+  "${AUTH_HEADER[@]}" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc --arg account_id "$ACCOUNT_ID" '{
+    account_id: $account_id,
+    direction: "receiver",
+    asset_id: "native:near",
+    min_amount: "1000000000000000000000000",
+    desc: true,
+    limit: 10
+  }')")"
 RECEIPT_ID="$(echo "$FEED" | jq -r '.transfers[0].receipt_id')"
 
-curl -s "$TX_BASE_URL/v0/receipt" \
+curl -s "https://tx.main.fastnear.com/v0/receipt" \
+  "${AUTH_HEADER[@]}" \
   -H 'content-type: application/json' \
   --data "$(jq -nc --arg receipt_id "$RECEIPT_ID" '{receipt_id: $receipt_id}')" \
   | jq '.receipt | {receipt_id, transaction_hash, receiver_id, predecessor_id, tx_block_height, is_success}'
 ```
 
-Это тот же переход, что описан в [Превратить один неказистый receipt ID из логов в человекочитаемую историю](https://docs.fastnear.com/ru/tx/examples#%D0%BF%D1%80%D0%B5%D0%B2%D1%80%D0%B0%D1%82%D0%B8%D1%82%D1%8C-%D0%BE%D0%B4%D0%B8%D0%BD-%D0%BD%D0%B5%D0%BA%D0%B0%D0%B7%D0%B8%D1%81%D1%82%D1%8B%D0%B9-receipt-id-%D0%B8%D0%B7-%D0%BB%D0%BE%D0%B3%D0%BE%D0%B2-%D0%B2-%D1%87%D0%B5%D0%BB%D0%BE%D0%B2%D0%B5%D0%BA%D0%BE%D1%87%D0%B8%D1%82%D0%B0%D0%B5%D0%BC%D1%83%D1%8E-%D0%B8%D1%81%D1%82%D0%BE%D1%80%D0%B8%D1%8E) — один запрос возвращает и квитанцию, и её родительскую транзакцию целиком.
+Это тот же переход, что описан в [Превратить один receipt ID в читаемую историю транзакции](https://docs.fastnear.com/ru/tx/examples#receipt-id-to-readable-story) — один запрос возвращает и квитанцию, и её родительскую транзакцию целиком.
 
 ## Частые ошибки
 
@@ -61,5 +106,5 @@ curl -s "$TX_BASE_URL/v0/receipt" \
 
 - FastNear обрабатывает более 10 млрд запросов в месяц.
 - FastNear управляет более чем 100 нодами по всему миру.
-- FastNear предлагает щедрые кредиты и бесплатный пробный период.
-- Быстро получите пробный аккаунт на [dashboard.fastnear.com](https://dashboard.fastnear.com).
+- Один API-ключ FastNear работает и для RPC, и для индексированных API.
+- Получите API-ключ на [dashboard.fastnear.com](https://dashboard.fastnear.com).

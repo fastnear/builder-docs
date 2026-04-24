@@ -10,6 +10,8 @@ page_actions:
 
 ## Examples
 
+All shell examples below work on the public KV FastData hosts as-is. If `FASTNEAR_API_KEY` is set in your shell, they add it as a bearer header automatically; if it is unset, they fall back to the public unauthenticated path.
+
 ### Check one exact key, then replay its history
 
 When you already know the contract, predecessor, and exact key, start narrow. `latest` answers the present-tense question; `history` shows whether that one row changed over time.
@@ -18,12 +20,13 @@ When you already know the contract, predecessor, and exact key, start narrow. `l
 CURRENT_ACCOUNT_ID=social.near
 PREDECESSOR_ID=james.near
 KEY='graph/follow/sleet.near'
-FASTNEAR_API_KEY=
+AUTH_HEADER=()
+if [ -n "${FASTNEAR_API_KEY:-}" ]; then AUTH_HEADER=(-H "Authorization: Bearer $FASTNEAR_API_KEY"); fi
 
 ENCODED_KEY="$(jq -rn --arg key "$KEY" '$key | @uri')"
 
 LATEST="$(curl -s "https://kv.main.fastnear.com/v0/latest/$CURRENT_ACCOUNT_ID/$PREDECESSOR_ID/$ENCODED_KEY" \
-  -H "Authorization: Bearer $FASTNEAR_API_KEY")"
+  "${AUTH_HEADER[@]}")"
 
 echo "$LATEST" | jq '{
   latest: (
@@ -39,7 +42,7 @@ echo "$LATEST" | jq '{
 }'
 
 curl -s "https://kv.main.fastnear.com/v0/history/$CURRENT_ACCOUNT_ID/$PREDECESSOR_ID/$ENCODED_KEY" \
-  -H "Authorization: Bearer $FASTNEAR_API_KEY" \
+  "${AUTH_HEADER[@]}" \
   | jq '{writes: [.entries[] | {block_height, value}]}'
 ```
 
@@ -51,10 +54,11 @@ For an exact follow-edge style key like this, `latest` tells you the current ind
 
 ```bash
 PREDECESSOR_ID=jemartel.near
-FASTNEAR_API_KEY=
+AUTH_HEADER=()
+if [ -n "${FASTNEAR_API_KEY:-}" ]; then AUTH_HEADER=(-H "Authorization: Bearer $FASTNEAR_API_KEY"); fi
 
 FIRST="$(curl -s "https://kv.main.fastnear.com/v0/all/$PREDECESSOR_ID" \
-  -H "Authorization: Bearer $FASTNEAR_API_KEY" \
+  "${AUTH_HEADER[@]}" \
   -H 'content-type: application/json' \
   --data '{"include_metadata":true,"limit":10}')"
 
@@ -69,12 +73,20 @@ For `jemartel.near`, the listing mixes an `account_id` identity assertion on `co
 Lift the most recent row and replay it through `history`:
 
 ```bash
+PREDECESSOR_ID=jemartel.near
+AUTH_HEADER=()
+if [ -n "${FASTNEAR_API_KEY:-}" ]; then AUTH_HEADER=(-H "Authorization: Bearer $FASTNEAR_API_KEY"); fi
+FIRST="$(curl -s "https://kv.main.fastnear.com/v0/all/$PREDECESSOR_ID" \
+  "${AUTH_HEADER[@]}" \
+  -H 'content-type: application/json' \
+  --data '{"include_metadata":true,"limit":10}')"
+
 CURRENT_ACCOUNT_ID="$(echo "$FIRST" | jq -r '.entries[0].current_account_id')"
 EXACT_KEY="$(echo "$FIRST" | jq -r '.entries[0].key')"
 ENCODED_KEY="$(jq -rn --arg key "$EXACT_KEY" '$key | @uri')"
 
 curl -s "https://kv.main.fastnear.com/v0/history/$CURRENT_ACCOUNT_ID/$PREDECESSOR_ID/$ENCODED_KEY" \
-  -H "Authorization: Bearer $FASTNEAR_API_KEY" \
+  "${AUTH_HEADER[@]}" \
   | jq '{entries: [.entries[] | {block_height, value}]}'
 ```
 

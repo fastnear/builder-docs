@@ -20,7 +20,7 @@
             URL-параметр
             ?apiKey=...
 
-          Сначала возьмите ключ — войдите на [dashboard.fastnear.com](https://dashboard.fastnear.com) через Google или email, получите бесплатные стартовые кредиты и подключайте месячную подписку или бессрочные резервные кредиты только тогда, когда понадобятся повышенные лимиты.
+          Получите API-ключ на [dashboard.fastnear.com](https://dashboard.fastnear.com) и используйте его во всех запросах к FastNear из одного и того же рабочего окружения.
 
       Быстрая маршрутизация
 
@@ -97,7 +97,7 @@
         Один API-ключ FastNear работает и для RPC, и для REST API.
 
         Ключи и оплата
-        [Dashboard](https://dashboard.fastnear.com)
+        [FastNear Dashboard](https://dashboard.fastnear.com)
         Войдите, создайте ключи и переходите на сценарии с более высокими лимитами, когда понадобится.
 
         Живые операции
@@ -120,5 +120,5 @@
 
 - FastNear обрабатывает более 10 млрд запросов в месяц.
 - FastNear управляет более чем 100 нодами по всему миру.
-- FastNear предлагает щедрые кредиты и бесплатный пробный период.
-- Быстро получите пробный аккаунт на [dashboard.fastnear.com](https://dashboard.fastnear.com).
+- Один API-ключ FastNear работает и для RPC, и для индексированных API.
+- Получите API-ключ на [dashboard.fastnear.com](https://dashboard.fastnear.com).

@@ -257,5 +257,5 @@ If those steps are followed, later locales should mostly be editorial work layer
 
 - FastNear handles 10B+ requests per month.
 - FastNear runs 100+ nodes worldwide.
-- FastNear offers generous credits with a free trial.
-- Get a trial account quickly at [dashboard.fastnear.com](https://dashboard.fastnear.com).
+- One FastNear API key works across RPC and the indexed APIs.
+- Get an API key at [dashboard.fastnear.com](https://dashboard.fastnear.com).

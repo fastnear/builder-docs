@@ -10,16 +10,19 @@ page_actions:
 
 ## Примеры
 
+Эти shell-примеры работают и на публичных Transfers и Transactions endpoint-ах. Если `FASTNEAR_API_KEY` уже задан в окружении, сниппеты автоматически пробросят его как bearer-заголовок.
+
 ### Какая у этого аккаунта свежая активность по переводам?
 
 `/v0/transfers` всего с `account_id` и `desc: true` возвращает самые свежие переводы, касающиеся этого аккаунта, по всем типам активов, в обоих направлениях сразу. В каждой строке уже есть `human_amount`, `asset_id` и `transaction_id`, так что этот поток заодно служит быстрым сканом активности до того, как вы достанете фильтры.
 
 ```bash
 ACCOUNT_ID=root.near
-FASTNEAR_API_KEY=
+AUTH_HEADER=()
+if [ -n "${FASTNEAR_API_KEY:-}" ]; then AUTH_HEADER=(-H "Authorization: Bearer $FASTNEAR_API_KEY"); fi
 
 curl -s "https://transfers.main.fastnear.com/v0/transfers" \
-  -H "Authorization: Bearer $FASTNEAR_API_KEY" \
+  "${AUTH_HEADER[@]}" \
   -H 'content-type: application/json' \
   --data "$(jq -nc --arg account_id "$ACCOUNT_ID" '{account_id: $account_id, desc: true, limit: 5}')" \
   | jq '{
@@ -42,10 +45,11 @@ curl -s "https://transfers.main.fastnear.com/v0/transfers" \
 
 ```bash
 ACCOUNT_ID=root.near
-FASTNEAR_API_KEY=
+AUTH_HEADER=()
+if [ -n "${FASTNEAR_API_KEY:-}" ]; then AUTH_HEADER=(-H "Authorization: Bearer $FASTNEAR_API_KEY"); fi
 
 FEED="$(curl -s "https://transfers.main.fastnear.com/v0/transfers" \
-  -H "Authorization: Bearer $FASTNEAR_API_KEY" \
+  "${AUTH_HEADER[@]}" \
   -H 'content-type: application/json' \
   --data "$(jq -nc --arg account_id "$ACCOUNT_ID" '{
     account_id: $account_id,
@@ -67,10 +71,24 @@ echo "$FEED" | jq '{
 Когда одной строке нужна точка исполнения, возьмите её `receipt_id` и сразу обратитесь к `/v0/receipt`:
 
 ```bash
+ACCOUNT_ID=root.near
+AUTH_HEADER=()
+if [ -n "${FASTNEAR_API_KEY:-}" ]; then AUTH_HEADER=(-H "Authorization: Bearer $FASTNEAR_API_KEY"); fi
+FEED="$(curl -s "https://transfers.main.fastnear.com/v0/transfers" \
+  "${AUTH_HEADER[@]}" \
+  -H 'content-type: application/json' \
+  --data "$(jq -nc --arg account_id "$ACCOUNT_ID" '{
+    account_id: $account_id,
+    direction: "receiver",
+    asset_id: "native:near",
+    min_amount: "1000000000000000000000000",
+    desc: true,
+    limit: 10
+  }')")"
 RECEIPT_ID="$(echo "$FEED" | jq -r '.transfers[0].receipt_id')"
 
 curl -s "https://tx.main.fastnear.com/v0/receipt" \
-  -H "Authorization: Bearer $FASTNEAR_API_KEY" \
+  "${AUTH_HEADER[@]}" \
   -H 'content-type: application/json' \
   --data "$(jq -nc --arg receipt_id "$RECEIPT_ID" '{receipt_id: $receipt_id}')" \
   | jq '.receipt | {receipt_id, transaction_hash, receiver_id, predecessor_id, tx_block_height, is_success}'

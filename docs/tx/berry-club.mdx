@@ -29,6 +29,8 @@ Start with the live board. If that already answers the question, stop there.
 
 Only switch to Transactions API when the question becomes historical: “what did Berry Club look like during one older era, and which `draw` calls made it look that way?”
 
+These shell examples work against the public RPC and Transactions endpoints. If `FASTNEAR_API_KEY` is already set in your shell, the FastNear calls will forward it automatically as a bearer header.
+
 <BerryClubLiveBoard
   uiText={{
     title: 'Live Berry Club board',
@@ -50,10 +52,11 @@ This is the shortest useful read:
 
 ```bash
 ARGS_BASE64="$(jq -nc '{lines: [range(0;50)]}' | base64 | tr -d '\n')"
-FASTNEAR_API_KEY=
+AUTH_HEADER=()
+if [ -n "${FASTNEAR_API_KEY:-}" ]; then AUTH_HEADER=(-H "Authorization: Bearer $FASTNEAR_API_KEY"); fi
 
 curl -sS https://rpc.mainnet.fastnear.com \
-  -H "Authorization: Bearer $FASTNEAR_API_KEY" \
+  "${AUTH_HEADER[@]}" \
   -H 'content-type: application/json' \
   --data "{
     \"jsonrpc\": \"2.0\",
@@ -83,10 +86,11 @@ When you need history, keep the flow short:
 This example uses a narrow window around block `97601515`:
 
 ```bash
-FASTNEAR_API_KEY=
+AUTH_HEADER=()
+if [ -n "${FASTNEAR_API_KEY:-}" ]; then AUTH_HEADER=(-H "Authorization: Bearer $FASTNEAR_API_KEY"); fi
 
 curl -sS https://tx.main.fastnear.com/v0/account \
-  -H "Authorization: Bearer $FASTNEAR_API_KEY" \
+  "${AUTH_HEADER[@]}" \
   -H 'content-type: application/json' \
   --data '{
     "account_id": "berryclub.ek.near",
@@ -105,10 +109,11 @@ If you do not know the window yet, <Link to="/tx/blocks">`/v0/blocks`</Link> can
 Hydrate the candidate hashes and keep only top-level `draw` calls:
 
 ```bash
-FASTNEAR_API_KEY=
+AUTH_HEADER=()
+if [ -n "${FASTNEAR_API_KEY:-}" ]; then AUTH_HEADER=(-H "Authorization: Bearer $FASTNEAR_API_KEY"); fi
 
 curl -sS https://tx.main.fastnear.com/v0/transactions \
-  -H "Authorization: Bearer $FASTNEAR_API_KEY" \
+  "${AUTH_HEADER[@]}" \
   -H 'content-type: application/json' \
   --data '{
     "tx_hashes": [

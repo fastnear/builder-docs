@@ -174,14 +174,17 @@ You never "вызов" another контракта. You отправка them a l
 
 ### curl Examples
 
+Эти RPC-чтения работают и на публичных FastNear RPC-хостах. Если `FASTNEAR_API_KEY` уже задан в окружении, сниппеты автоматически пробросят его как bearer-заголовок.
+
 #### Submit Транзакция (Асинхронная)
 
 ```bash
 # Submit and get hash immediately
-FASTNEAR_API_KEY=
+AUTH_HEADER=()
+if [ -n "${FASTNEAR_API_KEY:-}" ]; then AUTH_HEADER=(-H "Authorization: Bearer $FASTNEAR_API_KEY"); fi
 
 curl -X POST https://rpc.mainnet.fastnear.com \
-  -H "Authorization: Bearer $FASTNEAR_API_KEY" \
+  "${AUTH_HEADER[@]}" \
   -H "Content-Type: application/json" \
   -d '{
     "jsonrpc": "2.0",
@@ -197,10 +200,11 @@ curl -X POST https://rpc.mainnet.fastnear.com \
 #### Submit Транзакция (Wait for Final)
 
 ```bash
-FASTNEAR_API_KEY=
+AUTH_HEADER=()
+if [ -n "${FASTNEAR_API_KEY:-}" ]; then AUTH_HEADER=(-H "Authorization: Bearer $FASTNEAR_API_KEY"); fi
 
 curl -X POST https://rpc.mainnet.fastnear.com \
-  -H "Authorization: Bearer $FASTNEAR_API_KEY" \
+  "${AUTH_HEADER[@]}" \
   -H "Content-Type: application/json" \
   -d '{
     "jsonrpc": "2.0",
@@ -213,18 +217,19 @@ curl -X POST https://rpc.mainnet.fastnear.com \
 #### Check Транзакция Статус
 
 ```bash
-FASTNEAR_API_KEY=
+AUTH_HEADER=()
+if [ -n "${FASTNEAR_API_KEY:-}" ]; then AUTH_HEADER=(-H "Authorization: Bearer $FASTNEAR_API_KEY"); fi
 
 curl -X POST https://archival-rpc.mainnet.fastnear.com \
-  -H "Authorization: Bearer $FASTNEAR_API_KEY" \
+  "${AUTH_HEADER[@]}" \
   -H "Content-Type: application/json" \
   -d '{
     "jsonrpc": "2.0",
     "id": "1",
     "method": "tx",
     "params": {
-      "tx_hash": "6zgh2u9DqHHiXzdy9ouTP7oGky2T4nugqzqt9wJZwNFm",
-      "sender_account_id": "sender.testnet",
+      "tx_hash": "7ZKnhzt2MqMNmsk13dV8GAjGu3Db8aHzSBHeNeu9MJCq",
+      "sender_account_id": "root.near",
       "wait_until": "FINAL"
     }
   }'
@@ -233,10 +238,11 @@ curl -X POST https://archival-rpc.mainnet.fastnear.com \
 #### Просмотр доступ Key (for nonce)
 
 ```bash
-FASTNEAR_API_KEY=
+AUTH_HEADER=()
+if [ -n "${FASTNEAR_API_KEY:-}" ]; then AUTH_HEADER=(-H "Authorization: Bearer $FASTNEAR_API_KEY"); fi
 
 curl -X POST https://rpc.mainnet.fastnear.com \
-  -H "Authorization: Bearer $FASTNEAR_API_KEY" \
+  "${AUTH_HEADER[@]}" \
   -H "Content-Type: application/json" \
   -d '{
     "jsonrpc": "2.0",
@@ -245,8 +251,8 @@ curl -X POST https://rpc.mainnet.fastnear.com \
     "params": {
       "request_type": "view_access_key",
       "finality": "final",
-      "account_id": "sender.testnet",
-      "public_key": "ed25519:DcA2MzgpJbrUATQLLceocVckhhAqrkingax4oJ9kZ847"
+      "account_id": "root.near",
+      "public_key": "ed25519:CByX7HPjgSGFi5G26zwgZGDFCFyBHvSv1fe7AFzmVe3"
     }
   }'
 
@@ -257,10 +263,11 @@ curl -X POST https://rpc.mainnet.fastnear.com \
 #### Get Recent Блок Hash
 
 ```bash
-FASTNEAR_API_KEY=
+AUTH_HEADER=()
+if [ -n "${FASTNEAR_API_KEY:-}" ]; then AUTH_HEADER=(-H "Authorization: Bearer $FASTNEAR_API_KEY"); fi
 
 curl -X POST https://rpc.mainnet.fastnear.com \
-  -H "Authorization: Bearer $FASTNEAR_API_KEY" \
+  "${AUTH_HEADER[@]}" \
   -H "Content-Type: application/json" \
   -d '{
     "jsonrpc": "2.0",

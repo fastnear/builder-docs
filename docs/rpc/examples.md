@@ -12,6 +12,8 @@ page_actions:
 
 Start with the RPC method that answers the question. Use `tx` to track inclusion and finality from a tx hash, and widen only when you need receipt trees, raw state, or shard-level tracing.
 
+All shell examples below work on the public RPC hosts as-is. If `FASTNEAR_API_KEY` is set in your shell, they add it as a bearer header automatically; if it is unset, they fall back to the public unauthenticated path.
+
 ## Account State
 
 ### Show an account's balance and storage at finality
@@ -20,10 +22,11 @@ Start with the RPC method that answers the question. Use `tx` to track inclusion
 
 ```bash
 ACCOUNT_ID=root.near
-FASTNEAR_API_KEY=
+AUTH_HEADER=()
+if [ -n "${FASTNEAR_API_KEY:-}" ]; then AUTH_HEADER=(-H "Authorization: Bearer $FASTNEAR_API_KEY"); fi
 
 curl -s "https://rpc.mainnet.fastnear.com" \
-  -H "Authorization: Bearer $FASTNEAR_API_KEY" \
+  "${AUTH_HEADER[@]}" \
   -H 'content-type: application/json' \
   --data "$(jq -nc --arg account_id "$ACCOUNT_ID" '{
     jsonrpc:"2.0",id:"fastnear",method:"query",
@@ -43,10 +46,11 @@ Have a tx hash? Poll `tx` with the smallest `wait_until` threshold that answers 
 ```bash
 TX_HASH=CVyG2xLJ6fuKCtULAxMnWTh2GL5ey2UUiTcgYT3M6Pow
 SIGNER_ACCOUNT_ID=mike.testnet
-FASTNEAR_API_KEY=
+AUTH_HEADER=()
+if [ -n "${FASTNEAR_API_KEY:-}" ]; then AUTH_HEADER=(-H "Authorization: Bearer $FASTNEAR_API_KEY"); fi
 
 curl -s "https://archival-rpc.testnet.fastnear.com" \
-  -H "Authorization: Bearer $FASTNEAR_API_KEY" \
+  "${AUTH_HEADER[@]}" \
   -H 'content-type: application/json' \
   --data "$(jq -nc --arg tx_hash "$TX_HASH" --arg signer_id "$SIGNER_ACCOUNT_ID" '{
     jsonrpc: "2.0", id: "fastnear", method: "tx",
@@ -75,13 +79,14 @@ A NEAR block is a header over N shard chunks, not a flat list of transactions. `
 
 ```bash
 EMPTY_TX_ROOT=11111111111111111111111111111111
-FASTNEAR_API_KEY=
+AUTH_HEADER=()
+if [ -n "${FASTNEAR_API_KEY:-}" ]; then AUTH_HEADER=(-H "Authorization: Bearer $FASTNEAR_API_KEY"); fi
 
-BLOCK_HASH="$(curl -s "https://rpc.mainnet.fastnear.com" -H "Authorization: Bearer $FASTNEAR_API_KEY" -H 'content-type: application/json' \
+BLOCK_HASH="$(curl -s "https://rpc.mainnet.fastnear.com" "${AUTH_HEADER[@]}" -H 'content-type: application/json' \
   --data '{"jsonrpc":"2.0","id":"fastnear","method":"status","params":[]}' \
   | jq -r '.result.sync_info.latest_block_hash')"
 
-CHUNK_HASH="$(curl -s "https://rpc.mainnet.fastnear.com" -H "Authorization: Bearer $FASTNEAR_API_KEY" -H 'content-type: application/json' \
+CHUNK_HASH="$(curl -s "https://rpc.mainnet.fastnear.com" "${AUTH_HEADER[@]}" -H 'content-type: application/json' \
   --data "$(jq -nc --arg block_hash "$BLOCK_HASH" '{
     jsonrpc:"2.0",id:"fastnear",method:"block",params:{block_id:$block_hash}
   }')" \
@@ -91,7 +96,7 @@ CHUNK_HASH="$(curl -s "https://rpc.mainnet.fastnear.com" -H "Authorization: Bear
 if [ -z "$CHUNK_HASH" ]; then
   echo "tip block had no transactions in any chunk — rerun on the next head"
 else
-  curl -s "https://rpc.mainnet.fastnear.com" -H "Authorization: Bearer $FASTNEAR_API_KEY" -H 'content-type: application/json' \
+  curl -s "https://rpc.mainnet.fastnear.com" "${AUTH_HEADER[@]}" -H 'content-type: application/json' \
     --data "$(jq -nc --arg chunk_hash "$CHUNK_HASH" '{
       jsonrpc:"2.0",id:"fastnear",method:"chunk",params:{chunk_id:$chunk_hash}
     }')" \
@@ -131,10 +136,11 @@ Any key with `tx_count: 0` was created and never used — the clearest candidate
 ```bash
 ACCOUNT_ID=root.near
 RECEIVER_ID=social.near
-FASTNEAR_API_KEY=
+AUTH_HEADER=()
+if [ -n "${FASTNEAR_API_KEY:-}" ]; then AUTH_HEADER=(-H "Authorization: Bearer $FASTNEAR_API_KEY"); fi
 
 curl -s "https://rpc.mainnet.fastnear.com" \
-  -H "Authorization: Bearer $FASTNEAR_API_KEY" \
+  "${AUTH_HEADER[@]}" \
   -H 'content-type: application/json' \
   --data "$(jq -nc --arg account_id "$ACCOUNT_ID" '{
     jsonrpc:"2.0",id:"fastnear",method:"query",
@@ -172,9 +178,10 @@ Contracts built with `near-sdk-rs` store the top-level `#[near_bindgen]` struct 
 
 ```bash
 CONTRACT_ID=counter.near-examples.testnet
-FASTNEAR_API_KEY=
+AUTH_HEADER=()
+if [ -n "${FASTNEAR_API_KEY:-}" ]; then AUTH_HEADER=(-H "Authorization: Bearer $FASTNEAR_API_KEY"); fi
 
-RAW_B64="$(curl -s "https://rpc.testnet.fastnear.com" -H "Authorization: Bearer $FASTNEAR_API_KEY" -H 'content-type: application/json' \
+RAW_B64="$(curl -s "https://rpc.testnet.fastnear.com" "${AUTH_HEADER[@]}" -H 'content-type: application/json' \
   --data "$(jq -nc --arg contract "$CONTRACT_ID" '{
     jsonrpc:"2.0",id:"fastnear",method:"query",
     params:{request_type:"view_state",account_id:$contract,prefix_base64:"U1RBVEU=",finality:"final"}
@@ -201,11 +208,12 @@ These stay on exact SocialDB reads and on-chain readiness checks until the quest
 ```bash
 ACCOUNT_ID=root.near         # account you're writing under
 SIGNER_ACCOUNT_ID=root.near  # account signing the transaction
-FASTNEAR_API_KEY=
+AUTH_HEADER=()
+if [ -n "${FASTNEAR_API_KEY:-}" ]; then AUTH_HEADER=(-H "Authorization: Bearer $FASTNEAR_API_KEY"); fi
 
 STORAGE_ARGS_B64="$(jq -nc --arg account_id "$ACCOUNT_ID" '{account_id:$account_id}' | base64 | tr -d '\n')"
 
-STORAGE="$(curl -s "https://rpc.mainnet.fastnear.com" -H "Authorization: Bearer $FASTNEAR_API_KEY" -H 'content-type: application/json' \
+STORAGE="$(curl -s "https://rpc.mainnet.fastnear.com" "${AUTH_HEADER[@]}" -H 'content-type: application/json' \
   --data "$(jq -nc --arg args "$STORAGE_ARGS_B64" '{
     jsonrpc:"2.0",id:"fastnear",method:"query",
     params:{request_type:"call_function",account_id:"social.near",method_name:"get_account_storage",args_base64:$args,finality:"final"}
@@ -216,7 +224,7 @@ if [ "$SIGNER_ACCOUNT_ID" = "$ACCOUNT_ID" ]; then
   PERMISSION=true
 else
   PERM_ARGS_B64="$(jq -nc --arg pred "$SIGNER_ACCOUNT_ID" --arg key "$ACCOUNT_ID" '{predecessor_id:$pred,key:$key}' | base64 | tr -d '\n')"
-  PERMISSION="$(curl -s "https://rpc.mainnet.fastnear.com" -H "Authorization: Bearer $FASTNEAR_API_KEY" -H 'content-type: application/json' \
+  PERMISSION="$(curl -s "https://rpc.mainnet.fastnear.com" "${AUTH_HEADER[@]}" -H 'content-type: application/json' \
     --data "$(jq -nc --arg args "$PERM_ARGS_B64" '{
       jsonrpc:"2.0",id:"fastnear",method:"query",
       params:{request_type:"call_function",account_id:"social.near",method_name:"is_write_permission_granted",args_base64:$args,finality:"final"}
@@ -243,14 +251,15 @@ SocialDB stores BOS widgets as `<account>/widget/<name>` keys on `social.near`. 
 ```bash
 ACCOUNT_ID=mob.near
 WIDGET_NAME=Profile
-FASTNEAR_API_KEY=
+AUTH_HEADER=()
+if [ -n "${FASTNEAR_API_KEY:-}" ]; then AUTH_HEADER=(-H "Authorization: Bearer $FASTNEAR_API_KEY"); fi
 
 KEYS_ARGS="$(jq -nc --arg account_id "$ACCOUNT_ID" '{
   keys: [($account_id + "/widget/*")],
   options: {return_type: "BlockHeight"}
 }' | base64 | tr -d '\n')"
 
-curl -s "https://rpc.mainnet.fastnear.com" -H "Authorization: Bearer $FASTNEAR_API_KEY" -H 'content-type: application/json' \
+curl -s "https://rpc.mainnet.fastnear.com" "${AUTH_HEADER[@]}" -H 'content-type: application/json' \
   --data "$(jq -nc --arg args "$KEYS_ARGS" '{
     jsonrpc:"2.0",id:"fastnear",method:"query",
     params:{request_type:"call_function",account_id:"social.near",method_name:"keys",args_base64:$args,finality:"final"}
@@ -267,7 +276,7 @@ GET_ARGS="$(jq -nc --arg account_id "$ACCOUNT_ID" --arg widget "$WIDGET_NAME" '{
   keys: [($account_id + "/widget/" + $widget)]
 }' | base64 | tr -d '\n')"
 
-curl -s "https://rpc.mainnet.fastnear.com" -H "Authorization: Bearer $FASTNEAR_API_KEY" -H 'content-type: application/json' \
+curl -s "https://rpc.mainnet.fastnear.com" "${AUTH_HEADER[@]}" -H 'content-type: application/json' \
   --data "$(jq -nc --arg args "$GET_ARGS" '{
     jsonrpc:"2.0",id:"fastnear",method:"query",
     params:{request_type:"call_function",account_id:"social.near",method_name:"get",args_base64:$args,finality:"final"}

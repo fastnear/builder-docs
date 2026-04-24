@@ -129,21 +129,24 @@ pub enum FinalExecutionStatus {
 
 ## Querying Outcomes
 
+These RPC reads work on the public FastNear RPC hosts. If `FASTNEAR_API_KEY` is already set in your shell, the snippets forward it automatically as a bearer header.
+
 ### The `tx` RPC Method
 
 ```bash
-FASTNEAR_API_KEY=
+AUTH_HEADER=()
+if [ -n "${FASTNEAR_API_KEY:-}" ]; then AUTH_HEADER=(-H "Authorization: Bearer $FASTNEAR_API_KEY"); fi
 
 curl -X POST https://archival-rpc.mainnet.fastnear.com \
-  -H "Authorization: Bearer $FASTNEAR_API_KEY" \
+  "${AUTH_HEADER[@]}" \
   -H "Content-Type: application/json" \
   -d '{
     "jsonrpc": "2.0",
     "id": "1",
     "method": "tx",
     "params": {
-      "tx_hash": "6zgh2u9DqHHiXzdy9ouTP7oGky2T4nugqzqt9wJZwNFm",
-      "sender_account_id": "sender.near",
+      "tx_hash": "7ZKnhzt2MqMNmsk13dV8GAjGu3Db8aHzSBHeNeu9MJCq",
+      "sender_account_id": "root.near",
       "wait_until": "FINAL"
     }
   }'

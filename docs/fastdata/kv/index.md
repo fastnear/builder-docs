@@ -30,12 +30,13 @@ If you already know one exact key, start with the latest indexed row and stop as
 CURRENT_ACCOUNT_ID=social.near
 PREDECESSOR_ID=james.near
 KEY='graph/follow/sleet.near'
-FASTNEAR_API_KEY=
+AUTH_HEADER=()
+if [ -n "${FASTNEAR_API_KEY:-}" ]; then AUTH_HEADER=(-H "Authorization: Bearer $FASTNEAR_API_KEY"); fi
 
 ENCODED_KEY="$(jq -rn --arg key "$KEY" '$key | @uri')"
 
 curl -s "https://kv.main.fastnear.com/v0/latest/$CURRENT_ACCOUNT_ID/$PREDECESSOR_ID/$ENCODED_KEY" \
-  -H "Authorization: Bearer $FASTNEAR_API_KEY" \
+  "${AUTH_HEADER[@]}" \
   | jq '{
       latest: (
         .entries[0]

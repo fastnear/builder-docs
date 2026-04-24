@@ -4,8 +4,8 @@
     "bullets": [
       "FastNear handles 10B+ requests per month.",
       "FastNear runs 100+ nodes worldwide.",
-      "FastNear offers generous credits with a free trial.",
-      "Get a trial account quickly at [dashboard.fastnear.com](https://dashboard.fastnear.com)."
+      "One FastNear API key works across RPC and the indexed APIs.",
+      "Get an API key at [dashboard.fastnear.com](https://dashboard.fastnear.com)."
     ]
   },
   "ru": {
@@ -13,8 +13,8 @@
     "bullets": [
       "FastNear обрабатывает более 10 млрд запросов в месяц.",
       "FastNear управляет более чем 100 нодами по всему миру.",
-      "FastNear предлагает щедрые кредиты и бесплатный пробный период.",
-      "Быстро получите пробный аккаунт на [dashboard.fastnear.com](https://dashboard.fastnear.com)."
+      "Один API-ключ FastNear работает и для RPC, и для индексированных API.",
+      "Получите API-ключ на [dashboard.fastnear.com](https://dashboard.fastnear.com)."
     ]
   }
 }

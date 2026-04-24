@@ -10,6 +10,8 @@
 
 Переходите к Transactions API только тогда, когда вопрос становится историческим: «как Berry Club выглядел в одной более ранней эпохе и какие `draw`-вызовы сделали доску именно такой?»
 
+Эти shell-примеры работают и с публичными RPC и Transactions endpoint-ами. Если `FASTNEAR_API_KEY` уже задан в окружении, FastNear-вызовы автоматически пробросят его как bearer-заголовок.
+
 Карточка живой доски: запрашивает `berryclub.ek.near` `get_lines` через mainnet RPC и рендерит текущую сетку 50x50 в интерфейсе документации.
 
 ## 1. Прочитайте живую доску
@@ -18,8 +20,11 @@
 
 ```bash
 ARGS_BASE64="$(jq -nc '{lines: [range(0;50)]}' | base64 | tr -d '\n')"
+AUTH_HEADER=()
+if [ -n "${FASTNEAR_API_KEY:-}" ]; then AUTH_HEADER=(-H "Authorization: Bearer $FASTNEAR_API_KEY"); fi
 
 curl -sS https://rpc.mainnet.fastnear.com \
+  "${AUTH_HEADER[@]}" \
   -H 'content-type: application/json' \
   --data "{
     \"jsonrpc\": \"2.0\",
@@ -49,7 +54,11 @@ curl -sS https://rpc.mainnet.fastnear.com \
 В этом примере используется узкое окно вокруг блока `97601515`:
 
 ```bash
+AUTH_HEADER=()
+if [ -n "${FASTNEAR_API_KEY:-}" ]; then AUTH_HEADER=(-H "Authorization: Bearer $FASTNEAR_API_KEY"); fi
+
 curl -sS https://tx.main.fastnear.com/v0/account \
+  "${AUTH_HEADER[@]}" \
   -H 'content-type: application/json' \
   --data '{
     "account_id": "berryclub.ek.near",
@@ -68,7 +77,11 @@ curl -sS https://tx.main.fastnear.com/v0/account \
 Раскройте кандидатные хеши и оставьте только верхнеуровневые вызовы `draw`:
 
 ```bash
+AUTH_HEADER=()
+if [ -n "${FASTNEAR_API_KEY:-}" ]; then AUTH_HEADER=(-H "Authorization: Bearer $FASTNEAR_API_KEY"); fi
+
 curl -sS https://tx.main.fastnear.com/v0/transactions \
+  "${AUTH_HEADER[@]}" \
   -H 'content-type: application/json' \
   --data '{
     "tx_hashes": [
@@ -110,5 +123,5 @@ for (const drawTx of drawTransactionsOldestFirst) {
 
 - FastNear обрабатывает более 10 млрд запросов в месяц.
 - FastNear управляет более чем 100 нодами по всему миру.
-- FastNear предлагает щедрые кредиты и бесплатный пробный период.
-- Быстро получите пробный аккаунт на [dashboard.fastnear.com](https://dashboard.fastnear.com).
+- Один API-ключ FastNear работает и для RPC, и для индексированных API.
+- Получите API-ключ на [dashboard.fastnear.com](https://dashboard.fastnear.com).

@@ -32,18 +32,18 @@ import IconExternalLink from '@theme/Icon/ExternalLink';
 
 # Аутентификация и доступ
 
-Один API-ключ FastNear работает и для [RPC](/rpc), и для [API-эндпоинтов](/api). Многие публичные чтения работают и без него, но когда ключ нужен, модель остаётся простой: используйте один и тот же ключ везде и передавайте его либо через заголовок `Authorization: Bearer`, либо как URL-параметр `?apiKey=`.
+Один API-ключ FastNear работает и для [RPC](/rpc), и для [API-эндпоинтов](/api). Держите модель аутентификации простой: используйте один и тот же ключ везде и передавайте его либо через заголовок `Authorization: Bearer`, либо как URL-параметр `?apiKey=`.
 
 Та же модель действует и на обычных, и на архивных RPC-хостах. Хранение ключа в браузере для UI документации — это удобство документации, а не продовый шаблон.
 
-Войдите на <Link href="https://dashboard.fastnear.com">dashboard.fastnear.com<IconExternalLink /></Link>, чтобы получить ключ, и отправляйте его в каждом запросе одним из способов ниже.
+Получите ключ в <Link href="https://dashboard.fastnear.com">FastNear Dashboard<IconExternalLink /></Link> и отправляйте его в каждом запросе одним из способов ниже.
 
 Страницы с интерактивными примерами также поддерживают `Copy example URL`, чтобы делиться уже заполненными запросами. Общие URL примеров выполняются автоматически при загрузке, когда в них есть состояние операции, а сохранённые API-ключи и токены никогда не включаются в такие общедоступные URL документации.
 
 ## Через заголовок Authorization
 
 ```bash
-FASTNEAR_API_KEY=
+: "${FASTNEAR_API_KEY:?Задайте FASTNEAR_API_KEY в окружении перед запуском примера.}"
 
 curl "https://rpc.mainnet.fastnear.com" \
   -H "Authorization: Bearer $FASTNEAR_API_KEY" \
@@ -54,7 +54,7 @@ curl "https://rpc.mainnet.fastnear.com" \
 ## Через URL-параметр `?apiKey=`
 
 ```bash
-FASTNEAR_API_KEY=
+: "${FASTNEAR_API_KEY:?Задайте FASTNEAR_API_KEY в окружении перед запуском примера.}"
 
 curl "https://rpc.mainnet.fastnear.com?apiKey=$FASTNEAR_API_KEY" \
   -H "Content-Type: application/json" \

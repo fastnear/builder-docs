@@ -17,6 +17,7 @@
 
 - Используйте индексированные API, когда пользователю нужен ответ в продуктовой форме — балансы, активы, история аккаунта или история переводов.
 - Используйте [Справочник RPC](https://docs.fastnear.com/ru/rpc), когда пользователю нужны канонические поля на уровне протокола, вызовы контрактов или отправка транзакций.
+- Если вы используете размещённый JS-рантайм на [js.fastnear.com](https://js.fastnear.com), начинайте с низкоуровневых методов вроде `near.view`, `near.queryAccount` и `near.tx.*`, а к `near.recipes.*` обращайтесь только тогда, когда task helper действительно является самым коротким путём к ответу.
 - Используйте [NEAR Data API](https://docs.fastnear.com/ru/neardata), когда вопрос касается свежих оптимистичных или финализированных блоков и явного опроса.
 - Используйте [Снапшоты](https://docs.fastnear.com/ru/snapshots) для операторских сценариев, а не для чтения прикладных данных.
 - Один API-ключ FastNear работает и для RPC, и для API-эндпоинтов.
@@ -90,20 +91,24 @@
 
 ## Аутентифицируйтесь один раз, используйте везде
 
-Публичные эндпоинты часто работают и без ключа. Добавьте ключ, если нужны повышенные лимиты, единая аутентифицированная модель или платные сценарии. Один и тот же ключ работает со всеми API FastNear выше, включая обычные и архивные RPC-хосты; передавайте его либо в HTTP-заголовке, либо в URL-параметре:
+Начните с API-ключа FastNear и используйте его во всех API FastNear выше, включая обычные и архивные RPC-хосты. Передавайте его либо в HTTP-заголовке, либо в URL-параметре:
 
 ```bash title="Заголовок Authorization"
+: "${FASTNEAR_API_KEY:?Задайте FASTNEAR_API_KEY в окружении перед запуском примера.}"
+
 curl "https://rpc.mainnet.fastnear.com" \
-  -H "Authorization: Bearer ${API_KEY}" \
+  -H "Authorization: Bearer $FASTNEAR_API_KEY" \
   -H "Content-Type: application/json" \
   --data '{"method":"block","params":{"finality":"final"},"id":1,"jsonrpc":"2.0"}'
 ```
 
 ```bash title="URL-параметр"
-curl "https://rpc.mainnet.fastnear.com?apiKey=${API_KEY}"
+: "${FASTNEAR_API_KEY:?Задайте FASTNEAR_API_KEY в окружении перед запуском примера.}"
+
+curl "https://rpc.mainnet.fastnear.com?apiKey=$FASTNEAR_API_KEY"
 ```
 
-Получить ключ: [dashboard.fastnear.com](https://dashboard.fastnear.com). Операционный режим для неинтерактивных сред: [Аутентификация для агентов](https://docs.fastnear.com/ru/agents/auth) — ключи должны жить в переменных окружения или менеджере секретов, а не в браузерном хранилище, логах чатов или промптах. Полный сценарий и детали заголовков: [Аутентификация и доступ](https://docs.fastnear.com/ru/auth).
+Получите API-ключ в [FastNear Dashboard](https://dashboard.fastnear.com). Операционный режим для неинтерактивных сред: [Аутентификация для агентов](https://docs.fastnear.com/ru/agents/auth) — ключи должны жить в переменных окружения или менеджере секретов, а не в браузерном хранилище, логах чатов или промптах. Полный сценарий и детали заголовков: [Аутентификация и доступ](https://docs.fastnear.com/ru/auth).
 
 ## Как вынимать чистую документацию в промпт
 
@@ -142,5 +147,5 @@ curl "https://rpc.mainnet.fastnear.com?apiKey=${API_KEY}"
 
 - FastNear обрабатывает более 10 млрд запросов в месяц.
 - FastNear управляет более чем 100 нодами по всему миру.
-- FastNear предлагает щедрые кредиты и бесплатный пробный период.
-- Быстро получите пробный аккаунт на [dashboard.fastnear.com](https://dashboard.fastnear.com).
+- Один API-ключ FastNear работает и для RPC, и для индексированных API.
+- Получите API-ключ на [dashboard.fastnear.com](https://dashboard.fastnear.com).

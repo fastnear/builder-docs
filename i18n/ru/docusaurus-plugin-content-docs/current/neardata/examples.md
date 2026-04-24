@@ -12,15 +12,18 @@ page_actions:
 
 NEAR Data возвращает каждый блок полностью гидратированным одним JSON-документом — header плюс per-shard chunks, receipts, результаты исполнения и state changes, — так что один `curl` уже даёт всё необходимое, чтобы отфильтровать нужный контракт без второго запроса.
 
+Все shell-примеры ниже работают на публичных NEAR Data-хостах как есть. Если в shell задан `FASTNEAR_API_KEY`, они автоматически добавляют bearer header; если переменная не задана, они переходят на публичный неаутентифицированный путь.
+
 ### На каком блоке NEAR сейчас?
 
 `/v0/last_block/final` отдаёт 302-редирект на текущий финализированный блок. Прежде чем фильтровать по конкретному контракту, полезно увидеть, как выглядит один блок на уровне протокола: транзакции приходят с разбивкой по shard, поэтому общее число транзакций в блоке — это сумма по shards, а не одно поле верхнего уровня.
 
 ```bash
-FASTNEAR_API_KEY=
+AUTH_HEADER=()
+if [ -n "${FASTNEAR_API_KEY:-}" ]; then AUTH_HEADER=(-H "Authorization: Bearer $FASTNEAR_API_KEY"); fi
 
 curl -sL "https://mainnet.neardata.xyz/v0/last_block/final" \
-  -H "Authorization: Bearer $FASTNEAR_API_KEY" \
+  "${AUTH_HEADER[@]}" \
   | jq '{
       height: .block.header.height,
       timestamp_nanosec: .block.header.timestamp_nanosec,
@@ -37,10 +40,11 @@ curl -sL "https://mainnet.neardata.xyz/v0/last_block/final" \
 
 ```bash
 TARGET_CONTRACT=intents.near
-FASTNEAR_API_KEY=
+AUTH_HEADER=()
+if [ -n "${FASTNEAR_API_KEY:-}" ]; then AUTH_HEADER=(-H "Authorization: Bearer $FASTNEAR_API_KEY"); fi
 
 curl -sL "https://mainnet.neardata.xyz/v0/last_block/final" \
-  -H "Authorization: Bearer $FASTNEAR_API_KEY" \
+  "${AUTH_HEADER[@]}" \
   | jq --arg contract "$TARGET_CONTRACT" '{
       height: .block.header.height,
       contract: $contract,
@@ -62,7 +66,8 @@ Optimistic-блоки ходят по `/v0/block_opt/{height}` примерно 
 
 ```bash
 TARGET_CONTRACT=intents.near
-FASTNEAR_API_KEY=
+AUTH_HEADER=()
+if [ -n "${FASTNEAR_API_KEY:-}" ]; then AUTH_HEADER=(-H "Authorization: Bearer $FASTNEAR_API_KEY"); fi
 
 count_touches() {
   jq --arg contract "$1" '
@@ -73,15 +78,15 @@ count_touches() {
 }
 
 OPT_LOCATION="$(
-  curl -s -D - -o /dev/null -H "Authorization: Bearer $FASTNEAR_API_KEY" "https://mainnet.neardata.xyz/v0/last_block/optimistic" \
+  curl -s -D - -o /dev/null "${AUTH_HEADER[@]}" "https://mainnet.neardata.xyz/v0/last_block/optimistic" \
     | awk 'tolower($1) == "location:" {print $2}' | tr -d '\r'
 )"
 OPT_HEIGHT="${OPT_LOCATION##*/}"
 
 echo "optimistic @ $OPT_HEIGHT: $(curl -s "https://mainnet.neardata.xyz$OPT_LOCATION" \
-  -H "Authorization: Bearer $FASTNEAR_API_KEY" | count_touches "$TARGET_CONTRACT") touches"
+  "${AUTH_HEADER[@]}" | count_touches "$TARGET_CONTRACT") touches"
 FINAL="$(curl -s "https://mainnet.neardata.xyz/v0/block/$OPT_HEIGHT" \
-  -H "Authorization: Bearer $FASTNEAR_API_KEY")"
+  "${AUTH_HEADER[@]}")"
 if [ "$(printf '%s' "$FINAL" | jq 'type')" = '"null"' ]; then
   echo "finalized @ $OPT_HEIGHT: not caught up yet"
 else
@@ -97,17 +102,18 @@ fi
 
 ```bash
 TARGET_CONTRACT=intents.near
-FASTNEAR_API_KEY=
+AUTH_HEADER=()
+if [ -n "${FASTNEAR_API_KEY:-}" ]; then AUTH_HEADER=(-H "Authorization: Bearer $FASTNEAR_API_KEY"); fi
 
 HEAD="$(curl -sL "https://mainnet.neardata.xyz/v0/last_block/final" \
-  -H "Authorization: Bearer $FASTNEAR_API_KEY" | jq '.block.header.height')"
+  "${AUTH_HEADER[@]}" | jq '.block.header.height')"
 FOUND_HEIGHT=""
 FOUND_SHARD=""
 
 for OFFSET in $(seq 0 15); do
   H=$((HEAD - OFFSET))
   SHARD="$(curl -s "https://mainnet.neardata.xyz/v0/block/$H" \
-    -H "Authorization: Bearer $FASTNEAR_API_KEY" \
+    "${AUTH_HEADER[@]}" \
     | jq -r --arg contract "$TARGET_CONTRACT" '
         .shards[]
         | select([.state_changes[]? | select(.change.account_id? == $contract)] | length > 0)
@@ -123,7 +129,7 @@ if [ -z "$FOUND_HEIGHT" ]; then
   echo "no state mutation for $TARGET_CONTRACT in the last 16 finalized blocks"
 else
   curl -s "https://mainnet.neardata.xyz/v0/block/$FOUND_HEIGHT/shard/$FOUND_SHARD" \
-    -H "Authorization: Bearer $FASTNEAR_API_KEY" \
+    "${AUTH_HEADER[@]}" \
     | jq --arg contract "$TARGET_CONTRACT" --argjson height "$FOUND_HEIGHT" --argjson shard_id "$FOUND_SHARD" '{
         height: $height,
         shard_id: $shard_id,

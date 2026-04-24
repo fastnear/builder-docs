@@ -1,1 +1,0 @@
-{"version":3,"sources":["../../src/index.ts"],"sourcesContent":["// See tsup.config.ts for additional banner/footer js\nexport * from \"./near.js\";\n"],"mappings":";;;;;;;;;;;;;;;;;AAAA;AAAA;AACA,0BAAc,sBADd;","names":[]}

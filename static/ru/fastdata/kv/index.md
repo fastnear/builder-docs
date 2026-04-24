@@ -19,14 +19,16 @@ https://kv.test.fastnear.com
 Если вы уже знаете один точный ключ, начните с последней индексированной строки и остановитесь, как только она ответит на вопрос.
 
 ```bash
-KV_BASE_URL=https://kv.main.fastnear.com
 CURRENT_ACCOUNT_ID=social.near
 PREDECESSOR_ID=james.near
 KEY='graph/follow/sleet.near'
+AUTH_HEADER=()
+if [ -n "${FASTNEAR_API_KEY:-}" ]; then AUTH_HEADER=(-H "Authorization: Bearer $FASTNEAR_API_KEY"); fi
 
 ENCODED_KEY="$(jq -rn --arg key "$KEY" '$key | @uri')"
 
-curl -s "$KV_BASE_URL/v0/latest/$CURRENT_ACCOUNT_ID/$PREDECESSOR_ID/$ENCODED_KEY" \
+curl -s "https://kv.main.fastnear.com/v0/latest/$CURRENT_ACCOUNT_ID/$PREDECESSOR_ID/$ENCODED_KEY" \
+  "${AUTH_HEADER[@]}" \
   | jq '{
       latest: (
         .entries[0]
@@ -112,5 +114,5 @@ curl -s "$KV_BASE_URL/v0/latest/$CURRENT_ACCOUNT_ID/$PREDECESSOR_ID/$ENCODED_KEY
 
 - FastNear обрабатывает более 10 млрд запросов в месяц.
 - FastNear управляет более чем 100 нодами по всему миру.
-- FastNear предлагает щедрые кредиты и бесплатный пробный период.
-- Быстро получите пробный аккаунт на [dashboard.fastnear.com](https://dashboard.fastnear.com).
+- Один API-ключ FastNear работает и для RPC, и для индексированных API.
+- Получите API-ключ на [dashboard.fastnear.com](https://dashboard.fastnear.com).

@@ -25,6 +25,7 @@ This page is the operational starting point for AI agents, crawlers, and automat
 
 - Use indexed APIs when the user wants a product-shaped answer such as balances, holdings, account history, or transfer history.
 - Use [RPC Reference](/rpc) when the user needs canonical protocol-native fields, contract calls, or transaction submission.
+- If you are using the hosted JS runtime at [js.fastnear.com](https://js.fastnear.com), start with low-level methods such as `near.view`, `near.queryAccount`, and `near.tx.*`, and use `near.recipes.*` only when a task helper is the shortest path to the answer.
 - Use [NEAR Data API](/neardata) when the question is about recent optimistic or finalized blocks and explicit polling.
 - Use [Snapshots](/snapshots/) for operator workflows, not application-level data reads.
 - One FastNear API key works across the RPC and API endpoints.
@@ -98,10 +99,10 @@ Bad pattern:
 
 ## Authenticate once, reuse everywhere
 
-Public endpoints often work without a key. Add a key for higher limits, a shared authenticated posture, or paid access patterns. The same key works across every FastNear API above, including the regular and archival RPC hosts; send it either as an HTTP header or a URL parameter:
+Start with a FastNear API key and reuse it across every FastNear API above, including the regular and archival RPC hosts. Send it either as an HTTP header or a URL parameter:
 
 ```bash title="Authorization header"
-FASTNEAR_API_KEY=
+: "${FASTNEAR_API_KEY:?Set FASTNEAR_API_KEY in your shell before running this example.}"
 
 curl "https://rpc.mainnet.fastnear.com" \
   -H "Authorization: Bearer $FASTNEAR_API_KEY" \
@@ -110,12 +111,12 @@ curl "https://rpc.mainnet.fastnear.com" \
 ```
 
 ```bash title="URL parameter"
-FASTNEAR_API_KEY=
+: "${FASTNEAR_API_KEY:?Set FASTNEAR_API_KEY in your shell before running this example.}"
 
 curl "https://rpc.mainnet.fastnear.com?apiKey=$FASTNEAR_API_KEY"
 ```
 
-Get a key from [dashboard.fastnear.com](https://dashboard.fastnear.com). Operational posture for non-interactive runtimes: [Auth for Agents](/agents/auth) — keys go in env vars or a secret manager, never in browser storage, chat logs, or prompts. Full flow and header details: [Auth & Access](/auth).
+Get your API key from [FastNear Dashboard](https://dashboard.fastnear.com). Operational posture for non-interactive runtimes: [Auth for Agents](/agents/auth) — keys go in env vars or a secret manager, never in browser storage, chat logs, or prompts. Full flow and header details: [Auth & Access](/auth).
 
 ## Pull clean docs into a prompt
 

@@ -29,6 +29,8 @@ import BerryClubLiveBoard from '@site/src/components/BerryClubLiveBoard';
 
 Переходите к Transactions API только тогда, когда вопрос становится историческим: «как Berry Club выглядел в одной более ранней эпохе и какие `draw`-вызовы сделали доску именно такой?»
 
+Эти shell-примеры работают и с публичными RPC и Transactions endpoint-ами. Если `FASTNEAR_API_KEY` уже задан в окружении, FastNear-вызовы автоматически пробросят его как bearer-заголовок.
+
 <BerryClubLiveBoard
   uiText={{
     title: 'Живая доска Berry Club',
@@ -50,10 +52,11 @@ import BerryClubLiveBoard from '@site/src/components/BerryClubLiveBoard';
 
 ```bash
 ARGS_BASE64="$(jq -nc '{lines: [range(0;50)]}' | base64 | tr -d '\n')"
-FASTNEAR_API_KEY=
+AUTH_HEADER=()
+if [ -n "${FASTNEAR_API_KEY:-}" ]; then AUTH_HEADER=(-H "Authorization: Bearer $FASTNEAR_API_KEY"); fi
 
 curl -sS https://rpc.mainnet.fastnear.com \
-  -H "Authorization: Bearer $FASTNEAR_API_KEY" \
+  "${AUTH_HEADER[@]}" \
   -H 'content-type: application/json' \
   --data "{
     \"jsonrpc\": \"2.0\",
@@ -83,10 +86,11 @@ curl -sS https://rpc.mainnet.fastnear.com \
 В этом примере используется узкое окно вокруг блока `97601515`:
 
 ```bash
-FASTNEAR_API_KEY=
+AUTH_HEADER=()
+if [ -n "${FASTNEAR_API_KEY:-}" ]; then AUTH_HEADER=(-H "Authorization: Bearer $FASTNEAR_API_KEY"); fi
 
 curl -sS https://tx.main.fastnear.com/v0/account \
-  -H "Authorization: Bearer $FASTNEAR_API_KEY" \
+  "${AUTH_HEADER[@]}" \
   -H 'content-type: application/json' \
   --data '{
     "account_id": "berryclub.ek.near",
@@ -105,10 +109,11 @@ curl -sS https://tx.main.fastnear.com/v0/account \
 Раскройте кандидатные хеши и оставьте только верхнеуровневые вызовы `draw`:
 
 ```bash
-FASTNEAR_API_KEY=
+AUTH_HEADER=()
+if [ -n "${FASTNEAR_API_KEY:-}" ]; then AUTH_HEADER=(-H "Authorization: Bearer $FASTNEAR_API_KEY"); fi
 
 curl -sS https://tx.main.fastnear.com/v0/transactions \
-  -H "Authorization: Bearer $FASTNEAR_API_KEY" \
+  "${AUTH_HEADER[@]}" \
   -H 'content-type: application/json' \
   --data '{
     "tx_hashes": [

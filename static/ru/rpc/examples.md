@@ -4,6 +4,8 @@
 
 Начинайте с RPC-метода, который отвечает на вопрос. Используйте `tx`, чтобы отследить включение и финальность по хешу транзакции, и расширяйте поверхность только когда нужны дерево receipts, сырой state или трассировка на уровне shard.
 
+Все shell-примеры ниже работают на публичных RPC-хостах как есть. Если в shell задан `FASTNEAR_API_KEY`, они автоматически добавляют bearer header; если переменная не задана, они переходят на публичный неаутентифицированный путь.
+
 ## Состояние аккаунта
 
 ### Показать баланс и storage аккаунта на finality
@@ -11,10 +13,12 @@
 `view_account` — канонический RPC-запрос для текущего состояния аккаунта. Один вызов возвращает свободный баланс, сумму, заблокированную в валидаторском стейке или lockup-контракте, использованное storage и блок, на котором было сделано чтение. `finality: "final"` гарантирует, что вы читаете стабильное состояние, а не optimistic-представление.
 
 ```bash
-RPC_URL=https://rpc.mainnet.fastnear.com
-ACCOUNT_ID=mike.near
+ACCOUNT_ID=root.near
+AUTH_HEADER=()
+if [ -n "${FASTNEAR_API_KEY:-}" ]; then AUTH_HEADER=(-H "Authorization: Bearer $FASTNEAR_API_KEY"); fi
 
-curl -s "$RPC_URL" \
+curl -s "https://rpc.mainnet.fastnear.com" \
+  "${AUTH_HEADER[@]}" \
   -H 'content-type: application/json' \
   --data "$(jq -nc --arg account_id "$ACCOUNT_ID" '{
     jsonrpc:"2.0",id:"fastnear",method:"query",
@@ -23,7 +27,7 @@ curl -s "$RPC_URL" \
   | jq '.result | {amount, locked, storage_usage, block_height, block_hash}'
 ```
 
-Для `mike.near` это возвращает `amount` (yoctoNEAR в свободной части), `locked: "0"` (ничего в валидаторском стейке или lockup-контракте) и `storage_usage: 558441` — 558 КБ on-chain-состояния. Пара `block_height`/`block_hash` фиксирует точку чтения; чтобы прочитать несколько аккаунтов *на одном и том же* блоке, переиспользуйте возвращённый `block_hash` как `block_id` в последующих запросах.
+Для `root.near` это возвращает `amount` (yoctoNEAR в свободной части), `locked: "0"` (ничего в валидаторском стейке или lockup-контракте) и `storage_usage: 28677` — примерно 28.7 КБ on-chain-состояния. Пара `block_height`/`block_hash` фиксирует точку чтения; чтобы прочитать несколько аккаунтов *на одном и том же* блоке, переиспользуйте возвращённый `block_hash` как `block_id` в последующих запросах.
 
 ## Включение транзакции и финальность
 
@@ -32,11 +36,13 @@ curl -s "$RPC_URL" \
 Есть tx hash? Опрашивайте `tx` с минимальным порогом `wait_until`, который отвечает на ваш вопрос.
 
 ```bash
-RPC_URL=https://rpc.testnet.fastnear.com
 TX_HASH=CVyG2xLJ6fuKCtULAxMnWTh2GL5ey2UUiTcgYT3M6Pow
 SIGNER_ACCOUNT_ID=mike.testnet
+AUTH_HEADER=()
+if [ -n "${FASTNEAR_API_KEY:-}" ]; then AUTH_HEADER=(-H "Authorization: Bearer $FASTNEAR_API_KEY"); fi
 
-curl -s "$RPC_URL" \
+curl -s "https://archival-rpc.testnet.fastnear.com" \
+  "${AUTH_HEADER[@]}" \
   -H 'content-type: application/json' \
   --data "$(jq -nc --arg tx_hash "$TX_HASH" --arg signer_id "$SIGNER_ACCOUNT_ID" '{
     jsonrpc: "2.0", id: "fastnear", method: "tx",
@@ -64,14 +70,15 @@ curl -s "$RPC_URL" \
 Блок NEAR — это header поверх N shard chunks, а не плоский список транзакций. `block` возвращает headers chunks; сами транзакции лежат уровнем ниже, внутри `chunk`. Шортката `block → tx` нет — блок не несёт хешей транзакций, поэтому `tx` (которому нужен hash) в этой цепочке не участвует. Канонический проход — `status` → `block` → `chunk`, пропуская пустые chunks по дороге. Большинство chunks в tip-блоке пустые — их `tx_root` равен сентинелу `11111111111111111111111111111111`, поэтому селектору нужен фильтр.
 
 ```bash
-RPC_URL=https://rpc.mainnet.fastnear.com
 EMPTY_TX_ROOT=11111111111111111111111111111111
+AUTH_HEADER=()
+if [ -n "${FASTNEAR_API_KEY:-}" ]; then AUTH_HEADER=(-H "Authorization: Bearer $FASTNEAR_API_KEY"); fi
 
-BLOCK_HASH="$(curl -s "$RPC_URL" -H 'content-type: application/json' \
+BLOCK_HASH="$(curl -s "https://rpc.mainnet.fastnear.com" "${AUTH_HEADER[@]}" -H 'content-type: application/json' \
   --data '{"jsonrpc":"2.0","id":"fastnear","method":"status","params":[]}' \
   | jq -r '.result.sync_info.latest_block_hash')"
 
-CHUNK_HASH="$(curl -s "$RPC_URL" -H 'content-type: application/json' \
+CHUNK_HASH="$(curl -s "https://rpc.mainnet.fastnear.com" "${AUTH_HEADER[@]}" -H 'content-type: application/json' \
   --data "$(jq -nc --arg block_hash "$BLOCK_HASH" '{
     jsonrpc:"2.0",id:"fastnear",method:"block",params:{block_id:$block_hash}
   }')" \
@@ -81,7 +88,7 @@ CHUNK_HASH="$(curl -s "$RPC_URL" -H 'content-type: application/json' \
 if [ -z "$CHUNK_HASH" ]; then
   echo "tip block had no transactions in any chunk — rerun on the next head"
 else
-  curl -s "$RPC_URL" -H 'content-type: application/json' \
+  curl -s "https://rpc.mainnet.fastnear.com" "${AUTH_HEADER[@]}" -H 'content-type: application/json' \
     --data "$(jq -nc --arg chunk_hash "$CHUNK_HASH" '{
       jsonrpc:"2.0",id:"fastnear",method:"chunk",params:{chunk_id:$chunk_hash}
     }')" \
@@ -119,11 +126,13 @@ fi
 Любой ключ с `tx_count: 0` был создан и ни разу не использовался — самый очевидный кандидат на очистку. Следующий по порядку — ключи, заскоупленные на контракт, с которым вы больше не работаете. Фильтр ниже сужает до `social.near`, но чтобы аудитировать другой контракт, меняется только строка `RECEIVER_ID`.
 
 ```bash
-RPC_URL=https://rpc.mainnet.fastnear.com
-ACCOUNT_ID=mike.near
+ACCOUNT_ID=root.near
 RECEIVER_ID=social.near
+AUTH_HEADER=()
+if [ -n "${FASTNEAR_API_KEY:-}" ]; then AUTH_HEADER=(-H "Authorization: Bearer $FASTNEAR_API_KEY"); fi
 
-curl -s "$RPC_URL" \
+curl -s "https://rpc.mainnet.fastnear.com" \
+  "${AUTH_HEADER[@]}" \
   -H 'content-type: application/json' \
   --data "$(jq -nc --arg account_id "$ACCOUNT_ID" '{
     jsonrpc:"2.0",id:"fastnear",method:"query",
@@ -147,7 +156,7 @@ curl -s "$RPC_URL" \
       }'
 ```
 
-Для `mike.near` это возвращает десятки function-call-ключей на `social.near`. Записи с `tx_count: 0` были созданы и ни разу не использовались — прямые кандидаты на удаление. `method_names: "ANY"` означает, что ключ может вызвать любой метод на `social.near`; сужение до списка вида `["find_grants", "insert_grant", "delete_grant"]` означает, что ключ был заскоуплен на write-поверхность одного dapp.
+Для `root.near` это возвращает 235 ключей всего, включая 34 function-call-ключа на `social.near`; 21 из них были созданы и ни разу не использовались (`tx_count: 0`) и потому являются прямыми кандидатами на удаление. `method_names: "ANY"` означает, что ключ может вызвать любой метод на `social.near`; сужение до списка вида `["find_grants", "insert_grant", "delete_grant"]` означает, что ключ был заскоуплен на write-поверхность одного dapp.
 
 Чтобы удалить такой ключ, подпишите action `DeleteKey` **full-access**-ключом (function-call-ключ не может авторизовать `DeleteKey`) и отправьте через [`send_tx`](https://docs.fastnear.com/ru/rpc/transaction/send-tx). Повторный запуск того же запроса подтвердит, что ключа больше нет.
 
@@ -160,10 +169,11 @@ View-метод вроде `get_num` всё равно заставляет уз
 Контракты на `near-sdk-rs` хранят верхнеуровневую `#[near_bindgen]`-структуру под ключом `STATE`. Передайте `STATE` как `prefix_base64` (`U1RBVEU=` — это base64 тех же четырёх ASCII-байт), и узел вернёт сериализованное значение.
 
 ```bash
-RPC_URL=https://rpc.testnet.fastnear.com
 CONTRACT_ID=counter.near-examples.testnet
+AUTH_HEADER=()
+if [ -n "${FASTNEAR_API_KEY:-}" ]; then AUTH_HEADER=(-H "Authorization: Bearer $FASTNEAR_API_KEY"); fi
 
-RAW_B64="$(curl -s "$RPC_URL" -H 'content-type: application/json' \
+RAW_B64="$(curl -s "https://rpc.testnet.fastnear.com" "${AUTH_HEADER[@]}" -H 'content-type: application/json' \
   --data "$(jq -nc --arg contract "$CONTRACT_ID" '{
     jsonrpc:"2.0",id:"fastnear",method:"query",
     params:{request_type:"view_state",account_id:$contract,prefix_base64:"U1RBVEU=",finality:"final"}
@@ -188,13 +198,14 @@ jq -n --arg raw "$RAW_B64" --argjson val "$DECODED_I8" '{raw_bytes_base64: $raw,
 `social.near` знает две вещи, о которых UI кошелька может только догадываться: сколько storage осталось у каждого аккаунта и разрешена ли делегированному signer запись под этим аккаунтом. Два view-вызова сворачивают вопрос готовности к одному boolean.
 
 ```bash
-RPC_URL=https://rpc.mainnet.fastnear.com
-ACCOUNT_ID=mike.near         # account you're writing under
-SIGNER_ACCOUNT_ID=mike.near  # account signing the transaction
+ACCOUNT_ID=root.near         # account you're writing under
+SIGNER_ACCOUNT_ID=root.near  # account signing the transaction
+AUTH_HEADER=()
+if [ -n "${FASTNEAR_API_KEY:-}" ]; then AUTH_HEADER=(-H "Authorization: Bearer $FASTNEAR_API_KEY"); fi
 
 STORAGE_ARGS_B64="$(jq -nc --arg account_id "$ACCOUNT_ID" '{account_id:$account_id}' | base64 | tr -d '\n')"
 
-STORAGE="$(curl -s "$RPC_URL" -H 'content-type: application/json' \
+STORAGE="$(curl -s "https://rpc.mainnet.fastnear.com" "${AUTH_HEADER[@]}" -H 'content-type: application/json' \
   --data "$(jq -nc --arg args "$STORAGE_ARGS_B64" '{
     jsonrpc:"2.0",id:"fastnear",method:"query",
     params:{request_type:"call_function",account_id:"social.near",method_name:"get_account_storage",args_base64:$args,finality:"final"}
@@ -205,7 +216,7 @@ if [ "$SIGNER_ACCOUNT_ID" = "$ACCOUNT_ID" ]; then
   PERMISSION=true
 else
   PERM_ARGS_B64="$(jq -nc --arg pred "$SIGNER_ACCOUNT_ID" --arg key "$ACCOUNT_ID" '{predecessor_id:$pred,key:$key}' | base64 | tr -d '\n')"
-  PERMISSION="$(curl -s "$RPC_URL" -H 'content-type: application/json' \
+  PERMISSION="$(curl -s "https://rpc.mainnet.fastnear.com" "${AUTH_HEADER[@]}" -H 'content-type: application/json' \
     --data "$(jq -nc --arg args "$PERM_ARGS_B64" '{
       jsonrpc:"2.0",id:"fastnear",method:"query",
       params:{request_type:"call_function",account_id:"social.near",method_name:"is_write_permission_granted",args_base64:$args,finality:"final"}
@@ -223,23 +234,24 @@ jq -n --argjson storage "$STORAGE" --argjson permission "$PERMISSION" \
   }'
 ```
 
-Для `mike.near`, подписывающего под собой, это возвращает `storage: {used_bytes: 139803, available_bytes: 83891}`, `permission_granted: true` (владельческая запись) и `ready_to_publish: true`. Если `storage` приходит как `null` или `available_bytes: 0`, аккаунту нужен `storage_deposit` на `social.near`, прежде чем новая запись сможет закрепиться. Если signer отличается от цели, ветка permission спрашивает `is_write_permission_granted({predecessor_id, key})` — тот же on-chain-ответ, который dapp видит, прежде чем писать от имени пользователя. Полную поверхность контракта см. в [SocialDB API](https://github.com/NearSocial/social-db#api).
+Для `root.near`, подписывающего под собой, это возвращает `storage: {used_bytes: 136245, available_bytes: 42484}`, `permission_granted: true` (владельческая запись) и `ready_to_publish: true`. Если `storage` приходит как `null` или `available_bytes: 0`, аккаунту нужен `storage_deposit` на `social.near`, прежде чем новая запись сможет закрепиться. Если signer отличается от цели, ветка permission спрашивает `is_write_permission_granted({predecessor_id, key})` — тот же on-chain-ответ, который dapp видит, прежде чем писать от имени пользователя. Полную поверхность контракта см. в [SocialDB API](https://github.com/NearSocial/social-db#api).
 
 ### Что `mob.near/widget/Profile` содержит прямо сейчас?
 
 SocialDB хранит BOS-виджеты как ключи `<account>/widget/<name>` на `social.near`. Один `keys` с типом возврата `BlockHeight` возвращает каталог плюс якоря последней записи по каждому виджету; один `get` возвращает точный исходник.
 
 ```bash
-RPC_URL=https://rpc.mainnet.fastnear.com
 ACCOUNT_ID=mob.near
 WIDGET_NAME=Profile
+AUTH_HEADER=()
+if [ -n "${FASTNEAR_API_KEY:-}" ]; then AUTH_HEADER=(-H "Authorization: Bearer $FASTNEAR_API_KEY"); fi
 
 KEYS_ARGS="$(jq -nc --arg account_id "$ACCOUNT_ID" '{
   keys: [($account_id + "/widget/*")],
   options: {return_type: "BlockHeight"}
 }' | base64 | tr -d '\n')"
 
-curl -s "$RPC_URL" -H 'content-type: application/json' \
+curl -s "https://rpc.mainnet.fastnear.com" "${AUTH_HEADER[@]}" -H 'content-type: application/json' \
   --data "$(jq -nc --arg args "$KEYS_ARGS" '{
     jsonrpc:"2.0",id:"fastnear",method:"query",
     params:{request_type:"call_function",account_id:"social.near",method_name:"keys",args_base64:$args,finality:"final"}
@@ -256,7 +268,7 @@ GET_ARGS="$(jq -nc --arg account_id "$ACCOUNT_ID" --arg widget "$WIDGET_NAME" '{
   keys: [($account_id + "/widget/" + $widget)]
 }' | base64 | tr -d '\n')"
 
-curl -s "$RPC_URL" -H 'content-type: application/json' \
+curl -s "https://rpc.mainnet.fastnear.com" "${AUTH_HEADER[@]}" -H 'content-type: application/json' \
   --data "$(jq -nc --arg args "$GET_ARGS" '{
     jsonrpc:"2.0",id:"fastnear",method:"query",
     params:{request_type:"call_function",account_id:"social.near",method_name:"get",args_base64:$args,finality:"final"}
@@ -287,5 +299,5 @@ curl -s "$RPC_URL" -H 'content-type: application/json' \
 
 - FastNear обрабатывает более 10 млрд запросов в месяц.
 - FastNear управляет более чем 100 нодами по всему миру.
-- FastNear предлагает щедрые кредиты и бесплатный пробный период.
-- Быстро получите пробный аккаунт на [dashboard.fastnear.com](https://dashboard.fastnear.com).
+- Один API-ключ FastNear работает и для RPC, и для индексированных API.
+- Получите API-ключ на [dashboard.fastnear.com](https://dashboard.fastnear.com).

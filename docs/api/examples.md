@@ -10,16 +10,19 @@ page_actions:
 
 ## Examples
 
+All shell examples below work on the public FastNear API hosts as-is. If `FASTNEAR_API_KEY` is set in your shell, they add it as a bearer header automatically; if it is unset, they fall back to the public unauthenticated path.
+
 ### Summarize one account in one call
 
 `/v1/account/{id}/full` is the FastNear API's account aggregator — one call bundles the account's NEAR state, every FT contract it's touched, every NFT collection it's received, and every validator pool it's delegated to. When you already have the `account_id`, this is the fastest "what does this account look like?" read.
 
 ```bash
 ACCOUNT_ID=root.near
-FASTNEAR_API_KEY=
+AUTH_HEADER=()
+if [ -n "${FASTNEAR_API_KEY:-}" ]; then AUTH_HEADER=(-H "Authorization: Bearer $FASTNEAR_API_KEY"); fi
 
 curl -s "https://api.fastnear.com/v1/account/$ACCOUNT_ID/full" \
-  -H "Authorization: Bearer $FASTNEAR_API_KEY" \
+  "${AUTH_HEADER[@]}" \
   | jq '{
       account_id,
       near_balance_yocto: .state.balance,
@@ -37,17 +40,18 @@ Look up which account a key belongs to, then read that account's holdings in one
 
 ```bash
 PUBLIC_KEY='ed25519:CCaThr3uokqnUs6Z5vVnaDcJdrfuTpYJHJWcAGubDjT'
-FASTNEAR_API_KEY=
+AUTH_HEADER=()
+if [ -n "${FASTNEAR_API_KEY:-}" ]; then AUTH_HEADER=(-H "Authorization: Bearer $FASTNEAR_API_KEY"); fi
 
 LOOKUP="$(curl -s "https://api.fastnear.com/v1/public_key/$(jq -rn --arg k "$PUBLIC_KEY" '$k | @uri')" \
-  -H "Authorization: Bearer $FASTNEAR_API_KEY")"
+  "${AUTH_HEADER[@]}")"
 
 echo "$LOOKUP" | jq '{matched: (.account_ids | length), account_ids}'
 
 ACCOUNT_ID="$(echo "$LOOKUP" | jq -r '.account_ids[0]')"
 
 curl -s "https://api.fastnear.com/v1/account/$ACCOUNT_ID/full" \
-  -H "Authorization: Bearer $FASTNEAR_API_KEY" \
+  "${AUTH_HEADER[@]}" \
   | jq '{account_id, state, tokens: (.tokens|length), nfts: (.nfts|length), pools: (.pools|length)}'
 ```
 
@@ -59,10 +63,11 @@ NEAR account state has three buckets that wallet UIs tend to conflate: `balance`
 
 ```bash
 ACCOUNT_ID=root.near
-FASTNEAR_API_KEY=
+AUTH_HEADER=()
+if [ -n "${FASTNEAR_API_KEY:-}" ]; then AUTH_HEADER=(-H "Authorization: Bearer $FASTNEAR_API_KEY"); fi
 
 curl -s "https://api.fastnear.com/v1/account/$ACCOUNT_ID/full" \
-  -H "Authorization: Bearer $FASTNEAR_API_KEY" \
+  "${AUTH_HEADER[@]}" \
   | jq '
       (.state.balance | tonumber) as $amount
       | (.state.locked  | tonumber) as $locked
@@ -92,10 +97,11 @@ Every entry under `/full`'s `tokens`, `nfts`, and `pools` arrays carries its own
 
 ```bash
 ACCOUNT_ID=root.near
-FASTNEAR_API_KEY=
+AUTH_HEADER=()
+if [ -n "${FASTNEAR_API_KEY:-}" ]; then AUTH_HEADER=(-H "Authorization: Bearer $FASTNEAR_API_KEY"); fi
 
 curl -s "https://api.fastnear.com/v1/account/$ACCOUNT_ID/full" \
-  -H "Authorization: Bearer $FASTNEAR_API_KEY" \
+  "${AUTH_HEADER[@]}" \
   | jq '
       [
         (.tokens // [])[].last_update_block_height,
@@ -123,10 +129,11 @@ NEAR account names encode a hierarchy: `mint.sharddog.near` is a subaccount of `
 ```bash
 ACCOUNT_ID=root.near
 PUBLISHER=sharddog.near
-FASTNEAR_API_KEY=
+AUTH_HEADER=()
+if [ -n "${FASTNEAR_API_KEY:-}" ]; then AUTH_HEADER=(-H "Authorization: Bearer $FASTNEAR_API_KEY"); fi
 
 curl -s "https://api.fastnear.com/v1/account/$ACCOUNT_ID/nft" \
-  -H "Authorization: Bearer $FASTNEAR_API_KEY" \
+  "${AUTH_HEADER[@]}" \
   | jq --arg publisher "$PUBLISHER" '
       ("." + $publisher) as $suffix
       | {
@@ -155,12 +162,13 @@ Direct pool positions live on `/staking`; liquid staking tokens (stNEAR, LiNEAR,
 ```bash
 ACCOUNT_ID=root.near
 LIQUID_PROVIDERS_JSON='["meta-pool.near","lst.rhealab.near","linear-protocol.near"]'
-FASTNEAR_API_KEY=
+AUTH_HEADER=()
+if [ -n "${FASTNEAR_API_KEY:-}" ]; then AUTH_HEADER=(-H "Authorization: Bearer $FASTNEAR_API_KEY"); fi
 
 STAKING="$(curl -s "https://api.fastnear.com/v1/account/$ACCOUNT_ID/staking" \
-  -H "Authorization: Bearer $FASTNEAR_API_KEY")"
+  "${AUTH_HEADER[@]}")"
 FT="$(curl -s "https://api.fastnear.com/v1/account/$ACCOUNT_ID/ft" \
-  -H "Authorization: Bearer $FASTNEAR_API_KEY")"
+  "${AUTH_HEADER[@]}")"
 
 jq -n \
   --argjson staking "$STAKING" \
@@ -169,11 +177,12 @@ jq -n \
   ($staking.pools // []) as $direct
   | (($ft.tokens // []) | map(select(.contract_id as $id | $providers | index($id)))) as $liquid
   | {
-      classification:
+      classification: (
         if ($direct|length)>0 and ($liquid|length)>0 then "mixed"
         elif ($direct|length)>0 then "direct_only"
         elif ($liquid|length)>0 then "liquid_only"
-        else "no_visible_staking_position" end,
+        else "no_visible_staking_position" end
+      ),
       direct_pools: ($direct | map(.pool_id)),
       liquid_tokens: ($liquid | map({contract_id, balance}))
     }'

@@ -4,33 +4,33 @@
 
 Используйте эту страницу только тогда, когда отправная точка — уже читаемое значение SocialDB из `api.near.social`, а следующий вопрос относится к историческому поиску записи.
 
+Эти shell-шаги работают и с публичными endpoint-ами SocialDB и FastNear. Если `FASTNEAR_API_KEY` уже задан в окружении, FastNear-вызовы автоматически пробросят его как bearer-заголовок.
+
 Для FastNear-first-задач сначала откройте [Transactions Examples](https://docs.fastnear.com/ru/tx/examples). Сюда переходите только тогда, когда вопрос звучит как «какая запись сделала это читаемое значение SocialDB истинным?».
 
-## Канонический пример: доказать, что `mike.near` установил `profile.name` в `Mike Purvis`
+## Канонический пример: доказать, что `root.near` установил `profile.name` в `Illia`
 
-Используйте этот сценарий, когда читаемый факт уже звучит как «текущее `profile.name` равно `Mike Purvis`», а остаётся вопрос, какая запись сделала это поле истинным.
+Используйте этот сценарий, когда читаемый факт уже звучит как «текущее `profile.name` равно `Illia`», а остаётся вопрос, какая запись сделала это поле истинным.
 
 Это единственный нюанс SocialDB, который стоит запомнить: для исторического доказательства правильным мостом обычно служит `:block` на уровне поля, а не `:block` родительского объекта.
 
 Для этого живого якоря:
 
-- текущее `profile.name`: `Mike Purvis`
-- блок записи SocialDB на уровне поля: `78675795`
-- receipt ID: `2gbAmEEdcCNARuCorquXStftqvWFmPG2GSaMJXFw5qiN`
-- хеш исходной транзакции: `6zMb9L6rLNufZGUgCmeHTh5LvFsn3R92dPxuubH6MRsZ`
-- внешний блок транзакции: `78675794`
+- текущее `profile.name`: `Illia`
+- блок записи SocialDB на уровне поля: `75590392`
+- receipt ID: `GYvnvBxWA46UGa3aGEkqUBeT7hxhVXk2iZScJFZWU8Se`
+- хеш исходной транзакции: `7HtFWv51k5Bispmh1WYPbAVkxr2X4AL6n98DhcQwVw7w`
+- внешний блок транзакции: `75590391`
 
 ### Shell-сценарий
 
 1. Прочитайте поле из NEAR Social и сохраните блок записи на уровне поля.
 
 ```bash
-SOCIAL_API_BASE_URL=https://api.near.social
-TX_BASE_URL=https://tx.main.fastnear.com
-ACCOUNT_ID=mike.near
+ACCOUNT_ID=root.near
 PROFILE_FIELD=profile/name
 
-PROFILE="$(curl -s "$SOCIAL_API_BASE_URL/get" \
+PROFILE="$(curl -s "https://api.near.social/get" \
   -H 'content-type: application/json' \
   --data "$(jq -nc --arg account_id "$ACCOUNT_ID" --arg profile_field "$PROFILE_FIELD" '{
     keys: [($account_id + "/" + $profile_field)],
@@ -49,7 +49,21 @@ PROFILE_BLOCK_HEIGHT="$(echo "$PROFILE" | jq -r --arg account_id "$ACCOUNT_ID" '
 2. Переиспользуйте этот блок уровня поля в FastNear block receipts и восстановите receipt вместе с tx hash.
 
 ```bash
-BLOCK_RECEIPTS="$(curl -s "$TX_BASE_URL/v0/block" \
+ACCOUNT_ID=root.near
+PROFILE_FIELD=profile/name
+AUTH_HEADER=()
+if [ -n "${FASTNEAR_API_KEY:-}" ]; then AUTH_HEADER=(-H "Authorization: Bearer $FASTNEAR_API_KEY"); fi
+PROFILE_BLOCK_HEIGHT="$(
+  curl -s "https://api.near.social/get" \
+    -H 'content-type: application/json' \
+    --data "$(jq -nc --arg account_id "$ACCOUNT_ID" --arg profile_field "$PROFILE_FIELD" '{
+      keys: [($account_id + "/" + $profile_field)],
+      options: {with_block_height: true}
+    }')" \
+    | jq -r --arg account_id "$ACCOUNT_ID" '.[$account_id].profile.name[":block"]'
+)"
+BLOCK_RECEIPTS="$(curl -s "https://tx.main.fastnear.com/v0/block" \
+  "${AUTH_HEADER[@]}" \
   -H 'content-type: application/json' \
   --data "$(jq -nc --argjson block_id "$PROFILE_BLOCK_HEIGHT" '{
     block_id: $block_id,
@@ -78,7 +92,37 @@ PROFILE_TX_HASH="$(echo "$BLOCK_RECEIPTS" | jq -r --arg account_id "$ACCOUNT_ID"
 3. Переиспользуйте этот tx hash в `POST /v0/transactions` и декодируйте payload записи SocialDB.
 
 ```bash
-curl -s "$TX_BASE_URL/v0/transactions" \
+ACCOUNT_ID=root.near
+PROFILE_FIELD=profile/name
+AUTH_HEADER=()
+if [ -n "${FASTNEAR_API_KEY:-}" ]; then AUTH_HEADER=(-H "Authorization: Bearer $FASTNEAR_API_KEY"); fi
+PROFILE_BLOCK_HEIGHT="$(
+  curl -s "https://api.near.social/get" \
+    -H 'content-type: application/json' \
+    --data "$(jq -nc --arg account_id "$ACCOUNT_ID" --arg profile_field "$PROFILE_FIELD" '{
+      keys: [($account_id + "/" + $profile_field)],
+      options: {with_block_height: true}
+    }')" \
+    | jq -r --arg account_id "$ACCOUNT_ID" '.[$account_id].profile.name[":block"]'
+)"
+PROFILE_TX_HASH="$(
+  curl -s "https://tx.main.fastnear.com/v0/block" \
+    "${AUTH_HEADER[@]}" \
+    -H 'content-type: application/json' \
+    --data "$(jq -nc --argjson block_id "$PROFILE_BLOCK_HEIGHT" '{
+      block_id: $block_id,
+      with_transactions: false,
+      with_receipts: true
+    }')" \
+    | jq -r --arg account_id "$ACCOUNT_ID" '
+        first(
+          .block_receipts[]
+          | select(.predecessor_id == $account_id and .receiver_id == "social.near")
+          | .transaction_hash
+        )'
+)"
+curl -s "https://tx.main.fastnear.com/v0/transactions" \
+  "${AUTH_HEADER[@]}" \
   -H 'content-type: application/json' \
   --data "$(jq -nc --arg tx_hash "$PROFILE_TX_HASH" '{tx_hashes: [$tx_hash]}')" \
   | jq --arg account_id "$ACCOUNT_ID" '{
@@ -94,8 +138,8 @@ curl -s "$TX_BASE_URL/v0/transactions" \
         | {
             method_name,
             profile_name: $profile.name,
-            description: $profile.description,
-            tags: ($profile.tags | keys)
+            image_fields: (($profile.image // {}) | keys),
+            linktree_keys: (($profile.linktree // {}) | keys)
           }
       )
     }'
@@ -105,8 +149,8 @@ curl -s "$TX_BASE_URL/v0/transactions" \
 
 Тот же мост работает и для других читаемых значений SocialDB:
 
-- вариант для связи подписки: `mike.near -> mob.near`, блок `79574924`, tx `FLLmTvFx9vCof79scy2uUviF5WwYmevkz9TZ8azPGVQb`
-- вариант для исходника виджета: `mob.near/widget/Profile`, блок `86494825`, tx `9QDupdK2ewMxfSvMmdGEkdBcVnoL4TexmXY2FnMRxfia`
+- вариант для связи подписки: `root.near -> mob.near`, блок `79152039`, tx `DvNoqtDrruhmcq7mPpxdFacph2ZCqSzMFF5ZqMRFG78q`
+- вариант для исходника виджета: `root.near/widget/Profile`, блок `76029540`, tx `ELS3DrE4Upoc91ZnBh4thVugxCUBAbaLFB4nyKsoyRNP`
 
 Ключевая идея не меняется: начните с читаемого значения и его write-block, восстановите receipt `*.near -> social.near` из блока, а затем декодируйте payload `social.near set` из исходной транзакции.
 ---
@@ -114,5 +158,5 @@ curl -s "$TX_BASE_URL/v0/transactions" \
 
 - FastNear обрабатывает более 10 млрд запросов в месяц.
 - FastNear управляет более чем 100 нодами по всему миру.
-- FastNear предлагает щедрые кредиты и бесплатный пробный период.
-- Быстро получите пробный аккаунт на [dashboard.fastnear.com](https://dashboard.fastnear.com).
+- Один API-ключ FastNear работает и для RPC, и для индексированных API.
+- Получите API-ключ на [dashboard.fastnear.com](https://dashboard.fastnear.com).

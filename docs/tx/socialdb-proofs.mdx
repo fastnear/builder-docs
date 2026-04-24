@@ -11,6 +11,8 @@ page_actions:
 
 Use this page only when the starting point is already a readable SocialDB value from `api.near.social` and the next question is historical write lookup.
 
+These shell steps work against the public SocialDB and FastNear endpoints. If `FASTNEAR_API_KEY` is already set in your shell, the FastNear calls will forward it automatically as a bearer header.
+
 For FastNear-first jobs, start with [Transactions Examples](/tx/examples). Come here only when the question has become "which write made this readable SocialDB value true?"
 
 ## Canonical example: prove that `root.near` set `profile.name` to `Illia`
@@ -34,7 +36,6 @@ For this live anchor:
 ```bash
 ACCOUNT_ID=root.near
 PROFILE_FIELD=profile/name
-FASTNEAR_API_KEY=
 
 PROFILE="$(curl -s "https://api.near.social/get" \
   -H 'content-type: application/json' \
@@ -55,8 +56,21 @@ PROFILE_BLOCK_HEIGHT="$(echo "$PROFILE" | jq -r --arg account_id "$ACCOUNT_ID" '
 2. Reuse that field-level block in FastNear block receipts and recover the receipt plus tx hash.
 
 ```bash
+ACCOUNT_ID=root.near
+PROFILE_FIELD=profile/name
+AUTH_HEADER=()
+if [ -n "${FASTNEAR_API_KEY:-}" ]; then AUTH_HEADER=(-H "Authorization: Bearer $FASTNEAR_API_KEY"); fi
+PROFILE_BLOCK_HEIGHT="$(
+  curl -s "https://api.near.social/get" \
+    -H 'content-type: application/json' \
+    --data "$(jq -nc --arg account_id "$ACCOUNT_ID" --arg profile_field "$PROFILE_FIELD" '{
+      keys: [($account_id + "/" + $profile_field)],
+      options: {with_block_height: true}
+    }')" \
+    | jq -r --arg account_id "$ACCOUNT_ID" '.[$account_id].profile.name[":block"]'
+)"
 BLOCK_RECEIPTS="$(curl -s "https://tx.main.fastnear.com/v0/block" \
-  -H "Authorization: Bearer $FASTNEAR_API_KEY" \
+  "${AUTH_HEADER[@]}" \
   -H 'content-type: application/json' \
   --data "$(jq -nc --argjson block_id "$PROFILE_BLOCK_HEIGHT" '{
     block_id: $block_id,
@@ -85,8 +99,37 @@ PROFILE_TX_HASH="$(echo "$BLOCK_RECEIPTS" | jq -r --arg account_id "$ACCOUNT_ID"
 3. Reuse that tx hash in `POST /v0/transactions` and decode the SocialDB write payload.
 
 ```bash
+ACCOUNT_ID=root.near
+PROFILE_FIELD=profile/name
+AUTH_HEADER=()
+if [ -n "${FASTNEAR_API_KEY:-}" ]; then AUTH_HEADER=(-H "Authorization: Bearer $FASTNEAR_API_KEY"); fi
+PROFILE_BLOCK_HEIGHT="$(
+  curl -s "https://api.near.social/get" \
+    -H 'content-type: application/json' \
+    --data "$(jq -nc --arg account_id "$ACCOUNT_ID" --arg profile_field "$PROFILE_FIELD" '{
+      keys: [($account_id + "/" + $profile_field)],
+      options: {with_block_height: true}
+    }')" \
+    | jq -r --arg account_id "$ACCOUNT_ID" '.[$account_id].profile.name[":block"]'
+)"
+PROFILE_TX_HASH="$(
+  curl -s "https://tx.main.fastnear.com/v0/block" \
+    "${AUTH_HEADER[@]}" \
+    -H 'content-type: application/json' \
+    --data "$(jq -nc --argjson block_id "$PROFILE_BLOCK_HEIGHT" '{
+      block_id: $block_id,
+      with_transactions: false,
+      with_receipts: true
+    }')" \
+    | jq -r --arg account_id "$ACCOUNT_ID" '
+        first(
+          .block_receipts[]
+          | select(.predecessor_id == $account_id and .receiver_id == "social.near")
+          | .transaction_hash
+        )'
+)"
 curl -s "https://tx.main.fastnear.com/v0/transactions" \
-  -H "Authorization: Bearer $FASTNEAR_API_KEY" \
+  "${AUTH_HEADER[@]}" \
   -H 'content-type: application/json' \
   --data "$(jq -nc --arg tx_hash "$PROFILE_TX_HASH" '{tx_hashes: [$tx_hash]}')" \
   | jq --arg account_id "$ACCOUNT_ID" '{
