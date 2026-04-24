@@ -10,7 +10,7 @@ page_actions:
 
 ## Начните здесь
 
-Все shell-примеры ниже работают на публичных Transactions API-хостах как есть. Если в shell задан `FASTNEAR_API_KEY`, они автоматически добавляют bearer header; если переменная не задана, они переходят на публичный неаутентифицированный путь.
+Все shell-примеры ниже работают на публичных Transactions API-хостах как есть. Если в shell задан `FASTNEAR_API_KEY`, они автоматически передают его как query-параметр `apiKey`; если переменная не задана, они переходят на публичный неаутентифицированный путь. Также поддерживается bearer-аутентификация через `Authorization: Bearer ${FASTNEAR_API_KEY}`, если вашему клиенту удобнее передавать ключ в заголовке.
 
 ### У меня один хеш транзакции. Что произошло?
 
@@ -18,11 +18,8 @@ page_actions:
 
 ```bash
 TX_HASH=7ZKnhzt2MqMNmsk13dV8GAjGu3Db8aHzSBHeNeu9MJCq
-AUTH_HEADER=()
-if [ -n "${FASTNEAR_API_KEY:-}" ]; then AUTH_HEADER=(-H "Authorization: Bearer $FASTNEAR_API_KEY"); fi
 
-curl -s "https://tx.main.fastnear.com/v0/transactions" \
-  "${AUTH_HEADER[@]}" \
+curl -s "https://tx.main.fastnear.com/v0/transactions?apiKey=${FASTNEAR_API_KEY:-}" \
   -H 'content-type: application/json' \
   --data "$(jq -nc --arg tx_hash "$TX_HASH" '{tx_hashes: [$tx_hash]}')" \
   | jq '{
@@ -45,11 +42,8 @@ curl -s "https://tx.main.fastnear.com/v0/transactions" \
 ```bash
 TX_HASH=2KhhB1uDScGCFQfVchep7DiZTGTxMcgfUYHNzwf5e6uL
 LOG_FRAGMENT=Refund
-AUTH_HEADER=()
-if [ -n "${FASTNEAR_API_KEY:-}" ]; then AUTH_HEADER=(-H "Authorization: Bearer $FASTNEAR_API_KEY"); fi
 
-curl -s "https://tx.main.fastnear.com/v0/transactions" \
-  "${AUTH_HEADER[@]}" \
+curl -s "https://tx.main.fastnear.com/v0/transactions?apiKey=${FASTNEAR_API_KEY:-}" \
   -H 'content-type: application/json' \
   --data "$(jq -nc --arg tx_hash "$TX_HASH" '{tx_hashes: [$tx_hash]}')" \
   | jq --arg fragment "$LOG_FRAGMENT" '
@@ -75,11 +69,8 @@ curl -s "https://tx.main.fastnear.com/v0/transactions" \
 
 ```bash
 RECEIPT_ID=B8QzHQZ6VnUVy8zaVXCEkWuSs7MPb34yoHYixZV3Zdj1
-AUTH_HEADER=()
-if [ -n "${FASTNEAR_API_KEY:-}" ]; then AUTH_HEADER=(-H "Authorization: Bearer $FASTNEAR_API_KEY"); fi
 
-curl -s "https://tx.main.fastnear.com/v0/receipt" \
-  "${AUTH_HEADER[@]}" \
+curl -s "https://tx.main.fastnear.com/v0/receipt?apiKey=${FASTNEAR_API_KEY:-}" \
   -H 'content-type: application/json' \
   --data "$(jq -nc --arg receipt_id "$RECEIPT_ID" '{receipt_id: $receipt_id}')" \
   | jq '{
@@ -112,11 +103,8 @@ curl -s "https://tx.main.fastnear.com/v0/receipt" \
 ```bash
 TX_HASH=CrhH3xLzbNwNMGgZkgptXorwh8YmqxRGuA6Mc11MkU6M
 NEW_ACCOUNT_ID=rollback-mo4vmkig.temp.mike.testnet
-AUTH_HEADER=()
-if [ -n "${FASTNEAR_API_KEY:-}" ]; then AUTH_HEADER=(-H "Authorization: Bearer $FASTNEAR_API_KEY"); fi
 
-curl -s "https://tx.test.fastnear.com/v0/transactions" \
-  "${AUTH_HEADER[@]}" \
+curl -s "https://tx.test.fastnear.com/v0/transactions?apiKey=${FASTNEAR_API_KEY:-}" \
   -H 'content-type: application/json' \
   --data "$(jq -nc --arg tx_hash "$TX_HASH" '{tx_hashes: [$tx_hash]}')" \
   | jq '{
@@ -139,11 +127,8 @@ curl -s "https://tx.test.fastnear.com/v0/transactions" \
 
 ```bash
 NEW_ACCOUNT_ID=rollback-mo4vmkig.temp.mike.testnet
-AUTH_HEADER=()
-if [ -n "${FASTNEAR_API_KEY:-}" ]; then AUTH_HEADER=(-H "Authorization: Bearer $FASTNEAR_API_KEY"); fi
 
-curl -s "https://rpc.testnet.fastnear.com" \
-  "${AUTH_HEADER[@]}" \
+curl -s "https://rpc.testnet.fastnear.com?apiKey=${FASTNEAR_API_KEY:-}" \
   -H 'content-type: application/json' \
   --data "$(jq -nc --arg account_id "$NEW_ACCOUNT_ID" '{
     jsonrpc: "2.0", id: "fastnear", method: "query",
@@ -162,11 +147,8 @@ curl -s "https://rpc.testnet.fastnear.com" \
 TX_HASH=2KhhB1uDScGCFQfVchep7DiZTGTxMcgfUYHNzwf5e6uL
 ORIGIN_CONTRACT_ID=wrap.near
 CALLBACK_METHOD=ft_resolve_transfer
-AUTH_HEADER=()
-if [ -n "${FASTNEAR_API_KEY:-}" ]; then AUTH_HEADER=(-H "Authorization: Bearer $FASTNEAR_API_KEY"); fi
 
-curl -s "https://tx.main.fastnear.com/v0/transactions" \
-  "${AUTH_HEADER[@]}" \
+curl -s "https://tx.main.fastnear.com/v0/transactions?apiKey=${FASTNEAR_API_KEY:-}" \
   -H 'content-type: application/json' \
   --data "$(jq -nc --arg tx_hash "$TX_HASH" '{tx_hashes: [$tx_hash]}')" \
   | jq --arg origin "$ORIGIN_CONTRACT_ID" --arg callback "$CALLBACK_METHOD" '{
@@ -206,11 +188,8 @@ curl -s "https://tx.main.fastnear.com/v0/transactions" \
 ```bash
 REQUEST_TX=BZDQAxEdpQ9wUGXmXTa2APwFLDTTqTy5ucrBPsfgZeyz
 WORKER_TX=3NYD4Mkn5cwkuVkGP9PPoiJ9PB5Vr7v6r8CwSswtHVA3
-AUTH_HEADER=()
-if [ -n "${FASTNEAR_API_KEY:-}" ]; then AUTH_HEADER=(-H "Authorization: Bearer $FASTNEAR_API_KEY"); fi
 
-curl -s "https://tx.main.fastnear.com/v0/transactions" \
-  "${AUTH_HEADER[@]}" \
+curl -s "https://tx.main.fastnear.com/v0/transactions?apiKey=${FASTNEAR_API_KEY:-}" \
   -H 'content-type: application/json' \
   --data "$(jq -nc --arg a "$REQUEST_TX" --arg b "$WORKER_TX" '{tx_hashes: [$a, $b]}')" \
   | jq '[
