@@ -10,7 +10,7 @@ page_actions:
 
 ## Start Here
 
-All shell examples below work on the public Transactions API hosts as-is. If `FASTNEAR_API_KEY` is set in your shell, they add it as a bearer header automatically; if it is unset, they fall back to the public unauthenticated path.
+All shell examples below work on the public Transactions API hosts as-is. If `FASTNEAR_API_KEY` is set in your shell, they pass it as an `apiKey` query parameter automatically; if it is unset, they fall back to the public unauthenticated path. Bearer auth with `Authorization: Bearer ${FASTNEAR_API_KEY}` is also supported when headers fit your client better.
 
 ### I have one transaction hash. What happened?
 
@@ -18,11 +18,8 @@ Paste the hash into `POST /v0/transactions` and one response usually holds the w
 
 ```bash
 TX_HASH=7ZKnhzt2MqMNmsk13dV8GAjGu3Db8aHzSBHeNeu9MJCq
-AUTH_HEADER=()
-if [ -n "${FASTNEAR_API_KEY:-}" ]; then AUTH_HEADER=(-H "Authorization: Bearer $FASTNEAR_API_KEY"); fi
 
-curl -s "https://tx.main.fastnear.com/v0/transactions" \
-  "${AUTH_HEADER[@]}" \
+curl -s "https://tx.main.fastnear.com/v0/transactions?apiKey=${FASTNEAR_API_KEY:-}" \
   -H 'content-type: application/json' \
   --data "$(jq -nc --arg tx_hash "$TX_HASH" '{tx_hashes: [$tx_hash]}')" \
   | jq '{
@@ -45,11 +42,8 @@ List every logged receipt in the transaction with a flag for whether its logs co
 ```bash
 TX_HASH=2KhhB1uDScGCFQfVchep7DiZTGTxMcgfUYHNzwf5e6uL
 LOG_FRAGMENT=Refund
-AUTH_HEADER=()
-if [ -n "${FASTNEAR_API_KEY:-}" ]; then AUTH_HEADER=(-H "Authorization: Bearer $FASTNEAR_API_KEY"); fi
 
-curl -s "https://tx.main.fastnear.com/v0/transactions" \
-  "${AUTH_HEADER[@]}" \
+curl -s "https://tx.main.fastnear.com/v0/transactions?apiKey=${FASTNEAR_API_KEY:-}" \
   -H 'content-type: application/json' \
   --data "$(jq -nc --arg tx_hash "$TX_HASH" '{tx_hashes: [$tx_hash]}')" \
   | jq --arg fragment "$LOG_FRAGMENT" '
@@ -75,11 +69,8 @@ The `Refund` fragment attributes to receipt `9sLHQpaGz3NnMNMn8zGrDUSyktR1q6ts2ot
 
 ```bash
 RECEIPT_ID=B8QzHQZ6VnUVy8zaVXCEkWuSs7MPb34yoHYixZV3Zdj1
-AUTH_HEADER=()
-if [ -n "${FASTNEAR_API_KEY:-}" ]; then AUTH_HEADER=(-H "Authorization: Bearer $FASTNEAR_API_KEY"); fi
 
-curl -s "https://tx.main.fastnear.com/v0/receipt" \
-  "${AUTH_HEADER[@]}" \
+curl -s "https://tx.main.fastnear.com/v0/receipt?apiKey=${FASTNEAR_API_KEY:-}" \
   -H 'content-type: application/json' \
   --data "$(jq -nc --arg receipt_id "$RECEIPT_ID" '{receipt_id: $receipt_id}')" \
   | jq '{
@@ -112,11 +103,8 @@ One batch submitted `CreateAccount → Transfer → AddKey → FunctionCall` and
 ```bash
 TX_HASH=CrhH3xLzbNwNMGgZkgptXorwh8YmqxRGuA6Mc11MkU6M
 NEW_ACCOUNT_ID=rollback-mo4vmkig.temp.mike.testnet
-AUTH_HEADER=()
-if [ -n "${FASTNEAR_API_KEY:-}" ]; then AUTH_HEADER=(-H "Authorization: Bearer $FASTNEAR_API_KEY"); fi
 
-curl -s "https://tx.test.fastnear.com/v0/transactions" \
-  "${AUTH_HEADER[@]}" \
+curl -s "https://tx.test.fastnear.com/v0/transactions?apiKey=${FASTNEAR_API_KEY:-}" \
   -H 'content-type: application/json' \
   --data "$(jq -nc --arg tx_hash "$TX_HASH" '{tx_hashes: [$tx_hash]}')" \
   | jq '{
@@ -139,11 +127,8 @@ Now prove the earlier actions rolled back by asking for the account the batch *t
 
 ```bash
 NEW_ACCOUNT_ID=rollback-mo4vmkig.temp.mike.testnet
-AUTH_HEADER=()
-if [ -n "${FASTNEAR_API_KEY:-}" ]; then AUTH_HEADER=(-H "Authorization: Bearer $FASTNEAR_API_KEY"); fi
 
-curl -s "https://rpc.testnet.fastnear.com" \
-  "${AUTH_HEADER[@]}" \
+curl -s "https://rpc.testnet.fastnear.com?apiKey=${FASTNEAR_API_KEY:-}" \
   -H 'content-type: application/json' \
   --data "$(jq -nc --arg account_id "$NEW_ACCOUNT_ID" '{
     jsonrpc: "2.0", id: "fastnear", method: "query",
@@ -162,11 +147,8 @@ A tx's outer `execution_outcome.outcome.status` reports `SuccessReceiptId` whene
 TX_HASH=2KhhB1uDScGCFQfVchep7DiZTGTxMcgfUYHNzwf5e6uL
 ORIGIN_CONTRACT_ID=wrap.near
 CALLBACK_METHOD=ft_resolve_transfer
-AUTH_HEADER=()
-if [ -n "${FASTNEAR_API_KEY:-}" ]; then AUTH_HEADER=(-H "Authorization: Bearer $FASTNEAR_API_KEY"); fi
 
-curl -s "https://tx.main.fastnear.com/v0/transactions" \
-  "${AUTH_HEADER[@]}" \
+curl -s "https://tx.main.fastnear.com/v0/transactions?apiKey=${FASTNEAR_API_KEY:-}" \
   -H 'content-type: application/json' \
   --data "$(jq -nc --arg tx_hash "$TX_HASH" '{tx_hashes: [$tx_hash]}')" \
   | jq --arg origin "$ORIGIN_CONTRACT_ID" --arg callback "$CALLBACK_METHOD" '{
@@ -206,11 +188,8 @@ Receipt success is not transitive. A protocol can hand off cleanly and still see
 ```bash
 REQUEST_TX=BZDQAxEdpQ9wUGXmXTa2APwFLDTTqTy5ucrBPsfgZeyz
 WORKER_TX=3NYD4Mkn5cwkuVkGP9PPoiJ9PB5Vr7v6r8CwSswtHVA3
-AUTH_HEADER=()
-if [ -n "${FASTNEAR_API_KEY:-}" ]; then AUTH_HEADER=(-H "Authorization: Bearer $FASTNEAR_API_KEY"); fi
 
-curl -s "https://tx.main.fastnear.com/v0/transactions" \
-  "${AUTH_HEADER[@]}" \
+curl -s "https://tx.main.fastnear.com/v0/transactions?apiKey=${FASTNEAR_API_KEY:-}" \
   -H 'content-type: application/json' \
   --data "$(jq -nc --arg a "$REQUEST_TX" --arg b "$WORKER_TX" '{tx_hashes: [$a, $b]}')" \
   | jq '[

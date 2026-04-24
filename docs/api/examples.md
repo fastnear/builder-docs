@@ -10,7 +10,7 @@ page_actions:
 
 ## Examples
 
-All shell examples below work on the public FastNear API hosts as-is. If `FASTNEAR_API_KEY` is set in your shell, they add it as a bearer header automatically; if it is unset, they fall back to the public unauthenticated path.
+All shell examples below work on the public FastNear API hosts as-is. If `FASTNEAR_API_KEY` is set in your shell, they pass it as an `apiKey` query parameter automatically; if it is unset, they fall back to the public unauthenticated path. Bearer auth with `Authorization: Bearer ${FASTNEAR_API_KEY}` is also supported when headers fit your client better.
 
 ### Summarize one account in one call
 
@@ -18,11 +18,8 @@ All shell examples below work on the public FastNear API hosts as-is. If `FASTNE
 
 ```bash
 ACCOUNT_ID=root.near
-AUTH_HEADER=()
-if [ -n "${FASTNEAR_API_KEY:-}" ]; then AUTH_HEADER=(-H "Authorization: Bearer $FASTNEAR_API_KEY"); fi
 
-curl -s "https://api.fastnear.com/v1/account/$ACCOUNT_ID/full" \
-  "${AUTH_HEADER[@]}" \
+curl -s "https://api.fastnear.com/v1/account/$ACCOUNT_ID/full?apiKey=${FASTNEAR_API_KEY:-}" \
   | jq '{
       account_id,
       near_balance_yocto: .state.balance,
@@ -40,18 +37,14 @@ Look up which account a key belongs to, then read that account's holdings in one
 
 ```bash
 PUBLIC_KEY='ed25519:CCaThr3uokqnUs6Z5vVnaDcJdrfuTpYJHJWcAGubDjT'
-AUTH_HEADER=()
-if [ -n "${FASTNEAR_API_KEY:-}" ]; then AUTH_HEADER=(-H "Authorization: Bearer $FASTNEAR_API_KEY"); fi
 
-LOOKUP="$(curl -s "https://api.fastnear.com/v1/public_key/$(jq -rn --arg k "$PUBLIC_KEY" '$k | @uri')" \
-  "${AUTH_HEADER[@]}")"
+LOOKUP="$(curl -s "https://api.fastnear.com/v1/public_key/$(jq -rn --arg k "$PUBLIC_KEY" '$k | @uri')?apiKey=${FASTNEAR_API_KEY:-}")"
 
 echo "$LOOKUP" | jq '{matched: (.account_ids | length), account_ids}'
 
 ACCOUNT_ID="$(echo "$LOOKUP" | jq -r '.account_ids[0]')"
 
-curl -s "https://api.fastnear.com/v1/account/$ACCOUNT_ID/full" \
-  "${AUTH_HEADER[@]}" \
+curl -s "https://api.fastnear.com/v1/account/$ACCOUNT_ID/full?apiKey=${FASTNEAR_API_KEY:-}" \
   | jq '{account_id, state, tokens: (.tokens|length), nfts: (.nfts|length), pools: (.pools|length)}'
 ```
 
@@ -63,11 +56,8 @@ NEAR account state has three buckets that wallet UIs tend to conflate: `balance`
 
 ```bash
 ACCOUNT_ID=root.near
-AUTH_HEADER=()
-if [ -n "${FASTNEAR_API_KEY:-}" ]; then AUTH_HEADER=(-H "Authorization: Bearer $FASTNEAR_API_KEY"); fi
 
-curl -s "https://api.fastnear.com/v1/account/$ACCOUNT_ID/full" \
-  "${AUTH_HEADER[@]}" \
+curl -s "https://api.fastnear.com/v1/account/$ACCOUNT_ID/full?apiKey=${FASTNEAR_API_KEY:-}" \
   | jq '
       (.state.balance | tonumber) as $amount
       | (.state.locked  | tonumber) as $locked
@@ -97,11 +87,8 @@ Every entry under `/full`'s `tokens`, `nfts`, and `pools` arrays carries its own
 
 ```bash
 ACCOUNT_ID=root.near
-AUTH_HEADER=()
-if [ -n "${FASTNEAR_API_KEY:-}" ]; then AUTH_HEADER=(-H "Authorization: Bearer $FASTNEAR_API_KEY"); fi
 
-curl -s "https://api.fastnear.com/v1/account/$ACCOUNT_ID/full" \
-  "${AUTH_HEADER[@]}" \
+curl -s "https://api.fastnear.com/v1/account/$ACCOUNT_ID/full?apiKey=${FASTNEAR_API_KEY:-}" \
   | jq '
       [
         (.tokens // [])[].last_update_block_height,
@@ -129,11 +116,8 @@ NEAR account names encode a hierarchy: `mint.sharddog.near` is a subaccount of `
 ```bash
 ACCOUNT_ID=root.near
 PUBLISHER=sharddog.near
-AUTH_HEADER=()
-if [ -n "${FASTNEAR_API_KEY:-}" ]; then AUTH_HEADER=(-H "Authorization: Bearer $FASTNEAR_API_KEY"); fi
 
-curl -s "https://api.fastnear.com/v1/account/$ACCOUNT_ID/nft" \
-  "${AUTH_HEADER[@]}" \
+curl -s "https://api.fastnear.com/v1/account/$ACCOUNT_ID/nft?apiKey=${FASTNEAR_API_KEY:-}" \
   | jq --arg publisher "$PUBLISHER" '
       ("." + $publisher) as $suffix
       | {
@@ -162,13 +146,9 @@ Direct pool positions live on `/staking`; liquid staking tokens (stNEAR, LiNEAR,
 ```bash
 ACCOUNT_ID=root.near
 LIQUID_PROVIDERS_JSON='["meta-pool.near","lst.rhealab.near","linear-protocol.near"]'
-AUTH_HEADER=()
-if [ -n "${FASTNEAR_API_KEY:-}" ]; then AUTH_HEADER=(-H "Authorization: Bearer $FASTNEAR_API_KEY"); fi
 
-STAKING="$(curl -s "https://api.fastnear.com/v1/account/$ACCOUNT_ID/staking" \
-  "${AUTH_HEADER[@]}")"
-FT="$(curl -s "https://api.fastnear.com/v1/account/$ACCOUNT_ID/ft" \
-  "${AUTH_HEADER[@]}")"
+STAKING="$(curl -s "https://api.fastnear.com/v1/account/$ACCOUNT_ID/staking?apiKey=${FASTNEAR_API_KEY:-}")"
+FT="$(curl -s "https://api.fastnear.com/v1/account/$ACCOUNT_ID/ft?apiKey=${FASTNEAR_API_KEY:-}")"
 
 jq -n \
   --argjson staking "$STAKING" \
