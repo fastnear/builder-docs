@@ -28,7 +28,7 @@
     "description": "The label of footer link with label=NEAR Whitepaper linking to https://pages.near.org/papers/the-official-near-white-paper"
   },
   "link.item.label.FastNear agent-first JavaScript lib": {
-    "message": "FastNear agent-first JavaScript lib",
+    "message": "JavaScript-библиотека FastNear для агентов",
     "description": "The label of footer link with label=FastNear agent-first JavaScript lib linking to https://js.fastnear.com"
   },
   "copyright": {
