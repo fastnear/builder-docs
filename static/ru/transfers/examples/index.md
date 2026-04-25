@@ -2,7 +2,7 @@
 
 ## Примеры
 
-Эти shell-примеры работают и на публичных Transfers и Transactions endpoint-ах. Если `FASTNEAR_API_KEY` уже задан в окружении, сниппеты автоматически пробросят его как bearer-заголовок.
+Эти shell-примеры работают и на публичных Transfers и Transactions endpoint-ах. Если `FASTNEAR_API_KEY` задан в окружении, сниппеты автоматически передадут его как query-параметр `apiKey`; если переменная не задана, они переходят на публичный неаутентифицированный путь. Также поддерживается bearer-аутентификация через `Authorization: Bearer ${FASTNEAR_API_KEY}`, если вашему клиенту удобнее передавать ключ в заголовке.
 
 ### Какая у этого аккаунта свежая активность по переводам?
 
@@ -10,11 +10,8 @@
 
 ```bash
 ACCOUNT_ID=root.near
-AUTH_HEADER=()
-if [ -n "${FASTNEAR_API_KEY:-}" ]; then AUTH_HEADER=(-H "Authorization: Bearer $FASTNEAR_API_KEY"); fi
 
-curl -s "https://transfers.main.fastnear.com/v0/transfers" \
-  "${AUTH_HEADER[@]}" \
+curl -s "https://transfers.main.fastnear.com/v0/transfers?apiKey=${FASTNEAR_API_KEY:-}" \
   -H 'content-type: application/json' \
   --data "$(jq -nc --arg account_id "$ACCOUNT_ID" '{account_id: $account_id, desc: true, limit: 5}')" \
   | jq '{
@@ -37,11 +34,8 @@ curl -s "https://transfers.main.fastnear.com/v0/transfers" \
 
 ```bash
 ACCOUNT_ID=root.near
-AUTH_HEADER=()
-if [ -n "${FASTNEAR_API_KEY:-}" ]; then AUTH_HEADER=(-H "Authorization: Bearer $FASTNEAR_API_KEY"); fi
 
-FEED="$(curl -s "https://transfers.main.fastnear.com/v0/transfers" \
-  "${AUTH_HEADER[@]}" \
+FEED="$(curl -s "https://transfers.main.fastnear.com/v0/transfers?apiKey=${FASTNEAR_API_KEY:-}" \
   -H 'content-type: application/json' \
   --data "$(jq -nc --arg account_id "$ACCOUNT_ID" '{
     account_id: $account_id,
@@ -64,10 +58,7 @@ echo "$FEED" | jq '{
 
 ```bash
 ACCOUNT_ID=root.near
-AUTH_HEADER=()
-if [ -n "${FASTNEAR_API_KEY:-}" ]; then AUTH_HEADER=(-H "Authorization: Bearer $FASTNEAR_API_KEY"); fi
-FEED="$(curl -s "https://transfers.main.fastnear.com/v0/transfers" \
-  "${AUTH_HEADER[@]}" \
+FEED="$(curl -s "https://transfers.main.fastnear.com/v0/transfers?apiKey=${FASTNEAR_API_KEY:-}" \
   -H 'content-type: application/json' \
   --data "$(jq -nc --arg account_id "$ACCOUNT_ID" '{
     account_id: $account_id,
@@ -79,8 +70,7 @@ FEED="$(curl -s "https://transfers.main.fastnear.com/v0/transfers" \
   }')")"
 RECEIPT_ID="$(echo "$FEED" | jq -r '.transfers[0].receipt_id')"
 
-curl -s "https://tx.main.fastnear.com/v0/receipt" \
-  "${AUTH_HEADER[@]}" \
+curl -s "https://tx.main.fastnear.com/v0/receipt?apiKey=${FASTNEAR_API_KEY:-}" \
   -H 'content-type: application/json' \
   --data "$(jq -nc --arg receipt_id "$RECEIPT_ID" '{receipt_id: $receipt_id}')" \
   | jq '.receipt | {receipt_id, transaction_hash, receiver_id, predecessor_id, tx_block_height, is_success}'
