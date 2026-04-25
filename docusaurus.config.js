@@ -735,7 +735,7 @@ const config = {
             title: 'More',
             items: [
               {
-                label: 'JS API (alpha version)',
+                label: 'FastNear agent-first JavaScript lib',
                 href: 'https://js.fastnear.com',
               },
             ],

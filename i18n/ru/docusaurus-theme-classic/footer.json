@@ -27,9 +27,9 @@
     "message": "Белая книга NEAR",
     "description": "The label of footer link with label=NEAR Whitepaper linking to https://pages.near.org/papers/the-official-near-white-paper"
   },
-  "link.item.label.JS API (alpha version)": {
-    "message": "JS API (альфа-версия)",
-    "description": "The label of footer link with label=JS API (alpha version) linking to https://js.fastnear.com"
+  "link.item.label.FastNear agent-first JavaScript lib": {
+    "message": "JavaScript-библиотека FastNear для агентов",
+    "description": "The label of footer link with label=FastNear agent-first JavaScript lib linking to https://js.fastnear.com"
   },
   "copyright": {
     "message": "Авторские права © 2026 FastNear",
