@@ -1,5 +1,11 @@
 #!/usr/bin/env node
 
+// Live smoke test for HTTP `Link` headers and content-negotiated `.md` serving advertised via
+// `static/_headers` and `static/_worker.js`. These directives only execute on Cloudflare Pages
+// with Workers/Pages Functions enabled, so this script is meaningful only against a Cloudflare
+// Pages origin (production once migrated, or local `wrangler pages dev`). Against GitHub Pages
+// it will fail by design — that is not a regression. Override the target with SITE_ORIGIN.
+
 const SITE_ORIGIN = (process.env.SITE_ORIGIN || "https://docs.fastnear.com").replace(/\/+$/, "");
 
 const API_CATALOG_FRAGMENT = 'rel="api-catalog"';
