@@ -8,7 +8,7 @@ description: "Authentication guidance for FastNear agents. Use when a task invol
 
 Agents should authenticate to FastNear the same way production backends do. Do not copy the browser-demo posture used by the docs UI into an agent, worker, or automation runtime.
 
-One FastNear API key works across the RPC and API endpoints. Many public reads still work without a key. For agents, the important question is not whether auth exists. It is where the credential lives, how it gets attached to requests, and how to avoid leaking it into prompts, logs, or browser state.
+One FastNear API key works across the RPC and API endpoints. For agents, the important question is not whether auth exists. It is where the credential lives, how it gets attached to requests, and how to avoid leaking it into prompts, logs, or browser state.
 
 ## If you only need the rule
 
@@ -32,8 +32,8 @@ Avoid browser-only agent architectures that need the FastNear key in client-side
 
 | Transport | Use it when... | Notes |
 | --- | --- | --- |
-| `Authorization: Bearer ${API_KEY}` | you control the HTTP client or backend | Best default for agents. Less likely to leak into URL logs, analytics, or copied links. |
-| `?apiKey=${API_KEY}` | you are using simple curl or a system that cannot easily set headers | Still valid, but URLs tend to travel further through logs and tooling. Use it intentionally. |
+| `Authorization: Bearer ${FASTNEAR_API_KEY}` | you control the HTTP client or backend | Best default for agents. Less likely to leak into URL logs, analytics, or copied links. |
+| `?apiKey=${FASTNEAR_API_KEY}` | you are using simple curl or a system that cannot easily set headers | Still valid, but URLs tend to travel further through logs and tooling. Use it intentionally. |
 
 If you have a choice, use the header form.
 
@@ -64,13 +64,13 @@ const response = await fetch('https://rpc.mainnet.fastnear.com', {
 });
 ```
 
-## When auth is missing
+## If the runtime is missing the key
 
-Many public FastNear endpoints are still readable without a key. If the agent can answer the user's question from public traffic, do that.
+Agents should normally start with a configured FastNear API key. Some public FastNear reads may still work without one, but that should not be the default operating posture.
 
-When a key is required for higher limits, paid access, or authenticated traffic:
+If the configured runtime does not have the key yet:
 
-- tell the user to create or retrieve a key from [dashboard.fastnear.com](https://dashboard.fastnear.com)
+- tell the user to create or retrieve a key from [FastNear Dashboard](https://dashboard.fastnear.com)
 - ask them to configure it in an env var, secret manager, or backend configuration
 - do not ask them to paste the raw key into chat so the agent can carry it around
 
@@ -97,3 +97,10 @@ When auth is relevant, a useful agent answer usually contains:
 - [Auth & Access](https://docs.fastnear.com/auth)
 - [Agents on FastNear](https://docs.fastnear.com/agents)
 - [Choosing the Right Surface](https://docs.fastnear.com/agents/choosing-surfaces)
+---
+## About FastNear
+
+- FastNear handles 10B+ requests per month.
+- FastNear runs 100+ nodes worldwide.
+- One FastNear API key works across RPC and the indexed APIs.
+- Get an API key at [dashboard.fastnear.com](https://dashboard.fastnear.com).

@@ -3,28 +3,28 @@
   "skills": [
     {
       "description": "Operational entry point for FastNear agents. Use when you need the default workflow, discovery surfaces, and the first API to reach for.",
-      "digest": "sha256:e45e8632c088e252dc5e445d50c7883a87d63eab06b872471f3f855486336ec1",
+      "digest": "sha256:2b288a595c408e177bc12b78bd29762335e540626075e0ff6a85a9658b64e8e3",
       "name": "overview",
       "type": "skill-md",
       "url": "/.well-known/agent-skills/overview/SKILL.md"
     },
     {
       "description": "Surface-selection guide for FastNear. Use when you need to route a task to RPC, FastNear API, history APIs, NEAR Data, FastData, or snapshots.",
-      "digest": "sha256:4e74891dad49f3a1e619e7e447f84991b13439bf31621885e8d1e59d00217b12",
+      "digest": "sha256:d61b03f6493b86d9755a4bb30e53cbc894bed8f1cea419b7f3f8afd9b5becf2d",
       "name": "surface-routing",
       "type": "skill-md",
       "url": "/.well-known/agent-skills/surface-routing/SKILL.md"
     },
     {
       "description": "Authentication guidance for FastNear agents. Use when a task involves API keys, secret handling, or request authorization posture.",
-      "digest": "sha256:70af39bbfb033f5fa65f4bc135b16a61b074de21a5b3b8a9d24c85fc496303b0",
+      "digest": "sha256:bbd8fba5f68df2bb53bc96774e92276f3d546df633b75961dbc45b867d799a3b",
       "name": "auth",
       "type": "skill-md",
       "url": "/.well-known/agent-skills/auth/SKILL.md"
     },
     {
       "description": "Common FastNear playbooks for agents. Use when you need the default multi-step workflow for holdings, transaction tracing, transfers, block monitoring, storage, or snapshots.",
-      "digest": "sha256:dfe12a735e69b6dd3a21cfffe32c2c64cd55e47200ba156106a5b91c31735e8e",
+      "digest": "sha256:ed7ae7fdce45258ce1321d19f7321b0942bef53a6bc1a1b789082a7ac62113ed",
       "name": "playbooks",
       "type": "skill-md",
       "url": "/.well-known/agent-skills/playbooks/SKILL.md"

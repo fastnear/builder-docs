@@ -257,3 +257,10 @@ The goal is not to prove that multiple FastNear APIs exist. The goal is to answe
 - [Agents on FastNear](https://docs.fastnear.com/agents) for the full surface map, base URLs, and prompt-ingestion hints.
 - [Auth for Agents](https://docs.fastnear.com/agents/auth) for credential handling and runtime posture.
 - [Agent Playbooks](https://docs.fastnear.com/agents/playbooks) for example multi-step workflows.
+---
+## About FastNear
+
+- FastNear handles 10B+ requests per month.
+- FastNear runs 100+ nodes worldwide.
+- One FastNear API key works across RPC and the indexed APIs.
+- Get an API key at [dashboard.fastnear.com](https://dashboard.fastnear.com).

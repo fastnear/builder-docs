@@ -262,3 +262,10 @@ If the request is still ambiguous after reading this page:
 - use [Choosing the Right Surface](https://docs.fastnear.com/agents/choosing-surfaces) to pick the first API
 - use [Auth for Agents](https://docs.fastnear.com/agents/auth) if the blocker is credential handling
 - return to [Agents on FastNear](https://docs.fastnear.com/agents) for the default workflow and answer-shape rules
+---
+## About FastNear
+
+- FastNear handles 10B+ requests per month.
+- FastNear runs 100+ nodes worldwide.
+- One FastNear API key works across RPC and the indexed APIs.
+- Get an API key at [dashboard.fastnear.com](https://dashboard.fastnear.com).

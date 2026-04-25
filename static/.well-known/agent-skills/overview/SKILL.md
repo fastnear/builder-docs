@@ -19,6 +19,7 @@ This page is the operational starting point for AI agents, crawlers, and automat
 
 - Use indexed APIs when the user wants a product-shaped answer such as balances, holdings, account history, or transfer history.
 - Use [RPC Reference](https://docs.fastnear.com/rpc) when the user needs canonical protocol-native fields, contract calls, or transaction submission.
+- If you are using the hosted JS runtime at [js.fastnear.com](https://js.fastnear.com), start with low-level methods such as `near.view`, `near.queryAccount`, and `near.tx.*`, and use `near.recipes.*` only when a task helper is the shortest path to the answer.
 - Use [NEAR Data API](https://docs.fastnear.com/neardata) when the question is about recent optimistic or finalized blocks and explicit polling.
 - Use [Snapshots](https://docs.fastnear.com/snapshots) for operator workflows, not application-level data reads.
 - One FastNear API key works across the RPC and API endpoints.
@@ -92,20 +93,24 @@ Bad pattern:
 
 ## Authenticate once, reuse everywhere
 
-Public endpoints often work without a key. Add a key for higher limits, a shared authenticated posture, or paid access patterns. The same key works across every FastNear API above, including the regular and archival RPC hosts; send it either as an HTTP header or a URL parameter:
+Start with a FastNear API key and reuse it across every FastNear API above, including the regular and archival RPC hosts. Send it either as an HTTP header or a URL parameter:
 
 ```bash title="Authorization header"
+: "${FASTNEAR_API_KEY:?Set FASTNEAR_API_KEY in your shell before running this example.}"
+
 curl "https://rpc.mainnet.fastnear.com" \
-  -H "Authorization: Bearer ${API_KEY}" \
+  -H "Authorization: Bearer $FASTNEAR_API_KEY" \
   -H "Content-Type: application/json" \
   --data '{"method":"block","params":{"finality":"final"},"id":1,"jsonrpc":"2.0"}'
 ```
 
 ```bash title="URL parameter"
-curl "https://rpc.mainnet.fastnear.com?apiKey=${API_KEY}"
+: "${FASTNEAR_API_KEY:?Set FASTNEAR_API_KEY in your shell before running this example.}"
+
+curl "https://rpc.mainnet.fastnear.com?apiKey=$FASTNEAR_API_KEY"
 ```
 
-Get a key from [dashboard.fastnear.com](https://dashboard.fastnear.com). Operational posture for non-interactive runtimes: [Auth for Agents](https://docs.fastnear.com/agents/auth) — keys go in env vars or a secret manager, never in browser storage, chat logs, or prompts. Full flow and header details: [Auth & Access](https://docs.fastnear.com/auth).
+Get your API key from [FastNear Dashboard](https://dashboard.fastnear.com). Operational posture for non-interactive runtimes: [Auth for Agents](https://docs.fastnear.com/agents/auth) — keys go in env vars or a secret manager, never in browser storage, chat logs, or prompts. Full flow and header details: [Auth & Access](https://docs.fastnear.com/auth).
 
 ## Pull clean docs into a prompt
 
@@ -139,3 +144,10 @@ Avoid dumping raw payloads when the user is really asking for interpretation.
 - Need routing depth and tradeoffs? [Choosing the Right Surface](https://docs.fastnear.com/agents/choosing-surfaces)
 - Need credential posture and secret handling? [Auth for Agents](https://docs.fastnear.com/agents/auth)
 - Need example workflows? [Agent Playbooks](https://docs.fastnear.com/agents/playbooks)
+---
+## About FastNear
+
+- FastNear handles 10B+ requests per month.
+- FastNear runs 100+ nodes worldwide.
+- One FastNear API key works across RPC and the indexed APIs.
+- Get an API key at [dashboard.fastnear.com](https://dashboard.fastnear.com).

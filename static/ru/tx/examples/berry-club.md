@@ -1,7 +1,5 @@
 **Источник:** [https://docs.fastnear.com/ru/tx/examples/berry-club](https://docs.fastnear.com/ru/tx/examples/berry-club)
 
-{/* FASTNEAR_AI_DISCOVERY: Этот walkthrough показывает краткий и полезный путь для Berry Club: сначала прочитайте живую доску через RPC get_lines, а Transactions API используйте только тогда, когда нужно восстановить одну более раннюю эпоху по draw-вызовам. */}
-
 # Berry Club: как читать живую доску и разбирать одну эпоху
 
 Используйте этот walkthrough, когда живую доску читать легко, но нужен один понятный путь к исторической реконструкции.
