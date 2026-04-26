@@ -1,0 +1,153 @@
+---
+name: "overview"
+description: "Operational entry point for FastNear agents. Use when you need the default workflow, discovery surfaces, and the first API to reach for."
+---
+**Source:** [https://docs.fastnear.com/agents](https://docs.fastnear.com/agents)
+
+# Agents on FastNear
+
+This page is the operational starting point for AI agents, crawlers, and automation runtimes using FastNear. The goal is simple: identify the user's actual task, choose one FastNear API first, fetch the smallest useful result, and only widen to another API when there is a clear missing piece.
+
+## If you only need the next step
+
+- Need to decide which FastNear API to start with? Use [Choosing the Right Surface](https://docs.fastnear.com/agents/choosing-surfaces).
+- Need credential handling rules? Use [Auth for Agents](https://docs.fastnear.com/agents/auth).
+- Need example multi-step workflows? Use [Agent Playbooks](https://docs.fastnear.com/agents/playbooks).
+- Need exact endpoint docs now? Go directly to [RPC Reference](https://docs.fastnear.com/rpc), [FastNear API](https://docs.fastnear.com/api), [Transactions API](https://docs.fastnear.com/tx), [Transfers API](https://docs.fastnear.com/transfers), [NEAR Data API](https://docs.fastnear.com/neardata), or [KV FastData API](https://docs.fastnear.com/fastdata/kv).
+
+## FastNear for agents in one minute
+
+- Use indexed APIs when the user wants a product-shaped answer such as balances, holdings, account history, or transfer history.
+- Use [RPC Reference](https://docs.fastnear.com/rpc) when the user needs canonical protocol-native fields, contract calls, or transaction submission.
+- If you are using the hosted JS runtime at [js.fastnear.com](https://js.fastnear.com), start with low-level methods such as `near.view`, `near.queryAccount`, and `near.tx.*`, and use `near.recipes.*` only when a task helper is the shortest path to the answer.
+- Use [NEAR Data API](https://docs.fastnear.com/neardata) when the question is about recent optimistic or finalized blocks and explicit polling.
+- Use [Snapshots](https://docs.fastnear.com/snapshots) for operator workflows, not application-level data reads.
+- One FastNear API key works across the RPC and API endpoints.
+- Stop after the first sufficient answer. Do not collect from multiple APIs unless the current result is insufficient.
+
+## What to resolve before the first request
+
+Try to identify these inputs before you make a call:
+
+- **Network**: mainnet or testnet.
+- **Primary identifier**: account ID, public key, transaction hash, receipt ID, block height/hash, contract ID plus storage key, or node/bootstrap task.
+- **Answer shape**: summary, history, canonical protocol output, or operator instructions.
+- **Freshness requirement**: historical, current, optimistic/latest, or finalized/latest.
+- **Precision requirement**: indexed summary is acceptable, or exact canonical node semantics are required.
+
+If one of these is missing, make a small assumption when the likely starting API does not change. Ask a clarifying question only when the wrong API choice would materially change the result.
+
+## FastNear APIs at a glance
+
+| API | Start here when... | Typical inputs | Widen only if... |
+| --- | --- | --- | --- |
+| [FastNear API](https://docs.fastnear.com/api) | The user wants balances, NFTs, staking, public-key resolution, or an account summary | `account_id`, public key | The user needs exact canonical node fields |
+| [RPC Reference](https://docs.fastnear.com/rpc) | The user wants canonical protocol output, contract calls, validator data, or transaction submission | `account_id`, block height/hash, method-specific params | The user also needs a higher-level summary or indexed history |
+| [Transactions API](https://docs.fastnear.com/tx) | The user wants transaction, receipt, account, or block execution history | transaction hash, receipt ID, `account_id`, block identifiers | The user needs exact RPC-level follow-up or finality semantics |
+| [Transfers API](https://docs.fastnear.com/transfers) | The user wants transfer-only history | `account_id`, transfer filters | The question broadens to general execution context |
+| [NEAR Data API](https://docs.fastnear.com/neardata) | The user wants recent optimistic or finalized blocks, headers, or latest-block helpers | block height/hash, freshness requirement | The user needs exact canonical block/state follow-up |
+| [KV FastData API](https://docs.fastnear.com/fastdata/kv) | The user wants indexed contract key history or latest indexed key-value state | contract ID, storage key | The user needs exact on-chain current state |
+| [Snapshots](https://docs.fastnear.com/snapshots) | The user is standing up infrastructure | network, node type, operator goal | The user shifts to application-level chain questions |
+
+## Default workflow
+
+Use this loop unless the task clearly needs something more specialized:
+
+1. Translate the user's wording into the task they actually need solved.
+   Examples: account summary, canonical state inspection, transaction investigation, transfer-only history, recent block monitoring, or node bootstrap.
+2. Pick one FastNear API first.
+   Do not gather from multiple APIs until the first result proves insufficient.
+3. Pull the smallest relevant docs context.
+   Use the API index page, endpoint page, or Markdown mirror instead of broad unrelated docs.
+4. Make the first request that matches the user's identifier and expected answer shape.
+5. Stop if the result is already sufficient to answer the user's question.
+6. Widen only when you can name the missing piece precisely.
+   Examples: canonical confirmation, broader execution history, fresher block-family data, or exact protocol fields.
+
+## Good defaults
+
+When the user's wording is short but the intent is common, these defaults are usually correct:
+
+- "Check this account" usually starts with [FastNear API](https://docs.fastnear.com/api).
+- "Check this public key" usually starts with [FastNear API](https://docs.fastnear.com/api) for key-to-account resolution.
+- "Check this transaction" usually starts with [Transactions API](https://docs.fastnear.com/tx).
+- "Check this receipt" usually starts with [Transactions API](https://docs.fastnear.com/tx).
+- "Check this block" usually starts with [NEAR Data API](https://docs.fastnear.com/neardata) for recent-block monitoring or [RPC Reference](https://docs.fastnear.com/rpc) for exact canonical block data.
+- "Check this contract key/history" usually starts with [KV FastData API](https://docs.fastnear.com/fastdata/kv).
+- "Help me bootstrap a node" starts with [Snapshots](https://docs.fastnear.com/snapshots).
+
+Full routing rules and tradeoffs live in [Choosing the Right Surface](https://docs.fastnear.com/agents/choosing-surfaces).
+
+## Widen carefully
+
+Good escalation patterns:
+
+- Start with [FastNear API](https://docs.fastnear.com/api), then move to [RPC Reference](https://docs.fastnear.com/rpc) if the user asks for exact canonical confirmation.
+- Start with [Transactions API](https://docs.fastnear.com/tx), then move to [RPC Reference](https://docs.fastnear.com/rpc) if the user needs protocol-level transaction or receipt follow-up.
+- Start with [Transfers API](https://docs.fastnear.com/transfers), then widen to [Transactions API](https://docs.fastnear.com/tx) if the user broadens the question beyond transfer events.
+- Start with [NEAR Data API](https://docs.fastnear.com/neardata), then move to [RPC Reference](https://docs.fastnear.com/rpc) if the user needs exact canonical block or state inspection.
+
+Bad pattern:
+
+- Pull from several FastNear APIs before you know what the user actually needs. That usually produces a noisier answer, not a better one.
+
+## Authenticate once, reuse everywhere
+
+Start with a FastNear API key and reuse it across every FastNear API above, including the regular and archival RPC hosts. Send it either as an HTTP header or a URL parameter:
+
+```bash title="Authorization header"
+: "${FASTNEAR_API_KEY:?Set FASTNEAR_API_KEY in your shell before running this example.}"
+
+curl "https://rpc.mainnet.fastnear.com" \
+  -H "Authorization: Bearer $FASTNEAR_API_KEY" \
+  -H "Content-Type: application/json" \
+  --data '{"method":"block","params":{"finality":"final"},"id":1,"jsonrpc":"2.0"}'
+```
+
+```bash title="URL parameter"
+: "${FASTNEAR_API_KEY:?Set FASTNEAR_API_KEY in your shell before running this example.}"
+
+curl "https://rpc.mainnet.fastnear.com?apiKey=$FASTNEAR_API_KEY"
+```
+
+Get your API key from [FastNear Dashboard](https://dashboard.fastnear.com). Operational posture for non-interactive runtimes: [Auth for Agents](https://docs.fastnear.com/agents/auth) — keys go in env vars or a secret manager, never in browser storage, chat logs, or prompts. Full flow and header details: [Auth & Access](https://docs.fastnear.com/auth).
+
+## Pull clean docs into a prompt
+
+- Every page has a **Copy Markdown** button in the top-right toolbar. It emits a navigation-chrome-free Markdown version of the page, ready to paste into a prompt or RAG store.
+- The `llms.txt` convention is mirrored here:
+  - [`/llms.txt`](https://docs.fastnear.com/llms.txt) — index of pages and short descriptions.
+  - [`/llms-full.txt`](https://docs.fastnear.com/llms-full.txt) — the full docs corpus concatenated into one file.
+  - Russian-locale equivalents live at [`/ru/llms.txt`](https://docs.fastnear.com/llms.txt) and [`/ru/llms-full.txt`](https://docs.fastnear.com/llms-full.txt).
+- Machine-readable site structure for graph-aware ingestion: [`/structured-data/site-graph.json`](https://docs.fastnear.com/structured-data/site-graph.json) (mirrored in `/ru/`).
+- Per-page Markdown mirrors live under the same slug with a `.md` suffix if you prefer direct fetches over the Copy Markdown button.
+
+## Per-call hints an agent should know
+
+- Parameter names, response fields, and example payloads are rendered live on each endpoint page. The underlying registry lives at `src/data/generatedFastnearPageModels.json` if you are mirroring schema into another system.
+- `?network=testnet` is supported on specific pages only. Each page calls out its network support in the **Auth and availability** section; do not assume it works globally.
+- Pagination tokens (`resume_token`, `page_token`) are opaque. Reuse them verbatim and only with the endpoint plus filter set that produced them.
+- Status routes: every REST family ships a `/status` and `/health` path for liveness and sync-latency inspection.
+
+## What a useful agent answer should contain
+
+- A brief statement of which FastNear API was used and why, especially if the choice was an inference.
+- The answer in the shape the user is likely to need next: summary first for humans, exact fields or next-call guidance when the caller is technical.
+- Any important caveat about freshness, canonicality, pagination, or network choice.
+- A follow-up path only when it is likely to help.
+  Examples: "use RPC for canonical confirmation" or "use Transactions API if you need broader execution context."
+
+Avoid dumping raw payloads when the user is really asking for interpretation.
+
+## Next docs by need
+
+- Need routing depth and tradeoffs? [Choosing the Right Surface](https://docs.fastnear.com/agents/choosing-surfaces)
+- Need credential posture and secret handling? [Auth for Agents](https://docs.fastnear.com/agents/auth)
+- Need example workflows? [Agent Playbooks](https://docs.fastnear.com/agents/playbooks)
+---
+## About FastNear
+
+- FastNear handles 10B+ requests per month.
+- FastNear runs 100+ nodes worldwide.
+- One FastNear API key works across RPC and the indexed APIs.
+- Get an API key at [dashboard.fastnear.com](https://dashboard.fastnear.com).

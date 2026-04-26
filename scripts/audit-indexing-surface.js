@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+const crypto = require("node:crypto");
 const fs = require("node:fs");
 const path = require("node:path");
 const {
@@ -41,13 +42,213 @@ const ALGOLIA_RELEVANCE_AUDIT_PATH = path.join(ROOT, "scripts/audit-algolia-rele
 const SEARCH_BAR_PATH = path.join(ROOT, "src/theme/SearchBar/index.js");
 const SEARCH_BAR_RUNTIME_PATH = path.join(ROOT, "src/theme/SearchBar/AlgoliaSearchRuntime.js");
 const SEARCH_BAR_STYLES_PATH = path.join(ROOT, "src/theme/SearchBar/styles.css");
+const HEADERS_PATH = path.join(BUILD_ROOT, "_headers");
 const REDIRECTS_PATH = path.join(BUILD_ROOT, "_redirects");
 const ROBOTS_PATH = path.join(BUILD_ROOT, "robots.txt");
+const API_CATALOG_PATH = path.join(BUILD_ROOT, ".well-known", "api-catalog");
+const AGENT_SKILLS_INDEX_PATH = path.join(
+  BUILD_ROOT,
+  ".well-known",
+  "agent-skills",
+  "index.json"
+);
+const WORKER_SOURCE_PATH = path.join(ROOT, "static", "_worker.js");
 const PAGE_MODELS_PATH = path.join(ROOT, "src/data/generatedFastnearPageModels.json");
 const STRUCTURED_GRAPH_PATH = path.join(ROOT, "src/data/generatedFastnearStructuredGraph.json");
 const PRODUCTION_SITE_URL = "https://docs.fastnear.com";
 const WEBSITE_ID = `${PRODUCTION_SITE_URL}/#website`;
 const ORGANIZATION_ID = `${PRODUCTION_SITE_URL}/#organization`;
+const EXPECTED_CONTENT_SIGNAL = "Content-Signal: search=yes, ai-input=yes, ai-train=yes";
+const API_CATALOG_LINK_HEADER =
+  'Link: </.well-known/api-catalog>; rel="api-catalog"; type="application/linkset+json"';
+const AGENT_SKILLS_LINK_HEADER =
+  'Link: </.well-known/agent-skills/index.json>; rel="service-meta"; type="application/json"';
+const ROOT_SITE_GRAPH_LINK_HEADER =
+  'Link: </structured-data/site-graph.json>; rel="service-meta"; type="application/json"';
+const RU_SITE_GRAPH_LINK_HEADER =
+  'Link: </ru/structured-data/site-graph.json>; rel="service-meta"; type="application/json"';
+const ROOT_SERVICE_DOC_LINK_HEADER = 'Link: </agents>; rel="service-doc"; type="text/html"';
+const RU_SERVICE_DOC_LINK_HEADER = 'Link: </ru/agents>; rel="service-doc"; type="text/html"';
+const RPC_SERVICE_DESC_LINK_HEADER =
+  'Link: <https://rpc.mainnet.fastnear.com/openapi.json>; rel="service-desc"; type="application/json"';
+const FASTNEAR_SERVICE_DESC_LINK_HEADER =
+  'Link: </openapi/fastnear.json>; rel="service-desc"; type="application/json"';
+const NEARDATA_SERVICE_DESC_LINK_HEADER =
+  'Link: </openapi/neardata.json>; rel="service-desc"; type="application/json"';
+const EXPECTED_ROOT_LINK_HEADERS = [
+  API_CATALOG_LINK_HEADER,
+  ROOT_SERVICE_DOC_LINK_HEADER,
+  AGENT_SKILLS_LINK_HEADER,
+  ROOT_SITE_GRAPH_LINK_HEADER,
+];
+const EXPECTED_RU_LINK_HEADERS = [
+  API_CATALOG_LINK_HEADER,
+  RU_SERVICE_DOC_LINK_HEADER,
+  AGENT_SKILLS_LINK_HEADER,
+  RU_SITE_GRAPH_LINK_HEADER,
+];
+const EXPECTED_RPC_LINK_HEADERS = [
+  API_CATALOG_LINK_HEADER,
+  RPC_SERVICE_DESC_LINK_HEADER,
+  ROOT_SITE_GRAPH_LINK_HEADER,
+];
+const EXPECTED_RU_RPC_LINK_HEADERS = [
+  API_CATALOG_LINK_HEADER,
+  RPC_SERVICE_DESC_LINK_HEADER,
+  RU_SITE_GRAPH_LINK_HEADER,
+];
+const EXPECTED_API_LINK_HEADERS = [
+  API_CATALOG_LINK_HEADER,
+  FASTNEAR_SERVICE_DESC_LINK_HEADER,
+  ROOT_SITE_GRAPH_LINK_HEADER,
+];
+const EXPECTED_RU_API_LINK_HEADERS = [
+  API_CATALOG_LINK_HEADER,
+  FASTNEAR_SERVICE_DESC_LINK_HEADER,
+  RU_SITE_GRAPH_LINK_HEADER,
+];
+const EXPECTED_NEARDATA_LINK_HEADERS = [
+  API_CATALOG_LINK_HEADER,
+  NEARDATA_SERVICE_DESC_LINK_HEADER,
+  ROOT_SITE_GRAPH_LINK_HEADER,
+];
+const EXPECTED_RU_NEARDATA_LINK_HEADERS = [
+  API_CATALOG_LINK_HEADER,
+  NEARDATA_SERVICE_DESC_LINK_HEADER,
+  RU_SITE_GRAPH_LINK_HEADER,
+];
+const EXPECTED_AGENTS_LINK_HEADERS = [
+  API_CATALOG_LINK_HEADER,
+  AGENT_SKILLS_LINK_HEADER,
+  ROOT_SITE_GRAPH_LINK_HEADER,
+];
+const EXPECTED_RU_AGENTS_LINK_HEADERS = [
+  API_CATALOG_LINK_HEADER,
+  AGENT_SKILLS_LINK_HEADER,
+  RU_SITE_GRAPH_LINK_HEADER,
+];
+const EXPECTED_AUTH_LINK_HEADERS = [
+  API_CATALOG_LINK_HEADER,
+  ROOT_SITE_GRAPH_LINK_HEADER,
+];
+const EXPECTED_RU_AUTH_LINK_HEADERS = [
+  API_CATALOG_LINK_HEADER,
+  RU_SITE_GRAPH_LINK_HEADER,
+];
+const EXPECTED_DISCOVERY_HEADER_RULES = [
+  {
+    path: "/",
+    lines: EXPECTED_ROOT_LINK_HEADERS,
+  },
+  {
+    path: "/ru",
+    lines: EXPECTED_RU_LINK_HEADERS,
+  },
+  {
+    path: "/rpc",
+    lines: EXPECTED_RPC_LINK_HEADERS,
+  },
+  {
+    path: "/rpc/*",
+    lines: EXPECTED_RPC_LINK_HEADERS,
+  },
+  {
+    path: "/ru/rpc",
+    lines: EXPECTED_RU_RPC_LINK_HEADERS,
+  },
+  {
+    path: "/ru/rpc/*",
+    lines: EXPECTED_RU_RPC_LINK_HEADERS,
+  },
+  {
+    path: "/api",
+    lines: EXPECTED_API_LINK_HEADERS,
+  },
+  {
+    path: "/api/*",
+    lines: EXPECTED_API_LINK_HEADERS,
+  },
+  {
+    path: "/ru/api",
+    lines: EXPECTED_RU_API_LINK_HEADERS,
+  },
+  {
+    path: "/ru/api/*",
+    lines: EXPECTED_RU_API_LINK_HEADERS,
+  },
+  {
+    path: "/neardata",
+    lines: EXPECTED_NEARDATA_LINK_HEADERS,
+  },
+  {
+    path: "/neardata/*",
+    lines: EXPECTED_NEARDATA_LINK_HEADERS,
+  },
+  {
+    path: "/ru/neardata",
+    lines: EXPECTED_RU_NEARDATA_LINK_HEADERS,
+  },
+  {
+    path: "/ru/neardata/*",
+    lines: EXPECTED_RU_NEARDATA_LINK_HEADERS,
+  },
+  {
+    path: "/agents",
+    lines: EXPECTED_AGENTS_LINK_HEADERS,
+  },
+  {
+    path: "/agents/*",
+    lines: EXPECTED_AGENTS_LINK_HEADERS,
+  },
+  {
+    path: "/ru/agents",
+    lines: EXPECTED_RU_AGENTS_LINK_HEADERS,
+  },
+  {
+    path: "/ru/agents/*",
+    lines: EXPECTED_RU_AGENTS_LINK_HEADERS,
+  },
+  {
+    path: "/auth",
+    lines: EXPECTED_AUTH_LINK_HEADERS,
+  },
+  {
+    path: "/auth/*",
+    lines: EXPECTED_AUTH_LINK_HEADERS,
+  },
+  {
+    path: "/ru/auth",
+    lines: EXPECTED_RU_AUTH_LINK_HEADERS,
+  },
+  {
+    path: "/ru/auth/*",
+    lines: EXPECTED_RU_AUTH_LINK_HEADERS,
+  },
+];
+const EXPECTED_HEADER_RULES = [
+  ...EXPECTED_DISCOVERY_HEADER_RULES,
+  {
+    path: "/.well-known/api-catalog",
+    lines: [
+      'Content-Type: application/linkset+json; charset=utf-8; profile="https://www.rfc-editor.org/info/rfc9727"',
+      API_CATALOG_LINK_HEADER,
+    ],
+  },
+  {
+    path: "/.well-known/agent-skills/index.json",
+    lines: ['Content-Type: application/json; charset=utf-8'],
+  },
+  {
+    path: "/.well-known/agent-skills/*/SKILL.md",
+    lines: ['Content-Type: text/markdown; charset=utf-8'],
+  },
+];
+const EXPECTED_API_CATALOG_ANCHORS = [
+  "https://api.fastnear.com",
+  "https://mainnet.neardata.xyz",
+  "https://rpc.mainnet.fastnear.com",
+];
+const EXPECTED_AGENT_SKILLS = ["auth", "overview", "playbooks", "surface-routing"];
 
 const hideEarlyApiFamilies = /^(1|true|yes|on)$/i.test(
   process.env.HIDE_EARLY_API_FAMILIES || ""
@@ -115,6 +316,10 @@ function assert(condition, message) {
 function loadJson(filePath, label) {
   assert(fs.existsSync(filePath), `Missing ${label}: ${path.relative(ROOT, filePath)}`);
   return JSON.parse(fs.readFileSync(filePath, "utf8"));
+}
+
+function sha256File(filePath) {
+  return `sha256:${crypto.createHash("sha256").update(fs.readFileSync(filePath)).digest("hex")}`;
 }
 
 function walkDocs(dirPath) {
@@ -193,6 +398,18 @@ function buildCrawlerUrl(route, locale = DEFAULT_LOCALE) {
   }
 
   return `${PRODUCTION_SITE_URL}${localizeRoute(route, locale)}`;
+}
+
+function buildSiteGraphDocumentUrl(locale = DEFAULT_LOCALE) {
+  return buildLocalizedProductionUrl("/structured-data/site-graph.json", locale);
+}
+
+function buildExpectedSiteGraphFamilyEntityId(familyId, locale = DEFAULT_LOCALE) {
+  return `${buildSiteGraphDocumentUrl(locale)}#family-${familyId}`;
+}
+
+function buildExpectedSiteGraphOperationEntityId(pageModelId, locale = DEFAULT_LOCALE) {
+  return `${buildSiteGraphDocumentUrl(locale)}#operation-${pageModelId}`;
 }
 
 function getSiteGraphPath(locale = DEFAULT_LOCALE) {
@@ -282,6 +499,10 @@ function buildMetaPattern(name, value) {
     `<meta[^>]+name="${escapeRegExp(name)}"[^>]+content="${escapeRegExp(value)}"[^>]*>`,
     "i"
   );
+}
+
+function stripHeaderName(line) {
+  return String(line || "").replace(/^[^:]+:\s*/, "");
 }
 
 function parseJsonLdScripts(html, label) {
@@ -707,6 +928,256 @@ function parseSitemapUrls(locale = DEFAULT_LOCALE) {
   );
 }
 
+function auditAgentDiscoveryArtifacts() {
+  assert(fs.existsSync(HEADERS_PATH), `Missing _headers: ${path.relative(ROOT, HEADERS_PATH)}`);
+  const headersText = fs.readFileSync(HEADERS_PATH, "utf8");
+  EXPECTED_HEADER_RULES.forEach(({ path: rulePath, lines }) => {
+    assert(headersText.includes(`${rulePath}\n`), `_headers is missing the ${rulePath} rule`);
+    lines.forEach((line) => {
+      assert(
+        headersText.includes(line),
+        `_headers is missing "${line}" for ${rulePath}`
+      );
+    });
+  });
+
+  assert(
+    fs.existsSync(API_CATALOG_PATH),
+    `Missing API catalog: ${path.relative(ROOT, API_CATALOG_PATH)}`
+  );
+  const apiCatalog = loadJson(API_CATALOG_PATH, "API catalog");
+  assert(Array.isArray(apiCatalog.linkset), "API catalog must expose a linkset array");
+  const apiCatalogAnchors = apiCatalog.linkset.map((entry) => entry.anchor).sort();
+  assert(
+    JSON.stringify(apiCatalogAnchors) === JSON.stringify(EXPECTED_API_CATALOG_ANCHORS),
+    `API catalog anchors are out of sync. Expected ${EXPECTED_API_CATALOG_ANCHORS.join(", ")}, got ${apiCatalogAnchors.join(", ")}`
+  );
+  apiCatalog.linkset.forEach((entry) => {
+    ["service-desc", "service-doc", "status"].forEach((relation) => {
+      assert(
+        Array.isArray(entry[relation]) && entry[relation].length > 0,
+        `API catalog entry ${entry.anchor} must include ${relation}`
+      );
+      entry[relation].forEach((target) => {
+        assert(
+          typeof target.href === "string" && /^https:\/\//.test(target.href),
+          `API catalog entry ${entry.anchor} has an invalid ${relation} target`
+        );
+      });
+    });
+  });
+  [
+    "/openapi/fastnear.json",
+    "/openapi/neardata.json",
+  ].forEach((route) => {
+    const filePath = routeToBuildAssetPath(route);
+    assert(
+      fs.existsSync(filePath),
+      `Build is missing the vendored OpenAPI snapshot ${route}`
+    );
+  });
+
+  assert(
+    fs.existsSync(AGENT_SKILLS_INDEX_PATH),
+    `Missing Agent Skills index: ${path.relative(ROOT, AGENT_SKILLS_INDEX_PATH)}`
+  );
+  const agentSkillsIndex = loadJson(AGENT_SKILLS_INDEX_PATH, "Agent Skills index");
+  assert(
+    agentSkillsIndex.$schema === "https://schemas.agentskills.io/discovery/0.2.0/schema.json",
+    "Agent Skills index must use the v0.2.0 schema URI"
+  );
+  assert(Array.isArray(agentSkillsIndex.skills), "Agent Skills index must expose a skills array");
+  const skillNames = agentSkillsIndex.skills.map((skill) => skill.name).sort();
+  assert(
+    JSON.stringify(skillNames) === JSON.stringify(EXPECTED_AGENT_SKILLS),
+    `Agent Skills index names are out of sync. Expected ${EXPECTED_AGENT_SKILLS.join(", ")}, got ${skillNames.join(", ")}`
+  );
+  agentSkillsIndex.skills.forEach((skill) => {
+    assert(skill.type === "skill-md", `Agent skill ${skill.name} must use type=skill-md`);
+    assert(
+      typeof skill.description === "string" && skill.description.length > 0,
+      `Agent skill ${skill.name} must include a description`
+    );
+    assert(
+      typeof skill.url === "string" && skill.url.startsWith("/.well-known/agent-skills/"),
+      `Agent skill ${skill.name} must use a stable well-known URL`
+    );
+    const filePath = routeToBuildAssetPath(skill.url);
+    assert(
+      fs.existsSync(filePath),
+      `Agent skill artifact is missing: ${path.relative(ROOT, filePath)}`
+    );
+    assert(
+      skill.digest === sha256File(filePath),
+      `Agent skill digest mismatch for ${skill.name}`
+    );
+    const content = fs.readFileSync(filePath, "utf8");
+    assert(
+      content.startsWith("---\n"),
+      `Agent skill ${skill.name} must include YAML frontmatter`
+    );
+    assert(
+      content.includes(`name: "${skill.name}"`) || content.includes(`name: '${skill.name}'`),
+      `Agent skill ${skill.name} frontmatter must declare its name`
+    );
+  });
+}
+
+async function auditMarkdownDiscoveryWorker({ routeEntries, structuredGraph }) {
+  assert(
+    fs.existsSync(WORKER_SOURCE_PATH),
+    `Missing worker source: ${path.relative(ROOT, WORKER_SOURCE_PATH)}`
+  );
+  const workerSource = fs.readFileSync(WORKER_SOURCE_PATH, "utf8");
+  const workerModule = await import(
+    `data:text/javascript;base64,${Buffer.from(workerSource, "utf8").toString("base64")}`
+  );
+  const workerFetch = workerModule?.default?.fetch;
+  assert(typeof workerFetch === "function", "static/_worker.js must export a default fetch handler");
+
+  const env = {
+    ASSETS: {
+      async fetch(request) {
+        const url = new URL(request.url);
+        const headers = new Headers();
+
+        if (url.pathname.endsWith(".md")) {
+          headers.set("Content-Type", "text/markdown; charset=utf-8");
+          return new Response(`# ${url.pathname}\n`, {
+            headers,
+            status: 200,
+          });
+        }
+
+        headers.set("Content-Type", "text/html; charset=utf-8");
+        return new Response(`<!doctype html><html><body>${url.pathname}</body></html>`, {
+          headers,
+          status: 200,
+        });
+      },
+    },
+  };
+
+  const visibleOperations = structuredGraph.operations.filter(
+    (operation) => !isHiddenCanonicalRoute(operation.canonicalPath)
+  );
+  const localizedRoutes = [
+    ...routeEntries.map((entry) => entry.route),
+    ...visibleOperations.map((operation) => operation.canonicalPath),
+  ];
+
+  for (const locale of SUPPORTED_LOCALES) {
+    for (const route of localizedRoutes) {
+      const localizedRoute = localizeRoute(route, locale);
+      const response = await workerFetch(new Request(buildLocalizedProductionUrl(route, locale)), env);
+      const link = response.headers.get("Link") || "";
+      assert(
+        link.includes(
+          `<${getExpectedMarkdownMirrorPath(localizedRoute)}>; rel="alternate"; type="text/markdown"`
+        ),
+        `Worker should advertise markdown alternate for ${localizedRoute}`
+      );
+      assert(
+        response.headers.get("Vary")?.toLowerCase().includes("accept"),
+        `Worker should add Vary: Accept for ${localizedRoute}`
+      );
+    }
+  }
+
+  const discoveryChecks = [
+    {
+      route: "/",
+      expectedLinks: EXPECTED_ROOT_LINK_HEADERS,
+    },
+    {
+      route: "/ru",
+      expectedLinks: EXPECTED_RU_LINK_HEADERS,
+    },
+    {
+      route: "/rpc/account/view-account",
+      expectedLinks: EXPECTED_RPC_LINK_HEADERS,
+    },
+    {
+      route: "/ru/rpc/account/view-account",
+      expectedLinks: EXPECTED_RU_RPC_LINK_HEADERS,
+    },
+    {
+      route: "/api/v1/account-full",
+      expectedLinks: EXPECTED_API_LINK_HEADERS,
+    },
+    {
+      route: "/ru/api/v1/account-full",
+      expectedLinks: EXPECTED_RU_API_LINK_HEADERS,
+    },
+    {
+      route: "/neardata/last-block-final",
+      expectedLinks: EXPECTED_NEARDATA_LINK_HEADERS,
+    },
+    {
+      route: "/ru/neardata/last-block-final",
+      expectedLinks: EXPECTED_RU_NEARDATA_LINK_HEADERS,
+    },
+    {
+      route: "/agents",
+      expectedLinks: EXPECTED_AGENTS_LINK_HEADERS,
+    },
+    {
+      route: "/ru/agents",
+      expectedLinks: EXPECTED_RU_AGENTS_LINK_HEADERS,
+    },
+    {
+      route: "/auth",
+      expectedLinks: EXPECTED_AUTH_LINK_HEADERS,
+    },
+    {
+      route: "/ru/auth",
+      expectedLinks: EXPECTED_RU_AUTH_LINK_HEADERS,
+    },
+  ];
+
+  for (const { route, expectedLinks } of discoveryChecks) {
+    const htmlResponse = await workerFetch(new Request(`${PRODUCTION_SITE_URL}${route}`), env);
+    const markdownResponse = await workerFetch(
+      new Request(`${PRODUCTION_SITE_URL}${route}`, {
+        headers: {
+          Accept: "text/markdown",
+        },
+      }),
+      env
+    );
+
+    const htmlLinks = htmlResponse.headers.get("Link") || "";
+    const markdownLinks = markdownResponse.headers.get("Link") || "";
+
+    expectedLinks.forEach((line) => {
+      const linkValue = stripHeaderName(line);
+      assert(htmlLinks.includes(linkValue), `Worker should add ${linkValue} to HTML route ${route}`);
+      assert(
+        markdownLinks.includes(linkValue),
+        `Worker should preserve ${linkValue} on markdown route ${route}`
+      );
+    });
+
+    assert(
+      markdownResponse.headers.get("Content-Type")?.includes("text/markdown"),
+      `Worker should return markdown content-type for ${route}`
+    );
+  }
+
+  const headResponse = await workerFetch(
+    new Request(`${PRODUCTION_SITE_URL}/rpc/account/view-account`, {
+      method: "HEAD",
+    }),
+    env
+  );
+  assert(
+    (headResponse.headers.get("Link") || "").includes(
+      '</rpc/account/view-account.md>; rel="alternate"; type="text/markdown"'
+    ),
+    "Worker should advertise markdown alternate on HEAD responses"
+  );
+}
+
 function auditDocsBuildOutput(routeEntries, structuredGraph) {
   const pageModels = loadJson(PAGE_MODELS_PATH, "generated FastNear page models");
   const pageModelsById = Object.fromEntries(
@@ -732,6 +1203,11 @@ function auditDocsBuildOutput(routeEntries, structuredGraph) {
       `robots.txt must explicitly allow ${userAgent}`
     );
   });
+  assert(
+    robotsText.includes(EXPECTED_CONTENT_SIGNAL),
+    "robots.txt must declare the agreed Content-Signal policy"
+  );
+  auditAgentDiscoveryArtifacts();
 
   assert(fs.existsSync(REDIRECTS_PATH), `Missing redirects file: ${path.relative(ROOT, REDIRECTS_PATH)}`);
   const redirectsText = fs.readFileSync(REDIRECTS_PATH, "utf8");
@@ -1315,12 +1791,17 @@ function auditSiteGraphArtifact({ routeEntries, structuredGraph }) {
         `Hosted page has wrong markdownMirrorUrl in site-graph.json: ${localizedCanonicalPath}`
       );
       assert(
-        page.entityIds?.mainEntityId === `${PRODUCTION_SITE_URL}/structured-data/operations/${operation.pageModelId}`,
+        page.entityIds?.mainEntityId ===
+          buildExpectedSiteGraphOperationEntityId(operation.pageModelId, locale),
         `Hosted page has wrong mainEntityId in site-graph.json: ${localizedCanonicalPath}`
       );
     });
 
     siteGraph.families.forEach((family) => {
+      assert(
+        family["@id"] === buildExpectedSiteGraphFamilyEntityId(family.id, locale),
+        `site-graph.json family ${family.id} should use an anchored @id in ${locale}`
+      );
       assert(
         family.providerId === ORGANIZATION_ID,
         `site-graph.json family ${family.id} should point providerId to the Organization node`
@@ -1336,6 +1817,14 @@ function auditSiteGraphArtifact({ routeEntries, structuredGraph }) {
     });
 
     siteGraph.operations.forEach((operation) => {
+      assert(
+        operation["@id"] === buildExpectedSiteGraphOperationEntityId(operation.pageModelId, locale),
+        `site-graph.json operation ${operation.pageModelId} should use an anchored @id in ${locale}`
+      );
+      assert(
+        operation.familyEntityId === buildExpectedSiteGraphFamilyEntityId(operation.familyId, locale),
+        `site-graph.json operation ${operation.pageModelId} should use an anchored familyEntityId`
+      );
       assert(
         operation.publisherId === ORGANIZATION_ID,
         `site-graph.json operation ${operation.pageModelId} should point publisherId to the Organization node`
@@ -1365,6 +1854,15 @@ function auditSiteGraphArtifact({ routeEntries, structuredGraph }) {
     });
 
     assert(
+      !JSON.stringify(siteGraph).includes('"/structured-data/families/'),
+      `site-graph.json should not reference nonexistent /structured-data/families URLs for ${locale}`
+    );
+    assert(
+      !JSON.stringify(siteGraph).includes('"/structured-data/operations/'),
+      `site-graph.json should not reference nonexistent /structured-data/operations URLs for ${locale}`
+    );
+
+    assert(
       siteGraph.discovery?.llmsIndexUrl === buildLocalizedProductionUrl("/llms.txt", locale),
       `site-graph.json should advertise ${localizeRoute("/llms.txt", locale)}`
     );
@@ -1379,7 +1877,7 @@ function auditSiteGraphArtifact({ routeEntries, structuredGraph }) {
   });
 }
 
-function main() {
+async function main() {
   auditConfigSurface();
   const structuredGraph = loadJson(STRUCTURED_GRAPH_PATH, "structured graph registry");
   const { routeEntries, routes } = auditDocsSource();
@@ -1387,15 +1885,14 @@ function main() {
   auditHostedBuildOutput(structuredGraph);
   auditGeneratedTextArtifacts({ routeEntries, structuredGraph });
   auditSiteGraphArtifact({ routeEntries, structuredGraph });
+  await auditMarkdownDiscoveryWorker({ routeEntries, structuredGraph });
 
   console.log(
     `Indexing surface audit passed for ${routes.length} explicit docs routes, ${routeEntries.filter((entry) => entry.hasFastnearOperation).length} docs operation pages, and ${structuredGraph.operations.filter((operation) => !isHiddenCanonicalRoute(operation.canonicalPath)).length} hosted operation pages.`
   );
 }
 
-try {
-  main();
-} catch (error) {
+main().catch((error) => {
   console.error(`Indexing surface audit failed: ${error.message}`);
   process.exitCode = 1;
-}
+});
