@@ -512,6 +512,7 @@ const config = {
             '/redocly-config',
             '/transaction-flow',
             '/transaction-flow/**',
+            '/debug',
             ...(hideEarlyApiFamilies ? ['/transfers/**', '/fastdata/**'] : []),
           ]),
           lastmod: 'date',
