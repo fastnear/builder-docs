@@ -63,6 +63,7 @@ Current navigation model:
 - **`FastnearHostedOperationPage`** (`src/components/FastnearHostedOperationPage/index.js`) — Lightweight page wrapper used by the generated canonical `/rpcs/**` and `/apis/**` hosted pages. Also posts resize messages when embedded externally.
 - **`ApiKeyManager`** (`src/components/ApiKeyManager/index.js`) — UI for users to set/manage their FastNear API key, stored in localStorage.
 - **`FastnearApiSidebarVersionControl`** (`src/components/FastnearApiSidebarVersionControl/index.js`) — FastNear API version selector for the sidebar.
+- **`RateLimitDebugger`** (`src/components/RateLimitDebugger/index.js`) — hidden `/debug` API-key / rate-limit tester (`src/pages/debug.js`; sitemap-excluded + `noindex`, not linked anywhere). See [`md-CLAUDE-chapters/debug-ratelimit-tester.md`](md-CLAUDE-chapters/debug-ratelimit-tester.md).
 - **`SimpleButton`** — Reusable button component, used in the snapshots landing page.
 - **`src/css/custom.css`** — Canonical bespoke UI stylesheet. Public layout/spacing/polish changes belong here first.
 

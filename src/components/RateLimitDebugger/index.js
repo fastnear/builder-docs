@@ -54,7 +54,7 @@ const mono = {
 };
 
 function classify(status, bodyText) {
-  if (status == null) return "network/CORS error";
+  if (status == null) return "CORS-blocked — status hidden by browser";
   if (status >= 200 && status < 300) return "ok";
   if (status === 401) return "missing/invalid key (401)";
   if (status === 402) return "quota exceeded (402)";
@@ -202,6 +202,7 @@ export default function RateLimitDebugger() {
     });
     const first403 = results.find((r) => r.status === 403);
     const first429 = results.find((r) => r.status === 429);
+    const ok2xx = results.filter((r) => r.status >= 200 && r.status < 300).length;
     const last = results[results.length - 1];
     const elapsedMs = last ? last.atMs + last.durationMs : 0;
     const rps = elapsedMs > 0 ? results.length / (elapsedMs / 1000) : 0;
@@ -213,6 +214,7 @@ export default function RateLimitDebugger() {
       byStatus,
       first403,
       first429,
+      ok2xx,
       elapsedMs,
       rps,
       total: results.length,
@@ -566,11 +568,47 @@ export default function RateLimitDebugger() {
                 ? `request #${summary.first429.i} at ${summary.first429.atMs}ms`
                 : "none"}
             </li>
+            <li>
+              <strong>≈ Effective cap: {summary.ok2xx} successful</strong> before limits hit
+              {authMode === "query"
+                ? " — in ?apiKey= mode this approximates your tier's per-minute budget"
+                : " — note: in Bearer mode the preflight throttle (~100/min) hits first; switch to ?apiKey= to measure the actual plan limit"}
+            </li>
             <li>Elapsed: {summary.elapsedMs}ms · Achieved: {summary.rps.toFixed(2)} req/s</li>
             <li>
               Latency: avg {summary.avgMs}ms · p50 {summary.p50}ms · p95 {summary.p95}ms
             </li>
           </ul>
+
+          {summary.byStatus.ERR ? (
+            <div
+              style={{
+                padding: "10px 14px",
+                margin: "0 0 1rem",
+                borderRadius: 8,
+                border: "1px solid var(--ifm-color-warning-dark, #b8860b)",
+                background: "var(--ifm-color-warning-contrast-background, #fff8e1)",
+                color: "var(--ifm-color-warning-contrast-foreground, #4d3800)",
+              }}
+            >
+              <strong>{summary.byStatus.ERR} request(s) returned no readable status (“ERR”).</strong>{" "}
+              This is a CORS limitation, not a bug in this page: when a preflight (<code>OPTIONS</code>)
+              is rate-limited, the edge returns <code>429</code> <em>without</em>{" "}
+              <code>access-control-allow-origin</code>, so the browser blocks the response and
+              JavaScript cannot read its status — it surfaces as “Failed to fetch”. The HTTP status is{" "}
+              <em>unrecoverable from the browser by design</em>.
+              {authMode === "bearer" ? (
+                <>
+                  {" "}
+                  To see real statuses, switch <strong>Auth attachment</strong> to{" "}
+                  <code>?apiKey=</code> below (the preflight URL then contains <code>apiKey=</code> and
+                  is not caught by the anonymous per-IP rule), or fix it at the edge: exempt{" "}
+                  <code>OPTIONS</code> from the anonymous rule, add <code>access-control-max-age</code>,
+                  and return CORS headers on error responses.
+                </>
+              ) : null}
+            </div>
+          ) : null}
 
           <h2>Results</h2>
           <p style={{ fontSize: "0.8rem", color: "var(--ifm-color-emphasis-700)" }}>
