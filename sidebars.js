@@ -89,6 +89,7 @@ const rpcSidebar = withExamplesFooter(
     ...nearcoreReleaseSidebarItems,
     'rpc/index',
     'auth/index',
+    'auth/browser-keys',
     {
       type: 'category',
       label: 'Account',
