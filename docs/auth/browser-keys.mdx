@@ -190,6 +190,12 @@ restricted browser key, served from a domain you listed on the key.
 Use two keys: a restricted browser key for the frontend, and an unrestricted server key for the backend.
 Do not try to share one key across both.
 
+### My key fails from inside an embedded or sandboxed iframe
+
+A sandboxed `<iframe>` sends `Origin: null` and usually omits `Referer`, so a website-restricted key
+returns `403 origin_not_allowed` even on your own domain. A widget in a sandboxed iframe can't use a
+restricted browser key — call FastNear from the top-level page, or route through a server-side path.
+
 ## Related guides
 
 - [Auth & Access](/auth) — the server-key default and transport choices
