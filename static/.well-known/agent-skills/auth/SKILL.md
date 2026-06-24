@@ -1,0 +1,106 @@
+---
+name: "auth"
+description: "Authentication guidance for FastNear agents. Use when a task involves API keys, secret handling, or request authorization posture."
+---
+**Source:** [https://docs.fastnear.com/agents/auth](https://docs.fastnear.com/agents/auth)
+
+# Auth for Agents
+
+Agents should authenticate to FastNear the same way production backends do. Do not copy the browser-demo posture used by the docs UI into an agent, worker, or automation runtime.
+
+One FastNear API key works across the RPC and API endpoints. For agents, the important question is not whether auth exists. It is where the credential lives, how it gets attached to requests, and how to avoid leaking it into prompts, logs, or browser state.
+
+## If you only need the rule
+
+- Store the key in an env var or secret manager.
+- Inject it server-side or from the worker runtime.
+- Prefer the `Authorization: Bearer ...` header.
+- Apply the same key and transport rules to both regular and archival RPC hosts.
+- Never ask a user to paste a FastNear key into chat, a prompt, or a browser-only agent.
+
+## Recommended runtime patterns
+
+Use one of these patterns:
+
+- **Server-side worker or automation**: load the key from env vars or a secret manager and attach it directly to outbound FastNear requests.
+- **Thin backend proxy**: if the user-facing app runs in the browser, send the request to your backend first and let the backend inject the FastNear credential.
+- **Multi-tenant service**: keep per-tenant keys in a proper secrets store and make the agent select the right credential by tenant or project context.
+
+Avoid browser-only agent architectures that need the FastNear key in client-side storage.
+
+## Choose the credential transport
+
+| Transport | Use it when... | Notes |
+| --- | --- | --- |
+| `Authorization: Bearer ${FASTNEAR_API_KEY}` | you control the HTTP client or backend | Best default for agents. Less likely to leak into URL logs, analytics, or copied links. |
+| `?apiKey=${FASTNEAR_API_KEY}` | you are using simple curl or a system that cannot easily set headers | Still valid, but URLs tend to travel further through logs and tooling. Use it intentionally. |
+
+If you have a choice, use the header form.
+
+## Minimum secure flow
+
+1. Read the key from an env var or secret manager at runtime.
+2. Attach it to the request as a header or query parameter.
+3. Keep prompts, traces, and logs scrubbed so the raw key never lands in transcripts.
+4. Rotate the key if it appears in a prompt, debug trace, browser storage, or a copied URL.
+
+Example:
+
+```js
+const apiKey = process.env.FASTNEAR_API_KEY;
+
+const response = await fetch('https://rpc.mainnet.fastnear.com', {
+  method: 'POST',
+  headers: {
+    'Authorization': `Bearer ${apiKey}`,
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    jsonrpc: '2.0',
+    id: 1,
+    method: 'block',
+    params: {finality: 'final'},
+  }),
+});
+```
+
+## If the runtime is missing the key
+
+Agents should normally start with a configured FastNear API key. Some public FastNear reads may still work without one, but that should not be the default operating posture.
+
+If the configured runtime does not have the key yet:
+
+- tell the user to create or retrieve a key from [FastNear Dashboard](https://dashboard.fastnear.com)
+- ask them to configure it in an env var, secret manager, or backend configuration
+- do not ask them to paste the raw key into chat so the agent can carry it around
+
+If the agent cannot access the configured secret, it should say that clearly and stop rather than improvising insecure storage.
+
+## Do not do this
+
+- Do not lift a key out of browser `localStorage` and treat it as an agent credential.
+- Do not embed keys into browser-delivered agent apps.
+- Do not keep keys in prompts, notebook cells, or plaintext config checked into source control.
+- Do not prefer `?apiKey=` just because it is shorter if your infrastructure logs full URLs aggressively.
+
+## What the agent should tell a user
+
+When auth is relevant, a useful agent answer usually contains:
+
+- whether the current request can proceed unauthenticated
+- whether the user needs to configure a FastNear API key next
+- where that key should live, usually env vars, a secret manager, or a backend proxy
+- which transport the agent is using, usually `Authorization: Bearer ...`
+
+## Related guides
+
+- [Auth & Access](https://docs.fastnear.com/auth)
+- [Agents on FastNear](https://docs.fastnear.com/agents)
+- [Choosing the Right Surface](https://docs.fastnear.com/agents/choosing-surfaces)
+---
+## About FastNear
+
+- FastNear handles 10B+ requests per month.
+- FastNear runs 100+ nodes worldwide.
+- One FastNear API key works across RPC and the indexed APIs.
+- Get an API key at [dashboard.fastnear.com](https://dashboard.fastnear.com).

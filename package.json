@@ -27,6 +27,7 @@
     "audit:i18n:ru": "node scripts/audit-ru-translation.js",
     "audit:ru-terminology": "node scripts/audit-ru-terminology.js",
     "audit:indexing": "yarn test:route-semantics && yarn audit:page-models && yarn build && node scripts/audit-indexing-surface.js",
+    "audit:agent-readiness:live": "node scripts/audit-agent-readiness-live.js",
     "audit:algolia-highlights": "node scripts/audit-algolia-highlights.js",
     "audit:algolia-relevance": "node scripts/audit-algolia-relevance.js",
     "algolia:inspect": "node scripts/algolia-inspect.js",

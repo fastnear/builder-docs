@@ -1,0 +1,117 @@
+/
+  Link: </.well-known/api-catalog>; rel="api-catalog"; type="application/linkset+json"
+  Link: </agents>; rel="service-doc"; type="text/html"
+  Link: </.well-known/agent-skills/index.json>; rel="service-meta"; type="application/json"
+  Link: </structured-data/site-graph.json>; rel="service-meta"; type="application/json"
+
+/ru
+  Link: </.well-known/api-catalog>; rel="api-catalog"; type="application/linkset+json"
+  Link: </ru/agents>; rel="service-doc"; type="text/html"
+  Link: </.well-known/agent-skills/index.json>; rel="service-meta"; type="application/json"
+  Link: </ru/structured-data/site-graph.json>; rel="service-meta"; type="application/json"
+
+/rpc
+  Link: </.well-known/api-catalog>; rel="api-catalog"; type="application/linkset+json"
+  Link: <https://rpc.mainnet.fastnear.com/openapi.json>; rel="service-desc"; type="application/json"
+  Link: </structured-data/site-graph.json>; rel="service-meta"; type="application/json"
+
+/rpc/*
+  Link: </.well-known/api-catalog>; rel="api-catalog"; type="application/linkset+json"
+  Link: <https://rpc.mainnet.fastnear.com/openapi.json>; rel="service-desc"; type="application/json"
+  Link: </structured-data/site-graph.json>; rel="service-meta"; type="application/json"
+
+/ru/rpc
+  Link: </.well-known/api-catalog>; rel="api-catalog"; type="application/linkset+json"
+  Link: <https://rpc.mainnet.fastnear.com/openapi.json>; rel="service-desc"; type="application/json"
+  Link: </ru/structured-data/site-graph.json>; rel="service-meta"; type="application/json"
+
+/ru/rpc/*
+  Link: </.well-known/api-catalog>; rel="api-catalog"; type="application/linkset+json"
+  Link: <https://rpc.mainnet.fastnear.com/openapi.json>; rel="service-desc"; type="application/json"
+  Link: </ru/structured-data/site-graph.json>; rel="service-meta"; type="application/json"
+
+/api
+  Link: </.well-known/api-catalog>; rel="api-catalog"; type="application/linkset+json"
+  Link: </openapi/fastnear.json>; rel="service-desc"; type="application/json"
+  Link: </structured-data/site-graph.json>; rel="service-meta"; type="application/json"
+
+/api/*
+  Link: </.well-known/api-catalog>; rel="api-catalog"; type="application/linkset+json"
+  Link: </openapi/fastnear.json>; rel="service-desc"; type="application/json"
+  Link: </structured-data/site-graph.json>; rel="service-meta"; type="application/json"
+
+/ru/api
+  Link: </.well-known/api-catalog>; rel="api-catalog"; type="application/linkset+json"
+  Link: </openapi/fastnear.json>; rel="service-desc"; type="application/json"
+  Link: </ru/structured-data/site-graph.json>; rel="service-meta"; type="application/json"
+
+/ru/api/*
+  Link: </.well-known/api-catalog>; rel="api-catalog"; type="application/linkset+json"
+  Link: </openapi/fastnear.json>; rel="service-desc"; type="application/json"
+  Link: </ru/structured-data/site-graph.json>; rel="service-meta"; type="application/json"
+
+/neardata
+  Link: </.well-known/api-catalog>; rel="api-catalog"; type="application/linkset+json"
+  Link: </openapi/neardata.json>; rel="service-desc"; type="application/json"
+  Link: </structured-data/site-graph.json>; rel="service-meta"; type="application/json"
+
+/neardata/*
+  Link: </.well-known/api-catalog>; rel="api-catalog"; type="application/linkset+json"
+  Link: </openapi/neardata.json>; rel="service-desc"; type="application/json"
+  Link: </structured-data/site-graph.json>; rel="service-meta"; type="application/json"
+
+/ru/neardata
+  Link: </.well-known/api-catalog>; rel="api-catalog"; type="application/linkset+json"
+  Link: </openapi/neardata.json>; rel="service-desc"; type="application/json"
+  Link: </ru/structured-data/site-graph.json>; rel="service-meta"; type="application/json"
+
+/ru/neardata/*
+  Link: </.well-known/api-catalog>; rel="api-catalog"; type="application/linkset+json"
+  Link: </openapi/neardata.json>; rel="service-desc"; type="application/json"
+  Link: </ru/structured-data/site-graph.json>; rel="service-meta"; type="application/json"
+
+/agents
+  Link: </.well-known/api-catalog>; rel="api-catalog"; type="application/linkset+json"
+  Link: </.well-known/agent-skills/index.json>; rel="service-meta"; type="application/json"
+  Link: </structured-data/site-graph.json>; rel="service-meta"; type="application/json"
+
+/agents/*
+  Link: </.well-known/api-catalog>; rel="api-catalog"; type="application/linkset+json"
+  Link: </.well-known/agent-skills/index.json>; rel="service-meta"; type="application/json"
+  Link: </structured-data/site-graph.json>; rel="service-meta"; type="application/json"
+
+/ru/agents
+  Link: </.well-known/api-catalog>; rel="api-catalog"; type="application/linkset+json"
+  Link: </.well-known/agent-skills/index.json>; rel="service-meta"; type="application/json"
+  Link: </ru/structured-data/site-graph.json>; rel="service-meta"; type="application/json"
+
+/ru/agents/*
+  Link: </.well-known/api-catalog>; rel="api-catalog"; type="application/linkset+json"
+  Link: </.well-known/agent-skills/index.json>; rel="service-meta"; type="application/json"
+  Link: </ru/structured-data/site-graph.json>; rel="service-meta"; type="application/json"
+
+/auth
+  Link: </.well-known/api-catalog>; rel="api-catalog"; type="application/linkset+json"
+  Link: </structured-data/site-graph.json>; rel="service-meta"; type="application/json"
+
+/auth/*
+  Link: </.well-known/api-catalog>; rel="api-catalog"; type="application/linkset+json"
+  Link: </structured-data/site-graph.json>; rel="service-meta"; type="application/json"
+
+/ru/auth
+  Link: </.well-known/api-catalog>; rel="api-catalog"; type="application/linkset+json"
+  Link: </ru/structured-data/site-graph.json>; rel="service-meta"; type="application/json"
+
+/ru/auth/*
+  Link: </.well-known/api-catalog>; rel="api-catalog"; type="application/linkset+json"
+  Link: </ru/structured-data/site-graph.json>; rel="service-meta"; type="application/json"
+
+/.well-known/api-catalog
+  Content-Type: application/linkset+json; charset=utf-8; profile="https://www.rfc-editor.org/info/rfc9727"
+  Link: </.well-known/api-catalog>; rel="api-catalog"; type="application/linkset+json"
+
+/.well-known/agent-skills/index.json
+  Content-Type: application/json; charset=utf-8
+
+/.well-known/agent-skills/*/SKILL.md
+  Content-Type: text/markdown; charset=utf-8

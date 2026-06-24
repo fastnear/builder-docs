@@ -17,7 +17,7 @@
       "kind": "api",
       "name": "FastNear API",
       "schemaType": "WebAPI",
-      "@id": "https://docs.fastnear.com/structured-data/families/api-fastnear",
+      "@id": "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-fastnear",
       "docsPageId": "https://docs.fastnear.com/ru/api#page",
       "docsUrl": "https://docs.fastnear.com/ru/api",
       "documentationUrl": "https://docs.fastnear.com/ru/api",
@@ -34,7 +34,7 @@
       "kind": "api",
       "name": "KV FastData API",
       "schemaType": "WebAPI",
-      "@id": "https://docs.fastnear.com/structured-data/families/api-kv-fastdata",
+      "@id": "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-kv-fastdata",
       "docsPageId": "https://docs.fastnear.com/ru/fastdata/kv#page",
       "docsUrl": "https://docs.fastnear.com/ru/fastdata/kv",
       "documentationUrl": "https://docs.fastnear.com/ru/fastdata/kv",
@@ -51,7 +51,7 @@
       "kind": "api",
       "name": "NEAR Data API",
       "schemaType": "WebAPI",
-      "@id": "https://docs.fastnear.com/structured-data/families/api-neardata",
+      "@id": "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-neardata",
       "docsPageId": "https://docs.fastnear.com/ru/neardata#page",
       "docsUrl": "https://docs.fastnear.com/ru/neardata",
       "documentationUrl": "https://docs.fastnear.com/ru/neardata",
@@ -68,7 +68,7 @@
       "kind": "api",
       "name": "Транзакции API",
       "schemaType": "WebAPI",
-      "@id": "https://docs.fastnear.com/structured-data/families/api-transactions",
+      "@id": "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-transactions",
       "docsPageId": "https://docs.fastnear.com/ru/tx#page",
       "docsUrl": "https://docs.fastnear.com/ru/tx",
       "documentationUrl": "https://docs.fastnear.com/ru/tx",
@@ -85,7 +85,7 @@
       "kind": "api",
       "name": "API переводов",
       "schemaType": "WebAPI",
-      "@id": "https://docs.fastnear.com/structured-data/families/api-transfers",
+      "@id": "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-transfers",
       "docsPageId": "https://docs.fastnear.com/ru/transfers#page",
       "docsUrl": "https://docs.fastnear.com/ru/transfers",
       "documentationUrl": "https://docs.fastnear.com/ru/transfers",
@@ -102,7 +102,7 @@
       "kind": "rpc",
       "name": "RPC аккаунта",
       "schemaType": "WebAPI",
-      "@id": "https://docs.fastnear.com/structured-data/families/rpc-account",
+      "@id": "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-account",
       "docsPageId": "https://docs.fastnear.com/ru/rpc#page",
       "docsUrl": "https://docs.fastnear.com/ru/rpc",
       "documentationUrl": "https://docs.fastnear.com/ru/rpc",
@@ -119,7 +119,7 @@
       "kind": "rpc",
       "name": "RPC блоков",
       "schemaType": "WebAPI",
-      "@id": "https://docs.fastnear.com/structured-data/families/rpc-block",
+      "@id": "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-block",
       "docsPageId": "https://docs.fastnear.com/ru/rpc#page",
       "docsUrl": "https://docs.fastnear.com/ru/rpc",
       "documentationUrl": "https://docs.fastnear.com/ru/rpc",
@@ -136,7 +136,7 @@
       "kind": "rpc",
       "name": "RPC контрактов",
       "schemaType": "WebAPI",
-      "@id": "https://docs.fastnear.com/structured-data/families/rpc-contract",
+      "@id": "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-contract",
       "docsPageId": "https://docs.fastnear.com/ru/rpc#page",
       "docsUrl": "https://docs.fastnear.com/ru/rpc",
       "documentationUrl": "https://docs.fastnear.com/ru/rpc",
@@ -153,7 +153,7 @@
       "kind": "rpc",
       "name": "RPC протокола",
       "schemaType": "WebAPI",
-      "@id": "https://docs.fastnear.com/structured-data/families/rpc-protocol",
+      "@id": "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-protocol",
       "docsPageId": "https://docs.fastnear.com/ru/rpc#page",
       "docsUrl": "https://docs.fastnear.com/ru/rpc",
       "documentationUrl": "https://docs.fastnear.com/ru/rpc",
@@ -170,7 +170,7 @@
       "kind": "rpc",
       "name": "RPC транзакций",
       "schemaType": "WebAPI",
-      "@id": "https://docs.fastnear.com/structured-data/families/rpc-transaction",
+      "@id": "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-transaction",
       "docsPageId": "https://docs.fastnear.com/ru/rpc#page",
       "docsUrl": "https://docs.fastnear.com/ru/rpc",
       "documentationUrl": "https://docs.fastnear.com/ru/rpc",
@@ -187,7 +187,7 @@
       "kind": "rpc",
       "name": "RPC валидаторов",
       "schemaType": "WebAPI",
-      "@id": "https://docs.fastnear.com/structured-data/families/rpc-validators",
+      "@id": "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-validators",
       "docsPageId": "https://docs.fastnear.com/ru/rpc#page",
       "docsUrl": "https://docs.fastnear.com/ru/rpc",
       "documentationUrl": "https://docs.fastnear.com/ru/rpc",
@@ -222,13 +222,13 @@
       "sourceSpec": "apis/fastnear/system/health.yaml",
       "summary": "Проверить состояние сервиса",
       "transport": "http",
-      "@id": "https://docs.fastnear.com/structured-data/operations/fastnear-system-health",
+      "@id": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-fastnear-system-health",
       "abstract": "Проверить состояние сервиса",
       "canonicalPageId": "https://docs.fastnear.com/ru/apis/fastnear/system/health#page",
       "canonicalUrl": "https://docs.fastnear.com/ru/apis/fastnear/system/health",
       "docsPageId": "https://docs.fastnear.com/ru/api/system/health#page",
       "docsUrl": "https://docs.fastnear.com/ru/api/system/health",
-      "familyEntityId": "https://docs.fastnear.com/structured-data/families/api-fastnear",
+      "familyEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-fastnear",
       "inLanguage": "ru",
       "mainEntityOfPageId": "https://docs.fastnear.com/ru/api/system/health#page",
       "publisherId": "https://docs.fastnear.com/#organization",
@@ -267,13 +267,13 @@
       "sourceSpec": "apis/fastnear/system/status.yaml",
       "summary": "Получить статус синхронизации сервиса",
       "transport": "http",
-      "@id": "https://docs.fastnear.com/structured-data/operations/fastnear-system-status",
+      "@id": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-fastnear-system-status",
       "abstract": "Получить статус синхронизации сервиса",
       "canonicalPageId": "https://docs.fastnear.com/ru/apis/fastnear/system/status#page",
       "canonicalUrl": "https://docs.fastnear.com/ru/apis/fastnear/system/status",
       "docsPageId": "https://docs.fastnear.com/ru/api/system/status#page",
       "docsUrl": "https://docs.fastnear.com/ru/api/system/status",
-      "familyEntityId": "https://docs.fastnear.com/structured-data/families/api-fastnear",
+      "familyEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-fastnear",
       "inLanguage": "ru",
       "mainEntityOfPageId": "https://docs.fastnear.com/ru/api/system/status#page",
       "publisherId": "https://docs.fastnear.com/#organization",
@@ -312,13 +312,13 @@
       "sourceSpec": "apis/fastnear/v0/account_ft.yaml",
       "summary": "Получить ID FT-контрактов аккаунта",
       "transport": "http",
-      "@id": "https://docs.fastnear.com/structured-data/operations/fastnear-v0-account-ft",
+      "@id": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-fastnear-v0-account-ft",
       "abstract": "Получить ID FT-контрактов аккаунта",
       "canonicalPageId": "https://docs.fastnear.com/ru/apis/fastnear/v0/account_ft#page",
       "canonicalUrl": "https://docs.fastnear.com/ru/apis/fastnear/v0/account_ft",
       "docsPageId": "https://docs.fastnear.com/ru/api/v0/account-ft#page",
       "docsUrl": "https://docs.fastnear.com/ru/api/v0/account-ft",
-      "familyEntityId": "https://docs.fastnear.com/structured-data/families/api-fastnear",
+      "familyEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-fastnear",
       "inLanguage": "ru",
       "mainEntityOfPageId": "https://docs.fastnear.com/ru/api/v0/account-ft#page",
       "publisherId": "https://docs.fastnear.com/#organization",
@@ -357,13 +357,13 @@
       "sourceSpec": "apis/fastnear/v0/account_nft.yaml",
       "summary": "Получить ID NFT-контрактов аккаунта",
       "transport": "http",
-      "@id": "https://docs.fastnear.com/structured-data/operations/fastnear-v0-account-nft",
+      "@id": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-fastnear-v0-account-nft",
       "abstract": "Получить ID NFT-контрактов аккаунта",
       "canonicalPageId": "https://docs.fastnear.com/ru/apis/fastnear/v0/account_nft#page",
       "canonicalUrl": "https://docs.fastnear.com/ru/apis/fastnear/v0/account_nft",
       "docsPageId": "https://docs.fastnear.com/ru/api/v0/account-nft#page",
       "docsUrl": "https://docs.fastnear.com/ru/api/v0/account-nft",
-      "familyEntityId": "https://docs.fastnear.com/structured-data/families/api-fastnear",
+      "familyEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-fastnear",
       "inLanguage": "ru",
       "mainEntityOfPageId": "https://docs.fastnear.com/ru/api/v0/account-nft#page",
       "publisherId": "https://docs.fastnear.com/#organization",
@@ -402,13 +402,13 @@
       "sourceSpec": "apis/fastnear/v0/account_staking.yaml",
       "summary": "Получить ID стейкинг-пулов аккаунта",
       "transport": "http",
-      "@id": "https://docs.fastnear.com/structured-data/operations/fastnear-v0-account-staking",
+      "@id": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-fastnear-v0-account-staking",
       "abstract": "Получить ID стейкинг-пулов аккаунта",
       "canonicalPageId": "https://docs.fastnear.com/ru/apis/fastnear/v0/account_staking#page",
       "canonicalUrl": "https://docs.fastnear.com/ru/apis/fastnear/v0/account_staking",
       "docsPageId": "https://docs.fastnear.com/ru/api/v0/account-staking#page",
       "docsUrl": "https://docs.fastnear.com/ru/api/v0/account-staking",
-      "familyEntityId": "https://docs.fastnear.com/structured-data/families/api-fastnear",
+      "familyEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-fastnear",
       "inLanguage": "ru",
       "mainEntityOfPageId": "https://docs.fastnear.com/ru/api/v0/account-staking#page",
       "publisherId": "https://docs.fastnear.com/#organization",
@@ -447,13 +447,13 @@
       "sourceSpec": "apis/fastnear/v0/public_key_lookup.yaml",
       "summary": "Найти аккаунты полного доступа по публичному ключу",
       "transport": "http",
-      "@id": "https://docs.fastnear.com/structured-data/operations/fastnear-v0-public-key-lookup",
+      "@id": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-fastnear-v0-public-key-lookup",
       "abstract": "Найти аккаунты полного доступа по публичному ключу",
       "canonicalPageId": "https://docs.fastnear.com/ru/apis/fastnear/v0/public_key_lookup#page",
       "canonicalUrl": "https://docs.fastnear.com/ru/apis/fastnear/v0/public_key_lookup",
       "docsPageId": "https://docs.fastnear.com/ru/api/v0/public-key#page",
       "docsUrl": "https://docs.fastnear.com/ru/api/v0/public-key",
-      "familyEntityId": "https://docs.fastnear.com/structured-data/families/api-fastnear",
+      "familyEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-fastnear",
       "inLanguage": "ru",
       "mainEntityOfPageId": "https://docs.fastnear.com/ru/api/v0/public-key#page",
       "publisherId": "https://docs.fastnear.com/#organization",
@@ -492,13 +492,13 @@
       "sourceSpec": "apis/fastnear/v0/public_key_lookup_all.yaml",
       "summary": "Найти все аккаунты по публичному ключу",
       "transport": "http",
-      "@id": "https://docs.fastnear.com/structured-data/operations/fastnear-v0-public-key-lookup-all",
+      "@id": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-fastnear-v0-public-key-lookup-all",
       "abstract": "Найти все аккаунты по публичному ключу",
       "canonicalPageId": "https://docs.fastnear.com/ru/apis/fastnear/v0/public_key_lookup_all#page",
       "canonicalUrl": "https://docs.fastnear.com/ru/apis/fastnear/v0/public_key_lookup_all",
       "docsPageId": "https://docs.fastnear.com/ru/api/v0/public-key-all#page",
       "docsUrl": "https://docs.fastnear.com/ru/api/v0/public-key-all",
-      "familyEntityId": "https://docs.fastnear.com/structured-data/families/api-fastnear",
+      "familyEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-fastnear",
       "inLanguage": "ru",
       "mainEntityOfPageId": "https://docs.fastnear.com/ru/api/v0/public-key-all#page",
       "publisherId": "https://docs.fastnear.com/#organization",
@@ -537,13 +537,13 @@
       "sourceSpec": "apis/fastnear/v1/account_ft.yaml",
       "summary": "Получить индексированные строки FT-токенов аккаунта",
       "transport": "http",
-      "@id": "https://docs.fastnear.com/structured-data/operations/fastnear-v1-account-ft",
+      "@id": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-fastnear-v1-account-ft",
       "abstract": "Получить индексированные строки FT-токенов аккаунта",
       "canonicalPageId": "https://docs.fastnear.com/ru/apis/fastnear/v1/account_ft#page",
       "canonicalUrl": "https://docs.fastnear.com/ru/apis/fastnear/v1/account_ft",
       "docsPageId": "https://docs.fastnear.com/ru/api/v1/account-ft#page",
       "docsUrl": "https://docs.fastnear.com/ru/api/v1/account-ft",
-      "familyEntityId": "https://docs.fastnear.com/structured-data/families/api-fastnear",
+      "familyEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-fastnear",
       "inLanguage": "ru",
       "mainEntityOfPageId": "https://docs.fastnear.com/ru/api/v1/account-ft#page",
       "publisherId": "https://docs.fastnear.com/#organization",
@@ -582,13 +582,13 @@
       "sourceSpec": "apis/fastnear/v1/account_full.yaml",
       "summary": "Получить полный индексированный снимок аккаунта",
       "transport": "http",
-      "@id": "https://docs.fastnear.com/structured-data/operations/fastnear-v1-account-full",
+      "@id": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-fastnear-v1-account-full",
       "abstract": "Получить полный индексированный снимок аккаунта",
       "canonicalPageId": "https://docs.fastnear.com/ru/apis/fastnear/v1/account_full#page",
       "canonicalUrl": "https://docs.fastnear.com/ru/apis/fastnear/v1/account_full",
       "docsPageId": "https://docs.fastnear.com/ru/api/v1/account-full#page",
       "docsUrl": "https://docs.fastnear.com/ru/api/v1/account-full",
-      "familyEntityId": "https://docs.fastnear.com/structured-data/families/api-fastnear",
+      "familyEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-fastnear",
       "inLanguage": "ru",
       "mainEntityOfPageId": "https://docs.fastnear.com/ru/api/v1/account-full#page",
       "publisherId": "https://docs.fastnear.com/#organization",
@@ -627,13 +627,13 @@
       "sourceSpec": "apis/fastnear/v1/account_nft.yaml",
       "summary": "Получить индексированные строки NFT аккаунта",
       "transport": "http",
-      "@id": "https://docs.fastnear.com/structured-data/operations/fastnear-v1-account-nft",
+      "@id": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-fastnear-v1-account-nft",
       "abstract": "Получить индексированные строки NFT аккаунта",
       "canonicalPageId": "https://docs.fastnear.com/ru/apis/fastnear/v1/account_nft#page",
       "canonicalUrl": "https://docs.fastnear.com/ru/apis/fastnear/v1/account_nft",
       "docsPageId": "https://docs.fastnear.com/ru/api/v1/account-nft#page",
       "docsUrl": "https://docs.fastnear.com/ru/api/v1/account-nft",
-      "familyEntityId": "https://docs.fastnear.com/structured-data/families/api-fastnear",
+      "familyEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-fastnear",
       "inLanguage": "ru",
       "mainEntityOfPageId": "https://docs.fastnear.com/ru/api/v1/account-nft#page",
       "publisherId": "https://docs.fastnear.com/#organization",
@@ -672,13 +672,13 @@
       "sourceSpec": "apis/fastnear/v1/account_staking.yaml",
       "summary": "Поиск индексированных стейкинг-пулов аккаунта",
       "transport": "http",
-      "@id": "https://docs.fastnear.com/structured-data/operations/fastnear-v1-account-staking",
+      "@id": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-fastnear-v1-account-staking",
       "abstract": "Поиск индексированных стейкинг-пулов аккаунта",
       "canonicalPageId": "https://docs.fastnear.com/ru/apis/fastnear/v1/account_staking#page",
       "canonicalUrl": "https://docs.fastnear.com/ru/apis/fastnear/v1/account_staking",
       "docsPageId": "https://docs.fastnear.com/ru/api/v1/account-staking#page",
       "docsUrl": "https://docs.fastnear.com/ru/api/v1/account-staking",
-      "familyEntityId": "https://docs.fastnear.com/structured-data/families/api-fastnear",
+      "familyEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-fastnear",
       "inLanguage": "ru",
       "mainEntityOfPageId": "https://docs.fastnear.com/ru/api/v1/account-staking#page",
       "publisherId": "https://docs.fastnear.com/#organization",
@@ -717,13 +717,13 @@
       "sourceSpec": "apis/fastnear/v1/ft_top.yaml",
       "summary": "Поиск индексированных топ-держателей FT-токена",
       "transport": "http",
-      "@id": "https://docs.fastnear.com/structured-data/operations/fastnear-v1-ft-top",
+      "@id": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-fastnear-v1-ft-top",
       "abstract": "Поиск индексированных топ-держателей FT-токена",
       "canonicalPageId": "https://docs.fastnear.com/ru/apis/fastnear/v1/ft_top#page",
       "canonicalUrl": "https://docs.fastnear.com/ru/apis/fastnear/v1/ft_top",
       "docsPageId": "https://docs.fastnear.com/ru/api/v1/ft-top#page",
       "docsUrl": "https://docs.fastnear.com/ru/api/v1/ft-top",
-      "familyEntityId": "https://docs.fastnear.com/structured-data/families/api-fastnear",
+      "familyEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-fastnear",
       "inLanguage": "ru",
       "mainEntityOfPageId": "https://docs.fastnear.com/ru/api/v1/ft-top#page",
       "publisherId": "https://docs.fastnear.com/#organization",
@@ -762,13 +762,13 @@
       "sourceSpec": "apis/fastnear/v1/public_key_lookup.yaml",
       "summary": "Найти аккаунты полного доступа по публичному ключу",
       "transport": "http",
-      "@id": "https://docs.fastnear.com/structured-data/operations/fastnear-v1-public-key-lookup",
+      "@id": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-fastnear-v1-public-key-lookup",
       "abstract": "Найти аккаунты полного доступа по публичному ключу",
       "canonicalPageId": "https://docs.fastnear.com/ru/apis/fastnear/v1/public_key_lookup#page",
       "canonicalUrl": "https://docs.fastnear.com/ru/apis/fastnear/v1/public_key_lookup",
       "docsPageId": "https://docs.fastnear.com/ru/api/v1/public-key#page",
       "docsUrl": "https://docs.fastnear.com/ru/api/v1/public-key",
-      "familyEntityId": "https://docs.fastnear.com/structured-data/families/api-fastnear",
+      "familyEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-fastnear",
       "inLanguage": "ru",
       "mainEntityOfPageId": "https://docs.fastnear.com/ru/api/v1/public-key#page",
       "publisherId": "https://docs.fastnear.com/#organization",
@@ -807,13 +807,13 @@
       "sourceSpec": "apis/fastnear/v1/public_key_lookup_all.yaml",
       "summary": "Найти все индексированные аккаунты по публичному ключу",
       "transport": "http",
-      "@id": "https://docs.fastnear.com/structured-data/operations/fastnear-v1-public-key-lookup-all",
+      "@id": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-fastnear-v1-public-key-lookup-all",
       "abstract": "Найти все индексированные аккаунты по публичному ключу",
       "canonicalPageId": "https://docs.fastnear.com/ru/apis/fastnear/v1/public_key_lookup_all#page",
       "canonicalUrl": "https://docs.fastnear.com/ru/apis/fastnear/v1/public_key_lookup_all",
       "docsPageId": "https://docs.fastnear.com/ru/api/v1/public-key-all#page",
       "docsUrl": "https://docs.fastnear.com/ru/api/v1/public-key-all",
-      "familyEntityId": "https://docs.fastnear.com/structured-data/families/api-fastnear",
+      "familyEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-fastnear",
       "inLanguage": "ru",
       "mainEntityOfPageId": "https://docs.fastnear.com/ru/api/v1/public-key-all#page",
       "publisherId": "https://docs.fastnear.com/#organization",
@@ -852,13 +852,13 @@
       "sourceSpec": "apis/kv-fastdata/v0/all_by_predecessor.yaml",
       "summary": "Получить последние строки «ключ-значение» для одного вызывающего аккаунта по всем контрактам",
       "transport": "http",
-      "@id": "https://docs.fastnear.com/structured-data/operations/kv-fastdata-v0-all-by-predecessor",
+      "@id": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-kv-fastdata-v0-all-by-predecessor",
       "abstract": "Получить последние строки «ключ-значение» для одного вызывающего аккаунта по всем контрактам",
       "canonicalPageId": "https://docs.fastnear.com/ru/apis/kv-fastdata/v0/all_by_predecessor#page",
       "canonicalUrl": "https://docs.fastnear.com/ru/apis/kv-fastdata/v0/all_by_predecessor",
       "docsPageId": "https://docs.fastnear.com/ru/fastdata/kv/all-by-predecessor#page",
       "docsUrl": "https://docs.fastnear.com/ru/fastdata/kv/all-by-predecessor",
-      "familyEntityId": "https://docs.fastnear.com/structured-data/families/api-kv-fastdata",
+      "familyEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-kv-fastdata",
       "inLanguage": "ru",
       "mainEntityOfPageId": "https://docs.fastnear.com/ru/fastdata/kv/all-by-predecessor#page",
       "publisherId": "https://docs.fastnear.com/#organization",
@@ -897,13 +897,13 @@
       "sourceSpec": "apis/kv-fastdata/v0/get_history_key.yaml",
       "summary": "Получить исторические строки для одного точного ключа в рамках одного вызывающего аккаунта и контракта",
       "transport": "http",
-      "@id": "https://docs.fastnear.com/structured-data/operations/kv-fastdata-v0-get-history-key",
+      "@id": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-kv-fastdata-v0-get-history-key",
       "abstract": "Получить исторические строки для одного точного ключа в рамках одного вызывающего аккаунта и контракта",
       "canonicalPageId": "https://docs.fastnear.com/ru/apis/kv-fastdata/v0/get_history_key#page",
       "canonicalUrl": "https://docs.fastnear.com/ru/apis/kv-fastdata/v0/get_history_key",
       "docsPageId": "https://docs.fastnear.com/ru/fastdata/kv/get-history-key#page",
       "docsUrl": "https://docs.fastnear.com/ru/fastdata/kv/get-history-key",
-      "familyEntityId": "https://docs.fastnear.com/structured-data/families/api-kv-fastdata",
+      "familyEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-kv-fastdata",
       "inLanguage": "ru",
       "mainEntityOfPageId": "https://docs.fastnear.com/ru/fastdata/kv/get-history-key#page",
       "publisherId": "https://docs.fastnear.com/#organization",
@@ -942,13 +942,13 @@
       "sourceSpec": "apis/kv-fastdata/v0/get_latest_key.yaml",
       "summary": "Получить последнюю строку для одного точного ключа в рамках одного вызывающего аккаунта и контракта",
       "transport": "http",
-      "@id": "https://docs.fastnear.com/structured-data/operations/kv-fastdata-v0-get-latest-key",
+      "@id": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-kv-fastdata-v0-get-latest-key",
       "abstract": "Получить последнюю строку для одного точного ключа в рамках одного вызывающего аккаунта и контракта",
       "canonicalPageId": "https://docs.fastnear.com/ru/apis/kv-fastdata/v0/get_latest_key#page",
       "canonicalUrl": "https://docs.fastnear.com/ru/apis/kv-fastdata/v0/get_latest_key",
       "docsPageId": "https://docs.fastnear.com/ru/fastdata/kv/get-latest-key#page",
       "docsUrl": "https://docs.fastnear.com/ru/fastdata/kv/get-latest-key",
-      "familyEntityId": "https://docs.fastnear.com/structured-data/families/api-kv-fastdata",
+      "familyEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-kv-fastdata",
       "inLanguage": "ru",
       "mainEntityOfPageId": "https://docs.fastnear.com/ru/fastdata/kv/get-latest-key#page",
       "publisherId": "https://docs.fastnear.com/#organization",
@@ -987,13 +987,13 @@
       "sourceSpec": "apis/kv-fastdata/v0/history_by_account.yaml",
       "summary": "Получить историю записей «ключ-значение» для одного контракта по всем вызывающим аккаунтам",
       "transport": "http",
-      "@id": "https://docs.fastnear.com/structured-data/operations/kv-fastdata-v0-history-by-account",
+      "@id": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-kv-fastdata-v0-history-by-account",
       "abstract": "Получить историю записей «ключ-значение» для одного контракта по всем вызывающим аккаунтам",
       "canonicalPageId": "https://docs.fastnear.com/ru/apis/kv-fastdata/v0/history_by_account#page",
       "canonicalUrl": "https://docs.fastnear.com/ru/apis/kv-fastdata/v0/history_by_account",
       "docsPageId": "https://docs.fastnear.com/ru/fastdata/kv/history-by-account#page",
       "docsUrl": "https://docs.fastnear.com/ru/fastdata/kv/history-by-account",
-      "familyEntityId": "https://docs.fastnear.com/structured-data/families/api-kv-fastdata",
+      "familyEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-kv-fastdata",
       "inLanguage": "ru",
       "mainEntityOfPageId": "https://docs.fastnear.com/ru/fastdata/kv/history-by-account#page",
       "publisherId": "https://docs.fastnear.com/#organization",
@@ -1032,13 +1032,13 @@
       "sourceSpec": "apis/kv-fastdata/v0/history_by_key.yaml",
       "summary": "Получить историю по точному ключу во всех индексированных контрактах",
       "transport": "http",
-      "@id": "https://docs.fastnear.com/structured-data/operations/kv-fastdata-v0-history-by-key",
+      "@id": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-kv-fastdata-v0-history-by-key",
       "abstract": "Получить историю по точному ключу во всех индексированных контрактах",
       "canonicalPageId": "https://docs.fastnear.com/ru/apis/kv-fastdata/v0/history_by_key#page",
       "canonicalUrl": "https://docs.fastnear.com/ru/apis/kv-fastdata/v0/history_by_key",
       "docsPageId": "https://docs.fastnear.com/ru/fastdata/kv/history-by-key#page",
       "docsUrl": "https://docs.fastnear.com/ru/fastdata/kv/history-by-key",
-      "familyEntityId": "https://docs.fastnear.com/structured-data/families/api-kv-fastdata",
+      "familyEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-kv-fastdata",
       "inLanguage": "ru",
       "mainEntityOfPageId": "https://docs.fastnear.com/ru/fastdata/kv/history-by-key#page",
       "publisherId": "https://docs.fastnear.com/#organization",
@@ -1077,13 +1077,13 @@
       "sourceSpec": "apis/kv-fastdata/v0/history_by_predecessor.yaml",
       "summary": "Получить историю записей «ключ-значение» для одного вызывающего аккаунта и контракта",
       "transport": "http",
-      "@id": "https://docs.fastnear.com/structured-data/operations/kv-fastdata-v0-history-by-predecessor",
+      "@id": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-kv-fastdata-v0-history-by-predecessor",
       "abstract": "Получить историю записей «ключ-значение» для одного вызывающего аккаунта и контракта",
       "canonicalPageId": "https://docs.fastnear.com/ru/apis/kv-fastdata/v0/history_by_predecessor#page",
       "canonicalUrl": "https://docs.fastnear.com/ru/apis/kv-fastdata/v0/history_by_predecessor",
       "docsPageId": "https://docs.fastnear.com/ru/fastdata/kv/history-by-predecessor#page",
       "docsUrl": "https://docs.fastnear.com/ru/fastdata/kv/history-by-predecessor",
-      "familyEntityId": "https://docs.fastnear.com/structured-data/families/api-kv-fastdata",
+      "familyEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-kv-fastdata",
       "inLanguage": "ru",
       "mainEntityOfPageId": "https://docs.fastnear.com/ru/fastdata/kv/history-by-predecessor#page",
       "publisherId": "https://docs.fastnear.com/#organization",
@@ -1122,13 +1122,13 @@
       "sourceSpec": "apis/kv-fastdata/v0/latest_by_account.yaml",
       "summary": "Получить последние строки «ключ-значение» для одного контракта по всем вызывающим аккаунтам",
       "transport": "http",
-      "@id": "https://docs.fastnear.com/structured-data/operations/kv-fastdata-v0-latest-by-account",
+      "@id": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-kv-fastdata-v0-latest-by-account",
       "abstract": "Получить последние строки «ключ-значение» для одного контракта по всем вызывающим аккаунтам",
       "canonicalPageId": "https://docs.fastnear.com/ru/apis/kv-fastdata/v0/latest_by_account#page",
       "canonicalUrl": "https://docs.fastnear.com/ru/apis/kv-fastdata/v0/latest_by_account",
       "docsPageId": "https://docs.fastnear.com/ru/fastdata/kv/latest-by-account#page",
       "docsUrl": "https://docs.fastnear.com/ru/fastdata/kv/latest-by-account",
-      "familyEntityId": "https://docs.fastnear.com/structured-data/families/api-kv-fastdata",
+      "familyEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-kv-fastdata",
       "inLanguage": "ru",
       "mainEntityOfPageId": "https://docs.fastnear.com/ru/fastdata/kv/latest-by-account#page",
       "publisherId": "https://docs.fastnear.com/#organization",
@@ -1167,13 +1167,13 @@
       "sourceSpec": "apis/kv-fastdata/v0/latest_by_predecessor.yaml",
       "summary": "Получить последние строки «ключ-значение» для одного вызывающего аккаунта и контракта",
       "transport": "http",
-      "@id": "https://docs.fastnear.com/structured-data/operations/kv-fastdata-v0-latest-by-predecessor",
+      "@id": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-kv-fastdata-v0-latest-by-predecessor",
       "abstract": "Получить последние строки «ключ-значение» для одного вызывающего аккаунта и контракта",
       "canonicalPageId": "https://docs.fastnear.com/ru/apis/kv-fastdata/v0/latest_by_predecessor#page",
       "canonicalUrl": "https://docs.fastnear.com/ru/apis/kv-fastdata/v0/latest_by_predecessor",
       "docsPageId": "https://docs.fastnear.com/ru/fastdata/kv/latest-by-predecessor#page",
       "docsUrl": "https://docs.fastnear.com/ru/fastdata/kv/latest-by-predecessor",
-      "familyEntityId": "https://docs.fastnear.com/structured-data/families/api-kv-fastdata",
+      "familyEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-kv-fastdata",
       "inLanguage": "ru",
       "mainEntityOfPageId": "https://docs.fastnear.com/ru/fastdata/kv/latest-by-predecessor#page",
       "publisherId": "https://docs.fastnear.com/#organization",
@@ -1212,13 +1212,13 @@
       "sourceSpec": "apis/kv-fastdata/v0/multi.yaml",
       "summary": "Получить последние строки для нескольких полностью квалифицированных ключей",
       "transport": "http",
-      "@id": "https://docs.fastnear.com/structured-data/operations/kv-fastdata-v0-multi",
+      "@id": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-kv-fastdata-v0-multi",
       "abstract": "Получить последние строки для нескольких полностью квалифицированных ключей",
       "canonicalPageId": "https://docs.fastnear.com/ru/apis/kv-fastdata/v0/multi#page",
       "canonicalUrl": "https://docs.fastnear.com/ru/apis/kv-fastdata/v0/multi",
       "docsPageId": "https://docs.fastnear.com/ru/fastdata/kv/multi#page",
       "docsUrl": "https://docs.fastnear.com/ru/fastdata/kv/multi",
-      "familyEntityId": "https://docs.fastnear.com/structured-data/families/api-kv-fastdata",
+      "familyEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-kv-fastdata",
       "inLanguage": "ru",
       "mainEntityOfPageId": "https://docs.fastnear.com/ru/fastdata/kv/multi#page",
       "publisherId": "https://docs.fastnear.com/#organization",
@@ -1257,13 +1257,13 @@
       "sourceSpec": "apis/neardata/system/health.yaml",
       "summary": "Проверить состояние сервиса",
       "transport": "http",
-      "@id": "https://docs.fastnear.com/structured-data/operations/neardata-system-health",
+      "@id": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-neardata-system-health",
       "abstract": "Проверить состояние сервиса",
       "canonicalPageId": "https://docs.fastnear.com/ru/apis/neardata/system/health#page",
       "canonicalUrl": "https://docs.fastnear.com/ru/apis/neardata/system/health",
       "docsPageId": "https://docs.fastnear.com/ru/neardata/system/health#page",
       "docsUrl": "https://docs.fastnear.com/ru/neardata/system/health",
-      "familyEntityId": "https://docs.fastnear.com/structured-data/families/api-neardata",
+      "familyEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-neardata",
       "inLanguage": "ru",
       "mainEntityOfPageId": "https://docs.fastnear.com/ru/neardata/system/health#page",
       "publisherId": "https://docs.fastnear.com/#organization",
@@ -1302,13 +1302,13 @@
       "sourceSpec": "apis/neardata/v0/block.yaml",
       "summary": "Получить финализированный блок по высоте",
       "transport": "http",
-      "@id": "https://docs.fastnear.com/structured-data/operations/neardata-v0-block",
+      "@id": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-neardata-v0-block",
       "abstract": "Получить финализированный блок по высоте",
       "canonicalPageId": "https://docs.fastnear.com/ru/apis/neardata/v0/block#page",
       "canonicalUrl": "https://docs.fastnear.com/ru/apis/neardata/v0/block",
       "docsPageId": "https://docs.fastnear.com/ru/neardata/block#page",
       "docsUrl": "https://docs.fastnear.com/ru/neardata/block",
-      "familyEntityId": "https://docs.fastnear.com/structured-data/families/api-neardata",
+      "familyEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-neardata",
       "inLanguage": "ru",
       "mainEntityOfPageId": "https://docs.fastnear.com/ru/neardata/block#page",
       "publisherId": "https://docs.fastnear.com/#organization",
@@ -1347,13 +1347,13 @@
       "sourceSpec": "apis/neardata/v0/block_chunk.yaml",
       "summary": "Получить чанк из финализированного блока",
       "transport": "http",
-      "@id": "https://docs.fastnear.com/structured-data/operations/neardata-v0-block-chunk",
+      "@id": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-neardata-v0-block-chunk",
       "abstract": "Получить чанк из финализированного блока",
       "canonicalPageId": "https://docs.fastnear.com/ru/apis/neardata/v0/block_chunk#page",
       "canonicalUrl": "https://docs.fastnear.com/ru/apis/neardata/v0/block_chunk",
       "docsPageId": "https://docs.fastnear.com/ru/neardata/block-chunk#page",
       "docsUrl": "https://docs.fastnear.com/ru/neardata/block-chunk",
-      "familyEntityId": "https://docs.fastnear.com/structured-data/families/api-neardata",
+      "familyEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-neardata",
       "inLanguage": "ru",
       "mainEntityOfPageId": "https://docs.fastnear.com/ru/neardata/block-chunk#page",
       "publisherId": "https://docs.fastnear.com/#organization",
@@ -1392,13 +1392,13 @@
       "sourceSpec": "apis/neardata/v0/block_headers.yaml",
       "summary": "Получить объект блока для финализированного блока",
       "transport": "http",
-      "@id": "https://docs.fastnear.com/structured-data/operations/neardata-v0-block-headers",
+      "@id": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-neardata-v0-block-headers",
       "abstract": "Получить объект блока для финализированного блока",
       "canonicalPageId": "https://docs.fastnear.com/ru/apis/neardata/v0/block_headers#page",
       "canonicalUrl": "https://docs.fastnear.com/ru/apis/neardata/v0/block_headers",
       "docsPageId": "https://docs.fastnear.com/ru/neardata/block-headers#page",
       "docsUrl": "https://docs.fastnear.com/ru/neardata/block-headers",
-      "familyEntityId": "https://docs.fastnear.com/structured-data/families/api-neardata",
+      "familyEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-neardata",
       "inLanguage": "ru",
       "mainEntityOfPageId": "https://docs.fastnear.com/ru/neardata/block-headers#page",
       "publisherId": "https://docs.fastnear.com/#organization",
@@ -1437,13 +1437,13 @@
       "sourceSpec": "apis/neardata/v0/block_optimistic.yaml",
       "summary": "Получить оптимистичный блок по высоте",
       "transport": "http",
-      "@id": "https://docs.fastnear.com/structured-data/operations/neardata-v0-block-optimistic",
+      "@id": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-neardata-v0-block-optimistic",
       "abstract": "Получить оптимистичный блок по высоте",
       "canonicalPageId": "https://docs.fastnear.com/ru/apis/neardata/v0/block_optimistic#page",
       "canonicalUrl": "https://docs.fastnear.com/ru/apis/neardata/v0/block_optimistic",
       "docsPageId": "https://docs.fastnear.com/ru/neardata/block-optimistic#page",
       "docsUrl": "https://docs.fastnear.com/ru/neardata/block-optimistic",
-      "familyEntityId": "https://docs.fastnear.com/structured-data/families/api-neardata",
+      "familyEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-neardata",
       "inLanguage": "ru",
       "mainEntityOfPageId": "https://docs.fastnear.com/ru/neardata/block-optimistic#page",
       "publisherId": "https://docs.fastnear.com/#organization",
@@ -1482,13 +1482,13 @@
       "sourceSpec": "apis/neardata/v0/block_shard.yaml",
       "summary": "Получить шард из финализированного блока",
       "transport": "http",
-      "@id": "https://docs.fastnear.com/structured-data/operations/neardata-v0-block-shard",
+      "@id": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-neardata-v0-block-shard",
       "abstract": "Получить шард из финализированного блока",
       "canonicalPageId": "https://docs.fastnear.com/ru/apis/neardata/v0/block_shard#page",
       "canonicalUrl": "https://docs.fastnear.com/ru/apis/neardata/v0/block_shard",
       "docsPageId": "https://docs.fastnear.com/ru/neardata/block-shard#page",
       "docsUrl": "https://docs.fastnear.com/ru/neardata/block-shard",
-      "familyEntityId": "https://docs.fastnear.com/structured-data/families/api-neardata",
+      "familyEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-neardata",
       "inLanguage": "ru",
       "mainEntityOfPageId": "https://docs.fastnear.com/ru/neardata/block-shard#page",
       "publisherId": "https://docs.fastnear.com/#organization",
@@ -1527,13 +1527,13 @@
       "sourceSpec": "apis/neardata/v0/first_block.yaml",
       "summary": "Перенаправление на первый блок после генезиса",
       "transport": "http",
-      "@id": "https://docs.fastnear.com/structured-data/operations/neardata-v0-first-block",
+      "@id": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-neardata-v0-first-block",
       "abstract": "Перенаправление на первый блок после генезиса",
       "canonicalPageId": "https://docs.fastnear.com/ru/apis/neardata/v0/first_block#page",
       "canonicalUrl": "https://docs.fastnear.com/ru/apis/neardata/v0/first_block",
       "docsPageId": "https://docs.fastnear.com/ru/neardata/first-block#page",
       "docsUrl": "https://docs.fastnear.com/ru/neardata/first-block",
-      "familyEntityId": "https://docs.fastnear.com/structured-data/families/api-neardata",
+      "familyEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-neardata",
       "inLanguage": "ru",
       "mainEntityOfPageId": "https://docs.fastnear.com/ru/neardata/first-block#page",
       "publisherId": "https://docs.fastnear.com/#organization",
@@ -1572,13 +1572,13 @@
       "sourceSpec": "apis/neardata/v0/last_block_final.yaml",
       "summary": "Перенаправление на последний финализированный блок",
       "transport": "http",
-      "@id": "https://docs.fastnear.com/structured-data/operations/neardata-v0-last-block-final",
+      "@id": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-neardata-v0-last-block-final",
       "abstract": "Перенаправление на последний финализированный блок",
       "canonicalPageId": "https://docs.fastnear.com/ru/apis/neardata/v0/last_block_final#page",
       "canonicalUrl": "https://docs.fastnear.com/ru/apis/neardata/v0/last_block_final",
       "docsPageId": "https://docs.fastnear.com/ru/neardata/last-block-final#page",
       "docsUrl": "https://docs.fastnear.com/ru/neardata/last-block-final",
-      "familyEntityId": "https://docs.fastnear.com/structured-data/families/api-neardata",
+      "familyEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-neardata",
       "inLanguage": "ru",
       "mainEntityOfPageId": "https://docs.fastnear.com/ru/neardata/last-block-final#page",
       "publisherId": "https://docs.fastnear.com/#organization",
@@ -1617,13 +1617,13 @@
       "sourceSpec": "apis/neardata/v0/last_block_optimistic.yaml",
       "summary": "Перенаправление на последний оптимистичный блок",
       "transport": "http",
-      "@id": "https://docs.fastnear.com/structured-data/operations/neardata-v0-last-block-optimistic",
+      "@id": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-neardata-v0-last-block-optimistic",
       "abstract": "Перенаправление на последний оптимистичный блок",
       "canonicalPageId": "https://docs.fastnear.com/ru/apis/neardata/v0/last_block_optimistic#page",
       "canonicalUrl": "https://docs.fastnear.com/ru/apis/neardata/v0/last_block_optimistic",
       "docsPageId": "https://docs.fastnear.com/ru/neardata/last-block-optimistic#page",
       "docsUrl": "https://docs.fastnear.com/ru/neardata/last-block-optimistic",
-      "familyEntityId": "https://docs.fastnear.com/structured-data/families/api-neardata",
+      "familyEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-neardata",
       "inLanguage": "ru",
       "mainEntityOfPageId": "https://docs.fastnear.com/ru/neardata/last-block-optimistic#page",
       "publisherId": "https://docs.fastnear.com/#organization",
@@ -1662,13 +1662,13 @@
       "sourceSpec": "apis/transactions/v0/account.yaml",
       "summary": "Получить историю транзакций аккаунта",
       "transport": "http",
-      "@id": "https://docs.fastnear.com/structured-data/operations/transactions-v0-account",
+      "@id": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-transactions-v0-account",
       "abstract": "Получить историю транзакций аккаунта",
       "canonicalPageId": "https://docs.fastnear.com/ru/apis/transactions/v0/account#page",
       "canonicalUrl": "https://docs.fastnear.com/ru/apis/transactions/v0/account",
       "docsPageId": "https://docs.fastnear.com/ru/tx/account#page",
       "docsUrl": "https://docs.fastnear.com/ru/tx/account",
-      "familyEntityId": "https://docs.fastnear.com/structured-data/families/api-transactions",
+      "familyEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-transactions",
       "inLanguage": "ru",
       "mainEntityOfPageId": "https://docs.fastnear.com/ru/tx/account#page",
       "publisherId": "https://docs.fastnear.com/#organization",
@@ -1707,13 +1707,13 @@
       "sourceSpec": "apis/transactions/v0/block.yaml",
       "summary": "Получить блок по высоте или хешу",
       "transport": "http",
-      "@id": "https://docs.fastnear.com/structured-data/operations/transactions-v0-block",
+      "@id": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-transactions-v0-block",
       "abstract": "Получить блок по высоте или хешу",
       "canonicalPageId": "https://docs.fastnear.com/ru/apis/transactions/v0/block#page",
       "canonicalUrl": "https://docs.fastnear.com/ru/apis/transactions/v0/block",
       "docsPageId": "https://docs.fastnear.com/ru/tx/block#page",
       "docsUrl": "https://docs.fastnear.com/ru/tx/block",
-      "familyEntityId": "https://docs.fastnear.com/structured-data/families/api-transactions",
+      "familyEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-transactions",
       "inLanguage": "ru",
       "mainEntityOfPageId": "https://docs.fastnear.com/ru/tx/block#page",
       "publisherId": "https://docs.fastnear.com/#organization",
@@ -1752,13 +1752,13 @@
       "sourceSpec": "apis/transactions/v0/blocks.yaml",
       "summary": "Получить список блоков",
       "transport": "http",
-      "@id": "https://docs.fastnear.com/structured-data/operations/transactions-v0-blocks",
+      "@id": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-transactions-v0-blocks",
       "abstract": "Получить список блоков",
       "canonicalPageId": "https://docs.fastnear.com/ru/apis/transactions/v0/blocks#page",
       "canonicalUrl": "https://docs.fastnear.com/ru/apis/transactions/v0/blocks",
       "docsPageId": "https://docs.fastnear.com/ru/tx/blocks#page",
       "docsUrl": "https://docs.fastnear.com/ru/tx/blocks",
-      "familyEntityId": "https://docs.fastnear.com/structured-data/families/api-transactions",
+      "familyEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-transactions",
       "inLanguage": "ru",
       "mainEntityOfPageId": "https://docs.fastnear.com/ru/tx/blocks#page",
       "publisherId": "https://docs.fastnear.com/#organization",
@@ -1797,13 +1797,13 @@
       "sourceSpec": "apis/transactions/v0/receipt.yaml",
       "summary": "Получить квитанцию по ID",
       "transport": "http",
-      "@id": "https://docs.fastnear.com/structured-data/operations/transactions-v0-receipt",
+      "@id": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-transactions-v0-receipt",
       "abstract": "Получить квитанцию по ID",
       "canonicalPageId": "https://docs.fastnear.com/ru/apis/transactions/v0/receipt#page",
       "canonicalUrl": "https://docs.fastnear.com/ru/apis/transactions/v0/receipt",
       "docsPageId": "https://docs.fastnear.com/ru/tx/receipt#page",
       "docsUrl": "https://docs.fastnear.com/ru/tx/receipt",
-      "familyEntityId": "https://docs.fastnear.com/structured-data/families/api-transactions",
+      "familyEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-transactions",
       "inLanguage": "ru",
       "mainEntityOfPageId": "https://docs.fastnear.com/ru/tx/receipt#page",
       "publisherId": "https://docs.fastnear.com/#organization",
@@ -1842,13 +1842,13 @@
       "sourceSpec": "apis/transactions/v0/transactions.yaml",
       "summary": "Получить транзакции по хешу",
       "transport": "http",
-      "@id": "https://docs.fastnear.com/structured-data/operations/transactions-v0-transactions",
+      "@id": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-transactions-v0-transactions",
       "abstract": "Получить транзакции по хешу",
       "canonicalPageId": "https://docs.fastnear.com/ru/apis/transactions/v0/transactions#page",
       "canonicalUrl": "https://docs.fastnear.com/ru/apis/transactions/v0/transactions",
       "docsPageId": "https://docs.fastnear.com/ru/tx/transactions#page",
       "docsUrl": "https://docs.fastnear.com/ru/tx/transactions",
-      "familyEntityId": "https://docs.fastnear.com/structured-data/families/api-transactions",
+      "familyEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-transactions",
       "inLanguage": "ru",
       "mainEntityOfPageId": "https://docs.fastnear.com/ru/tx/transactions#page",
       "publisherId": "https://docs.fastnear.com/#organization",
@@ -1886,13 +1886,13 @@
       "sourceSpec": "apis/transfers/v0/transfers.yaml",
       "summary": "Запросить переводы аккаунта",
       "transport": "http",
-      "@id": "https://docs.fastnear.com/structured-data/operations/transfers-v0-transfers",
+      "@id": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-transfers-v0-transfers",
       "abstract": "Запросить переводы аккаунта",
       "canonicalPageId": "https://docs.fastnear.com/ru/apis/transfers/v0/transfers#page",
       "canonicalUrl": "https://docs.fastnear.com/ru/apis/transfers/v0/transfers",
       "docsPageId": "https://docs.fastnear.com/ru/transfers/query#page",
       "docsUrl": "https://docs.fastnear.com/ru/transfers/query",
-      "familyEntityId": "https://docs.fastnear.com/structured-data/families/api-transfers",
+      "familyEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-transfers",
       "inLanguage": "ru",
       "mainEntityOfPageId": "https://docs.fastnear.com/ru/transfers/query#page",
       "publisherId": "https://docs.fastnear.com/#organization",
@@ -1932,13 +1932,13 @@
       "sourceSpec": "rpcs/account/view_access_key.yaml",
       "summary": "Просмотр ключа доступа аккаунта",
       "transport": "json-rpc",
-      "@id": "https://docs.fastnear.com/structured-data/operations/rpc-view-access-key",
+      "@id": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-view-access-key",
       "abstract": "Просмотр ключа доступа аккаунта",
       "canonicalPageId": "https://docs.fastnear.com/ru/rpcs/account/view_access_key#page",
       "canonicalUrl": "https://docs.fastnear.com/ru/rpcs/account/view_access_key",
       "docsPageId": "https://docs.fastnear.com/ru/rpc/account/view-access-key#page",
       "docsUrl": "https://docs.fastnear.com/ru/rpc/account/view-access-key",
-      "familyEntityId": "https://docs.fastnear.com/structured-data/families/rpc-account",
+      "familyEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-account",
       "inLanguage": "ru",
       "mainEntityOfPageId": "https://docs.fastnear.com/ru/rpc/account/view-access-key#page",
       "publisherId": "https://docs.fastnear.com/#organization",
@@ -1979,13 +1979,13 @@
       "sourceSpec": "rpcs/account/view_access_key_list.yaml",
       "summary": "Просмотр списка ключей доступа аккаунта",
       "transport": "json-rpc",
-      "@id": "https://docs.fastnear.com/structured-data/operations/rpc-view-access-key-list",
+      "@id": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-view-access-key-list",
       "abstract": "Просмотр списка ключей доступа аккаунта",
       "canonicalPageId": "https://docs.fastnear.com/ru/rpcs/account/view_access_key_list#page",
       "canonicalUrl": "https://docs.fastnear.com/ru/rpcs/account/view_access_key_list",
       "docsPageId": "https://docs.fastnear.com/ru/rpc/account/view-access-key-list#page",
       "docsUrl": "https://docs.fastnear.com/ru/rpc/account/view-access-key-list",
-      "familyEntityId": "https://docs.fastnear.com/structured-data/families/rpc-account",
+      "familyEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-account",
       "inLanguage": "ru",
       "mainEntityOfPageId": "https://docs.fastnear.com/ru/rpc/account/view-access-key-list#page",
       "publisherId": "https://docs.fastnear.com/#organization",
@@ -2026,13 +2026,13 @@
       "sourceSpec": "rpcs/account/view_account.yaml",
       "summary": "Просмотр аккаунта",
       "transport": "json-rpc",
-      "@id": "https://docs.fastnear.com/structured-data/operations/rpc-view-account",
+      "@id": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-view-account",
       "abstract": "Просмотр аккаунта",
       "canonicalPageId": "https://docs.fastnear.com/ru/rpcs/account/view_account#page",
       "canonicalUrl": "https://docs.fastnear.com/ru/rpcs/account/view_account",
       "docsPageId": "https://docs.fastnear.com/ru/rpc/account/view-account#page",
       "docsUrl": "https://docs.fastnear.com/ru/rpc/account/view-account",
-      "familyEntityId": "https://docs.fastnear.com/structured-data/families/rpc-account",
+      "familyEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-account",
       "inLanguage": "ru",
       "mainEntityOfPageId": "https://docs.fastnear.com/ru/rpc/account/view-account#page",
       "publisherId": "https://docs.fastnear.com/#organization",
@@ -2073,13 +2073,13 @@
       "sourceSpec": "rpcs/block/block_by_height.yaml",
       "summary": "Получить блок по высоте",
       "transport": "json-rpc",
-      "@id": "https://docs.fastnear.com/structured-data/operations/rpc-block-by-height",
+      "@id": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-block-by-height",
       "abstract": "Получить блок по высоте",
       "canonicalPageId": "https://docs.fastnear.com/ru/rpcs/block/block_by_height#page",
       "canonicalUrl": "https://docs.fastnear.com/ru/rpcs/block/block_by_height",
       "docsPageId": "https://docs.fastnear.com/ru/rpc/block/block-by-height#page",
       "docsUrl": "https://docs.fastnear.com/ru/rpc/block/block-by-height",
-      "familyEntityId": "https://docs.fastnear.com/structured-data/families/rpc-block",
+      "familyEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-block",
       "inLanguage": "ru",
       "mainEntityOfPageId": "https://docs.fastnear.com/ru/rpc/block/block-by-height#page",
       "publisherId": "https://docs.fastnear.com/#organization",
@@ -2120,13 +2120,13 @@
       "sourceSpec": "rpcs/block/block_by_id.yaml",
       "summary": "Получить блок по хешу",
       "transport": "json-rpc",
-      "@id": "https://docs.fastnear.com/structured-data/operations/rpc-block-by-id",
+      "@id": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-block-by-id",
       "abstract": "Получить блок по хешу",
       "canonicalPageId": "https://docs.fastnear.com/ru/rpcs/block/block_by_id#page",
       "canonicalUrl": "https://docs.fastnear.com/ru/rpcs/block/block_by_id",
       "docsPageId": "https://docs.fastnear.com/ru/rpc/block/block-by-id#page",
       "docsUrl": "https://docs.fastnear.com/ru/rpc/block/block-by-id",
-      "familyEntityId": "https://docs.fastnear.com/structured-data/families/rpc-block",
+      "familyEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-block",
       "inLanguage": "ru",
       "mainEntityOfPageId": "https://docs.fastnear.com/ru/rpc/block/block-by-id#page",
       "publisherId": "https://docs.fastnear.com/#organization",
@@ -2167,13 +2167,13 @@
       "sourceSpec": "rpcs/block/block_effects.yaml",
       "summary": "Получить эффекты блока",
       "transport": "json-rpc",
-      "@id": "https://docs.fastnear.com/structured-data/operations/rpc-block-effects",
+      "@id": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-block-effects",
       "abstract": "Получить эффекты блока",
       "canonicalPageId": "https://docs.fastnear.com/ru/rpcs/block/block_effects#page",
       "canonicalUrl": "https://docs.fastnear.com/ru/rpcs/block/block_effects",
       "docsPageId": "https://docs.fastnear.com/ru/rpc/block/block-effects#page",
       "docsUrl": "https://docs.fastnear.com/ru/rpc/block/block-effects",
-      "familyEntityId": "https://docs.fastnear.com/structured-data/families/rpc-block",
+      "familyEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-block",
       "inLanguage": "ru",
       "mainEntityOfPageId": "https://docs.fastnear.com/ru/rpc/block/block-effects#page",
       "publisherId": "https://docs.fastnear.com/#organization",
@@ -2214,13 +2214,13 @@
       "sourceSpec": "rpcs/contract/call.yaml",
       "summary": "Вызвать view-метод контракта",
       "transport": "json-rpc",
-      "@id": "https://docs.fastnear.com/structured-data/operations/rpc-call-function",
+      "@id": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-call-function",
       "abstract": "Вызвать view-метод контракта",
       "canonicalPageId": "https://docs.fastnear.com/ru/rpcs/contract/call#page",
       "canonicalUrl": "https://docs.fastnear.com/ru/rpcs/contract/call",
       "docsPageId": "https://docs.fastnear.com/ru/rpc/contract/call-function#page",
       "docsUrl": "https://docs.fastnear.com/ru/rpc/contract/call-function",
-      "familyEntityId": "https://docs.fastnear.com/structured-data/families/rpc-contract",
+      "familyEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-contract",
       "inLanguage": "ru",
       "mainEntityOfPageId": "https://docs.fastnear.com/ru/rpc/contract/call-function#page",
       "publisherId": "https://docs.fastnear.com/#organization",
@@ -2261,13 +2261,13 @@
       "sourceSpec": "rpcs/contract/view_code.yaml",
       "summary": "Получить код контракта",
       "transport": "json-rpc",
-      "@id": "https://docs.fastnear.com/structured-data/operations/rpc-view-code",
+      "@id": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-view-code",
       "abstract": "Получить код контракта",
       "canonicalPageId": "https://docs.fastnear.com/ru/rpcs/contract/view_code#page",
       "canonicalUrl": "https://docs.fastnear.com/ru/rpcs/contract/view_code",
       "docsPageId": "https://docs.fastnear.com/ru/rpc/contract/view-code#page",
       "docsUrl": "https://docs.fastnear.com/ru/rpc/contract/view-code",
-      "familyEntityId": "https://docs.fastnear.com/structured-data/families/rpc-contract",
+      "familyEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-contract",
       "inLanguage": "ru",
       "mainEntityOfPageId": "https://docs.fastnear.com/ru/rpc/contract/view-code#page",
       "publisherId": "https://docs.fastnear.com/#organization",
@@ -2308,13 +2308,13 @@
       "sourceSpec": "rpcs/contract/view_global_contract_code.yaml",
       "summary": "Получить глобальный код контракта",
       "transport": "json-rpc",
-      "@id": "https://docs.fastnear.com/structured-data/operations/rpc-view-global-contract-code",
+      "@id": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-view-global-contract-code",
       "abstract": "Получить глобальный код контракта",
       "canonicalPageId": "https://docs.fastnear.com/ru/rpcs/contract/view_global_contract_code#page",
       "canonicalUrl": "https://docs.fastnear.com/ru/rpcs/contract/view_global_contract_code",
       "docsPageId": "https://docs.fastnear.com/ru/rpc/contract/view-global-contract-code#page",
       "docsUrl": "https://docs.fastnear.com/ru/rpc/contract/view-global-contract-code",
-      "familyEntityId": "https://docs.fastnear.com/structured-data/families/rpc-contract",
+      "familyEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-contract",
       "inLanguage": "ru",
       "mainEntityOfPageId": "https://docs.fastnear.com/ru/rpc/contract/view-global-contract-code#page",
       "publisherId": "https://docs.fastnear.com/#organization",
@@ -2355,13 +2355,13 @@
       "sourceSpec": "rpcs/contract/view_global_contract_code_by_account_id.yaml",
       "summary": "Получить глобальный код контракта по аккаунту",
       "transport": "json-rpc",
-      "@id": "https://docs.fastnear.com/structured-data/operations/rpc-view-global-contract-code-by-account-id",
+      "@id": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-view-global-contract-code-by-account-id",
       "abstract": "Получить глобальный код контракта по аккаунту",
       "canonicalPageId": "https://docs.fastnear.com/ru/rpcs/contract/view_global_contract_code_by_account_id#page",
       "canonicalUrl": "https://docs.fastnear.com/ru/rpcs/contract/view_global_contract_code_by_account_id",
       "docsPageId": "https://docs.fastnear.com/ru/rpc/contract/view-global-contract-code-by-account-id#page",
       "docsUrl": "https://docs.fastnear.com/ru/rpc/contract/view-global-contract-code-by-account-id",
-      "familyEntityId": "https://docs.fastnear.com/structured-data/families/rpc-contract",
+      "familyEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-contract",
       "inLanguage": "ru",
       "mainEntityOfPageId": "https://docs.fastnear.com/ru/rpc/contract/view-global-contract-code-by-account-id#page",
       "publisherId": "https://docs.fastnear.com/#organization",
@@ -2402,13 +2402,13 @@
       "sourceSpec": "rpcs/contract/view_state.yaml",
       "summary": "Получить состояние контракта",
       "transport": "json-rpc",
-      "@id": "https://docs.fastnear.com/structured-data/operations/rpc-view-state",
+      "@id": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-view-state",
       "abstract": "Получить состояние контракта",
       "canonicalPageId": "https://docs.fastnear.com/ru/rpcs/contract/view_state#page",
       "canonicalUrl": "https://docs.fastnear.com/ru/rpcs/contract/view_state",
       "docsPageId": "https://docs.fastnear.com/ru/rpc/contract/view-state#page",
       "docsUrl": "https://docs.fastnear.com/ru/rpc/contract/view-state",
-      "familyEntityId": "https://docs.fastnear.com/structured-data/families/rpc-contract",
+      "familyEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-contract",
       "inLanguage": "ru",
       "mainEntityOfPageId": "https://docs.fastnear.com/ru/rpc/contract/view-state#page",
       "publisherId": "https://docs.fastnear.com/#organization",
@@ -2449,13 +2449,13 @@
       "sourceSpec": "rpcs/protocol/changes.yaml",
       "summary": "Получить изменения состояния",
       "transport": "json-rpc",
-      "@id": "https://docs.fastnear.com/structured-data/operations/rpc-changes",
+      "@id": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-changes",
       "abstract": "Получить изменения состояния",
       "canonicalPageId": "https://docs.fastnear.com/ru/rpcs/protocol/changes#page",
       "canonicalUrl": "https://docs.fastnear.com/ru/rpcs/protocol/changes",
       "docsPageId": "https://docs.fastnear.com/ru/rpc/protocol/changes#page",
       "docsUrl": "https://docs.fastnear.com/ru/rpc/protocol/changes",
-      "familyEntityId": "https://docs.fastnear.com/structured-data/families/rpc-protocol",
+      "familyEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-protocol",
       "inLanguage": "ru",
       "mainEntityOfPageId": "https://docs.fastnear.com/ru/rpc/protocol/changes#page",
       "publisherId": "https://docs.fastnear.com/#organization",
@@ -2496,13 +2496,13 @@
       "sourceSpec": "rpcs/protocol/chunk_by_block_shard.yaml",
       "summary": "Получить чанк по блоку и шарду",
       "transport": "json-rpc",
-      "@id": "https://docs.fastnear.com/structured-data/operations/rpc-chunk-by-block-shard",
+      "@id": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-chunk-by-block-shard",
       "abstract": "Получить чанк по блоку и шарду",
       "canonicalPageId": "https://docs.fastnear.com/ru/rpcs/protocol/chunk_by_block_shard#page",
       "canonicalUrl": "https://docs.fastnear.com/ru/rpcs/protocol/chunk_by_block_shard",
       "docsPageId": "https://docs.fastnear.com/ru/rpc/protocol/chunk-by-block-shard#page",
       "docsUrl": "https://docs.fastnear.com/ru/rpc/protocol/chunk-by-block-shard",
-      "familyEntityId": "https://docs.fastnear.com/structured-data/families/rpc-protocol",
+      "familyEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-protocol",
       "inLanguage": "ru",
       "mainEntityOfPageId": "https://docs.fastnear.com/ru/rpc/protocol/chunk-by-block-shard#page",
       "publisherId": "https://docs.fastnear.com/#organization",
@@ -2543,13 +2543,13 @@
       "sourceSpec": "rpcs/protocol/chunk_by_hash.yaml",
       "summary": "Получить чанк по хешу",
       "transport": "json-rpc",
-      "@id": "https://docs.fastnear.com/structured-data/operations/rpc-chunk-by-hash",
+      "@id": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-chunk-by-hash",
       "abstract": "Получить чанк по хешу",
       "canonicalPageId": "https://docs.fastnear.com/ru/rpcs/protocol/chunk_by_hash#page",
       "canonicalUrl": "https://docs.fastnear.com/ru/rpcs/protocol/chunk_by_hash",
       "docsPageId": "https://docs.fastnear.com/ru/rpc/protocol/chunk-by-hash#page",
       "docsUrl": "https://docs.fastnear.com/ru/rpc/protocol/chunk-by-hash",
-      "familyEntityId": "https://docs.fastnear.com/structured-data/families/rpc-protocol",
+      "familyEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-protocol",
       "inLanguage": "ru",
       "mainEntityOfPageId": "https://docs.fastnear.com/ru/rpc/protocol/chunk-by-hash#page",
       "publisherId": "https://docs.fastnear.com/#organization",
@@ -2590,13 +2590,13 @@
       "sourceSpec": "rpcs/protocol/client_config.yaml",
       "summary": "Получить конфигурацию клиента",
       "transport": "json-rpc",
-      "@id": "https://docs.fastnear.com/structured-data/operations/rpc-client-config",
+      "@id": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-client-config",
       "abstract": "Получить конфигурацию клиента",
       "canonicalPageId": "https://docs.fastnear.com/ru/rpcs/protocol/client_config#page",
       "canonicalUrl": "https://docs.fastnear.com/ru/rpcs/protocol/client_config",
       "docsPageId": "https://docs.fastnear.com/ru/rpc/protocol/client-config#page",
       "docsUrl": "https://docs.fastnear.com/ru/rpc/protocol/client-config",
-      "familyEntityId": "https://docs.fastnear.com/structured-data/families/rpc-protocol",
+      "familyEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-protocol",
       "inLanguage": "ru",
       "mainEntityOfPageId": "https://docs.fastnear.com/ru/rpc/protocol/client-config#page",
       "publisherId": "https://docs.fastnear.com/#organization",
@@ -2637,13 +2637,13 @@
       "sourceSpec": "rpcs/protocol/EXPERIMENTAL_congestion_level.yaml",
       "summary": "Получить уровень перегрузки",
       "transport": "json-rpc",
-      "@id": "https://docs.fastnear.com/structured-data/operations/rpc-EXPERIMENTAL-congestion-level",
+      "@id": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-EXPERIMENTAL-congestion-level",
       "abstract": "Получить уровень перегрузки",
       "canonicalPageId": "https://docs.fastnear.com/ru/rpcs/protocol/EXPERIMENTAL_congestion_level#page",
       "canonicalUrl": "https://docs.fastnear.com/ru/rpcs/protocol/EXPERIMENTAL_congestion_level",
       "docsPageId": "https://docs.fastnear.com/ru/rpc/protocol/experimental-congestion-level#page",
       "docsUrl": "https://docs.fastnear.com/ru/rpc/protocol/experimental-congestion-level",
-      "familyEntityId": "https://docs.fastnear.com/structured-data/families/rpc-protocol",
+      "familyEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-protocol",
       "inLanguage": "ru",
       "mainEntityOfPageId": "https://docs.fastnear.com/ru/rpc/protocol/experimental-congestion-level#page",
       "publisherId": "https://docs.fastnear.com/#organization",
@@ -2684,13 +2684,13 @@
       "sourceSpec": "rpcs/protocol/EXPERIMENTAL_light_client_block_proof.yaml",
       "summary": "Получить доказательство блока для лайт-клиента",
       "transport": "json-rpc",
-      "@id": "https://docs.fastnear.com/structured-data/operations/rpc-EXPERIMENTAL-light-client-block-proof",
+      "@id": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-EXPERIMENTAL-light-client-block-proof",
       "abstract": "Получить доказательство блока для лайт-клиента",
       "canonicalPageId": "https://docs.fastnear.com/ru/rpcs/protocol/EXPERIMENTAL_light_client_block_proof#page",
       "canonicalUrl": "https://docs.fastnear.com/ru/rpcs/protocol/EXPERIMENTAL_light_client_block_proof",
       "docsPageId": "https://docs.fastnear.com/ru/rpc/protocol/experimental-light-client-block-proof#page",
       "docsUrl": "https://docs.fastnear.com/ru/rpc/protocol/experimental-light-client-block-proof",
-      "familyEntityId": "https://docs.fastnear.com/structured-data/families/rpc-protocol",
+      "familyEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-protocol",
       "inLanguage": "ru",
       "mainEntityOfPageId": "https://docs.fastnear.com/ru/rpc/protocol/experimental-light-client-block-proof#page",
       "publisherId": "https://docs.fastnear.com/#organization",
@@ -2731,13 +2731,13 @@
       "sourceSpec": "rpcs/protocol/EXPERIMENTAL_light_client_proof.yaml",
       "summary": "Получить доказательство исполнения для лайт-клиента",
       "transport": "json-rpc",
-      "@id": "https://docs.fastnear.com/structured-data/operations/rpc-EXPERIMENTAL-light-client-proof",
+      "@id": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-EXPERIMENTAL-light-client-proof",
       "abstract": "Получить доказательство исполнения для лайт-клиента",
       "canonicalPageId": "https://docs.fastnear.com/ru/rpcs/protocol/EXPERIMENTAL_light_client_proof#page",
       "canonicalUrl": "https://docs.fastnear.com/ru/rpcs/protocol/EXPERIMENTAL_light_client_proof",
       "docsPageId": "https://docs.fastnear.com/ru/rpc/protocol/experimental-light-client-proof#page",
       "docsUrl": "https://docs.fastnear.com/ru/rpc/protocol/experimental-light-client-proof",
-      "familyEntityId": "https://docs.fastnear.com/structured-data/families/rpc-protocol",
+      "familyEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-protocol",
       "inLanguage": "ru",
       "mainEntityOfPageId": "https://docs.fastnear.com/ru/rpc/protocol/experimental-light-client-proof#page",
       "publisherId": "https://docs.fastnear.com/#organization",
@@ -2778,13 +2778,13 @@
       "sourceSpec": "rpcs/protocol/EXPERIMENTAL_protocol_config.yaml",
       "summary": "Получить конфигурацию протокола",
       "transport": "json-rpc",
-      "@id": "https://docs.fastnear.com/structured-data/operations/rpc-EXPERIMENTAL-protocol-config",
+      "@id": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-EXPERIMENTAL-protocol-config",
       "abstract": "Получить конфигурацию протокола",
       "canonicalPageId": "https://docs.fastnear.com/ru/rpcs/protocol/EXPERIMENTAL_protocol_config#page",
       "canonicalUrl": "https://docs.fastnear.com/ru/rpcs/protocol/EXPERIMENTAL_protocol_config",
       "docsPageId": "https://docs.fastnear.com/ru/rpc/protocol/experimental-protocol-config#page",
       "docsUrl": "https://docs.fastnear.com/ru/rpc/protocol/experimental-protocol-config",
-      "familyEntityId": "https://docs.fastnear.com/structured-data/families/rpc-protocol",
+      "familyEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-protocol",
       "inLanguage": "ru",
       "mainEntityOfPageId": "https://docs.fastnear.com/ru/rpc/protocol/experimental-protocol-config#page",
       "publisherId": "https://docs.fastnear.com/#organization",
@@ -2825,13 +2825,13 @@
       "sourceSpec": "rpcs/protocol/EXPERIMENTAL_split_storage_info.yaml",
       "summary": "Получить сведения о разделённом хранилище",
       "transport": "json-rpc",
-      "@id": "https://docs.fastnear.com/structured-data/operations/rpc-EXPERIMENTAL-split-storage-info",
+      "@id": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-EXPERIMENTAL-split-storage-info",
       "abstract": "Получить сведения о разделённом хранилище",
       "canonicalPageId": "https://docs.fastnear.com/ru/rpcs/protocol/EXPERIMENTAL_split_storage_info#page",
       "canonicalUrl": "https://docs.fastnear.com/ru/rpcs/protocol/EXPERIMENTAL_split_storage_info",
       "docsPageId": "https://docs.fastnear.com/ru/rpc/protocol/experimental-split-storage-info#page",
       "docsUrl": "https://docs.fastnear.com/ru/rpc/protocol/experimental-split-storage-info",
-      "familyEntityId": "https://docs.fastnear.com/structured-data/families/rpc-protocol",
+      "familyEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-protocol",
       "inLanguage": "ru",
       "mainEntityOfPageId": "https://docs.fastnear.com/ru/rpc/protocol/experimental-split-storage-info#page",
       "publisherId": "https://docs.fastnear.com/#organization",
@@ -2872,13 +2872,13 @@
       "sourceSpec": "rpcs/protocol/gas_price.yaml",
       "summary": "Получить текущую цену газа",
       "transport": "json-rpc",
-      "@id": "https://docs.fastnear.com/structured-data/operations/rpc-gas-price",
+      "@id": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-gas-price",
       "abstract": "Получить текущую цену газа",
       "canonicalPageId": "https://docs.fastnear.com/ru/rpcs/protocol/gas_price#page",
       "canonicalUrl": "https://docs.fastnear.com/ru/rpcs/protocol/gas_price",
       "docsPageId": "https://docs.fastnear.com/ru/rpc/protocol/gas-price#page",
       "docsUrl": "https://docs.fastnear.com/ru/rpc/protocol/gas-price",
-      "familyEntityId": "https://docs.fastnear.com/structured-data/families/rpc-protocol",
+      "familyEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-protocol",
       "inLanguage": "ru",
       "mainEntityOfPageId": "https://docs.fastnear.com/ru/rpc/protocol/gas-price#page",
       "publisherId": "https://docs.fastnear.com/#organization",
@@ -2919,13 +2919,13 @@
       "sourceSpec": "rpcs/protocol/gas_price_by_block.yaml",
       "summary": "Получить цену газа по блоку",
       "transport": "json-rpc",
-      "@id": "https://docs.fastnear.com/structured-data/operations/rpc-gas-price-by-block",
+      "@id": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-gas-price-by-block",
       "abstract": "Получить цену газа по блоку",
       "canonicalPageId": "https://docs.fastnear.com/ru/rpcs/protocol/gas_price_by_block#page",
       "canonicalUrl": "https://docs.fastnear.com/ru/rpcs/protocol/gas_price_by_block",
       "docsPageId": "https://docs.fastnear.com/ru/rpc/protocol/gas-price-by-block#page",
       "docsUrl": "https://docs.fastnear.com/ru/rpc/protocol/gas-price-by-block",
-      "familyEntityId": "https://docs.fastnear.com/structured-data/families/rpc-protocol",
+      "familyEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-protocol",
       "inLanguage": "ru",
       "mainEntityOfPageId": "https://docs.fastnear.com/ru/rpc/protocol/gas-price-by-block#page",
       "publisherId": "https://docs.fastnear.com/#organization",
@@ -2966,13 +2966,13 @@
       "sourceSpec": "rpcs/protocol/genesis_config.yaml",
       "summary": "Получить конфигурацию генезиса",
       "transport": "json-rpc",
-      "@id": "https://docs.fastnear.com/structured-data/operations/rpc-genesis-config",
+      "@id": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-genesis-config",
       "abstract": "Получить конфигурацию генезиса",
       "canonicalPageId": "https://docs.fastnear.com/ru/rpcs/protocol/genesis_config#page",
       "canonicalUrl": "https://docs.fastnear.com/ru/rpcs/protocol/genesis_config",
       "docsPageId": "https://docs.fastnear.com/ru/rpc/protocol/genesis-config#page",
       "docsUrl": "https://docs.fastnear.com/ru/rpc/protocol/genesis-config",
-      "familyEntityId": "https://docs.fastnear.com/structured-data/families/rpc-protocol",
+      "familyEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-protocol",
       "inLanguage": "ru",
       "mainEntityOfPageId": "https://docs.fastnear.com/ru/rpc/protocol/genesis-config#page",
       "publisherId": "https://docs.fastnear.com/#organization",
@@ -3013,13 +3013,13 @@
       "sourceSpec": "rpcs/protocol/health.yaml",
       "summary": "Проверить состояние узла",
       "transport": "json-rpc",
-      "@id": "https://docs.fastnear.com/structured-data/operations/rpc-health",
+      "@id": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-health",
       "abstract": "Проверить состояние узла",
       "canonicalPageId": "https://docs.fastnear.com/ru/rpcs/protocol/health#page",
       "canonicalUrl": "https://docs.fastnear.com/ru/rpcs/protocol/health",
       "docsPageId": "https://docs.fastnear.com/ru/rpc/protocol/health#page",
       "docsUrl": "https://docs.fastnear.com/ru/rpc/protocol/health",
-      "familyEntityId": "https://docs.fastnear.com/structured-data/families/rpc-protocol",
+      "familyEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-protocol",
       "inLanguage": "ru",
       "mainEntityOfPageId": "https://docs.fastnear.com/ru/rpc/protocol/health#page",
       "publisherId": "https://docs.fastnear.com/#organization",
@@ -3062,13 +3062,13 @@
       "sourceSpec": "rpcs/protocol/latest_block.yaml",
       "summary": "Получить последний блок",
       "transport": "json-rpc",
-      "@id": "https://docs.fastnear.com/structured-data/operations/rpc-latest-block",
+      "@id": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-latest-block",
       "abstract": "Получить последний блок",
       "canonicalPageId": "https://docs.fastnear.com/ru/rpcs/protocol/latest_block#page",
       "canonicalUrl": "https://docs.fastnear.com/ru/rpcs/protocol/latest_block",
       "docsPageId": "https://docs.fastnear.com/ru/rpc/protocol/latest-block#page",
       "docsUrl": "https://docs.fastnear.com/ru/rpc/protocol/latest-block",
-      "familyEntityId": "https://docs.fastnear.com/structured-data/families/rpc-protocol",
+      "familyEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-protocol",
       "inLanguage": "ru",
       "mainEntityOfPageId": "https://docs.fastnear.com/ru/rpc/protocol/latest-block#page",
       "publisherId": "https://docs.fastnear.com/#organization",
@@ -3109,13 +3109,13 @@
       "sourceSpec": "rpcs/protocol/light_client_proof.yaml",
       "summary": "Получить доказательство для лайт-клиента",
       "transport": "json-rpc",
-      "@id": "https://docs.fastnear.com/structured-data/operations/rpc-light-client-proof",
+      "@id": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-light-client-proof",
       "abstract": "Получить доказательство для лайт-клиента",
       "canonicalPageId": "https://docs.fastnear.com/ru/rpcs/protocol/light_client_proof#page",
       "canonicalUrl": "https://docs.fastnear.com/ru/rpcs/protocol/light_client_proof",
       "docsPageId": "https://docs.fastnear.com/ru/rpc/protocol/light-client-proof#page",
       "docsUrl": "https://docs.fastnear.com/ru/rpc/protocol/light-client-proof",
-      "familyEntityId": "https://docs.fastnear.com/structured-data/families/rpc-protocol",
+      "familyEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-protocol",
       "inLanguage": "ru",
       "mainEntityOfPageId": "https://docs.fastnear.com/ru/rpc/protocol/light-client-proof#page",
       "publisherId": "https://docs.fastnear.com/#organization",
@@ -3156,13 +3156,13 @@
       "sourceSpec": "rpcs/protocol/maintenance_windows.yaml",
       "summary": "Получить окна обслуживания",
       "transport": "json-rpc",
-      "@id": "https://docs.fastnear.com/structured-data/operations/rpc-maintenance-windows",
+      "@id": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-maintenance-windows",
       "abstract": "Получить окна обслуживания",
       "canonicalPageId": "https://docs.fastnear.com/ru/rpcs/protocol/maintenance_windows#page",
       "canonicalUrl": "https://docs.fastnear.com/ru/rpcs/protocol/maintenance_windows",
       "docsPageId": "https://docs.fastnear.com/ru/rpc/protocol/maintenance-windows#page",
       "docsUrl": "https://docs.fastnear.com/ru/rpc/protocol/maintenance-windows",
-      "familyEntityId": "https://docs.fastnear.com/structured-data/families/rpc-protocol",
+      "familyEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-protocol",
       "inLanguage": "ru",
       "mainEntityOfPageId": "https://docs.fastnear.com/ru/rpc/protocol/maintenance-windows#page",
       "publisherId": "https://docs.fastnear.com/#organization",
@@ -3203,13 +3203,13 @@
       "sourceSpec": "rpcs/protocol/metrics.yaml",
       "summary": "Получить метрики узла",
       "transport": "json-rpc",
-      "@id": "https://docs.fastnear.com/structured-data/operations/rpc-metrics",
+      "@id": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-metrics",
       "abstract": "Получить метрики узла",
       "canonicalPageId": "https://docs.fastnear.com/ru/rpcs/protocol/metrics#page",
       "canonicalUrl": "https://docs.fastnear.com/ru/rpcs/protocol/metrics",
       "docsPageId": "https://docs.fastnear.com/ru/rpc/protocol/metrics#page",
       "docsUrl": "https://docs.fastnear.com/ru/rpc/protocol/metrics",
-      "familyEntityId": "https://docs.fastnear.com/structured-data/families/rpc-protocol",
+      "familyEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-protocol",
       "inLanguage": "ru",
       "mainEntityOfPageId": "https://docs.fastnear.com/ru/rpc/protocol/metrics#page",
       "publisherId": "https://docs.fastnear.com/#organization",
@@ -3250,13 +3250,13 @@
       "sourceSpec": "rpcs/protocol/network_info.yaml",
       "summary": "Получить сведения о сети",
       "transport": "json-rpc",
-      "@id": "https://docs.fastnear.com/structured-data/operations/rpc-network-info",
+      "@id": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-network-info",
       "abstract": "Получить сведения о сети",
       "canonicalPageId": "https://docs.fastnear.com/ru/rpcs/protocol/network_info#page",
       "canonicalUrl": "https://docs.fastnear.com/ru/rpcs/protocol/network_info",
       "docsPageId": "https://docs.fastnear.com/ru/rpc/protocol/network-info#page",
       "docsUrl": "https://docs.fastnear.com/ru/rpc/protocol/network-info",
-      "familyEntityId": "https://docs.fastnear.com/structured-data/families/rpc-protocol",
+      "familyEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-protocol",
       "inLanguage": "ru",
       "mainEntityOfPageId": "https://docs.fastnear.com/ru/rpc/protocol/network-info#page",
       "publisherId": "https://docs.fastnear.com/#organization",
@@ -3297,13 +3297,13 @@
       "sourceSpec": "rpcs/protocol/next_light_client_block.yaml",
       "summary": "Получить следующий блок для лайт-клиента",
       "transport": "json-rpc",
-      "@id": "https://docs.fastnear.com/structured-data/operations/rpc-next-light-client-block",
+      "@id": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-next-light-client-block",
       "abstract": "Получить следующий блок для лайт-клиента",
       "canonicalPageId": "https://docs.fastnear.com/ru/rpcs/protocol/next_light_client_block#page",
       "canonicalUrl": "https://docs.fastnear.com/ru/rpcs/protocol/next_light_client_block",
       "docsPageId": "https://docs.fastnear.com/ru/rpc/protocol/next-light-client-block#page",
       "docsUrl": "https://docs.fastnear.com/ru/rpc/protocol/next-light-client-block",
-      "familyEntityId": "https://docs.fastnear.com/structured-data/families/rpc-protocol",
+      "familyEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-protocol",
       "inLanguage": "ru",
       "mainEntityOfPageId": "https://docs.fastnear.com/ru/rpc/protocol/next-light-client-block#page",
       "publisherId": "https://docs.fastnear.com/#organization",
@@ -3344,13 +3344,13 @@
       "sourceSpec": "rpcs/protocol/status.yaml",
       "summary": "Получить статус узла",
       "transport": "json-rpc",
-      "@id": "https://docs.fastnear.com/structured-data/operations/rpc-status",
+      "@id": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-status",
       "abstract": "Получить статус узла",
       "canonicalPageId": "https://docs.fastnear.com/ru/rpcs/protocol/status#page",
       "canonicalUrl": "https://docs.fastnear.com/ru/rpcs/protocol/status",
       "docsPageId": "https://docs.fastnear.com/ru/rpc/protocol/status#page",
       "docsUrl": "https://docs.fastnear.com/ru/rpc/protocol/status",
-      "familyEntityId": "https://docs.fastnear.com/structured-data/families/rpc-protocol",
+      "familyEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-protocol",
       "inLanguage": "ru",
       "mainEntityOfPageId": "https://docs.fastnear.com/ru/rpc/protocol/status#page",
       "publisherId": "https://docs.fastnear.com/#organization",
@@ -3391,13 +3391,13 @@
       "sourceSpec": "rpcs/transaction/broadcast_tx_async.yaml",
       "summary": "Отправить транзакцию асинхронно",
       "transport": "json-rpc",
-      "@id": "https://docs.fastnear.com/structured-data/operations/rpc-broadcast-tx-async",
+      "@id": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-broadcast-tx-async",
       "abstract": "Отправить транзакцию асинхронно",
       "canonicalPageId": "https://docs.fastnear.com/ru/rpcs/transaction/broadcast_tx_async#page",
       "canonicalUrl": "https://docs.fastnear.com/ru/rpcs/transaction/broadcast_tx_async",
       "docsPageId": "https://docs.fastnear.com/ru/rpc/transaction/broadcast-tx-async#page",
       "docsUrl": "https://docs.fastnear.com/ru/rpc/transaction/broadcast-tx-async",
-      "familyEntityId": "https://docs.fastnear.com/structured-data/families/rpc-transaction",
+      "familyEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-transaction",
       "inLanguage": "ru",
       "mainEntityOfPageId": "https://docs.fastnear.com/ru/rpc/transaction/broadcast-tx-async#page",
       "publisherId": "https://docs.fastnear.com/#organization",
@@ -3438,13 +3438,13 @@
       "sourceSpec": "rpcs/transaction/broadcast_tx_commit.yaml",
       "summary": "Отправить транзакцию и дождаться подтверждения",
       "transport": "json-rpc",
-      "@id": "https://docs.fastnear.com/structured-data/operations/rpc-broadcast-tx-commit",
+      "@id": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-broadcast-tx-commit",
       "abstract": "Отправить транзакцию и дождаться подтверждения",
       "canonicalPageId": "https://docs.fastnear.com/ru/rpcs/transaction/broadcast_tx_commit#page",
       "canonicalUrl": "https://docs.fastnear.com/ru/rpcs/transaction/broadcast_tx_commit",
       "docsPageId": "https://docs.fastnear.com/ru/rpc/transaction/broadcast-tx-commit#page",
       "docsUrl": "https://docs.fastnear.com/ru/rpc/transaction/broadcast-tx-commit",
-      "familyEntityId": "https://docs.fastnear.com/structured-data/families/rpc-transaction",
+      "familyEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-transaction",
       "inLanguage": "ru",
       "mainEntityOfPageId": "https://docs.fastnear.com/ru/rpc/transaction/broadcast-tx-commit#page",
       "publisherId": "https://docs.fastnear.com/#organization",
@@ -3485,13 +3485,13 @@
       "sourceSpec": "rpcs/transaction/EXPERIMENTAL_receipt.yaml",
       "summary": "Получить квитанцию по ID",
       "transport": "json-rpc",
-      "@id": "https://docs.fastnear.com/structured-data/operations/rpc-EXPERIMENTAL-receipt",
+      "@id": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-EXPERIMENTAL-receipt",
       "abstract": "Получить квитанцию по ID",
       "canonicalPageId": "https://docs.fastnear.com/ru/rpcs/transaction/EXPERIMENTAL_receipt#page",
       "canonicalUrl": "https://docs.fastnear.com/ru/rpcs/transaction/EXPERIMENTAL_receipt",
       "docsPageId": "https://docs.fastnear.com/ru/rpc/transaction/experimental-receipt#page",
       "docsUrl": "https://docs.fastnear.com/ru/rpc/transaction/experimental-receipt",
-      "familyEntityId": "https://docs.fastnear.com/structured-data/families/rpc-transaction",
+      "familyEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-transaction",
       "inLanguage": "ru",
       "mainEntityOfPageId": "https://docs.fastnear.com/ru/rpc/transaction/experimental-receipt#page",
       "publisherId": "https://docs.fastnear.com/#organization",
@@ -3532,13 +3532,13 @@
       "sourceSpec": "rpcs/transaction/EXPERIMENTAL_tx_status.yaml",
       "summary": "Получить подробный статус транзакции",
       "transport": "json-rpc",
-      "@id": "https://docs.fastnear.com/structured-data/operations/rpc-EXPERIMENTAL-tx-status",
+      "@id": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-EXPERIMENTAL-tx-status",
       "abstract": "Получить подробный статус транзакции",
       "canonicalPageId": "https://docs.fastnear.com/ru/rpcs/transaction/EXPERIMENTAL_tx_status#page",
       "canonicalUrl": "https://docs.fastnear.com/ru/rpcs/transaction/EXPERIMENTAL_tx_status",
       "docsPageId": "https://docs.fastnear.com/ru/rpc/transaction/experimental-tx-status#page",
       "docsUrl": "https://docs.fastnear.com/ru/rpc/transaction/experimental-tx-status",
-      "familyEntityId": "https://docs.fastnear.com/structured-data/families/rpc-transaction",
+      "familyEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-transaction",
       "inLanguage": "ru",
       "mainEntityOfPageId": "https://docs.fastnear.com/ru/rpc/transaction/experimental-tx-status#page",
       "publisherId": "https://docs.fastnear.com/#organization",
@@ -3579,13 +3579,13 @@
       "sourceSpec": "rpcs/transaction/send_tx.yaml",
       "summary": "Отправить транзакцию",
       "transport": "json-rpc",
-      "@id": "https://docs.fastnear.com/structured-data/operations/rpc-send-tx",
+      "@id": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-send-tx",
       "abstract": "Отправить транзакцию",
       "canonicalPageId": "https://docs.fastnear.com/ru/rpcs/transaction/send_tx#page",
       "canonicalUrl": "https://docs.fastnear.com/ru/rpcs/transaction/send_tx",
       "docsPageId": "https://docs.fastnear.com/ru/rpc/transaction/send-tx#page",
       "docsUrl": "https://docs.fastnear.com/ru/rpc/transaction/send-tx",
-      "familyEntityId": "https://docs.fastnear.com/structured-data/families/rpc-transaction",
+      "familyEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-transaction",
       "inLanguage": "ru",
       "mainEntityOfPageId": "https://docs.fastnear.com/ru/rpc/transaction/send-tx#page",
       "publisherId": "https://docs.fastnear.com/#organization",
@@ -3626,13 +3626,13 @@
       "sourceSpec": "rpcs/transaction/tx_status.yaml",
       "summary": "Проверить статус транзакции",
       "transport": "json-rpc",
-      "@id": "https://docs.fastnear.com/structured-data/operations/rpc-tx-status",
+      "@id": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-tx-status",
       "abstract": "Проверить статус транзакции",
       "canonicalPageId": "https://docs.fastnear.com/ru/rpcs/transaction/tx_status#page",
       "canonicalUrl": "https://docs.fastnear.com/ru/rpcs/transaction/tx_status",
       "docsPageId": "https://docs.fastnear.com/ru/rpc/transaction/tx-status#page",
       "docsUrl": "https://docs.fastnear.com/ru/rpc/transaction/tx-status",
-      "familyEntityId": "https://docs.fastnear.com/structured-data/families/rpc-transaction",
+      "familyEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-transaction",
       "inLanguage": "ru",
       "mainEntityOfPageId": "https://docs.fastnear.com/ru/rpc/transaction/tx-status#page",
       "publisherId": "https://docs.fastnear.com/#organization",
@@ -3673,13 +3673,13 @@
       "sourceSpec": "rpcs/validators/EXPERIMENTAL_validators_ordered.yaml",
       "summary": "Получить упорядоченных валидаторов",
       "transport": "json-rpc",
-      "@id": "https://docs.fastnear.com/structured-data/operations/rpc-EXPERIMENTAL-validators-ordered",
+      "@id": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-EXPERIMENTAL-validators-ordered",
       "abstract": "Получить упорядоченных валидаторов",
       "canonicalPageId": "https://docs.fastnear.com/ru/rpcs/validators/EXPERIMENTAL_validators_ordered#page",
       "canonicalUrl": "https://docs.fastnear.com/ru/rpcs/validators/EXPERIMENTAL_validators_ordered",
       "docsPageId": "https://docs.fastnear.com/ru/rpc/validators/experimental-validators-ordered#page",
       "docsUrl": "https://docs.fastnear.com/ru/rpc/validators/experimental-validators-ordered",
-      "familyEntityId": "https://docs.fastnear.com/structured-data/families/rpc-validators",
+      "familyEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-validators",
       "inLanguage": "ru",
       "mainEntityOfPageId": "https://docs.fastnear.com/ru/rpc/validators/experimental-validators-ordered#page",
       "publisherId": "https://docs.fastnear.com/#organization",
@@ -3720,13 +3720,13 @@
       "sourceSpec": "rpcs/validators/validators_by_epoch.yaml",
       "summary": "Получить валидаторов по эпохе",
       "transport": "json-rpc",
-      "@id": "https://docs.fastnear.com/structured-data/operations/rpc-validators-by-epoch",
+      "@id": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-validators-by-epoch",
       "abstract": "Получить валидаторов по эпохе",
       "canonicalPageId": "https://docs.fastnear.com/ru/rpcs/validators/validators_by_epoch#page",
       "canonicalUrl": "https://docs.fastnear.com/ru/rpcs/validators/validators_by_epoch",
       "docsPageId": "https://docs.fastnear.com/ru/rpc/validators/validators-by-epoch#page",
       "docsUrl": "https://docs.fastnear.com/ru/rpc/validators/validators-by-epoch",
-      "familyEntityId": "https://docs.fastnear.com/structured-data/families/rpc-validators",
+      "familyEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-validators",
       "inLanguage": "ru",
       "mainEntityOfPageId": "https://docs.fastnear.com/ru/rpc/validators/validators-by-epoch#page",
       "publisherId": "https://docs.fastnear.com/#organization",
@@ -3767,13 +3767,13 @@
       "sourceSpec": "rpcs/validators/validators_current.yaml",
       "summary": "Получить текущих валидаторов",
       "transport": "json-rpc",
-      "@id": "https://docs.fastnear.com/structured-data/operations/rpc-validators-current",
+      "@id": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-validators-current",
       "abstract": "Получить текущих валидаторов",
       "canonicalPageId": "https://docs.fastnear.com/ru/rpcs/validators/validators_current#page",
       "canonicalUrl": "https://docs.fastnear.com/ru/rpcs/validators/validators_current",
       "docsPageId": "https://docs.fastnear.com/ru/rpc/validators/validators-current#page",
       "docsUrl": "https://docs.fastnear.com/ru/rpc/validators/validators-current",
-      "familyEntityId": "https://docs.fastnear.com/structured-data/families/rpc-validators",
+      "familyEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-validators",
       "inLanguage": "ru",
       "mainEntityOfPageId": "https://docs.fastnear.com/ru/rpc/validators/validators-current#page",
       "publisherId": "https://docs.fastnear.com/#organization",
@@ -3870,7 +3870,7 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/api-fastnear"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-fastnear"
         ],
         "mainEntityId": null,
         "pageId": "https://docs.fastnear.com/ru/api#page"
@@ -3911,9 +3911,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/api-fastnear"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-fastnear"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/fastnear-system-health",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-fastnear-system-health",
         "pageId": "https://docs.fastnear.com/ru/api/system/health#page"
       },
       "indexable": true,
@@ -3926,9 +3926,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/api-fastnear"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-fastnear"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/fastnear-system-status",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-fastnear-system-status",
         "pageId": "https://docs.fastnear.com/ru/api/system/status#page"
       },
       "indexable": true,
@@ -3941,9 +3941,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/api-fastnear"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-fastnear"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/fastnear-v0-account-ft",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-fastnear-v0-account-ft",
         "pageId": "https://docs.fastnear.com/ru/api/v0/account-ft#page"
       },
       "indexable": true,
@@ -3956,9 +3956,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/api-fastnear"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-fastnear"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/fastnear-v0-account-nft",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-fastnear-v0-account-nft",
         "pageId": "https://docs.fastnear.com/ru/api/v0/account-nft#page"
       },
       "indexable": true,
@@ -3971,9 +3971,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/api-fastnear"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-fastnear"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/fastnear-v0-account-staking",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-fastnear-v0-account-staking",
         "pageId": "https://docs.fastnear.com/ru/api/v0/account-staking#page"
       },
       "indexable": true,
@@ -3986,9 +3986,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/api-fastnear"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-fastnear"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/fastnear-v0-public-key-lookup",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-fastnear-v0-public-key-lookup",
         "pageId": "https://docs.fastnear.com/ru/api/v0/public-key#page"
       },
       "indexable": true,
@@ -4001,9 +4001,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/api-fastnear"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-fastnear"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/fastnear-v0-public-key-lookup-all",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-fastnear-v0-public-key-lookup-all",
         "pageId": "https://docs.fastnear.com/ru/api/v0/public-key-all#page"
       },
       "indexable": true,
@@ -4016,9 +4016,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/api-fastnear"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-fastnear"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/fastnear-v1-account-ft",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-fastnear-v1-account-ft",
         "pageId": "https://docs.fastnear.com/ru/api/v1/account-ft#page"
       },
       "indexable": true,
@@ -4031,9 +4031,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/api-fastnear"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-fastnear"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/fastnear-v1-account-full",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-fastnear-v1-account-full",
         "pageId": "https://docs.fastnear.com/ru/api/v1/account-full#page"
       },
       "indexable": true,
@@ -4046,9 +4046,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/api-fastnear"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-fastnear"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/fastnear-v1-account-nft",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-fastnear-v1-account-nft",
         "pageId": "https://docs.fastnear.com/ru/api/v1/account-nft#page"
       },
       "indexable": true,
@@ -4061,9 +4061,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/api-fastnear"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-fastnear"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/fastnear-v1-account-staking",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-fastnear-v1-account-staking",
         "pageId": "https://docs.fastnear.com/ru/api/v1/account-staking#page"
       },
       "indexable": true,
@@ -4076,9 +4076,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/api-fastnear"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-fastnear"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/fastnear-v1-ft-top",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-fastnear-v1-ft-top",
         "pageId": "https://docs.fastnear.com/ru/api/v1/ft-top#page"
       },
       "indexable": true,
@@ -4091,9 +4091,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/api-fastnear"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-fastnear"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/fastnear-v1-public-key-lookup",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-fastnear-v1-public-key-lookup",
         "pageId": "https://docs.fastnear.com/ru/api/v1/public-key#page"
       },
       "indexable": true,
@@ -4106,9 +4106,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/api-fastnear"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-fastnear"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/fastnear-v1-public-key-lookup-all",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-fastnear-v1-public-key-lookup-all",
         "pageId": "https://docs.fastnear.com/ru/api/v1/public-key-all#page"
       },
       "indexable": true,
@@ -4121,9 +4121,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/api-fastnear"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-fastnear"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/fastnear-system-health",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-fastnear-system-health",
         "pageId": "https://docs.fastnear.com/ru/apis/fastnear/system/health#page"
       },
       "indexable": false,
@@ -4136,9 +4136,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/api-fastnear"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-fastnear"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/fastnear-system-status",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-fastnear-system-status",
         "pageId": "https://docs.fastnear.com/ru/apis/fastnear/system/status#page"
       },
       "indexable": false,
@@ -4151,9 +4151,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/api-fastnear"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-fastnear"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/fastnear-v0-account-ft",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-fastnear-v0-account-ft",
         "pageId": "https://docs.fastnear.com/ru/apis/fastnear/v0/account_ft#page"
       },
       "indexable": false,
@@ -4166,9 +4166,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/api-fastnear"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-fastnear"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/fastnear-v0-account-nft",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-fastnear-v0-account-nft",
         "pageId": "https://docs.fastnear.com/ru/apis/fastnear/v0/account_nft#page"
       },
       "indexable": false,
@@ -4181,9 +4181,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/api-fastnear"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-fastnear"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/fastnear-v0-account-staking",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-fastnear-v0-account-staking",
         "pageId": "https://docs.fastnear.com/ru/apis/fastnear/v0/account_staking#page"
       },
       "indexable": false,
@@ -4196,9 +4196,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/api-fastnear"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-fastnear"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/fastnear-v0-public-key-lookup",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-fastnear-v0-public-key-lookup",
         "pageId": "https://docs.fastnear.com/ru/apis/fastnear/v0/public_key_lookup#page"
       },
       "indexable": false,
@@ -4211,9 +4211,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/api-fastnear"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-fastnear"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/fastnear-v0-public-key-lookup-all",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-fastnear-v0-public-key-lookup-all",
         "pageId": "https://docs.fastnear.com/ru/apis/fastnear/v0/public_key_lookup_all#page"
       },
       "indexable": false,
@@ -4226,9 +4226,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/api-fastnear"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-fastnear"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/fastnear-v1-account-ft",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-fastnear-v1-account-ft",
         "pageId": "https://docs.fastnear.com/ru/apis/fastnear/v1/account_ft#page"
       },
       "indexable": false,
@@ -4241,9 +4241,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/api-fastnear"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-fastnear"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/fastnear-v1-account-full",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-fastnear-v1-account-full",
         "pageId": "https://docs.fastnear.com/ru/apis/fastnear/v1/account_full#page"
       },
       "indexable": false,
@@ -4256,9 +4256,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/api-fastnear"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-fastnear"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/fastnear-v1-account-nft",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-fastnear-v1-account-nft",
         "pageId": "https://docs.fastnear.com/ru/apis/fastnear/v1/account_nft#page"
       },
       "indexable": false,
@@ -4271,9 +4271,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/api-fastnear"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-fastnear"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/fastnear-v1-account-staking",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-fastnear-v1-account-staking",
         "pageId": "https://docs.fastnear.com/ru/apis/fastnear/v1/account_staking#page"
       },
       "indexable": false,
@@ -4286,9 +4286,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/api-fastnear"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-fastnear"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/fastnear-v1-ft-top",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-fastnear-v1-ft-top",
         "pageId": "https://docs.fastnear.com/ru/apis/fastnear/v1/ft_top#page"
       },
       "indexable": false,
@@ -4301,9 +4301,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/api-fastnear"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-fastnear"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/fastnear-v1-public-key-lookup",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-fastnear-v1-public-key-lookup",
         "pageId": "https://docs.fastnear.com/ru/apis/fastnear/v1/public_key_lookup#page"
       },
       "indexable": false,
@@ -4316,9 +4316,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/api-fastnear"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-fastnear"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/fastnear-v1-public-key-lookup-all",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-fastnear-v1-public-key-lookup-all",
         "pageId": "https://docs.fastnear.com/ru/apis/fastnear/v1/public_key_lookup_all#page"
       },
       "indexable": false,
@@ -4331,9 +4331,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/api-kv-fastdata"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-kv-fastdata"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/kv-fastdata-v0-all-by-predecessor",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-kv-fastdata-v0-all-by-predecessor",
         "pageId": "https://docs.fastnear.com/ru/apis/kv-fastdata/v0/all_by_predecessor#page"
       },
       "indexable": false,
@@ -4346,9 +4346,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/api-kv-fastdata"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-kv-fastdata"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/kv-fastdata-v0-get-history-key",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-kv-fastdata-v0-get-history-key",
         "pageId": "https://docs.fastnear.com/ru/apis/kv-fastdata/v0/get_history_key#page"
       },
       "indexable": false,
@@ -4361,9 +4361,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/api-kv-fastdata"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-kv-fastdata"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/kv-fastdata-v0-get-latest-key",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-kv-fastdata-v0-get-latest-key",
         "pageId": "https://docs.fastnear.com/ru/apis/kv-fastdata/v0/get_latest_key#page"
       },
       "indexable": false,
@@ -4376,9 +4376,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/api-kv-fastdata"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-kv-fastdata"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/kv-fastdata-v0-history-by-account",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-kv-fastdata-v0-history-by-account",
         "pageId": "https://docs.fastnear.com/ru/apis/kv-fastdata/v0/history_by_account#page"
       },
       "indexable": false,
@@ -4391,9 +4391,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/api-kv-fastdata"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-kv-fastdata"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/kv-fastdata-v0-history-by-key",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-kv-fastdata-v0-history-by-key",
         "pageId": "https://docs.fastnear.com/ru/apis/kv-fastdata/v0/history_by_key#page"
       },
       "indexable": false,
@@ -4406,9 +4406,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/api-kv-fastdata"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-kv-fastdata"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/kv-fastdata-v0-history-by-predecessor",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-kv-fastdata-v0-history-by-predecessor",
         "pageId": "https://docs.fastnear.com/ru/apis/kv-fastdata/v0/history_by_predecessor#page"
       },
       "indexable": false,
@@ -4421,9 +4421,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/api-kv-fastdata"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-kv-fastdata"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/kv-fastdata-v0-latest-by-account",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-kv-fastdata-v0-latest-by-account",
         "pageId": "https://docs.fastnear.com/ru/apis/kv-fastdata/v0/latest_by_account#page"
       },
       "indexable": false,
@@ -4436,9 +4436,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/api-kv-fastdata"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-kv-fastdata"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/kv-fastdata-v0-latest-by-predecessor",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-kv-fastdata-v0-latest-by-predecessor",
         "pageId": "https://docs.fastnear.com/ru/apis/kv-fastdata/v0/latest_by_predecessor#page"
       },
       "indexable": false,
@@ -4451,9 +4451,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/api-kv-fastdata"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-kv-fastdata"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/kv-fastdata-v0-multi",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-kv-fastdata-v0-multi",
         "pageId": "https://docs.fastnear.com/ru/apis/kv-fastdata/v0/multi#page"
       },
       "indexable": false,
@@ -4466,9 +4466,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/api-neardata"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-neardata"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/neardata-system-health",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-neardata-system-health",
         "pageId": "https://docs.fastnear.com/ru/apis/neardata/system/health#page"
       },
       "indexable": false,
@@ -4481,9 +4481,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/api-neardata"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-neardata"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/neardata-v0-block",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-neardata-v0-block",
         "pageId": "https://docs.fastnear.com/ru/apis/neardata/v0/block#page"
       },
       "indexable": false,
@@ -4496,9 +4496,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/api-neardata"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-neardata"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/neardata-v0-block-chunk",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-neardata-v0-block-chunk",
         "pageId": "https://docs.fastnear.com/ru/apis/neardata/v0/block_chunk#page"
       },
       "indexable": false,
@@ -4511,9 +4511,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/api-neardata"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-neardata"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/neardata-v0-block-headers",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-neardata-v0-block-headers",
         "pageId": "https://docs.fastnear.com/ru/apis/neardata/v0/block_headers#page"
       },
       "indexable": false,
@@ -4526,9 +4526,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/api-neardata"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-neardata"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/neardata-v0-block-optimistic",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-neardata-v0-block-optimistic",
         "pageId": "https://docs.fastnear.com/ru/apis/neardata/v0/block_optimistic#page"
       },
       "indexable": false,
@@ -4541,9 +4541,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/api-neardata"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-neardata"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/neardata-v0-block-shard",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-neardata-v0-block-shard",
         "pageId": "https://docs.fastnear.com/ru/apis/neardata/v0/block_shard#page"
       },
       "indexable": false,
@@ -4556,9 +4556,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/api-neardata"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-neardata"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/neardata-v0-first-block",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-neardata-v0-first-block",
         "pageId": "https://docs.fastnear.com/ru/apis/neardata/v0/first_block#page"
       },
       "indexable": false,
@@ -4571,9 +4571,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/api-neardata"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-neardata"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/neardata-v0-last-block-final",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-neardata-v0-last-block-final",
         "pageId": "https://docs.fastnear.com/ru/apis/neardata/v0/last_block_final#page"
       },
       "indexable": false,
@@ -4586,9 +4586,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/api-neardata"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-neardata"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/neardata-v0-last-block-optimistic",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-neardata-v0-last-block-optimistic",
         "pageId": "https://docs.fastnear.com/ru/apis/neardata/v0/last_block_optimistic#page"
       },
       "indexable": false,
@@ -4601,9 +4601,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/api-transactions"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-transactions"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/transactions-v0-account",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-transactions-v0-account",
         "pageId": "https://docs.fastnear.com/ru/apis/transactions/v0/account#page"
       },
       "indexable": false,
@@ -4616,9 +4616,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/api-transactions"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-transactions"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/transactions-v0-block",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-transactions-v0-block",
         "pageId": "https://docs.fastnear.com/ru/apis/transactions/v0/block#page"
       },
       "indexable": false,
@@ -4631,9 +4631,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/api-transactions"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-transactions"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/transactions-v0-blocks",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-transactions-v0-blocks",
         "pageId": "https://docs.fastnear.com/ru/apis/transactions/v0/blocks#page"
       },
       "indexable": false,
@@ -4646,9 +4646,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/api-transactions"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-transactions"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/transactions-v0-receipt",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-transactions-v0-receipt",
         "pageId": "https://docs.fastnear.com/ru/apis/transactions/v0/receipt#page"
       },
       "indexable": false,
@@ -4661,9 +4661,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/api-transactions"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-transactions"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/transactions-v0-transactions",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-transactions-v0-transactions",
         "pageId": "https://docs.fastnear.com/ru/apis/transactions/v0/transactions#page"
       },
       "indexable": false,
@@ -4676,9 +4676,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/api-transfers"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-transfers"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/transfers-v0-transfers",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-transfers-v0-transfers",
         "pageId": "https://docs.fastnear.com/ru/apis/transfers/v0/transfers#page"
       },
       "indexable": false,
@@ -4704,7 +4704,7 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/api-kv-fastdata"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-kv-fastdata"
         ],
         "mainEntityId": null,
         "pageId": "https://docs.fastnear.com/ru/fastdata/kv#page"
@@ -4719,9 +4719,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/api-kv-fastdata"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-kv-fastdata"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/kv-fastdata-v0-all-by-predecessor",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-kv-fastdata-v0-all-by-predecessor",
         "pageId": "https://docs.fastnear.com/ru/fastdata/kv/all-by-predecessor#page"
       },
       "indexable": true,
@@ -4747,9 +4747,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/api-kv-fastdata"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-kv-fastdata"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/kv-fastdata-v0-get-history-key",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-kv-fastdata-v0-get-history-key",
         "pageId": "https://docs.fastnear.com/ru/fastdata/kv/get-history-key#page"
       },
       "indexable": true,
@@ -4762,9 +4762,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/api-kv-fastdata"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-kv-fastdata"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/kv-fastdata-v0-get-latest-key",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-kv-fastdata-v0-get-latest-key",
         "pageId": "https://docs.fastnear.com/ru/fastdata/kv/get-latest-key#page"
       },
       "indexable": true,
@@ -4777,9 +4777,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/api-kv-fastdata"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-kv-fastdata"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/kv-fastdata-v0-history-by-account",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-kv-fastdata-v0-history-by-account",
         "pageId": "https://docs.fastnear.com/ru/fastdata/kv/history-by-account#page"
       },
       "indexable": true,
@@ -4792,9 +4792,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/api-kv-fastdata"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-kv-fastdata"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/kv-fastdata-v0-history-by-key",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-kv-fastdata-v0-history-by-key",
         "pageId": "https://docs.fastnear.com/ru/fastdata/kv/history-by-key#page"
       },
       "indexable": true,
@@ -4807,9 +4807,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/api-kv-fastdata"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-kv-fastdata"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/kv-fastdata-v0-history-by-predecessor",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-kv-fastdata-v0-history-by-predecessor",
         "pageId": "https://docs.fastnear.com/ru/fastdata/kv/history-by-predecessor#page"
       },
       "indexable": true,
@@ -4822,9 +4822,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/api-kv-fastdata"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-kv-fastdata"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/kv-fastdata-v0-latest-by-account",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-kv-fastdata-v0-latest-by-account",
         "pageId": "https://docs.fastnear.com/ru/fastdata/kv/latest-by-account#page"
       },
       "indexable": true,
@@ -4837,9 +4837,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/api-kv-fastdata"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-kv-fastdata"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/kv-fastdata-v0-latest-by-predecessor",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-kv-fastdata-v0-latest-by-predecessor",
         "pageId": "https://docs.fastnear.com/ru/fastdata/kv/latest-by-predecessor#page"
       },
       "indexable": true,
@@ -4852,9 +4852,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/api-kv-fastdata"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-kv-fastdata"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/kv-fastdata-v0-multi",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-kv-fastdata-v0-multi",
         "pageId": "https://docs.fastnear.com/ru/fastdata/kv/multi#page"
       },
       "indexable": true,
@@ -4880,7 +4880,7 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/api-neardata"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-neardata"
         ],
         "mainEntityId": null,
         "pageId": "https://docs.fastnear.com/ru/neardata#page"
@@ -4895,9 +4895,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/api-neardata"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-neardata"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/neardata-v0-block",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-neardata-v0-block",
         "pageId": "https://docs.fastnear.com/ru/neardata/block#page"
       },
       "indexable": true,
@@ -4910,9 +4910,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/api-neardata"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-neardata"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/neardata-v0-block-chunk",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-neardata-v0-block-chunk",
         "pageId": "https://docs.fastnear.com/ru/neardata/block-chunk#page"
       },
       "indexable": true,
@@ -4925,9 +4925,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/api-neardata"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-neardata"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/neardata-v0-block-headers",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-neardata-v0-block-headers",
         "pageId": "https://docs.fastnear.com/ru/neardata/block-headers#page"
       },
       "indexable": true,
@@ -4940,9 +4940,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/api-neardata"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-neardata"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/neardata-v0-block-optimistic",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-neardata-v0-block-optimistic",
         "pageId": "https://docs.fastnear.com/ru/neardata/block-optimistic#page"
       },
       "indexable": true,
@@ -4955,9 +4955,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/api-neardata"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-neardata"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/neardata-v0-block-shard",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-neardata-v0-block-shard",
         "pageId": "https://docs.fastnear.com/ru/neardata/block-shard#page"
       },
       "indexable": true,
@@ -4983,9 +4983,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/api-neardata"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-neardata"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/neardata-v0-first-block",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-neardata-v0-first-block",
         "pageId": "https://docs.fastnear.com/ru/neardata/first-block#page"
       },
       "indexable": true,
@@ -4998,9 +4998,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/api-neardata"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-neardata"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/neardata-v0-last-block-final",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-neardata-v0-last-block-final",
         "pageId": "https://docs.fastnear.com/ru/neardata/last-block-final#page"
       },
       "indexable": true,
@@ -5013,9 +5013,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/api-neardata"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-neardata"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/neardata-v0-last-block-optimistic",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-neardata-v0-last-block-optimistic",
         "pageId": "https://docs.fastnear.com/ru/neardata/last-block-optimistic#page"
       },
       "indexable": true,
@@ -5028,9 +5028,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/api-neardata"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-neardata"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/neardata-system-health",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-neardata-system-health",
         "pageId": "https://docs.fastnear.com/ru/neardata/system/health#page"
       },
       "indexable": true,
@@ -5056,12 +5056,12 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/rpc-account",
-          "https://docs.fastnear.com/structured-data/families/rpc-block",
-          "https://docs.fastnear.com/structured-data/families/rpc-contract",
-          "https://docs.fastnear.com/structured-data/families/rpc-protocol",
-          "https://docs.fastnear.com/structured-data/families/rpc-transaction",
-          "https://docs.fastnear.com/structured-data/families/rpc-validators"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-account",
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-block",
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-contract",
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-protocol",
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-transaction",
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-validators"
         ],
         "mainEntityId": null,
         "pageId": "https://docs.fastnear.com/ru/rpc#page"
@@ -5076,9 +5076,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/rpc-account"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-account"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/rpc-view-access-key",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-view-access-key",
         "pageId": "https://docs.fastnear.com/ru/rpc/account/view-access-key#page"
       },
       "indexable": true,
@@ -5091,9 +5091,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/rpc-account"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-account"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/rpc-view-access-key-list",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-view-access-key-list",
         "pageId": "https://docs.fastnear.com/ru/rpc/account/view-access-key-list#page"
       },
       "indexable": true,
@@ -5106,9 +5106,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/rpc-account"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-account"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/rpc-view-account",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-view-account",
         "pageId": "https://docs.fastnear.com/ru/rpc/account/view-account#page"
       },
       "indexable": true,
@@ -5121,9 +5121,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/rpc-block"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-block"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/rpc-block-by-height",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-block-by-height",
         "pageId": "https://docs.fastnear.com/ru/rpc/block/block-by-height#page"
       },
       "indexable": true,
@@ -5136,9 +5136,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/rpc-block"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-block"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/rpc-block-by-id",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-block-by-id",
         "pageId": "https://docs.fastnear.com/ru/rpc/block/block-by-id#page"
       },
       "indexable": true,
@@ -5151,9 +5151,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/rpc-block"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-block"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/rpc-block-effects",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-block-effects",
         "pageId": "https://docs.fastnear.com/ru/rpc/block/block-effects#page"
       },
       "indexable": true,
@@ -5166,9 +5166,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/rpc-contract"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-contract"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/rpc-call-function",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-call-function",
         "pageId": "https://docs.fastnear.com/ru/rpc/contract/call-function#page"
       },
       "indexable": true,
@@ -5181,9 +5181,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/rpc-contract"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-contract"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/rpc-view-code",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-view-code",
         "pageId": "https://docs.fastnear.com/ru/rpc/contract/view-code#page"
       },
       "indexable": true,
@@ -5196,9 +5196,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/rpc-contract"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-contract"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/rpc-view-global-contract-code",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-view-global-contract-code",
         "pageId": "https://docs.fastnear.com/ru/rpc/contract/view-global-contract-code#page"
       },
       "indexable": true,
@@ -5211,9 +5211,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/rpc-contract"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-contract"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/rpc-view-global-contract-code-by-account-id",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-view-global-contract-code-by-account-id",
         "pageId": "https://docs.fastnear.com/ru/rpc/contract/view-global-contract-code-by-account-id#page"
       },
       "indexable": true,
@@ -5226,9 +5226,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/rpc-contract"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-contract"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/rpc-view-state",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-view-state",
         "pageId": "https://docs.fastnear.com/ru/rpc/contract/view-state#page"
       },
       "indexable": true,
@@ -5254,9 +5254,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/rpc-protocol"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-protocol"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/rpc-changes",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-changes",
         "pageId": "https://docs.fastnear.com/ru/rpc/protocol/changes#page"
       },
       "indexable": true,
@@ -5269,9 +5269,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/rpc-protocol"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-protocol"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/rpc-chunk-by-block-shard",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-chunk-by-block-shard",
         "pageId": "https://docs.fastnear.com/ru/rpc/protocol/chunk-by-block-shard#page"
       },
       "indexable": true,
@@ -5284,9 +5284,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/rpc-protocol"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-protocol"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/rpc-chunk-by-hash",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-chunk-by-hash",
         "pageId": "https://docs.fastnear.com/ru/rpc/protocol/chunk-by-hash#page"
       },
       "indexable": true,
@@ -5299,9 +5299,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/rpc-protocol"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-protocol"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/rpc-client-config",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-client-config",
         "pageId": "https://docs.fastnear.com/ru/rpc/protocol/client-config#page"
       },
       "indexable": true,
@@ -5314,9 +5314,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/rpc-protocol"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-protocol"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/rpc-EXPERIMENTAL-congestion-level",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-EXPERIMENTAL-congestion-level",
         "pageId": "https://docs.fastnear.com/ru/rpc/protocol/experimental-congestion-level#page"
       },
       "indexable": true,
@@ -5329,9 +5329,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/rpc-protocol"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-protocol"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/rpc-EXPERIMENTAL-light-client-block-proof",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-EXPERIMENTAL-light-client-block-proof",
         "pageId": "https://docs.fastnear.com/ru/rpc/protocol/experimental-light-client-block-proof#page"
       },
       "indexable": true,
@@ -5344,9 +5344,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/rpc-protocol"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-protocol"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/rpc-EXPERIMENTAL-light-client-proof",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-EXPERIMENTAL-light-client-proof",
         "pageId": "https://docs.fastnear.com/ru/rpc/protocol/experimental-light-client-proof#page"
       },
       "indexable": true,
@@ -5359,9 +5359,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/rpc-protocol"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-protocol"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/rpc-EXPERIMENTAL-protocol-config",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-EXPERIMENTAL-protocol-config",
         "pageId": "https://docs.fastnear.com/ru/rpc/protocol/experimental-protocol-config#page"
       },
       "indexable": true,
@@ -5374,9 +5374,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/rpc-protocol"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-protocol"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/rpc-EXPERIMENTAL-split-storage-info",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-EXPERIMENTAL-split-storage-info",
         "pageId": "https://docs.fastnear.com/ru/rpc/protocol/experimental-split-storage-info#page"
       },
       "indexable": true,
@@ -5389,9 +5389,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/rpc-protocol"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-protocol"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/rpc-gas-price",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-gas-price",
         "pageId": "https://docs.fastnear.com/ru/rpc/protocol/gas-price#page"
       },
       "indexable": true,
@@ -5404,9 +5404,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/rpc-protocol"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-protocol"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/rpc-gas-price-by-block",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-gas-price-by-block",
         "pageId": "https://docs.fastnear.com/ru/rpc/protocol/gas-price-by-block#page"
       },
       "indexable": true,
@@ -5419,9 +5419,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/rpc-protocol"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-protocol"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/rpc-genesis-config",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-genesis-config",
         "pageId": "https://docs.fastnear.com/ru/rpc/protocol/genesis-config#page"
       },
       "indexable": true,
@@ -5434,9 +5434,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/rpc-protocol"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-protocol"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/rpc-health",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-health",
         "pageId": "https://docs.fastnear.com/ru/rpc/protocol/health#page"
       },
       "indexable": true,
@@ -5449,9 +5449,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/rpc-protocol"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-protocol"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/rpc-latest-block",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-latest-block",
         "pageId": "https://docs.fastnear.com/ru/rpc/protocol/latest-block#page"
       },
       "indexable": true,
@@ -5464,9 +5464,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/rpc-protocol"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-protocol"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/rpc-light-client-proof",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-light-client-proof",
         "pageId": "https://docs.fastnear.com/ru/rpc/protocol/light-client-proof#page"
       },
       "indexable": true,
@@ -5479,9 +5479,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/rpc-protocol"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-protocol"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/rpc-maintenance-windows",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-maintenance-windows",
         "pageId": "https://docs.fastnear.com/ru/rpc/protocol/maintenance-windows#page"
       },
       "indexable": true,
@@ -5494,9 +5494,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/rpc-protocol"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-protocol"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/rpc-metrics",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-metrics",
         "pageId": "https://docs.fastnear.com/ru/rpc/protocol/metrics#page"
       },
       "indexable": true,
@@ -5509,9 +5509,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/rpc-protocol"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-protocol"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/rpc-network-info",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-network-info",
         "pageId": "https://docs.fastnear.com/ru/rpc/protocol/network-info#page"
       },
       "indexable": true,
@@ -5524,9 +5524,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/rpc-protocol"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-protocol"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/rpc-next-light-client-block",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-next-light-client-block",
         "pageId": "https://docs.fastnear.com/ru/rpc/protocol/next-light-client-block#page"
       },
       "indexable": true,
@@ -5539,9 +5539,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/rpc-protocol"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-protocol"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/rpc-status",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-status",
         "pageId": "https://docs.fastnear.com/ru/rpc/protocol/status#page"
       },
       "indexable": true,
@@ -5554,9 +5554,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/rpc-transaction"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-transaction"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/rpc-broadcast-tx-async",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-broadcast-tx-async",
         "pageId": "https://docs.fastnear.com/ru/rpc/transaction/broadcast-tx-async#page"
       },
       "indexable": true,
@@ -5569,9 +5569,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/rpc-transaction"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-transaction"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/rpc-broadcast-tx-commit",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-broadcast-tx-commit",
         "pageId": "https://docs.fastnear.com/ru/rpc/transaction/broadcast-tx-commit#page"
       },
       "indexable": true,
@@ -5584,9 +5584,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/rpc-transaction"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-transaction"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/rpc-EXPERIMENTAL-receipt",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-EXPERIMENTAL-receipt",
         "pageId": "https://docs.fastnear.com/ru/rpc/transaction/experimental-receipt#page"
       },
       "indexable": true,
@@ -5599,9 +5599,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/rpc-transaction"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-transaction"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/rpc-EXPERIMENTAL-tx-status",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-EXPERIMENTAL-tx-status",
         "pageId": "https://docs.fastnear.com/ru/rpc/transaction/experimental-tx-status#page"
       },
       "indexable": true,
@@ -5614,9 +5614,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/rpc-transaction"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-transaction"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/rpc-send-tx",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-send-tx",
         "pageId": "https://docs.fastnear.com/ru/rpc/transaction/send-tx#page"
       },
       "indexable": true,
@@ -5629,9 +5629,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/rpc-transaction"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-transaction"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/rpc-tx-status",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-tx-status",
         "pageId": "https://docs.fastnear.com/ru/rpc/transaction/tx-status#page"
       },
       "indexable": true,
@@ -5644,9 +5644,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/rpc-validators"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-validators"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/rpc-EXPERIMENTAL-validators-ordered",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-EXPERIMENTAL-validators-ordered",
         "pageId": "https://docs.fastnear.com/ru/rpc/validators/experimental-validators-ordered#page"
       },
       "indexable": true,
@@ -5659,9 +5659,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/rpc-validators"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-validators"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/rpc-validators-by-epoch",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-validators-by-epoch",
         "pageId": "https://docs.fastnear.com/ru/rpc/validators/validators-by-epoch#page"
       },
       "indexable": true,
@@ -5674,9 +5674,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/rpc-validators"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-validators"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/rpc-validators-current",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-validators-current",
         "pageId": "https://docs.fastnear.com/ru/rpc/validators/validators-current#page"
       },
       "indexable": true,
@@ -5689,9 +5689,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/rpc-account"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-account"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/rpc-view-access-key",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-view-access-key",
         "pageId": "https://docs.fastnear.com/ru/rpcs/account/view_access_key#page"
       },
       "indexable": false,
@@ -5704,9 +5704,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/rpc-account"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-account"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/rpc-view-access-key-list",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-view-access-key-list",
         "pageId": "https://docs.fastnear.com/ru/rpcs/account/view_access_key_list#page"
       },
       "indexable": false,
@@ -5719,9 +5719,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/rpc-account"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-account"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/rpc-view-account",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-view-account",
         "pageId": "https://docs.fastnear.com/ru/rpcs/account/view_account#page"
       },
       "indexable": false,
@@ -5734,9 +5734,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/rpc-block"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-block"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/rpc-block-by-height",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-block-by-height",
         "pageId": "https://docs.fastnear.com/ru/rpcs/block/block_by_height#page"
       },
       "indexable": false,
@@ -5749,9 +5749,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/rpc-block"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-block"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/rpc-block-by-id",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-block-by-id",
         "pageId": "https://docs.fastnear.com/ru/rpcs/block/block_by_id#page"
       },
       "indexable": false,
@@ -5764,9 +5764,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/rpc-block"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-block"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/rpc-block-effects",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-block-effects",
         "pageId": "https://docs.fastnear.com/ru/rpcs/block/block_effects#page"
       },
       "indexable": false,
@@ -5779,9 +5779,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/rpc-contract"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-contract"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/rpc-call-function",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-call-function",
         "pageId": "https://docs.fastnear.com/ru/rpcs/contract/call#page"
       },
       "indexable": false,
@@ -5794,9 +5794,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/rpc-contract"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-contract"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/rpc-view-code",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-view-code",
         "pageId": "https://docs.fastnear.com/ru/rpcs/contract/view_code#page"
       },
       "indexable": false,
@@ -5809,9 +5809,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/rpc-contract"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-contract"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/rpc-view-global-contract-code",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-view-global-contract-code",
         "pageId": "https://docs.fastnear.com/ru/rpcs/contract/view_global_contract_code#page"
       },
       "indexable": false,
@@ -5824,9 +5824,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/rpc-contract"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-contract"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/rpc-view-global-contract-code-by-account-id",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-view-global-contract-code-by-account-id",
         "pageId": "https://docs.fastnear.com/ru/rpcs/contract/view_global_contract_code_by_account_id#page"
       },
       "indexable": false,
@@ -5839,9 +5839,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/rpc-contract"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-contract"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/rpc-view-state",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-view-state",
         "pageId": "https://docs.fastnear.com/ru/rpcs/contract/view_state#page"
       },
       "indexable": false,
@@ -5854,9 +5854,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/rpc-protocol"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-protocol"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/rpc-changes",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-changes",
         "pageId": "https://docs.fastnear.com/ru/rpcs/protocol/changes#page"
       },
       "indexable": false,
@@ -5869,9 +5869,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/rpc-protocol"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-protocol"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/rpc-chunk-by-block-shard",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-chunk-by-block-shard",
         "pageId": "https://docs.fastnear.com/ru/rpcs/protocol/chunk_by_block_shard#page"
       },
       "indexable": false,
@@ -5884,9 +5884,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/rpc-protocol"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-protocol"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/rpc-chunk-by-hash",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-chunk-by-hash",
         "pageId": "https://docs.fastnear.com/ru/rpcs/protocol/chunk_by_hash#page"
       },
       "indexable": false,
@@ -5899,9 +5899,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/rpc-protocol"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-protocol"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/rpc-client-config",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-client-config",
         "pageId": "https://docs.fastnear.com/ru/rpcs/protocol/client_config#page"
       },
       "indexable": false,
@@ -5914,9 +5914,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/rpc-protocol"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-protocol"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/rpc-EXPERIMENTAL-congestion-level",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-EXPERIMENTAL-congestion-level",
         "pageId": "https://docs.fastnear.com/ru/rpcs/protocol/EXPERIMENTAL_congestion_level#page"
       },
       "indexable": false,
@@ -5929,9 +5929,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/rpc-protocol"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-protocol"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/rpc-EXPERIMENTAL-light-client-block-proof",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-EXPERIMENTAL-light-client-block-proof",
         "pageId": "https://docs.fastnear.com/ru/rpcs/protocol/EXPERIMENTAL_light_client_block_proof#page"
       },
       "indexable": false,
@@ -5944,9 +5944,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/rpc-protocol"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-protocol"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/rpc-EXPERIMENTAL-light-client-proof",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-EXPERIMENTAL-light-client-proof",
         "pageId": "https://docs.fastnear.com/ru/rpcs/protocol/EXPERIMENTAL_light_client_proof#page"
       },
       "indexable": false,
@@ -5959,9 +5959,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/rpc-protocol"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-protocol"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/rpc-EXPERIMENTAL-protocol-config",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-EXPERIMENTAL-protocol-config",
         "pageId": "https://docs.fastnear.com/ru/rpcs/protocol/EXPERIMENTAL_protocol_config#page"
       },
       "indexable": false,
@@ -5974,9 +5974,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/rpc-protocol"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-protocol"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/rpc-EXPERIMENTAL-split-storage-info",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-EXPERIMENTAL-split-storage-info",
         "pageId": "https://docs.fastnear.com/ru/rpcs/protocol/EXPERIMENTAL_split_storage_info#page"
       },
       "indexable": false,
@@ -5989,9 +5989,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/rpc-protocol"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-protocol"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/rpc-gas-price",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-gas-price",
         "pageId": "https://docs.fastnear.com/ru/rpcs/protocol/gas_price#page"
       },
       "indexable": false,
@@ -6004,9 +6004,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/rpc-protocol"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-protocol"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/rpc-gas-price-by-block",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-gas-price-by-block",
         "pageId": "https://docs.fastnear.com/ru/rpcs/protocol/gas_price_by_block#page"
       },
       "indexable": false,
@@ -6019,9 +6019,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/rpc-protocol"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-protocol"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/rpc-genesis-config",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-genesis-config",
         "pageId": "https://docs.fastnear.com/ru/rpcs/protocol/genesis_config#page"
       },
       "indexable": false,
@@ -6034,9 +6034,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/rpc-protocol"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-protocol"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/rpc-health",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-health",
         "pageId": "https://docs.fastnear.com/ru/rpcs/protocol/health#page"
       },
       "indexable": false,
@@ -6049,9 +6049,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/rpc-protocol"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-protocol"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/rpc-latest-block",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-latest-block",
         "pageId": "https://docs.fastnear.com/ru/rpcs/protocol/latest_block#page"
       },
       "indexable": false,
@@ -6064,9 +6064,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/rpc-protocol"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-protocol"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/rpc-light-client-proof",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-light-client-proof",
         "pageId": "https://docs.fastnear.com/ru/rpcs/protocol/light_client_proof#page"
       },
       "indexable": false,
@@ -6079,9 +6079,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/rpc-protocol"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-protocol"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/rpc-maintenance-windows",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-maintenance-windows",
         "pageId": "https://docs.fastnear.com/ru/rpcs/protocol/maintenance_windows#page"
       },
       "indexable": false,
@@ -6094,9 +6094,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/rpc-protocol"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-protocol"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/rpc-metrics",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-metrics",
         "pageId": "https://docs.fastnear.com/ru/rpcs/protocol/metrics#page"
       },
       "indexable": false,
@@ -6109,9 +6109,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/rpc-protocol"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-protocol"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/rpc-network-info",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-network-info",
         "pageId": "https://docs.fastnear.com/ru/rpcs/protocol/network_info#page"
       },
       "indexable": false,
@@ -6124,9 +6124,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/rpc-protocol"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-protocol"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/rpc-next-light-client-block",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-next-light-client-block",
         "pageId": "https://docs.fastnear.com/ru/rpcs/protocol/next_light_client_block#page"
       },
       "indexable": false,
@@ -6139,9 +6139,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/rpc-protocol"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-protocol"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/rpc-status",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-status",
         "pageId": "https://docs.fastnear.com/ru/rpcs/protocol/status#page"
       },
       "indexable": false,
@@ -6154,9 +6154,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/rpc-transaction"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-transaction"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/rpc-broadcast-tx-async",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-broadcast-tx-async",
         "pageId": "https://docs.fastnear.com/ru/rpcs/transaction/broadcast_tx_async#page"
       },
       "indexable": false,
@@ -6169,9 +6169,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/rpc-transaction"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-transaction"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/rpc-broadcast-tx-commit",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-broadcast-tx-commit",
         "pageId": "https://docs.fastnear.com/ru/rpcs/transaction/broadcast_tx_commit#page"
       },
       "indexable": false,
@@ -6184,9 +6184,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/rpc-transaction"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-transaction"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/rpc-EXPERIMENTAL-receipt",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-EXPERIMENTAL-receipt",
         "pageId": "https://docs.fastnear.com/ru/rpcs/transaction/EXPERIMENTAL_receipt#page"
       },
       "indexable": false,
@@ -6199,9 +6199,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/rpc-transaction"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-transaction"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/rpc-EXPERIMENTAL-tx-status",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-EXPERIMENTAL-tx-status",
         "pageId": "https://docs.fastnear.com/ru/rpcs/transaction/EXPERIMENTAL_tx_status#page"
       },
       "indexable": false,
@@ -6214,9 +6214,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/rpc-transaction"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-transaction"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/rpc-send-tx",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-send-tx",
         "pageId": "https://docs.fastnear.com/ru/rpcs/transaction/send_tx#page"
       },
       "indexable": false,
@@ -6229,9 +6229,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/rpc-transaction"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-transaction"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/rpc-tx-status",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-tx-status",
         "pageId": "https://docs.fastnear.com/ru/rpcs/transaction/tx_status#page"
       },
       "indexable": false,
@@ -6244,9 +6244,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/rpc-validators"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-validators"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/rpc-EXPERIMENTAL-validators-ordered",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-EXPERIMENTAL-validators-ordered",
         "pageId": "https://docs.fastnear.com/ru/rpcs/validators/EXPERIMENTAL_validators_ordered#page"
       },
       "indexable": false,
@@ -6259,9 +6259,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/rpc-validators"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-validators"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/rpc-validators-by-epoch",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-validators-by-epoch",
         "pageId": "https://docs.fastnear.com/ru/rpcs/validators/validators_by_epoch#page"
       },
       "indexable": false,
@@ -6274,9 +6274,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/rpc-validators"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-rpc-validators"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/rpc-validators-current",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-rpc-validators-current",
         "pageId": "https://docs.fastnear.com/ru/rpcs/validators/validators_current#page"
       },
       "indexable": false,
@@ -6341,7 +6341,7 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/api-transfers"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-transfers"
         ],
         "mainEntityId": null,
         "pageId": "https://docs.fastnear.com/ru/transfers#page"
@@ -6369,9 +6369,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/api-transfers"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-transfers"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/transfers-v0-transfers",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-transfers-v0-transfers",
         "pageId": "https://docs.fastnear.com/ru/transfers/query#page"
       },
       "indexable": true,
@@ -6384,7 +6384,7 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/api-transactions"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-transactions"
         ],
         "mainEntityId": null,
         "pageId": "https://docs.fastnear.com/ru/tx#page"
@@ -6399,9 +6399,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/api-transactions"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-transactions"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/transactions-v0-account",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-transactions-v0-account",
         "pageId": "https://docs.fastnear.com/ru/tx/account#page"
       },
       "indexable": true,
@@ -6414,9 +6414,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/api-transactions"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-transactions"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/transactions-v0-block",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-transactions-v0-block",
         "pageId": "https://docs.fastnear.com/ru/tx/block#page"
       },
       "indexable": true,
@@ -6429,9 +6429,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/api-transactions"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-transactions"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/transactions-v0-blocks",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-transactions-v0-blocks",
         "pageId": "https://docs.fastnear.com/ru/tx/blocks#page"
       },
       "indexable": true,
@@ -6470,9 +6470,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/api-transactions"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-transactions"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/transactions-v0-receipt",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-transactions-v0-receipt",
         "pageId": "https://docs.fastnear.com/ru/tx/receipt#page"
       },
       "indexable": true,
@@ -6498,9 +6498,9 @@
     {
       "entityIds": {
         "familyIds": [
-          "https://docs.fastnear.com/structured-data/families/api-transactions"
+          "https://docs.fastnear.com/ru/structured-data/site-graph.json#family-api-transactions"
         ],
-        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/transactions-v0-transactions",
+        "mainEntityId": "https://docs.fastnear.com/ru/structured-data/site-graph.json#operation-transactions-v0-transactions",
         "pageId": "https://docs.fastnear.com/ru/tx/transactions#page"
       },
       "indexable": true,
