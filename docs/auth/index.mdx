@@ -38,6 +38,7 @@ Live example pages also support `Copy example URL` for sharing prefilled request
 - Prefer `Authorization: Bearer ${FASTNEAR_API_KEY}` for production backends.
 - Use `?apiKey=${FASTNEAR_API_KEY}` when headers are awkward or you are doing quick curl/debug work.
 - Agents and automations should keep the key in env vars or a secret manager, not in browser storage.
+- Building a browser or frontend app? Ship a [browser key](/auth/browser-keys) restricted to your domains, not a plain server key.
 
 ## Choose the auth form
 
@@ -107,3 +108,7 @@ Do not rely on browser storage behavior from the docs UI. Production backends sh
 ### I am building an agent or automation
 
 Use [Auth for Agents](/agents/auth) for the runtime posture. Browser `localStorage` is a docs convenience, not an agent secret store.
+
+### I am building a browser or frontend app
+
+Do not ship a server key in your frontend. Use a [browser key](/auth/browser-keys) restricted to your site's domains, with a per-key rate cap, so a copied key is hard to reuse and cannot drain your quota.

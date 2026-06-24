@@ -1,0 +1,197 @@
+---
+title: Browser Keys
+description: Use a FastNear API key directly from a browser app by restricting it to your website's domains, with a per-key rate cap and one-click rotation.
+slug: /auth/browser-keys
+sidebar_position: 1
+displayed_sidebar: rpcSidebar
+page_actions:
+  - markdown
+keywords:
+  - browser api key
+  - frontend api key
+  - restrict api key to domain
+  - restrict api key to website
+  - origin
+  - referer
+  - CORS
+  - website restriction
+  - ui api key
+  - public api key
+---
+
+import Link from '@docusaurus/Link';
+import IconExternalLink from '@theme/Icon/ExternalLink';
+
+# Browser Keys
+
+A FastNear API key normally lives on a backend. But if your app talks to FastNear directly from the
+browser, you can publish a key in your frontend and **restrict it to your website's domains** so a
+copied key is hard to reuse elsewhere. This is the *browser key* (or *UI key*) posture.
+
+Two postures, one credential model:
+
+| Posture | Where the key lives | How it is protected |
+| --- | --- | --- |
+| **Server key** (default) | backend, worker, proxy, secret manager | kept secret; never shipped to clients. See [Auth & Access](/auth). |
+| **Browser key** | shipped in your frontend bundle | restricted to your site's `Origin`/`Referer`, plus a per-key rate cap. This page. |
+
+A browser key is **not a secret** — anyone can read it from your page source. The restriction makes it
+inconvenient to reuse and the rate cap limits the damage if it is. For anything that must stay secret,
+use a server key.
+
+:::info Availability
+Website restrictions are a **paid-plan** feature. On the free tier the control is disabled — upgrade
+your project in <Link href="https://dashboard.fastnear.com">FastNear Dashboard<IconExternalLink /></Link>
+to enable browser keys.
+:::
+
+## If you only need the rule
+
+- Create a key in the dashboard, then turn on **Restrict to websites** and list your domains.
+- A restricted key only works from a browser on a matching `Origin` (or `Referer`); everything else gets
+  `403 origin_not_allowed` — including your own backend.
+- Calling from the browser works with either `Authorization: Bearer ...` or `?apiKey=...`; FastNear's RPC
+  answers the CORS preflight, so both forms work.
+- Set a **Rate cap** on the key so a lifted key cannot burn your whole plan's quota.
+- A restriction is a **deterrent, not a secret**. Keep a separate, unrestricted server key for backend work.
+
+## Restrict a key to your website
+
+1. Open your project in <Link href="https://dashboard.fastnear.com">FastNear Dashboard<IconExternalLink /></Link>
+   and create (or pick) an API key.
+2. Turn on **Restrict to websites**.
+3. List the domains your app is served from, comma-separated:
+
+   ```text
+   example.com, *.example.com
+   ```
+
+   - Matching is **exact** on the hostname. `example.com` does **not** cover `www.example.com` or
+     `app.example.com` — add each host, or use a wildcard.
+   - `*.example.com` matches any direct subdomain (`app.example.com`, `www.example.com`).
+   - You can list up to **20 domains** per key.
+   - Do not include the scheme, port, or path — just the hostname (`app.example.com`, not
+     `https://app.example.com/`).
+
+Turning the restriction **on** hard-blocks every caller without a matching `Origin`/`Referer`, *including
+your own server-side traffic with that key*. Use a separate unrestricted key for backend calls.
+
+## How the restriction is enforced
+
+The check runs at the edge, before the request reaches the RPC, against the browser-set `Origin` header
+(with `Referer` as a fallback):
+
+| Request | Result |
+| --- | --- |
+| `Origin` matches an allowed domain | ✅ passes |
+| No `Origin`, but `Referer` matches | ✅ passes |
+| `Origin` present but not allowed | ⛔ `403 origin_not_allowed` |
+| Neither `Origin` nor `Referer` (e.g. curl, a backend) | ⛔ `403 origin_not_allowed` |
+| A subdomain of an allowed domain, with no wildcard | ⛔ `403 origin_not_allowed` |
+
+`Origin` takes precedence over `Referer` — a request with a disallowed `Origin` is rejected even if the
+`Referer` would have matched. The `403` body is `{"error":"origin_not_allowed"}`.
+
+A key with **no** website restriction is treated as a server key: the origin check is skipped and it works
+from anywhere (so keep it secret).
+
+## Call FastNear from the browser
+
+FastNear's RPC endpoint returns permissive CORS headers and answers the preflight `OPTIONS` request, so a
+browser `fetch()` works directly — no proxy required.
+
+```js
+// Served from https://app.example.com (an allowed domain on this key)
+const FASTNEAR_API_KEY = 'YOUR_BROWSER_KEY'; // restricted to app.example.com
+
+const res = await fetch('https://rpc.mainnet.fastnear.com', {
+  method: 'POST',
+  headers: {
+    'Authorization': `Bearer ${FASTNEAR_API_KEY}`,
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    jsonrpc: '2.0',
+    id: 1,
+    method: 'block',
+    params: { finality: 'final' },
+  }),
+});
+const data = await res.json();
+```
+
+The browser sends your site's `Origin` automatically, so the edge can enforce the restriction. The
+`?apiKey=` query form works too and is handy when setting headers is awkward:
+
+```js
+const res = await fetch(`https://rpc.mainnet.fastnear.com?apiKey=${FASTNEAR_API_KEY}`, {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'block', params: { finality: 'final' } }),
+});
+```
+
+:::note
+If a browser call exceeds your rate limit, the `429` response may not yet include CORS headers, so the
+browser can surface it as a generic network error rather than the JSON limit message. Treat a sudden
+`fetch` failure under load as a possible rate-limit hit.
+:::
+
+## Limit the blast radius
+
+A published key will eventually be copied. Two controls keep that cheap:
+
+- **Rate cap** — set a per-key cap (requests per minute) below your plan default. A lifted key can then
+  only consume up to that cap, not your whole quota. Leave it blank to use the plan default.
+- **Rotate** — if a key is abused, use **Rotate** to issue a new value while keeping the same
+  restrictions and cap. Update your site with the new value; the old value stops working at the edge
+  shortly after, once the change syncs.
+
+## This is a deterrent, not a secret
+
+:::caution
+`Origin` and `Referer` are set by the browser, but a non-browser client (curl, a script) can forge them.
+So a website restriction stops **casual reuse of a key lifted from your page**, but it is **not** a hard
+security boundary.
+:::
+
+What this means in practice:
+
+- The risk of a leaked browser key is **quota and cost abuse** — someone running up usage against your
+  plan. FastNear API keys are rate-limit/billing credentials, not NEAR account keys, so a leaked browser
+  key cannot move funds or sign transactions on your accounts.
+- Your real backstops are the **rate cap** (bounds the damage) and **rotation** (ends it).
+- Never put a credential that must stay secret in the browser. Use a [server key](/auth) behind your
+  backend for anything sensitive or unrestricted.
+
+## Common failure modes
+
+### `403 origin_not_allowed` from curl or my backend
+
+Expected — a restricted key only works from a browser on an allowed domain. Backends and curl send no
+`Origin`/`Referer`. Use a separate unrestricted server key for backend traffic.
+
+### It works on `example.com` but not `www.example.com`
+
+Hostname matching is exact. Add `www.example.com` to the key, or use `*.example.com` to cover subdomains.
+
+### My browser call fails with no useful error
+
+If you are over your rate limit, the `429` may arrive without CORS headers and show up as a generic
+network error. Check your usage, and consider whether your key's rate cap is too low.
+
+### The docs UI worked, but my app does not
+
+The docs site can forward a saved key for convenience; that is not the production pattern. Ship your own
+restricted browser key, served from a domain you listed on the key.
+
+### I need both browser and backend access
+
+Use two keys: a restricted browser key for the frontend, and an unrestricted server key for the backend.
+Do not try to share one key across both.
+
+## Related guides
+
+- [Auth & Access](/auth) — the server-key default and transport choices
+- [Auth for Agents](/agents/auth) — runtime posture for agents and automations
+- [RPC Reference](/rpc)
