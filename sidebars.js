@@ -154,6 +154,7 @@ const rpcSidebar = withExamplesFooter(
         'rpc/transaction/broadcast-tx-async',
         'rpc/transaction/broadcast-tx-commit',
         'rpc/transaction/experimental-receipt',
+        'rpc/transaction/experimental-receipt-to-tx',
         'rpc/transaction/experimental-tx-status',
       ],
     },

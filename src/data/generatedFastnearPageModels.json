@@ -11884,6 +11884,353 @@
     "sourceSpec": "rpcs/transaction/EXPERIMENTAL_receipt.yaml"
   },
   {
+    "canonicalPath": "/rpcs/transaction/EXPERIMENTAL_receipt_to_tx",
+    "info": {
+      "description": "Resolve a receipt ID to the transaction hash and signer that produced it. Requires a node with `save_receipt_to_tx` enabled; unindexed receipts return `UNKNOWN_RECEIPT`.",
+      "operationId": "EXPERIMENTAL_receipt_to_tx",
+      "summary": "Resolve receipt to transaction",
+      "title": "NEAR Protocol RPC: Resolve receipt to transaction",
+      "version": "1.0.0"
+    },
+    "interaction": {
+      "authTransport": "bearer",
+      "defaultId": "fastnear",
+      "fields": [
+        {
+          "description": "Optional hint: block height near where the receipt was created, to bound the fallback scan.",
+          "label": "Block Height",
+          "location": "body",
+          "name": "block_height",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Optional hint: block height near where the receipt was created, to bound the fallback scan.",
+            "format": "uint64"
+          }
+        },
+        {
+          "description": "Base58-encoded receipt ID to resolve to its originating transaction.",
+          "label": "Receipt Id",
+          "location": "body",
+          "name": "receipt_id",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "description": "Base58-encoded receipt ID to resolve to its originating transaction."
+          }
+        },
+        {
+          "description": "Optional hint: shard to scan at the hint height; omit to scan all tracked shards.",
+          "label": "Shard Id",
+          "location": "body",
+          "name": "shard_id",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Optional hint: shard to scan at the hint height; omit to scan all tracked shards."
+          }
+        },
+        {
+          "description": "Optional hint: ± block-height window scanned around the hint before walking ancestor blocks.",
+          "label": "Window",
+          "location": "body",
+          "name": "window",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Optional hint: ± block-height window scanned around the hint before walking ancestor blocks.",
+            "format": "uint64"
+          }
+        }
+      ],
+      "kind": "rpc-EXPERIMENTAL-receipt-to-tx",
+      "networks": [
+        {
+          "defaultFields": {
+            "receipt_id": "FcFKrKQziMPCgYMFiLMZwecBtA7vqxdkatkhc1j3GYj8"
+          },
+          "key": "mainnet",
+          "label": "Mainnet",
+          "url": "https://rpc.mainnet.fastnear.com"
+        },
+        {
+          "defaultFields": {
+            "receipt_id": "ExampleReceiptId",
+            "shard_id": 0
+          },
+          "key": "testnet",
+          "label": "Testnet",
+          "url": "https://rpc.testnet.fastnear.com"
+        }
+      ],
+      "requestMethod": "EXPERIMENTAL_receipt_to_tx",
+      "supportsFinality": false,
+      "transport": "json-rpc"
+    },
+    "pageModelId": "rpc-EXPERIMENTAL-receipt-to-tx",
+    "replaceOperationPage": true,
+    "request": {
+      "bodySchema": {
+        "type": "object",
+        "required": [
+          "jsonrpc",
+          "id",
+          "method",
+          "params"
+        ],
+        "properties": [
+          {
+            "name": "jsonrpc",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "2.0"
+              ]
+            }
+          },
+          {
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "fastnear"
+            }
+          },
+          {
+            "name": "method",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "EXPERIMENTAL_receipt_to_tx"
+              ]
+            }
+          },
+          {
+            "name": "params",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "receipt_id"
+              ],
+              "properties": [
+                {
+                  "name": "block_height",
+                  "required": false,
+                  "schema": {
+                    "type": "integer",
+                    "nullable": true,
+                    "description": "Optional hint: block height near where the receipt was created, to bound the fallback scan.",
+                    "format": "uint64"
+                  }
+                },
+                {
+                  "name": "receipt_id",
+                  "required": true,
+                  "schema": {
+                    "type": "string",
+                    "description": "Base58-encoded receipt ID to resolve to its originating transaction."
+                  }
+                },
+                {
+                  "name": "shard_id",
+                  "required": false,
+                  "schema": {
+                    "type": "integer",
+                    "nullable": true,
+                    "description": "Optional hint: shard to scan at the hint height; omit to scan all tracked shards."
+                  }
+                },
+                {
+                  "name": "window",
+                  "required": false,
+                  "schema": {
+                    "type": "integer",
+                    "nullable": true,
+                    "description": "Optional hint: ± block-height window scanned around the hint before walking ancestor blocks.",
+                    "format": "uint64"
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "examples": [
+        {
+          "id": "mainnet",
+          "label": "Resolve receipt to transaction (Mainnet)",
+          "network": "mainnet",
+          "request": {
+            "body": {
+              "jsonrpc": "2.0",
+              "id": "fastnear",
+              "method": "EXPERIMENTAL_receipt_to_tx",
+              "params": {
+                "receipt_id": "FcFKrKQziMPCgYMFiLMZwecBtA7vqxdkatkhc1j3GYj8"
+              }
+            },
+            "headers": {},
+            "path": {},
+            "query": {}
+          }
+        },
+        {
+          "id": "testnet",
+          "label": "Resolve receipt to transaction (Testnet)",
+          "network": "testnet",
+          "request": {
+            "body": {
+              "jsonrpc": "2.0",
+              "id": "fastnear",
+              "method": "EXPERIMENTAL_receipt_to_tx",
+              "params": {
+                "block_height": null,
+                "receipt_id": "ExampleReceiptId",
+                "shard_id": 0,
+                "window": null
+              }
+            },
+            "headers": {},
+            "path": {},
+            "query": {}
+          }
+        }
+      ],
+      "mediaType": "application/json",
+      "parameters": {
+        "header": [],
+        "path": [],
+        "query": []
+      },
+      "required": true
+    },
+    "responses": [
+      {
+        "description": "Successful response",
+        "mediaType": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "jsonrpc",
+            "id"
+          ],
+          "properties": [
+            {
+              "name": "jsonrpc",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "enum": [
+                  "2.0"
+                ]
+              }
+            },
+            {
+              "name": "id",
+              "required": true,
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "number"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "result",
+              "required": false,
+              "schema": {
+                "type": "object",
+                "required": [
+                  "transaction_hash",
+                  "sender_account_id"
+                ],
+                "properties": [
+                  {
+                    "name": "sender_account_id",
+                    "required": true,
+                    "schema": {
+                      "type": "string",
+                      "description": "NEAR account ID"
+                    }
+                  },
+                  {
+                    "name": "transaction_hash",
+                    "required": true,
+                    "schema": {
+                      "type": "string",
+                      "description": "Base58-encoded hash"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "name": "error",
+              "required": false,
+              "schema": {
+                "type": "object",
+                "properties": [
+                  {
+                    "name": "code",
+                    "required": false,
+                    "schema": {
+                      "type": "integer"
+                    }
+                  },
+                  {
+                    "name": "message",
+                    "required": false,
+                    "schema": {
+                      "type": "string"
+                    }
+                  },
+                  {
+                    "name": "data",
+                    "required": false,
+                    "schema": {
+                      "type": "object"
+                    }
+                  }
+                ]
+              }
+            }
+          ],
+          "refName": "JsonRpcResponse"
+        },
+        "status": "200"
+      }
+    ],
+    "route": {
+      "method": "POST",
+      "path": "/",
+      "transport": "json-rpc"
+    },
+    "routeAliases": [
+      "/rpcs/transaction/EXPERIMENTAL_receipt_to_tx/other/EXPERIMENTAL_receipt_to_tx",
+      "/reference/operation/EXPERIMENTAL_receipt_to_tx"
+    ],
+    "securitySchemes": [
+      {
+        "description": "The OpenAPI contract describes the FastNEAR API key as a query parameter named apiKey.",
+        "id": "ApiKeyAuth",
+        "in": "query",
+        "name": "apiKey",
+        "type": "apiKey"
+      }
+    ],
+    "sourceSpec": "rpcs/transaction/EXPERIMENTAL_receipt_to_tx.yaml"
+  },
+  {
     "canonicalPath": "/rpcs/transaction/EXPERIMENTAL_tx_status",
     "info": {
       "description": "Fetch a transaction's full receipt tree and per-receipt outcomes by Base58 hash — richer than `tx_status`.",
