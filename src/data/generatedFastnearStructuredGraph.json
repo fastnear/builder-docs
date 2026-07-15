@@ -1208,14 +1208,14 @@
   "metadata": {
     "nearcoreSource": {
       "branch": "HEAD",
-      "commitSha": "72dbd0f789a427bed7e7552070b1828794f122b9",
+      "commitSha": "499283a5e3a6f8ea52bc068c28e3a7bebb1e38c0",
       "dirty": true,
-      "generatedAt": "2026-04-17T13:39:55.482Z",
-      "releaseUrl": "https://github.com/near/nearcore/releases/tag/2.11.0",
+      "generatedAt": "2026-07-14T21:45:20.697Z",
+      "releaseUrl": "https://github.com/near/nearcore/releases/tag/2.13.0",
       "repoRoot": "../nearcore",
       "repoUrl": "https://github.com/near/nearcore",
       "specPath": "../nearcore/chain/jsonrpc/openapi/openapi.json",
-      "tag": "2.11.0",
+      "tag": "2.13.0",
       "tagSource": "exact"
     }
   },
@@ -3049,7 +3049,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/rpcs/transaction/broadcast_tx_async",
-      "description": "Submit a freshly signed transaction and immediately get its hash — no wait for execution. Default examples are illustrative only and are not reusable signed payloads.",
+      "description": "Broadcast a base64-encoded `SignedTransaction`; returns the transaction hash without awaiting inclusion or execution. Example payloads are placeholders and cannot be replayed.",
       "docsPath": "/rpc/transaction/broadcast-tx-async",
       "familyId": "rpc-transaction",
       "headline": "NEAR Protocol RPC: Send transaction asynchronously",
@@ -3076,7 +3076,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/rpcs/transaction/broadcast_tx_commit",
-      "description": "Submit a freshly signed transaction and wait for its commit — the legacy synchronous send, superseded by `send_tx`. Default examples are illustrative only and are not reusable signed payloads.",
+      "description": "Broadcast a base64-encoded `SignedTransaction`; blocks until execution completes or a 10-second timeout elapses. Deprecated — use `send_tx`. Example payloads are placeholders and cannot be replayed.",
       "docsPath": "/rpc/transaction/broadcast-tx-commit",
       "familyId": "rpc-transaction",
       "headline": "NEAR Protocol RPC: Send transaction and wait",
@@ -3157,7 +3157,7 @@
     {
       "authSummary": "API key via query apiKey",
       "canonicalPath": "/rpcs/transaction/send_tx",
-      "description": "Submit a freshly signed transaction and wait for its final execution outcome — the current synchronous send. Default examples are illustrative only and are not reusable signed payloads.",
+      "description": "Broadcast a base64-encoded `SignedTransaction`; blocks until the execution outcome specified by `wait_until`. Example payloads are placeholders and cannot be replayed.",
       "docsPath": "/rpc/transaction/send-tx",
       "familyId": "rpc-transaction",
       "headline": "NEAR Protocol RPC: Send transaction",
