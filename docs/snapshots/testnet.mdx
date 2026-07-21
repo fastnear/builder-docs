@@ -1,82 +1,46 @@
 ---
 sidebar_label: Testnet
 slug: /snapshots/testnet
-description: Download testnet RPC and archival snapshots for FastNear-backed NEAR infrastructure bootstrapping.
+description: Current FastNear testnet snapshot posture for RPC bootstrap and archival snapshot requests.
 ---
 
 # Testnet
 
-## RPC Testnet Snapshot
+FastNear no longer documents a public self-serve testnet snapshot download flow here.
 
-This is likely the preferred approach for syncing, as opposed to downloading an archival snapshot, which is significantly larger and more special-purpose.
-
-Before running the snapshot download script, you can set the following environment variables:
-
-- `CHAIN_ID` to either `mainnet` or `testnet`. (default: `mainnet`)
-- `THREADS` to the number of threads you want to use for downloading. Use `128` for 10Gbps, and `16` for 1Gbps (default: `128`).
-- `TPSLIMIT` to the maximum number of HTTP new actions per second. (default: `4096`)
-- `BWLIMIT` to the maximum bandwidth to use for download in case you want to limit it. (default: `10G`)
-- `DATA_PATH` to the path where you want to download the snapshot (default: `~/.near/data`)
-- `BLOCK` to the block height of the snapshot you want to download. If not set, it will download the latest snapshot.
-
-**Run this command to download the RPC Testnet snapshot:**
-
-:::info
-We will set the following environment variables:
-- `DATA_PATH=~/.near/data` - the standard nearcore path
-- `CHAIN_ID=testnet` - to explicitly specify the testnet data
+:::warning[Free snapshots are deprecated]
+The free nearcore data snapshots were deprecated on June 1, 2025.
 :::
 
-`RPC Testnet Snapshot » ~/.near/data`:
+## For regular RPC nodes and validators
 
-```bash
-curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/fastnear/static/refs/heads/main/down_rclone.sh | DATA_PATH=~/.near/data CHAIN_ID=testnet bash
-```
+Use [NEAR Nodes](https://near-nodes.io) for the current bootstrap guidance based on Epoch Sync plus decentralized state sync. That is the public recommendation for normal testnet node bring-up and recovery.
 
-## Archival Testnet snapshot
+Before the first `neard run`, refresh `network.boot_nodes` with the current command from [NEAR Nodes: Epoch Sync](https://near-nodes.io/intro/node-epoch-sync). A freshly downloaded `config.json` can still leave `boot_nodes` empty, which can leave the node stuck at `Waiting for peers 0 peers`.
 
-:::warning
-**Time and storage intensive.**
+## For archival testnet snapshots
 
-Be prepared for a large download and the inherent time constraints involved.
-:::
+Archival snapshot access is request-based. Start from [fastnear.com/snapshots](https://fastnear.com/snapshots) or email [snapshots@fastnear.com](mailto:snapshots@fastnear.com) to get the current availability, block height, and storage expectations.
 
-Before running the download script, you can set the following environment variables:
+## About the legacy scripts
 
-- `CHAIN_ID` to either `mainnet` or `testnet`. (default: `mainnet`)
-- `THREADS` to the number of threads you want to use for downloading. Use `128` for 10Gbps, and `16` for 1Gbps (default: `128`).
-- `TPSLIMIT` to the maximum number of HTTP new actions per second. (default: `4096`)
-- `DATA_TYPE` to either `hot-data` or `cold-data` (default: `cold-data`)
-- `BWLIMIT` to the maximum bandwidth to use for download in case you want to limit it. (default: `10G`)
-- `DATA_PATH` to the path where you want to download the snapshot (default: `/mnt/nvme/data/$DATA_TYPE`)
-- `BLOCK` to the block height of the snapshot you want to download. If not set, it will download the latest snapshot.
+The [fastnear/static](https://github.com/fastnear/static) repository still contains the historical `down_rclone.sh` and `down_rclone_archival.sh` scripts. These docs no longer publish copy-paste commands for them because the old public `latest.txt` discovery URLs now redirect to the snapshots info page and are not a supported public workflow.
 
-By default the script assumes the paths for the data:
-- Hot data (has to be on NVME): `/mnt/nvme/data/hot-data`
+If FastNear support gives you a current block height and a supported download path, use the exact host, block, and storage layout they provide instead of the retired public examples.
 
-**Run the following commands to download the Archival Testnet snapshot:**
+## If you are preparing for an archival request
 
-1. Download the latest snapshot block height:
+- Be ready to place hot data on fast local storage if the snapshot package requires it.
+- Confirm your storage layout with nearcore before you start the transfer.
+- Install `rclone` only if the support flow you receive actually depends on it.
 
-`Latest archival testnet snapshot block`:
+## If FastNear provides a snapshot package
 
-```bash
-LATEST=$(curl -s "https://snapshot.neardata.xyz/testnet/archival/latest.txt")
-echo "Latest snapshot block: $LATEST"
-```
+1. Stop `neard` before you replace any snapshot data or edit archival storage settings.
+2. Confirm whether the package is meant for `~/.near/data` or for split `hot-data` and `cold-data` paths.
+3. Verify that your `config.json` matches the intended archival mode before restart.
+   For archival nodes, NEAR Nodes documents `archive: true` and `tracked_shards: [0]` as critical settings.
+4. If the package uses split storage, make sure your configured store paths match the delivered hot/cold layout before you start the node again.
+5. Restart the node and verify that it starts cleanly and resumes syncing instead of silently serving stale local state.
 
-2. Download the HOT data from the snapshot. It has to be placed on NVME.
-
-:::info
-We will set the following environment variables:
-- `DATA_TYPE=hot-data` - downloads the Hot data
-- `DATA_PATH=~/.near/data` - the standard nearcore path
-- `CHAIN_ID=testnet` - set to testnet network
-- `BLOCK=$LATEST` - specify the snapshot block
-:::
-
-`Archival Testnet Snapshot (hot-data) » ~/.near/data`:
-
-```bash
-curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/fastnear/static/refs/heads/main/down_rclone_archival.sh | DATA_TYPE=hot-data DATA_PATH=~/.near/data CHAIN_ID=testnet BLOCK=$LATEST bash
-```
+For nearcore storage expectations and operator prerequisites, see [nearcore](https://github.com/near/nearcore?tab=readme-ov-file#about-near).
