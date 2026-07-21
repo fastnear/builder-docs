@@ -149,13 +149,13 @@ test('live and expanded responses show the RPC endpoint URL', async ({ page }) =
   await requestPromise;
 
   const inlineRequestTarget = page.locator('.fastnear-interaction__result-url').first();
-  await expect(inlineRequestTarget).toHaveText('https://rpc.mainnet.fastnear.com/account/view_account');
+  await expect(inlineRequestTarget).toHaveText('https://rpc.mainnet.fastnear.com');
 
   await page.getByRole('button', { name: 'Expand response' }).click();
   const expandedRequestTarget = page
     .getByRole('dialog', { name: 'Expanded response' })
     .locator('.fastnear-interaction__result-url');
-  await expect(expandedRequestTarget).toHaveText('https://rpc.mainnet.fastnear.com/account/view_account');
+  await expect(expandedRequestTarget).toHaveText('https://rpc.mainnet.fastnear.com');
 });
 
 test('expanded response modal supports find, next, previous, and keyboard navigation', async ({ page }) => {
