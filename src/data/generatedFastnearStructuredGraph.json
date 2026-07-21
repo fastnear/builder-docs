@@ -1009,6 +1009,20 @@
       "pageModelId": "rpc-EXPERIMENTAL-receipt"
     },
     {
+      "canonicalPath": "/rpcs/transaction/EXPERIMENTAL_receipt_to_tx",
+      "items": [
+        {
+          "label": "Transaction RPC",
+          "path": "/rpc"
+        },
+        {
+          "label": "Resolve receipt to transaction",
+          "path": "/rpcs/transaction/EXPERIMENTAL_receipt_to_tx"
+        }
+      ],
+      "pageModelId": "rpc-EXPERIMENTAL-receipt-to-tx"
+    },
+    {
       "canonicalPath": "/rpcs/transaction/EXPERIMENTAL_tx_status",
       "items": [
         {
@@ -1210,7 +1224,7 @@
       "branch": "HEAD",
       "commitSha": "499283a5e3a6f8ea52bc068c28e3a7bebb1e38c0",
       "dirty": true,
-      "generatedAt": "2026-07-14T21:45:20.697Z",
+      "generatedAt": "2026-07-14T21:02:40.181Z",
       "releaseUrl": "https://github.com/near/nearcore/releases/tag/2.13.0",
       "repoRoot": "../nearcore",
       "repoUrl": "https://github.com/near/nearcore",
@@ -3125,6 +3139,33 @@
       "schemaType": "APIReference",
       "sourceSpec": "rpcs/transaction/EXPERIMENTAL_receipt.yaml",
       "summary": "Get receipt by ID",
+      "transport": "json-rpc"
+    },
+    {
+      "authSummary": "API key via query apiKey",
+      "canonicalPath": "/rpcs/transaction/EXPERIMENTAL_receipt_to_tx",
+      "description": "Resolve a receipt ID to the transaction hash and signer that produced it. Requires a node with `save_receipt_to_tx` enabled; unindexed receipts return `UNKNOWN_RECEIPT`.",
+      "docsPath": "/rpc/transaction/experimental-receipt-to-tx",
+      "familyId": "rpc-transaction",
+      "headline": "NEAR Protocol RPC: Resolve receipt to transaction",
+      "httpMethod": "POST",
+      "id": "rpc-EXPERIMENTAL-receipt-to-tx",
+      "name": "NEAR Protocol RPC: Resolve receipt to transaction",
+      "networkKeys": [
+        "mainnet",
+        "testnet"
+      ],
+      "operationId": "EXPERIMENTAL_receipt_to_tx",
+      "pageModelId": "rpc-EXPERIMENTAL-receipt-to-tx",
+      "requestPath": "/",
+      "requestType": null,
+      "routeAliases": [
+        "/rpcs/transaction/EXPERIMENTAL_receipt_to_tx/other/EXPERIMENTAL_receipt_to_tx",
+        "/reference/operation/EXPERIMENTAL_receipt_to_tx"
+      ],
+      "schemaType": "APIReference",
+      "sourceSpec": "rpcs/transaction/EXPERIMENTAL_receipt_to_tx.yaml",
+      "summary": "Resolve receipt to transaction",
       "transport": "json-rpc"
     },
     {
