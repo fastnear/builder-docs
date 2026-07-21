@@ -11,7 +11,7 @@ const EXPECTED_FAMILY_COUNTS = {
   "rpcs/block": 3,
   "rpcs/contract": 5,
   "rpcs/protocol": 20,
-  "rpcs/transaction": 6,
+  "rpcs/transaction": 7,
   "rpcs/validators": 3,
   "apis/fastnear": 14,
   "apis/kv-fastdata": 9,
