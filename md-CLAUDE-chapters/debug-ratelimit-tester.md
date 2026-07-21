@@ -21,6 +21,11 @@ The browser sets `Origin`/`Referer` automatically and JS cannot override them, s
 (the page generates a `hey` script). Origin restriction is enforced at the edge (Origin-primary,
 Referer-fallback) → `403 origin_not_allowed` off-origin.
 
+For **programmatic off-origin** testing with JSON output, the FastNear dashboard now has a companion
+`/api/debug` route (+ `/admin/debug` page) that runs these probes server-side (it sets `Origin`/`Referer`
+itself) — see `~/near/fn/dashboard/UI_API_KEY_INVESTIGATION.md` ("Tooling"). This static docs `/debug`
+remains the only way to exercise the *true on-origin browser* path (a real, unforgeable `Origin`).
+
 ## Findings (2026-06-18)
 
 - **Origin enforcement works (confirmed server-side 2026-06-18, all 3 corrected keys dev2/pro/business):**
@@ -42,17 +47,24 @@ Referer-fallback) → `403 origin_not_allowed` off-origin.
   with the fix (switch Auth to `?apiKey=`, which dodges the anon preflight rule, or fix the edge). ARL block
   responses can't carry custom headers, so adding ACAO to `429`s needs an `http_response_headers_transform`
   rule.
-- **Per-tier enforcement — `x-rate-limit-score` IS the enforcement input (corrected).** The plan limit is
-  two **active** Cloudflare ARL rules (Bearer + apiKey query) that sum `x-rate-limit-score` per `(key, colo)`
-  over 60s and block at `1e9` with the `-429` "project plan exceeded" custom response. The config is correct
-  (`score = floor(1e9/budget)`; budgets dev 10k / pro 20k / business 50k; all three scores observed on the
-  wire). **But measured enforcement ≠ config:** dev caps ~**5k**, pro ~**10k** (each **half** its budget —
-  effective trip ≈ 5e8, systematic across c=20 and c=150), and **business never trips** (>55k, single colo
-  SEA) → effectively unlimited. CF's response-header score counting is empirically imprecise (high scores
-  trip ~2× early; the low business score under-counts to non-enforcement). My earlier note here
-  ("dev≈pro≈10k / score informational / snippet `-429` binds / business ≫137k") was **wrong** — the old
-  "dev" was a mislabeled pro key, and the `-429` is the ARL rule's custom response, not snippet code. Full
-  data + fix options: `~/near/fn/dashboard/md-CLAUDE-chapters/arl-tier-enforcement-findings.md`.
+- **Per-tier enforcement — validated on rpc.near.red (updated 2026-06-22).** The plan limit is two **active**
+  Cloudflare ARL rules (Bearer + apiKey query) that sum `x-rate-limit-score` per `(key, colo)` over 60s and
+  block at `1e9` with the `-429` "project plan exceeded" custom response (that string is the ARL rule's custom
+  response, not snippet code). Config is correct (`score = floor(1e9/budget)`; budgets dev 10k / pro 20k /
+  business 50k; all three scores observed on the wire). **Prod-path measurements** on `rpc.mainnet`
+  (request → transform-echo → response bounce) showed dev capping ~**5k**, pro ~**10k** (≈½ budget), and
+  **business not tripping** at the test rate — which earlier read here as "CF score counting is
+  magnitude-broken." **That conclusion is retracted.** A clean controlled A/B on `rpc.near.red` (snippet sets
+  the response header directly, single colo) showed **both** `requests_per_period` **and** `score_per_period`
+  enforce **accurately** (~1.00–1.09×), and per-tier `requests_per_period` + `counting_expression` on a
+  response `x-tier` tag caps **every** tier at ~1.0× — including **business 50,028/50,000** (it *is* cappable).
+  So the prod-path 2× is **path-specific and still unexplained, not an intrinsic `score_per_period` defect**;
+  business "no trip" was **confounded** (≈142 grandfathered skip rules bypassing ARL + a rate floor needing
+  >833 req/s). **Decision:** move per-tier enforcement to `requests_per_period`, rolling out **free/dev/pro
+  first** (business/custom/enterprise deferred). Full data + cap/mechanism decisions:
+  `~/near/fn/dashboard/RATE_LIMIT_TIER_INVESTIGATION.md` (deeper detail:
+  `~/near/fn/dashboard/md-CLAUDE-chapters/arl-tier-enforcement-findings.md`); UI-key / origin / CORS side:
+  `~/near/fn/dashboard/UI_API_KEY_INVESTIGATION.md`.
 
 ## Secret hygiene
 
