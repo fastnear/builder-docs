@@ -4159,15 +4159,16 @@
           }
         },
         {
-          "description": "Proof subject — `receipt` proves inclusion of a specific receipt produced during execution.",
+          "description": "Proof subject — `transaction` proves inclusion of the top-level transaction, `receipt` proves inclusion of a specific receipt produced during execution.",
           "label": "Type",
           "location": "body",
           "name": "type",
           "required": false,
           "schema": {
             "type": "string",
-            "description": "Proof subject — `receipt` proves inclusion of a specific receipt produced during execution.",
+            "description": "Proof subject — `transaction` proves inclusion of the top-level transaction, `receipt` proves inclusion of a specific receipt produced during execution.",
             "enum": [
+              "transaction",
               "receipt"
             ]
           }
@@ -4302,8 +4303,9 @@
                   "required": false,
                   "schema": {
                     "type": "string",
-                    "description": "Proof subject — `receipt` proves inclusion of a specific receipt produced during execution.",
+                    "description": "Proof subject — `transaction` proves inclusion of the top-level transaction, `receipt` proves inclusion of a specific receipt produced during execution.",
                     "enum": [
+                      "transaction",
                       "receipt"
                     ]
                   }
@@ -9550,15 +9552,16 @@
           }
         },
         {
-          "description": "Proof subject — `receipt` proves inclusion of a specific receipt produced during execution.",
+          "description": "Proof subject — `transaction` proves inclusion of the top-level transaction, `receipt` proves inclusion of a specific receipt produced during execution.",
           "label": "Type",
           "location": "body",
           "name": "type",
           "required": false,
           "schema": {
             "type": "string",
-            "description": "Proof subject — `receipt` proves inclusion of a specific receipt produced during execution.",
+            "description": "Proof subject — `transaction` proves inclusion of the top-level transaction, `receipt` proves inclusion of a specific receipt produced during execution.",
             "enum": [
+              "transaction",
               "receipt"
             ]
           }
@@ -9693,8 +9696,9 @@
                   "required": false,
                   "schema": {
                     "type": "string",
-                    "description": "Proof subject — `receipt` proves inclusion of a specific receipt produced during execution.",
+                    "description": "Proof subject — `transaction` proves inclusion of the top-level transaction, `receipt` proves inclusion of a specific receipt produced during execution.",
                     "enum": [
+                      "transaction",
                       "receipt"
                     ]
                   }
