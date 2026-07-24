@@ -13326,7 +13326,7 @@
       "networks": [
         {
           "defaultFields": {
-            "signed_tx_base64": "ExampleBase64EncodedTransaction",
+            "signed_tx_base64": "CQAAAG1pa2UubmVhcgBPiSiO5F7KYuZ9VQ2eF6/b9dXqrBUBxDs2AuXiQZw8DgEAAAAAAAAADQAAAG1pa2V0ZXN0Lm5lYXKwzpn8eLLqwzoVC5PlcvpzSXj65ke9WN3TLsRpndusbgEAAAADAQAAAAAAAAAAAAAAAAAAAAC7RkXLWjBx/qplpt/RT2uwQWvrovT3+6ef0BG1LU5OahlAsFmjEsuOv8rg4JI8TXOkg16oXljReiM4KU41yHYM",
             "wait_until": "EXECUTED_OPTIMISTIC"
           },
           "key": "mainnet",
@@ -13335,7 +13335,7 @@
         },
         {
           "defaultFields": {
-            "signed_tx_base64": "ExampleBase64EncodedTransaction",
+            "signed_tx_base64": "DAAAAG1pa2UudGVzdG5ldABpWDhNQVV7BkV62S5Hbdm5jBNjKhV1eGJAHSwC6iwNqgEAAAAAAAAAEAAAAG1pa2V0ZXN0LnRlc3RuZXQlxP80whXgLsNL4raSbYLM3YKFSTxZTp6FZcg8ExwGpwEAAAADAQAAAAAAAAAAAAAAAAAAAADLrZ/qNwNTZoXF4ALlKxLeC0nfTZol2HyyY0XoChnSNATaQ27bP5HM90mAhgq4OI7Zo+k3GQ1CxC3bGUqbhMcD",
             "wait_until": "EXECUTED_OPTIMISTIC"
           },
           "key": "testnet",
@@ -13437,7 +13437,7 @@
               "id": "fastnear",
               "method": "send_tx",
               "params": {
-                "signed_tx_base64": "ExampleBase64EncodedTransaction",
+                "signed_tx_base64": "CQAAAG1pa2UubmVhcgBPiSiO5F7KYuZ9VQ2eF6/b9dXqrBUBxDs2AuXiQZw8DgEAAAAAAAAADQAAAG1pa2V0ZXN0Lm5lYXKwzpn8eLLqwzoVC5PlcvpzSXj65ke9WN3TLsRpndusbgEAAAADAQAAAAAAAAAAAAAAAAAAAAC7RkXLWjBx/qplpt/RT2uwQWvrovT3+6ef0BG1LU5OahlAsFmjEsuOv8rg4JI8TXOkg16oXljReiM4KU41yHYM",
                 "wait_until": "EXECUTED_OPTIMISTIC"
               }
             },
@@ -13456,7 +13456,7 @@
               "id": "fastnear",
               "method": "send_tx",
               "params": {
-                "signed_tx_base64": "ExampleBase64EncodedTransaction",
+                "signed_tx_base64": "DAAAAG1pa2UudGVzdG5ldABpWDhNQVV7BkV62S5Hbdm5jBNjKhV1eGJAHSwC6iwNqgEAAAAAAAAAEAAAAG1pa2V0ZXN0LnRlc3RuZXQlxP80whXgLsNL4raSbYLM3YKFSTxZTp6FZcg8ExwGpwEAAAADAQAAAAAAAAAAAAAAAAAAAADLrZ/qNwNTZoXF4ALlKxLeC0nfTZol2HyyY0XoChnSNATaQ27bP5HM90mAhgq4OI7Zo+k3GQ1CxC3bGUqbhMcD",
                 "wait_until": "EXECUTED_OPTIMISTIC"
               }
             },
