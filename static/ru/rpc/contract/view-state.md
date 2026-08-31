@@ -15,6 +15,7 @@
 - Mainnet: https://rpc.mainnet.fastnear.com/
 - Testnet: https://rpc.testnet.fastnear.com/
 ## Авторизация
+- Bearer-токен через заголовок `Authorization: Bearer <token>`
 - API-ключ через query `apiKey`: Контракт OpenAPI описывает API-ключ FastNear как параметр запроса `apiKey`.
 - Этот экспорт намеренно не включает локально сохранённые учётные данные
 ## Текущий запрос
@@ -57,7 +58,9 @@
 ```
 ### Входные данные
 - `account_id` (body, обязательный, string): ID аккаунта NEAR.
+- `after_key_base64` (body, string): Exclusive start cursor: returns only keys greater than this one. Set to the prior response's `last_key` to page forward; omit to scan from the start of the prefix range.
 - `include_proof` (body, boolean): Добавить криптографическое доказательство к ответу.
+- `limit` (body, integer): Maximum key/value entries per response (≥ 1). Omit for no client-set bound (subject to node limits).
 - `prefix_base64` (body, обязательный, string): Префикс ключа хранилища в кодировке Base64.
 ### Схема запроса
 ```json
@@ -119,6 +122,15 @@
             }
           },
           {
+            "name": "after_key_base64",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "nullable": true,
+              "description": "Exclusive start cursor: returns only keys greater than this one. Set to the prior response's `last_key` to page forward; omit to scan from the start of the prefix range."
+            }
+          },
+          {
             "name": "include_proof",
             "required": false,
             "schema": {
@@ -127,11 +139,21 @@
             }
           },
           {
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "nullable": true,
+              "description": "Maximum key/value entries per response (≥ 1). Omit for no client-set bound (subject to node limits).",
+              "format": "uint32"
+            }
+          },
+          {
             "name": "prefix_base64",
             "required": true,
             "schema": {
               "type": "string",
-              "description": "Base64-encoded storage key prefix. Use an empty string (`\"\"`) to remove the prefix filter and return all matching contract state values. Large contracts can produce very large responses when no prefix is set."
+              "description": "Base64-encoded key prefix; returns only trie entries whose key begins with these bytes. Empty string (`\"\"`) removes the filter and returns the entire contract state — expensive on large contracts."
             }
           },
           {
@@ -210,6 +232,15 @@
           "values"
         ],
         "properties": [
+          {
+            "name": "last_key",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "nullable": true,
+              "description": "Continuation cursor — the last key returned. Pass as `after_key_base64` to fetch the next page; absent when the result set is exhausted."
+            }
+          },
           {
             "name": "доказательство",
             "required": false,

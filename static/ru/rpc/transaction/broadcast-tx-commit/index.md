@@ -15,6 +15,7 @@
 - Mainnet: https://rpc.mainnet.fastnear.com/
 - Testnet: https://rpc.testnet.fastnear.com/
 ## Авторизация
+- Bearer-токен через заголовок `Authorization: Bearer <token>`
 - API-ключ через query `apiKey`: Контракт OpenAPI описывает API-ключ FastNear как параметр запроса `apiKey`.
 - Этот экспорт намеренно не включает локально сохранённые учётные данные
 ## Текущий запрос
@@ -28,7 +29,7 @@
   "id": "fastnear",
   "method": "broadcast_tx_commit",
   "params": {
-    "signed_tx_base64": "DgAAAG1pa2UubmVhcgCpPJgEEFUwQjFQvL8V3CnZ0h688WG5sVsKE8JYM37ax2cUjgEAAAAAAAAADQAAAG1pa2V0ZXN0Lm5lYXIPfFBmYNAIe2/MicVhDXbvT3w06LxS2OCF0UHIYgjNDQAAAHRlc3RpbmcgbWVtbwEAAAADAQAAAAAAAAAAAAAAAAAAAA=="
+    "signed_tx_base64": "CQAAAG1pa2UubmVhcgD64cHVt7yB8HSzql1e8RLKSv2riwv7+vNviWHD/y95EgEAAAAAAAAADQAAAG1pa2V0ZXN0Lm5lYXJBM1Y72BJnk/V7dlrTRBxxxUxyB/JXo+hODCyF0woAEAEAAAADAQAAAAAAAAAAAAAAAAAAAADiGG3IJC5QsOBN70h+glB+U9nBYEXObdaPHMjXyu2YQbQUvALIWbdBBxhuR9VQ/fEXg7L0vGSCd9wCCrq0CFIF"
   }
 }
 ```
@@ -41,7 +42,7 @@
     "id": "fastnear",
     "method": "broadcast_tx_commit",
     "params": {
-      "signed_tx_base64": "DgAAAG1pa2UubmVhcgCpPJgEEFUwQjFQvL8V3CnZ0h688WG5sVsKE8JYM37ax2cUjgEAAAAAAAAADQAAAG1pa2V0ZXN0Lm5lYXIPfFBmYNAIe2/MicVhDXbvT3w06LxS2OCF0UHIYgjNDQAAAHRlc3RpbmcgbWVtbwEAAAADAQAAAAAAAAAAAAAAAAAAAA=="
+      "signed_tx_base64": "CQAAAG1pa2UubmVhcgD64cHVt7yB8HSzql1e8RLKSv2riwv7+vNviWHD/y95EgEAAAAAAAAADQAAAG1pa2V0ZXN0Lm5lYXJBM1Y72BJnk/V7dlrTRBxxxUxyB/JXo+hODCyF0woAEAEAAAADAQAAAAAAAAAAAAAAAAAAAADiGG3IJC5QsOBN70h+glB+U9nBYEXObdaPHMjXyu2YQbQUvALIWbdBBxhuR9VQ/fEXg7L0vGSCd9wCCrq0CFIF"
     }
   },
   "headers": {},
@@ -105,7 +106,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "description": "Подписанная транзакция в кодировке Base64. Сгенерируйте новый подписанный пакет данных для подписывающего аккаунта непосредственно перед отправкой или запросом статуса."
+              "description": "Подписанная транзакция в кодировке Base64"
             }
           },
           {

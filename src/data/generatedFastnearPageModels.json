@@ -1035,7 +1035,9 @@
           },
           "key": "mainnet",
           "label": "Mainnet",
-          "url": "https://rpc.mainnet.fastnear.com"
+          "url": "https://archival-rpc.mainnet.fastnear.com",
+          "archival": true,
+          "archivalReason": "Pinned block height, older than standard RPC retention."
         },
         {
           "defaultFields": {
@@ -1043,7 +1045,9 @@
           },
           "key": "testnet",
           "label": "Testnet",
-          "url": "https://rpc.testnet.fastnear.com"
+          "url": "https://archival-rpc.testnet.fastnear.com",
+          "archival": true,
+          "archivalReason": "Pinned block height, older than standard RPC retention."
         }
       ],
       "requestMethod": "block",
@@ -1295,7 +1299,9 @@
           },
           "key": "mainnet",
           "label": "Mainnet",
-          "url": "https://rpc.mainnet.fastnear.com"
+          "url": "https://archival-rpc.mainnet.fastnear.com",
+          "archival": true,
+          "archivalReason": "Pinned block hash, older than standard RPC retention."
         },
         {
           "defaultFields": {
@@ -1303,7 +1309,9 @@
           },
           "key": "testnet",
           "label": "Testnet",
-          "url": "https://rpc.testnet.fastnear.com"
+          "url": "https://archival-rpc.testnet.fastnear.com",
+          "archival": true,
+          "archivalReason": "Pinned block hash, older than standard RPC retention."
         }
       ],
       "requestMethod": "block",
@@ -1540,7 +1548,7 @@
           "label": "Block ID",
           "location": "body",
           "name": "block_id",
-          "required": true,
+          "required": false,
           "schema": {
             "description": "Block height (integer) or block hash (string)",
             "oneOf": [
@@ -1559,24 +1567,20 @@
       "kind": "rpc-block-effects",
       "networks": [
         {
-          "defaultFields": {
-            "block_id": 9820210
-          },
+          "defaultFields": {},
           "key": "mainnet",
           "label": "Mainnet",
           "url": "https://rpc.mainnet.fastnear.com"
         },
         {
-          "defaultFields": {
-            "block_id": 245254793
-          },
+          "defaultFields": {},
           "key": "testnet",
           "label": "Testnet",
           "url": "https://rpc.testnet.fastnear.com"
         }
       ],
       "requestMethod": "block_effects",
-      "supportsFinality": false,
+      "supportsFinality": true,
       "transport": "json-rpc"
     },
     "pageModelId": "rpc-block-effects",
@@ -1624,13 +1628,10 @@
             "required": true,
             "schema": {
               "type": "object",
-              "required": [
-                "block_id"
-              ],
               "properties": [
                 {
                   "name": "block_id",
-                  "required": true,
+                  "required": false,
                   "schema": {
                     "description": "Block height (integer) or block hash (string)",
                     "oneOf": [
@@ -1642,6 +1643,19 @@
                         "type": "string",
                         "description": "Base58-encoded block hash"
                       }
+                    ]
+                  }
+                },
+                {
+                  "name": "finality",
+                  "required": false,
+                  "schema": {
+                    "type": "string",
+                    "description": "Block finality",
+                    "enum": [
+                      "final",
+                      "near-final",
+                      "optimistic"
                     ]
                   }
                 }
@@ -1661,7 +1675,7 @@
               "id": "fastnear",
               "method": "block_effects",
               "params": {
-                "block_id": 9820210
+                "finality": "final"
               }
             },
             "headers": {},
@@ -1679,7 +1693,7 @@
               "id": "fastnear",
               "method": "block_effects",
               "params": {
-                "block_id": 245254793
+                "finality": "final"
               }
             },
             "headers": {},
@@ -3212,8 +3226,8 @@
         },
         {
           "defaultFields": {
-            "account_id": "v1.signer-prod.testnet",
-            "prefix_base64": "U1RBVEU="
+            "account_id": "counter.testnet",
+            "prefix_base64": ""
           },
           "key": "testnet",
           "label": "Testnet",
@@ -3382,8 +3396,8 @@
               "params": {
                 "request_type": "view_state",
                 "finality": "final",
-                "account_id": "v1.signer-prod.testnet",
-                "prefix_base64": "U1RBVEU="
+                "account_id": "counter.testnet",
+                "prefix_base64": ""
               }
             },
             "headers": {},
@@ -3594,7 +3608,9 @@
           },
           "key": "mainnet",
           "label": "Mainnet",
-          "url": "https://rpc.mainnet.fastnear.com"
+          "url": "https://archival-rpc.mainnet.fastnear.com",
+          "archival": true,
+          "archivalReason": "Pinned block, older than standard RPC retention."
         },
         {
           "defaultFields": {
@@ -3603,7 +3619,9 @@
           },
           "key": "testnet",
           "label": "Testnet",
-          "url": "https://rpc.testnet.fastnear.com"
+          "url": "https://archival-rpc.testnet.fastnear.com",
+          "archival": true,
+          "archivalReason": "Pinned block, older than standard RPC retention."
         }
       ],
       "requestMethod": "EXPERIMENTAL_congestion_level",
@@ -3901,7 +3919,9 @@
           },
           "key": "mainnet",
           "label": "Mainnet",
-          "url": "https://rpc.mainnet.fastnear.com"
+          "url": "https://archival-rpc.mainnet.fastnear.com",
+          "archival": true,
+          "archivalReason": "Pinned block, older than standard RPC retention."
         },
         {
           "defaultFields": {
@@ -3910,7 +3930,9 @@
           },
           "key": "testnet",
           "label": "Testnet",
-          "url": "https://rpc.testnet.fastnear.com"
+          "url": "https://archival-rpc.testnet.fastnear.com",
+          "archival": true,
+          "archivalReason": "Pinned block, older than standard RPC retention."
         }
       ],
       "requestMethod": "EXPERIMENTAL_light_client_block_proof",
@@ -4241,15 +4263,16 @@
           }
         },
         {
-          "description": "Proof subject — `receipt` proves inclusion of a specific receipt produced during execution.",
+          "description": "Proof subject — `transaction` proves inclusion of the top-level transaction, `receipt` proves inclusion of a specific receipt produced during execution.",
           "label": "Type",
           "location": "body",
           "name": "type",
           "required": false,
           "schema": {
             "type": "string",
-            "description": "Proof subject — `receipt` proves inclusion of a specific receipt produced during execution.",
+            "description": "Proof subject — `transaction` proves inclusion of the top-level transaction, `receipt` proves inclusion of a specific receipt produced during execution.",
             "enum": [
+              "transaction",
               "receipt"
             ]
           }
@@ -4284,22 +4307,26 @@
             "light_client_head": "9XN7MtDywZvfGx6TKy1MT2iCZkKuHikJXmNazxdZ4x6T",
             "sender_id": "escrow.ai.near",
             "transaction_hash": "34E7weKCDqXh3xPKdBgSWRqo44yTWjbka9deMK8JbAxx",
-            "type": "receipt"
+            "type": "transaction"
           },
           "key": "mainnet",
           "label": "Mainnet",
-          "url": "https://rpc.mainnet.fastnear.com"
+          "url": "https://archival-rpc.mainnet.fastnear.com",
+          "archival": true,
+          "archivalReason": "Pinned transaction, older than standard RPC retention."
         },
         {
           "defaultFields": {
             "light_client_head": "6JYj6i1FaUCzdoqy41CqUcZJxa5n9EmLEENRDH2gLm5u",
             "sender_id": "near-mpc-staking4all-01.testnet",
             "transaction_hash": "9LPbkwJ26HYgda7KHrURc6jozBcpdA1kUMSEzwm81JPx",
-            "type": "receipt"
+            "type": "transaction"
           },
           "key": "testnet",
           "label": "Testnet",
-          "url": "https://rpc.testnet.fastnear.com"
+          "url": "https://archival-rpc.testnet.fastnear.com",
+          "archival": true,
+          "archivalReason": "Pinned transaction, older than standard RPC retention."
         }
       ],
       "requestMethod": "EXPERIMENTAL_light_client_proof",
@@ -4384,8 +4411,9 @@
                   "required": false,
                   "schema": {
                     "type": "string",
-                    "description": "Proof subject — `receipt` proves inclusion of a specific receipt produced during execution.",
+                    "description": "Proof subject — `transaction` proves inclusion of the top-level transaction, `receipt` proves inclusion of a specific receipt produced during execution.",
                     "enum": [
+                      "transaction",
                       "receipt"
                     ]
                   }
@@ -4425,7 +4453,7 @@
                 "light_client_head": "9XN7MtDywZvfGx6TKy1MT2iCZkKuHikJXmNazxdZ4x6T",
                 "sender_id": "escrow.ai.near",
                 "transaction_hash": "34E7weKCDqXh3xPKdBgSWRqo44yTWjbka9deMK8JbAxx",
-                "type": "receipt"
+                "type": "transaction"
               }
             },
             "headers": {},
@@ -4446,7 +4474,7 @@
                 "light_client_head": "6JYj6i1FaUCzdoqy41CqUcZJxa5n9EmLEENRDH2gLm5u",
                 "sender_id": "near-mpc-staking4all-01.testnet",
                 "transaction_hash": "9LPbkwJ26HYgda7KHrURc6jozBcpdA1kUMSEzwm81JPx",
-                "type": "receipt"
+                "type": "transaction"
               }
             },
             "headers": {},
@@ -5895,7 +5923,9 @@
           },
           "key": "mainnet",
           "label": "Mainnet",
-          "url": "https://rpc.mainnet.fastnear.com"
+          "url": "https://archival-rpc.mainnet.fastnear.com",
+          "archival": true,
+          "archivalReason": "Pinned parent block, older than standard RPC retention."
         },
         {
           "defaultFields": {
@@ -5904,7 +5934,9 @@
           },
           "key": "testnet",
           "label": "Testnet",
-          "url": "https://rpc.testnet.fastnear.com"
+          "url": "https://archival-rpc.testnet.fastnear.com",
+          "archival": true,
+          "archivalReason": "Pinned parent block, older than standard RPC retention."
         }
       ],
       "requestMethod": "chunk",
@@ -6406,7 +6438,9 @@
           },
           "key": "mainnet",
           "label": "Mainnet",
-          "url": "https://rpc.mainnet.fastnear.com"
+          "url": "https://archival-rpc.mainnet.fastnear.com",
+          "archival": true,
+          "archivalReason": "Pinned chunk hash, older than standard RPC retention."
         },
         {
           "defaultFields": {
@@ -6414,7 +6448,9 @@
           },
           "key": "testnet",
           "label": "Testnet",
-          "url": "https://rpc.testnet.fastnear.com"
+          "url": "https://archival-rpc.testnet.fastnear.com",
+          "archival": true,
+          "archivalReason": "Pinned chunk hash, older than standard RPC retention."
         }
       ],
       "requestMethod": "chunk",
@@ -8268,7 +8304,9 @@
           },
           "key": "mainnet",
           "label": "Mainnet",
-          "url": "https://rpc.mainnet.fastnear.com"
+          "url": "https://archival-rpc.mainnet.fastnear.com",
+          "archival": true,
+          "archivalReason": "Pinned block, older than standard RPC retention."
         },
         {
           "defaultFields": {
@@ -8276,7 +8314,9 @@
           },
           "key": "testnet",
           "label": "Testnet",
-          "url": "https://rpc.testnet.fastnear.com"
+          "url": "https://archival-rpc.testnet.fastnear.com",
+          "archival": true,
+          "archivalReason": "Pinned block, older than standard RPC retention."
         }
       ],
       "requestMethod": "gas_price",
@@ -9422,18 +9462,6 @@
           "key": "testnet",
           "label": "Testnet RPC",
           "url": "https://rpc.testnet.fastnear.com"
-        },
-        {
-          "defaultFields": {},
-          "key": "mainnet",
-          "label": "Mainnet Archival RPC",
-          "url": "https://archival-rpc.mainnet.fastnear.com"
-        },
-        {
-          "defaultFields": {},
-          "key": "testnet",
-          "label": "Testnet Archival RPC",
-          "url": "https://archival-rpc.testnet.fastnear.com"
         }
       ],
       "requestMethod": "block",
@@ -9704,15 +9732,16 @@
           }
         },
         {
-          "description": "Proof subject — `receipt` proves inclusion of a specific receipt produced during execution.",
+          "description": "Proof subject — `transaction` proves inclusion of the top-level transaction, `receipt` proves inclusion of a specific receipt produced during execution.",
           "label": "Type",
           "location": "body",
           "name": "type",
           "required": false,
           "schema": {
             "type": "string",
-            "description": "Proof subject — `receipt` proves inclusion of a specific receipt produced during execution.",
+            "description": "Proof subject — `transaction` proves inclusion of the top-level transaction, `receipt` proves inclusion of a specific receipt produced during execution.",
             "enum": [
+              "transaction",
               "receipt"
             ]
           }
@@ -9747,22 +9776,26 @@
             "light_client_head": "9XN7MtDywZvfGx6TKy1MT2iCZkKuHikJXmNazxdZ4x6T",
             "sender_id": "escrow.ai.near",
             "transaction_hash": "34E7weKCDqXh3xPKdBgSWRqo44yTWjbka9deMK8JbAxx",
-            "type": "receipt"
+            "type": "transaction"
           },
           "key": "mainnet",
           "label": "Mainnet",
-          "url": "https://rpc.mainnet.fastnear.com"
+          "url": "https://archival-rpc.mainnet.fastnear.com",
+          "archival": true,
+          "archivalReason": "Pinned transaction, older than standard RPC retention."
         },
         {
           "defaultFields": {
             "light_client_head": "6JYj6i1FaUCzdoqy41CqUcZJxa5n9EmLEENRDH2gLm5u",
             "sender_id": "near-mpc-staking4all-01.testnet",
             "transaction_hash": "9LPbkwJ26HYgda7KHrURc6jozBcpdA1kUMSEzwm81JPx",
-            "type": "receipt"
+            "type": "transaction"
           },
           "key": "testnet",
           "label": "Testnet",
-          "url": "https://rpc.testnet.fastnear.com"
+          "url": "https://archival-rpc.testnet.fastnear.com",
+          "archival": true,
+          "archivalReason": "Pinned transaction, older than standard RPC retention."
         }
       ],
       "requestMethod": "light_client_proof",
@@ -9847,8 +9880,9 @@
                   "required": false,
                   "schema": {
                     "type": "string",
-                    "description": "Proof subject — `receipt` proves inclusion of a specific receipt produced during execution.",
+                    "description": "Proof subject — `transaction` proves inclusion of the top-level transaction, `receipt` proves inclusion of a specific receipt produced during execution.",
                     "enum": [
+                      "transaction",
                       "receipt"
                     ]
                   }
@@ -9885,7 +9919,7 @@
               "id": "fastnear",
               "method": "light_client_proof",
               "params": {
-                "type": "receipt",
+                "type": "transaction",
                 "transaction_hash": "34E7weKCDqXh3xPKdBgSWRqo44yTWjbka9deMK8JbAxx",
                 "sender_id": "escrow.ai.near",
                 "light_client_head": "9XN7MtDywZvfGx6TKy1MT2iCZkKuHikJXmNazxdZ4x6T"
@@ -9906,7 +9940,7 @@
               "id": "fastnear",
               "method": "light_client_proof",
               "params": {
-                "type": "receipt",
+                "type": "transaction",
                 "transaction_hash": "9LPbkwJ26HYgda7KHrURc6jozBcpdA1kUMSEzwm81JPx",
                 "sender_id": "near-mpc-staking4all-01.testnet",
                 "light_client_head": "6JYj6i1FaUCzdoqy41CqUcZJxa5n9EmLEENRDH2gLm5u"
@@ -10846,7 +10880,9 @@
           },
           "key": "mainnet",
           "label": "Mainnet",
-          "url": "https://rpc.mainnet.fastnear.com"
+          "url": "https://archival-rpc.mainnet.fastnear.com",
+          "archival": true,
+          "archivalReason": "Pinned light-client head, older than standard RPC retention."
         },
         {
           "defaultFields": {
@@ -10854,7 +10890,9 @@
           },
           "key": "testnet",
           "label": "Testnet",
-          "url": "https://rpc.testnet.fastnear.com"
+          "url": "https://archival-rpc.testnet.fastnear.com",
+          "archival": true,
+          "archivalReason": "Pinned light-client head, older than standard RPC retention."
         }
       ],
       "requestMethod": "next_light_client_block",
@@ -11798,7 +11836,9 @@
           },
           "key": "mainnet",
           "label": "Mainnet",
-          "url": "https://rpc.mainnet.fastnear.com"
+          "url": "https://archival-rpc.mainnet.fastnear.com",
+          "archival": true,
+          "archivalReason": "Pinned receipt, older than standard RPC retention."
         },
         {
           "defaultFields": {
@@ -11806,7 +11846,9 @@
           },
           "key": "testnet",
           "label": "Testnet",
-          "url": "https://rpc.testnet.fastnear.com"
+          "url": "https://archival-rpc.testnet.fastnear.com",
+          "archival": true,
+          "archivalReason": "Pinned receipt, older than standard RPC retention."
         }
       ],
       "requestMethod": "EXPERIMENTAL_receipt",
@@ -12142,20 +12184,25 @@
       "networks": [
         {
           "defaultFields": {
-            "receipt_id": "FcFKrKQziMPCgYMFiLMZwecBtA7vqxdkatkhc1j3GYj8"
+            "block_height": 194263442,
+            "receipt_id": "ETMK9HmPsAYcNxfSXBejMWQs57W4Ph5HDYoYhDMpotQn"
           },
           "key": "mainnet",
           "label": "Mainnet",
-          "url": "https://rpc.mainnet.fastnear.com"
+          "url": "https://archival-rpc.mainnet.fastnear.com",
+          "archival": true,
+          "archivalReason": "Pinned receipt plus block_height anchor, older than standard RPC retention."
         },
         {
           "defaultFields": {
-            "receipt_id": "ExampleReceiptId",
-            "shard_id": 0
+            "block_height": 246016180,
+            "receipt_id": "9uJmhNCLRgsFncH3anffPLE1YsZCPTyAZrBdekc3vTaZ"
           },
           "key": "testnet",
           "label": "Testnet",
-          "url": "https://rpc.testnet.fastnear.com"
+          "url": "https://archival-rpc.testnet.fastnear.com",
+          "archival": true,
+          "archivalReason": "Pinned receipt plus block_height anchor, older than standard RPC retention."
         }
       ],
       "requestMethod": "EXPERIMENTAL_receipt_to_tx",
@@ -12264,7 +12311,8 @@
               "id": "fastnear",
               "method": "EXPERIMENTAL_receipt_to_tx",
               "params": {
-                "receipt_id": "FcFKrKQziMPCgYMFiLMZwecBtA7vqxdkatkhc1j3GYj8"
+                "receipt_id": "ETMK9HmPsAYcNxfSXBejMWQs57W4Ph5HDYoYhDMpotQn",
+                "block_height": 194263442
               }
             },
             "headers": {},
@@ -12282,10 +12330,8 @@
               "id": "fastnear",
               "method": "EXPERIMENTAL_receipt_to_tx",
               "params": {
-                "block_height": null,
-                "receipt_id": "ExampleReceiptId",
-                "shard_id": 0,
-                "window": null
+                "receipt_id": "9uJmhNCLRgsFncH3anffPLE1YsZCPTyAZrBdekc3vTaZ",
+                "block_height": 246016180
               }
             },
             "headers": {},
@@ -12505,7 +12551,9 @@
           },
           "key": "mainnet",
           "label": "Mainnet",
-          "url": "https://rpc.mainnet.fastnear.com"
+          "url": "https://archival-rpc.mainnet.fastnear.com",
+          "archival": true,
+          "archivalReason": "Pinned transaction, older than standard RPC retention."
         },
         {
           "defaultFields": {
@@ -12515,7 +12563,9 @@
           },
           "key": "testnet",
           "label": "Testnet",
-          "url": "https://rpc.testnet.fastnear.com"
+          "url": "https://archival-rpc.testnet.fastnear.com",
+          "archival": true,
+          "archivalReason": "Pinned transaction, older than standard RPC retention."
         }
       ],
       "requestMethod": "EXPERIMENTAL_tx_status",
@@ -12884,7 +12934,7 @@
       "networks": [
         {
           "defaultFields": {
-            "signed_tx_base64": "DgAAAG1pa2UubmVhcgCpPJgEEFUwQjFQvL8V3CnZ0h688WG5sVsKE8JYM37ax2cUjgEAAAAAAAAADQAAAG1pa2V0ZXN0Lm5lYXIPfFBmYNAIe2/MicVhDXbvT3w06LxS2OCF0UHIYgjNDQAAAHRlc3RpbmcgbWVtbwEAAAADAQAAAAAAAAAAAAAAAAAAAA=="
+            "signed_tx_base64": "CQAAAG1pa2UubmVhcgCCy5RvHN/3t5Oejtf0aWKCCwJIxXkWWCQKxnaU9nr4nAEAAAAAAAAADQAAAG1pa2V0ZXN0Lm5lYXL6UXoKlIC/UXiHRkiBCYVW69w6N/+7ZXy0+gPAs9TQ5wEAAAADAQAAAAAAAAAAAAAAAAAAAABv/f+CgT7byEQUzraUd1LDQ7ELv5ld7bhFGUYNaxWWRMzl5rAuRhcfkV2jHIqJgu0sfw7B9/npIH69aqsm/GIM"
           },
           "key": "mainnet",
           "label": "Mainnet",
@@ -12892,7 +12942,7 @@
         },
         {
           "defaultFields": {
-            "signed_tx_base64": "DgAAAG1pa2UudGVzdG5ldACpPJgEEFUwQjFQvL8V3CnZ0h688WG5sVsKE8JYM37ax2cUjgEAAAAAAAAADQAAAG1pa2V0ZXN0LnRlc3RuZXQPfFBmYNAIe2/MicVhDXbvT3w06LxS2OCF0UHIYgjNDQAAAHRlc3RpbmcgbWVtbwEAAAADAQAAAAAAAAAAAAAAAAAAAA=="
+            "signed_tx_base64": "DAAAAG1pa2UudGVzdG5ldAD7f6gOSLbFPadEDmehA6rmcy+EOXYRGly1GK0ponIwDgEAAAAAAAAAEAAAAG1pa2V0ZXN0LnRlc3RuZXTmqC62j/JHfs1+RJFA5+kaPJY8rDAfhHuh2G548XJ6GQEAAAADAQAAAAAAAAAAAAAAAAAAAADq6qRsj8FW73GukqS5yqwXYL7riy7EcIaZrhZy40hMq4Kux+lp+AsMLtVPqic5xAfX5dlLaFRJ6Nbi2Th185UI"
           },
           "key": "testnet",
           "label": "Testnet",
@@ -12993,7 +13043,7 @@
               "id": "fastnear",
               "method": "broadcast_tx_async",
               "params": {
-                "signed_tx_base64": "DgAAAG1pa2UubmVhcgCpPJgEEFUwQjFQvL8V3CnZ0h688WG5sVsKE8JYM37ax2cUjgEAAAAAAAAADQAAAG1pa2V0ZXN0Lm5lYXIPfFBmYNAIe2/MicVhDXbvT3w06LxS2OCF0UHIYgjNDQAAAHRlc3RpbmcgbWVtbwEAAAADAQAAAAAAAAAAAAAAAAAAAA=="
+                "signed_tx_base64": "CQAAAG1pa2UubmVhcgCCy5RvHN/3t5Oejtf0aWKCCwJIxXkWWCQKxnaU9nr4nAEAAAAAAAAADQAAAG1pa2V0ZXN0Lm5lYXL6UXoKlIC/UXiHRkiBCYVW69w6N/+7ZXy0+gPAs9TQ5wEAAAADAQAAAAAAAAAAAAAAAAAAAABv/f+CgT7byEQUzraUd1LDQ7ELv5ld7bhFGUYNaxWWRMzl5rAuRhcfkV2jHIqJgu0sfw7B9/npIH69aqsm/GIM"
               }
             },
             "headers": {},
@@ -13011,7 +13061,7 @@
               "id": "fastnear",
               "method": "broadcast_tx_async",
               "params": {
-                "signed_tx_base64": "DgAAAG1pa2UudGVzdG5ldACpPJgEEFUwQjFQvL8V3CnZ0h688WG5sVsKE8JYM37ax2cUjgEAAAAAAAAADQAAAG1pa2V0ZXN0LnRlc3RuZXQPfFBmYNAIe2/MicVhDXbvT3w06LxS2OCF0UHIYgjNDQAAAHRlc3RpbmcgbWVtbwEAAAADAQAAAAAAAAAAAAAAAAAAAA=="
+                "signed_tx_base64": "DAAAAG1pa2UudGVzdG5ldAD7f6gOSLbFPadEDmehA6rmcy+EOXYRGly1GK0ponIwDgEAAAAAAAAAEAAAAG1pa2V0ZXN0LnRlc3RuZXTmqC62j/JHfs1+RJFA5+kaPJY8rDAfhHuh2G548XJ6GQEAAAADAQAAAAAAAAAAAAAAAAAAAADq6qRsj8FW73GukqS5yqwXYL7riy7EcIaZrhZy40hMq4Kux+lp+AsMLtVPqic5xAfX5dlLaFRJ6Nbi2Th185UI"
               }
             },
             "headers": {},
@@ -13182,7 +13232,7 @@
       "networks": [
         {
           "defaultFields": {
-            "signed_tx_base64": "DgAAAG1pa2UubmVhcgCpPJgEEFUwQjFQvL8V3CnZ0h688WG5sVsKE8JYM37ax2cUjgEAAAAAAAAADQAAAG1pa2V0ZXN0Lm5lYXIPfFBmYNAIe2/MicVhDXbvT3w06LxS2OCF0UHIYgjNDQAAAHRlc3RpbmcgbWVtbwEAAAADAQAAAAAAAAAAAAAAAAAAAA=="
+            "signed_tx_base64": "CQAAAG1pa2UubmVhcgD64cHVt7yB8HSzql1e8RLKSv2riwv7+vNviWHD/y95EgEAAAAAAAAADQAAAG1pa2V0ZXN0Lm5lYXJBM1Y72BJnk/V7dlrTRBxxxUxyB/JXo+hODCyF0woAEAEAAAADAQAAAAAAAAAAAAAAAAAAAADiGG3IJC5QsOBN70h+glB+U9nBYEXObdaPHMjXyu2YQbQUvALIWbdBBxhuR9VQ/fEXg7L0vGSCd9wCCrq0CFIF"
           },
           "key": "mainnet",
           "label": "Mainnet",
@@ -13190,7 +13240,7 @@
         },
         {
           "defaultFields": {
-            "signed_tx_base64": "DgAAAG1pa2UudGVzdG5ldACpPJgEEFUwQjFQvL8V3CnZ0h688WG5sVsKE8JYM37ax2cUjgEAAAAAAAAADQAAAG1pa2V0ZXN0LnRlc3RuZXQPfFBmYNAIe2/MicVhDXbvT3w06LxS2OCF0UHIYgjNDQAAAHRlc3RpbmcgbWVtbwEAAAADAQAAAAAAAAAAAAAAAAAAAA=="
+            "signed_tx_base64": "DAAAAG1pa2UudGVzdG5ldAAnrCNE2/YvBtldmNpxP3k7ego/A6RxrtUvzhp3ngJJTQEAAAAAAAAAEAAAAG1pa2V0ZXN0LnRlc3RuZXTIRL9kr4DAnxTBWcN/e5852wyOE353mPf+XnCN73Z/hwEAAAADAQAAAAAAAAAAAAAAAAAAAADMWuZ8agklUGXpr759mp4DIsPFKgc+ZYFMjR6hjoPrNR9vPxFeLVm8jpLqr6+U9BnlQU7chIfUkeppU1YFvHsO"
           },
           "key": "testnet",
           "label": "Testnet",
@@ -13291,7 +13341,7 @@
               "id": "fastnear",
               "method": "broadcast_tx_commit",
               "params": {
-                "signed_tx_base64": "DgAAAG1pa2UubmVhcgCpPJgEEFUwQjFQvL8V3CnZ0h688WG5sVsKE8JYM37ax2cUjgEAAAAAAAAADQAAAG1pa2V0ZXN0Lm5lYXIPfFBmYNAIe2/MicVhDXbvT3w06LxS2OCF0UHIYgjNDQAAAHRlc3RpbmcgbWVtbwEAAAADAQAAAAAAAAAAAAAAAAAAAA=="
+                "signed_tx_base64": "CQAAAG1pa2UubmVhcgD64cHVt7yB8HSzql1e8RLKSv2riwv7+vNviWHD/y95EgEAAAAAAAAADQAAAG1pa2V0ZXN0Lm5lYXJBM1Y72BJnk/V7dlrTRBxxxUxyB/JXo+hODCyF0woAEAEAAAADAQAAAAAAAAAAAAAAAAAAAADiGG3IJC5QsOBN70h+glB+U9nBYEXObdaPHMjXyu2YQbQUvALIWbdBBxhuR9VQ/fEXg7L0vGSCd9wCCrq0CFIF"
               }
             },
             "headers": {},
@@ -13309,7 +13359,7 @@
               "id": "fastnear",
               "method": "broadcast_tx_commit",
               "params": {
-                "signed_tx_base64": "DgAAAG1pa2UudGVzdG5ldACpPJgEEFUwQjFQvL8V3CnZ0h688WG5sVsKE8JYM37ax2cUjgEAAAAAAAAADQAAAG1pa2V0ZXN0LnRlc3RuZXQPfFBmYNAIe2/MicVhDXbvT3w06LxS2OCF0UHIYgjNDQAAAHRlc3RpbmcgbWVtbwEAAAADAQAAAAAAAAAAAAAAAAAAAA=="
+                "signed_tx_base64": "DAAAAG1pa2UudGVzdG5ldAAnrCNE2/YvBtldmNpxP3k7ego/A6RxrtUvzhp3ngJJTQEAAAAAAAAAEAAAAG1pa2V0ZXN0LnRlc3RuZXTIRL9kr4DAnxTBWcN/e5852wyOE353mPf+XnCN73Z/hwEAAAADAQAAAAAAAAAAAAAAAAAAAADMWuZ8agklUGXpr759mp4DIsPFKgc+ZYFMjR6hjoPrNR9vPxFeLVm8jpLqr6+U9BnlQU7chIfUkeppU1YFvHsO"
               }
             },
             "headers": {},
@@ -13546,7 +13596,7 @@
       "networks": [
         {
           "defaultFields": {
-            "signed_tx_base64": "ExampleBase64EncodedTransaction",
+            "signed_tx_base64": "CQAAAG1pa2UubmVhcgBPiSiO5F7KYuZ9VQ2eF6/b9dXqrBUBxDs2AuXiQZw8DgEAAAAAAAAADQAAAG1pa2V0ZXN0Lm5lYXKwzpn8eLLqwzoVC5PlcvpzSXj65ke9WN3TLsRpndusbgEAAAADAQAAAAAAAAAAAAAAAAAAAAC7RkXLWjBx/qplpt/RT2uwQWvrovT3+6ef0BG1LU5OahlAsFmjEsuOv8rg4JI8TXOkg16oXljReiM4KU41yHYM",
             "wait_until": "EXECUTED_OPTIMISTIC"
           },
           "key": "mainnet",
@@ -13555,7 +13605,7 @@
         },
         {
           "defaultFields": {
-            "signed_tx_base64": "ExampleBase64EncodedTransaction",
+            "signed_tx_base64": "DAAAAG1pa2UudGVzdG5ldABpWDhNQVV7BkV62S5Hbdm5jBNjKhV1eGJAHSwC6iwNqgEAAAAAAAAAEAAAAG1pa2V0ZXN0LnRlc3RuZXQlxP80whXgLsNL4raSbYLM3YKFSTxZTp6FZcg8ExwGpwEAAAADAQAAAAAAAAAAAAAAAAAAAADLrZ/qNwNTZoXF4ALlKxLeC0nfTZol2HyyY0XoChnSNATaQ27bP5HM90mAhgq4OI7Zo+k3GQ1CxC3bGUqbhMcD",
             "wait_until": "EXECUTED_OPTIMISTIC"
           },
           "key": "testnet",
@@ -13657,7 +13707,7 @@
               "id": "fastnear",
               "method": "send_tx",
               "params": {
-                "signed_tx_base64": "ExampleBase64EncodedTransaction",
+                "signed_tx_base64": "CQAAAG1pa2UubmVhcgBPiSiO5F7KYuZ9VQ2eF6/b9dXqrBUBxDs2AuXiQZw8DgEAAAAAAAAADQAAAG1pa2V0ZXN0Lm5lYXKwzpn8eLLqwzoVC5PlcvpzSXj65ke9WN3TLsRpndusbgEAAAADAQAAAAAAAAAAAAAAAAAAAAC7RkXLWjBx/qplpt/RT2uwQWvrovT3+6ef0BG1LU5OahlAsFmjEsuOv8rg4JI8TXOkg16oXljReiM4KU41yHYM",
                 "wait_until": "EXECUTED_OPTIMISTIC"
               }
             },
@@ -13676,7 +13726,7 @@
               "id": "fastnear",
               "method": "send_tx",
               "params": {
-                "signed_tx_base64": "ExampleBase64EncodedTransaction",
+                "signed_tx_base64": "DAAAAG1pa2UudGVzdG5ldABpWDhNQVV7BkV62S5Hbdm5jBNjKhV1eGJAHSwC6iwNqgEAAAAAAAAAEAAAAG1pa2V0ZXN0LnRlc3RuZXQlxP80whXgLsNL4raSbYLM3YKFSTxZTp6FZcg8ExwGpwEAAAADAQAAAAAAAAAAAAAAAAAAAADLrZ/qNwNTZoXF4ALlKxLeC0nfTZol2HyyY0XoChnSNATaQ27bP5HM90mAhgq4OI7Zo+k3GQ1CxC3bGUqbhMcD",
                 "wait_until": "EXECUTED_OPTIMISTIC"
               }
             },
@@ -13941,7 +13991,9 @@
           },
           "key": "mainnet",
           "label": "Mainnet",
-          "url": "https://rpc.mainnet.fastnear.com"
+          "url": "https://archival-rpc.mainnet.fastnear.com",
+          "archival": true,
+          "archivalReason": "Pinned transaction, older than standard RPC retention."
         },
         {
           "defaultFields": {
@@ -13950,7 +14002,9 @@
           },
           "key": "testnet",
           "label": "Testnet",
-          "url": "https://rpc.testnet.fastnear.com"
+          "url": "https://archival-rpc.testnet.fastnear.com",
+          "archival": true,
+          "archivalReason": "Pinned transaction, older than standard RPC retention."
         }
       ],
       "requestMethod": "tx",
@@ -14313,7 +14367,9 @@
           },
           "key": "mainnet",
           "label": "Mainnet",
-          "url": "https://rpc.mainnet.fastnear.com"
+          "url": "https://archival-rpc.mainnet.fastnear.com",
+          "archival": true,
+          "archivalReason": "Pinned epoch, older than standard RPC retention."
         },
         {
           "defaultFields": {
@@ -14321,7 +14377,9 @@
           },
           "key": "testnet",
           "label": "Testnet",
-          "url": "https://rpc.testnet.fastnear.com"
+          "url": "https://archival-rpc.testnet.fastnear.com",
+          "archival": true,
+          "archivalReason": "Pinned epoch, older than standard RPC retention."
         }
       ],
       "requestMethod": "EXPERIMENTAL_validators_ordered",
@@ -14586,15 +14644,19 @@
           },
           "key": "mainnet",
           "label": "Mainnet",
-          "url": "https://rpc.mainnet.fastnear.com"
+          "url": "https://archival-rpc.mainnet.fastnear.com",
+          "archival": true,
+          "archivalReason": "Pinned epoch, older than standard RPC retention."
         },
         {
           "defaultFields": {
-            "epoch_id": "3KWUtEFtzmmmc93EYpD3ehb4LE11YJ2jCFkqWhygkbaR"
+            "epoch_id": "BARiarhzfSL7G737ik4AukX9sFYH1iR3dYU3KNUAvF3e"
           },
           "key": "testnet",
           "label": "Testnet",
-          "url": "https://rpc.testnet.fastnear.com"
+          "url": "https://archival-rpc.testnet.fastnear.com",
+          "archival": true,
+          "archivalReason": "Pinned epoch, older than standard RPC retention."
         }
       ],
       "requestMethod": "validators",
@@ -14692,7 +14754,7 @@
               "id": "fastnear",
               "method": "validators",
               "params": {
-                "epoch_id": "3KWUtEFtzmmmc93EYpD3ehb4LE11YJ2jCFkqWhygkbaR"
+                "epoch_id": "BARiarhzfSL7G737ik4AukX9sFYH1iR3dYU3KNUAvF3e"
               }
             },
             "headers": {},

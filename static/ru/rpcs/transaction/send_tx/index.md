@@ -14,6 +14,7 @@
 - Mainnet: https://rpc.mainnet.fastnear.com/
 - Testnet: https://rpc.testnet.fastnear.com/
 ## Авторизация
+- Bearer-токен через заголовок `Authorization: Bearer <token>`
 - API-ключ через query `apiKey`: Контракт OpenAPI описывает API-ключ FastNear как параметр запроса `apiKey`.
 - Этот экспорт намеренно не включает локально сохранённые учётные данные
 ## Текущий запрос
@@ -27,7 +28,7 @@
   "id": "fastnear",
   "method": "send_tx",
   "params": {
-    "signed_tx_base64": "ExampleBase64EncodedTransaction",
+    "signed_tx_base64": "CQAAAG1pa2UubmVhcgBPiSiO5F7KYuZ9VQ2eF6/b9dXqrBUBxDs2AuXiQZw8DgEAAAAAAAAADQAAAG1pa2V0ZXN0Lm5lYXKwzpn8eLLqwzoVC5PlcvpzSXj65ke9WN3TLsRpndusbgEAAAADAQAAAAAAAAAAAAAAAAAAAAC7RkXLWjBx/qplpt/RT2uwQWvrovT3+6ef0BG1LU5OahlAsFmjEsuOv8rg4JI8TXOkg16oXljReiM4KU41yHYM",
     "wait_until": "EXECUTED_OPTIMISTIC"
   }
 }
@@ -41,7 +42,7 @@
     "id": "fastnear",
     "method": "send_tx",
     "params": {
-      "signed_tx_base64": "ExampleBase64EncodedTransaction",
+      "signed_tx_base64": "CQAAAG1pa2UubmVhcgBPiSiO5F7KYuZ9VQ2eF6/b9dXqrBUBxDs2AuXiQZw8DgEAAAAAAAAADQAAAG1pa2V0ZXN0Lm5lYXKwzpn8eLLqwzoVC5PlcvpzSXj65ke9WN3TLsRpndusbgEAAAADAQAAAAAAAAAAAAAAAAAAAAC7RkXLWjBx/qplpt/RT2uwQWvrovT3+6ef0BG1LU5OahlAsFmjEsuOv8rg4JI8TXOkg16oXljReiM4KU41yHYM",
       "wait_until": "EXECUTED_OPTIMISTIC"
     }
   },
@@ -106,7 +107,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "description": "Подписанная транзакция в кодировке Base64. Сгенерируйте новый подписанный пакет данных для подписывающего аккаунта непосредственно перед отправкой или запросом статуса."
+              "description": "Подписанная транзакция в кодировке Base64"
             }
           },
           {

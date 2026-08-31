@@ -66,6 +66,22 @@ That behavior is deliberate and currently correct for this repo.
 
 ### Page models
 
+`interaction.networks[]` is `{ key, label, url, defaultFields }` plus optional
+`archival` / `archivalReason`. Two properties the renderer depends on:
+
+- **`key` is unique per model.** The endpoint is resolved with
+  `networks.find((n) => n.key === selectedNetwork)`, so a duplicate key makes the
+  second entry unreachable and lights up two toggle buttons at once. The
+  generator collapses a spec's servers to one entry per network for this reason,
+  even when the upstream spec declares both a standard and an archival host.
+- **`url` is the endpoint, and it is chosen per example, not per method.** The
+  sixteen operations whose examples pin a historical record resolve to
+  `archival-rpc`, because the standard RPC drops those records after roughly 29
+  hours. Those methods all work on the standard RPC for recent data, so the
+  archival host is surfaced as an explanatory note (`archivalReason`) rather than
+  by relabelling the network. Declared upstream in `ARCHIVAL_EXAMPLES` in
+  mike-docs `scripts/rpc-example-config.js` — never patched in this repo.
+
 The generated page models currently expose `interaction.authTransport`, but not an explicit required/optional semantic.
 
 That means a model can say:

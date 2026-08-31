@@ -602,8 +602,11 @@ test('request example and finality URL params restore extra UI state on load', a
   expect(sentPayload?.params?.finality).toBe('near-final');
 });
 
+// block_by_height's example pins a historical block, so its page model resolves to
+// the archival host (see ARCHIVAL_EXAMPLES in mike-docs). Mock that host, not the
+// standard RPC, or the route never matches and the request is never intercepted.
 test('runtime hydration does not overwrite block_id provided via URL params', async ({ page }) => {
-  await page.route('https://rpc.mainnet.fastnear.com/**', async (route) => {
+  await page.route('https://archival-rpc.mainnet.fastnear.com/**', async (route) => {
     const request = route.request();
     const url = new URL(request.url());
 
@@ -654,7 +657,7 @@ test('runtime hydration does not overwrite block_id provided via URL params', as
 
   const hydrationRequestPromise = waitForRpcRequest(
     page,
-    'https://rpc.mainnet.fastnear.com',
+    'https://archival-rpc.mainnet.fastnear.com',
     (payload) => payload?.id === 'fastnear-docs'
   );
   await page.goto('/rpc/block/block-by-height?block_id=123');
@@ -667,7 +670,7 @@ test('runtime hydration does not overwrite block_id provided via URL params', as
 
   const requestPromise = waitForRpcRequest(
     page,
-    'https://rpc.mainnet.fastnear.com',
+    'https://archival-rpc.mainnet.fastnear.com',
     (payload) => payload?.id !== 'fastnear-docs'
   );
   await page.getByRole('button', { name: 'Send request' }).click();

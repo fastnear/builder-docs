@@ -420,9 +420,11 @@ builder-docs renders via FastnearDirectOperation
 To add a new RPC operation from nearcore:
 
 1. In `mike-docs`, add an entry to `OPERATIONS` in `scripts/nearcore-operation-map.js`
-2. In `mike-docs`, run `npm run generate-rpc` to generate the YAML
-3. In `mike-docs`, run `npm run sync:apis` to refresh vendored artifacts consumed here
-4. In `builder-docs`, create an MDX page under `docs/rpc/<category>/` using `FastnearDirectOperation`
-5. In `builder-docs`, add the page to `sidebars.js`
+2. In `mike-docs`, if the operation's example pins a historical record (a past block, chunk, tx, receipt, or epoch), add it to `ARCHIVAL_EXAMPLES` in `scripts/rpc-example-config.js`. The standard RPC drops such records after roughly 29 hours. Do not point the spec's `servers:` at `archival-rpc` — that is contract data, and `generate-rpc` overwrites it anyway.
+3. In `mike-docs`, run `npm run generate-rpc` to generate the YAML
+4. In `mike-docs`, run `npm run sync:apis` to refresh vendored artifacts consumed here
+5. In `builder-docs`, create an MDX page under `docs/rpc/<category>/` using `FastnearDirectOperation`
+6. In `builder-docs`, add the page to `sidebars.js`
+7. In `builder-docs`, run `yarn build` and commit the regenerated page-model chunks — they are build-derived and are what the browser loads
 
 See `mike-docs/AGENTS.md`, `mike-docs/README.md`, and `mike-docs/INTEGRATION_GUIDE.md` for the full generator and integration workflow.

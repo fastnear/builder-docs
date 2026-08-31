@@ -11,15 +11,16 @@
 - Путь: `/`
 - Исходная спецификация: `rpcs/protocol/next_light_client_block.yaml`
 ## Сети
-- Mainnet: https://rpc.mainnet.fastnear.com/
-- Testnet: https://rpc.testnet.fastnear.com/
+- Mainnet: https://archival-rpc.mainnet.fastnear.com/ (archival: Pinned light-client head, older than standard RPC retention.)
+- Testnet: https://archival-rpc.testnet.fastnear.com/ (archival: Pinned light-client head, older than standard RPC retention.)
 ## Авторизация
+- Bearer-токен через заголовок `Authorization: Bearer <token>`
 - API-ключ через query `apiKey`: Контракт OpenAPI описывает API-ключ FastNear как параметр запроса `apiKey`.
 - Этот экспорт намеренно не включает локально сохранённые учётные данные
 ## Текущий запрос
 - Сеть: Mainnet
 - Финальность: final
-- Эндпоинт: https://rpc.mainnet.fastnear.com/
+- Эндпоинт: https://archival-rpc.mainnet.fastnear.com/
 ### Тело запроса
 ```json
 {

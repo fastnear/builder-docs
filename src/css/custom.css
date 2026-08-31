@@ -1051,6 +1051,13 @@ pre code {
   text-transform: uppercase;
 }
 
+.builder-fastnear-direct .fastnear-interaction__meta-note {
+  margin: 6px 0 0;
+  font-size: 0.78rem;
+  line-height: 1.45;
+  color: var(--fastnear-text-soft);
+}
+
 .builder-fastnear-direct .fastnear-interaction__meta-item code {
   display: block;
   padding: 0.32rem 0.62rem 0.32rem 0.68rem;

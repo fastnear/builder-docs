@@ -1907,7 +1907,7 @@
       ]
     },
     {
-      "authSummary": "API key via query apiKey",
+      "authSummary": "Bearer token via Authorization header; API key via query apiKey",
       "canonicalPath": "/ru/rpcs/account/view_access_key",
       "description": "Получите права и nonce одного ключа доступа аккаунта по его публичному ключу.",
       "docsPath": "/ru/rpc/account/view-access-key",
@@ -1954,7 +1954,7 @@
       ]
     },
     {
-      "authSummary": "API key via query apiKey",
+      "authSummary": "Bearer token via Authorization header; API key via query apiKey",
       "canonicalPath": "/ru/rpcs/account/view_access_key_list",
       "description": "Получите все ключи доступа аккаунта — каждый с правами и nonce.",
       "docsPath": "/ru/rpc/account/view-access-key-list",
@@ -2001,7 +2001,7 @@
       ]
     },
     {
-      "authSummary": "API key via query apiKey",
+      "authSummary": "Bearer token via Authorization header; API key via query apiKey",
       "canonicalPath": "/ru/rpcs/account/view_account",
       "description": "Получите баланс аккаунта, размер хранилища и хеш кода на выбранной высоте блока или финальности.",
       "docsPath": "/ru/rpc/account/view-account",
@@ -2048,7 +2048,7 @@
       ]
     },
     {
-      "authSummary": "API key via query apiKey",
+      "authSummary": "Bearer token via Authorization header; API key via query apiKey",
       "canonicalPath": "/ru/rpcs/block/block_by_height",
       "description": "Получите заголовок и сводку по чанкам блока по его высоте в цепочке.",
       "docsPath": "/ru/rpc/block/block-by-height",
@@ -2095,7 +2095,7 @@
       ]
     },
     {
-      "authSummary": "API key via query apiKey",
+      "authSummary": "Bearer token via Authorization header; API key via query apiKey",
       "canonicalPath": "/ru/rpcs/block/block_by_id",
       "description": "Получите заголовок и сводку по чанкам блока по его SHA-256-хешу в кодировке Base58.",
       "docsPath": "/ru/rpc/block/block-by-id",
@@ -2142,7 +2142,7 @@
       ]
     },
     {
-      "authSummary": "API key via query apiKey",
+      "authSummary": "Bearer token via Authorization header; API key via query apiKey",
       "canonicalPath": "/ru/rpcs/block/block_effects",
       "description": "Получите сводку всех изменений состояния в одном блоке — какие аккаунты, ключи и записи состояния контрактов были затронуты.",
       "docsPath": "/ru/rpc/block/block-effects",
@@ -2189,7 +2189,7 @@
       ]
     },
     {
-      "authSummary": "API key via query apiKey",
+      "authSummary": "Bearer token via Authorization header; API key via query apiKey",
       "canonicalPath": "/ru/rpcs/contract/call",
       "description": "Вызовите view-метод контракта без газа и изменений состояния — чтение вычисляемых значений из логики контракта.",
       "docsPath": "/ru/rpc/contract/call-function",
@@ -2236,7 +2236,7 @@
       ]
     },
     {
-      "authSummary": "API key via query apiKey",
+      "authSummary": "Bearer token via Authorization header; API key via query apiKey",
       "canonicalPath": "/ru/rpcs/contract/view_code",
       "description": "Получите скомпилированный WebAssembly-байткод, развёрнутый непосредственно на одном аккаунте.",
       "docsPath": "/ru/rpc/contract/view-code",
@@ -2283,7 +2283,7 @@
       ]
     },
     {
-      "authSummary": "API key via query apiKey",
+      "authSummary": "Bearer token via Authorization header; API key via query apiKey",
       "canonicalPath": "/ru/rpcs/contract/view_global_contract_code",
       "description": "Найдите WebAssembly-байткод глобального контракта по SHA-256-хешу его кода в кодировке Base58.",
       "docsPath": "/ru/rpc/contract/view-global-contract-code",
@@ -2330,7 +2330,7 @@
       ]
     },
     {
-      "authSummary": "API key via query apiKey",
+      "authSummary": "Bearer token via Authorization header; API key via query apiKey",
       "canonicalPath": "/ru/rpcs/contract/view_global_contract_code_by_account_id",
       "description": "Найдите WebAssembly-байткод глобального контракта по ID аккаунта, который его зарегистрировал.",
       "docsPath": "/ru/rpc/contract/view-global-contract-code-by-account-id",
@@ -2377,7 +2377,7 @@
       ]
     },
     {
-      "authSummary": "API key via query apiKey",
+      "authSummary": "Bearer token via Authorization header; API key via query apiKey",
       "canonicalPath": "/ru/rpcs/contract/view_state",
       "description": "Получите сырое состояние «ключ-значение», записанное контрактом, с опциональным фильтром по префиксу ключа.",
       "docsPath": "/ru/rpc/contract/view-state",
@@ -2424,7 +2424,7 @@
       ]
     },
     {
-      "authSummary": "API key via query apiKey",
+      "authSummary": "Bearer token via Authorization header; API key via query apiKey",
       "canonicalPath": "/ru/rpcs/protocol/changes",
       "description": "Получите подробные изменения состояния в блоке — с фильтром по аккаунту, префиксу ключа или типу изменения.",
       "docsPath": "/ru/rpc/protocol/changes",
@@ -2471,7 +2471,7 @@
       ]
     },
     {
-      "authSummary": "API key via query apiKey",
+      "authSummary": "Bearer token via Authorization header; API key via query apiKey",
       "canonicalPath": "/ru/rpcs/protocol/chunk_by_block_shard",
       "description": "Получите транзакции и квитанции одного чанка по родительскому блоку и индексу шарда.",
       "docsPath": "/ru/rpc/protocol/chunk-by-block-shard",
@@ -2518,7 +2518,7 @@
       ]
     },
     {
-      "authSummary": "API key via query apiKey",
+      "authSummary": "Bearer token via Authorization header; API key via query apiKey",
       "canonicalPath": "/ru/rpcs/protocol/chunk_by_hash",
       "description": "Получите транзакции и квитанции одного чанка по его хешу содержимого в кодировке Base58.",
       "docsPath": "/ru/rpc/protocol/chunk-by-hash",
@@ -2565,7 +2565,7 @@
       ]
     },
     {
-      "authSummary": "API key via query apiKey",
+      "authSummary": "Bearer token via Authorization header; API key via query apiKey",
       "canonicalPath": "/ru/rpcs/protocol/client_config",
       "description": "Получите локальную клиентскую конфигурацию узла — таймауты, настройки повторов и параметры оператора.",
       "docsPath": "/ru/rpc/protocol/client-config",
@@ -2612,7 +2612,7 @@
       ]
     },
     {
-      "authSummary": "API key via query apiKey",
+      "authSummary": "Bearer token via Authorization header; API key via query apiKey",
       "canonicalPath": "/ru/rpcs/protocol/EXPERIMENTAL_congestion_level",
       "description": "Измерьте нагрузку одного шарда на выбранном блоке — оценка насыщения от 0.0 до 1.0.",
       "docsPath": "/ru/rpc/protocol/experimental-congestion-level",
@@ -2659,7 +2659,7 @@
       ]
     },
     {
-      "authSummary": "API key via query apiKey",
+      "authSummary": "Bearer token via Authorization header; API key via query apiKey",
       "canonicalPath": "/ru/rpcs/protocol/EXPERIMENTAL_light_client_block_proof",
       "description": "Получите Merkle-доказательство — по хешам блока и вершины лайт-клиента в кодировке Base58 — того, что блок включён в верифицированную цепочку лайт-клиента.",
       "docsPath": "/ru/rpc/protocol/experimental-light-client-block-proof",
@@ -2706,7 +2706,7 @@
       ]
     },
     {
-      "authSummary": "API key via query apiKey",
+      "authSummary": "Bearer token via Authorization header; API key via query apiKey",
       "canonicalPath": "/ru/rpcs/protocol/EXPERIMENTAL_light_client_proof",
       "description": "Получите Merkle-доказательство включения транзакции или квитанции по ID в кодировке Base58 — EXPERIMENTAL-вариант метода `light_client_proof`.",
       "docsPath": "/ru/rpc/protocol/experimental-light-client-proof",
@@ -2753,7 +2753,7 @@
       ]
     },
     {
-      "authSummary": "API key via query apiKey",
+      "authSummary": "Bearer token via Authorization header; API key via query apiKey",
       "canonicalPath": "/ru/rpcs/protocol/EXPERIMENTAL_protocol_config",
       "description": "Получите рантайм-конфигурацию протокола на выбранном блоке — стоимость газа, цены хранилища и действующие лимиты.",
       "docsPath": "/ru/rpc/protocol/experimental-protocol-config",
@@ -2800,7 +2800,7 @@
       ]
     },
     {
-      "authSummary": "API key via query apiKey",
+      "authSummary": "Bearer token via Authorization header; API key via query apiKey",
       "canonicalPath": "/ru/rpcs/protocol/EXPERIMENTAL_split_storage_info",
       "description": "Изучите раскладку разделённого хранилища узла — границу между горячими недавними и холодными архивными данными.",
       "docsPath": "/ru/rpc/protocol/experimental-split-storage-info",
@@ -2847,7 +2847,7 @@
       ]
     },
     {
-      "authSummary": "API key via query apiKey",
+      "authSummary": "Bearer token via Authorization header; API key via query apiKey",
       "canonicalPath": "/ru/rpcs/protocol/gas_price",
       "description": "Получите текущую общесетевую цену газа для самого последнего блока.",
       "docsPath": "/ru/rpc/protocol/gas-price",
@@ -2894,7 +2894,7 @@
       ]
     },
     {
-      "authSummary": "API key via query apiKey",
+      "authSummary": "Bearer token via Authorization header; API key via query apiKey",
       "canonicalPath": "/ru/rpcs/protocol/gas_price_by_block",
       "description": "Получите общесетевую цену газа на выбранном историческом блоке — по высоте или хешу.",
       "docsPath": "/ru/rpc/protocol/gas-price-by-block",
@@ -2941,7 +2941,7 @@
       ]
     },
     {
-      "authSummary": "API key via query apiKey",
+      "authSummary": "Bearer token via Authorization header; API key via query apiKey",
       "canonicalPath": "/ru/rpcs/protocol/genesis_config",
       "description": "Получите неизменяемую генезис-конфигурацию цепочки — начальные записи, настройки протокола и длину эпохи в блоке 0.",
       "docsPath": "/ru/rpc/protocol/genesis-config",
@@ -2988,7 +2988,7 @@
       ]
     },
     {
-      "authSummary": "API key via query apiKey",
+      "authSummary": "Bearer token via Authorization header; API key via query apiKey",
       "canonicalPath": "/ru/rpcs/protocol/health",
       "description": "Проверьте работоспособность узла — `null` при успехе, ошибка при проблемах.",
       "docsPath": "/ru/rpc/protocol/health",
@@ -3035,7 +3035,7 @@
       ]
     },
     {
-      "authSummary": "API key via query apiKey",
+      "authSummary": "Bearer token via Authorization header; API key via query apiKey",
       "canonicalPath": "/ru/rpcs/protocol/latest_block",
       "description": "Получите последний финализированный блок — финальность выбирается автоматически, ID блока не требуется.",
       "docsPath": "/ru/rpc/protocol/latest-block",
@@ -3045,8 +3045,6 @@
       "id": "rpc-latest-block",
       "name": "NEAR Protocol RPC: последний блок",
       "networkKeys": [
-        "mainnet",
-        "testnet",
         "mainnet",
         "testnet"
       ],
@@ -3084,7 +3082,7 @@
       ]
     },
     {
-      "authSummary": "API key via query apiKey",
+      "authSummary": "Bearer token via Authorization header; API key via query apiKey",
       "canonicalPath": "/ru/rpcs/protocol/light_client_proof",
       "description": "Получите Merkle-доказательство — по ID транзакции или квитанции в кодировке Base58 — того, что элемент был включён и исполнен, для верификации лайт-клиентом.",
       "docsPath": "/ru/rpc/protocol/light-client-proof",
@@ -3131,7 +3129,7 @@
       ]
     },
     {
-      "authSummary": "API key via query apiKey",
+      "authSummary": "Bearer token via Authorization header; API key via query apiKey",
       "canonicalPath": "/ru/rpcs/protocol/maintenance_windows",
       "description": "Найдите предстоящие диапазоны блоков, когда валидатор может безопасно перезапуститься, не пропуская производство блоков.",
       "docsPath": "/ru/rpc/protocol/maintenance-windows",
@@ -3178,7 +3176,7 @@
       ]
     },
     {
-      "authSummary": "API key via query apiKey",
+      "authSummary": "Bearer token via Authorization header; API key via query apiKey",
       "canonicalPath": "/ru/rpcs/protocol/metrics",
       "description": "Соберите метрики узла в Prometheus-формате для мониторинга.",
       "docsPath": "/ru/rpc/protocol/metrics",
@@ -3225,7 +3223,7 @@
       ]
     },
     {
-      "authSummary": "API key via query apiKey",
+      "authSummary": "Bearer token via Authorization header; API key via query apiKey",
       "canonicalPath": "/ru/rpcs/protocol/network_info",
       "description": "Получите список активных подключений к пирам узла и отслеживаемых им производителей блоков.",
       "docsPath": "/ru/rpc/protocol/network-info",
@@ -3272,7 +3270,7 @@
       ]
     },
     {
-      "authSummary": "API key via query apiKey",
+      "authSummary": "Bearer token via Authorization header; API key via query apiKey",
       "canonicalPath": "/ru/rpcs/protocol/next_light_client_block",
       "description": "Получите следующий заголовок блока для лайт-клиента после известного хеша вершины его верифицированной цепочки в кодировке Base58.",
       "docsPath": "/ru/rpc/protocol/next-light-client-block",
@@ -3319,7 +3317,7 @@
       ]
     },
     {
-      "authSummary": "API key via query apiKey",
+      "authSummary": "Bearer token via Authorization header; API key via query apiKey",
       "canonicalPath": "/ru/rpcs/protocol/status",
       "description": "Получите версию узла, прогресс синхронизации и последний обработанный блок в одном ответе.",
       "docsPath": "/ru/rpc/protocol/status",
@@ -3366,7 +3364,7 @@
       ]
     },
     {
-      "authSummary": "API key via query apiKey",
+      "authSummary": "Bearer token via Authorization header; API key via query apiKey",
       "canonicalPath": "/ru/rpcs/transaction/broadcast_tx_async",
       "description": "Отправьте свежеподписанную транзакцию и сразу получите её хеш, без ожидания исполнения. Примеры по умолчанию служат только для иллюстрации и не являются повторно используемыми подписанными пакетами данных.",
       "docsPath": "/ru/rpc/transaction/broadcast-tx-async",
@@ -3413,7 +3411,7 @@
       ]
     },
     {
-      "authSummary": "API key via query apiKey",
+      "authSummary": "Bearer token via Authorization header; API key via query apiKey",
       "canonicalPath": "/ru/rpcs/transaction/broadcast_tx_commit",
       "description": "Отправьте свежеподписанную транзакцию и дождитесь её коммита — это устаревший синхронный способ отправки, который заменён `send_tx`. Примеры по умолчанию служат только для иллюстрации и не являются повторно используемыми подписанными пакетами данных.",
       "docsPath": "/ru/rpc/transaction/broadcast-tx-commit",
@@ -3460,7 +3458,7 @@
       ]
     },
     {
-      "authSummary": "API key via query apiKey",
+      "authSummary": "Bearer token via Authorization header; API key via query apiKey",
       "canonicalPath": "/ru/rpcs/transaction/EXPERIMENTAL_receipt",
       "description": "Получите одну квитанцию по её ID в кодировке Base58 — межшардовую единицу исполнения, производимую транзакцией.",
       "docsPath": "/ru/rpc/transaction/experimental-receipt",
@@ -3507,7 +3505,54 @@
       ]
     },
     {
-      "authSummary": "API key via query apiKey",
+      "authSummary": "Bearer token via Authorization header; API key via query apiKey",
+      "canonicalPath": "/ru/rpcs/transaction/EXPERIMENTAL_receipt_to_tx",
+      "description": "Resolve a receipt ID to the transaction hash and signer that produced it. Requires a node with `save_receipt_to_tx` enabled; unindexed receipts return `UNKNOWN_RECEIPT`.",
+      "docsPath": "/ru/rpc/transaction/experimental-receipt-to-tx",
+      "familyId": "rpc-transaction",
+      "headline": "NEAR Protocol RPC: Resolve receipt to transaction",
+      "httpMethod": "POST",
+      "id": "rpc-EXPERIMENTAL-receipt-to-tx",
+      "name": "NEAR Protocol RPC: Resolve receipt to transaction",
+      "networkKeys": [
+        "mainnet",
+        "testnet"
+      ],
+      "operationId": "EXPERIMENTAL_receipt_to_tx",
+      "pageModelId": "rpc-EXPERIMENTAL-receipt-to-tx",
+      "requestPath": "/",
+      "requestType": null,
+      "routeAliases": [
+        "/ru/rpcs/transaction/EXPERIMENTAL_receipt_to_tx/other/EXPERIMENTAL_receipt_to_tx",
+        "/ru/reference/operation/EXPERIMENTAL_receipt_to_tx"
+      ],
+      "schemaType": "APIReference",
+      "sourceSpec": "rpcs/transaction/EXPERIMENTAL_receipt_to_tx.yaml",
+      "summary": "Resolve receipt to transaction",
+      "transport": "json-rpc",
+      "@id": "https://docs.fastnear.com/structured-data/operations/rpc-EXPERIMENTAL-receipt-to-tx",
+      "abstract": "Resolve receipt to transaction",
+      "canonicalPageId": "https://docs.fastnear.com/ru/rpcs/transaction/EXPERIMENTAL_receipt_to_tx#page",
+      "canonicalUrl": "https://docs.fastnear.com/ru/rpcs/transaction/EXPERIMENTAL_receipt_to_tx",
+      "docsPageId": "https://docs.fastnear.com/ru/rpc/transaction/experimental-receipt-to-tx#page",
+      "docsUrl": "https://docs.fastnear.com/ru/rpc/transaction/experimental-receipt-to-tx",
+      "familyEntityId": "https://docs.fastnear.com/structured-data/families/rpc-transaction",
+      "inLanguage": "ru",
+      "mainEntityOfPageId": "https://docs.fastnear.com/ru/rpc/transaction/experimental-receipt-to-tx#page",
+      "publisherId": "https://docs.fastnear.com/#organization",
+      "sameAs": [
+        "https://docs.fastnear.com/ru/rpc/transaction/experimental-receipt-to-tx",
+        "https://docs.fastnear.com/ru/rpcs/transaction/EXPERIMENTAL_receipt_to_tx",
+        "https://docs.fastnear.com/ru/rpcs/transaction/EXPERIMENTAL_receipt_to_tx/other/EXPERIMENTAL_receipt_to_tx",
+        "https://docs.fastnear.com/ru/reference/operation/EXPERIMENTAL_receipt_to_tx"
+      ],
+      "subjectOfPageIds": [
+        "https://docs.fastnear.com/ru/rpc/transaction/experimental-receipt-to-tx#page",
+        "https://docs.fastnear.com/ru/rpcs/transaction/EXPERIMENTAL_receipt_to_tx#page"
+      ]
+    },
+    {
+      "authSummary": "Bearer token via Authorization header; API key via query apiKey",
       "canonicalPath": "/ru/rpcs/transaction/EXPERIMENTAL_tx_status",
       "description": "Получите полное дерево квитанций и результаты исполнения каждой квитанции по хешу в кодировке Base58 — богаче, чем `tx_status`.",
       "docsPath": "/ru/rpc/transaction/experimental-tx-status",
@@ -3554,7 +3599,7 @@
       ]
     },
     {
-      "authSummary": "API key via query apiKey",
+      "authSummary": "Bearer token via Authorization header; API key via query apiKey",
       "canonicalPath": "/ru/rpcs/transaction/send_tx",
       "description": "Отправьте свежеподписанную транзакцию и дождитесь её итогового результата исполнения — это текущий синхронный способ отправки. Примеры по умолчанию служат только для иллюстрации и не являются повторно используемыми подписанными пакетами данных.",
       "docsPath": "/ru/rpc/transaction/send-tx",
@@ -3601,7 +3646,7 @@
       ]
     },
     {
-      "authSummary": "API key via query apiKey",
+      "authSummary": "Bearer token via Authorization header; API key via query apiKey",
       "canonicalPath": "/ru/rpcs/transaction/tx_status",
       "description": "Проверьте итоговый результат транзакции по её хешу в кодировке Base58 — успех, сбой или ещё не завершена.",
       "docsPath": "/ru/rpc/transaction/tx-status",
@@ -3648,7 +3693,7 @@
       ]
     },
     {
-      "authSummary": "API key via query apiKey",
+      "authSummary": "Bearer token via Authorization header; API key via query apiKey",
       "canonicalPath": "/ru/rpcs/validators/EXPERIMENTAL_validators_ordered",
       "description": "Получите список валидаторов, упорядоченный по размеру стейка на выбранном блоке — шире, чем только активный набор.",
       "docsPath": "/ru/rpc/validators/experimental-validators-ordered",
@@ -3695,7 +3740,7 @@
       ]
     },
     {
-      "authSummary": "API key via query apiKey",
+      "authSummary": "Bearer token via Authorization header; API key via query apiKey",
       "canonicalPath": "/ru/rpcs/validators/validators_by_epoch",
       "description": "Получите набор валидаторов выбранной прошлой эпохи по высоте начального блока или хеш-идентификатору эпохи в кодировке Base58.",
       "docsPath": "/ru/rpc/validators/validators-by-epoch",
@@ -3742,7 +3787,7 @@
       ]
     },
     {
-      "authSummary": "API key via query apiKey",
+      "authSummary": "Bearer token via Authorization header; API key via query apiKey",
       "canonicalPath": "/ru/rpcs/validators/validators_current",
       "description": "Получите активный набор валидаторов текущей эпохи со стейками и статистикой производительности.",
       "docsPath": "/ru/rpc/validators/validators-current",
@@ -4703,6 +4748,19 @@
     },
     {
       "entityIds": {
+        "familyIds": [],
+        "mainEntityId": null,
+        "pageId": "https://docs.fastnear.com/ru/auth/browser-keys#page"
+      },
+      "indexable": true,
+      "markdownMirrorUrl": "https://docs.fastnear.com/ru/auth/browser-keys.md",
+      "pageSchemaType": "TechArticle",
+      "route": "/ru/auth/browser-keys",
+      "routeType": "docs",
+      "url": "https://docs.fastnear.com/ru/auth/browser-keys"
+    },
+    {
+      "entityIds": {
         "familyIds": [
           "https://docs.fastnear.com/structured-data/families/api-kv-fastdata"
         ],
@@ -5601,6 +5659,21 @@
         "familyIds": [
           "https://docs.fastnear.com/structured-data/families/rpc-transaction"
         ],
+        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/rpc-EXPERIMENTAL-receipt-to-tx",
+        "pageId": "https://docs.fastnear.com/ru/rpc/transaction/experimental-receipt-to-tx#page"
+      },
+      "indexable": true,
+      "markdownMirrorUrl": "https://docs.fastnear.com/ru/rpc/transaction/experimental-receipt-to-tx.md",
+      "pageSchemaType": "WebPage",
+      "route": "/ru/rpc/transaction/experimental-receipt-to-tx",
+      "routeType": "docs",
+      "url": "https://docs.fastnear.com/ru/rpc/transaction/experimental-receipt-to-tx"
+    },
+    {
+      "entityIds": {
+        "familyIds": [
+          "https://docs.fastnear.com/structured-data/families/rpc-transaction"
+        ],
         "mainEntityId": "https://docs.fastnear.com/structured-data/operations/rpc-EXPERIMENTAL-tx-status",
         "pageId": "https://docs.fastnear.com/ru/rpc/transaction/experimental-tx-status#page"
       },
@@ -6195,6 +6268,21 @@
       "route": "/ru/rpcs/transaction/EXPERIMENTAL_receipt",
       "routeType": "hosted-rpc",
       "url": "https://docs.fastnear.com/ru/rpcs/transaction/EXPERIMENTAL_receipt"
+    },
+    {
+      "entityIds": {
+        "familyIds": [
+          "https://docs.fastnear.com/structured-data/families/rpc-transaction"
+        ],
+        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/rpc-EXPERIMENTAL-receipt-to-tx",
+        "pageId": "https://docs.fastnear.com/ru/rpcs/transaction/EXPERIMENTAL_receipt_to_tx#page"
+      },
+      "indexable": false,
+      "markdownMirrorUrl": "https://docs.fastnear.com/ru/rpcs/transaction/EXPERIMENTAL_receipt_to_tx.md",
+      "pageSchemaType": "WebPage",
+      "route": "/ru/rpcs/transaction/EXPERIMENTAL_receipt_to_tx",
+      "routeType": "hosted-rpc",
+      "url": "https://docs.fastnear.com/ru/rpcs/transaction/EXPERIMENTAL_receipt_to_tx"
     },
     {
       "entityIds": {

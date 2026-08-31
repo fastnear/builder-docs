@@ -15,6 +15,7 @@
 - Mainnet: https://rpc.mainnet.fastnear.com/
 - Testnet: https://rpc.testnet.fastnear.com/
 ## Авторизация
+- Bearer-токен через заголовок `Authorization: Bearer <token>`
 - API-ключ через query `apiKey`: Контракт OpenAPI описывает API-ключ FastNear как параметр запроса `apiKey`.
 - Этот экспорт намеренно не включает локально сохранённые учётные данные
 ## Текущий запрос
@@ -149,15 +150,6 @@
             }
           },
           {
-            "name": "block_fetch_horizon",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "description": "Горизонт, после которого вместо получения блока извлекается полное состояние.",
-              "format": "uint64"
-            }
-          },
-          {
             "name": "block_header_fetch_horizon",
             "required": false,
             "schema": {
@@ -170,12 +162,8 @@
             "name": "block_production_tracking_delay",
             "required": false,
             "schema": {
-              "type": "array",
-              "description": "Интервал проверки необходимости выпустить или пропустить блок.",
-              "items": {
-                "type": "integer",
-                "format": "uint64"
-              }
+              "type": "string",
+              "description": "Интервал проверки необходимости выпустить или пропустить блок."
             }
           },
           {
@@ -249,12 +237,8 @@
             "name": "chunk_wait_mult",
             "required": false,
             "schema": {
-              "type": "array",
-              "description": "Multiplier for the wait time for all chunks to be received.",
-              "items": {
-                "type": "integer",
-                "format": "int32"
-              }
+              "type": "string",
+              "description": "Multiplier for the wait time for all chunks to be received."
             }
           },
           {
@@ -303,6 +287,16 @@
                       "secs": 1
                     }
                   }
+                },
+                {
+                  "name": "snapshot_every_n_epochs",
+                  "required": false,
+                  "schema": {
+                    "type": "integer",
+                    "description": "Cadence of state snapshots, in epochs. Higher values reduce bucket cost at\nthe expense of potentially longer delta replay during reader bootstrap.",
+                    "format": "uint64",
+                    "default": 10
+                  }
                 }
               ]
             }
@@ -319,12 +313,8 @@
             "name": "doomslug_step_period",
             "required": false,
             "schema": {
-              "type": "array",
-              "description": "Time between running doomslug timer.",
-              "items": {
-                "type": "integer",
-                "format": "uint64"
-              }
+              "type": "string",
+              "description": "Time between running doomslug timer."
             }
           },
           {
@@ -520,24 +510,16 @@
             "name": "max_block_production_delay",
             "required": false,
             "schema": {
-              "type": "array",
-              "description": "Максимальное время ожидания подтверждений перед выпуском блока.",
-              "items": {
-                "type": "integer",
-                "format": "uint64"
-              }
+              "type": "string",
+              "description": "Максимальное время ожидания подтверждений перед выпуском блока."
             }
           },
           {
             "name": "max_block_wait_delay",
             "required": false,
             "schema": {
-              "type": "array",
-              "description": "Maximum duration before skipping given height.",
-              "items": {
-                "type": "integer",
-                "format": "uint64"
-              }
+              "type": "string",
+              "description": "Maximum duration before skipping given height."
             }
           },
           {
@@ -553,12 +535,8 @@
             "name": "min_block_production_delay",
             "required": false,
             "schema": {
-              "type": "array",
-              "description": "Минимальная длительность перед выпуском блока.",
-              "items": {
-                "type": "integer",
-                "format": "uint64"
-              }
+              "type": "string",
+              "description": "Минимальная длительность перед выпуском блока."
             }
           },
           {
@@ -626,6 +604,33 @@
             }
           },
           {
+            "name": "receipt_to_tx_max_hint_window",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "description": "Max `±window` accepted on `EXPERIMENTAL_receipt_to_tx` requests.\nCaps caller's `window`. Applies to pre-first-scan `CenterOut`\nagainst caller's literal hint; ancestor scans use\n`receipt_to_tx_max_hop_distance` instead. Operators raising this\nshould also raise `receipt_to_tx_max_hop_distance` so backward reach\nmatches caller's wider hint scope. Requests with `window` over this\nrejected with `WindowTooLarge`.",
+              "format": "uint64"
+            }
+          },
+          {
+            "name": "receipt_to_tx_max_hop_distance",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "description": "Max block-distance ancestor scan walks per hop once any scan in\nwalk refreshed `current_height`. Subsequent column-miss scans visit\n`h, h-1, ..., h-max_hop_distance` from most-recent scan-refreshed\nanchor, regardless of column hits between. Anchor included —\nsame-shard local receipts execute in same block as producing\noutcome. Raise if cold archival traffic shows ancestor misses —\ngap = scan-refreshed anchor to producer-outcome height of receipt\nwith missing column row (column hits don't reset anchor). Default\n20 (matches `receipt_to_tx_max_hint_window`).",
+              "format": "uint64"
+            }
+          },
+          {
+            "name": "receipt_to_tx_max_outcomes_per_request",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "description": "Per-request ceiling on outcome rows the `EXPERIMENTAL_receipt_to_tx`\nhint-fallback scanner reads across hops + shards. Caps cold-RocksDB\nworst case on unauthenticated public endpoint. Default 20_000.\nOperators serving cold archival traffic with deep walks or sparse\noutcomes may raise; benchmark first (see TODO in\n`view_client_actor.rs`). Mid-scan exhaustion fails with\n`BudgetExceeded { scanned, limit }`.",
+              "format": "uint64"
+            }
+          },
+          {
             "name": "resharding_config",
             "required": false,
             "schema": {
@@ -655,6 +660,14 @@
             "schema": {
               "type": "boolean",
               "description": "Сохраняет наблюдаемые экземпляры ChunkStateWitness в базу данных DBCol::LatestChunkStateWitnesses.\nСохранение последних экземпляров ChunkStateWitness полезно для анализа и отладки.\nЭта опция может создавать дополнительную нагрузку на базу данных и не рекомендуется для продового контура."
+            }
+          },
+          {
+            "name": "save_receipt_to_tx",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "description": "Whether to persist receipt-to-tx origin mappings to disk or not."
             }
           },
           {
@@ -776,14 +789,6 @@
             }
           },
           {
-            "name": "state_sync_enabled",
-            "required": false,
-            "schema": {
-              "type": "boolean",
-              "description": "Использовать ли механизм State Sync.\nЕсли отключён, узел будет выполнять Block Sync вместо State Sync."
-            }
-          },
-          {
             "name": "state_sync_external_backoff",
             "required": false,
             "schema": {
@@ -892,6 +897,15 @@
             }
           },
           {
+            "name": "transaction_pool_strict_nonce_ttl_blocks",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "description": "TTL in blocks for gapped strict-nonce transactions in the pool. Transactions with a\nnonce gap whose block_hash is older than this many blocks are evicted during\nprepare_transactions.",
+              "format": "uint64"
+            }
+          },
+          {
             "name": "transaction_request_handler_threads",
             "required": false,
             "schema": {
@@ -981,6 +995,23 @@
               "type": "integer",
               "description": "Количество потоков для пула ViewClientActor.",
               "format": "uint"
+            }
+          },
+          {
+            "name": "block_fetch_horizon",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "description": "Горизонт, после которого вместо получения блока извлекается полное состояние.",
+              "format": "uint64"
+            }
+          },
+          {
+            "name": "state_sync_enabled",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "description": "Использовать ли механизм State Sync.\nЕсли отключён, узел будет выполнять Block Sync вместо State Sync."
             }
           },
           {

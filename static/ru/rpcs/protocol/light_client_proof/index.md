@@ -11,15 +11,16 @@
 - Путь: `/`
 - Исходная спецификация: `rpcs/protocol/light_client_proof.yaml`
 ## Сети
-- Mainnet: https://rpc.mainnet.fastnear.com/
-- Testnet: https://rpc.testnet.fastnear.com/
+- Mainnet: https://archival-rpc.mainnet.fastnear.com/ (archival: Pinned transaction, older than standard RPC retention.)
+- Testnet: https://archival-rpc.testnet.fastnear.com/ (archival: Pinned transaction, older than standard RPC retention.)
 ## Авторизация
+- Bearer-токен через заголовок `Authorization: Bearer <token>`
 - API-ключ через query `apiKey`: Контракт OpenAPI описывает API-ключ FastNear как параметр запроса `apiKey`.
 - Этот экспорт намеренно не включает локально сохранённые учётные данные
 ## Текущий запрос
 - Сеть: Mainnet
 - Финальность: final
-- Эндпоинт: https://rpc.mainnet.fastnear.com/
+- Эндпоинт: https://archival-rpc.mainnet.fastnear.com/
 ### Тело запроса
 ```json
 {
@@ -27,7 +28,7 @@
   "id": "fastnear",
   "method": "light_client_proof",
   "params": {
-    "type": "квитанция",
+    "type": "транзакция",
     "transaction_hash": "34E7weKCDqXh3xPKdBgSWRqo44yTWjbka9deMK8JbAxx",
     "sender_id": "escrow.ai.near",
     "light_client_head": "9XN7MtDywZvfGx6TKy1MT2iCZkKuHikJXmNazxdZ4x6T"
@@ -43,7 +44,7 @@
     "id": "fastnear",
     "method": "light_client_proof",
     "params": {
-      "type": "квитанция",
+      "type": "транзакция",
       "transaction_hash": "34E7weKCDqXh3xPKdBgSWRqo44yTWjbka9deMK8JbAxx",
       "sender_id": "escrow.ai.near",
       "light_client_head": "9XN7MtDywZvfGx6TKy1MT2iCZkKuHikJXmNazxdZ4x6T"
@@ -138,8 +139,9 @@
             "required": false,
             "schema": {
               "type": "string",
-              "description": "Proof subject — `receipt` proves inclusion of a specific receipt produced during execution.",
+              "description": "Предмет доказательства — `transaction` подтверждает включение транзакции верхнего уровня, `receipt` подтверждает включение конкретной квитанции, сформированной в ходе исполнения.",
               "enum": [
+                "транзакция",
                 "квитанция"
               ]
             }

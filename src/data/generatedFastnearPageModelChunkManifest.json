@@ -46,6 +46,7 @@
   "rpc-EXPERIMENTAL-light-client-proof": "rpcs/protocol",
   "rpc-EXPERIMENTAL-protocol-config": "rpcs/protocol",
   "rpc-EXPERIMENTAL-receipt": "rpcs/transaction",
+  "rpc-EXPERIMENTAL-receipt-to-tx": "rpcs/transaction",
   "rpc-EXPERIMENTAL-split-storage-info": "rpcs/protocol",
   "rpc-EXPERIMENTAL-tx-status": "rpcs/transaction",
   "rpc-EXPERIMENTAL-validators-ordered": "rpcs/validators",

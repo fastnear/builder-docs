@@ -15,6 +15,7 @@
 - Mainnet: https://rpc.mainnet.fastnear.com/
 - Testnet: https://rpc.testnet.fastnear.com/
 ## Авторизация
+- Bearer-токен через заголовок `Authorization: Bearer <token>`
 - API-ключ через query `apiKey`: Контракт OpenAPI описывает API-ключ FastNear как параметр запроса `apiKey`.
 - Этот экспорт намеренно не включает локально сохранённые учётные данные
 ## Текущий запрос
@@ -28,7 +29,7 @@
   "id": "fastnear",
   "method": "block_effects",
   "params": {
-    "block_id": 9820210
+    "finality": "final"
   }
 }
 ```
@@ -41,7 +42,7 @@
     "id": "fastnear",
     "method": "block_effects",
     "params": {
-      "block_id": 9820210
+      "finality": "final"
     }
   },
   "headers": {},
@@ -50,7 +51,7 @@
 }
 ```
 ### Входные данные
-- `block_id` (body, обязательный, integer | string): Высота блока (целое число) или хеш блока (строка).
+- `block_id` (body, integer | string): Высота блока (целое число) или хеш блока (строка).
 ### Схема запроса
 ```json
 {
@@ -95,13 +96,10 @@
       "required": true,
       "schema": {
         "type": "object",
-        "required": [
-          "block_id"
-        ],
         "properties": [
           {
             "name": "block_id",
-            "required": true,
+            "required": false,
             "schema": {
               "description": "Высота блока (целое число) или хеш блока (строка)",
               "oneOf": [
@@ -113,6 +111,19 @@
                   "type": "string",
                   "description": "Хеш блока в кодировке Base58"
                 }
+              ]
+            }
+          },
+          {
+            "name": "финальность",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "Финальность блока",
+              "enum": [
+                "final",
+                "near-final",
+                "optimistic"
               ]
             }
           }

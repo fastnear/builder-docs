@@ -14,6 +14,7 @@
 - Mainnet: https://rpc.mainnet.fastnear.com/
 - Testnet: https://rpc.testnet.fastnear.com/
 ## Авторизация
+- Bearer-токен через заголовок `Authorization: Bearer <token>`
 - API-ключ через query `apiKey`: Контракт OpenAPI описывает API-ключ FastNear как параметр запроса `apiKey`.
 - Этот экспорт намеренно не включает локально сохранённые учётные данные
 ## Текущий запрос
@@ -143,8 +144,6 @@
           "chain_id",
           "genesis_height",
           "num_block_producer_seats",
-          "num_block_producer_seats_per_shard",
-          "avg_hidden_validator_seats_per_shard",
           "dynamic_resharding",
           "epoch_length",
           "gas_limit",
@@ -163,18 +162,6 @@
           "fishermen_threshold"
         ],
         "properties": [
-          {
-            "name": "avg_hidden_validator_seats_per_shard",
-            "required": true,
-            "schema": {
-              "type": "array",
-              "description": "Ожидаемое количество скрытых валидаторов на шард.",
-              "items": {
-                "type": "integer",
-                "format": "uint64"
-              }
-            }
-          },
           {
             "name": "block_producer_kickout_threshold",
             "required": true,
@@ -364,34 +351,12 @@
             }
           },
           {
-            "name": "num_block_producer_seats_per_shard",
-            "required": true,
-            "schema": {
-              "type": "array",
-              "description": "Задаёт количество шардов и количество мест для производителей блоков на каждый шард в генезисе.\nПрим.: не используется с protocol_feature_chunk_only_producers — заменено на minimum_validators_per_shard.\nПрим.: раньше не использовалось, так как все производители блоков выпускали чанки для всех шардов.",
-              "items": {
-                "type": "integer",
-                "format": "uint64"
-              }
-            }
-          },
-          {
             "name": "num_blocks_per_year",
             "required": true,
             "schema": {
               "type": "integer",
               "description": "Ожидаемое количество блоков в год",
               "format": "uint64"
-            }
-          },
-          {
-            "name": "num_chunk_only_producer_seats",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "description": "Deprecated.",
-              "format": "uint64",
-              "default": 300
             }
           },
           {
@@ -556,6 +521,40 @@
                 "type": "object",
                 "description": "Информация об аккаунтах валидаторов"
               }
+            }
+          },
+          {
+            "name": "avg_hidden_validator_seats_per_shard",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "description": "Ожидаемое количество скрытых валидаторов на шард.",
+              "items": {
+                "type": "integer",
+                "format": "uint64"
+              }
+            }
+          },
+          {
+            "name": "num_block_producer_seats_per_shard",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "description": "Задаёт количество шардов и количество мест для производителей блоков на каждый шард в генезисе.\nПрим.: не используется с protocol_feature_chunk_only_producers — заменено на minimum_validators_per_shard.\nПрим.: раньше не использовалось, так как все производители блоков выпускали чанки для всех шардов.",
+              "items": {
+                "type": "integer",
+                "format": "uint64"
+              }
+            }
+          },
+          {
+            "name": "num_chunk_only_producer_seats",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "description": "Deprecated.",
+              "format": "uint64",
+              "default": 300
             }
           }
         ]

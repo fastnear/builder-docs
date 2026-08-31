@@ -1142,11 +1142,11 @@
     ]
   },
   "rpc-broadcast-tx-async": {
-    "description": "Submit a freshly signed transaction and immediately get its hash — no wait for execution. Default examples are illustrative only and are not reusable signed payloads.",
+    "description": "Broadcast a base64-encoded `SignedTransaction`; returns the transaction hash without awaiting inclusion or execution. Example payloads are placeholders and cannot be replayed.",
     "parameters": [
       {
         "name": "signed_tx_base64",
-        "description": "Base64-encoded signed transaction. Generate a fresh signed payload for the signing account immediately before submission or status lookup."
+        "description": "Base64-encoded signed transaction"
       },
       {
         "name": "wait_until",
@@ -1162,11 +1162,11 @@
     ]
   },
   "rpc-broadcast-tx-commit": {
-    "description": "Submit a freshly signed transaction and wait for its commit — the legacy synchronous send, superseded by `send_tx`. Default examples are illustrative only and are not reusable signed payloads.",
+    "description": "Broadcast a base64-encoded `SignedTransaction`; blocks until execution completes or a 10-second timeout elapses. Deprecated — use `send_tx`. Example payloads are placeholders and cannot be replayed.",
     "parameters": [
       {
         "name": "signed_tx_base64",
-        "description": "Base64-encoded signed transaction. Generate a fresh signed payload for the signing account immediately before submission or status lookup."
+        "description": "Base64-encoded signed transaction"
       },
       {
         "name": "wait_until",
@@ -1210,7 +1210,7 @@
       },
       {
         "name": "args_base64",
-        "description": "Base64-encoded raw method arguments. JSON-based contracts typically expect UTF-8 bytes of the JSON payload; the example `e30=` is `{}`."
+        "description": "Base64-encoded argument byte array passed to the method. JSON contracts expect the UTF-8 bytes of the JSON payload (`e30=` decodes to `{}`)."
       },
       {
         "name": "method_name",
@@ -1424,10 +1424,6 @@
         "description": "Not clear old data, set `true` for archive nodes."
       },
       {
-        "name": "block_fetch_horizon",
-        "description": "Horizon at which instead of fetching block, fetch full state."
-      },
-      {
         "name": "block_header_fetch_horizon",
         "description": "Behind this horizon header fetch kicks in."
       },
@@ -1482,6 +1478,10 @@
       {
         "name": "polling_interval",
         "description": "Interval at which the system checks for new blocks or chunks to archive."
+      },
+      {
+        "name": "snapshot_every_n_epochs",
+        "description": "Cadence of state snapshots, in epochs. Higher values reduce bucket cost at the expense of potentially longer delta replay during reader bootstrap."
       },
       {
         "name": "disable_tx_routing",
@@ -1608,6 +1608,18 @@
         "description": "Configures whether the node checks the next or the next next epoch for network version compatibility."
       },
       {
+        "name": "receipt_to_tx_max_hint_window",
+        "description": "Max `±window` accepted on `EXPERIMENTAL_receipt_to_tx` requests. Caps caller's `window`. Applies to pre-first-scan `CenterOut` against caller's literal hint; ancestor scans use `receipt_to_tx_max_hop_distance` instead. Operators raising this should also raise `receipt_to_tx_max_hop_distance` so backward reach matches caller's wider hint scope. Requests with `window` over this rejected with `WindowTooLarge`."
+      },
+      {
+        "name": "receipt_to_tx_max_hop_distance",
+        "description": "Max block-distance ancestor scan walks per hop once any scan in walk refreshed `current_height`. Subsequent column-miss scans visit `h, h-1, ..., h-max_hop_distance` from most-recent scan-refreshed anchor, regardless of column hits between. Anchor included — same-shard local receipts execute in same block as producing outcome. Raise if cold archival traffic shows ancestor misses — gap = scan-refreshed anchor to producer-outcome height of receipt with missing column row (column hits don't reset anchor). Default 20 (matches `receipt_to_tx_max_hint_window`)."
+      },
+      {
+        "name": "receipt_to_tx_max_outcomes_per_request",
+        "description": "Per-request ceiling on outcome rows the `EXPERIMENTAL_receipt_to_tx` hint-fallback scanner reads across hops + shards. Caps cold-RocksDB worst case on unauthenticated public endpoint. Default 20_000. Operators serving cold archival traffic with deep walks or sparse outcomes may raise; benchmark first (see TODO in `view_client_actor.rs`). Mid-scan exhaustion fails with `BudgetExceeded { scanned, limit }`."
+      },
+      {
         "name": "rpc_addr",
         "description": "Listening rpc port for status."
       },
@@ -1618,6 +1630,10 @@
       {
         "name": "save_latest_witnesses",
         "description": "Save observed instances of ChunkStateWitness to the database in DBCol::LatestChunkStateWitnesses. Saving the latest witnesses is useful for analysis and debugging. This option can cause extra load on the database and is not recommended for production use."
+      },
+      {
+        "name": "save_receipt_to_tx",
+        "description": "Whether to persist receipt-to-tx origin mappings to disk or not."
       },
       {
         "name": "save_state_changes",
@@ -1668,10 +1684,6 @@
         "description": "Syncs state from the peers without reading anything from external storage."
       },
       {
-        "name": "state_sync_enabled",
-        "description": "Whether to use the State Sync mechanism. If disabled, the node will do Block Sync instead of State Sync."
-      },
-      {
         "name": "state_sync_external_backoff",
         "description": "Additional waiting period after a failed request to external storage"
       },
@@ -1712,6 +1724,10 @@
         "description": "Limit of the size of per-shard transaction pool measured in bytes. If not set, the size will be unbounded."
       },
       {
+        "name": "transaction_pool_strict_nonce_ttl_blocks",
+        "description": "TTL in blocks for gapped strict-nonce transactions in the pool. Transactions with a nonce gap whose block_hash is older than this many blocks are evicted during prepare_transactions."
+      },
+      {
         "name": "trie_viewer_state_size_limit",
         "description": "Upper bound of the byte size of contract state that is still viewable. None is no limit"
       },
@@ -1730,6 +1746,14 @@
       {
         "name": "view_client_threads",
         "description": "Number of threads for ViewClientActor pool."
+      },
+      {
+        "name": "block_fetch_horizon",
+        "description": "Horizon at which instead of fetching block, fetch full state."
+      },
+      {
+        "name": "state_sync_enabled",
+        "description": "Whether to use the State Sync mechanism. If disabled, the node will do Block Sync instead of State Sync."
       },
       {
         "name": "dynamic_resharding_dry_run",
@@ -1796,7 +1820,7 @@
       },
       {
         "name": "type",
-        "description": "Proof subject — `receipt` proves inclusion of a specific receipt produced during execution."
+        "description": "Proof subject — `transaction` proves inclusion of the top-level transaction, `receipt` proves inclusion of a specific receipt produced during execution."
       },
       {
         "name": "receipt_id",
@@ -1835,10 +1859,6 @@
     "description": "Fetch the runtime protocol config at a chosen block — gas costs, storage prices, and limits currently in force.",
     "response": "Successful response",
     "schema": [
-      {
-        "name": "avg_hidden_validator_seats_per_shard",
-        "description": "Expected number of hidden validators per shard."
-      },
       {
         "name": "block_producer_kickout_threshold",
         "description": "Threshold for kicking out block producers, between 0 and 100."
@@ -1916,10 +1936,6 @@
         "description": "Number of block producer seats at genesis."
       },
       {
-        "name": "num_block_producer_seats_per_shard",
-        "description": "Defines number of shards and number of block producer seats per each shard at genesis."
-      },
-      {
         "name": "num_blocks_per_year",
         "description": "Expected number of blocks per year"
       },
@@ -1952,12 +1968,20 @@
         "description": "View that preserves JSON format of the runtime config."
       },
       {
+        "name": "account_creation_charge",
+        "description": "Amount in yoctoNEAR"
+      },
+      {
         "name": "account_creation_config",
         "description": "The structure describes configuration for creation of new accounts."
       },
       {
         "name": "congestion_control_config",
         "description": "The configuration for congestion control. More info about congestion [here](https://near.github.io/nearcore/architecture/how/receipt-congestion.html?highlight=congestion#receipt-congestion)"
+      },
+      {
+        "name": "min_gas_purchase_price",
+        "description": "Amount in yoctoNEAR"
       },
       {
         "name": "storage_amount_per_byte",
@@ -1990,6 +2014,14 @@
       {
         "name": "transaction_validity_period",
         "description": "Number of blocks for which a given transaction is valid"
+      },
+      {
+        "name": "avg_hidden_validator_seats_per_shard",
+        "description": "Expected number of hidden validators per shard."
+      },
+      {
+        "name": "num_block_producer_seats_per_shard",
+        "description": "Defines number of shards and number of block producer seats per each shard at genesis."
       }
     ]
   },
@@ -2025,6 +2057,38 @@
       }
     ]
   },
+  "rpc-EXPERIMENTAL-receipt-to-tx": {
+    "description": "Resolve a receipt ID to the transaction hash and signer that produced it. Requires a node with `save_receipt_to_tx` enabled; unindexed receipts return `UNKNOWN_RECEIPT`.",
+    "parameters": [
+      {
+        "name": "block_height",
+        "description": "Optional hint: block height near where the receipt was created, to bound the fallback scan."
+      },
+      {
+        "name": "receipt_id",
+        "description": "Base58-encoded receipt ID to resolve to its originating transaction."
+      },
+      {
+        "name": "shard_id",
+        "description": "Optional hint: shard to scan at the hint height; omit to scan all tracked shards."
+      },
+      {
+        "name": "window",
+        "description": "Optional hint: ± block-height window scanned around the hint before walking ancestor blocks."
+      }
+    ],
+    "response": "Successful response",
+    "schema": [
+      {
+        "name": "sender_account_id",
+        "description": "NEAR account ID"
+      },
+      {
+        "name": "transaction_hash",
+        "description": "Base58-encoded hash"
+      }
+    ]
+  },
   "rpc-EXPERIMENTAL-split-storage-info": {
     "description": "Inspect a node's split-storage layout — the boundary between hot recent data and cold archival data.",
     "response": "Successful response",
@@ -2044,7 +2108,7 @@
       },
       {
         "name": "signed_tx_base64",
-        "description": "Base64-encoded signed transaction. Generate a fresh signed payload for the signing account immediately before submission or status lookup."
+        "description": "Base64-encoded Borsh serialization of a `SignedTransaction`; must be freshly signed (nonce above the access key's current value)."
       },
       {
         "name": "sender_account_id",
@@ -2123,10 +2187,6 @@
     "description": "Fetch the chain's immutable genesis config — initial records, protocol settings, and epoch length at block 0.",
     "response": "Successful response",
     "schema": [
-      {
-        "name": "avg_hidden_validator_seats_per_shard",
-        "description": "Expected number of hidden validators per shard."
-      },
       {
         "name": "block_producer_kickout_threshold",
         "description": "Threshold for kicking out block producers, between 0 and 100."
@@ -2208,16 +2268,8 @@
         "description": "Number of block producer seats at genesis."
       },
       {
-        "name": "num_block_producer_seats_per_shard",
-        "description": "Defines number of shards and number of block producer seats per each shard at genesis. Note: not used with protocol_feature_chunk_only_producers -- replaced by minimum_validators_per_shard Note: not used before as all block producers produce chunks for all shards"
-      },
-      {
         "name": "num_blocks_per_year",
         "description": "Expected number of blocks per year"
-      },
-      {
-        "name": "num_chunk_only_producer_seats",
-        "description": "Deprecated."
       },
       {
         "name": "num_chunk_producer_seats",
@@ -2274,6 +2326,18 @@
       {
         "name": "validators",
         "description": "List of initial validators."
+      },
+      {
+        "name": "avg_hidden_validator_seats_per_shard",
+        "description": "Expected number of hidden validators per shard."
+      },
+      {
+        "name": "num_block_producer_seats_per_shard",
+        "description": "Defines number of shards and number of block producer seats per each shard at genesis. Note: not used with protocol_feature_chunk_only_producers -- replaced by minimum_validators_per_shard Note: not used before as all block producers produce chunks for all shards"
+      },
+      {
+        "name": "num_chunk_only_producer_seats",
+        "description": "Deprecated."
       }
     ]
   },
@@ -2308,7 +2372,7 @@
       },
       {
         "name": "type",
-        "description": "Proof subject — `receipt` proves inclusion of a specific receipt produced during execution."
+        "description": "Proof subject — `transaction` proves inclusion of the top-level transaction, `receipt` proves inclusion of a specific receipt produced during execution."
       },
       {
         "name": "receipt_id",
@@ -2428,11 +2492,11 @@
     ]
   },
   "rpc-send-tx": {
-    "description": "Submit a freshly signed transaction and wait for its final execution outcome — the current synchronous send. Default examples are illustrative only and are not reusable signed payloads.",
+    "description": "Broadcast a base64-encoded `SignedTransaction`; blocks until the execution outcome specified by `wait_until`. Example payloads are placeholders and cannot be replayed.",
     "parameters": [
       {
         "name": "signed_tx_base64",
-        "description": "Base64-encoded signed transaction. Generate a fresh signed payload for the signing account immediately before submission or status lookup."
+        "description": "Base64-encoded signed transaction"
       },
       {
         "name": "wait_until",
@@ -2558,7 +2622,7 @@
       },
       {
         "name": "signed_tx_base64",
-        "description": "Base64-encoded signed transaction. Generate a fresh signed payload for the signing account immediately before submission or status lookup."
+        "description": "Base64-encoded Borsh serialization of a `SignedTransaction`; must be freshly signed (nonce above the access key's current value)."
       },
       {
         "name": "sender_account_id",
@@ -2835,12 +2899,20 @@
         "description": "NEAR account ID"
       },
       {
+        "name": "after_key_base64",
+        "description": "Exclusive start cursor: returns only keys greater than this one. Set to the prior response's `last_key` to page forward; omit to scan from the start of the prefix range."
+      },
+      {
         "name": "include_proof",
         "description": "Include a Merkle proof for the queried state alongside the values."
       },
       {
+        "name": "limit",
+        "description": "Maximum key/value entries per response (≥ 1). Omit for no client-set bound (subject to node limits)."
+      },
+      {
         "name": "prefix_base64",
-        "description": "Base64-encoded storage key prefix. Use an empty string (`\"\"`) to remove the prefix filter and return all matching contract state values. Large contracts can produce very large responses when no prefix is set."
+        "description": "Base64-encoded key prefix; returns only trie entries whose key begins with these bytes. Empty string (`\"\"`) removes the filter and returns the entire contract state — expensive on large contracts."
       }
     ],
     "response": "Successful response",
@@ -2848,6 +2920,10 @@
       {
         "name": "result",
         "description": "Resulting state values for a view state query request"
+      },
+      {
+        "name": "last_key",
+        "description": "Continuation cursor — the last key returned. Pass as `after_key_base64` to fetch the next page; absent when the result set is exhausted."
       }
     ]
   },

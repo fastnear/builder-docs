@@ -54,6 +54,7 @@
 - [RPC протокола NEAR: Отправка транзакции (асинхронно)](https://docs.fastnear.com/ru/rpcs/transaction/broadcast_tx_async.md): Отправить транзакцию асинхронно
 - [RPC протокола NEAR: Отправка транзакции (с подтверждением)](https://docs.fastnear.com/ru/rpcs/transaction/broadcast_tx_commit.md): Отправить транзакцию и дождаться подтверждения
 - [RPC протокола NEAR: Квитанция по ID](https://docs.fastnear.com/ru/rpcs/transaction/EXPERIMENTAL_receipt.md): Получить квитанцию по ID
+- [NEAR Protocol RPC: Resolve receipt to transaction](https://docs.fastnear.com/ru/rpcs/transaction/EXPERIMENTAL_receipt_to_tx.md): Resolve receipt to transaction
 - [RPC протокола NEAR: Подробный статус транзакции](https://docs.fastnear.com/ru/rpcs/transaction/EXPERIMENTAL_tx_status.md): Получить подробный статус транзакции
 - [RPC протокола NEAR: Отправить транзакцию](https://docs.fastnear.com/ru/rpcs/transaction/send_tx.md): Отправить транзакцию
 - [RPC протокола NEAR: Статус транзакции](https://docs.fastnear.com/ru/rpcs/transaction/tx_status.md): Проверить статус транзакции
