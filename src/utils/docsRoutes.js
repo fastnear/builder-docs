@@ -22,7 +22,6 @@ const HIDDEN_VISIBLE_BREADCRUMB_ROUTES = new Set([
   '/internationalization',
   '/snapshots',
   '/transaction-flow',
-  '/redocly-config',
 ]);
 
 const ROUTE_LABELS = {

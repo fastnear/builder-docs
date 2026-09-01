@@ -29,12 +29,10 @@ const EXCLUDED_ROUTE_PATTERNS = [
   "/apis/llms.txt",
   "/structured-data/**",
   "/api/reference",
-  "/redocly-config",
 ];
 
 const EXCLUDED_SITEMAP_ROUTES = [
   "/api/reference",
-  "/redocly-config",
 ];
 
 const EXCLUDED_SITEMAP_ROUTE_PREFIXES = [

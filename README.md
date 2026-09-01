@@ -120,7 +120,7 @@ Treat the clean root-mounted public docs as the public search surface.
 
 - Crawl: `/`, `/rpc/**`, `/api/**`, `/tx/**`, `/transfers/**`, `/neardata/**`, `/fastdata/**`, `/auth/**`, `/agents/**`, `/snapshots/**`
 - Exclude: `/rpcs/**`, `/apis/**`, `/**/*.md`, `/llms.txt`, `/llms-full.txt`, `/guides/llms.txt`, `/rpcs/llms.txt`, `/apis/llms.txt`, `/structured-data/**`
-- Exclude low-value utility pages already kept out of the sitemap: `/api/reference`, `/redocly-config`
+- Exclude low-value utility pages already kept out of the sitemap: `/api/reference`
 - Add `category`, `method_type`, `surface`, `family`, `audience`, and `page_type` to `attributesForFaceting`
 - Use [algolia/crawler/shared.js](/Users/mikepurvis/near/fn/builder-docs/algolia/crawler/shared.js) as the shared crawler definition for repo-managed sync
 - Use [algolia/docsearch-crawler.config.js](/Users/mikepurvis/near/fn/builder-docs/algolia/docsearch-crawler.config.js) as the generated pasteable crawler editor artifact

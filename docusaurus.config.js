@@ -360,7 +360,8 @@ function buildLegacyRedirects() {
 
   addRedirect('/docs', '/');
   addRedirect('/docs/rpc-api', '/');
-  addRedirect('/docs/redocly-config', '/redocly-config');
+  addRedirect('/docs/redocly-config', '/auth');
+  addRedirect('/redocly-config', '/auth');
 
   readDocSlugs().forEach((slug) => {
     if (slug !== '/') {
@@ -509,7 +510,6 @@ const config = {
           changefreq: null,
           ignorePatterns: buildLocalizedIgnorePatterns([
             '/api/reference',
-            '/redocly-config',
             '/transaction-flow',
             '/transaction-flow/**',
             '/debug',

@@ -5100,19 +5100,6 @@
     },
     {
       "entityIds": {
-        "familyIds": [],
-        "mainEntityId": null,
-        "pageId": "https://docs.fastnear.com/ru/redocly-config#page"
-      },
-      "indexable": true,
-      "markdownMirrorUrl": "https://docs.fastnear.com/ru/redocly-config.md",
-      "pageSchemaType": "TechArticle",
-      "route": "/ru/redocly-config",
-      "routeType": "docs",
-      "url": "https://docs.fastnear.com/ru/redocly-config"
-    },
-    {
-      "entityIds": {
         "familyIds": [
           "https://docs.fastnear.com/structured-data/families/rpc-account",
           "https://docs.fastnear.com/structured-data/families/rpc-block",

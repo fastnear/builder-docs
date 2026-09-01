@@ -112,7 +112,6 @@ waves:
       - neardata-system-health
   wave2:
     docs:
-      - redocly-config.md
       - internationalization.md
       - api/examples.md
       - api/reference.md
