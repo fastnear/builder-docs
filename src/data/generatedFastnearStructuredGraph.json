@@ -2222,7 +2222,7 @@
       "transport": "http"
     },
     {
-      "authSummary": "API key via query apiKey",
+      "authSummary": "Bearer token via Authorization header; API key via query apiKey",
       "canonicalPath": "/rpcs/account/view_access_key",
       "description": "Fetch one access key's permissions and nonce by public key on a given account.",
       "docsPath": "/rpc/account/view-access-key",
@@ -2249,7 +2249,7 @@
       "transport": "json-rpc"
     },
     {
-      "authSummary": "API key via query apiKey",
+      "authSummary": "Bearer token via Authorization header; API key via query apiKey",
       "canonicalPath": "/rpcs/account/view_access_key_list",
       "description": "Fetch every access key attached to an account, each with its permissions and nonce.",
       "docsPath": "/rpc/account/view-access-key-list",
@@ -2276,7 +2276,7 @@
       "transport": "json-rpc"
     },
     {
-      "authSummary": "API key via query apiKey",
+      "authSummary": "Bearer token via Authorization header; API key via query apiKey",
       "canonicalPath": "/rpcs/account/view_account",
       "description": "Fetch an account's balance, storage usage, and code hash at a chosen block or finality.",
       "docsPath": "/rpc/account/view-account",
@@ -2303,7 +2303,7 @@
       "transport": "json-rpc"
     },
     {
-      "authSummary": "API key via query apiKey",
+      "authSummary": "Bearer token via Authorization header; API key via query apiKey",
       "canonicalPath": "/rpcs/block/block_by_height",
       "description": "Fetch a block's header and chunk summaries by its height in the chain.",
       "docsPath": "/rpc/block/block-by-height",
@@ -2330,7 +2330,7 @@
       "transport": "json-rpc"
     },
     {
-      "authSummary": "API key via query apiKey",
+      "authSummary": "Bearer token via Authorization header; API key via query apiKey",
       "canonicalPath": "/rpcs/block/block_by_id",
       "description": "Fetch a block's header and chunk summaries by its Base58-encoded SHA-256 hash.",
       "docsPath": "/rpc/block/block-by-id",
@@ -2357,7 +2357,7 @@
       "transport": "json-rpc"
     },
     {
-      "authSummary": "API key via query apiKey",
+      "authSummary": "Bearer token via Authorization header; API key via query apiKey",
       "canonicalPath": "/rpcs/block/block_effects",
       "description": "Summarize every state change in a block — which accounts, keys, and contract-state entries were touched.",
       "docsPath": "/rpc/block/block-effects",
@@ -2384,7 +2384,7 @@
       "transport": "json-rpc"
     },
     {
-      "authSummary": "API key via query apiKey",
+      "authSummary": "Bearer token via Authorization header; API key via query apiKey",
       "canonicalPath": "/rpcs/contract/call",
       "description": "Invoke a contract view method without gas or state changes — reads computed values from contract logic.",
       "docsPath": "/rpc/contract/call-function",
@@ -2411,7 +2411,7 @@
       "transport": "json-rpc"
     },
     {
-      "authSummary": "API key via query apiKey",
+      "authSummary": "Bearer token via Authorization header; API key via query apiKey",
       "canonicalPath": "/rpcs/contract/view_code",
       "description": "Fetch the compiled WebAssembly bytes deployed directly to a single account.",
       "docsPath": "/rpc/contract/view-code",
@@ -2438,7 +2438,7 @@
       "transport": "json-rpc"
     },
     {
-      "authSummary": "API key via query apiKey",
+      "authSummary": "Bearer token via Authorization header; API key via query apiKey",
       "canonicalPath": "/rpcs/contract/view_global_contract_code",
       "description": "Look up a global contract's WebAssembly bytes by its Base58-encoded SHA-256 code hash.",
       "docsPath": "/rpc/contract/view-global-contract-code",
@@ -2465,7 +2465,7 @@
       "transport": "json-rpc"
     },
     {
-      "authSummary": "API key via query apiKey",
+      "authSummary": "Bearer token via Authorization header; API key via query apiKey",
       "canonicalPath": "/rpcs/contract/view_global_contract_code_by_account_id",
       "description": "Look up a global contract's WebAssembly bytes by the account that registered it.",
       "docsPath": "/rpc/contract/view-global-contract-code-by-account-id",
@@ -2492,7 +2492,7 @@
       "transport": "json-rpc"
     },
     {
-      "authSummary": "API key via query apiKey",
+      "authSummary": "Bearer token via Authorization header; API key via query apiKey",
       "canonicalPath": "/rpcs/contract/view_state",
       "description": "Fetch the raw key-value state a contract has written, optionally filtered by key prefix.",
       "docsPath": "/rpc/contract/view-state",
@@ -2519,7 +2519,7 @@
       "transport": "json-rpc"
     },
     {
-      "authSummary": "API key via query apiKey",
+      "authSummary": "Bearer token via Authorization header; API key via query apiKey",
       "canonicalPath": "/rpcs/protocol/changes",
       "description": "Fetch detailed state changes in a block — filter by account, key prefix, or change type.",
       "docsPath": "/rpc/protocol/changes",
@@ -2546,7 +2546,7 @@
       "transport": "json-rpc"
     },
     {
-      "authSummary": "API key via query apiKey",
+      "authSummary": "Bearer token via Authorization header; API key via query apiKey",
       "canonicalPath": "/rpcs/protocol/chunk_by_block_shard",
       "description": "Fetch a single chunk's transactions and receipts by its parent block plus shard index.",
       "docsPath": "/rpc/protocol/chunk-by-block-shard",
@@ -2573,7 +2573,7 @@
       "transport": "json-rpc"
     },
     {
-      "authSummary": "API key via query apiKey",
+      "authSummary": "Bearer token via Authorization header; API key via query apiKey",
       "canonicalPath": "/rpcs/protocol/chunk_by_hash",
       "description": "Fetch a single chunk's transactions and receipts by its Base58 content hash.",
       "docsPath": "/rpc/protocol/chunk-by-hash",
@@ -2600,7 +2600,7 @@
       "transport": "json-rpc"
     },
     {
-      "authSummary": "API key via query apiKey",
+      "authSummary": "Bearer token via Authorization header; API key via query apiKey",
       "canonicalPath": "/rpcs/protocol/client_config",
       "description": "Fetch the node's own local client config — timeouts, retry settings, and operator-chosen parameters.",
       "docsPath": "/rpc/protocol/client-config",
@@ -2627,7 +2627,7 @@
       "transport": "json-rpc"
     },
     {
-      "authSummary": "API key via query apiKey",
+      "authSummary": "Bearer token via Authorization header; API key via query apiKey",
       "canonicalPath": "/rpcs/protocol/EXPERIMENTAL_congestion_level",
       "description": "Measure a single shard's congestion pressure at a chosen block — a 0.0-to-1.0 saturation score.",
       "docsPath": "/rpc/protocol/experimental-congestion-level",
@@ -2654,7 +2654,7 @@
       "transport": "json-rpc"
     },
     {
-      "authSummary": "API key via query apiKey",
+      "authSummary": "Bearer token via Authorization header; API key via query apiKey",
       "canonicalPath": "/rpcs/protocol/EXPERIMENTAL_light_client_block_proof",
       "description": "Fetch a Merkle proof — by Base58 block and light-client-head hashes — that the block is included in the light client's verified chain.",
       "docsPath": "/rpc/protocol/experimental-light-client-block-proof",
@@ -2681,7 +2681,7 @@
       "transport": "json-rpc"
     },
     {
-      "authSummary": "API key via query apiKey",
+      "authSummary": "Bearer token via Authorization header; API key via query apiKey",
       "canonicalPath": "/rpcs/protocol/EXPERIMENTAL_light_client_proof",
       "description": "Fetch a Merkle proof of transaction or receipt inclusion by Base58 ID — the EXPERIMENTAL alias of `light_client_proof`.",
       "docsPath": "/rpc/protocol/experimental-light-client-proof",
@@ -2708,7 +2708,7 @@
       "transport": "json-rpc"
     },
     {
-      "authSummary": "API key via query apiKey",
+      "authSummary": "Bearer token via Authorization header; API key via query apiKey",
       "canonicalPath": "/rpcs/protocol/EXPERIMENTAL_protocol_config",
       "description": "Fetch the runtime protocol config at a chosen block — gas costs, storage prices, and limits currently in force.",
       "docsPath": "/rpc/protocol/experimental-protocol-config",
@@ -2735,7 +2735,7 @@
       "transport": "json-rpc"
     },
     {
-      "authSummary": "API key via query apiKey",
+      "authSummary": "Bearer token via Authorization header; API key via query apiKey",
       "canonicalPath": "/rpcs/protocol/EXPERIMENTAL_split_storage_info",
       "description": "Inspect a node's split-storage layout — the boundary between hot recent data and cold archival data.",
       "docsPath": "/rpc/protocol/experimental-split-storage-info",
@@ -2762,7 +2762,7 @@
       "transport": "json-rpc"
     },
     {
-      "authSummary": "API key via query apiKey",
+      "authSummary": "Bearer token via Authorization header; API key via query apiKey",
       "canonicalPath": "/rpcs/protocol/gas_price",
       "description": "Fetch the current chain-wide gas price for the most recent block.",
       "docsPath": "/rpc/protocol/gas-price",
@@ -2789,7 +2789,7 @@
       "transport": "json-rpc"
     },
     {
-      "authSummary": "API key via query apiKey",
+      "authSummary": "Bearer token via Authorization header; API key via query apiKey",
       "canonicalPath": "/rpcs/protocol/gas_price_by_block",
       "description": "Fetch the chain-wide gas price at a chosen historical block, by height or hash.",
       "docsPath": "/rpc/protocol/gas-price-by-block",
@@ -2816,7 +2816,7 @@
       "transport": "json-rpc"
     },
     {
-      "authSummary": "API key via query apiKey",
+      "authSummary": "Bearer token via Authorization header; API key via query apiKey",
       "canonicalPath": "/rpcs/protocol/genesis_config",
       "description": "Fetch the chain's immutable genesis config — initial records, protocol settings, and epoch length at block 0.",
       "docsPath": "/rpc/protocol/genesis-config",
@@ -2843,7 +2843,7 @@
       "transport": "json-rpc"
     },
     {
-      "authSummary": "API key via query apiKey",
+      "authSummary": "Bearer token via Authorization header; API key via query apiKey",
       "canonicalPath": "/rpcs/protocol/health",
       "description": "Ping a node for liveness — returns `null` on success, an error on unhealthy state.",
       "docsPath": "/rpc/protocol/health",
@@ -2870,7 +2870,7 @@
       "transport": "json-rpc"
     },
     {
-      "authSummary": "API key via query apiKey",
+      "authSummary": "Bearer token via Authorization header; API key via query apiKey",
       "canonicalPath": "/rpcs/protocol/latest_block",
       "description": "Fetch the latest final block — finality set automatically, no block ID needed.",
       "docsPath": "/rpc/protocol/latest-block",
@@ -2899,7 +2899,7 @@
       "transport": "json-rpc"
     },
     {
-      "authSummary": "API key via query apiKey",
+      "authSummary": "Bearer token via Authorization header; API key via query apiKey",
       "canonicalPath": "/rpcs/protocol/light_client_proof",
       "description": "Fetch a Merkle proof — by Base58 transaction or receipt ID — that the item was included and executed, suitable for light-client verification.",
       "docsPath": "/rpc/protocol/light-client-proof",
@@ -2926,7 +2926,7 @@
       "transport": "json-rpc"
     },
     {
-      "authSummary": "API key via query apiKey",
+      "authSummary": "Bearer token via Authorization header; API key via query apiKey",
       "canonicalPath": "/rpcs/protocol/maintenance_windows",
       "description": "Find upcoming block ranges where a validator can safely restart without missing block production.",
       "docsPath": "/rpc/protocol/maintenance-windows",
@@ -2953,7 +2953,7 @@
       "transport": "json-rpc"
     },
     {
-      "authSummary": "API key via query apiKey",
+      "authSummary": "Bearer token via Authorization header; API key via query apiKey",
       "canonicalPath": "/rpcs/protocol/metrics",
       "description": "Retrieves Prometheus-format node metrics from the HTTP `/metrics` endpoint. Requires an API key.",
       "docsPath": "/rpc/protocol/metrics",
@@ -2980,7 +2980,7 @@
       "transport": "json-rpc"
     },
     {
-      "authSummary": "API key via query apiKey",
+      "authSummary": "Bearer token via Authorization header; API key via query apiKey",
       "canonicalPath": "/rpcs/protocol/network_info",
       "description": "List the node's active peer connections and the block producers it currently tracks.",
       "docsPath": "/rpc/protocol/network-info",
@@ -3007,7 +3007,7 @@
       "transport": "json-rpc"
     },
     {
-      "authSummary": "API key via query apiKey",
+      "authSummary": "Bearer token via Authorization header; API key via query apiKey",
       "canonicalPath": "/rpcs/protocol/next_light_client_block",
       "description": "Advance a light client's verified chain by fetching the next block header after a known Base58 head hash.",
       "docsPath": "/rpc/protocol/next-light-client-block",
@@ -3034,7 +3034,7 @@
       "transport": "json-rpc"
     },
     {
-      "authSummary": "API key via query apiKey",
+      "authSummary": "Bearer token via Authorization header; API key via query apiKey",
       "canonicalPath": "/rpcs/protocol/status",
       "description": "Fetch a node's binary version, sync progress, and head block in one snapshot.",
       "docsPath": "/rpc/protocol/status",
@@ -3061,7 +3061,7 @@
       "transport": "json-rpc"
     },
     {
-      "authSummary": "API key via query apiKey",
+      "authSummary": "Bearer token via Authorization header; API key via query apiKey",
       "canonicalPath": "/rpcs/transaction/broadcast_tx_async",
       "description": "Broadcast a base64-encoded `SignedTransaction`; returns the transaction hash without awaiting inclusion or execution. Example payloads are placeholders and cannot be replayed.",
       "docsPath": "/rpc/transaction/broadcast-tx-async",
@@ -3088,7 +3088,7 @@
       "transport": "json-rpc"
     },
     {
-      "authSummary": "API key via query apiKey",
+      "authSummary": "Bearer token via Authorization header; API key via query apiKey",
       "canonicalPath": "/rpcs/transaction/broadcast_tx_commit",
       "description": "Broadcast a base64-encoded `SignedTransaction`; blocks until execution completes or a 10-second timeout elapses. Deprecated — use `send_tx`. Example payloads are placeholders and cannot be replayed.",
       "docsPath": "/rpc/transaction/broadcast-tx-commit",
@@ -3115,7 +3115,7 @@
       "transport": "json-rpc"
     },
     {
-      "authSummary": "API key via query apiKey",
+      "authSummary": "Bearer token via Authorization header; API key via query apiKey",
       "canonicalPath": "/rpcs/transaction/EXPERIMENTAL_receipt",
       "description": "Fetch a single receipt by Base58 ID — the cross-shard execution unit a transaction produces.",
       "docsPath": "/rpc/transaction/experimental-receipt",
@@ -3142,7 +3142,7 @@
       "transport": "json-rpc"
     },
     {
-      "authSummary": "API key via query apiKey",
+      "authSummary": "Bearer token via Authorization header; API key via query apiKey",
       "canonicalPath": "/rpcs/transaction/EXPERIMENTAL_receipt_to_tx",
       "description": "Resolve a receipt ID to the transaction hash and signer that produced it. Requires a node with `save_receipt_to_tx` enabled; unindexed receipts return `UNKNOWN_RECEIPT`.",
       "docsPath": "/rpc/transaction/experimental-receipt-to-tx",
@@ -3169,7 +3169,7 @@
       "transport": "json-rpc"
     },
     {
-      "authSummary": "API key via query apiKey",
+      "authSummary": "Bearer token via Authorization header; API key via query apiKey",
       "canonicalPath": "/rpcs/transaction/EXPERIMENTAL_tx_status",
       "description": "Fetch a transaction's full receipt tree and per-receipt outcomes by Base58 hash — richer than `tx_status`.",
       "docsPath": "/rpc/transaction/experimental-tx-status",
@@ -3196,7 +3196,7 @@
       "transport": "json-rpc"
     },
     {
-      "authSummary": "API key via query apiKey",
+      "authSummary": "Bearer token via Authorization header; API key via query apiKey",
       "canonicalPath": "/rpcs/transaction/send_tx",
       "description": "Broadcast a base64-encoded `SignedTransaction`; blocks until the execution outcome specified by `wait_until`. Example payloads are placeholders and cannot be replayed.",
       "docsPath": "/rpc/transaction/send-tx",
@@ -3223,7 +3223,7 @@
       "transport": "json-rpc"
     },
     {
-      "authSummary": "API key via query apiKey",
+      "authSummary": "Bearer token via Authorization header; API key via query apiKey",
       "canonicalPath": "/rpcs/transaction/tx_status",
       "description": "Check a transaction's final outcome by Base58 hash — succeeded, failed, or still unresolved.",
       "docsPath": "/rpc/transaction/tx-status",
@@ -3250,7 +3250,7 @@
       "transport": "json-rpc"
     },
     {
-      "authSummary": "API key via query apiKey",
+      "authSummary": "Bearer token via Authorization header; API key via query apiKey",
       "canonicalPath": "/rpcs/validators/EXPERIMENTAL_validators_ordered",
       "description": "List validators ordered by stake size at a chosen block — broader than just the current active set.",
       "docsPath": "/rpc/validators/experimental-validators-ordered",
@@ -3277,7 +3277,7 @@
       "transport": "json-rpc"
     },
     {
-      "authSummary": "API key via query apiKey",
+      "authSummary": "Bearer token via Authorization header; API key via query apiKey",
       "canonicalPath": "/rpcs/validators/validators_by_epoch",
       "description": "Fetch the validator set for a chosen past epoch, selected by epoch-start block height or Base58 epoch-id hash.",
       "docsPath": "/rpc/validators/validators-by-epoch",
@@ -3304,7 +3304,7 @@
       "transport": "json-rpc"
     },
     {
-      "authSummary": "API key via query apiKey",
+      "authSummary": "Bearer token via Authorization header; API key via query apiKey",
       "canonicalPath": "/rpcs/validators/validators_current",
       "description": "Fetch the active validator set for the current epoch, with stakes and performance stats.",
       "docsPath": "/rpc/validators/validators-current",
