@@ -14,6 +14,7 @@
 - Mainnet: https://rpc.mainnet.fastnear.com/
 - Testnet: https://rpc.testnet.fastnear.com/
 ## Авторизация
+- Bearer-токен через заголовок `Authorization: Bearer <token>`
 - API-ключ через query `apiKey`: Контракт OpenAPI описывает API-ключ FastNear как параметр запроса `apiKey`.
 - Этот экспорт намеренно не включает локально сохранённые учётные данные
 ## Текущий запрос

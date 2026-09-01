@@ -14,6 +14,7 @@
 - Mainnet: https://rpc.mainnet.fastnear.com/
 - Testnet: https://rpc.testnet.fastnear.com/
 ## Авторизация
+- Bearer-токен через заголовок `Authorization: Bearer <token>`
 - API-ключ через query `apiKey`: Контракт OpenAPI описывает API-ключ FastNear как параметр запроса `apiKey`.
 - Этот экспорт намеренно не включает локально сохранённые учётные данные
 ## Текущий запрос
@@ -141,18 +142,6 @@
       "schema": {
         "type": "object",
         "properties": [
-          {
-            "name": "avg_hidden_validator_seats_per_shard",
-            "required": false,
-            "schema": {
-              "type": "array",
-              "description": "Ожидаемое количество скрытых валидаторов на шард.",
-              "items": {
-                "type": "integer",
-                "format": "uint64"
-              }
-            }
-          },
           {
             "name": "block_producer_kickout_threshold",
             "required": false,
@@ -328,18 +317,6 @@
             }
           },
           {
-            "name": "num_block_producer_seats_per_shard",
-            "required": false,
-            "schema": {
-              "type": "array",
-              "description": "Задаёт количество шардов и количество мест для производителей блоков на каждый шард в генезисе.",
-              "items": {
-                "type": "integer",
-                "format": "uint64"
-              }
-            }
-          },
-          {
             "name": "num_blocks_per_year",
             "required": false,
             "schema": {
@@ -421,6 +398,15 @@
               "description": "Представление, сохраняющее JSON-формат конфигурации рантайма.",
               "properties": [
                 {
+                  "name": "account_creation_charge",
+                  "required": false,
+                  "schema": {
+                    "type": "string",
+                    "description": "Amount in yoctoNEAR",
+                    "default": "0"
+                  }
+                },
+                {
                   "name": "account_creation_config",
                   "required": false,
                   "schema": {
@@ -434,6 +420,15 @@
                   "schema": {
                     "type": "object",
                     "description": "The configuration for congestion control. More info about congestion [here](https://near.github.io/nearcore/architecture/how/receipt-congestion.html?highlight=congestion#receipt-congestion)"
+                  }
+                },
+                {
+                  "name": "min_gas_purchase_price",
+                  "required": false,
+                  "schema": {
+                    "type": "string",
+                    "description": "Amount in yoctoNEAR",
+                    "default": "0"
                   }
                 },
                 {
@@ -503,6 +498,30 @@
               "type": "integer",
               "description": "Количество блоков, в течение которых заданная транзакция действительна",
               "format": "uint64"
+            }
+          },
+          {
+            "name": "avg_hidden_validator_seats_per_shard",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "description": "Ожидаемое количество скрытых валидаторов на шард.",
+              "items": {
+                "type": "integer",
+                "format": "uint64"
+              }
+            }
+          },
+          {
+            "name": "num_block_producer_seats_per_shard",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "description": "Задаёт количество шардов и количество мест для производителей блоков на каждый шард в генезисе.",
+              "items": {
+                "type": "integer",
+                "format": "uint64"
+              }
             }
           }
         ]

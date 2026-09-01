@@ -1258,6 +1258,17 @@ function FastnearOperationPage({ pageModel }) {
   const selectedNetworkDetails =
     pageModel.interaction.networks.find((network) => network.key === selectedNetwork) ||
     pageModel.interaction.networks[0];
+
+  // Set by the mike-docs page-model generator when this network resolves to the
+  // archival host, which happens when the operation's EXAMPLE pins a record older
+  // than the standard RPC's retention window. It describes the example, not the
+  // method, so it is shown as a note instead of relabelling the network.
+  //
+  // The note is built from localized strings only. The per-operation
+  // `archivalReason` on the network is English text authored in mike-docs config;
+  // interpolating it here produced a half-translated sentence in the ru build. It
+  // stays machine-facing, in the generated AI surfaces.
+  const isArchivalEndpoint = Boolean(selectedNetworkDetails?.archival);
   const selectedExample =
     pageModel.request.examples.find((example) => example.id === selectedExampleId) ||
     pageModel.request.examples.find((example) => example.network === selectedNetwork) ||
@@ -2272,6 +2283,11 @@ function FastnearOperationPage({ pageModel }) {
                     ? selectedNetworkDetails?.url
                     : requestUrl?.origin || selectedNetworkDetails?.url}
                 </code>
+                {isArchivalEndpoint ? (
+                  <p className="fastnear-interaction__meta-note">
+                    {uiText.archivalEndpoint} — {uiText.archivalEndpointDetail}
+                  </p>
+                ) : null}
               </div>
               {pageModel.interaction.supportsFinality ? (
                 <div className="fastnear-interaction__meta-item fastnear-interaction__meta-item--finality">

@@ -44,7 +44,9 @@
           },
           "key": "mainnet",
           "label": "Mainnet",
-          "url": "https://rpc.mainnet.fastnear.com"
+          "url": "https://archival-rpc.mainnet.fastnear.com",
+          "archival": true,
+          "archivalReason": "Pinned epoch, older than standard RPC retention."
         },
         {
           "defaultFields": {
@@ -52,7 +54,9 @@
           },
           "key": "testnet",
           "label": "Testnet",
-          "url": "https://rpc.testnet.fastnear.com"
+          "url": "https://archival-rpc.testnet.fastnear.com",
+          "archival": true,
+          "archivalReason": "Pinned epoch, older than standard RPC retention."
         }
       ],
       "requestMethod": "EXPERIMENTAL_validators_ordered",
@@ -269,7 +273,13 @@
     ],
     "securitySchemes": [
       {
-        "description": "The OpenAPI contract describes the FastNEAR API key as a query parameter named apiKey.",
+        "description": "FastNEAR API key sent as an `Authorization: Bearer` header; recommended when you control the client.",
+        "id": "BearerAuth",
+        "scheme": "bearer",
+        "type": "http"
+      },
+      {
+        "description": "FastNEAR API key as the `apiKey` query parameter; convenient for browsers, but the key appears in URLs and logs.",
         "id": "ApiKeyAuth",
         "in": "query",
         "name": "apiKey",
@@ -311,15 +321,19 @@
           },
           "key": "mainnet",
           "label": "Mainnet",
-          "url": "https://rpc.mainnet.fastnear.com"
+          "url": "https://archival-rpc.mainnet.fastnear.com",
+          "archival": true,
+          "archivalReason": "Pinned epoch, older than standard RPC retention."
         },
         {
           "defaultFields": {
-            "epoch_id": "3KWUtEFtzmmmc93EYpD3ehb4LE11YJ2jCFkqWhygkbaR"
+            "epoch_id": "BARiarhzfSL7G737ik4AukX9sFYH1iR3dYU3KNUAvF3e"
           },
           "key": "testnet",
           "label": "Testnet",
-          "url": "https://rpc.testnet.fastnear.com"
+          "url": "https://archival-rpc.testnet.fastnear.com",
+          "archival": true,
+          "archivalReason": "Pinned epoch, older than standard RPC retention."
         }
       ],
       "requestMethod": "validators",
@@ -417,7 +431,7 @@
               "id": "fastnear",
               "method": "validators",
               "params": {
-                "epoch_id": "3KWUtEFtzmmmc93EYpD3ehb4LE11YJ2jCFkqWhygkbaR"
+                "epoch_id": "BARiarhzfSL7G737ik4AukX9sFYH1iR3dYU3KNUAvF3e"
               }
             },
             "headers": {},
@@ -624,7 +638,13 @@
     ],
     "securitySchemes": [
       {
-        "description": "The OpenAPI contract describes the FastNEAR API key as a query parameter named apiKey.",
+        "description": "FastNEAR API key sent as an `Authorization: Bearer` header; recommended when you control the client.",
+        "id": "BearerAuth",
+        "scheme": "bearer",
+        "type": "http"
+      },
+      {
+        "description": "FastNEAR API key as the `apiKey` query parameter; convenient for browsers, but the key appears in URLs and logs.",
         "id": "ApiKeyAuth",
         "in": "query",
         "name": "apiKey",
@@ -956,7 +976,13 @@
     ],
     "securitySchemes": [
       {
-        "description": "The OpenAPI contract describes the FastNEAR API key as a query parameter named apiKey.",
+        "description": "FastNEAR API key sent as an `Authorization: Bearer` header; recommended when you control the client.",
+        "id": "BearerAuth",
+        "scheme": "bearer",
+        "type": "http"
+      },
+      {
+        "description": "FastNEAR API key as the `apiKey` query parameter; convenient for browsers, but the key appears in URLs and logs.",
         "id": "ApiKeyAuth",
         "in": "query",
         "name": "apiKey",

@@ -13,9 +13,8 @@
 ## Сети
 - Архивный RPC mainnet: https://rpc.mainnet.fastnear.com/
 - Архивный RPC testnet: https://rpc.testnet.fastnear.com/
-- Архивный RPC mainnet: https://archival-rpc.mainnet.fastnear.com/
-- Архивный RPC testnet: https://archival-rpc.testnet.fastnear.com/
 ## Авторизация
+- Bearer-токен через заголовок `Authorization: Bearer <token>`
 - API-ключ через query `apiKey`: Контракт OpenAPI описывает API-ключ FastNear как параметр запроса `apiKey`.
 - Этот экспорт намеренно не включает локально сохранённые учётные данные
 ## Текущий запрос

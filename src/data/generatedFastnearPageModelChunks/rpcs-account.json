@@ -321,7 +321,13 @@
     ],
     "securitySchemes": [
       {
-        "description": "The OpenAPI contract describes the FastNEAR API key as a query parameter named apiKey.",
+        "description": "FastNEAR API key sent as an `Authorization: Bearer` header; recommended when you control the client.",
+        "id": "BearerAuth",
+        "scheme": "bearer",
+        "type": "http"
+      },
+      {
+        "description": "FastNEAR API key as the `apiKey` query parameter; convenient for browsers, but the key appears in URLs and logs.",
         "id": "ApiKeyAuth",
         "in": "query",
         "name": "apiKey",
@@ -568,7 +574,7 @@
                       "type": "array",
                       "items": {
                         "type": "object",
-                        "description": "Describes information about an access key including the public key."
+                        "description": "Describes information about an access key including its on-trie\nidentifier. For ed25519/secp256k1 access keys the `public_key` field\nis the full public key (string form unchanged from before); for\nML-DSA-65 access keys it is a `ml-dsa-65-hash:...` SHA3-256 digest\n(the full pubkey is not stored on-chain)."
                       }
                     }
                   }
@@ -622,7 +628,13 @@
     ],
     "securitySchemes": [
       {
-        "description": "The OpenAPI contract describes the FastNEAR API key as a query parameter named apiKey.",
+        "description": "FastNEAR API key sent as an `Authorization: Bearer` header; recommended when you control the client.",
+        "id": "BearerAuth",
+        "scheme": "bearer",
+        "type": "http"
+      },
+      {
+        "description": "FastNEAR API key as the `apiKey` query parameter; convenient for browsers, but the key appears in URLs and logs.",
         "id": "ApiKeyAuth",
         "in": "query",
         "name": "apiKey",
@@ -975,7 +987,13 @@
     ],
     "securitySchemes": [
       {
-        "description": "The OpenAPI contract describes the FastNEAR API key as a query parameter named apiKey.",
+        "description": "FastNEAR API key sent as an `Authorization: Bearer` header; recommended when you control the client.",
+        "id": "BearerAuth",
+        "scheme": "bearer",
+        "type": "http"
+      },
+      {
+        "description": "FastNEAR API key as the `apiKey` query parameter; convenient for browsers, but the key appears in URLs and logs.",
         "id": "ApiKeyAuth",
         "in": "query",
         "name": "apiKey",

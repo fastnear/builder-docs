@@ -482,6 +482,12 @@
   "fastnear.operationUi.expandResponse": {
     "message": "Развернуть ответ"
   },
+  "fastnear.operationUi.archivalEndpoint": {
+    "message": "Архивный эндпоинт"
+  },
+  "fastnear.operationUi.archivalEndpointDetail": {
+    "message": "Этот пример обращается к записи старше окна хранения стандартного RPC. Сам метод работает на стандартном RPC для недавних данных."
+  },
   "fastnear.operationUi.endpoint": {
     "message": "Эндпоинт"
   },

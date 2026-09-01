@@ -11,15 +11,16 @@ Resolve a receipt ID to the transaction hash and signer that produced it. Requir
 - Путь: `/`
 - Исходная спецификация: `rpcs/transaction/EXPERIMENTAL_receipt_to_tx.yaml`
 ## Сети
-- Mainnet: https://rpc.mainnet.fastnear.com/
-- Testnet: https://rpc.testnet.fastnear.com/
+- Mainnet: https://archival-rpc.mainnet.fastnear.com/ (archival: Pinned receipt plus block_height anchor, older than standard RPC retention.)
+- Testnet: https://archival-rpc.testnet.fastnear.com/ (archival: Pinned receipt plus block_height anchor, older than standard RPC retention.)
 ## Авторизация
-- API-ключ через query `apiKey`: Контракт OpenAPI описывает API-ключ FastNEAR как параметр запроса с именем apiKey.
+- Bearer-токен через заголовок `Authorization: Bearer <token>`
+- API-ключ через query `apiKey`: FastNEAR API key as the `apiKey` query parameter; convenient for browsers, but the key appears in URLs and logs.
 - Этот экспорт намеренно не включает локально сохранённые учётные данные
 ## Текущий запрос
 - Сеть: Mainnet
 - Финальность: final
-- Эндпоинт: https://rpc.mainnet.fastnear.com/
+- Эндпоинт: https://archival-rpc.mainnet.fastnear.com/
 ### Тело запроса
 ```json
 {
@@ -27,7 +28,8 @@ Resolve a receipt ID to the transaction hash and signer that produced it. Requir
   "id": "fastnear",
   "method": "EXPERIMENTAL_receipt_to_tx",
   "params": {
-    "receipt_id": "FcFKrKQziMPCgYMFiLMZwecBtA7vqxdkatkhc1j3GYj8"
+    "receipt_id": "ETMK9HmPsAYcNxfSXBejMWQs57W4Ph5HDYoYhDMpotQn",
+    "block_height": 194263442
   }
 }
 ```
@@ -40,7 +42,8 @@ Resolve a receipt ID to the transaction hash and signer that produced it. Requir
     "id": "fastnear",
     "method": "EXPERIMENTAL_receipt_to_tx",
     "params": {
-      "receipt_id": "FcFKrKQziMPCgYMFiLMZwecBtA7vqxdkatkhc1j3GYj8"
+      "receipt_id": "ETMK9HmPsAYcNxfSXBejMWQs57W4Ph5HDYoYhDMpotQn",
+      "block_height": 194263442
     }
   },
   "headers": {},

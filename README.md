@@ -220,6 +220,18 @@ npm run sync:apis
 That updates the generated page models copied into `builder-docs/src/data/generatedFastnearPageModels.json`.
 It also refreshes the structured graph copied into `builder-docs/src/data/generatedFastnearStructuredGraph.json`.
 
+Then rebuild here, because `src/data/generatedFastnearPageModelChunks/*` and
+`generatedFastnearOperationSearchContent.*` are build-derived from those two files and are
+what the browser actually loads — the top-level registry is never imported at runtime:
+
+```bash
+cd /Users/mikepurvis/near/fn/builder-docs
+yarn build
+```
+
+Commit the regenerated chunks alongside the vendored registry, or the committed chunks
+drift silently from it.
+
 ## Feature Branch Workflow
 
 - `builder-docs` is the main product branch and deployment repo for `docs.fastnear.com`.

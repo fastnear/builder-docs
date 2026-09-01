@@ -24,14 +24,14 @@
           }
         },
         {
-          "description": "Base64-encoded raw method arguments. JSON-based contracts typically expect UTF-8 bytes of the JSON payload; the example `e30=` is `{}`.",
+          "description": "Base64-encoded argument byte array passed to the method. JSON contracts expect the UTF-8 bytes of the JSON payload (`e30=` decodes to `{}`).",
           "label": "Args Base64",
           "location": "body",
           "name": "args_base64",
           "required": true,
           "schema": {
             "type": "string",
-            "description": "Base64-encoded raw method arguments. JSON-based contracts typically expect UTF-8 bytes of the JSON payload; the example `e30=` is `{}`."
+            "description": "Base64-encoded argument byte array passed to the method. JSON contracts expect the UTF-8 bytes of the JSON payload (`e30=` decodes to `{}`)."
           }
         },
         {
@@ -140,7 +140,7 @@
                   "required": true,
                   "schema": {
                     "type": "string",
-                    "description": "Base64-encoded raw method arguments. JSON-based contracts typically expect UTF-8 bytes of the JSON payload; the example `e30=` is `{}`."
+                    "description": "Base64-encoded argument byte array passed to the method. JSON contracts expect the UTF-8 bytes of the JSON payload (`e30=` decodes to `{}`)."
                   }
                 },
                 {
@@ -350,7 +350,13 @@
     ],
     "securitySchemes": [
       {
-        "description": "The OpenAPI contract describes the FastNEAR API key as a query parameter named apiKey.",
+        "description": "FastNEAR API key sent as an `Authorization: Bearer` header; recommended when you control the client.",
+        "id": "BearerAuth",
+        "scheme": "bearer",
+        "type": "http"
+      },
+      {
+        "description": "FastNEAR API key as the `apiKey` query parameter; convenient for browsers, but the key appears in URLs and logs.",
         "id": "ApiKeyAuth",
         "in": "query",
         "name": "apiKey",
@@ -656,7 +662,13 @@
     ],
     "securitySchemes": [
       {
-        "description": "The OpenAPI contract describes the FastNEAR API key as a query parameter named apiKey.",
+        "description": "FastNEAR API key sent as an `Authorization: Bearer` header; recommended when you control the client.",
+        "id": "BearerAuth",
+        "scheme": "bearer",
+        "type": "http"
+      },
+      {
+        "description": "FastNEAR API key as the `apiKey` query parameter; convenient for browsers, but the key appears in URLs and logs.",
         "id": "ApiKeyAuth",
         "in": "query",
         "name": "apiKey",
@@ -962,7 +974,13 @@
     ],
     "securitySchemes": [
       {
-        "description": "The OpenAPI contract describes the FastNEAR API key as a query parameter named apiKey.",
+        "description": "FastNEAR API key sent as an `Authorization: Bearer` header; recommended when you control the client.",
+        "id": "BearerAuth",
+        "scheme": "bearer",
+        "type": "http"
+      },
+      {
+        "description": "FastNEAR API key as the `apiKey` query parameter; convenient for browsers, but the key appears in URLs and logs.",
         "id": "ApiKeyAuth",
         "in": "query",
         "name": "apiKey",
@@ -1268,7 +1286,13 @@
     ],
     "securitySchemes": [
       {
-        "description": "The OpenAPI contract describes the FastNEAR API key as a query parameter named apiKey.",
+        "description": "FastNEAR API key sent as an `Authorization: Bearer` header; recommended when you control the client.",
+        "id": "BearerAuth",
+        "scheme": "bearer",
+        "type": "http"
+      },
+      {
+        "description": "FastNEAR API key as the `apiKey` query parameter; convenient for browsers, but the key appears in URLs and logs.",
         "id": "ApiKeyAuth",
         "in": "query",
         "name": "apiKey",
@@ -1302,6 +1326,18 @@
           }
         },
         {
+          "description": "Exclusive start cursor: returns only keys greater than this one. Set to the prior response's `last_key` to page forward; omit to scan from the start of the prefix range.",
+          "label": "After Key Base64",
+          "location": "body",
+          "name": "after_key_base64",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "nullable": true,
+            "description": "Exclusive start cursor: returns only keys greater than this one. Set to the prior response's `last_key` to page forward; omit to scan from the start of the prefix range."
+          }
+        },
+        {
           "description": "Include a Merkle proof for the queried state alongside the values.",
           "label": "Include Proof",
           "location": "body",
@@ -1313,14 +1349,27 @@
           }
         },
         {
-          "description": "Base64-encoded storage key prefix. Use an empty string (`\"\"`) to remove the prefix filter and return all matching contract state values. Large contracts can produce very large responses when no prefix is set.",
+          "description": "Maximum key/value entries per response (≥ 1). Omit for no client-set bound (subject to node limits).",
+          "label": "Limit",
+          "location": "body",
+          "name": "limit",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Maximum key/value entries per response (≥ 1). Omit for no client-set bound (subject to node limits).",
+            "format": "uint32"
+          }
+        },
+        {
+          "description": "Base64-encoded key prefix; returns only trie entries whose key begins with these bytes. Empty string (`\"\"`) removes the filter and returns the entire contract state — expensive on large contracts.",
           "label": "Prefix Base64",
           "location": "body",
           "name": "prefix_base64",
           "required": true,
           "schema": {
             "type": "string",
-            "description": "Base64-encoded storage key prefix. Use an empty string (`\"\"`) to remove the prefix filter and return all matching contract state values. Large contracts can produce very large responses when no prefix is set."
+            "description": "Base64-encoded key prefix; returns only trie entries whose key begins with these bytes. Empty string (`\"\"`) removes the filter and returns the entire contract state — expensive on large contracts."
           }
         }
       ],
@@ -1337,8 +1386,8 @@
         },
         {
           "defaultFields": {
-            "account_id": "v1.signer-prod.testnet",
-            "prefix_base64": "U1RBVEU="
+            "account_id": "counter.testnet",
+            "prefix_base64": ""
           },
           "key": "testnet",
           "label": "Testnet",
@@ -1411,6 +1460,15 @@
                   }
                 },
                 {
+                  "name": "after_key_base64",
+                  "required": false,
+                  "schema": {
+                    "type": "string",
+                    "nullable": true,
+                    "description": "Exclusive start cursor: returns only keys greater than this one. Set to the prior response's `last_key` to page forward; omit to scan from the start of the prefix range."
+                  }
+                },
+                {
                   "name": "include_proof",
                   "required": false,
                   "schema": {
@@ -1419,11 +1477,21 @@
                   }
                 },
                 {
+                  "name": "limit",
+                  "required": false,
+                  "schema": {
+                    "type": "integer",
+                    "nullable": true,
+                    "description": "Maximum key/value entries per response (≥ 1). Omit for no client-set bound (subject to node limits).",
+                    "format": "uint32"
+                  }
+                },
+                {
                   "name": "prefix_base64",
                   "required": true,
                   "schema": {
                     "type": "string",
-                    "description": "Base64-encoded storage key prefix. Use an empty string (`\"\"`) to remove the prefix filter and return all matching contract state values. Large contracts can produce very large responses when no prefix is set."
+                    "description": "Base64-encoded key prefix; returns only trie entries whose key begins with these bytes. Empty string (`\"\"`) removes the filter and returns the entire contract state — expensive on large contracts."
                   }
                 },
                 {
@@ -1488,8 +1556,8 @@
               "params": {
                 "request_type": "view_state",
                 "finality": "final",
-                "account_id": "v1.signer-prod.testnet",
-                "prefix_base64": "U1RBVEU="
+                "account_id": "counter.testnet",
+                "prefix_base64": ""
               }
             },
             "headers": {},
@@ -1551,6 +1619,15 @@
                   "values"
                 ],
                 "properties": [
+                  {
+                    "name": "last_key",
+                    "required": false,
+                    "schema": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Continuation cursor — the last key returned. Pass as `after_key_base64` to fetch the next page; absent when the result set is exhausted."
+                    }
+                  },
                   {
                     "name": "proof",
                     "required": false,
@@ -1622,7 +1699,13 @@
     ],
     "securitySchemes": [
       {
-        "description": "The OpenAPI contract describes the FastNEAR API key as a query parameter named apiKey.",
+        "description": "FastNEAR API key sent as an `Authorization: Bearer` header; recommended when you control the client.",
+        "id": "BearerAuth",
+        "scheme": "bearer",
+        "type": "http"
+      },
+      {
+        "description": "FastNEAR API key as the `apiKey` query parameter; convenient for browsers, but the key appears in URLs and logs.",
         "id": "ApiKeyAuth",
         "in": "query",
         "name": "apiKey",

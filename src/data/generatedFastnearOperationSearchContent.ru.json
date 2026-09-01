@@ -1424,10 +1424,6 @@
         "description": "Not clear old data, set `true` for archive nodes."
       },
       {
-        "name": "block_fetch_horizon",
-        "description": "Горизонт, после которого вместо получения блока извлекается полное состояние."
-      },
-      {
         "name": "block_header_fetch_horizon",
         "description": "Behind this horizon header fetch kicks in."
       },
@@ -1482,6 +1478,10 @@
       {
         "name": "polling_interval",
         "description": "Интервал, с которым система проверяет новые блоки или чанки для архивации."
+      },
+      {
+        "name": "snapshot_every_n_epochs",
+        "description": "Cadence of state snapshots, in epochs. Higher values reduce bucket cost at the expense of potentially longer delta replay during reader bootstrap."
       },
       {
         "name": "disable_tx_routing",
@@ -1608,6 +1608,18 @@
         "description": "Определяет, проверяет ли узел совместимость версии сети для следующей или через одну эпохи."
       },
       {
+        "name": "receipt_to_tx_max_hint_window",
+        "description": "Max `±window` accepted on `EXPERIMENTAL_receipt_to_tx` requests. Caps caller's `window`. Applies to pre-first-scan `CenterOut` against caller's literal hint; ancestor scans use `receipt_to_tx_max_hop_distance` instead. Operators raising this should also raise `receipt_to_tx_max_hop_distance` so backward reach matches caller's wider hint scope. Requests with `window` over this rejected with `WindowTooLarge`."
+      },
+      {
+        "name": "receipt_to_tx_max_hop_distance",
+        "description": "Max block-distance ancestor scan walks per hop once any scan in walk refreshed `current_height`. Subsequent column-miss scans visit `h, h-1, ..., h-max_hop_distance` from most-recent scan-refreshed anchor, regardless of column hits between. Anchor included — same-shard local receipts execute in same block as producing outcome. Raise if cold archival traffic shows ancestor misses — gap = scan-refreshed anchor to producer-outcome height of receipt with missing column row (column hits don't reset anchor). Default 20 (matches `receipt_to_tx_max_hint_window`)."
+      },
+      {
+        "name": "receipt_to_tx_max_outcomes_per_request",
+        "description": "Per-request ceiling on outcome rows the `EXPERIMENTAL_receipt_to_tx` hint-fallback scanner reads across hops + shards. Caps cold-RocksDB worst case on unauthenticated public endpoint. Default 20_000. Operators serving cold archival traffic with deep walks or sparse outcomes may raise; benchmark first (see TODO in `view_client_actor.rs`). Mid-scan exhaustion fails with `BudgetExceeded { scanned, limit }`."
+      },
+      {
         "name": "rpc_addr",
         "description": "Порт RPC для статуса, на котором слушает узел."
       },
@@ -1618,6 +1630,10 @@
       {
         "name": "save_latest_witnesses",
         "description": "Сохраняет наблюдаемые экземпляры ChunkStateWitness в базу данных DBCol::LatestChunkStateWitnesses. Сохранение последних экземпляров ChunkStateWitness полезно для анализа и отладки. Эта опция может создавать дополнительную нагрузку на базу данных и не рекомендуется для продового контура."
+      },
+      {
+        "name": "save_receipt_to_tx",
+        "description": "Whether to persist receipt-to-tx origin mappings to disk or not."
       },
       {
         "name": "save_state_changes",
@@ -1668,10 +1684,6 @@
         "description": "Синхронизирует состояние от пиров, не читая ничего из внешнего хранилища."
       },
       {
-        "name": "state_sync_enabled",
-        "description": "Использовать ли механизм State Sync. Если отключён, узел будет выполнять Block Sync вместо State Sync."
-      },
-      {
         "name": "state_sync_external_backoff",
         "description": "Дополнительное время ожидания после неудачного запроса к внешнему хранилищу"
       },
@@ -1712,6 +1724,10 @@
         "description": "Ограничение размера пула транзакций одного шарда в байтах. Если не задано, размер не ограничен."
       },
       {
+        "name": "transaction_pool_strict_nonce_ttl_blocks",
+        "description": "TTL in blocks for gapped strict-nonce transactions in the pool. Transactions with a nonce gap whose block_hash is older than this many blocks are evicted during prepare_transactions."
+      },
+      {
         "name": "trie_viewer_state_size_limit",
         "description": "Верхняя граница размера состояния контракта в байтах, при котором оно ещё доступно для просмотра. None — без ограничения"
       },
@@ -1730,6 +1746,14 @@
       {
         "name": "view_client_threads",
         "description": "Количество потоков для пула ViewClientActor."
+      },
+      {
+        "name": "block_fetch_horizon",
+        "description": "Горизонт, после которого вместо получения блока извлекается полное состояние."
+      },
+      {
+        "name": "state_sync_enabled",
+        "description": "Использовать ли механизм State Sync. Если отключён, узел будет выполнять Block Sync вместо State Sync."
       },
       {
         "name": "dynamic_resharding_dry_run",
@@ -1836,10 +1860,6 @@
     "response": "Успешный ответ",
     "schema": [
       {
-        "name": "avg_hidden_validator_seats_per_shard",
-        "description": "Ожидаемое количество скрытых валидаторов на шард."
-      },
-      {
         "name": "block_producer_kickout_threshold",
         "description": "Порог исключения производителей блоков, значение от 0 до 100."
       },
@@ -1916,10 +1936,6 @@
         "description": "Количество мест для производителей блоков в генезисе."
       },
       {
-        "name": "num_block_producer_seats_per_shard",
-        "description": "Задаёт количество шардов и количество мест для производителей блоков на каждый шард в генезисе."
-      },
-      {
         "name": "num_blocks_per_year",
         "description": "Ожидаемое количество блоков в год"
       },
@@ -1952,12 +1968,20 @@
         "description": "Представление, сохраняющее JSON-формат конфигурации рантайма."
       },
       {
+        "name": "account_creation_charge",
+        "description": "Amount in yoctoNEAR"
+      },
+      {
         "name": "account_creation_config",
         "description": "Структура описывает конфигурацию создания новых аккаунтов."
       },
       {
         "name": "congestion_control_config",
         "description": "The configuration for congestion control. More info about congestion [here](https://near.github.io/nearcore/architecture/how/receipt-congestion.html?highlight=congestion#receipt-congestion)"
+      },
+      {
+        "name": "min_gas_purchase_price",
+        "description": "Amount in yoctoNEAR"
       },
       {
         "name": "storage_amount_per_byte",
@@ -1990,6 +2014,14 @@
       {
         "name": "transaction_validity_period",
         "description": "Количество блоков, в течение которых заданная транзакция действительна"
+      },
+      {
+        "name": "avg_hidden_validator_seats_per_shard",
+        "description": "Ожидаемое количество скрытых валидаторов на шард."
+      },
+      {
+        "name": "num_block_producer_seats_per_shard",
+        "description": "Задаёт количество шардов и количество мест для производителей блоков на каждый шард в генезисе."
       }
     ]
   },
@@ -2022,6 +2054,38 @@
       {
         "name": "receiver_id",
         "description": "ID аккаунта NEAR"
+      }
+    ]
+  },
+  "rpc-EXPERIMENTAL-receipt-to-tx": {
+    "description": "Resolve a receipt ID to the transaction hash and signer that produced it. Requires a node with `save_receipt_to_tx` enabled; unindexed receipts return `UNKNOWN_RECEIPT`.",
+    "parameters": [
+      {
+        "name": "block_height",
+        "description": "Optional hint: block height near where the receipt was created, to bound the fallback scan."
+      },
+      {
+        "name": "receipt_id",
+        "description": "Base58-encoded receipt ID to resolve to its originating transaction."
+      },
+      {
+        "name": "shard_id",
+        "description": "Optional hint: shard to scan at the hint height; omit to scan all tracked shards."
+      },
+      {
+        "name": "window",
+        "description": "Optional hint: ± block-height window scanned around the hint before walking ancestor blocks."
+      }
+    ],
+    "response": "Успешный ответ",
+    "schema": [
+      {
+        "name": "sender_account_id",
+        "description": "ID аккаунта NEAR"
+      },
+      {
+        "name": "transaction_hash",
+        "description": "Base58-encoded hash"
       }
     ]
   },
@@ -2124,10 +2188,6 @@
     "response": "Успешный ответ",
     "schema": [
       {
-        "name": "avg_hidden_validator_seats_per_shard",
-        "description": "Ожидаемое количество скрытых валидаторов на шард."
-      },
-      {
         "name": "block_producer_kickout_threshold",
         "description": "Порог исключения производителей блоков, значение от 0 до 100."
       },
@@ -2208,16 +2268,8 @@
         "description": "Количество мест для производителей блоков в генезисе."
       },
       {
-        "name": "num_block_producer_seats_per_shard",
-        "description": "Задаёт количество шардов и количество мест для производителей блоков на каждый шард в генезисе. Прим.: не используется с protocol_feature_chunk_only_producers — заменено на minimum_validators_per_shard. Прим.: раньше не использовалось, так как все производители блоков выпускали чанки для всех шардов."
-      },
-      {
         "name": "num_blocks_per_year",
         "description": "Ожидаемое количество блоков в год"
-      },
-      {
-        "name": "num_chunk_only_producer_seats",
-        "description": "Deprecated."
       },
       {
         "name": "num_chunk_producer_seats",
@@ -2274,6 +2326,18 @@
       {
         "name": "валидаторы",
         "description": "Список начальных валидаторов."
+      },
+      {
+        "name": "avg_hidden_validator_seats_per_shard",
+        "description": "Ожидаемое количество скрытых валидаторов на шард."
+      },
+      {
+        "name": "num_block_producer_seats_per_shard",
+        "description": "Задаёт количество шардов и количество мест для производителей блоков на каждый шард в генезисе. Прим.: не используется с protocol_feature_chunk_only_producers — заменено на minimum_validators_per_shard. Прим.: раньше не использовалось, так как все производители блоков выпускали чанки для всех шардов."
+      },
+      {
+        "name": "num_chunk_only_producer_seats",
+        "description": "Deprecated."
       }
     ]
   },
@@ -2835,8 +2899,16 @@
         "description": "ID аккаунта NEAR."
       },
       {
+        "name": "after_key_base64",
+        "description": "Exclusive start cursor: returns only keys greater than this one. Set to the prior response's `last_key` to page forward; omit to scan from the start of the prefix range."
+      },
+      {
         "name": "include_proof",
         "description": "Добавить криптографическое доказательство к ответу."
+      },
+      {
+        "name": "limit",
+        "description": "Maximum key/value entries per response (≥ 1). Omit for no client-set bound (subject to node limits)."
       },
       {
         "name": "prefix_base64",
@@ -2848,6 +2920,10 @@
       {
         "name": "result",
         "description": "Итоговые значения состояния для запроса просмотра состояния"
+      },
+      {
+        "name": "last_key",
+        "description": "Continuation cursor — the last key returned. Pass as `after_key_base64` to fetch the next page; absent when the result set is exhausted."
       }
     ]
   },

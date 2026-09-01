@@ -97,6 +97,15 @@ export function getFastnearOperationUiText() {
       id: 'fastnear.operationUi.expandResponse',
       message: 'Expand response',
     }),
+    archivalEndpoint: translate({
+      id: 'fastnear.operationUi.archivalEndpoint',
+      message: 'Archival endpoint',
+    }),
+    archivalEndpointDetail: translate({
+      id: 'fastnear.operationUi.archivalEndpointDetail',
+      message:
+        'This example references a record older than the standard RPC retention window. The method itself works on the standard RPC for recent data.',
+    }),
     endpoint: translate({
       id: 'fastnear.operationUi.endpoint',
       message: 'Endpoint',

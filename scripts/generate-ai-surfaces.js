@@ -1071,7 +1071,14 @@ function formatNetworkLines(networks, labels) {
   }
 
   return networks
-    .map((network) => `- ${network.label || network.key}: ${sanitizePublicUrl(network.url)}`)
+    .map((network) => {
+      const line = `- ${network.label || network.key}: ${sanitizePublicUrl(network.url)}`;
+      // Say WHY when the example runs against archival. Without this an agent
+      // reading the AI surface sees an archival host and reasonably infers the
+      // method requires archival; it does not — the example just pins a record
+      // older than the standard RPC's retention window.
+      return network.archivalReason ? `${line} (archival: ${network.archivalReason})` : line;
+    })
     .join("\n");
 }
 

@@ -30,6 +30,7 @@
 ## Другие гайды
 
 - [Примеры API](https://docs.fastnear.com/ru/api/examples.md): Практические примеры FastNear API: поиск аккаунта по ключу, просмотр активов и классификация стейкинга.
+- [Браузерные ключи](https://docs.fastnear.com/ru/auth/browser-keys.md): Используйте API-ключ FastNear прямо из браузерного приложения, ограничив его доменами своего сайта, с лимитом частоты на ключ и ротацией в один клик.
 - [Руководство по интернационализации](https://docs.fastnear.com/ru/internationalization.md): Руководство для сопровождающих по добавлению локалей Docusaurus, локализованных оверлеев FastNear и безопасного для discovery процесса перевода.
 - [Примеры NEAR Data](https://docs.fastnear.com/ru/neardata/examples.md): Практические примеры NEAR Data: живой мониторинг, optimistic-проверки и доказательство на уровне shard.
 - [redocly-config](https://docs.fastnear.com/ru/redocly-config.md): Исторические заметки о прежнем бэкенде Redocly и о том, где он всё ещё важен для проверки документации FastNear.

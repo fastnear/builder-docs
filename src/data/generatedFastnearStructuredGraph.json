@@ -2881,8 +2881,6 @@
       "name": "NEAR Protocol RPC: Latest Block",
       "networkKeys": [
         "mainnet",
-        "testnet",
-        "mainnet",
         "testnet"
       ],
       "operationId": "latest_block",

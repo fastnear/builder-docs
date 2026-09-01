@@ -15,6 +15,7 @@
 - Mainnet: https://rpc.mainnet.fastnear.com/
 - Testnet: https://rpc.testnet.fastnear.com/
 ## Авторизация
+- Bearer-токен через заголовок `Authorization: Bearer <token>`
 - API-ключ через query `apiKey`: Контракт OpenAPI описывает API-ключ FastNear как параметр запроса `apiKey`.
 - Этот экспорт намеренно не включает локально сохранённые учётные данные
 ## Текущий запрос
@@ -126,7 +127,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "description": "Base64-кодированные сырые аргументы метода. Контракты, работающие с JSON, обычно ожидают UTF-8-байты JSON-полезной нагрузки; пример `e30=` соответствует `{}`."
+              "description": "Base64-encoded argument byte array passed to the method. JSON contracts expect the UTF-8 bytes of the JSON payload (`e30=` decodes to `{}`)."
             }
           },
           {

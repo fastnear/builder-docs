@@ -32,7 +32,9 @@
           },
           "key": "mainnet",
           "label": "Mainnet",
-          "url": "https://rpc.mainnet.fastnear.com"
+          "url": "https://archival-rpc.mainnet.fastnear.com",
+          "archival": true,
+          "archivalReason": "Pinned block height, older than standard RPC retention."
         },
         {
           "defaultFields": {
@@ -40,7 +42,9 @@
           },
           "key": "testnet",
           "label": "Testnet",
-          "url": "https://rpc.testnet.fastnear.com"
+          "url": "https://archival-rpc.testnet.fastnear.com",
+          "archival": true,
+          "archivalReason": "Pinned block height, older than standard RPC retention."
         }
       ],
       "requestMethod": "block",
@@ -244,7 +248,13 @@
     ],
     "securitySchemes": [
       {
-        "description": "The OpenAPI contract describes the FastNEAR API key as a query parameter named apiKey.",
+        "description": "FastNEAR API key sent as an `Authorization: Bearer` header; recommended when you control the client.",
+        "id": "BearerAuth",
+        "scheme": "bearer",
+        "type": "http"
+      },
+      {
+        "description": "FastNEAR API key as the `apiKey` query parameter; convenient for browsers, but the key appears in URLs and logs.",
         "id": "ApiKeyAuth",
         "in": "query",
         "name": "apiKey",
@@ -286,7 +296,9 @@
           },
           "key": "mainnet",
           "label": "Mainnet",
-          "url": "https://rpc.mainnet.fastnear.com"
+          "url": "https://archival-rpc.mainnet.fastnear.com",
+          "archival": true,
+          "archivalReason": "Pinned block hash, older than standard RPC retention."
         },
         {
           "defaultFields": {
@@ -294,7 +306,9 @@
           },
           "key": "testnet",
           "label": "Testnet",
-          "url": "https://rpc.testnet.fastnear.com"
+          "url": "https://archival-rpc.testnet.fastnear.com",
+          "archival": true,
+          "archivalReason": "Pinned block hash, older than standard RPC retention."
         }
       ],
       "requestMethod": "block",
@@ -498,7 +512,13 @@
     ],
     "securitySchemes": [
       {
-        "description": "The OpenAPI contract describes the FastNEAR API key as a query parameter named apiKey.",
+        "description": "FastNEAR API key sent as an `Authorization: Bearer` header; recommended when you control the client.",
+        "id": "BearerAuth",
+        "scheme": "bearer",
+        "type": "http"
+      },
+      {
+        "description": "FastNEAR API key as the `apiKey` query parameter; convenient for browsers, but the key appears in URLs and logs.",
         "id": "ApiKeyAuth",
         "in": "query",
         "name": "apiKey",
@@ -525,7 +545,7 @@
           "label": "Block ID",
           "location": "body",
           "name": "block_id",
-          "required": true,
+          "required": false,
           "schema": {
             "description": "Block height (integer) or block hash (string)",
             "oneOf": [
@@ -544,24 +564,20 @@
       "kind": "rpc-block-effects",
       "networks": [
         {
-          "defaultFields": {
-            "block_id": 9820210
-          },
+          "defaultFields": {},
           "key": "mainnet",
           "label": "Mainnet",
           "url": "https://rpc.mainnet.fastnear.com"
         },
         {
-          "defaultFields": {
-            "block_id": 245254793
-          },
+          "defaultFields": {},
           "key": "testnet",
           "label": "Testnet",
           "url": "https://rpc.testnet.fastnear.com"
         }
       ],
       "requestMethod": "block_effects",
-      "supportsFinality": false,
+      "supportsFinality": true,
       "transport": "json-rpc"
     },
     "pageModelId": "rpc-block-effects",
@@ -609,13 +625,10 @@
             "required": true,
             "schema": {
               "type": "object",
-              "required": [
-                "block_id"
-              ],
               "properties": [
                 {
                   "name": "block_id",
-                  "required": true,
+                  "required": false,
                   "schema": {
                     "description": "Block height (integer) or block hash (string)",
                     "oneOf": [
@@ -627,6 +640,19 @@
                         "type": "string",
                         "description": "Base58-encoded block hash"
                       }
+                    ]
+                  }
+                },
+                {
+                  "name": "finality",
+                  "required": false,
+                  "schema": {
+                    "type": "string",
+                    "description": "Block finality",
+                    "enum": [
+                      "final",
+                      "near-final",
+                      "optimistic"
                     ]
                   }
                 }
@@ -646,7 +672,7 @@
               "id": "fastnear",
               "method": "block_effects",
               "params": {
-                "block_id": 9820210
+                "finality": "final"
               }
             },
             "headers": {},
@@ -664,7 +690,7 @@
               "id": "fastnear",
               "method": "block_effects",
               "params": {
-                "block_id": 245254793
+                "finality": "final"
               }
             },
             "headers": {},
@@ -795,7 +821,13 @@
     ],
     "securitySchemes": [
       {
-        "description": "The OpenAPI contract describes the FastNEAR API key as a query parameter named apiKey.",
+        "description": "FastNEAR API key sent as an `Authorization: Bearer` header; recommended when you control the client.",
+        "id": "BearerAuth",
+        "scheme": "bearer",
+        "type": "http"
+      },
+      {
+        "description": "FastNEAR API key as the `apiKey` query parameter; convenient for browsers, but the key appears in URLs and logs.",
         "id": "ApiKeyAuth",
         "in": "query",
         "name": "apiKey",

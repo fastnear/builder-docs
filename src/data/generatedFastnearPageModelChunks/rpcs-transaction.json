@@ -32,7 +32,9 @@
           },
           "key": "mainnet",
           "label": "Mainnet",
-          "url": "https://rpc.mainnet.fastnear.com"
+          "url": "https://archival-rpc.mainnet.fastnear.com",
+          "archival": true,
+          "archivalReason": "Pinned receipt, older than standard RPC retention."
         },
         {
           "defaultFields": {
@@ -40,7 +42,9 @@
           },
           "key": "testnet",
           "label": "Testnet",
-          "url": "https://rpc.testnet.fastnear.com"
+          "url": "https://archival-rpc.testnet.fastnear.com",
+          "archival": true,
+          "archivalReason": "Pinned receipt, older than standard RPC retention."
         }
       ],
       "requestMethod": "EXPERIMENTAL_receipt",
@@ -294,7 +298,13 @@
     ],
     "securitySchemes": [
       {
-        "description": "The OpenAPI contract describes the FastNEAR API key as a query parameter named apiKey.",
+        "description": "FastNEAR API key sent as an `Authorization: Bearer` header; recommended when you control the client.",
+        "id": "BearerAuth",
+        "scheme": "bearer",
+        "type": "http"
+      },
+      {
+        "description": "FastNEAR API key as the `apiKey` query parameter; convenient for browsers, but the key appears in URLs and logs.",
         "id": "ApiKeyAuth",
         "in": "query",
         "name": "apiKey",
@@ -302,6 +312,363 @@
       }
     ],
     "sourceSpec": "rpcs/transaction/EXPERIMENTAL_receipt.yaml"
+  },
+  {
+    "canonicalPath": "/rpcs/transaction/EXPERIMENTAL_receipt_to_tx",
+    "info": {
+      "description": "Resolve a receipt ID to the transaction hash and signer that produced it. Requires a node with `save_receipt_to_tx` enabled; unindexed receipts return `UNKNOWN_RECEIPT`.",
+      "operationId": "EXPERIMENTAL_receipt_to_tx",
+      "summary": "Resolve receipt to transaction",
+      "title": "NEAR Protocol RPC: Resolve receipt to transaction",
+      "version": "1.0.0"
+    },
+    "interaction": {
+      "authTransport": "bearer",
+      "defaultId": "fastnear",
+      "fields": [
+        {
+          "description": "Optional hint: block height near where the receipt was created, to bound the fallback scan.",
+          "label": "Block Height",
+          "location": "body",
+          "name": "block_height",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Optional hint: block height near where the receipt was created, to bound the fallback scan.",
+            "format": "uint64"
+          }
+        },
+        {
+          "description": "Base58-encoded receipt ID to resolve to its originating transaction.",
+          "label": "Receipt Id",
+          "location": "body",
+          "name": "receipt_id",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "description": "Base58-encoded receipt ID to resolve to its originating transaction."
+          }
+        },
+        {
+          "description": "Optional hint: shard to scan at the hint height; omit to scan all tracked shards.",
+          "label": "Shard Id",
+          "location": "body",
+          "name": "shard_id",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Optional hint: shard to scan at the hint height; omit to scan all tracked shards."
+          }
+        },
+        {
+          "description": "Optional hint: ± block-height window scanned around the hint before walking ancestor blocks.",
+          "label": "Window",
+          "location": "body",
+          "name": "window",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Optional hint: ± block-height window scanned around the hint before walking ancestor blocks.",
+            "format": "uint64"
+          }
+        }
+      ],
+      "kind": "rpc-EXPERIMENTAL-receipt-to-tx",
+      "networks": [
+        {
+          "defaultFields": {
+            "block_height": 194263442,
+            "receipt_id": "ETMK9HmPsAYcNxfSXBejMWQs57W4Ph5HDYoYhDMpotQn"
+          },
+          "key": "mainnet",
+          "label": "Mainnet",
+          "url": "https://archival-rpc.mainnet.fastnear.com",
+          "archival": true,
+          "archivalReason": "Pinned receipt plus block_height anchor, older than standard RPC retention."
+        },
+        {
+          "defaultFields": {
+            "block_height": 246016180,
+            "receipt_id": "9uJmhNCLRgsFncH3anffPLE1YsZCPTyAZrBdekc3vTaZ"
+          },
+          "key": "testnet",
+          "label": "Testnet",
+          "url": "https://archival-rpc.testnet.fastnear.com",
+          "archival": true,
+          "archivalReason": "Pinned receipt plus block_height anchor, older than standard RPC retention."
+        }
+      ],
+      "requestMethod": "EXPERIMENTAL_receipt_to_tx",
+      "supportsFinality": false,
+      "transport": "json-rpc"
+    },
+    "pageModelId": "rpc-EXPERIMENTAL-receipt-to-tx",
+    "replaceOperationPage": true,
+    "request": {
+      "bodySchema": {
+        "type": "object",
+        "required": [
+          "jsonrpc",
+          "id",
+          "method",
+          "params"
+        ],
+        "properties": [
+          {
+            "name": "jsonrpc",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "2.0"
+              ]
+            }
+          },
+          {
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "fastnear"
+            }
+          },
+          {
+            "name": "method",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "EXPERIMENTAL_receipt_to_tx"
+              ]
+            }
+          },
+          {
+            "name": "params",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "receipt_id"
+              ],
+              "properties": [
+                {
+                  "name": "block_height",
+                  "required": false,
+                  "schema": {
+                    "type": "integer",
+                    "nullable": true,
+                    "description": "Optional hint: block height near where the receipt was created, to bound the fallback scan.",
+                    "format": "uint64"
+                  }
+                },
+                {
+                  "name": "receipt_id",
+                  "required": true,
+                  "schema": {
+                    "type": "string",
+                    "description": "Base58-encoded receipt ID to resolve to its originating transaction."
+                  }
+                },
+                {
+                  "name": "shard_id",
+                  "required": false,
+                  "schema": {
+                    "type": "integer",
+                    "nullable": true,
+                    "description": "Optional hint: shard to scan at the hint height; omit to scan all tracked shards."
+                  }
+                },
+                {
+                  "name": "window",
+                  "required": false,
+                  "schema": {
+                    "type": "integer",
+                    "nullable": true,
+                    "description": "Optional hint: ± block-height window scanned around the hint before walking ancestor blocks.",
+                    "format": "uint64"
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "examples": [
+        {
+          "id": "mainnet",
+          "label": "Resolve receipt to transaction (Mainnet)",
+          "network": "mainnet",
+          "request": {
+            "body": {
+              "jsonrpc": "2.0",
+              "id": "fastnear",
+              "method": "EXPERIMENTAL_receipt_to_tx",
+              "params": {
+                "receipt_id": "ETMK9HmPsAYcNxfSXBejMWQs57W4Ph5HDYoYhDMpotQn",
+                "block_height": 194263442
+              }
+            },
+            "headers": {},
+            "path": {},
+            "query": {}
+          }
+        },
+        {
+          "id": "testnet",
+          "label": "Resolve receipt to transaction (Testnet)",
+          "network": "testnet",
+          "request": {
+            "body": {
+              "jsonrpc": "2.0",
+              "id": "fastnear",
+              "method": "EXPERIMENTAL_receipt_to_tx",
+              "params": {
+                "receipt_id": "9uJmhNCLRgsFncH3anffPLE1YsZCPTyAZrBdekc3vTaZ",
+                "block_height": 246016180
+              }
+            },
+            "headers": {},
+            "path": {},
+            "query": {}
+          }
+        }
+      ],
+      "mediaType": "application/json",
+      "parameters": {
+        "header": [],
+        "path": [],
+        "query": []
+      },
+      "required": true
+    },
+    "responses": [
+      {
+        "description": "Successful response",
+        "mediaType": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "jsonrpc",
+            "id"
+          ],
+          "properties": [
+            {
+              "name": "jsonrpc",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "enum": [
+                  "2.0"
+                ]
+              }
+            },
+            {
+              "name": "id",
+              "required": true,
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "number"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "result",
+              "required": false,
+              "schema": {
+                "type": "object",
+                "required": [
+                  "transaction_hash",
+                  "sender_account_id"
+                ],
+                "properties": [
+                  {
+                    "name": "sender_account_id",
+                    "required": true,
+                    "schema": {
+                      "type": "string",
+                      "description": "NEAR account ID"
+                    }
+                  },
+                  {
+                    "name": "transaction_hash",
+                    "required": true,
+                    "schema": {
+                      "type": "string",
+                      "description": "Base58-encoded hash"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "name": "error",
+              "required": false,
+              "schema": {
+                "type": "object",
+                "properties": [
+                  {
+                    "name": "code",
+                    "required": false,
+                    "schema": {
+                      "type": "integer"
+                    }
+                  },
+                  {
+                    "name": "message",
+                    "required": false,
+                    "schema": {
+                      "type": "string"
+                    }
+                  },
+                  {
+                    "name": "data",
+                    "required": false,
+                    "schema": {
+                      "type": "object"
+                    }
+                  }
+                ]
+              }
+            }
+          ],
+          "refName": "JsonRpcResponse"
+        },
+        "status": "200"
+      }
+    ],
+    "route": {
+      "method": "POST",
+      "path": "/",
+      "transport": "json-rpc"
+    },
+    "routeAliases": [
+      "/rpcs/transaction/EXPERIMENTAL_receipt_to_tx/other/EXPERIMENTAL_receipt_to_tx",
+      "/reference/operation/EXPERIMENTAL_receipt_to_tx"
+    ],
+    "securitySchemes": [
+      {
+        "description": "FastNEAR API key sent as an `Authorization: Bearer` header; recommended when you control the client.",
+        "id": "BearerAuth",
+        "scheme": "bearer",
+        "type": "http"
+      },
+      {
+        "description": "FastNEAR API key as the `apiKey` query parameter; convenient for browsers, but the key appears in URLs and logs.",
+        "id": "ApiKeyAuth",
+        "in": "query",
+        "name": "apiKey",
+        "type": "apiKey"
+      }
+    ],
+    "sourceSpec": "rpcs/transaction/EXPERIMENTAL_receipt_to_tx.yaml"
   },
   {
     "canonicalPath": "/rpcs/transaction/EXPERIMENTAL_tx_status",
@@ -337,14 +704,14 @@
           }
         },
         {
-          "description": "Base64-encoded signed transaction. Generate a fresh signed payload for the signing account immediately before submission or status lookup.",
+          "description": "Base64-encoded Borsh serialization of a `SignedTransaction`; must be freshly signed (nonce above the access key's current value).",
           "label": "Signed Tx Base64",
           "location": "body",
           "name": "signed_tx_base64",
           "required": false,
           "schema": {
             "type": "string",
-            "description": "Base64-encoded signed transaction. Generate a fresh signed payload for the signing account immediately before submission or status lookup."
+            "description": "Base64-encoded Borsh serialization of a `SignedTransaction`; must be freshly signed (nonce above the access key's current value)."
           }
         },
         {
@@ -380,7 +747,9 @@
           },
           "key": "mainnet",
           "label": "Mainnet",
-          "url": "https://rpc.mainnet.fastnear.com"
+          "url": "https://archival-rpc.mainnet.fastnear.com",
+          "archival": true,
+          "archivalReason": "Pinned transaction, older than standard RPC retention."
         },
         {
           "defaultFields": {
@@ -390,7 +759,9 @@
           },
           "key": "testnet",
           "label": "Testnet",
-          "url": "https://rpc.testnet.fastnear.com"
+          "url": "https://archival-rpc.testnet.fastnear.com",
+          "archival": true,
+          "archivalReason": "Pinned transaction, older than standard RPC retention."
         }
       ],
       "requestMethod": "EXPERIMENTAL_tx_status",
@@ -465,7 +836,7 @@
                   "required": false,
                   "schema": {
                     "type": "string",
-                    "description": "Base64-encoded signed transaction. Generate a fresh signed payload for the signing account immediately before submission or status lookup."
+                    "description": "Base64-encoded Borsh serialization of a `SignedTransaction`; must be freshly signed (nonce above the access key's current value)."
                   }
                 },
                 {
@@ -695,7 +1066,13 @@
     ],
     "securitySchemes": [
       {
-        "description": "The OpenAPI contract describes the FastNEAR API key as a query parameter named apiKey.",
+        "description": "FastNEAR API key sent as an `Authorization: Bearer` header; recommended when you control the client.",
+        "id": "BearerAuth",
+        "scheme": "bearer",
+        "type": "http"
+      },
+      {
+        "description": "FastNEAR API key as the `apiKey` query parameter; convenient for browsers, but the key appears in URLs and logs.",
         "id": "ApiKeyAuth",
         "in": "query",
         "name": "apiKey",
@@ -707,7 +1084,7 @@
   {
     "canonicalPath": "/rpcs/transaction/broadcast_tx_async",
     "info": {
-      "description": "Submit a freshly signed transaction and immediately get its hash — no wait for execution. Default examples are illustrative only and are not reusable signed payloads.",
+      "description": "Broadcast a base64-encoded `SignedTransaction`; returns the transaction hash without awaiting inclusion or execution. Example payloads are placeholders and cannot be replayed.",
       "operationId": "broadcast_tx_async",
       "summary": "Send transaction asynchronously",
       "title": "NEAR Protocol RPC: Send transaction asynchronously",
@@ -718,14 +1095,14 @@
       "defaultId": "fastnear",
       "fields": [
         {
-          "description": "Base64-encoded signed transaction. Generate a fresh signed payload for the signing account immediately before submission or status lookup.",
+          "description": "Base64-encoded signed transaction",
           "label": "Signed Tx Base64",
           "location": "body",
           "name": "signed_tx_base64",
           "required": true,
           "schema": {
             "type": "string",
-            "description": "Base64-encoded signed transaction. Generate a fresh signed payload for the signing account immediately before submission or status lookup."
+            "description": "Base64-encoded signed transaction"
           }
         },
         {
@@ -753,7 +1130,7 @@
       "networks": [
         {
           "defaultFields": {
-            "signed_tx_base64": "DgAAAG1pa2UubmVhcgCpPJgEEFUwQjFQvL8V3CnZ0h688WG5sVsKE8JYM37ax2cUjgEAAAAAAAAADQAAAG1pa2V0ZXN0Lm5lYXIPfFBmYNAIe2/MicVhDXbvT3w06LxS2OCF0UHIYgjNDQAAAHRlc3RpbmcgbWVtbwEAAAADAQAAAAAAAAAAAAAAAAAAAA=="
+            "signed_tx_base64": "CQAAAG1pa2UubmVhcgCCy5RvHN/3t5Oejtf0aWKCCwJIxXkWWCQKxnaU9nr4nAEAAAAAAAAADQAAAG1pa2V0ZXN0Lm5lYXL6UXoKlIC/UXiHRkiBCYVW69w6N/+7ZXy0+gPAs9TQ5wEAAAADAQAAAAAAAAAAAAAAAAAAAABv/f+CgT7byEQUzraUd1LDQ7ELv5ld7bhFGUYNaxWWRMzl5rAuRhcfkV2jHIqJgu0sfw7B9/npIH69aqsm/GIM"
           },
           "key": "mainnet",
           "label": "Mainnet",
@@ -761,7 +1138,7 @@
         },
         {
           "defaultFields": {
-            "signed_tx_base64": "DgAAAG1pa2UudGVzdG5ldACpPJgEEFUwQjFQvL8V3CnZ0h688WG5sVsKE8JYM37ax2cUjgEAAAAAAAAADQAAAG1pa2V0ZXN0LnRlc3RuZXQPfFBmYNAIe2/MicVhDXbvT3w06LxS2OCF0UHIYgjNDQAAAHRlc3RpbmcgbWVtbwEAAAADAQAAAAAAAAAAAAAAAAAAAA=="
+            "signed_tx_base64": "DAAAAG1pa2UudGVzdG5ldAD7f6gOSLbFPadEDmehA6rmcy+EOXYRGly1GK0ponIwDgEAAAAAAAAAEAAAAG1pa2V0ZXN0LnRlc3RuZXTmqC62j/JHfs1+RJFA5+kaPJY8rDAfhHuh2G548XJ6GQEAAAADAQAAAAAAAAAAAAAAAAAAAADq6qRsj8FW73GukqS5yqwXYL7riy7EcIaZrhZy40hMq4Kux+lp+AsMLtVPqic5xAfX5dlLaFRJ6Nbi2Th185UI"
           },
           "key": "testnet",
           "label": "Testnet",
@@ -826,7 +1203,7 @@
                   "required": true,
                   "schema": {
                     "type": "string",
-                    "description": "Base64-encoded signed transaction. Generate a fresh signed payload for the signing account immediately before submission or status lookup."
+                    "description": "Base64-encoded signed transaction"
                   }
                 },
                 {
@@ -862,7 +1239,7 @@
               "id": "fastnear",
               "method": "broadcast_tx_async",
               "params": {
-                "signed_tx_base64": "DgAAAG1pa2UubmVhcgCpPJgEEFUwQjFQvL8V3CnZ0h688WG5sVsKE8JYM37ax2cUjgEAAAAAAAAADQAAAG1pa2V0ZXN0Lm5lYXIPfFBmYNAIe2/MicVhDXbvT3w06LxS2OCF0UHIYgjNDQAAAHRlc3RpbmcgbWVtbwEAAAADAQAAAAAAAAAAAAAAAAAAAA=="
+                "signed_tx_base64": "CQAAAG1pa2UubmVhcgCCy5RvHN/3t5Oejtf0aWKCCwJIxXkWWCQKxnaU9nr4nAEAAAAAAAAADQAAAG1pa2V0ZXN0Lm5lYXL6UXoKlIC/UXiHRkiBCYVW69w6N/+7ZXy0+gPAs9TQ5wEAAAADAQAAAAAAAAAAAAAAAAAAAABv/f+CgT7byEQUzraUd1LDQ7ELv5ld7bhFGUYNaxWWRMzl5rAuRhcfkV2jHIqJgu0sfw7B9/npIH69aqsm/GIM"
               }
             },
             "headers": {},
@@ -880,7 +1257,7 @@
               "id": "fastnear",
               "method": "broadcast_tx_async",
               "params": {
-                "signed_tx_base64": "DgAAAG1pa2UudGVzdG5ldACpPJgEEFUwQjFQvL8V3CnZ0h688WG5sVsKE8JYM37ax2cUjgEAAAAAAAAADQAAAG1pa2V0ZXN0LnRlc3RuZXQPfFBmYNAIe2/MicVhDXbvT3w06LxS2OCF0UHIYgjNDQAAAHRlc3RpbmcgbWVtbwEAAAADAQAAAAAAAAAAAAAAAAAAAA=="
+                "signed_tx_base64": "DAAAAG1pa2UudGVzdG5ldAD7f6gOSLbFPadEDmehA6rmcy+EOXYRGly1GK0ponIwDgEAAAAAAAAAEAAAAG1pa2V0ZXN0LnRlc3RuZXTmqC62j/JHfs1+RJFA5+kaPJY8rDAfhHuh2G548XJ6GQEAAAADAQAAAAAAAAAAAAAAAAAAAADq6qRsj8FW73GukqS5yqwXYL7riy7EcIaZrhZy40hMq4Kux+lp+AsMLtVPqic5xAfX5dlLaFRJ6Nbi2Th185UI"
               }
             },
             "headers": {},
@@ -987,7 +1364,13 @@
     ],
     "securitySchemes": [
       {
-        "description": "The OpenAPI contract describes the FastNEAR API key as a query parameter named apiKey.",
+        "description": "FastNEAR API key sent as an `Authorization: Bearer` header; recommended when you control the client.",
+        "id": "BearerAuth",
+        "scheme": "bearer",
+        "type": "http"
+      },
+      {
+        "description": "FastNEAR API key as the `apiKey` query parameter; convenient for browsers, but the key appears in URLs and logs.",
         "id": "ApiKeyAuth",
         "in": "query",
         "name": "apiKey",
@@ -999,7 +1382,7 @@
   {
     "canonicalPath": "/rpcs/transaction/broadcast_tx_commit",
     "info": {
-      "description": "Submit a freshly signed transaction and wait for its commit — the legacy synchronous send, superseded by `send_tx`. Default examples are illustrative only and are not reusable signed payloads.",
+      "description": "Broadcast a base64-encoded `SignedTransaction`; blocks until execution completes or a 10-second timeout elapses. Deprecated — use `send_tx`. Example payloads are placeholders and cannot be replayed.",
       "operationId": "broadcast_tx_commit",
       "summary": "Send transaction and wait",
       "title": "NEAR Protocol RPC: Send transaction and wait",
@@ -1010,14 +1393,14 @@
       "defaultId": "fastnear",
       "fields": [
         {
-          "description": "Base64-encoded signed transaction. Generate a fresh signed payload for the signing account immediately before submission or status lookup.",
+          "description": "Base64-encoded signed transaction",
           "label": "Signed Tx Base64",
           "location": "body",
           "name": "signed_tx_base64",
           "required": true,
           "schema": {
             "type": "string",
-            "description": "Base64-encoded signed transaction. Generate a fresh signed payload for the signing account immediately before submission or status lookup."
+            "description": "Base64-encoded signed transaction"
           }
         },
         {
@@ -1045,7 +1428,7 @@
       "networks": [
         {
           "defaultFields": {
-            "signed_tx_base64": "DgAAAG1pa2UubmVhcgCpPJgEEFUwQjFQvL8V3CnZ0h688WG5sVsKE8JYM37ax2cUjgEAAAAAAAAADQAAAG1pa2V0ZXN0Lm5lYXIPfFBmYNAIe2/MicVhDXbvT3w06LxS2OCF0UHIYgjNDQAAAHRlc3RpbmcgbWVtbwEAAAADAQAAAAAAAAAAAAAAAAAAAA=="
+            "signed_tx_base64": "CQAAAG1pa2UubmVhcgD64cHVt7yB8HSzql1e8RLKSv2riwv7+vNviWHD/y95EgEAAAAAAAAADQAAAG1pa2V0ZXN0Lm5lYXJBM1Y72BJnk/V7dlrTRBxxxUxyB/JXo+hODCyF0woAEAEAAAADAQAAAAAAAAAAAAAAAAAAAADiGG3IJC5QsOBN70h+glB+U9nBYEXObdaPHMjXyu2YQbQUvALIWbdBBxhuR9VQ/fEXg7L0vGSCd9wCCrq0CFIF"
           },
           "key": "mainnet",
           "label": "Mainnet",
@@ -1053,7 +1436,7 @@
         },
         {
           "defaultFields": {
-            "signed_tx_base64": "DgAAAG1pa2UudGVzdG5ldACpPJgEEFUwQjFQvL8V3CnZ0h688WG5sVsKE8JYM37ax2cUjgEAAAAAAAAADQAAAG1pa2V0ZXN0LnRlc3RuZXQPfFBmYNAIe2/MicVhDXbvT3w06LxS2OCF0UHIYgjNDQAAAHRlc3RpbmcgbWVtbwEAAAADAQAAAAAAAAAAAAAAAAAAAA=="
+            "signed_tx_base64": "DAAAAG1pa2UudGVzdG5ldAAnrCNE2/YvBtldmNpxP3k7ego/A6RxrtUvzhp3ngJJTQEAAAAAAAAAEAAAAG1pa2V0ZXN0LnRlc3RuZXTIRL9kr4DAnxTBWcN/e5852wyOE353mPf+XnCN73Z/hwEAAAADAQAAAAAAAAAAAAAAAAAAAADMWuZ8agklUGXpr759mp4DIsPFKgc+ZYFMjR6hjoPrNR9vPxFeLVm8jpLqr6+U9BnlQU7chIfUkeppU1YFvHsO"
           },
           "key": "testnet",
           "label": "Testnet",
@@ -1118,7 +1501,7 @@
                   "required": true,
                   "schema": {
                     "type": "string",
-                    "description": "Base64-encoded signed transaction. Generate a fresh signed payload for the signing account immediately before submission or status lookup."
+                    "description": "Base64-encoded signed transaction"
                   }
                 },
                 {
@@ -1154,7 +1537,7 @@
               "id": "fastnear",
               "method": "broadcast_tx_commit",
               "params": {
-                "signed_tx_base64": "DgAAAG1pa2UubmVhcgCpPJgEEFUwQjFQvL8V3CnZ0h688WG5sVsKE8JYM37ax2cUjgEAAAAAAAAADQAAAG1pa2V0ZXN0Lm5lYXIPfFBmYNAIe2/MicVhDXbvT3w06LxS2OCF0UHIYgjNDQAAAHRlc3RpbmcgbWVtbwEAAAADAQAAAAAAAAAAAAAAAAAAAA=="
+                "signed_tx_base64": "CQAAAG1pa2UubmVhcgD64cHVt7yB8HSzql1e8RLKSv2riwv7+vNviWHD/y95EgEAAAAAAAAADQAAAG1pa2V0ZXN0Lm5lYXJBM1Y72BJnk/V7dlrTRBxxxUxyB/JXo+hODCyF0woAEAEAAAADAQAAAAAAAAAAAAAAAAAAAADiGG3IJC5QsOBN70h+glB+U9nBYEXObdaPHMjXyu2YQbQUvALIWbdBBxhuR9VQ/fEXg7L0vGSCd9wCCrq0CFIF"
               }
             },
             "headers": {},
@@ -1172,7 +1555,7 @@
               "id": "fastnear",
               "method": "broadcast_tx_commit",
               "params": {
-                "signed_tx_base64": "DgAAAG1pa2UudGVzdG5ldACpPJgEEFUwQjFQvL8V3CnZ0h688WG5sVsKE8JYM37ax2cUjgEAAAAAAAAADQAAAG1pa2V0ZXN0LnRlc3RuZXQPfFBmYNAIe2/MicVhDXbvT3w06LxS2OCF0UHIYgjNDQAAAHRlc3RpbmcgbWVtbwEAAAADAQAAAAAAAAAAAAAAAAAAAA=="
+                "signed_tx_base64": "DAAAAG1pa2UudGVzdG5ldAAnrCNE2/YvBtldmNpxP3k7ego/A6RxrtUvzhp3ngJJTQEAAAAAAAAAEAAAAG1pa2V0ZXN0LnRlc3RuZXTIRL9kr4DAnxTBWcN/e5852wyOE353mPf+XnCN73Z/hwEAAAADAQAAAAAAAAAAAAAAAAAAAADMWuZ8agklUGXpr759mp4DIsPFKgc+ZYFMjR6hjoPrNR9vPxFeLVm8jpLqr6+U9BnlQU7chIfUkeppU1YFvHsO"
               }
             },
             "headers": {},
@@ -1345,7 +1728,13 @@
     ],
     "securitySchemes": [
       {
-        "description": "The OpenAPI contract describes the FastNEAR API key as a query parameter named apiKey.",
+        "description": "FastNEAR API key sent as an `Authorization: Bearer` header; recommended when you control the client.",
+        "id": "BearerAuth",
+        "scheme": "bearer",
+        "type": "http"
+      },
+      {
+        "description": "FastNEAR API key as the `apiKey` query parameter; convenient for browsers, but the key appears in URLs and logs.",
         "id": "ApiKeyAuth",
         "in": "query",
         "name": "apiKey",
@@ -1357,7 +1746,7 @@
   {
     "canonicalPath": "/rpcs/transaction/send_tx",
     "info": {
-      "description": "Submit a freshly signed transaction and wait for its final execution outcome — the current synchronous send. Default examples are illustrative only and are not reusable signed payloads.",
+      "description": "Broadcast a base64-encoded `SignedTransaction`; blocks until the execution outcome specified by `wait_until`. Example payloads are placeholders and cannot be replayed.",
       "operationId": "send_tx",
       "summary": "Send transaction",
       "title": "NEAR Protocol RPC: Send transaction",
@@ -1368,14 +1757,14 @@
       "defaultId": "fastnear",
       "fields": [
         {
-          "description": "Base64-encoded signed transaction. Generate a fresh signed payload for the signing account immediately before submission or status lookup.",
+          "description": "Base64-encoded signed transaction",
           "label": "Signed Tx Base64",
           "location": "body",
           "name": "signed_tx_base64",
           "required": true,
           "schema": {
             "type": "string",
-            "description": "Base64-encoded signed transaction. Generate a fresh signed payload for the signing account immediately before submission or status lookup."
+            "description": "Base64-encoded signed transaction"
           }
         },
         {
@@ -1403,7 +1792,7 @@
       "networks": [
         {
           "defaultFields": {
-            "signed_tx_base64": "ExampleBase64EncodedTransaction",
+            "signed_tx_base64": "CQAAAG1pa2UubmVhcgBPiSiO5F7KYuZ9VQ2eF6/b9dXqrBUBxDs2AuXiQZw8DgEAAAAAAAAADQAAAG1pa2V0ZXN0Lm5lYXKwzpn8eLLqwzoVC5PlcvpzSXj65ke9WN3TLsRpndusbgEAAAADAQAAAAAAAAAAAAAAAAAAAAC7RkXLWjBx/qplpt/RT2uwQWvrovT3+6ef0BG1LU5OahlAsFmjEsuOv8rg4JI8TXOkg16oXljReiM4KU41yHYM",
             "wait_until": "EXECUTED_OPTIMISTIC"
           },
           "key": "mainnet",
@@ -1412,7 +1801,7 @@
         },
         {
           "defaultFields": {
-            "signed_tx_base64": "ExampleBase64EncodedTransaction",
+            "signed_tx_base64": "DAAAAG1pa2UudGVzdG5ldABpWDhNQVV7BkV62S5Hbdm5jBNjKhV1eGJAHSwC6iwNqgEAAAAAAAAAEAAAAG1pa2V0ZXN0LnRlc3RuZXQlxP80whXgLsNL4raSbYLM3YKFSTxZTp6FZcg8ExwGpwEAAAADAQAAAAAAAAAAAAAAAAAAAADLrZ/qNwNTZoXF4ALlKxLeC0nfTZol2HyyY0XoChnSNATaQ27bP5HM90mAhgq4OI7Zo+k3GQ1CxC3bGUqbhMcD",
             "wait_until": "EXECUTED_OPTIMISTIC"
           },
           "key": "testnet",
@@ -1478,7 +1867,7 @@
                   "required": true,
                   "schema": {
                     "type": "string",
-                    "description": "Base64-encoded signed transaction. Generate a fresh signed payload for the signing account immediately before submission or status lookup."
+                    "description": "Base64-encoded signed transaction"
                   }
                 },
                 {
@@ -1514,7 +1903,7 @@
               "id": "fastnear",
               "method": "send_tx",
               "params": {
-                "signed_tx_base64": "ExampleBase64EncodedTransaction",
+                "signed_tx_base64": "CQAAAG1pa2UubmVhcgBPiSiO5F7KYuZ9VQ2eF6/b9dXqrBUBxDs2AuXiQZw8DgEAAAAAAAAADQAAAG1pa2V0ZXN0Lm5lYXKwzpn8eLLqwzoVC5PlcvpzSXj65ke9WN3TLsRpndusbgEAAAADAQAAAAAAAAAAAAAAAAAAAAC7RkXLWjBx/qplpt/RT2uwQWvrovT3+6ef0BG1LU5OahlAsFmjEsuOv8rg4JI8TXOkg16oXljReiM4KU41yHYM",
                 "wait_until": "EXECUTED_OPTIMISTIC"
               }
             },
@@ -1533,7 +1922,7 @@
               "id": "fastnear",
               "method": "send_tx",
               "params": {
-                "signed_tx_base64": "ExampleBase64EncodedTransaction",
+                "signed_tx_base64": "DAAAAG1pa2UudGVzdG5ldABpWDhNQVV7BkV62S5Hbdm5jBNjKhV1eGJAHSwC6iwNqgEAAAAAAAAAEAAAAG1pa2V0ZXN0LnRlc3RuZXQlxP80whXgLsNL4raSbYLM3YKFSTxZTp6FZcg8ExwGpwEAAAADAQAAAAAAAAAAAAAAAAAAAADLrZ/qNwNTZoXF4ALlKxLeC0nfTZol2HyyY0XoChnSNATaQ27bP5HM90mAhgq4OI7Zo+k3GQ1CxC3bGUqbhMcD",
                 "wait_until": "EXECUTED_OPTIMISTIC"
               }
             },
@@ -1707,7 +2096,13 @@
     ],
     "securitySchemes": [
       {
-        "description": "The OpenAPI contract describes the FastNEAR API key as a query parameter named apiKey.",
+        "description": "FastNEAR API key sent as an `Authorization: Bearer` header; recommended when you control the client.",
+        "id": "BearerAuth",
+        "scheme": "bearer",
+        "type": "http"
+      },
+      {
+        "description": "FastNEAR API key as the `apiKey` query parameter; convenient for browsers, but the key appears in URLs and logs.",
         "id": "ApiKeyAuth",
         "in": "query",
         "name": "apiKey",
@@ -1750,14 +2145,14 @@
           }
         },
         {
-          "description": "Base64-encoded signed transaction. Generate a fresh signed payload for the signing account immediately before submission or status lookup.",
+          "description": "Base64-encoded Borsh serialization of a `SignedTransaction`; must be freshly signed (nonce above the access key's current value).",
           "label": "Signed Tx Base64",
           "location": "body",
           "name": "signed_tx_base64",
           "required": false,
           "schema": {
             "type": "string",
-            "description": "Base64-encoded signed transaction. Generate a fresh signed payload for the signing account immediately before submission or status lookup."
+            "description": "Base64-encoded Borsh serialization of a `SignedTransaction`; must be freshly signed (nonce above the access key's current value)."
           }
         },
         {
@@ -1792,7 +2187,9 @@
           },
           "key": "mainnet",
           "label": "Mainnet",
-          "url": "https://rpc.mainnet.fastnear.com"
+          "url": "https://archival-rpc.mainnet.fastnear.com",
+          "archival": true,
+          "archivalReason": "Pinned transaction, older than standard RPC retention."
         },
         {
           "defaultFields": {
@@ -1801,7 +2198,9 @@
           },
           "key": "testnet",
           "label": "Testnet",
-          "url": "https://rpc.testnet.fastnear.com"
+          "url": "https://archival-rpc.testnet.fastnear.com",
+          "archival": true,
+          "archivalReason": "Pinned transaction, older than standard RPC retention."
         }
       ],
       "requestMethod": "tx",
@@ -1876,7 +2275,7 @@
                   "required": false,
                   "schema": {
                     "type": "string",
-                    "description": "Base64-encoded signed transaction. Generate a fresh signed payload for the signing account immediately before submission or status lookup."
+                    "description": "Base64-encoded Borsh serialization of a `SignedTransaction`; must be freshly signed (nonce above the access key's current value)."
                   }
                 },
                 {
@@ -2104,7 +2503,13 @@
     ],
     "securitySchemes": [
       {
-        "description": "The OpenAPI contract describes the FastNEAR API key as a query parameter named apiKey.",
+        "description": "FastNEAR API key sent as an `Authorization: Bearer` header; recommended when you control the client.",
+        "id": "BearerAuth",
+        "scheme": "bearer",
+        "type": "http"
+      },
+      {
+        "description": "FastNEAR API key as the `apiKey` query parameter; convenient for browsers, but the key appears in URLs and logs.",
         "id": "ApiKeyAuth",
         "in": "query",
         "name": "apiKey",
