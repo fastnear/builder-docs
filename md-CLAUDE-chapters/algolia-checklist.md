@@ -86,7 +86,6 @@ Explicitly excluded:
 - `/guides/llms.txt`
 - `/structured-data/**`
 - `/api/reference`
-- `/redocly-config`
 
 Search records rely on centralized `docsearch:*` meta tags. The most important fields are:
 

@@ -1,5 +1,6 @@
 /docs / 301
-/docs/redocly-config /redocly-config 301
+/docs/redocly-config /auth 301
+/redocly-config /auth 301
 /docs/rpc-api / 301
 /docs/rpc-api/rpc /rpc 301
 /docs/rpc-api/rpc/* /rpc/:splat 301

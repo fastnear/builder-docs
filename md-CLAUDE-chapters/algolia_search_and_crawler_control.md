@@ -191,7 +191,6 @@ The crawler is deliberately focused on the public root-mounted docs surface.
 - `/apis/llms.txt`
 - `/structured-data/**`
 - `/api/reference`
-- `/redocly-config`
 
 This is a core principle:
 
