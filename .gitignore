@@ -19,6 +19,8 @@
 /static/guides
 /static/*.md
 /static/index.md
+# Built EN mirror of the /openapi hub page; static/openapi/ holds only the generated spec documents.
+/static/openapi/index.md
 /static/rpcs
 /static/neardata
 /static/rpc
