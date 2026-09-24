@@ -5,7 +5,7 @@ Treat this directory as the executable source of truth for FastNear search quali
 ## Repo-owned artifacts
 
 - `index-settings.json`: the repo-owned Algolia index settings embedded into the crawler's `initialIndexSettings`
-- `rules.json`: optional dashboard curation baseline for promoted-result rules keyed by `fastnear-*` object IDs
+- `rules.json`: intended promote rules keyed by `fastnear-*` object IDs; **not applicable on this plan** (the DocSearch-provisioned application has a Rules quota of zero), kept as intent only
 - `synonyms.json`: optional dashboard curation baseline for synonyms keyed by `fastnear-*` object IDs
 - `crawler/shared.js`: the shared crawler definition used for API sync and the pasteable editor artifact
 - `docsearch-crawler.config.js`: the generated pasteable crawler editor artifact

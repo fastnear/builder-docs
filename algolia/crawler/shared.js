@@ -142,6 +142,12 @@ const RECORD_EXTRACTOR_SOURCE = dedent(`
         return 22;
       }
 
+      // The auth hub must outrank its own sub-guides (browser keys) when a query
+      // like "api key" ties on every textual criterion.
+      if (pathname === "/auth") {
+        return 30;
+      }
+
       if (surface === "auth") {
         return 28;
       }
