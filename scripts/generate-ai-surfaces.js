@@ -123,6 +123,8 @@ const AUTHORED_MARKDOWN_LABELS = {
     llmsIntro:
       "AI-readable indexes for FastNear guides, RPC reference, and REST API reference.",
     llmsRootTitle: "FastNear Builder Docs",
+    openapiIndex: "OpenAPI index",
+    openapiSpecs: "OpenAPI specs",
     llmsTopLevelIndex: "Top-level index",
     markdownPath: "Markdown path",
     open: "Open",
@@ -158,6 +160,8 @@ const AUTHORED_MARKDOWN_LABELS = {
     llmsIntro:
       "AI-читабельные индексы для гайдов FastNear, RPC-справочника и справочника REST API.",
     llmsRootTitle: "FastNear Builder Docs",
+    openapiIndex: "Индекс OpenAPI",
+    openapiSpecs: "Спецификации OpenAPI",
     llmsTopLevelIndex: "Верхний индекс",
     markdownPath: "Markdown-маршрут",
     open: "Открыть",
@@ -209,6 +213,12 @@ const OPERATION_MARKDOWN_LABELS = {
     required: "required",
     responseReference: "Response reference",
     responseSchema: "Response schema",
+    openapi: "OpenAPI",
+    openapiFamilyDocument: "Full API document",
+    openapiIndex: "OpenAPI index",
+    openapiOperationDocument: "This operation",
+    openapiPointer: "Pointer into the full document",
+    openapiSpecs: "OpenAPI specs",
     sourceLinks: "Source links",
     sourceSpec: "Source spec",
     status: "Status",
@@ -249,6 +259,12 @@ const OPERATION_MARKDOWN_LABELS = {
     required: "обязательный",
     responseReference: "Справка по ответу",
     responseSchema: "Схема ответа",
+    openapi: "OpenAPI",
+    openapiFamilyDocument: "Полный документ API",
+    openapiIndex: "Индекс OpenAPI",
+    openapiOperationDocument: "Эта операция",
+    openapiPointer: "Указатель в полном документе",
+    openapiSpecs: "Спецификации OpenAPI",
     sourceLinks: "Ссылки на источник",
     sourceSpec: "Исходная спецификация",
     status: "Статус",
@@ -1336,10 +1352,15 @@ function buildOperationMarkdown({
   sections.push(`- ${labels.transport}: ${pageModel.route.transport}`);
   sections.push(`- ${labels.method}: ${pageModel.route.method}`);
   sections.push(`- ${labels.path}: \`${pageModel.route.path}\``);
-  if (pageModel.sourceSpec) {
-    sections.push(`- ${labels.sourceSpec}: \`${pageModel.sourceSpec}\``);
-  }
   sections.push("");
+  if (pageModel.openapi) {
+    // Published documents are not localized, so these are plain site URLs.
+    sections.push(`## ${labels.openapi}`, "");
+    sections.push(`- ${labels.openapiOperationDocument}: ${SITE_ORIGIN}${pageModel.openapi.json} (${SITE_ORIGIN}${pageModel.openapi.yaml})`);
+    sections.push(`- ${labels.openapiFamilyDocument}: ${SITE_ORIGIN}${pageModel.openapi.familyJson}`);
+    sections.push(`- ${labels.openapiPointer}: ${SITE_ORIGIN}${pageModel.openapi.pointer}`);
+    sections.push("");
+  }
   sections.push(`## ${labels.networks}`, "");
   sections.push(formatNetworkLines(pageModel.interaction?.networks, labels));
   sections.push("");
@@ -1688,6 +1709,22 @@ function writeMirrorEntries(entries) {
   }
 }
 
+// One llms.txt entry per published OpenAPI family document, read from the
+// vendored index so the list can never drift from what is actually served.
+function buildOpenApiLlmsEntries(labels) {
+  const indexPath = path.join(STATIC_ROOT, "openapi/index.json");
+  if (!fs.existsSync(indexPath)) {
+    return [];
+  }
+  const index = JSON.parse(fs.readFileSync(indexPath, "utf8"));
+  return (index.specs || []).map((spec) => ({
+    description: `${spec.kind === "json-rpc" ? "JSON-RPC" : "REST"}, ${spec.operations.length} operations; YAML: ${SITE_ORIGIN}${spec.yaml}`,
+    group: labels.openapiSpecs,
+    markdownPath: spec.json,
+    title: `${spec.title} OpenAPI`,
+  }));
+}
+
 function groupEntries(entries) {
   const groups = new Map();
 
@@ -1782,7 +1819,7 @@ function main() {
         labels.rpcReferenceTitle,
         labels.rpcReferenceIntro,
         [{ href: localizeRoute("/llms.txt", locale), label: labels.topLevelIndex }],
-        rpcEntries,
+        [...buildOpenApiLlmsEntries(labels).filter((entry) => entry.markdownPath === "/openapi/rpc.json"), ...rpcEntries],
         locale
       )
     );
@@ -1793,7 +1830,7 @@ function main() {
         labels.restApiReferenceTitle,
         labels.restApiReferenceIntro,
         [{ href: localizeRoute("/llms.txt", locale), label: labels.topLevelIndex }],
-        apiEntries,
+        [...buildOpenApiLlmsEntries(labels).filter((entry) => entry.markdownPath !== "/openapi/rpc.json"), ...apiEntries],
         locale
       )
     );
@@ -1804,12 +1841,13 @@ function main() {
         labels.llmsRootTitle,
         labels.llmsIntro,
         [
+          { href: "/openapi/index.json", label: labels.openapiIndex },
           { href: localizeRoute("/guides/llms.txt", locale), label: labels.llmsGuidesIndex },
           { href: localizeRoute("/rpcs/llms.txt", locale), label: labels.rpcReferenceIndex },
           { href: localizeRoute("/apis/llms.txt", locale), label: labels.restApiReferenceIndex },
           { href: localizeRoute("/llms-full.txt", locale), label: labels.llmsFull },
         ],
-        [...authoredDocEntries, ...rpcEntries, ...apiEntries],
+        [...buildOpenApiLlmsEntries(labels), ...authoredDocEntries, ...rpcEntries, ...apiEntries],
         locale
       )
     );

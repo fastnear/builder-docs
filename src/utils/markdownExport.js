@@ -54,6 +54,10 @@ const MARKDOWN_EXPORT_LABELS = {
     required: 'required',
     responseReference: 'Response reference',
     responseSchema: 'Response schema',
+    openapi: 'OpenAPI',
+    openapiFamilyDocument: 'Full API document',
+    openapiOperationDocument: 'This operation',
+    openapiPointer: 'Pointer into the full document',
     sourceLinks: 'Source links',
     sourceSpec: 'Source spec',
     status: 'Status',
@@ -95,6 +99,10 @@ const MARKDOWN_EXPORT_LABELS = {
     required: 'обязательный',
     responseReference: 'Справка по ответу',
     responseSchema: 'Схема ответа',
+    openapi: 'OpenAPI',
+    openapiFamilyDocument: 'Полный документ API',
+    openapiOperationDocument: 'Эта операция',
+    openapiPointer: 'Указатель в полном документе',
     sourceLinks: 'Ссылки на источник',
     sourceSpec: 'Исходная спецификация',
     status: 'Статус',
@@ -532,10 +540,14 @@ export function buildOperationMarkdown({
   sections.push(`- ${labels.transport}: ${pageModel.route.transport}`);
   sections.push(`- ${labels.method}: ${pageModel.route.method}`);
   sections.push(`- ${labels.path}: \`${pageModel.route.path}\``);
-  if (pageModel.sourceSpec) {
-    sections.push(`- ${labels.sourceSpec}: \`${pageModel.sourceSpec}\``);
-  }
   sections.push('');
+  if (pageModel.openapi) {
+    sections.push(`## ${labels.openapi}`, '');
+    sections.push(`- ${labels.openapiOperationDocument}: ${toAbsoluteUrl(pageModel.openapi.json, baseUrl)} (${toAbsoluteUrl(pageModel.openapi.yaml, baseUrl)})`);
+    sections.push(`- ${labels.openapiFamilyDocument}: ${toAbsoluteUrl(pageModel.openapi.familyJson, baseUrl)}`);
+    sections.push(`- ${labels.openapiPointer}: ${toAbsoluteUrl(pageModel.openapi.pointer, baseUrl)}`);
+    sections.push('');
+  }
   sections.push(`## ${labels.networks}`, '');
   sections.push(formatNetworkLines(pageModel.interaction?.networks, labels));
   sections.push('');
