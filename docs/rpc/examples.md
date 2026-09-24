@@ -12,7 +12,7 @@ page_actions:
 
 Start with the RPC method that answers the question. Use `tx` to track inclusion and finality from a tx hash, and widen only when you need receipt trees, raw state, or shard-level tracing.
 
-All shell examples below work on the public RPC hosts as-is. If `FASTNEAR_API_KEY` is set in your shell, they pass it as an `apiKey` query parameter automatically; if it is unset, they fall back to the public unauthenticated path. Bearer auth with `Authorization: Bearer ${FASTNEAR_API_KEY}` is also supported when headers fit your client better.
+The shell examples below run against the RPC hosts and pass `FASTNEAR_API_KEY` from your shell as an `apiKey` query parameter, so set it first. Bearer auth with `Authorization: Bearer ${FASTNEAR_API_KEY}` is also supported when headers fit your client better.
 
 ## Account State
 

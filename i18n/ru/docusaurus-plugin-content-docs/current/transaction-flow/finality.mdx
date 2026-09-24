@@ -138,7 +138,7 @@ pub enum FinalExecutionStatus {
 
 ## Querying Outcomes
 
-Эти RPC-чтения работают и на публичных FastNear RPC-хостах. Если `FASTNEAR_API_KEY` уже задан в окружении, сниппеты автоматически пробросят его как bearer-заголовок.
+Эти RPC-чтения выполняются на FastNear RPC-хостах и передают `FASTNEAR_API_KEY` из окружения как bearer-заголовок, поэтому сначала задайте её.
 
 ### The `tx` RPC Method
 

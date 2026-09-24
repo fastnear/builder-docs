@@ -1053,7 +1053,7 @@
         "description": "Block height to query"
       }
     ],
-    "response": "Successful response The supplied API key was not recognized. Omit the key to use public access."
+    "response": "Successful response The supplied API key was not recognized."
   },
   "rpc-block-by-id": {
     "description": "Fetch a block's header and chunk summaries by its Base58-encoded SHA-256 hash.",
@@ -1063,7 +1063,7 @@
         "description": "Base58-encoded block hash"
       }
     ],
-    "response": "Successful response The supplied API key was not recognized. Omit the key to use public access."
+    "response": "Successful response The supplied API key was not recognized."
   },
   "rpc-block-effects": {
     "description": "Summarize every state change in a block — which accounts, keys, and contract-state entries were touched.",
@@ -1073,7 +1073,7 @@
         "description": "Block height (integer) or block hash (string)"
       }
     ],
-    "response": "Successful response The supplied API key was not recognized. Omit the key to use public access.",
+    "response": "Successful response The supplied API key was not recognized.",
     "schema": [
       {
         "name": "block_hash",
@@ -1093,7 +1093,7 @@
         "description": "Desired level of execution status guarantee"
       }
     ],
-    "response": "Successful response The supplied API key was not recognized. Omit the key to use public access.",
+    "response": "Successful response The supplied API key was not recognized.",
     "schema": [
       {
         "name": "result",
@@ -1113,7 +1113,7 @@
         "description": "Desired level of execution status guarantee"
       }
     ],
-    "response": "Successful response The supplied API key was not recognized. Omit the key to use public access.",
+    "response": "Successful response The supplied API key was not recognized.",
     "schema": [
       {
         "name": "final_execution_status",
@@ -1157,7 +1157,7 @@
         "description": "Name of the contract view method to invoke."
       }
     ],
-    "response": "Successful response The supplied API key was not recognized. Omit the key to use public access.",
+    "response": "Successful response The supplied API key was not recognized.",
     "schema": [
       {
         "name": "result",
@@ -1167,7 +1167,7 @@
   },
   "rpc-changes": {
     "description": "Fetch detailed state changes in a block — filter by account, key prefix, or change type.",
-    "response": "Successful response The supplied API key was not recognized. Omit the key to use public access.",
+    "response": "Successful response The supplied API key was not recognized.",
     "schema": [
       {
         "name": "block_hash",
@@ -1191,7 +1191,7 @@
         "description": "Shard identifier"
       }
     ],
-    "response": "Successful response The supplied API key was not recognized. Omit the key to use public access.",
+    "response": "Successful response The supplied API key was not recognized.",
     "schema": [
       {
         "name": "author",
@@ -1275,7 +1275,7 @@
         "description": "Base58-encoded chunk hash"
       }
     ],
-    "response": "Successful response The supplied API key was not recognized. Omit the key to use public access.",
+    "response": "Successful response The supplied API key was not recognized.",
     "schema": [
       {
         "name": "author",
@@ -1353,7 +1353,7 @@
   },
   "rpc-client-config": {
     "description": "Fetch the node's own local client config — timeouts, retry settings, and operator-chosen parameters.",
-    "response": "Successful response The supplied API key was not recognized. Omit the key to use public access.",
+    "response": "Successful response The supplied API key was not recognized.",
     "schema": [
       {
         "name": "result",
@@ -1713,7 +1713,7 @@
         "description": "Shard identifier"
       }
     ],
-    "response": "Successful response The supplied API key was not recognized. Omit the key to use public access."
+    "response": "Successful response The supplied API key was not recognized."
   },
   "rpc-EXPERIMENTAL-light-client-block-proof": {
     "description": "Fetch a Merkle proof — by Base58 block and light-client-head hashes — that the block is included in the light client's verified chain.",
@@ -1727,7 +1727,7 @@
         "description": "Base58-encoded hash"
       }
     ],
-    "response": "Successful response The supplied API key was not recognized. Omit the key to use public access.",
+    "response": "Successful response The supplied API key was not recognized.",
     "schema": [
       {
         "name": "inner_lite",
@@ -1771,7 +1771,7 @@
         "description": "NEAR account ID"
       }
     ],
-    "response": "Successful response The supplied API key was not recognized. Omit the key to use public access.",
+    "response": "Successful response The supplied API key was not recognized.",
     "schema": [
       {
         "name": "inner_lite",
@@ -1797,7 +1797,7 @@
   },
   "rpc-EXPERIMENTAL-protocol-config": {
     "description": "Fetch the runtime protocol config at a chosen block — gas costs, storage prices, and limits currently in force.",
-    "response": "Successful response The supplied API key was not recognized. Omit the key to use public access.",
+    "response": "Successful response The supplied API key was not recognized.",
     "schema": [
       {
         "name": "block_producer_kickout_threshold",
@@ -1973,7 +1973,7 @@
         "description": "Base58-encoded hash"
       }
     ],
-    "response": "Successful response The supplied API key was not recognized. Omit the key to use public access.",
+    "response": "Successful response The supplied API key was not recognized.",
     "schema": [
       {
         "name": "predecessor_id",
@@ -2017,7 +2017,7 @@
         "description": "Optional hint: ± block-height window scanned around the hint before walking ancestor blocks."
       }
     ],
-    "response": "Successful response The supplied API key was not recognized. Omit the key to use public access.",
+    "response": "Successful response The supplied API key was not recognized.",
     "schema": [
       {
         "name": "sender_account_id",
@@ -2031,7 +2031,7 @@
   },
   "rpc-EXPERIMENTAL-split-storage-info": {
     "description": "Inspect a node's split-storage layout — the boundary between hot recent data and cold archival data.",
-    "response": "Successful response The supplied API key was not recognized. Omit the key to use public access.",
+    "response": "Successful response The supplied API key was not recognized.",
     "schema": [
       {
         "name": "result",
@@ -2059,7 +2059,7 @@
         "description": "Base58-encoded hash"
       }
     ],
-    "response": "Successful response The supplied API key was not recognized. Omit the key to use public access.",
+    "response": "Successful response The supplied API key was not recognized.",
     "schema": [
       {
         "name": "final_execution_status",
@@ -2095,11 +2095,11 @@
         "description": "Block height (integer) or block hash (string)"
       }
     ],
-    "response": "Successful response The supplied API key was not recognized. Omit the key to use public access."
+    "response": "Successful response The supplied API key was not recognized."
   },
   "rpc-gas-price": {
     "description": "Fetch the current chain-wide gas price for the most recent block.",
-    "response": "Successful response The supplied API key was not recognized. Omit the key to use public access.",
+    "response": "Successful response The supplied API key was not recognized.",
     "schema": [
       {
         "name": "gas_price",
@@ -2115,7 +2115,7 @@
         "description": "Block height (integer) or block hash (string)"
       }
     ],
-    "response": "Successful response The supplied API key was not recognized. Omit the key to use public access.",
+    "response": "Successful response The supplied API key was not recognized.",
     "schema": [
       {
         "name": "gas_price",
@@ -2125,7 +2125,7 @@
   },
   "rpc-genesis-config": {
     "description": "Fetch the chain's immutable genesis config — initial records, protocol settings, and epoch length at block 0.",
-    "response": "Successful response The supplied API key was not recognized. Omit the key to use public access.",
+    "response": "Successful response The supplied API key was not recognized.",
     "schema": [
       {
         "name": "block_producer_kickout_threshold",
@@ -2283,7 +2283,7 @@
   },
   "rpc-health": {
     "description": "Ping a node for liveness — returns `null` on success, an error on unhealthy state.",
-    "response": "Successful response The supplied API key was not recognized. Omit the key to use public access.",
+    "response": "Successful response The supplied API key was not recognized.",
     "schema": [
       {
         "name": "result",
@@ -2293,7 +2293,7 @@
   },
   "rpc-latest-block": {
     "description": "Fetch the latest final block — finality set automatically, no block ID needed.",
-    "response": "Successful response The supplied API key was not recognized. Omit the key to use public access."
+    "response": "Successful response The supplied API key was not recognized."
   },
   "rpc-light-client-proof": {
     "description": "Fetch a Merkle proof — by Base58 transaction or receipt ID — that the item was included and executed, suitable for light-client verification.",
@@ -2323,7 +2323,7 @@
         "description": "NEAR account ID"
       }
     ],
-    "response": "Successful response The supplied API key was not recognized. Omit the key to use public access.",
+    "response": "Successful response The supplied API key was not recognized.",
     "schema": [
       {
         "name": "inner_lite",
@@ -2355,7 +2355,7 @@
         "description": "NEAR account ID"
       }
     ],
-    "response": "Successful response The supplied API key was not recognized. Omit the key to use public access."
+    "response": "Successful response The supplied API key was not recognized."
   },
   "rpc-metrics": {
     "description": "Retrieves Prometheus-format node metrics from the HTTP `/metrics` endpoint. Requires an API key.",
@@ -2363,7 +2363,7 @@
   },
   "rpc-network-info": {
     "description": "List the node's active peer connections and the block producers it currently tracks.",
-    "response": "Successful response The supplied API key was not recognized. Omit the key to use public access.",
+    "response": "Successful response The supplied API key was not recognized.",
     "schema": [
       {
         "name": "known_producers",
@@ -2379,7 +2379,7 @@
         "description": "Base58-encoded hash"
       }
     ],
-    "response": "Successful response The supplied API key was not recognized. Omit the key to use public access.",
+    "response": "Successful response The supplied API key was not recognized.",
     "schema": [
       {
         "name": "result",
@@ -2443,7 +2443,7 @@
         "description": "Desired level of execution status guarantee"
       }
     ],
-    "response": "Successful response The supplied API key was not recognized. Omit the key to use public access.",
+    "response": "Successful response The supplied API key was not recognized.",
     "schema": [
       {
         "name": "final_execution_status",
@@ -2473,7 +2473,7 @@
   },
   "rpc-status": {
     "description": "Fetch a node's binary version, sync progress, and head block in one snapshot.",
-    "response": "Successful response The supplied API key was not recognized. Omit the key to use public access.",
+    "response": "Successful response The supplied API key was not recognized.",
     "schema": [
       {
         "name": "chain_id",
@@ -2573,7 +2573,7 @@
         "description": "Base58-encoded hash"
       }
     ],
-    "response": "Successful response The supplied API key was not recognized. Omit the key to use public access.",
+    "response": "Successful response The supplied API key was not recognized.",
     "schema": [
       {
         "name": "final_execution_status",
@@ -2609,7 +2609,7 @@
         "description": "Base58-encoded epoch identifier hash"
       }
     ],
-    "response": "Successful response The supplied API key was not recognized. Omit the key to use public access.",
+    "response": "Successful response The supplied API key was not recognized.",
     "schema": [
       {
         "name": "result",
@@ -2651,7 +2651,7 @@
   },
   "rpc-validators-current": {
     "description": "Fetch the active validator set for the current epoch, with stakes and performance stats.",
-    "response": "Successful response The supplied API key was not recognized. Omit the key to use public access.",
+    "response": "Successful response The supplied API key was not recognized.",
     "schema": [
       {
         "name": "result",
@@ -2703,7 +2703,7 @@
         "description": "Public key with its type prefix: ed25519:, secp256k1:, or the full ml-dsa-65: key (never the ml-dsa-65-hash: handle)."
       }
     ],
-    "response": "Successful response The supplied API key was not recognized. Omit the key to use public access.",
+    "response": "Successful response The supplied API key was not recognized.",
     "schema": [
       {
         "name": "result",
@@ -2723,7 +2723,7 @@
         "description": "NEAR account ID"
       }
     ],
-    "response": "Successful response The supplied API key was not recognized. Omit the key to use public access.",
+    "response": "Successful response The supplied API key was not recognized.",
     "schema": [
       {
         "name": "result",
@@ -2739,7 +2739,7 @@
         "description": "NEAR account ID"
       }
     ],
-    "response": "Successful response The supplied API key was not recognized. Omit the key to use public access.",
+    "response": "Successful response The supplied API key was not recognized.",
     "schema": [
       {
         "name": "result",
@@ -2779,7 +2779,7 @@
         "description": "NEAR account ID"
       }
     ],
-    "response": "Successful response The supplied API key was not recognized. Omit the key to use public access.",
+    "response": "Successful response The supplied API key was not recognized.",
     "schema": [
       {
         "name": "result",
@@ -2799,7 +2799,7 @@
         "description": "Base58-encoded hash"
       }
     ],
-    "response": "Successful response The supplied API key was not recognized. Omit the key to use public access.",
+    "response": "Successful response The supplied API key was not recognized.",
     "schema": [
       {
         "name": "result",
@@ -2819,7 +2819,7 @@
         "description": "NEAR account ID"
       }
     ],
-    "response": "Successful response The supplied API key was not recognized. Omit the key to use public access.",
+    "response": "Successful response The supplied API key was not recognized.",
     "schema": [
       {
         "name": "result",
@@ -2855,7 +2855,7 @@
         "description": "Base64-encoded key prefix; returns only trie entries whose key begins with these bytes. Empty string (`\"\"`) removes the filter and returns the entire contract state — expensive on large contracts."
       }
     ],
-    "response": "Successful response The supplied API key was not recognized. Omit the key to use public access.",
+    "response": "Successful response The supplied API key was not recognized.",
     "schema": [
       {
         "name": "result",

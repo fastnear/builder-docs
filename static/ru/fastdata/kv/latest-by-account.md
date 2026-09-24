@@ -14,7 +14,7 @@
 - Mainnet: https://kv.main.fastnear.com/
 - Testnet: https://kv.test.fastnear.com/
 ## Авторизация
-- Авторизация не требуется
+- Не указано
 ## Текущий запрос
 - Сеть: Mainnet
 - Метод: POST

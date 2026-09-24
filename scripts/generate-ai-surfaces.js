@@ -183,7 +183,6 @@ const OPERATION_MARKDOWN_LABELS = {
     apiKeyVia: "API key via",
     array: "array",
     auth: "Auth",
-    authOptional: "Optional: the request also works without a key",
     bearerTokenViaHeader: "Bearer token via `Authorization: Bearer <token>` header",
     body: "body",
     currentRequest: "Current request",
@@ -195,7 +194,6 @@ const OPERATION_MARKDOWN_LABELS = {
     method: "Method",
     network: "Network",
     networks: "Networks",
-    noAuthRequired: "No auth required",
     notSpecified: "Not specified",
     object: "object",
     operation: "Operation",
@@ -225,7 +223,6 @@ const OPERATION_MARKDOWN_LABELS = {
     apiKeyVia: "API-ключ через",
     array: "массив",
     auth: "Авторизация",
-    authOptional: "Необязательно: запрос работает и без ключа",
     bearerTokenViaHeader: "Bearer-токен через заголовок `Authorization: Bearer <token>`",
     body: "тело",
     currentRequest: "Текущий запрос",
@@ -237,7 +234,6 @@ const OPERATION_MARKDOWN_LABELS = {
     method: "Метод",
     network: "Сеть",
     networks: "Сети",
-    noAuthRequired: "Авторизация не требуется",
     notSpecified: "Не указано",
     object: "объект",
     operation: "Операция",
@@ -1152,12 +1148,14 @@ function formatParameterGroup(title, parameters, labels) {
   ].join("\n");
 }
 
-function formatSecuritySummary(securitySchemes, labels, securityOptional = false) {
+// Neutral by design: list the accepted credential forms and never state whether
+// a request works without one (see CLAUDE.md, "API key wording").
+function formatSecuritySummary(securitySchemes, labels) {
   if (!Array.isArray(securitySchemes) || !securitySchemes.length) {
-    return `- ${labels.noAuthRequired}`;
+    return `- ${labels.notSpecified}`;
   }
 
-  const lines = securityOptional ? [`- ${labels.authOptional}`] : [];
+  const lines = [];
   lines.push(...securitySchemes.map((scheme) => {
     if (scheme.type === "apiKey") {
       return `- ${labels.apiKeyVia} ${scheme.in} \`${scheme.name}\`${scheme.description ? `: ${scheme.description}` : ""}`;
@@ -1346,7 +1344,7 @@ function buildOperationMarkdown({
   sections.push(formatNetworkLines(pageModel.interaction?.networks, labels));
   sections.push("");
   sections.push(`## ${labels.auth}`, "");
-  sections.push(formatSecuritySummary(pageModel.securitySchemes, labels, pageModel.securityOptional === true));
+  sections.push(formatSecuritySummary(pageModel.securitySchemes, labels));
   sections.push("");
   sections.push(
     formatCurrentRequestSection({

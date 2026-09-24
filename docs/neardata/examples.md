@@ -12,7 +12,7 @@ page_actions:
 
 NEAR Data returns each block fully hydrated as one JSON document — header plus per-shard chunks, receipts, execution outcomes, and state changes — so a single `curl` gives you everything you need to filter for a specific contract without a second call.
 
-All shell examples below work on the public NEAR Data hosts as-is. If `FASTNEAR_API_KEY` is set in your shell, they pass it as an `apiKey` query parameter automatically; if it is unset, they fall back to the public unauthenticated path. Bearer auth with `Authorization: Bearer ${FASTNEAR_API_KEY}` is also supported when headers fit your client better.
+The shell examples below run against the NEAR Data hosts and pass `FASTNEAR_API_KEY` from your shell as an `apiKey` query parameter, so set it first. Bearer auth with `Authorization: Bearer ${FASTNEAR_API_KEY}` is also supported when headers fit your client better.
 
 ### What block is NEAR on right now?
 

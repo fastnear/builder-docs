@@ -1,5 +1,8 @@
 # Builder Docs Auth Contract and Page-Model Semantics
 
+> **Editorial rule (September 2026):** the runtime contract below still describes what the UI does, but public wording must never state or imply that an endpoint works without an API key. See "API key wording" in `CLAUDE.md` before reusing any phrasing from this chapter.
+
+
 This chapter documents how authentication metadata currently works across `mike-docs` and `builder-docs`, what the runtime is actually allowed to infer from that metadata, and where the contract is still intentionally incomplete.
 
 This is an internal continuity chapter, not end-user docs copy.

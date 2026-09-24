@@ -89,9 +89,9 @@ Use these defaults unless you have a specific reason not to:
 
 ## Common failure modes
 
-### The request works without a key in one context but not another
+### The request works in one context but not another
 
-That usually means you moved from public traffic to a higher-limit or authenticated path. Add the same FastNear key you use elsewhere.
+That usually means the key is not being sent in the second context. Add the same FastNear key you use elsewhere.
 
 ### I switched from regular RPC to archival RPC
 
