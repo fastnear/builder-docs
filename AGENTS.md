@@ -91,7 +91,7 @@ yarn test:e2e
 
 ## High-Level Architecture
 
-This repo is the public Docusaurus v3.10.0 site for FastNear docs. `builder-docs` deploys to `https://docs.fastnear.com`; `mike-docs` is the generation pipeline, local verification environment, and legacy Redocly backend.
+This repo is the public Docusaurus v3.10.0 site for FastNear docs. `builder-docs` deploys to `https://docs.fastnear.com`; `mike-docs` is the generation pipeline and local verification environment.
 
 Public RPC and API pages are no longer iframe embeds. They render directly in `builder-docs` from vendored generated data synced from `mike-docs`.
 
@@ -251,7 +251,6 @@ The site treats `mike-docs` as a generation pipeline, not an embedded runtime. P
 4. `builder-docs` renders `/rpc/**` and service-specific root-mounted reference pages with `FastnearDirectOperation`.
 5. `builder-docs` generates canonical hosted pages under `src/pages/rpcs/**` and `src/pages/apis/**` so `docs.fastnear.com` serves the same bespoke runtime directly.
 6. `builder-docs` generates AI/discovery mirrors and structured-data outputs from the authored docs tree plus vendored generated metadata.
-7. Redocly remains available in `mike-docs` only for validation and legacy debugging.
 
 ### Refreshing generated artifacts
 
@@ -271,7 +270,6 @@ For deeper cross-repo validation:
 # in mike-docs
 npm run lint
 npm run standalone:build
-REDOCLY_LOCAL_PLAN=enterprise npm run build
 
 # in builder-docs
 yarn build
@@ -280,7 +278,6 @@ yarn serve
 
 Useful companion previews in `mike-docs`:
 
-- `npm run preview:headless` → legacy Redocly preview on `http://127.0.0.1:4000`
 - `npm run standalone:dev` → standalone bespoke runtime on `http://127.0.0.1:4010`
 
 ## Authentication & API Keys
