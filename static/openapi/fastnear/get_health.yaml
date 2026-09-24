@@ -23,7 +23,7 @@ paths:
               example: Invalid API key
               schema:
                 type: string
-          description: The supplied API key was not recognized. Omit the key to use public access.
+          description: The supplied API key was not recognized.
         "500":
           content:
             application/json:
