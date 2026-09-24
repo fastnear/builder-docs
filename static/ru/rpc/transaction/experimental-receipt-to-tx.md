@@ -15,8 +15,9 @@ Resolve a receipt ID to the transaction hash and signer that produced it. Requir
 - Mainnet: https://archival-rpc.mainnet.fastnear.com/ (archival: Pinned receipt plus block_height anchor, older than standard RPC retention.)
 - Testnet: https://archival-rpc.testnet.fastnear.com/ (archival: Pinned receipt plus block_height anchor, older than standard RPC retention.)
 ## Авторизация
+- Необязательно: запрос работает и без ключа
 - Bearer-токен через заголовок `Authorization: Bearer <token>`
-- API-ключ через query `apiKey`: FastNEAR API key as the `apiKey` query parameter; convenient for browsers, but the key appears in URLs and logs.
+- API-ключ через query `apiKey`: API-ключ FastNEAR в параметре запроса `apiKey`. Удобно для curl и клиентов, которые не могут задавать заголовки, но ключ может попасть в URL, логи и историю команд оболочки.
 - Этот экспорт намеренно не включает локально сохранённые учётные данные
 ## Текущий запрос
 - Сеть: Mainnet

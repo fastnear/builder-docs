@@ -15,8 +15,9 @@
 - Mainnet: https://rpc.mainnet.fastnear.com/
 - Testnet: https://rpc.testnet.fastnear.com/
 ## Авторизация
+- Необязательно: запрос работает и без ключа
 - Bearer-токен через заголовок `Authorization: Bearer <token>`
-- API-ключ через query `apiKey`: Контракт OpenAPI описывает API-ключ FastNear как параметр запроса `apiKey`.
+- API-ключ через query `apiKey`: API-ключ FastNEAR в параметре запроса `apiKey`. Удобно для curl и клиентов, которые не могут задавать заголовки, но ключ может попасть в URL, логи и историю команд оболочки.
 - Этот экспорт намеренно не включает локально сохранённые учётные данные
 ## Текущий запрос
 - Сеть: Mainnet
@@ -248,7 +249,7 @@
             "schema": {
               "type": "string",
               "nullable": true,
-              "description": "Публичный ключ с префиксом ed25519: или secp256k1:"
+              "description": "Публичный ключ с префиксом типа: `ed25519:`, `secp256k1:` или полный ключ `ml-dsa-65:` (но не хеш-идентификатор `ml-dsa-65-hash:`)."
             }
           },
           {
@@ -256,7 +257,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "description": "Публичный ключ с префиксом ed25519: или secp256k1:"
+              "description": "Публичный ключ с префиксом типа: `ed25519:`, `secp256k1:` или полный ключ `ml-dsa-65:` (но не хеш-идентификатор `ml-dsa-65-hash:`)."
             }
           },
           {
@@ -400,7 +401,7 @@
             "schema": {
               "type": "string",
               "nullable": true,
-              "description": "Публичный ключ с префиксом ed25519: или secp256k1:"
+              "description": "Публичный ключ с префиксом типа: `ed25519:`, `secp256k1:` или полный ключ `ml-dsa-65:` (но не хеш-идентификатор `ml-dsa-65-hash:`)."
             }
           },
           {
