@@ -29,6 +29,8 @@ const EXCLUDED_ROUTE_PATTERNS = [
   "/apis/llms.txt",
   "/structured-data/**",
   "/api/reference",
+  // Retired in #38 and redirected to /auth; the live crawler already excludes it.
+  "/redocly-config",
 ];
 
 const EXCLUDED_SITEMAP_ROUTES = [

@@ -35,6 +35,7 @@ new Crawler({
         "!https://docs.fastnear.com/apis/llms.txt",
         "!https://docs.fastnear.com/structured-data/**",
         "!https://docs.fastnear.com/api/reference",
+        "!https://docs.fastnear.com/redocly-config",
         "!https://docs.fastnear.com/ru/transaction-flow",
         "!https://docs.fastnear.com/ru/transaction-flow/**",
         "!https://docs.fastnear.com/ru/rpcs/**",
@@ -46,7 +47,8 @@ new Crawler({
         "!https://docs.fastnear.com/ru/rpcs/llms.txt",
         "!https://docs.fastnear.com/ru/apis/llms.txt",
         "!https://docs.fastnear.com/ru/structured-data/**",
-        "!https://docs.fastnear.com/ru/api/reference"
+        "!https://docs.fastnear.com/ru/api/reference",
+        "!https://docs.fastnear.com/ru/redocly-config"
       ],
       recordExtractor: ({ url, $, helpers }) => {
         const getMetaContent = (name, fallback = null) => {
