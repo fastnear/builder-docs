@@ -2752,7 +2752,7 @@
     ]
   },
   "rpc-view-access-key": {
-    "description": "Fetch one access key's permissions and nonce by public key on a given account.",
+    "description": "Fetch one access key's permissions and nonce by public key on a given account. Pass the full public key with its type prefix. For an ML-DSA-65 key that is the full ml-dsa-65: key, not the ml-dsa-65-hash: handle that view_access_key_list reports; the handle is rejected with a parse error (unknown key type).",
     "parameters": [
       {
         "name": "account_id",
@@ -2760,7 +2760,7 @@
       },
       {
         "name": "public_key",
-        "description": "ed25519: or secp256k1: prefixed public key"
+        "description": "Public key with its type prefix: ed25519:, secp256k1:, or the full ml-dsa-65: key (never the ml-dsa-65-hash: handle)."
       }
     ],
     "response": "Successful response",
@@ -2776,7 +2776,7 @@
     ]
   },
   "rpc-view-access-key-list": {
-    "description": "Fetch every access key attached to an account, each with its permissions and nonce.",
+    "description": "Fetch every access key attached to an account, each with its permissions and nonce. ML-DSA-65 keys are listed by their ml-dsa-65-hash: handle; to query one with view_access_key, or to reference it in an action, use the full ml-dsa-65: public key instead.",
     "parameters": [
       {
         "name": "account_id",
