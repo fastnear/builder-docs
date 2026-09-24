@@ -183,6 +183,10 @@ See [`/Users/mikepurvis/near/mike-docs/README.md`](/Users/mikepurvis/near/mike-d
 
 ## Authentication & API Keys
 
+### API key wording (editorial rule, September 2026)
+
+Never state or imply that a FastNear endpoint works without an API key: no "public endpoints often work without a key", no "keys are optional", no "falls back to the public unauthenticated path", no "Optional" auth labels, and no "No auth required" summaries. Describe the two accepted forms (`Authorization: Bearer` header, `?apiKey=` query parameter) and tell readers to send their key. This applies to MDX prose in every locale, UI and export labels, AI surfaces, the structured graph, and generated spec text; the OpenAPI `security` contract itself is left as the services declare it. When no scheme is declared, summaries say "Not specified" rather than making a claim.
+
 ### Storage keys
 
 All docs pages use the default localStorage key `fastnear:apiKey`. The UI migrates away from the legacy `fastnear_api_key` key automatically when encountered.
