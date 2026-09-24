@@ -159,6 +159,16 @@
     ]
   },
   {
+    "objectID": "fastnear-op-EXPERIMENTAL_receipt_to_tx",
+    "type": "synonym",
+    "synonyms": [
+      "experimental_receipt_to_tx",
+      "experimental-receipt-to-tx",
+      "experimental receipt to tx",
+      "EXPERIMENTAL_receipt_to_tx"
+    ]
+  },
+  {
     "objectID": "fastnear-op-EXPERIMENTAL_split_storage_info",
     "type": "synonym",
     "synonyms": [

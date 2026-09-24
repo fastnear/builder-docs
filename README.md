@@ -9,7 +9,7 @@ Two repos now split cleanly between presentation and generation:
 | Repo | Deploys to | Role |
 | --- | --- | --- |
 | **builder-docs** (this repo) | `docs.fastnear.com` | Public Docusaurus site, native API/RPC docs pages, generated canonical `/rpcs/...` and `/apis/...` routes |
-| **mike-docs** | `fastnear.redocly.app` (legacy), local standalone runtime | OpenAPI sync and generation, page-model generation, local verification, legacy Redocly backend |
+| **mike-docs** | local standalone runtime | OpenAPI sync and generation, page-model generation, local verification |
 
 Public API and RPC pages are no longer iframe embeds. They render directly in `builder-docs` from vendored page-model data generated in `mike-docs`.
 
@@ -253,14 +253,11 @@ When you want full parity checks across both repos:
 # in mike-docs
 npm run lint
 npm run standalone:build
-REDOCLY_LOCAL_PLAN=enterprise npm run build
 
 # in builder-docs
 yarn build
 yarn serve
 ```
-
-The Redocly preview in `mike-docs` is now legacy infrastructure. Use it only when validating generation or legacy behavior, not as the primary public runtime.
 
 ## Creating Or Updating Docs Pages
 
@@ -326,7 +323,6 @@ Legacy `/docs/...` routes now exist only as permanent redirects to the matching 
 | --- | --- |
 | `https://docs.fastnear.com` | Production docs host |
 | `http://localhost:3000` | Local Docusaurus dev server |
-| `http://127.0.0.1:4000` | Local legacy Redocly preview from `mike-docs` |
 | `http://127.0.0.1:4010` | Local standalone bespoke runtime from `mike-docs` |
 
 ## Further Reading

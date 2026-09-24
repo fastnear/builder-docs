@@ -178,7 +178,6 @@ The site now treats `mike-docs` as a generation pipeline, not an embedded runtim
 3. `mike-docs` generates the shared page-model registry and vendors it into `builder-docs/src/data/generatedFastnearPageModels.json`.
 4. `builder-docs` renders `/rpc/**` and service-specific root-mounted reference pages with `FastnearDirectOperation`.
 5. `builder-docs` generates canonical hosted pages under `src/pages/rpcs/**` and `src/pages/apis/**` so `docs.fastnear.com` serves the same bespoke runtime directly.
-6. Redocly remains available in `mike-docs` only for validation and legacy debugging.
 
 See [`/Users/mikepurvis/near/mike-docs/README.md`](/Users/mikepurvis/near/mike-docs/README.md) and [`/Users/mikepurvis/near/mike-docs/INTEGRATION_GUIDE.md`](/Users/mikepurvis/near/mike-docs/INTEGRATION_GUIDE.md) for the current portal-side configuration guide.
 
@@ -229,7 +228,6 @@ When editing Russian content, run `yarn audit:ru-terminology` before committing.
 - GitHub repository: https://github.com/fastnear/builder-docs
 - Yarn v4.9.2 as package manager
 - Node.js 20.0 or higher required
-- Legacy Redocly pages can be previewed locally using `npm run preview:headless` in the **mike-docs** repo root — runs on http://127.0.0.1:4000
 - Bespoke pages can be previewed locally using `npm run standalone:dev` in the **mike-docs** repo root — runs on http://127.0.0.1:4010
 - Public docs pages in this repo no longer depend on the legacy iframe routing layer
 
