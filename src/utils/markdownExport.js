@@ -28,6 +28,7 @@ const MARKDOWN_EXPORT_LABELS = {
     activeExample: 'Active example',
     array: 'array',
     auth: 'Auth',
+    authOptional: 'Optional: the request also works without a key',
     bearerTokenViaHeader: 'Bearer token via `Authorization: Bearer <token>` header',
     body: 'body',
     currentRequest: 'Current request',
@@ -70,6 +71,7 @@ const MARKDOWN_EXPORT_LABELS = {
     activeExample: 'Активный пример',
     array: 'массив',
     auth: 'Авторизация',
+    authOptional: 'Необязательно: запрос работает и без ключа',
     bearerTokenViaHeader: 'Bearer-токен через заголовок `Authorization: Bearer <token>`',
     body: 'тело',
     currentRequest: 'Текущий запрос',
@@ -335,12 +337,13 @@ function formatParameterGroup(title, parameters, labels = MARKDOWN_EXPORT_LABELS
   ].join('\n');
 }
 
-function formatSecuritySummary(securitySchemes, labels) {
+function formatSecuritySummary(securitySchemes, labels, securityOptional = false) {
   if (!Array.isArray(securitySchemes) || !securitySchemes.length) {
     return `- ${labels.noAuthRequired}`;
   }
 
-  const lines = securitySchemes.map((scheme) => {
+  const lines = securityOptional ? [`- ${labels.authOptional}`] : [];
+  lines.push(...securitySchemes.map((scheme) => {
     if (scheme.type === 'apiKey') {
       return `- ${labels.apiKeyVia} ${scheme.in} \`${scheme.name}\`${scheme.description ? `: ${scheme.description}` : ''}`;
     }
@@ -350,7 +353,7 @@ function formatSecuritySummary(securitySchemes, labels) {
     }
 
     return `- ${scheme.id || 'Auth'} (${scheme.type || 'custom'})${scheme.description ? `: ${scheme.description}` : ''}`;
-  });
+  }));
 
   lines.push(`- ${labels.withoutSavedCredentials}`);
   return lines.join('\n');
@@ -539,7 +542,7 @@ export function buildOperationMarkdown({
   sections.push(formatNetworkLines(pageModel.interaction?.networks, labels));
   sections.push('');
   sections.push(`## ${labels.auth}`, '');
-  sections.push(formatSecuritySummary(pageModel.securitySchemes, labels));
+  sections.push(formatSecuritySummary(pageModel.securitySchemes, labels, pageModel.securityOptional === true));
   sections.push('');
   sections.push(
     formatCurrentRequestSection({
