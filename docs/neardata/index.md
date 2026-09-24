@@ -14,6 +14,8 @@ NEAR Data API is the recent block and shard surface. Use it when you want fresh 
 
 ## Base URLs
 
+OpenAPI: [JSON](/openapi/neardata.json) · [YAML](/openapi/neardata.yaml) · [all specs](/openapi)
+
 ```bash title="NEAR Data API Mainnet"
 https://mainnet.neardata.xyz
 ```

@@ -16,6 +16,8 @@ public key?" without stitching together raw RPC calls.
 
 ## Base URLs
 
+OpenAPI: [JSON](/openapi/fastnear.json) · [YAML](/openapi/fastnear.yaml) · [all specs](/openapi)
+
 ```bash title="FastNear API Mainnet"
 https://api.fastnear.com
 ```

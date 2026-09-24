@@ -164,6 +164,11 @@ import Link from '@site/src/components/LocalizedLink';
         <p>Use one FastNear API key across both the RPC and REST APIs.</p>
       </div>
       <div className="fastnear-home-utility-card">
+        <span className="fastnear-home-utility-card__eyebrow">For agents and tools</span>
+        <Link className="fastnear-home-utility-card__title" to="/openapi">OpenAPI Specs</Link>
+        <p>Machine-readable OpenAPI documents for every API family and operation, plus a JSON index.</p>
+      </div>
+      <div className="fastnear-home-utility-card">
         <span className="fastnear-home-utility-card__eyebrow">Keys and billing</span>
         <Link className="fastnear-home-utility-card__title" to="https://dashboard.fastnear.com">FastNear Dashboard</Link>
         <p>Sign in, create keys, and manage the projects that use them.</p>

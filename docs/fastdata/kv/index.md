@@ -14,6 +14,8 @@ KV FastData API is the indexed key-value family. Use it when you already know th
 
 ## Base URLs
 
+OpenAPI: [JSON](/openapi/kv-fastdata.json) · [YAML](/openapi/kv-fastdata.yaml) · [all specs](/openapi)
+
 ```bash title="KV FastData API Mainnet"
 https://kv.main.fastnear.com
 ```

@@ -15,6 +15,8 @@ block and chunk inspection, transaction submission, validator data, and protocol
 
 ## Base URLs
 
+OpenAPI: [JSON](/openapi/rpc.json) · [YAML](/openapi/rpc.yaml) · [all specs](/openapi)
+
 Regular RPCs keep the most recent epochs of state and are the default choice for most application traffic:
 
 ```bash title="Mainnet Regular RPC"

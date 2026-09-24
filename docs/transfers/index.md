@@ -14,6 +14,8 @@ Transfers API is the narrowest FastNear history surface. Start here when the que
 
 ## Base URL
 
+OpenAPI: [JSON](/openapi/transfers.json) · [YAML](/openapi/transfers.yaml) · [all specs](/openapi)
+
 ```bash title="Transfers API Mainnet"
 https://transfers.main.fastnear.com
 ```

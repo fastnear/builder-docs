@@ -14,6 +14,8 @@ KV FastData API — это индексированное семейство «�
 
 ## Базовые URL
 
+OpenAPI: [JSON](/openapi/kv-fastdata.json) · [YAML](/openapi/kv-fastdata.yaml) · [все спецификации](/openapi)
+
 ```bash title="KV FastData API Mainnet"
 https://kv.main.fastnear.com
 ```
