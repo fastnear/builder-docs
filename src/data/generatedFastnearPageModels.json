@@ -310,7 +310,7 @@
         "status": "200"
       },
       {
-        "description": "The supplied API key was not recognized. Omit the key to use public access.",
+        "description": "The supplied API key was not recognized.",
         "mediaType": "text/plain",
         "schema": {
           "type": "string"
@@ -626,7 +626,7 @@
         "status": "200"
       },
       {
-        "description": "The supplied API key was not recognized. Omit the key to use public access.",
+        "description": "The supplied API key was not recognized.",
         "mediaType": "text/plain",
         "schema": {
           "type": "string"
@@ -994,7 +994,7 @@
         "status": "200"
       },
       {
-        "description": "The supplied API key was not recognized. Omit the key to use public access.",
+        "description": "The supplied API key was not recognized.",
         "mediaType": "text/plain",
         "schema": {
           "type": "string"
@@ -1267,7 +1267,7 @@
         "status": "200"
       },
       {
-        "description": "The supplied API key was not recognized. Omit the key to use public access.",
+        "description": "The supplied API key was not recognized.",
         "mediaType": "text/plain",
         "schema": {
           "type": "string"
@@ -1540,7 +1540,7 @@
         "status": "200"
       },
       {
-        "description": "The supplied API key was not recognized. Omit the key to use public access.",
+        "description": "The supplied API key was not recognized.",
         "mediaType": "text/plain",
         "schema": {
           "type": "string"
@@ -1858,7 +1858,7 @@
         "status": "200"
       },
       {
-        "description": "The supplied API key was not recognized. Omit the key to use public access.",
+        "description": "The supplied API key was not recognized.",
         "mediaType": "text/plain",
         "schema": {
           "type": "string"
@@ -2233,7 +2233,7 @@
         "status": "200"
       },
       {
-        "description": "The supplied API key was not recognized. Omit the key to use public access.",
+        "description": "The supplied API key was not recognized.",
         "mediaType": "text/plain",
         "schema": {
           "type": "string"
@@ -2554,7 +2554,7 @@
         "status": "200"
       },
       {
-        "description": "The supplied API key was not recognized. Omit the key to use public access.",
+        "description": "The supplied API key was not recognized.",
         "mediaType": "text/plain",
         "schema": {
           "type": "string"
@@ -2875,7 +2875,7 @@
         "status": "200"
       },
       {
-        "description": "The supplied API key was not recognized. Omit the key to use public access.",
+        "description": "The supplied API key was not recognized.",
         "mediaType": "text/plain",
         "schema": {
           "type": "string"
@@ -3196,7 +3196,7 @@
         "status": "200"
       },
       {
-        "description": "The supplied API key was not recognized. Omit the key to use public access.",
+        "description": "The supplied API key was not recognized.",
         "mediaType": "text/plain",
         "schema": {
           "type": "string"
@@ -3618,7 +3618,7 @@
         "status": "200"
       },
       {
-        "description": "The supplied API key was not recognized. Omit the key to use public access.",
+        "description": "The supplied API key was not recognized.",
         "mediaType": "text/plain",
         "schema": {
           "type": "string"
@@ -3947,7 +3947,7 @@
         "status": "200"
       },
       {
-        "description": "The supplied API key was not recognized. Omit the key to use public access.",
+        "description": "The supplied API key was not recognized.",
         "mediaType": "text/plain",
         "schema": {
           "type": "string"
@@ -4298,7 +4298,7 @@
         "status": "200"
       },
       {
-        "description": "The supplied API key was not recognized. Omit the key to use public access.",
+        "description": "The supplied API key was not recognized.",
         "mediaType": "text/plain",
         "schema": {
           "type": "string"
@@ -4800,7 +4800,7 @@
         "status": "200"
       },
       {
-        "description": "The supplied API key was not recognized. Omit the key to use public access.",
+        "description": "The supplied API key was not recognized.",
         "mediaType": "text/plain",
         "schema": {
           "type": "string"
@@ -5425,7 +5425,7 @@
         "status": "200"
       },
       {
-        "description": "The supplied API key was not recognized. Omit the key to use public access.",
+        "description": "The supplied API key was not recognized.",
         "mediaType": "text/plain",
         "schema": {
           "type": "string"
@@ -5701,7 +5701,7 @@
         "status": "200"
       },
       {
-        "description": "The supplied API key was not recognized. Omit the key to use public access.",
+        "description": "The supplied API key was not recognized.",
         "mediaType": "text/plain",
         "schema": {
           "type": "string"
@@ -5987,7 +5987,7 @@
         "status": "200"
       },
       {
-        "description": "The supplied API key was not recognized. Omit the key to use public access.",
+        "description": "The supplied API key was not recognized.",
         "mediaType": "text/plain",
         "schema": {
           "type": "string"
@@ -6532,7 +6532,7 @@
         "status": "200"
       },
       {
-        "description": "The supplied API key was not recognized. Omit the key to use public access.",
+        "description": "The supplied API key was not recognized.",
         "mediaType": "text/plain",
         "schema": {
           "type": "string"
@@ -7035,7 +7035,7 @@
         "status": "200"
       },
       {
-        "description": "The supplied API key was not recognized. Omit the key to use public access.",
+        "description": "The supplied API key was not recognized.",
         "mediaType": "text/plain",
         "schema": {
           "type": "string"
@@ -8157,7 +8157,7 @@
         "status": "200"
       },
       {
-        "description": "The supplied API key was not recognized. Omit the key to use public access.",
+        "description": "The supplied API key was not recognized.",
         "mediaType": "text/plain",
         "schema": {
           "type": "string"
@@ -8416,7 +8416,7 @@
         "status": "200"
       },
       {
-        "description": "The supplied API key was not recognized. Omit the key to use public access.",
+        "description": "The supplied API key was not recognized.",
         "mediaType": "text/plain",
         "schema": {
           "type": "string"
@@ -8720,7 +8720,7 @@
         "status": "200"
       },
       {
-        "description": "The supplied API key was not recognized. Omit the key to use public access.",
+        "description": "The supplied API key was not recognized.",
         "mediaType": "text/plain",
         "schema": {
           "type": "string"
@@ -9378,7 +9378,7 @@
         "status": "200"
       },
       {
-        "description": "The supplied API key was not recognized. Omit the key to use public access.",
+        "description": "The supplied API key was not recognized.",
         "mediaType": "text/plain",
         "schema": {
           "type": "string"
@@ -9617,7 +9617,7 @@
         "status": "200"
       },
       {
-        "description": "The supplied API key was not recognized. Omit the key to use public access.",
+        "description": "The supplied API key was not recognized.",
         "mediaType": "text/plain",
         "schema": {
           "type": "string"
@@ -9875,7 +9875,7 @@
         "status": "200"
       },
       {
-        "description": "The supplied API key was not recognized. Omit the key to use public access.",
+        "description": "The supplied API key was not recognized.",
         "mediaType": "text/plain",
         "schema": {
           "type": "string"
@@ -10377,7 +10377,7 @@
         "status": "200"
       },
       {
-        "description": "The supplied API key was not recognized. Omit the key to use public access.",
+        "description": "The supplied API key was not recognized.",
         "mediaType": "text/plain",
         "schema": {
           "type": "string"
@@ -10671,7 +10671,7 @@
         "status": "200"
       },
       {
-        "description": "The supplied API key was not recognized. Omit the key to use public access.",
+        "description": "The supplied API key was not recognized.",
         "mediaType": "text/plain",
         "schema": {
           "type": "string"
@@ -11064,7 +11064,7 @@
         "status": "200"
       },
       {
-        "description": "The supplied API key was not recognized. Omit the key to use public access.",
+        "description": "The supplied API key was not recognized.",
         "mediaType": "text/plain",
         "schema": {
           "type": "string"
@@ -11480,7 +11480,7 @@
         "status": "200"
       },
       {
-        "description": "The supplied API key was not recognized. Omit the key to use public access.",
+        "description": "The supplied API key was not recognized.",
         "mediaType": "text/plain",
         "schema": {
           "type": "string"
@@ -12038,7 +12038,7 @@
         "status": "200"
       },
       {
-        "description": "The supplied API key was not recognized. Omit the key to use public access.",
+        "description": "The supplied API key was not recognized.",
         "mediaType": "text/plain",
         "schema": {
           "type": "string"
@@ -12361,7 +12361,7 @@
         "status": "200"
       },
       {
-        "description": "The supplied API key was not recognized. Omit the key to use public access.",
+        "description": "The supplied API key was not recognized.",
         "mediaType": "text/plain",
         "schema": {
           "type": "string"
@@ -12727,7 +12727,7 @@
         "status": "200"
       },
       {
-        "description": "The supplied API key was not recognized. Omit the key to use public access.",
+        "description": "The supplied API key was not recognized.",
         "mediaType": "text/plain",
         "schema": {
           "type": "string"
@@ -13147,7 +13147,7 @@
         "status": "200"
       },
       {
-        "description": "The supplied API key was not recognized. Omit the key to use public access.",
+        "description": "The supplied API key was not recognized.",
         "mediaType": "text/plain",
         "schema": {
           "type": "string"
@@ -13454,7 +13454,7 @@
         "status": "200"
       },
       {
-        "description": "The supplied API key was not recognized. Omit the key to use public access.",
+        "description": "The supplied API key was not recognized.",
         "mediaType": "text/plain",
         "schema": {
           "type": "string"
@@ -13827,7 +13827,7 @@
         "status": "200"
       },
       {
-        "description": "The supplied API key was not recognized. Omit the key to use public access.",
+        "description": "The supplied API key was not recognized.",
         "mediaType": "text/plain",
         "schema": {
           "type": "string"
@@ -14204,7 +14204,7 @@
         "status": "200"
       },
       {
-        "description": "The supplied API key was not recognized. Omit the key to use public access.",
+        "description": "The supplied API key was not recognized.",
         "mediaType": "text/plain",
         "schema": {
           "type": "string"
@@ -14620,7 +14620,7 @@
         "status": "200"
       },
       {
-        "description": "The supplied API key was not recognized. Omit the key to use public access.",
+        "description": "The supplied API key was not recognized.",
         "mediaType": "text/plain",
         "schema": {
           "type": "string"
@@ -14918,7 +14918,7 @@
         "status": "200"
       },
       {
-        "description": "The supplied API key was not recognized. Omit the key to use public access.",
+        "description": "The supplied API key was not recognized.",
         "mediaType": "text/plain",
         "schema": {
           "type": "string"
@@ -15292,7 +15292,7 @@
         "status": "200"
       },
       {
-        "description": "The supplied API key was not recognized. Omit the key to use public access.",
+        "description": "The supplied API key was not recognized.",
         "mediaType": "text/plain",
         "schema": {
           "type": "string"
@@ -15639,7 +15639,7 @@
         "status": "200"
       },
       {
-        "description": "The supplied API key was not recognized. Omit the key to use public access.",
+        "description": "The supplied API key was not recognized.",
         "mediaType": "text/plain",
         "schema": {
           "type": "string"

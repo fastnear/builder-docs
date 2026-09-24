@@ -12,7 +12,7 @@
 ## Сети
 - Mainnet: https://transfers.main.fastnear.com/
 ## Авторизация
-- Авторизация не требуется
+- Не указано
 ## Текущий запрос
 - Сеть: Mainnet
 - Метод: POST

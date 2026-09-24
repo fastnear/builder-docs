@@ -14,7 +14,7 @@
 - Mainnet: https://tx.main.fastnear.com/
 - Testnet: https://tx.test.fastnear.com/
 ## Авторизация
-- Авторизация не требуется
+- Не указано
 ## Текущий запрос
 - Сеть: Mainnet
 - Метод: POST
