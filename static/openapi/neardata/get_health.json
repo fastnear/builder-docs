@@ -1,0 +1,93 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "NEAR Data API - Health",
+    "version": "3.0.3",
+    "description": "Ping the neardata service for liveness — returns `{status: ok}` when healthy, errors otherwise."
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "description": "Ping the neardata service for liveness — returns `{status: ok}` when healthy, errors otherwise.",
+        "operationId": "get_health",
+        "parameters": [
+          {
+            "description": "Optional FastNEAR subscription API key. Invalid values may return `401` before redirect handling.",
+            "in": "query",
+            "name": "apiKey",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "status": "ok"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            },
+            "description": "Health payload"
+          },
+          "401": {
+            "content": {
+              "text/plain": {
+                "example": "Unauthorized",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "Invalid or unauthorized API key"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "Cache or internal data error"
+          }
+        },
+        "summary": "Get service health",
+        "tags": [
+          "system"
+        ]
+      }
+    }
+  },
+  "servers": [
+    {
+      "description": "Mainnet",
+      "url": "https://mainnet.neardata.xyz"
+    },
+    {
+      "description": "Testnet",
+      "url": "https://testnet.neardata.xyz"
+    }
+  ],
+  "components": {
+    "schemas": {
+      "HealthResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "status": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "status"
+        ],
+        "type": "object"
+      }
+    }
+  }
+}

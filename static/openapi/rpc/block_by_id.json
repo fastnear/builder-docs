@@ -1,0 +1,200 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "NEAR Protocol RPC: Get block by hash",
+    "description": "Fetch a block's header and chunk summaries by its Base58-encoded SHA-256 hash.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://rpc.mainnet.fastnear.com",
+      "description": "Mainnet"
+    },
+    {
+      "url": "https://rpc.testnet.fastnear.com",
+      "description": "Testnet"
+    },
+    {
+      "url": "https://archival-rpc.mainnet.fastnear.com",
+      "description": "Mainnet Archival"
+    },
+    {
+      "url": "https://archival-rpc.testnet.fastnear.com",
+      "description": "Testnet Archival"
+    }
+  ],
+  "paths": {
+    "/": {
+      "post": {
+        "operationId": "block_by_id",
+        "summary": "Get block by hash",
+        "description": "Fetch a block's header and chunk summaries by its Base58-encoded SHA-256 hash.",
+        "x-fastnear-interaction": {
+          "kind": "rpc-block-by-id"
+        },
+        "x-hideReplay": true,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "jsonrpc",
+                  "id",
+                  "method",
+                  "params"
+                ],
+                "properties": {
+                  "jsonrpc": {
+                    "type": "string",
+                    "enum": [
+                      "2.0"
+                    ]
+                  },
+                  "id": {
+                    "type": "string",
+                    "example": "fastnear"
+                  },
+                  "method": {
+                    "type": "string",
+                    "enum": [
+                      "block"
+                    ]
+                  },
+                  "params": {
+                    "type": "object",
+                    "required": [
+                      "block_id"
+                    ],
+                    "properties": {
+                      "block_id": {
+                        "type": "string",
+                        "description": "Base58-encoded block hash"
+                      }
+                    }
+                  }
+                }
+              },
+              "examples": {
+                "mainnet": {
+                  "summary": "Get block by hash (Mainnet)",
+                  "value": {
+                    "jsonrpc": "2.0",
+                    "id": "fastnear",
+                    "method": "block",
+                    "params": {
+                      "block_id": "EPnLgE7iEq9s7yTkos96M3cWymH5avBAPm3qx3NXqR8H"
+                    }
+                  }
+                },
+                "testnet": {
+                  "summary": "Get block by hash (Testnet)",
+                  "value": {
+                    "jsonrpc": "2.0",
+                    "id": "fastnear",
+                    "method": "block",
+                    "params": {
+                      "block_id": "CoPszhGFqcx9L1HQYM62g3UjxMpuZD8RiZL6QdpBZXA4"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JsonRpcResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The supplied API key was not recognized.",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                },
+                "example": "Invalid API key"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "security": [
+    {},
+    {
+      "BearerAuth": []
+    },
+    {
+      "ApiKeyAuth": []
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "FastNEAR API key as an `Authorization: Bearer` header. Preferred for backends, workers, and proxies because it keeps the key out of URLs and logs."
+      },
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "query",
+        "name": "apiKey",
+        "description": "FastNEAR API key as the `apiKey` query parameter. Handy for curl or clients that cannot set headers, but the key can end up in URLs, logs, and shell history."
+      }
+    },
+    "schemas": {
+      "JsonRpcResponse": {
+        "type": "object",
+        "required": [
+          "jsonrpc",
+          "id"
+        ],
+        "properties": {
+          "jsonrpc": {
+            "type": "string",
+            "enum": [
+              "2.0"
+            ]
+          },
+          "id": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "number"
+              }
+            ]
+          },
+          "result": {
+            "type": "object"
+          },
+          "error": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "integer"
+              },
+              "message": {
+                "type": "string"
+              },
+              "data": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

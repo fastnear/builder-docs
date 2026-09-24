@@ -10,7 +10,10 @@
 - Транспорт: json-rpc
 - Метод: POST
 - Путь: `/`
-- Исходная спецификация: `rpcs/account/view_access_key_list.yaml`
+## OpenAPI
+- Эта операция: https://docs.fastnear.com/openapi/rpc/view_access_key_list.json (https://docs.fastnear.com/openapi/rpc/view_access_key_list.yaml)
+- Полный документ API: https://docs.fastnear.com/openapi/rpc.json
+- Указатель в полном документе: https://docs.fastnear.com/openapi/rpc.json#/paths/~1view_access_key_list/post
 ## Сети
 - Mainnet: https://rpc.mainnet.fastnear.com/
 - Testnet: https://rpc.testnet.fastnear.com/

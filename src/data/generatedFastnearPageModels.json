@@ -61,6 +61,14 @@
       "supportsFinality": true,
       "transport": "json-rpc"
     },
+    "openapi": {
+      "family": "rpc",
+      "familyJson": "/openapi/rpc.json",
+      "familyYaml": "/openapi/rpc.yaml",
+      "json": "/openapi/rpc/view_access_key.json",
+      "pointer": "/openapi/rpc.json#/paths/~1view_access_key/post",
+      "yaml": "/openapi/rpc/view_access_key.yaml"
+    },
     "pageModelId": "rpc-view-access-key",
     "replaceOperationPage": true,
     "request": {
@@ -394,6 +402,14 @@
       "supportsFinality": true,
       "transport": "json-rpc"
     },
+    "openapi": {
+      "family": "rpc",
+      "familyJson": "/openapi/rpc.json",
+      "familyYaml": "/openapi/rpc.yaml",
+      "json": "/openapi/rpc/view_access_key_list.json",
+      "pointer": "/openapi/rpc.json#/paths/~1view_access_key_list/post",
+      "yaml": "/openapi/rpc/view_access_key_list.yaml"
+    },
     "pageModelId": "rpc-view-access-key-list",
     "replaceOperationPage": true,
     "request": {
@@ -709,6 +725,14 @@
       "requestType": "view_account",
       "supportsFinality": true,
       "transport": "json-rpc"
+    },
+    "openapi": {
+      "family": "rpc",
+      "familyJson": "/openapi/rpc.json",
+      "familyYaml": "/openapi/rpc.yaml",
+      "json": "/openapi/rpc/view_account.json",
+      "pointer": "/openapi/rpc.json#/paths/~1view_account/post",
+      "yaml": "/openapi/rpc/view_account.yaml"
     },
     "pageModelId": "rpc-view-account",
     "replaceOperationPage": true,
@@ -1081,6 +1105,14 @@
       "supportsFinality": false,
       "transport": "json-rpc"
     },
+    "openapi": {
+      "family": "rpc",
+      "familyJson": "/openapi/rpc.json",
+      "familyYaml": "/openapi/rpc.yaml",
+      "json": "/openapi/rpc/block_by_height.json",
+      "pointer": "/openapi/rpc.json#/paths/~1block_by_height/post",
+      "yaml": "/openapi/rpc/block_by_height.yaml"
+    },
     "pageModelId": "rpc-block-by-height",
     "replaceOperationPage": true,
     "request": {
@@ -1353,6 +1385,14 @@
       "requestMethod": "block",
       "supportsFinality": false,
       "transport": "json-rpc"
+    },
+    "openapi": {
+      "family": "rpc",
+      "familyJson": "/openapi/rpc.json",
+      "familyYaml": "/openapi/rpc.yaml",
+      "json": "/openapi/rpc/block_by_id.json",
+      "pointer": "/openapi/rpc.json#/paths/~1block_by_id/post",
+      "yaml": "/openapi/rpc/block_by_id.yaml"
     },
     "pageModelId": "rpc-block-by-id",
     "replaceOperationPage": true,
@@ -1627,6 +1667,14 @@
       "requestMethod": "block_effects",
       "supportsFinality": true,
       "transport": "json-rpc"
+    },
+    "openapi": {
+      "family": "rpc",
+      "familyJson": "/openapi/rpc.json",
+      "familyYaml": "/openapi/rpc.yaml",
+      "json": "/openapi/rpc/block_effects.json",
+      "pointer": "/openapi/rpc.json#/paths/~1block_effects/post",
+      "yaml": "/openapi/rpc/block_effects.yaml"
     },
     "pageModelId": "rpc-block-effects",
     "replaceOperationPage": true,
@@ -1967,6 +2015,14 @@
       "requestType": "call_function",
       "supportsFinality": true,
       "transport": "json-rpc"
+    },
+    "openapi": {
+      "family": "rpc",
+      "familyJson": "/openapi/rpc.json",
+      "familyYaml": "/openapi/rpc.yaml",
+      "json": "/openapi/rpc/call_function.json",
+      "pointer": "/openapi/rpc.json#/paths/~1call_function/post",
+      "yaml": "/openapi/rpc/call_function.yaml"
     },
     "pageModelId": "rpc-call-function",
     "replaceOperationPage": true,
@@ -2317,6 +2373,14 @@
       "supportsFinality": true,
       "transport": "json-rpc"
     },
+    "openapi": {
+      "family": "rpc",
+      "familyJson": "/openapi/rpc.json",
+      "familyYaml": "/openapi/rpc.yaml",
+      "json": "/openapi/rpc/view_code.json",
+      "pointer": "/openapi/rpc.json#/paths/~1view_code/post",
+      "yaml": "/openapi/rpc/view_code.yaml"
+    },
     "pageModelId": "rpc-view-code",
     "replaceOperationPage": true,
     "request": {
@@ -2638,6 +2702,14 @@
       "supportsFinality": true,
       "transport": "json-rpc"
     },
+    "openapi": {
+      "family": "rpc",
+      "familyJson": "/openapi/rpc.json",
+      "familyYaml": "/openapi/rpc.yaml",
+      "json": "/openapi/rpc/view_global_contract_code.json",
+      "pointer": "/openapi/rpc.json#/paths/~1view_global_contract_code/post",
+      "yaml": "/openapi/rpc/view_global_contract_code.yaml"
+    },
     "pageModelId": "rpc-view-global-contract-code",
     "replaceOperationPage": true,
     "request": {
@@ -2958,6 +3030,14 @@
       "requestType": "view_global_contract_code_by_account_id",
       "supportsFinality": true,
       "transport": "json-rpc"
+    },
+    "openapi": {
+      "family": "rpc",
+      "familyJson": "/openapi/rpc.json",
+      "familyYaml": "/openapi/rpc.yaml",
+      "json": "/openapi/rpc/view_global_contract_code_by_account_id.json",
+      "pointer": "/openapi/rpc.json#/paths/~1view_global_contract_code_by_account_id/post",
+      "yaml": "/openapi/rpc/view_global_contract_code_by_account_id.yaml"
     },
     "pageModelId": "rpc-view-global-contract-code-by-account-id",
     "replaceOperationPage": true,
@@ -3328,6 +3408,14 @@
       "requestType": "view_state",
       "supportsFinality": true,
       "transport": "json-rpc"
+    },
+    "openapi": {
+      "family": "rpc",
+      "familyJson": "/openapi/rpc.json",
+      "familyYaml": "/openapi/rpc.yaml",
+      "json": "/openapi/rpc/view_state.json",
+      "pointer": "/openapi/rpc.json#/paths/~1view_state/post",
+      "yaml": "/openapi/rpc/view_state.yaml"
     },
     "pageModelId": "rpc-view-state",
     "replaceOperationPage": true,
@@ -3727,6 +3815,14 @@
       "supportsFinality": false,
       "transport": "json-rpc"
     },
+    "openapi": {
+      "family": "rpc",
+      "familyJson": "/openapi/rpc.json",
+      "familyYaml": "/openapi/rpc.yaml",
+      "json": "/openapi/rpc/EXPERIMENTAL_congestion_level.json",
+      "pointer": "/openapi/rpc.json#/paths/~1EXPERIMENTAL_congestion_level/post",
+      "yaml": "/openapi/rpc/EXPERIMENTAL_congestion_level.yaml"
+    },
     "pageModelId": "rpc-EXPERIMENTAL-congestion-level",
     "replaceOperationPage": true,
     "request": {
@@ -4046,6 +4142,14 @@
       "requestMethod": "EXPERIMENTAL_light_client_block_proof",
       "supportsFinality": false,
       "transport": "json-rpc"
+    },
+    "openapi": {
+      "family": "rpc",
+      "familyJson": "/openapi/rpc.json",
+      "familyYaml": "/openapi/rpc.yaml",
+      "json": "/openapi/rpc/EXPERIMENTAL_light_client_block_proof.json",
+      "pointer": "/openapi/rpc.json#/paths/~1EXPERIMENTAL_light_client_block_proof/post",
+      "yaml": "/openapi/rpc/EXPERIMENTAL_light_client_block_proof.yaml"
     },
     "pageModelId": "rpc-EXPERIMENTAL-light-client-block-proof",
     "replaceOperationPage": true,
@@ -4449,6 +4553,14 @@
       "requestMethod": "EXPERIMENTAL_light_client_proof",
       "supportsFinality": false,
       "transport": "json-rpc"
+    },
+    "openapi": {
+      "family": "rpc",
+      "familyJson": "/openapi/rpc.json",
+      "familyYaml": "/openapi/rpc.yaml",
+      "json": "/openapi/rpc/EXPERIMENTAL_light_client_proof.json",
+      "pointer": "/openapi/rpc.json#/paths/~1EXPERIMENTAL_light_client_proof/post",
+      "yaml": "/openapi/rpc/EXPERIMENTAL_light_client_proof.yaml"
     },
     "pageModelId": "rpc-EXPERIMENTAL-light-client-proof",
     "replaceOperationPage": true,
@@ -4866,6 +4978,14 @@
       "requestMethod": "EXPERIMENTAL_protocol_config",
       "supportsFinality": false,
       "transport": "json-rpc"
+    },
+    "openapi": {
+      "family": "rpc",
+      "familyJson": "/openapi/rpc.json",
+      "familyYaml": "/openapi/rpc.yaml",
+      "json": "/openapi/rpc/EXPERIMENTAL_protocol_config.json",
+      "pointer": "/openapi/rpc.json#/paths/~1EXPERIMENTAL_protocol_config/post",
+      "yaml": "/openapi/rpc/EXPERIMENTAL_protocol_config.yaml"
     },
     "pageModelId": "rpc-EXPERIMENTAL-protocol-config",
     "replaceOperationPage": true,
@@ -5492,6 +5612,14 @@
       "supportsFinality": false,
       "transport": "json-rpc"
     },
+    "openapi": {
+      "family": "rpc",
+      "familyJson": "/openapi/rpc.json",
+      "familyYaml": "/openapi/rpc.yaml",
+      "json": "/openapi/rpc/EXPERIMENTAL_split_storage_info.json",
+      "pointer": "/openapi/rpc.json#/paths/~1EXPERIMENTAL_split_storage_info/post",
+      "yaml": "/openapi/rpc/EXPERIMENTAL_split_storage_info.yaml"
+    },
     "pageModelId": "rpc-EXPERIMENTAL-split-storage-info",
     "replaceOperationPage": true,
     "request": {
@@ -5767,6 +5895,14 @@
       "requestMethod": "changes",
       "supportsFinality": false,
       "transport": "json-rpc"
+    },
+    "openapi": {
+      "family": "rpc",
+      "familyJson": "/openapi/rpc.json",
+      "familyYaml": "/openapi/rpc.yaml",
+      "json": "/openapi/rpc/changes.json",
+      "pointer": "/openapi/rpc.json#/paths/~1changes/post",
+      "yaml": "/openapi/rpc/changes.yaml"
     },
     "pageModelId": "rpc-changes",
     "replaceOperationPage": true,
@@ -6095,6 +6231,14 @@
       "requestMethod": "chunk",
       "supportsFinality": false,
       "transport": "json-rpc"
+    },
+    "openapi": {
+      "family": "rpc",
+      "familyJson": "/openapi/rpc.json",
+      "familyYaml": "/openapi/rpc.yaml",
+      "json": "/openapi/rpc/chunk_by_block_shard.json",
+      "pointer": "/openapi/rpc.json#/paths/~1chunk_by_block_shard/post",
+      "yaml": "/openapi/rpc/chunk_by_block_shard.yaml"
     },
     "pageModelId": "rpc-chunk-by-block-shard",
     "replaceOperationPage": true,
@@ -6619,6 +6763,14 @@
       "supportsFinality": false,
       "transport": "json-rpc"
     },
+    "openapi": {
+      "family": "rpc",
+      "familyJson": "/openapi/rpc.json",
+      "familyYaml": "/openapi/rpc.yaml",
+      "json": "/openapi/rpc/chunk_by_hash.json",
+      "pointer": "/openapi/rpc.json#/paths/~1chunk_by_hash/post",
+      "yaml": "/openapi/rpc/chunk_by_hash.yaml"
+    },
     "pageModelId": "rpc-chunk-by-hash",
     "replaceOperationPage": true,
     "request": {
@@ -7101,6 +7253,14 @@
       "requestMethod": "client_config",
       "supportsFinality": false,
       "transport": "json-rpc"
+    },
+    "openapi": {
+      "family": "rpc",
+      "familyJson": "/openapi/rpc.json",
+      "familyYaml": "/openapi/rpc.yaml",
+      "json": "/openapi/rpc/client_config.json",
+      "pointer": "/openapi/rpc.json#/paths/~1client_config/post",
+      "yaml": "/openapi/rpc/client_config.yaml"
     },
     "pageModelId": "rpc-client-config",
     "replaceOperationPage": true,
@@ -8224,6 +8384,14 @@
       "supportsFinality": false,
       "transport": "json-rpc"
     },
+    "openapi": {
+      "family": "rpc",
+      "familyJson": "/openapi/rpc.json",
+      "familyYaml": "/openapi/rpc.yaml",
+      "json": "/openapi/rpc/gas_price.json",
+      "pointer": "/openapi/rpc.json#/paths/~1gas_price/post",
+      "yaml": "/openapi/rpc/gas_price.yaml"
+    },
     "pageModelId": "rpc-gas-price",
     "replaceOperationPage": true,
     "request": {
@@ -8512,6 +8680,14 @@
       "supportsFinality": false,
       "transport": "json-rpc"
     },
+    "openapi": {
+      "family": "rpc",
+      "familyJson": "/openapi/rpc.json",
+      "familyYaml": "/openapi/rpc.yaml",
+      "json": "/openapi/rpc/gas_price_by_block.json",
+      "pointer": "/openapi/rpc.json#/paths/~1gas_price_by_block/post",
+      "yaml": "/openapi/rpc/gas_price_by_block.yaml"
+    },
     "pageModelId": "rpc-gas-price-by-block",
     "replaceOperationPage": true,
     "request": {
@@ -8786,6 +8962,14 @@
       "requestMethod": "genesis_config",
       "supportsFinality": false,
       "transport": "json-rpc"
+    },
+    "openapi": {
+      "family": "rpc",
+      "familyJson": "/openapi/rpc.json",
+      "familyYaml": "/openapi/rpc.yaml",
+      "json": "/openapi/rpc/genesis_config.json",
+      "pointer": "/openapi/rpc.json#/paths/~1genesis_config/post",
+      "yaml": "/openapi/rpc/genesis_config.yaml"
     },
     "pageModelId": "rpc-genesis-config",
     "replaceOperationPage": true,
@@ -9445,6 +9629,14 @@
       "supportsFinality": false,
       "transport": "json-rpc"
     },
+    "openapi": {
+      "family": "rpc",
+      "familyJson": "/openapi/rpc.json",
+      "familyYaml": "/openapi/rpc.yaml",
+      "json": "/openapi/rpc/health.json",
+      "pointer": "/openapi/rpc.json#/paths/~1health/post",
+      "yaml": "/openapi/rpc/health.yaml"
+    },
     "pageModelId": "rpc-health",
     "replaceOperationPage": true,
     "request": {
@@ -9683,6 +9875,14 @@
       "requestMethod": "block",
       "supportsFinality": true,
       "transport": "json-rpc"
+    },
+    "openapi": {
+      "family": "rpc",
+      "familyJson": "/openapi/rpc.json",
+      "familyYaml": "/openapi/rpc.yaml",
+      "json": "/openapi/rpc/latest_block.json",
+      "pointer": "/openapi/rpc.json#/paths/~1latest_block/post",
+      "yaml": "/openapi/rpc/latest_block.yaml"
     },
     "pageModelId": "rpc-latest-block",
     "replaceOperationPage": true,
@@ -10026,6 +10226,14 @@
       "requestMethod": "light_client_proof",
       "supportsFinality": false,
       "transport": "json-rpc"
+    },
+    "openapi": {
+      "family": "rpc",
+      "familyJson": "/openapi/rpc.json",
+      "familyYaml": "/openapi/rpc.yaml",
+      "json": "/openapi/rpc/light_client_proof.json",
+      "pointer": "/openapi/rpc.json#/paths/~1light_client_proof/post",
+      "yaml": "/openapi/rpc/light_client_proof.yaml"
     },
     "pageModelId": "rpc-light-client-proof",
     "replaceOperationPage": true,
@@ -10460,6 +10668,14 @@
       "supportsFinality": false,
       "transport": "json-rpc"
     },
+    "openapi": {
+      "family": "rpc",
+      "familyJson": "/openapi/rpc.json",
+      "familyYaml": "/openapi/rpc.yaml",
+      "json": "/openapi/rpc/maintenance_windows.json",
+      "pointer": "/openapi/rpc.json#/paths/~1maintenance_windows/post",
+      "yaml": "/openapi/rpc/maintenance_windows.yaml"
+    },
     "pageModelId": "rpc-maintenance-windows",
     "replaceOperationPage": true,
     "request": {
@@ -10738,6 +10954,14 @@
       "supportsFinality": false,
       "transport": "json-rpc"
     },
+    "openapi": {
+      "family": "rpc",
+      "familyJson": "/openapi/rpc.json",
+      "familyYaml": "/openapi/rpc.yaml",
+      "json": "/openapi/rpc/metrics.json",
+      "pointer": "/openapi/rpc.json#/paths/~1metrics/get",
+      "yaml": "/openapi/rpc/metrics.yaml"
+    },
     "pageModelId": "rpc-metrics",
     "replaceOperationPage": true,
     "request": {
@@ -10829,6 +11053,14 @@
       "requestMethod": "network_info",
       "supportsFinality": false,
       "transport": "json-rpc"
+    },
+    "openapi": {
+      "family": "rpc",
+      "familyJson": "/openapi/rpc.json",
+      "familyYaml": "/openapi/rpc.yaml",
+      "json": "/openapi/rpc/network_info.json",
+      "pointer": "/openapi/rpc.json#/paths/~1network_info/post",
+      "yaml": "/openapi/rpc/network_info.yaml"
     },
     "pageModelId": "rpc-network-info",
     "replaceOperationPage": true,
@@ -11150,6 +11382,14 @@
       "requestMethod": "next_light_client_block",
       "supportsFinality": false,
       "transport": "json-rpc"
+    },
+    "openapi": {
+      "family": "rpc",
+      "familyJson": "/openapi/rpc.json",
+      "familyYaml": "/openapi/rpc.yaml",
+      "json": "/openapi/rpc/next_light_client_block.json",
+      "pointer": "/openapi/rpc.json#/paths/~1next_light_client_block/post",
+      "yaml": "/openapi/rpc/next_light_client_block.yaml"
     },
     "pageModelId": "rpc-next-light-client-block",
     "replaceOperationPage": true,
@@ -11546,6 +11786,14 @@
       "requestMethod": "status",
       "supportsFinality": false,
       "transport": "json-rpc"
+    },
+    "openapi": {
+      "family": "rpc",
+      "familyJson": "/openapi/rpc.json",
+      "familyYaml": "/openapi/rpc.yaml",
+      "json": "/openapi/rpc/status.json",
+      "pointer": "/openapi/rpc.json#/paths/~1status/post",
+      "yaml": "/openapi/rpc/status.yaml"
     },
     "pageModelId": "rpc-status",
     "replaceOperationPage": true,
@@ -12125,6 +12373,14 @@
       "supportsFinality": false,
       "transport": "json-rpc"
     },
+    "openapi": {
+      "family": "rpc",
+      "familyJson": "/openapi/rpc.json",
+      "familyYaml": "/openapi/rpc.yaml",
+      "json": "/openapi/rpc/EXPERIMENTAL_receipt.json",
+      "pointer": "/openapi/rpc.json#/paths/~1EXPERIMENTAL_receipt/post",
+      "yaml": "/openapi/rpc/EXPERIMENTAL_receipt.yaml"
+    },
     "pageModelId": "rpc-EXPERIMENTAL-receipt",
     "replaceOperationPage": true,
     "request": {
@@ -12487,6 +12743,14 @@
       "requestMethod": "EXPERIMENTAL_receipt_to_tx",
       "supportsFinality": false,
       "transport": "json-rpc"
+    },
+    "openapi": {
+      "family": "rpc",
+      "familyJson": "/openapi/rpc.json",
+      "familyYaml": "/openapi/rpc.yaml",
+      "json": "/openapi/rpc/EXPERIMENTAL_receipt_to_tx.json",
+      "pointer": "/openapi/rpc.json#/paths/~1EXPERIMENTAL_receipt_to_tx/post",
+      "yaml": "/openapi/rpc/EXPERIMENTAL_receipt_to_tx.yaml"
     },
     "pageModelId": "rpc-EXPERIMENTAL-receipt-to-tx",
     "replaceOperationPage": true,
@@ -12859,6 +13123,14 @@
       "requestMethod": "EXPERIMENTAL_tx_status",
       "supportsFinality": false,
       "transport": "json-rpc"
+    },
+    "openapi": {
+      "family": "rpc",
+      "familyJson": "/openapi/rpc.json",
+      "familyYaml": "/openapi/rpc.yaml",
+      "json": "/openapi/rpc/EXPERIMENTAL_tx_status.json",
+      "pointer": "/openapi/rpc.json#/paths/~1EXPERIMENTAL_tx_status/post",
+      "yaml": "/openapi/rpc/EXPERIMENTAL_tx_status.yaml"
     },
     "pageModelId": "rpc-EXPERIMENTAL-tx-status",
     "replaceOperationPage": true,
@@ -13250,6 +13522,14 @@
       "supportsFinality": false,
       "transport": "json-rpc"
     },
+    "openapi": {
+      "family": "rpc",
+      "familyJson": "/openapi/rpc.json",
+      "familyYaml": "/openapi/rpc.yaml",
+      "json": "/openapi/rpc/broadcast_tx_async.json",
+      "pointer": "/openapi/rpc.json#/paths/~1broadcast_tx_async/post",
+      "yaml": "/openapi/rpc/broadcast_tx_async.yaml"
+    },
     "pageModelId": "rpc-broadcast-tx-async",
     "replaceOperationPage": true,
     "request": {
@@ -13556,6 +13836,14 @@
       "requestMethod": "broadcast_tx_commit",
       "supportsFinality": false,
       "transport": "json-rpc"
+    },
+    "openapi": {
+      "family": "rpc",
+      "familyJson": "/openapi/rpc.json",
+      "familyYaml": "/openapi/rpc.yaml",
+      "json": "/openapi/rpc/broadcast_tx_commit.json",
+      "pointer": "/openapi/rpc.json#/paths/~1broadcast_tx_commit/post",
+      "yaml": "/openapi/rpc/broadcast_tx_commit.yaml"
     },
     "pageModelId": "rpc-broadcast-tx-commit",
     "replaceOperationPage": true,
@@ -13931,6 +14219,14 @@
       "requestMethod": "send_tx",
       "supportsFinality": false,
       "transport": "json-rpc"
+    },
+    "openapi": {
+      "family": "rpc",
+      "familyJson": "/openapi/rpc.json",
+      "familyYaml": "/openapi/rpc.yaml",
+      "json": "/openapi/rpc/send_tx.json",
+      "pointer": "/openapi/rpc.json#/paths/~1send_tx/post",
+      "yaml": "/openapi/rpc/send_tx.yaml"
     },
     "pageModelId": "rpc-send-tx",
     "replaceOperationPage": true,
@@ -14335,6 +14631,14 @@
       "supportsFinality": false,
       "transport": "json-rpc"
     },
+    "openapi": {
+      "family": "rpc",
+      "familyJson": "/openapi/rpc.json",
+      "familyYaml": "/openapi/rpc.yaml",
+      "json": "/openapi/rpc/tx_status.json",
+      "pointer": "/openapi/rpc.json#/paths/~1tx_status/post",
+      "yaml": "/openapi/rpc/tx_status.yaml"
+    },
     "pageModelId": "rpc-tx-status",
     "replaceOperationPage": true,
     "request": {
@@ -14719,6 +15023,14 @@
       "supportsFinality": false,
       "transport": "json-rpc"
     },
+    "openapi": {
+      "family": "rpc",
+      "familyJson": "/openapi/rpc.json",
+      "familyYaml": "/openapi/rpc.yaml",
+      "json": "/openapi/rpc/EXPERIMENTAL_validators_ordered.json",
+      "pointer": "/openapi/rpc.json#/paths/~1EXPERIMENTAL_validators_ordered/post",
+      "yaml": "/openapi/rpc/EXPERIMENTAL_validators_ordered.yaml"
+    },
     "pageModelId": "rpc-EXPERIMENTAL-validators-ordered",
     "replaceOperationPage": true,
     "request": {
@@ -15004,6 +15316,14 @@
       "requestMethod": "validators",
       "supportsFinality": false,
       "transport": "json-rpc"
+    },
+    "openapi": {
+      "family": "rpc",
+      "familyJson": "/openapi/rpc.json",
+      "familyYaml": "/openapi/rpc.yaml",
+      "json": "/openapi/rpc/validators_by_epoch.json",
+      "pointer": "/openapi/rpc.json#/paths/~1validators_by_epoch/post",
+      "yaml": "/openapi/rpc/validators_by_epoch.yaml"
     },
     "pageModelId": "rpc-validators-by-epoch",
     "replaceOperationPage": true,
@@ -15359,6 +15679,14 @@
       "supportsFinality": false,
       "transport": "json-rpc"
     },
+    "openapi": {
+      "family": "rpc",
+      "familyJson": "/openapi/rpc.json",
+      "familyYaml": "/openapi/rpc.yaml",
+      "json": "/openapi/rpc/validators_current.json",
+      "pointer": "/openapi/rpc.json#/paths/~1validators_current/post",
+      "yaml": "/openapi/rpc/validators_current.yaml"
+    },
     "pageModelId": "rpc-validators-current",
     "replaceOperationPage": true,
     "request": {
@@ -15705,6 +16033,14 @@
       "supportsFinality": false,
       "transport": "http"
     },
+    "openapi": {
+      "family": "fastnear",
+      "familyJson": "/openapi/fastnear.json",
+      "familyYaml": "/openapi/fastnear.yaml",
+      "json": "/openapi/fastnear/get_health.json",
+      "pointer": "/openapi/fastnear.json#/paths/~1health/get",
+      "yaml": "/openapi/fastnear/get_health.yaml"
+    },
     "pageModelId": "fastnear-system-health",
     "replaceOperationPage": true,
     "request": {
@@ -15837,6 +16173,14 @@
       "requestMethod": "get_status",
       "supportsFinality": false,
       "transport": "http"
+    },
+    "openapi": {
+      "family": "fastnear",
+      "familyJson": "/openapi/fastnear.json",
+      "familyYaml": "/openapi/fastnear.yaml",
+      "json": "/openapi/fastnear/get_status.json",
+      "pointer": "/openapi/fastnear.json#/paths/~1status/get",
+      "yaml": "/openapi/fastnear/get_status.yaml"
     },
     "pageModelId": "fastnear-system-status",
     "replaceOperationPage": true,
@@ -16022,6 +16366,14 @@
       "supportsFinality": false,
       "transport": "http"
     },
+    "openapi": {
+      "family": "fastnear",
+      "familyJson": "/openapi/fastnear.json",
+      "familyYaml": "/openapi/fastnear.yaml",
+      "json": "/openapi/fastnear/account_staking_v0.json",
+      "pointer": "/openapi/fastnear.json#/paths/~1v0~1account~1%7Baccount_id%7D~1staking/get",
+      "yaml": "/openapi/fastnear/account_staking_v0.yaml"
+    },
     "pageModelId": "fastnear-v0-account-staking",
     "replaceOperationPage": true,
     "request": {
@@ -16204,6 +16556,14 @@
       "requestMethod": "account_ft_v0",
       "supportsFinality": false,
       "transport": "http"
+    },
+    "openapi": {
+      "family": "fastnear",
+      "familyJson": "/openapi/fastnear.json",
+      "familyYaml": "/openapi/fastnear.yaml",
+      "json": "/openapi/fastnear/account_ft_v0.json",
+      "pointer": "/openapi/fastnear.json#/paths/~1v0~1account~1%7Baccount_id%7D~1ft/get",
+      "yaml": "/openapi/fastnear/account_ft_v0.yaml"
     },
     "pageModelId": "fastnear-v0-account-ft",
     "replaceOperationPage": true,
@@ -16388,6 +16748,14 @@
       "supportsFinality": false,
       "transport": "http"
     },
+    "openapi": {
+      "family": "fastnear",
+      "familyJson": "/openapi/fastnear.json",
+      "familyYaml": "/openapi/fastnear.yaml",
+      "json": "/openapi/fastnear/account_nft_v0.json",
+      "pointer": "/openapi/fastnear.json#/paths/~1v0~1account~1%7Baccount_id%7D~1nft/get",
+      "yaml": "/openapi/fastnear/account_nft_v0.yaml"
+    },
     "pageModelId": "fastnear-v0-account-nft",
     "replaceOperationPage": true,
     "request": {
@@ -16570,6 +16938,14 @@
       "requestMethod": "lookup_by_public_key_v0",
       "supportsFinality": false,
       "transport": "http"
+    },
+    "openapi": {
+      "family": "fastnear",
+      "familyJson": "/openapi/fastnear.json",
+      "familyYaml": "/openapi/fastnear.yaml",
+      "json": "/openapi/fastnear/lookup_by_public_key_v0.json",
+      "pointer": "/openapi/fastnear.json#/paths/~1v0~1public_key~1%7Bpublic_key%7D/get",
+      "yaml": "/openapi/fastnear/lookup_by_public_key_v0.yaml"
     },
     "pageModelId": "fastnear-v0-public-key-lookup",
     "replaceOperationPage": true,
@@ -16754,6 +17130,14 @@
       "supportsFinality": false,
       "transport": "http"
     },
+    "openapi": {
+      "family": "fastnear",
+      "familyJson": "/openapi/fastnear.json",
+      "familyYaml": "/openapi/fastnear.yaml",
+      "json": "/openapi/fastnear/lookup_by_public_key_all_v0.json",
+      "pointer": "/openapi/fastnear.json#/paths/~1v0~1public_key~1%7Bpublic_key%7D~1all/get",
+      "yaml": "/openapi/fastnear/lookup_by_public_key_all_v0.yaml"
+    },
     "pageModelId": "fastnear-v0-public-key-lookup-all",
     "replaceOperationPage": true,
     "request": {
@@ -16936,6 +17320,14 @@
       "requestMethod": "account_staking_v1",
       "supportsFinality": false,
       "transport": "http"
+    },
+    "openapi": {
+      "family": "fastnear",
+      "familyJson": "/openapi/fastnear.json",
+      "familyYaml": "/openapi/fastnear.yaml",
+      "json": "/openapi/fastnear/account_staking_v1.json",
+      "pointer": "/openapi/fastnear.json#/paths/~1v1~1account~1%7Baccount_id%7D~1staking/get",
+      "yaml": "/openapi/fastnear/account_staking_v1.yaml"
     },
     "pageModelId": "fastnear-v1-account-staking",
     "replaceOperationPage": true,
@@ -17142,6 +17534,14 @@
       "requestMethod": "account_ft_v1",
       "supportsFinality": false,
       "transport": "http"
+    },
+    "openapi": {
+      "family": "fastnear",
+      "familyJson": "/openapi/fastnear.json",
+      "familyYaml": "/openapi/fastnear.yaml",
+      "json": "/openapi/fastnear/account_ft_v1.json",
+      "pointer": "/openapi/fastnear.json#/paths/~1v1~1account~1%7Baccount_id%7D~1ft/get",
+      "yaml": "/openapi/fastnear/account_ft_v1.yaml"
     },
     "pageModelId": "fastnear-v1-account-ft",
     "replaceOperationPage": true,
@@ -17357,6 +17757,14 @@
       "supportsFinality": false,
       "transport": "http"
     },
+    "openapi": {
+      "family": "fastnear",
+      "familyJson": "/openapi/fastnear.json",
+      "familyYaml": "/openapi/fastnear.yaml",
+      "json": "/openapi/fastnear/account_nft_v1.json",
+      "pointer": "/openapi/fastnear.json#/paths/~1v1~1account~1%7Baccount_id%7D~1nft/get",
+      "yaml": "/openapi/fastnear/account_nft_v1.yaml"
+    },
     "pageModelId": "fastnear-v1-account-nft",
     "replaceOperationPage": true,
     "request": {
@@ -17562,6 +17970,14 @@
       "requestMethod": "account_full_v1",
       "supportsFinality": false,
       "transport": "http"
+    },
+    "openapi": {
+      "family": "fastnear",
+      "familyJson": "/openapi/fastnear.json",
+      "familyYaml": "/openapi/fastnear.yaml",
+      "json": "/openapi/fastnear/account_full_v1.json",
+      "pointer": "/openapi/fastnear.json#/paths/~1v1~1account~1%7Baccount_id%7D~1full/get",
+      "yaml": "/openapi/fastnear/account_full_v1.yaml"
     },
     "pageModelId": "fastnear-v1-account-full",
     "replaceOperationPage": true,
@@ -17853,6 +18269,14 @@
       "supportsFinality": false,
       "transport": "http"
     },
+    "openapi": {
+      "family": "fastnear",
+      "familyJson": "/openapi/fastnear.json",
+      "familyYaml": "/openapi/fastnear.yaml",
+      "json": "/openapi/fastnear/lookup_by_public_key_v1.json",
+      "pointer": "/openapi/fastnear.json#/paths/~1v1~1public_key~1%7Bpublic_key%7D/get",
+      "yaml": "/openapi/fastnear/lookup_by_public_key_v1.yaml"
+    },
     "pageModelId": "fastnear-v1-public-key-lookup",
     "replaceOperationPage": true,
     "request": {
@@ -18035,6 +18459,14 @@
       "requestMethod": "ft_top_v1",
       "supportsFinality": false,
       "transport": "http"
+    },
+    "openapi": {
+      "family": "fastnear",
+      "familyJson": "/openapi/fastnear.json",
+      "familyYaml": "/openapi/fastnear.yaml",
+      "json": "/openapi/fastnear/ft_top_v1.json",
+      "pointer": "/openapi/fastnear.json#/paths/~1v1~1ft~1%7Btoken_id%7D~1top/get",
+      "yaml": "/openapi/fastnear/ft_top_v1.yaml"
     },
     "pageModelId": "fastnear-v1-ft-top",
     "replaceOperationPage": true,
@@ -18240,6 +18672,14 @@
       "requestMethod": "lookup_by_public_key_all_v1",
       "supportsFinality": false,
       "transport": "http"
+    },
+    "openapi": {
+      "family": "fastnear",
+      "familyJson": "/openapi/fastnear.json",
+      "familyYaml": "/openapi/fastnear.yaml",
+      "json": "/openapi/fastnear/lookup_by_public_key_all_v1.json",
+      "pointer": "/openapi/fastnear.json#/paths/~1v1~1public_key~1%7Bpublic_key%7D~1all/get",
+      "yaml": "/openapi/fastnear/lookup_by_public_key_all_v1.yaml"
     },
     "pageModelId": "fastnear-v1-public-key-lookup-all",
     "replaceOperationPage": true,
@@ -18465,6 +18905,14 @@
       "requestMethod": "all_by_predecessor",
       "supportsFinality": false,
       "transport": "http"
+    },
+    "openapi": {
+      "family": "kv-fastdata",
+      "familyJson": "/openapi/kv-fastdata.json",
+      "familyYaml": "/openapi/kv-fastdata.yaml",
+      "json": "/openapi/kv-fastdata/all_by_predecessor.json",
+      "pointer": "/openapi/kv-fastdata.json#/paths/~1v0~1all~1%7Bpredecessor_id%7D/post",
+      "yaml": "/openapi/kv-fastdata/all_by_predecessor.yaml"
     },
     "pageModelId": "kv-fastdata-v0-all-by-predecessor",
     "replaceOperationPage": true,
@@ -18834,6 +19282,14 @@
       "requestMethod": "history_by_key",
       "supportsFinality": false,
       "transport": "http"
+    },
+    "openapi": {
+      "family": "kv-fastdata",
+      "familyJson": "/openapi/kv-fastdata.json",
+      "familyYaml": "/openapi/kv-fastdata.yaml",
+      "json": "/openapi/kv-fastdata/history_by_key.json",
+      "pointer": "/openapi/kv-fastdata.json#/paths/~1v0~1history/post",
+      "yaml": "/openapi/kv-fastdata/history_by_key.yaml"
     },
     "pageModelId": "kv-fastdata-v0-history-by-key",
     "replaceOperationPage": true,
@@ -19238,6 +19694,14 @@
       "requestMethod": "history_by_account",
       "supportsFinality": false,
       "transport": "http"
+    },
+    "openapi": {
+      "family": "kv-fastdata",
+      "familyJson": "/openapi/kv-fastdata.json",
+      "familyYaml": "/openapi/kv-fastdata.yaml",
+      "json": "/openapi/kv-fastdata/history_by_account.json",
+      "pointer": "/openapi/kv-fastdata.json#/paths/~1v0~1history~1%7Bcurrent_account_id%7D/post",
+      "yaml": "/openapi/kv-fastdata/history_by_account.yaml"
     },
     "pageModelId": "kv-fastdata-v0-history-by-account",
     "replaceOperationPage": true,
@@ -19676,6 +20140,14 @@
       "supportsFinality": false,
       "transport": "http"
     },
+    "openapi": {
+      "family": "kv-fastdata",
+      "familyJson": "/openapi/kv-fastdata.json",
+      "familyYaml": "/openapi/kv-fastdata.yaml",
+      "json": "/openapi/kv-fastdata/history_by_predecessor.json",
+      "pointer": "/openapi/kv-fastdata.json#/paths/~1v0~1history~1%7Bcurrent_account_id%7D~1%7Bpredecessor_id%7D/post",
+      "yaml": "/openapi/kv-fastdata/history_by_predecessor.yaml"
+    },
     "pageModelId": "kv-fastdata-v0-history-by-predecessor",
     "replaceOperationPage": true,
     "request": {
@@ -20055,6 +20527,14 @@
       "supportsFinality": false,
       "transport": "http"
     },
+    "openapi": {
+      "family": "kv-fastdata",
+      "familyJson": "/openapi/kv-fastdata.json",
+      "familyYaml": "/openapi/kv-fastdata.yaml",
+      "json": "/openapi/kv-fastdata/get_history_key.json",
+      "pointer": "/openapi/kv-fastdata.json#/paths/~1v0~1history~1%7Bcurrent_account_id%7D~1%7Bpredecessor_id%7D~1%7Bkey%7D/get",
+      "yaml": "/openapi/kv-fastdata/get_history_key.yaml"
+    },
     "pageModelId": "kv-fastdata-v0-get-history-key",
     "replaceOperationPage": true,
     "request": {
@@ -20397,6 +20877,14 @@
       "requestMethod": "latest_by_account",
       "supportsFinality": false,
       "transport": "http"
+    },
+    "openapi": {
+      "family": "kv-fastdata",
+      "familyJson": "/openapi/kv-fastdata.json",
+      "familyYaml": "/openapi/kv-fastdata.yaml",
+      "json": "/openapi/kv-fastdata/latest_by_account.json",
+      "pointer": "/openapi/kv-fastdata.json#/paths/~1v0~1latest~1%7Bcurrent_account_id%7D/post",
+      "yaml": "/openapi/kv-fastdata/latest_by_account.yaml"
     },
     "pageModelId": "kv-fastdata-v0-latest-by-account",
     "replaceOperationPage": true,
@@ -20809,6 +21297,14 @@
       "supportsFinality": false,
       "transport": "http"
     },
+    "openapi": {
+      "family": "kv-fastdata",
+      "familyJson": "/openapi/kv-fastdata.json",
+      "familyYaml": "/openapi/kv-fastdata.yaml",
+      "json": "/openapi/kv-fastdata/latest_by_predecessor.json",
+      "pointer": "/openapi/kv-fastdata.json#/paths/~1v0~1latest~1%7Bcurrent_account_id%7D~1%7Bpredecessor_id%7D/post",
+      "yaml": "/openapi/kv-fastdata/latest_by_predecessor.yaml"
+    },
     "pageModelId": "kv-fastdata-v0-latest-by-predecessor",
     "replaceOperationPage": true,
     "request": {
@@ -21177,6 +21673,14 @@
       "supportsFinality": false,
       "transport": "http"
     },
+    "openapi": {
+      "family": "kv-fastdata",
+      "familyJson": "/openapi/kv-fastdata.json",
+      "familyYaml": "/openapi/kv-fastdata.yaml",
+      "json": "/openapi/kv-fastdata/get_latest_key.json",
+      "pointer": "/openapi/kv-fastdata.json#/paths/~1v0~1latest~1%7Bcurrent_account_id%7D~1%7Bpredecessor_id%7D~1%7Bkey%7D/get",
+      "yaml": "/openapi/kv-fastdata/get_latest_key.yaml"
+    },
     "pageModelId": "kv-fastdata-v0-get-latest-key",
     "replaceOperationPage": true,
     "request": {
@@ -21476,6 +21980,14 @@
       "supportsFinality": false,
       "transport": "http"
     },
+    "openapi": {
+      "family": "kv-fastdata",
+      "familyJson": "/openapi/kv-fastdata.json",
+      "familyYaml": "/openapi/kv-fastdata.yaml",
+      "json": "/openapi/kv-fastdata/multi.json",
+      "pointer": "/openapi/kv-fastdata.json#/paths/~1v0~1multi/post",
+      "yaml": "/openapi/kv-fastdata/multi.yaml"
+    },
     "pageModelId": "kv-fastdata-v0-multi",
     "replaceOperationPage": true,
     "request": {
@@ -21760,6 +22272,14 @@
       "supportsFinality": false,
       "transport": "http"
     },
+    "openapi": {
+      "family": "neardata",
+      "familyJson": "/openapi/neardata.json",
+      "familyYaml": "/openapi/neardata.yaml",
+      "json": "/openapi/neardata/get_health.json",
+      "pointer": "/openapi/neardata.json#/paths/~1health/get",
+      "yaml": "/openapi/neardata/get_health.yaml"
+    },
     "pageModelId": "neardata-system-health",
     "replaceOperationPage": true,
     "request": {
@@ -21895,6 +22415,14 @@
       "requestMethod": "get_first_block",
       "supportsFinality": false,
       "transport": "http"
+    },
+    "openapi": {
+      "family": "neardata",
+      "familyJson": "/openapi/neardata.json",
+      "familyYaml": "/openapi/neardata.yaml",
+      "json": "/openapi/neardata/get_first_block.json",
+      "pointer": "/openapi/neardata.json#/paths/~1v0~1first_block/get",
+      "yaml": "/openapi/neardata/get_first_block.yaml"
     },
     "pageModelId": "neardata-v0-first-block",
     "replaceOperationPage": true,
@@ -23828,6 +24356,14 @@
       "requestMethod": "get_block",
       "supportsFinality": false,
       "transport": "http"
+    },
+    "openapi": {
+      "family": "neardata",
+      "familyJson": "/openapi/neardata.json",
+      "familyYaml": "/openapi/neardata.yaml",
+      "json": "/openapi/neardata/get_block.json",
+      "pointer": "/openapi/neardata.json#/paths/~1v0~1block~1%7Bblock_height%7D/get",
+      "yaml": "/openapi/neardata/get_block.yaml"
     },
     "pageModelId": "neardata-v0-block",
     "replaceOperationPage": true,
@@ -25821,6 +26357,14 @@
       "supportsFinality": false,
       "transport": "http"
     },
+    "openapi": {
+      "family": "neardata",
+      "familyJson": "/openapi/neardata.json",
+      "familyYaml": "/openapi/neardata.yaml",
+      "json": "/openapi/neardata/get_block_headers.json",
+      "pointer": "/openapi/neardata.json#/paths/~1v0~1block~1%7Bblock_height%7D~1headers/get",
+      "yaml": "/openapi/neardata/get_block_headers.yaml"
+    },
     "pageModelId": "neardata-v0-block-headers",
     "replaceOperationPage": true,
     "request": {
@@ -26225,6 +26769,14 @@
       "requestMethod": "get_chunk",
       "supportsFinality": false,
       "transport": "http"
+    },
+    "openapi": {
+      "family": "neardata",
+      "familyJson": "/openapi/neardata.json",
+      "familyYaml": "/openapi/neardata.yaml",
+      "json": "/openapi/neardata/get_chunk.json",
+      "pointer": "/openapi/neardata.json#/paths/~1v0~1block~1%7Bblock_height%7D~1chunk~1%7Bshard_id%7D/get",
+      "yaml": "/openapi/neardata/get_chunk.yaml"
     },
     "pageModelId": "neardata-v0-block-chunk",
     "replaceOperationPage": true,
@@ -27294,6 +27846,14 @@
       "requestMethod": "get_shard",
       "supportsFinality": false,
       "transport": "http"
+    },
+    "openapi": {
+      "family": "neardata",
+      "familyJson": "/openapi/neardata.json",
+      "familyYaml": "/openapi/neardata.yaml",
+      "json": "/openapi/neardata/get_shard.json",
+      "pointer": "/openapi/neardata.json#/paths/~1v0~1block~1%7Bblock_height%7D~1shard~1%7Bshard_id%7D/get",
+      "yaml": "/openapi/neardata/get_shard.yaml"
     },
     "pageModelId": "neardata-v0-block-shard",
     "replaceOperationPage": true,
@@ -29074,6 +29634,14 @@
       "requestMethod": "get_block_optimistic",
       "supportsFinality": false,
       "transport": "http"
+    },
+    "openapi": {
+      "family": "neardata",
+      "familyJson": "/openapi/neardata.json",
+      "familyYaml": "/openapi/neardata.yaml",
+      "json": "/openapi/neardata/get_block_optimistic.json",
+      "pointer": "/openapi/neardata.json#/paths/~1v0~1block_opt~1%7Bblock_height%7D/get",
+      "yaml": "/openapi/neardata/get_block_optimistic.yaml"
     },
     "pageModelId": "neardata-v0-block-optimistic",
     "replaceOperationPage": true,
@@ -31051,6 +31619,14 @@
       "supportsFinality": false,
       "transport": "http"
     },
+    "openapi": {
+      "family": "neardata",
+      "familyJson": "/openapi/neardata.json",
+      "familyYaml": "/openapi/neardata.yaml",
+      "json": "/openapi/neardata/get_last_block_final.json",
+      "pointer": "/openapi/neardata.json#/paths/~1v0~1last_block~1final/get",
+      "yaml": "/openapi/neardata/get_last_block_final.yaml"
+    },
     "pageModelId": "neardata-v0-last-block-final",
     "replaceOperationPage": true,
     "request": {
@@ -32975,6 +33551,14 @@
       "requestMethod": "get_last_block_optimistic",
       "supportsFinality": false,
       "transport": "http"
+    },
+    "openapi": {
+      "family": "neardata",
+      "familyJson": "/openapi/neardata.json",
+      "familyYaml": "/openapi/neardata.yaml",
+      "json": "/openapi/neardata/get_last_block_optimistic.json",
+      "pointer": "/openapi/neardata.json#/paths/~1v0~1last_block~1optimistic/get",
+      "yaml": "/openapi/neardata/get_last_block_optimistic.yaml"
     },
     "pageModelId": "neardata-v0-last-block-optimistic",
     "replaceOperationPage": true,
@@ -35143,6 +35727,14 @@
       "supportsFinality": false,
       "transport": "http"
     },
+    "openapi": {
+      "family": "transactions",
+      "familyJson": "/openapi/transactions.json",
+      "familyYaml": "/openapi/transactions.yaml",
+      "json": "/openapi/transactions/get_account.json",
+      "pointer": "/openapi/transactions.json#/paths/~1v0~1account/post",
+      "yaml": "/openapi/transactions/get_account.yaml"
+    },
     "pageModelId": "transactions-v0-account",
     "replaceOperationPage": true,
     "request": {
@@ -35665,6 +36257,14 @@
       "requestMethod": "get_block",
       "supportsFinality": false,
       "transport": "http"
+    },
+    "openapi": {
+      "family": "transactions",
+      "familyJson": "/openapi/transactions.json",
+      "familyYaml": "/openapi/transactions.yaml",
+      "json": "/openapi/transactions/get_block.json",
+      "pointer": "/openapi/transactions.json#/paths/~1v0~1block/post",
+      "yaml": "/openapi/transactions/get_block.yaml"
     },
     "pageModelId": "transactions-v0-block",
     "replaceOperationPage": true,
@@ -36388,6 +36988,14 @@
       "supportsFinality": false,
       "transport": "http"
     },
+    "openapi": {
+      "family": "transactions",
+      "familyJson": "/openapi/transactions.json",
+      "familyYaml": "/openapi/transactions.yaml",
+      "json": "/openapi/transactions/get_blocks.json",
+      "pointer": "/openapi/transactions.json#/paths/~1v0~1blocks/post",
+      "yaml": "/openapi/transactions/get_blocks.yaml"
+    },
     "pageModelId": "transactions-v0-blocks",
     "replaceOperationPage": true,
     "request": {
@@ -36746,6 +37354,14 @@
       "supportsFinality": false,
       "transport": "http"
     },
+    "openapi": {
+      "family": "transactions",
+      "familyJson": "/openapi/transactions.json",
+      "familyYaml": "/openapi/transactions.yaml",
+      "json": "/openapi/transactions/get_receipt.json",
+      "pointer": "/openapi/transactions.json#/paths/~1v0~1receipt/post",
+      "yaml": "/openapi/transactions/get_receipt.yaml"
+    },
     "pageModelId": "transactions-v0-receipt",
     "replaceOperationPage": true,
     "request": {
@@ -37083,6 +37699,14 @@
       "supportsFinality": false,
       "transport": "http"
     },
+    "openapi": {
+      "family": "transactions",
+      "familyJson": "/openapi/transactions.json",
+      "familyYaml": "/openapi/transactions.yaml",
+      "json": "/openapi/transactions/get_transactions.json",
+      "pointer": "/openapi/transactions.json#/paths/~1v0~1transactions/post",
+      "yaml": "/openapi/transactions/get_transactions.yaml"
+    },
     "pageModelId": "transactions-v0-transactions",
     "replaceOperationPage": true,
     "request": {
@@ -37410,6 +38034,14 @@
       "requestMethod": "get_transfers_by_account",
       "supportsFinality": false,
       "transport": "http"
+    },
+    "openapi": {
+      "family": "transfers",
+      "familyJson": "/openapi/transfers.json",
+      "familyYaml": "/openapi/transfers.yaml",
+      "json": "/openapi/transfers/get_transfers_by_account.json",
+      "pointer": "/openapi/transfers.json#/paths/~1v0~1transfers/post",
+      "yaml": "/openapi/transfers/get_transfers_by_account.yaml"
     },
     "pageModelId": "transfers-v0-transfers",
     "replaceOperationPage": true,

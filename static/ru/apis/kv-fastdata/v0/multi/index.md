@@ -8,7 +8,10 @@
 - Транспорт: http
 - Метод: POST
 - Путь: `/v0/multi`
-- Исходная спецификация: `apis/kv-fastdata/v0/multi.yaml`
+## OpenAPI
+- Эта операция: https://docs.fastnear.com/openapi/kv-fastdata/multi.json (https://docs.fastnear.com/openapi/kv-fastdata/multi.yaml)
+- Полный документ API: https://docs.fastnear.com/openapi/kv-fastdata.json
+- Указатель в полном документе: https://docs.fastnear.com/openapi/kv-fastdata.json#/paths/~1v0~1multi/post
 ## Сети
 - Mainnet: https://kv.main.fastnear.com/
 - Testnet: https://kv.test.fastnear.com/

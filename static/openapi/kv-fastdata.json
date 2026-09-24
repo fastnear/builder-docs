@@ -1,0 +1,1170 @@
+{
+  "components": {
+    "schemas": {
+      "AllRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "include_metadata": {
+            "default": false,
+            "description": "Include receipt and signer metadata in each entry.",
+            "type": "boolean"
+          },
+          "limit": {
+            "description": "Maximum number of entries to return in one page (1–200, default 50).",
+            "format": "int32",
+            "maximum": 200,
+            "minimum": 1,
+            "nullable": true,
+            "type": "integer"
+          },
+          "page_token": {
+            "description": "Opaque pagination cursor from a previous `/v0/all/{predecessor_id}` response.",
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "ApiError": {
+        "additionalProperties": false,
+        "properties": {
+          "error": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "error"
+        ],
+        "type": "object"
+      },
+      "ByKeyRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "asc": {
+            "default": false,
+            "description": "Sort ascending for history results. Defaults to newest-first.",
+            "type": "boolean"
+          },
+          "include_metadata": {
+            "default": false,
+            "description": "Include receipt and signer metadata in each entry.",
+            "type": "boolean"
+          },
+          "key": {
+            "description": "Exact key name to match across all accounts and predecessors.",
+            "type": "string"
+          },
+          "limit": {
+            "description": "Maximum number of entries to return in one page (1–200, default 50).",
+            "format": "int32",
+            "maximum": 200,
+            "minimum": 1,
+            "nullable": true,
+            "type": "integer"
+          },
+          "page_token": {
+            "description": "Opaque pagination cursor from a previous response for the same endpoint and filter set.",
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "required": [
+          "key"
+        ],
+        "type": "object"
+      },
+      "KvEntry": {
+        "additionalProperties": false,
+        "properties": {
+          "action_index": {
+            "format": "uint32",
+            "minimum": 0,
+            "nullable": true,
+            "type": "integer"
+          },
+          "block_height": {
+            "format": "uint64",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "block_timestamp": {
+            "format": "uint64",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "current_account_id": {
+            "type": "string"
+          },
+          "key": {
+            "type": "string"
+          },
+          "predecessor_id": {
+            "type": "string"
+          },
+          "receipt_id": {
+            "nullable": true,
+            "type": "string"
+          },
+          "signer_id": {
+            "nullable": true,
+            "type": "string"
+          },
+          "tx_hash": {
+            "nullable": true,
+            "type": "string"
+          },
+          "value": {
+            "description": "Raw JSON value as stored in FastData."
+          }
+        },
+        "required": [
+          "predecessor_id",
+          "current_account_id",
+          "block_height",
+          "block_timestamp",
+          "key",
+          "value"
+        ],
+        "type": "object"
+      },
+      "LatestRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "include_metadata": {
+            "default": false,
+            "description": "Include receipt and signer metadata in each entry.",
+            "type": "boolean"
+          },
+          "key": {
+            "description": "Exact key filter. Mutually exclusive with `key_prefix`.",
+            "nullable": true,
+            "type": "string"
+          },
+          "key_prefix": {
+            "description": "Prefix filter for matching key namespaces.",
+            "nullable": true,
+            "type": "string"
+          },
+          "limit": {
+            "description": "Maximum number of entries to return in one page (1–200, default 50).",
+            "format": "int32",
+            "maximum": 200,
+            "minimum": 1,
+            "nullable": true,
+            "type": "integer"
+          },
+          "page_token": {
+            "description": "Opaque pagination cursor from a previous response for the same endpoint and filter set.",
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "ListResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "entries": {
+            "items": {
+              "$ref": "#/components/schemas/KvEntry"
+            },
+            "type": "array"
+          },
+          "page_token": {
+            "description": "Opaque pagination cursor for the next page. Absent when there are no more results.",
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "required": [
+          "entries"
+        ],
+        "type": "object"
+      },
+      "MultiRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "include_metadata": {
+            "default": false,
+            "description": "Include receipt and signer metadata in each entry.",
+            "type": "boolean"
+          },
+          "keys": {
+            "description": "Fully qualified keys in current_account_id/predecessor_id/key form.",
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 100,
+            "type": "array"
+          }
+        },
+        "required": [
+          "keys"
+        ],
+        "type": "object"
+      },
+      "MultiResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "entries": {
+            "items": {
+              "oneOf": [
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "action_index": {
+                      "format": "uint32",
+                      "minimum": 0,
+                      "nullable": true,
+                      "type": "integer"
+                    },
+                    "block_height": {
+                      "format": "uint64",
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    "block_timestamp": {
+                      "format": "uint64",
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    "current_account_id": {
+                      "type": "string"
+                    },
+                    "key": {
+                      "type": "string"
+                    },
+                    "predecessor_id": {
+                      "type": "string"
+                    },
+                    "receipt_id": {
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "signer_id": {
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "tx_hash": {
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "value": {
+                      "description": "Raw JSON value as stored in FastData."
+                    }
+                  },
+                  "required": [
+                    "predecessor_id",
+                    "current_account_id",
+                    "block_height",
+                    "block_timestamp",
+                    "key",
+                    "value"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "enum": [
+                    null
+                  ]
+                }
+              ]
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "entries"
+        ],
+        "type": "object"
+      },
+      "QueryRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "asc": {
+            "default": false,
+            "description": "Sort ascending for history endpoints. Defaults to newest-first.",
+            "type": "boolean"
+          },
+          "include_metadata": {
+            "default": false,
+            "description": "Include receipt and signer metadata in each entry.",
+            "type": "boolean"
+          },
+          "key": {
+            "description": "Exact key filter. Mutually exclusive with `key_prefix`.",
+            "nullable": true,
+            "type": "string"
+          },
+          "key_prefix": {
+            "description": "Prefix filter for matching key namespaces.",
+            "nullable": true,
+            "type": "string"
+          },
+          "limit": {
+            "description": "Maximum number of entries to return in one page (1–200, default 50).",
+            "format": "int32",
+            "maximum": 200,
+            "minimum": 1,
+            "nullable": true,
+            "type": "integer"
+          },
+          "page_token": {
+            "description": "Opaque pagination cursor from a previous response for the same endpoint and filter set.",
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "type": "object"
+      }
+    }
+  },
+  "info": {
+    "description": "Read-only key-value queries over FastData records stored in ScyllaDB.",
+    "title": "KV FastData API",
+    "version": "3.0.3"
+  },
+  "openapi": "3.0.3",
+  "paths": {
+    "/v0/all/{predecessor_id}": {
+      "post": {
+        "description": "Fetch the latest values for all contracts touched by one predecessor account.",
+        "operationId": "all_by_predecessor",
+        "parameters": [
+          {
+            "description": "Calling account that wrote the FastData keys.",
+            "example": "james.near",
+            "in": "path",
+            "name": "predecessor_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "include_metadata": true,
+                "limit": 50
+              },
+              "schema": {
+                "$ref": "#/components/schemas/AllRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "entries": [
+                    {
+                      "action_index": 0,
+                      "block_height": 183302718,
+                      "block_timestamp": 1769731630602682600,
+                      "current_account_id": "social.near",
+                      "key": "graph/follow/sleet.near",
+                      "predecessor_id": "james.near",
+                      "receipt_id": "gaiLdGpaRwaunXUFnnz9VNj8V7cY18ZPAt2QfZazBkk",
+                      "signer_id": "james.near",
+                      "tx_hash": "FK7qDhHv4otg2wPGrE3DKFjvmmjHhUKBxQDkcAsdH5k3",
+                      "value": ""
+                    }
+                  ],
+                  "page_token": "opaque-next-page-token"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ListResponse"
+                }
+              }
+            },
+            "description": "Latest rows for the selected predecessor"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "invalid page token"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Invalid key filter or page token"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "internal server error"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Scylla query failure"
+          }
+        },
+        "summary": "Fetch latest key-value rows for one predecessor across all contracts",
+        "tags": [
+          "latest"
+        ],
+        "x-fastnear-slug": "all_by_predecessor",
+        "x-fastnear-title": "KV FastData API - All Latest Keys by Predecessor"
+      }
+    },
+    "/v0/history": {
+      "post": {
+        "description": "Fetch the historical values for a selected key across accounts and predecessors.",
+        "operationId": "history_by_key",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "asc": true,
+                "include_metadata": false,
+                "key": "graph/follow/sleet.near",
+                "limit": 50
+              },
+              "schema": {
+                "$ref": "#/components/schemas/ByKeyRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "entries": [
+                    {
+                      "action_index": 0,
+                      "block_height": 183302718,
+                      "block_timestamp": 1769731630602682600,
+                      "current_account_id": "social.near",
+                      "key": "graph/follow/sleet.near",
+                      "predecessor_id": "james.near",
+                      "receipt_id": "gaiLdGpaRwaunXUFnnz9VNj8V7cY18ZPAt2QfZazBkk",
+                      "signer_id": "james.near",
+                      "tx_hash": "FK7qDhHv4otg2wPGrE3DKFjvmmjHhUKBxQDkcAsdH5k3",
+                      "value": ""
+                    }
+                  ],
+                  "page_token": "opaque-next-page-token"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ListResponse"
+                }
+              }
+            },
+            "description": "Historical rows for the selected key"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "invalid page token"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Invalid key filter or page token"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "internal server error"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Scylla query failure"
+          }
+        },
+        "summary": "Fetch historical rows by exact key across all indexed contracts",
+        "tags": [
+          "history"
+        ],
+        "x-fastnear-slug": "history_by_key",
+        "x-fastnear-title": "KV FastData API - History by Global Key"
+      }
+    },
+    "/v0/history/{current_account_id}": {
+      "post": {
+        "description": "Fetch historical FastData rows for one target account across all predecessor accounts.",
+        "operationId": "history_by_account",
+        "parameters": [
+          {
+            "description": "Contract account whose FastData keys were written.",
+            "example": "social.near",
+            "in": "path",
+            "name": "current_account_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "asc": false,
+                "include_metadata": true,
+                "key_prefix": "graph/follow/sleet.near",
+                "limit": 50
+              },
+              "schema": {
+                "$ref": "#/components/schemas/QueryRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "entries": [
+                    {
+                      "action_index": 0,
+                      "block_height": 183302718,
+                      "block_timestamp": 1769731630602682600,
+                      "current_account_id": "social.near",
+                      "key": "graph/follow/sleet.near",
+                      "predecessor_id": "james.near",
+                      "receipt_id": "gaiLdGpaRwaunXUFnnz9VNj8V7cY18ZPAt2QfZazBkk",
+                      "signer_id": "james.near",
+                      "tx_hash": "FK7qDhHv4otg2wPGrE3DKFjvmmjHhUKBxQDkcAsdH5k3",
+                      "value": ""
+                    }
+                  ],
+                  "page_token": "opaque-next-page-token"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ListResponse"
+                }
+              }
+            },
+            "description": "Historical rows for the selected contract"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "invalid page token"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Invalid key filter or page token"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "internal server error"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Scylla query failure"
+          }
+        },
+        "summary": "Fetch historical key-value writes for one contract across all predecessors",
+        "tags": [
+          "history"
+        ],
+        "x-fastnear-slug": "history_by_account",
+        "x-fastnear-title": "KV FastData API - History by Account"
+      }
+    },
+    "/v0/history/{current_account_id}/{predecessor_id}": {
+      "post": {
+        "description": "Fetch historical FastData rows for a single predecessor and target account.",
+        "operationId": "history_by_predecessor",
+        "parameters": [
+          {
+            "description": "Contract account whose FastData keys were written.",
+            "example": "social.near",
+            "in": "path",
+            "name": "current_account_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Calling account that wrote the FastData keys.",
+            "example": "james.near",
+            "in": "path",
+            "name": "predecessor_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "asc": false,
+                "include_metadata": true,
+                "key_prefix": "graph/follow/",
+                "limit": 50
+              },
+              "schema": {
+                "$ref": "#/components/schemas/QueryRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "entries": [
+                    {
+                      "action_index": 0,
+                      "block_height": 183302718,
+                      "block_timestamp": 1769731630602682600,
+                      "current_account_id": "social.near",
+                      "key": "graph/follow/sleet.near",
+                      "predecessor_id": "james.near",
+                      "receipt_id": "gaiLdGpaRwaunXUFnnz9VNj8V7cY18ZPAt2QfZazBkk",
+                      "signer_id": "james.near",
+                      "tx_hash": "FK7qDhHv4otg2wPGrE3DKFjvmmjHhUKBxQDkcAsdH5k3",
+                      "value": ""
+                    }
+                  ],
+                  "page_token": "opaque-next-page-token"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ListResponse"
+                }
+              }
+            },
+            "description": "Historical rows for the selected predecessor and account"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "invalid page token"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Invalid key filter or page token"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "internal server error"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Scylla query failure"
+          }
+        },
+        "summary": "Fetch historical key-value writes for one predecessor and contract",
+        "tags": [
+          "history"
+        ],
+        "x-fastnear-slug": "history_by_predecessor",
+        "x-fastnear-title": "KV FastData API - History by Predecessor"
+      }
+    },
+    "/v0/history/{current_account_id}/{predecessor_id}/{key}": {
+      "get": {
+        "description": "Fetch every historical write for one exact key under one predecessor and contract.",
+        "operationId": "get_history_key",
+        "parameters": [
+          {
+            "description": "Contract account whose FastData keys were written.",
+            "example": "social.near",
+            "in": "path",
+            "name": "current_account_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Calling account that wrote the FastData keys.",
+            "example": "james.near",
+            "in": "path",
+            "name": "predecessor_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Exact FastData key to return.",
+            "example": "graph/follow/sleet.near",
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "entries": [
+                    {
+                      "action_index": 0,
+                      "block_height": 183302718,
+                      "block_timestamp": 1769731630602682600,
+                      "current_account_id": "social.near",
+                      "key": "graph/follow/sleet.near",
+                      "predecessor_id": "james.near",
+                      "receipt_id": "gaiLdGpaRwaunXUFnnz9VNj8V7cY18ZPAt2QfZazBkk",
+                      "signer_id": "james.near",
+                      "tx_hash": "FK7qDhHv4otg2wPGrE3DKFjvmmjHhUKBxQDkcAsdH5k3",
+                      "value": ""
+                    }
+                  ],
+                  "page_token": "opaque-next-page-token"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ListResponse"
+                }
+              }
+            },
+            "description": "Historical rows for the selected predecessor, account, and key"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "internal server error"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Scylla query failure"
+          }
+        },
+        "summary": "Fetch historical rows for one exact key under one predecessor and contract",
+        "tags": [
+          "history"
+        ],
+        "x-fastnear-slug": "get_history_key",
+        "x-fastnear-title": "KV FastData API - History by Exact Key"
+      }
+    },
+    "/v0/latest/{current_account_id}": {
+      "post": {
+        "description": "Fetch the latest FastData rows for one target account across all predecessor accounts.",
+        "operationId": "latest_by_account",
+        "parameters": [
+          {
+            "description": "Contract account whose FastData keys were written.",
+            "example": "social.near",
+            "in": "path",
+            "name": "current_account_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "include_metadata": true,
+                "key_prefix": "graph/follow/",
+                "limit": 50
+              },
+              "schema": {
+                "$ref": "#/components/schemas/LatestRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "entries": [
+                    {
+                      "action_index": 0,
+                      "block_height": 183302718,
+                      "block_timestamp": 1769731630602682600,
+                      "current_account_id": "social.near",
+                      "key": "graph/follow/sleet.near",
+                      "predecessor_id": "james.near",
+                      "receipt_id": "gaiLdGpaRwaunXUFnnz9VNj8V7cY18ZPAt2QfZazBkk",
+                      "signer_id": "james.near",
+                      "tx_hash": "FK7qDhHv4otg2wPGrE3DKFjvmmjHhUKBxQDkcAsdH5k3",
+                      "value": ""
+                    }
+                  ],
+                  "page_token": "opaque-next-page-token"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ListResponse"
+                }
+              }
+            },
+            "description": "Latest rows for the selected contract"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "invalid page token"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Invalid key filter or page token"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "internal server error"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Scylla query failure"
+          }
+        },
+        "summary": "Fetch latest key-value rows for one contract across all predecessors",
+        "tags": [
+          "latest"
+        ],
+        "x-fastnear-slug": "latest_by_account",
+        "x-fastnear-title": "KV FastData API - Latest by Account"
+      }
+    },
+    "/v0/latest/{current_account_id}/{predecessor_id}": {
+      "post": {
+        "description": "Fetch the latest FastData rows for a single predecessor and target account.",
+        "operationId": "latest_by_predecessor",
+        "parameters": [
+          {
+            "description": "Contract account whose FastData keys were written.",
+            "example": "social.near",
+            "in": "path",
+            "name": "current_account_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Calling account that wrote the FastData keys.",
+            "example": "james.near",
+            "in": "path",
+            "name": "predecessor_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "include_metadata": true,
+                "key_prefix": "graph/follow/",
+                "limit": 50
+              },
+              "schema": {
+                "$ref": "#/components/schemas/LatestRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "entries": [
+                    {
+                      "action_index": 0,
+                      "block_height": 183302718,
+                      "block_timestamp": 1769731630602682600,
+                      "current_account_id": "social.near",
+                      "key": "graph/follow/sleet.near",
+                      "predecessor_id": "james.near",
+                      "receipt_id": "gaiLdGpaRwaunXUFnnz9VNj8V7cY18ZPAt2QfZazBkk",
+                      "signer_id": "james.near",
+                      "tx_hash": "FK7qDhHv4otg2wPGrE3DKFjvmmjHhUKBxQDkcAsdH5k3",
+                      "value": ""
+                    }
+                  ],
+                  "page_token": "opaque-next-page-token"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ListResponse"
+                }
+              }
+            },
+            "description": "Latest rows for the selected predecessor and account"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "invalid page token"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Invalid key filter or page token"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "internal server error"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Scylla query failure"
+          }
+        },
+        "summary": "Fetch latest key-value rows for one predecessor and contract",
+        "tags": [
+          "latest"
+        ],
+        "x-fastnear-slug": "latest_by_predecessor",
+        "x-fastnear-title": "KV FastData API - Latest by Predecessor"
+      }
+    },
+    "/v0/latest/{current_account_id}/{predecessor_id}/{key}": {
+      "get": {
+        "description": "Fetch the latest value for one exact key under one predecessor and contract.",
+        "operationId": "get_latest_key",
+        "parameters": [
+          {
+            "description": "Contract account whose FastData keys were written.",
+            "example": "social.near",
+            "in": "path",
+            "name": "current_account_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Calling account that wrote the FastData keys.",
+            "example": "james.near",
+            "in": "path",
+            "name": "predecessor_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Exact FastData key to return.",
+            "example": "graph/follow/sleet.near",
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "entries": [
+                    {
+                      "action_index": 0,
+                      "block_height": 183302718,
+                      "block_timestamp": 1769731630602682600,
+                      "current_account_id": "social.near",
+                      "key": "graph/follow/sleet.near",
+                      "predecessor_id": "james.near",
+                      "receipt_id": "gaiLdGpaRwaunXUFnnz9VNj8V7cY18ZPAt2QfZazBkk",
+                      "signer_id": "james.near",
+                      "tx_hash": "FK7qDhHv4otg2wPGrE3DKFjvmmjHhUKBxQDkcAsdH5k3",
+                      "value": ""
+                    }
+                  ],
+                  "page_token": "opaque-next-page-token"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ListResponse"
+                }
+              }
+            },
+            "description": "Latest rows for the selected predecessor, account, and key"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "internal server error"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Scylla query failure"
+          }
+        },
+        "summary": "Fetch the latest row for one exact key under one predecessor and contract",
+        "tags": [
+          "latest"
+        ],
+        "x-fastnear-slug": "get_latest_key",
+        "x-fastnear-title": "KV FastData API - Latest by Exact Key"
+      }
+    },
+    "/v0/multi": {
+      "post": {
+        "description": "Fetch the latest FastData row for up to 100 keys in a single request.",
+        "operationId": "multi",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "include_metadata": true,
+                "keys": [
+                  "social.near/james.near/graph/follow/sleet.near",
+                  "social.near/james.near/graph/follow/missing"
+                ]
+              },
+              "schema": {
+                "$ref": "#/components/schemas/MultiRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "entries": [
+                    {
+                      "action_index": 0,
+                      "block_height": 183302718,
+                      "block_timestamp": 1769731630602682600,
+                      "current_account_id": "social.near",
+                      "key": "graph/follow/sleet.near",
+                      "predecessor_id": "james.near",
+                      "receipt_id": "gaiLdGpaRwaunXUFnnz9VNj8V7cY18ZPAt2QfZazBkk",
+                      "signer_id": "james.near",
+                      "tx_hash": "FK7qDhHv4otg2wPGrE3DKFjvmmjHhUKBxQDkcAsdH5k3",
+                      "value": ""
+                    },
+                    null
+                  ]
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/MultiResponse"
+                }
+              }
+            },
+            "description": "Latest rows for the requested keys"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "invalid page token"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Invalid key filter or page token"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "internal server error"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Scylla query failure"
+          }
+        },
+        "summary": "Fetch the latest rows for multiple fully qualified keys",
+        "tags": [
+          "latest"
+        ],
+        "x-fastnear-slug": "multi",
+        "x-fastnear-title": "KV FastData API - Multi-Key Lookup"
+      }
+    }
+  },
+  "servers": [
+    {
+      "description": "Mainnet",
+      "url": "https://kv.main.fastnear.com"
+    },
+    {
+      "description": "Testnet",
+      "url": "https://kv.test.fastnear.com"
+    }
+  ]
+}

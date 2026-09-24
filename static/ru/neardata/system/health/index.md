@@ -9,7 +9,10 @@
 - Транспорт: http
 - Метод: GET
 - Путь: `/health`
-- Исходная спецификация: `apis/neardata/system/health.yaml`
+## OpenAPI
+- Эта операция: https://docs.fastnear.com/openapi/neardata/get_health.json (https://docs.fastnear.com/openapi/neardata/get_health.yaml)
+- Полный документ API: https://docs.fastnear.com/openapi/neardata.json
+- Указатель в полном документе: https://docs.fastnear.com/openapi/neardata.json#/paths/~1health/get
 ## Сети
 - Mainnet: https://mainnet.neardata.xyz/
 - Testnet: https://testnet.neardata.xyz/

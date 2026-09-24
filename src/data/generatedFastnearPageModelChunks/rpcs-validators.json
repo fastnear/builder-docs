@@ -63,6 +63,14 @@
       "supportsFinality": false,
       "transport": "json-rpc"
     },
+    "openapi": {
+      "family": "rpc",
+      "familyJson": "/openapi/rpc.json",
+      "familyYaml": "/openapi/rpc.yaml",
+      "json": "/openapi/rpc/EXPERIMENTAL_validators_ordered.json",
+      "pointer": "/openapi/rpc.json#/paths/~1EXPERIMENTAL_validators_ordered/post",
+      "yaml": "/openapi/rpc/EXPERIMENTAL_validators_ordered.yaml"
+    },
     "pageModelId": "rpc-EXPERIMENTAL-validators-ordered",
     "replaceOperationPage": true,
     "request": {
@@ -348,6 +356,14 @@
       "requestMethod": "validators",
       "supportsFinality": false,
       "transport": "json-rpc"
+    },
+    "openapi": {
+      "family": "rpc",
+      "familyJson": "/openapi/rpc.json",
+      "familyYaml": "/openapi/rpc.yaml",
+      "json": "/openapi/rpc/validators_by_epoch.json",
+      "pointer": "/openapi/rpc.json#/paths/~1validators_by_epoch/post",
+      "yaml": "/openapi/rpc/validators_by_epoch.yaml"
     },
     "pageModelId": "rpc-validators-by-epoch",
     "replaceOperationPage": true,
@@ -702,6 +718,14 @@
       "requestMethod": "validators",
       "supportsFinality": false,
       "transport": "json-rpc"
+    },
+    "openapi": {
+      "family": "rpc",
+      "familyJson": "/openapi/rpc.json",
+      "familyYaml": "/openapi/rpc.yaml",
+      "json": "/openapi/rpc/validators_current.json",
+      "pointer": "/openapi/rpc.json#/paths/~1validators_current/post",
+      "yaml": "/openapi/rpc/validators_current.yaml"
     },
     "pageModelId": "rpc-validators-current",
     "replaceOperationPage": true,

@@ -1,0 +1,98 @@
+openapi: 3.0.3
+info:
+  title: FastNEAR API - V1 FT Top Holders
+  version: 3.0.3
+  description: Fetch the top-balance holder list for a fungible token contract, ranked highest balance first.
+paths:
+  /v1/ft/{token_id}/top:
+    get:
+      description: Fetch the top-balance holder list for a fungible token contract, ranked highest balance first.
+      operationId: ft_top_v1
+      parameters:
+        - description: Fungible token contract account ID.
+          example: wrap.near
+          in: path
+          name: token_id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              example:
+                accounts:
+                  - account_id: mob.near
+                    balance: "979894691374420631019486155"
+                token_id: wrap.near
+              schema:
+                $ref: "#/components/schemas/TokenAccountsResponse"
+          description: Indexed top holders for the requested fungible token
+        "400":
+          content:
+            application/json:
+              schema:
+                type: string
+          description: Bad Request
+        "403":
+          content:
+            text/plain:
+              example: Invalid API key
+              schema:
+                type: string
+          description: The supplied API key was not recognized. Omit the key to use public access.
+        "500":
+          content:
+            application/json:
+              schema:
+                type: string
+          description: Internal Server Error
+      summary: Lookup top indexed holders for a fungible token
+      tags:
+        - fungible-tokens
+servers:
+  - description: Mainnet
+    url: https://api.fastnear.com
+  - description: Testnet
+    url: https://test.api.fastnear.com
+security:
+  - {}
+  - BearerAuth: []
+  - ApiKeyAuth: []
+components:
+  schemas:
+    AccountBalanceRow:
+      additionalProperties: false
+      properties:
+        account_id:
+          type: string
+        balance:
+          nullable: true
+          type: string
+      required:
+        - account_id
+        - balance
+      type: object
+    TokenAccountsResponse:
+      additionalProperties: false
+      properties:
+        accounts:
+          items:
+            $ref: "#/components/schemas/AccountBalanceRow"
+          type: array
+        token_id:
+          type: string
+      required:
+        - token_id
+        - accounts
+      type: object
+  securitySchemes:
+    ApiKeyAuth:
+      description: FastNEAR API key as the `apiKey` query parameter. Handy for curl or clients that cannot set headers, but the key can end up in URLs, logs, and shell history.
+      in: query
+      name: apiKey
+      type: apiKey
+    BearerAuth:
+      description: "FastNEAR API key as an `Authorization: Bearer` header. Preferred for backends, workers, and proxies because it keeps the key out of URLs and logs."
+      scheme: bearer
+      type: http

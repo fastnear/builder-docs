@@ -1,0 +1,219 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "NEAR Protocol RPC: Get split storage info",
+    "description": "Inspect a node's split-storage layout — the boundary between hot recent data and cold archival data.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://rpc.mainnet.fastnear.com",
+      "description": "Mainnet"
+    },
+    {
+      "url": "https://rpc.testnet.fastnear.com",
+      "description": "Testnet"
+    },
+    {
+      "url": "https://archival-rpc.mainnet.fastnear.com",
+      "description": "Mainnet Archival"
+    },
+    {
+      "url": "https://archival-rpc.testnet.fastnear.com",
+      "description": "Testnet Archival"
+    }
+  ],
+  "paths": {
+    "/": {
+      "post": {
+        "operationId": "EXPERIMENTAL_split_storage_info",
+        "summary": "Get split storage info",
+        "description": "Inspect a node's split-storage layout — the boundary between hot recent data and cold archival data.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "jsonrpc",
+                  "id",
+                  "method",
+                  "params"
+                ],
+                "properties": {
+                  "jsonrpc": {
+                    "type": "string",
+                    "enum": [
+                      "2.0"
+                    ]
+                  },
+                  "id": {
+                    "type": "string",
+                    "example": "fastnear"
+                  },
+                  "method": {
+                    "type": "string",
+                    "enum": [
+                      "EXPERIMENTAL_split_storage_info"
+                    ]
+                  },
+                  "params": {
+                    "type": "array",
+                    "maxItems": 0,
+                    "description": "Empty array as this method takes no parameters",
+                    "example": []
+                  }
+                }
+              },
+              "examples": {
+                "mainnet": {
+                  "summary": "Get split storage info (Mainnet)",
+                  "value": {
+                    "jsonrpc": "2.0",
+                    "id": "fastnear",
+                    "method": "EXPERIMENTAL_split_storage_info",
+                    "params": []
+                  }
+                },
+                "testnet": {
+                  "summary": "Get split storage info (Testnet)",
+                  "value": {
+                    "jsonrpc": "2.0",
+                    "id": "fastnear",
+                    "method": "EXPERIMENTAL_split_storage_info",
+                    "params": []
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JsonRpcResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The supplied API key was not recognized.",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                },
+                "example": "Invalid API key"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "security": [
+    {},
+    {
+      "BearerAuth": []
+    },
+    {
+      "ApiKeyAuth": []
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "FastNEAR API key as an `Authorization: Bearer` header. Preferred for backends, workers, and proxies because it keeps the key out of URLs and logs."
+      },
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "query",
+        "name": "apiKey",
+        "description": "FastNEAR API key as the `apiKey` query parameter. Handy for curl or clients that cannot set headers, but the key can end up in URLs, logs, and shell history."
+      }
+    },
+    "schemas": {
+      "JsonRpcResponse": {
+        "type": "object",
+        "required": [
+          "jsonrpc",
+          "id"
+        ],
+        "properties": {
+          "jsonrpc": {
+            "type": "string",
+            "enum": [
+              "2.0"
+            ]
+          },
+          "id": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "number"
+              }
+            ]
+          },
+          "result": {
+            "type": "object",
+            "description": "Contains the split storage information.",
+            "properties": {
+              "cold_head_height": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "format": "uint64",
+                "minimum": 0
+              },
+              "final_head_height": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "format": "uint64",
+                "minimum": 0
+              },
+              "head_height": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "format": "uint64",
+                "minimum": 0
+              },
+              "hot_db_kind": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          },
+          "error": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "integer"
+              },
+              "message": {
+                "type": "string"
+              },
+              "data": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -8,7 +8,10 @@
 - Транспорт: http
 - Метод: GET
 - Путь: `/v1/ft/{token_id}/top`
-- Исходная спецификация: `apis/fastnear/v1/ft_top.yaml`
+## OpenAPI
+- Эта операция: https://docs.fastnear.com/openapi/fastnear/ft_top_v1.json (https://docs.fastnear.com/openapi/fastnear/ft_top_v1.yaml)
+- Полный документ API: https://docs.fastnear.com/openapi/fastnear.json
+- Указатель в полном документе: https://docs.fastnear.com/openapi/fastnear.json#/paths/~1v1~1ft~1%7Btoken_id%7D~1top/get
 ## Сети
 - Mainnet: https://api.fastnear.com/
 - Testnet: https://test.api.fastnear.com/

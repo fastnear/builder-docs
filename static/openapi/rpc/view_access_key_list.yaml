@@ -1,0 +1,157 @@
+openapi: 3.1.0
+info:
+  title: "NEAR Protocol RPC: View access key list"
+  description: "Fetch every access key attached to an account, each with its permissions and nonce. ML-DSA-65 keys are listed by their ml-dsa-65-hash: handle; to query one with view_access_key, or to reference it in an action, use the full ml-dsa-65: public key instead."
+  version: 1.0.0
+servers:
+  - url: https://rpc.mainnet.fastnear.com
+    description: Mainnet
+  - url: https://rpc.testnet.fastnear.com
+    description: Testnet
+  - url: https://archival-rpc.mainnet.fastnear.com
+    description: Mainnet Archival
+  - url: https://archival-rpc.testnet.fastnear.com
+    description: Testnet Archival
+paths:
+  /:
+    post:
+      operationId: view_access_key_list
+      summary: View access key list
+      description: "Fetch every access key attached to an account, each with its permissions and nonce. ML-DSA-65 keys are listed by their ml-dsa-65-hash: handle; to query one with view_access_key, or to reference it in an action, use the full ml-dsa-65: public key instead."
+      x-fastnear-interaction:
+        kind: rpc-view-access-key-list
+      x-hideReplay: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - jsonrpc
+                - id
+                - method
+                - params
+              properties:
+                jsonrpc:
+                  type: string
+                  enum:
+                    - "2.0"
+                id:
+                  type: string
+                  example: fastnear
+                method:
+                  type: string
+                  enum:
+                    - query
+                params:
+                  type: object
+                  properties:
+                    account_id:
+                      type: string
+                      description: NEAR account ID
+                    request_type:
+                      type: string
+                      enum:
+                        - view_access_key_list
+                    finality:
+                      type: string
+                      enum:
+                        - final
+                        - near-final
+                        - optimistic
+                      description: Block finality
+                  required:
+                    - request_type
+                    - account_id
+                    - finality
+            examples:
+              mainnet:
+                summary: View access key list (Mainnet)
+                value:
+                  jsonrpc: "2.0"
+                  id: fastnear
+                  method: query
+                  params:
+                    account_id: root.near
+                    request_type: view_access_key_list
+                    finality: final
+              testnet:
+                summary: View access key list (Testnet)
+                value:
+                  jsonrpc: "2.0"
+                  id: fastnear
+                  method: query
+                  params:
+                    account_id: root.testnet
+                    request_type: view_access_key_list
+                    finality: final
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/JsonRpcResponse"
+        "403":
+          description: The supplied API key was not recognized.
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: Invalid API key
+security:
+  - {}
+  - BearerAuth: []
+  - ApiKeyAuth: []
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      description: "FastNEAR API key as an `Authorization: Bearer` header. Preferred for backends, workers, and proxies because it keeps the key out of URLs and logs."
+    ApiKeyAuth:
+      type: apiKey
+      in: query
+      name: apiKey
+      description: FastNEAR API key as the `apiKey` query parameter. Handy for curl or clients that cannot set headers, but the key can end up in URLs, logs, and shell history.
+  schemas:
+    JsonRpcResponse:
+      type: object
+      required:
+        - jsonrpc
+        - id
+      properties:
+        jsonrpc:
+          type: string
+          enum:
+            - "2.0"
+        id:
+          oneOf:
+            - type: string
+            - type: number
+        result:
+          type: object
+          description: Lists access keys
+          properties:
+            keys:
+              type: array
+              items:
+                type: object
+                description: |-
+                  Describes information about an access key including its on-trie
+                  identifier. For ed25519/secp256k1 access keys the `public_key` field
+                  is the full public key (string form unchanged from before); for
+                  ML-DSA-65 access keys it is a `ml-dsa-65-hash:...` SHA3-256 digest
+                  (the full pubkey is not stored on-chain).
+          required:
+            - keys
+        error:
+          type: object
+          properties:
+            code:
+              type: integer
+            message:
+              type: string
+            data:
+              type: object

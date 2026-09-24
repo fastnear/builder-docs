@@ -9,7 +9,10 @@
 - Транспорт: http
 - Метод: GET
 - Путь: `/v0/first_block`
-- Исходная спецификация: `apis/neardata/v0/first_block.yaml`
+## OpenAPI
+- Эта операция: https://docs.fastnear.com/openapi/neardata/get_first_block.json (https://docs.fastnear.com/openapi/neardata/get_first_block.yaml)
+- Полный документ API: https://docs.fastnear.com/openapi/neardata.json
+- Указатель в полном документе: https://docs.fastnear.com/openapi/neardata.json#/paths/~1v0~1first_block/get
 ## Сети
 - Mainnet: https://mainnet.neardata.xyz/
 - Testnet: https://testnet.neardata.xyz/

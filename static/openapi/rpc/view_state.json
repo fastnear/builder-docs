@@ -1,0 +1,270 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "NEAR Protocol RPC: View contract state",
+    "description": "Fetch the raw key-value state a contract has written, optionally filtered by key prefix.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://rpc.mainnet.fastnear.com",
+      "description": "Mainnet"
+    },
+    {
+      "url": "https://rpc.testnet.fastnear.com",
+      "description": "Testnet"
+    },
+    {
+      "url": "https://archival-rpc.mainnet.fastnear.com",
+      "description": "Mainnet Archival"
+    },
+    {
+      "url": "https://archival-rpc.testnet.fastnear.com",
+      "description": "Testnet Archival"
+    }
+  ],
+  "paths": {
+    "/": {
+      "post": {
+        "operationId": "view_state",
+        "summary": "View contract state",
+        "description": "Fetch the raw key-value state a contract has written, optionally filtered by key prefix.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "jsonrpc",
+                  "id",
+                  "method",
+                  "params"
+                ],
+                "properties": {
+                  "jsonrpc": {
+                    "type": "string",
+                    "enum": [
+                      "2.0"
+                    ]
+                  },
+                  "id": {
+                    "type": "string",
+                    "example": "fastnear"
+                  },
+                  "method": {
+                    "type": "string",
+                    "enum": [
+                      "query"
+                    ]
+                  },
+                  "params": {
+                    "type": "object",
+                    "properties": {
+                      "account_id": {
+                        "type": "string",
+                        "description": "NEAR account ID"
+                      },
+                      "after_key_base64": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Exclusive start cursor: returns only keys greater than this one. Set to the prior response's `last_key` to page forward; omit to scan from the start of the prefix range."
+                      },
+                      "include_proof": {
+                        "type": "boolean",
+                        "description": "Include a Merkle proof for the queried state alongside the values."
+                      },
+                      "limit": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ],
+                        "format": "uint32",
+                        "minimum": 1,
+                        "description": "Maximum key/value entries per response (≥ 1). Omit for no client-set bound (subject to node limits)."
+                      },
+                      "prefix_base64": {
+                        "type": "string",
+                        "description": "Base64-encoded key prefix; returns only trie entries whose key begins with these bytes. Empty string (`\"\"`) removes the filter and returns the entire contract state — expensive on large contracts."
+                      },
+                      "request_type": {
+                        "type": "string",
+                        "enum": [
+                          "view_state"
+                        ]
+                      },
+                      "finality": {
+                        "type": "string",
+                        "enum": [
+                          "final",
+                          "near-final",
+                          "optimistic"
+                        ],
+                        "description": "Block finality"
+                      }
+                    },
+                    "required": [
+                      "request_type",
+                      "account_id",
+                      "prefix_base64",
+                      "finality"
+                    ]
+                  }
+                }
+              },
+              "examples": {
+                "mainnet": {
+                  "summary": "View Mainnet Contract State",
+                  "value": {
+                    "jsonrpc": "2.0",
+                    "id": "fastnear",
+                    "method": "query",
+                    "params": {
+                      "request_type": "view_state",
+                      "finality": "final",
+                      "account_id": "lockup.near",
+                      "prefix_base64": "U1RBVEU="
+                    }
+                  }
+                },
+                "testnet": {
+                  "summary": "View Testnet Contract State",
+                  "value": {
+                    "jsonrpc": "2.0",
+                    "id": "fastnear",
+                    "method": "query",
+                    "params": {
+                      "request_type": "view_state",
+                      "finality": "final",
+                      "account_id": "counter.testnet",
+                      "prefix_base64": ""
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JsonRpcResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The supplied API key was not recognized.",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                },
+                "example": "Invalid API key"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "security": [
+    {},
+    {
+      "BearerAuth": []
+    },
+    {
+      "ApiKeyAuth": []
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "FastNEAR API key as an `Authorization: Bearer` header. Preferred for backends, workers, and proxies because it keeps the key out of URLs and logs."
+      },
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "query",
+        "name": "apiKey",
+        "description": "FastNEAR API key as the `apiKey` query parameter. Handy for curl or clients that cannot set headers, but the key can end up in URLs, logs, and shell history."
+      }
+    },
+    "schemas": {
+      "JsonRpcResponse": {
+        "type": "object",
+        "required": [
+          "jsonrpc",
+          "id"
+        ],
+        "properties": {
+          "jsonrpc": {
+            "type": "string",
+            "enum": [
+              "2.0"
+            ]
+          },
+          "id": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "number"
+              }
+            ]
+          },
+          "result": {
+            "type": "object",
+            "description": "Resulting state values for a view state query request",
+            "properties": {
+              "last_key": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Continuation cursor — the last key returned. Pass as `after_key_base64` to fetch the next page; absent when the result set is exhausted."
+              },
+              "proof": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "values": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "description": "Item of the state, key and value are serialized in base64 and proof for inclusion of given state item."
+                }
+              }
+            },
+            "required": [
+              "values"
+            ]
+          },
+          "error": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "integer"
+              },
+              "message": {
+                "type": "string"
+              },
+              "data": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,141 @@
+openapi: 3.1.0
+info:
+  title: "NEAR Protocol RPC: Get state changes"
+  description: Fetch detailed state changes in a block — filter by account, key prefix, or change type.
+  version: 1.0.0
+servers:
+  - url: https://rpc.mainnet.fastnear.com
+    description: Mainnet
+  - url: https://rpc.testnet.fastnear.com
+    description: Testnet
+  - url: https://archival-rpc.mainnet.fastnear.com
+    description: Mainnet Archival
+  - url: https://archival-rpc.testnet.fastnear.com
+    description: Testnet Archival
+paths:
+  /:
+    post:
+      operationId: changes
+      summary: Get state changes
+      description: Fetch detailed state changes in a block — filter by account, key prefix, or change type.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - jsonrpc
+                - id
+                - method
+                - params
+              properties:
+                jsonrpc:
+                  type: string
+                  enum:
+                    - "2.0"
+                id:
+                  type: string
+                  example: fastnear
+                method:
+                  type: string
+                  enum:
+                    - changes
+                params:
+                  type: object
+                  description: One of multiple possible types
+            examples:
+              mainnet:
+                summary: Get state changes (Mainnet)
+                value:
+                  jsonrpc: "2.0"
+                  id: fastnear
+                  method: changes
+                  params:
+                    finality: final
+                    changes_type: account_changes
+                    account_ids:
+                      - root.near
+              testnet:
+                summary: Get state changes (Testnet)
+                value:
+                  jsonrpc: "2.0"
+                  id: fastnear
+                  method: changes
+                  params:
+                    finality: final
+                    changes_type: account_changes
+                    account_ids:
+                      - root.testnet
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/JsonRpcResponse"
+        "403":
+          description: The supplied API key was not recognized.
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: Invalid API key
+security:
+  - {}
+  - BearerAuth: []
+  - ApiKeyAuth: []
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      description: "FastNEAR API key as an `Authorization: Bearer` header. Preferred for backends, workers, and proxies because it keeps the key out of URLs and logs."
+    ApiKeyAuth:
+      type: apiKey
+      in: query
+      name: apiKey
+      description: FastNEAR API key as the `apiKey` query parameter. Handy for curl or clients that cannot set headers, but the key can end up in URLs, logs, and shell history.
+  schemas:
+    JsonRpcResponse:
+      type: object
+      required:
+        - jsonrpc
+        - id
+      properties:
+        jsonrpc:
+          type: string
+          enum:
+            - "2.0"
+        id:
+          oneOf:
+            - type: string
+            - type: number
+        result:
+          type: object
+          properties:
+            block_hash:
+              type: string
+              description: Base58-encoded hash
+            changes:
+              type: array
+              items:
+                type: object
+                properties:
+                  cause:
+                    type: object
+                    description: One of multiple possible types
+                required:
+                  - cause
+          required:
+            - block_hash
+            - changes
+        error:
+          type: object
+          properties:
+            code:
+              type: integer
+            message:
+              type: string
+            data:
+              type: object

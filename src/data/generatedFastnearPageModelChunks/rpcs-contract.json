@@ -74,6 +74,14 @@
       "supportsFinality": true,
       "transport": "json-rpc"
     },
+    "openapi": {
+      "family": "rpc",
+      "familyJson": "/openapi/rpc.json",
+      "familyYaml": "/openapi/rpc.yaml",
+      "json": "/openapi/rpc/call_function.json",
+      "pointer": "/openapi/rpc.json#/paths/~1call_function/post",
+      "yaml": "/openapi/rpc/call_function.yaml"
+    },
     "pageModelId": "rpc-call-function",
     "replaceOperationPage": true,
     "request": {
@@ -423,6 +431,14 @@
       "supportsFinality": true,
       "transport": "json-rpc"
     },
+    "openapi": {
+      "family": "rpc",
+      "familyJson": "/openapi/rpc.json",
+      "familyYaml": "/openapi/rpc.yaml",
+      "json": "/openapi/rpc/view_code.json",
+      "pointer": "/openapi/rpc.json#/paths/~1view_code/post",
+      "yaml": "/openapi/rpc/view_code.yaml"
+    },
     "pageModelId": "rpc-view-code",
     "replaceOperationPage": true,
     "request": {
@@ -744,6 +760,14 @@
       "supportsFinality": true,
       "transport": "json-rpc"
     },
+    "openapi": {
+      "family": "rpc",
+      "familyJson": "/openapi/rpc.json",
+      "familyYaml": "/openapi/rpc.yaml",
+      "json": "/openapi/rpc/view_global_contract_code.json",
+      "pointer": "/openapi/rpc.json#/paths/~1view_global_contract_code/post",
+      "yaml": "/openapi/rpc/view_global_contract_code.yaml"
+    },
     "pageModelId": "rpc-view-global-contract-code",
     "replaceOperationPage": true,
     "request": {
@@ -1064,6 +1088,14 @@
       "requestType": "view_global_contract_code_by_account_id",
       "supportsFinality": true,
       "transport": "json-rpc"
+    },
+    "openapi": {
+      "family": "rpc",
+      "familyJson": "/openapi/rpc.json",
+      "familyYaml": "/openapi/rpc.yaml",
+      "json": "/openapi/rpc/view_global_contract_code_by_account_id.json",
+      "pointer": "/openapi/rpc.json#/paths/~1view_global_contract_code_by_account_id/post",
+      "yaml": "/openapi/rpc/view_global_contract_code_by_account_id.yaml"
     },
     "pageModelId": "rpc-view-global-contract-code-by-account-id",
     "replaceOperationPage": true,
@@ -1434,6 +1466,14 @@
       "requestType": "view_state",
       "supportsFinality": true,
       "transport": "json-rpc"
+    },
+    "openapi": {
+      "family": "rpc",
+      "familyJson": "/openapi/rpc.json",
+      "familyYaml": "/openapi/rpc.yaml",
+      "json": "/openapi/rpc/view_state.json",
+      "pointer": "/openapi/rpc.json#/paths/~1view_state/post",
+      "yaml": "/openapi/rpc/view_state.yaml"
     },
     "pageModelId": "rpc-view-state",
     "replaceOperationPage": true,

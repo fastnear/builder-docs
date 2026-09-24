@@ -1,0 +1,167 @@
+openapi: 3.1.0
+info:
+  title: "NEAR Protocol RPC: Call contract function"
+  description: Invoke a contract view method without gas or state changes — reads computed values from contract logic.
+  version: 1.0.0
+servers:
+  - url: https://rpc.mainnet.fastnear.com
+    description: Mainnet
+  - url: https://rpc.testnet.fastnear.com
+    description: Testnet
+  - url: https://archival-rpc.mainnet.fastnear.com
+    description: Mainnet Archival
+  - url: https://archival-rpc.testnet.fastnear.com
+    description: Testnet Archival
+paths:
+  /:
+    post:
+      operationId: call_function
+      summary: Call contract function
+      description: Invoke a contract view method without gas or state changes — reads computed values from contract logic.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - jsonrpc
+                - id
+                - method
+                - params
+              properties:
+                jsonrpc:
+                  type: string
+                  enum:
+                    - "2.0"
+                id:
+                  type: string
+                  example: fastnear
+                method:
+                  type: string
+                  enum:
+                    - query
+                params:
+                  type: object
+                  properties:
+                    account_id:
+                      type: string
+                      description: NEAR account ID
+                    args_base64:
+                      type: string
+                      description: Base64-encoded argument byte array passed to the method. JSON contracts expect the UTF-8 bytes of the JSON payload (`e30=` decodes to `{}`).
+                    method_name:
+                      type: string
+                      description: Name of the contract view method to invoke.
+                    request_type:
+                      type: string
+                      enum:
+                        - call_function
+                    finality:
+                      type: string
+                      enum:
+                        - final
+                        - near-final
+                        - optimistic
+                      description: Block finality
+                  required:
+                    - request_type
+                    - account_id
+                    - method_name
+                    - args_base64
+                    - finality
+            examples:
+              mainnet:
+                summary: Call Mainnet Contract Function
+                value:
+                  jsonrpc: "2.0"
+                  id: fastnear
+                  method: query
+                  params:
+                    request_type: call_function
+                    finality: final
+                    account_id: contract.near
+                    method_name: get_info
+                    args_base64: e30=
+              testnet:
+                summary: Call Testnet Contract Function
+                value:
+                  jsonrpc: "2.0"
+                  id: fastnear
+                  method: query
+                  params:
+                    request_type: call_function
+                    finality: final
+                    account_id: contract.testnet
+                    method_name: get_info
+                    args_base64: e30=
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/JsonRpcResponse"
+        "403":
+          description: The supplied API key was not recognized.
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: Invalid API key
+security:
+  - {}
+  - BearerAuth: []
+  - ApiKeyAuth: []
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      description: "FastNEAR API key as an `Authorization: Bearer` header. Preferred for backends, workers, and proxies because it keeps the key out of URLs and logs."
+    ApiKeyAuth:
+      type: apiKey
+      in: query
+      name: apiKey
+      description: FastNEAR API key as the `apiKey` query parameter. Handy for curl or clients that cannot set headers, but the key can end up in URLs, logs, and shell history.
+  schemas:
+    JsonRpcResponse:
+      type: object
+      required:
+        - jsonrpc
+        - id
+      properties:
+        jsonrpc:
+          type: string
+          enum:
+            - "2.0"
+        id:
+          oneOf:
+            - type: string
+            - type: number
+        result:
+          type: object
+          description: A result returned by contract method
+          properties:
+            logs:
+              type: array
+              items:
+                type: string
+            result:
+              type: array
+              items:
+                type: integer
+                format: uint8
+                minimum: 0
+          required:
+            - result
+            - logs
+        error:
+          type: object
+          properties:
+            code:
+              type: integer
+            message:
+              type: string
+            data:
+              type: object

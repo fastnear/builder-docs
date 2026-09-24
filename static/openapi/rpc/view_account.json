@@ -1,0 +1,268 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "NEAR Protocol RPC: View account",
+    "description": "Fetch an account's balance, storage usage, and code hash at a chosen block or finality.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://rpc.mainnet.fastnear.com",
+      "description": "Mainnet"
+    },
+    {
+      "url": "https://rpc.testnet.fastnear.com",
+      "description": "Testnet"
+    },
+    {
+      "url": "https://archival-rpc.mainnet.fastnear.com",
+      "description": "Mainnet Archival"
+    },
+    {
+      "url": "https://archival-rpc.testnet.fastnear.com",
+      "description": "Testnet Archival"
+    }
+  ],
+  "paths": {
+    "/": {
+      "post": {
+        "operationId": "view_account",
+        "summary": "View account",
+        "description": "Fetch an account's balance, storage usage, and code hash at a chosen block or finality.",
+        "x-fastnear-interaction": {
+          "kind": "rpc-view-account"
+        },
+        "x-hideReplay": true,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "jsonrpc",
+                  "id",
+                  "method",
+                  "params"
+                ],
+                "properties": {
+                  "jsonrpc": {
+                    "type": "string",
+                    "enum": [
+                      "2.0"
+                    ]
+                  },
+                  "id": {
+                    "type": "string",
+                    "example": "fastnear"
+                  },
+                  "method": {
+                    "type": "string",
+                    "enum": [
+                      "query"
+                    ]
+                  },
+                  "params": {
+                    "type": "object",
+                    "properties": {
+                      "account_id": {
+                        "type": "string",
+                        "description": "NEAR account ID"
+                      },
+                      "request_type": {
+                        "type": "string",
+                        "enum": [
+                          "view_account"
+                        ]
+                      },
+                      "finality": {
+                        "type": "string",
+                        "enum": [
+                          "final",
+                          "near-final",
+                          "optimistic"
+                        ],
+                        "description": "Block finality"
+                      }
+                    },
+                    "required": [
+                      "request_type",
+                      "account_id",
+                      "finality"
+                    ]
+                  }
+                }
+              },
+              "examples": {
+                "mainnet": {
+                  "summary": "View account (Mainnet)",
+                  "value": {
+                    "jsonrpc": "2.0",
+                    "id": "fastnear",
+                    "method": "query",
+                    "params": {
+                      "account_id": "root.near",
+                      "request_type": "view_account",
+                      "finality": "final"
+                    }
+                  }
+                },
+                "testnet": {
+                  "summary": "View account (Testnet)",
+                  "value": {
+                    "jsonrpc": "2.0",
+                    "id": "fastnear",
+                    "method": "query",
+                    "params": {
+                      "account_id": "root.testnet",
+                      "request_type": "view_account",
+                      "finality": "final"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JsonRpcResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The supplied API key was not recognized.",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                },
+                "example": "Invalid API key"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "security": [
+    {},
+    {
+      "BearerAuth": []
+    },
+    {
+      "ApiKeyAuth": []
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "FastNEAR API key as an `Authorization: Bearer` header. Preferred for backends, workers, and proxies because it keeps the key out of URLs and logs."
+      },
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "query",
+        "name": "apiKey",
+        "description": "FastNEAR API key as the `apiKey` query parameter. Handy for curl or clients that cannot set headers, but the key can end up in URLs, logs, and shell history."
+      }
+    },
+    "schemas": {
+      "JsonRpcResponse": {
+        "type": "object",
+        "required": [
+          "jsonrpc",
+          "id"
+        ],
+        "properties": {
+          "jsonrpc": {
+            "type": "string",
+            "enum": [
+              "2.0"
+            ]
+          },
+          "id": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "number"
+              }
+            ]
+          },
+          "result": {
+            "type": "object",
+            "description": "A view of the account",
+            "properties": {
+              "amount": {
+                "type": "string",
+                "description": "Amount in yoctoNEAR"
+              },
+              "code_hash": {
+                "type": "string",
+                "description": "Base58-encoded hash"
+              },
+              "global_contract_account_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "NEAR account ID"
+              },
+              "global_contract_hash": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Base58-encoded hash"
+              },
+              "locked": {
+                "type": "string",
+                "description": "Amount in yoctoNEAR"
+              },
+              "storage_paid_at": {
+                "type": "integer",
+                "description": "TODO(2271): deprecated.",
+                "format": "uint64",
+                "default": 0,
+                "minimum": 0
+              },
+              "storage_usage": {
+                "type": "integer",
+                "format": "uint64",
+                "minimum": 0
+              }
+            },
+            "required": [
+              "amount",
+              "locked",
+              "code_hash",
+              "storage_usage"
+            ]
+          },
+          "error": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "integer"
+              },
+              "message": {
+                "type": "string"
+              },
+              "data": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

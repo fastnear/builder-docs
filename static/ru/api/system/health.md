@@ -9,7 +9,10 @@
 - Транспорт: http
 - Метод: GET
 - Путь: `/health`
-- Исходная спецификация: `apis/fastnear/system/health.yaml`
+## OpenAPI
+- Эта операция: https://docs.fastnear.com/openapi/fastnear/get_health.json (https://docs.fastnear.com/openapi/fastnear/get_health.yaml)
+- Полный документ API: https://docs.fastnear.com/openapi/fastnear.json
+- Указатель в полном документе: https://docs.fastnear.com/openapi/fastnear.json#/paths/~1health/get
 ## Сети
 - Mainnet: https://api.fastnear.com/
 - Testnet: https://test.api.fastnear.com/

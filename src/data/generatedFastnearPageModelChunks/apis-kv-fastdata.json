@@ -88,6 +88,14 @@
       "supportsFinality": false,
       "transport": "http"
     },
+    "openapi": {
+      "family": "kv-fastdata",
+      "familyJson": "/openapi/kv-fastdata.json",
+      "familyYaml": "/openapi/kv-fastdata.yaml",
+      "json": "/openapi/kv-fastdata/all_by_predecessor.json",
+      "pointer": "/openapi/kv-fastdata.json#/paths/~1v0~1all~1%7Bpredecessor_id%7D/post",
+      "yaml": "/openapi/kv-fastdata/all_by_predecessor.yaml"
+    },
     "pageModelId": "kv-fastdata-v0-all-by-predecessor",
     "replaceOperationPage": true,
     "request": {
@@ -456,6 +464,14 @@
       "requestMethod": "history_by_key",
       "supportsFinality": false,
       "transport": "http"
+    },
+    "openapi": {
+      "family": "kv-fastdata",
+      "familyJson": "/openapi/kv-fastdata.json",
+      "familyYaml": "/openapi/kv-fastdata.yaml",
+      "json": "/openapi/kv-fastdata/history_by_key.json",
+      "pointer": "/openapi/kv-fastdata.json#/paths/~1v0~1history/post",
+      "yaml": "/openapi/kv-fastdata/history_by_key.yaml"
     },
     "pageModelId": "kv-fastdata-v0-history-by-key",
     "replaceOperationPage": true,
@@ -860,6 +876,14 @@
       "requestMethod": "history_by_account",
       "supportsFinality": false,
       "transport": "http"
+    },
+    "openapi": {
+      "family": "kv-fastdata",
+      "familyJson": "/openapi/kv-fastdata.json",
+      "familyYaml": "/openapi/kv-fastdata.yaml",
+      "json": "/openapi/kv-fastdata/history_by_account.json",
+      "pointer": "/openapi/kv-fastdata.json#/paths/~1v0~1history~1%7Bcurrent_account_id%7D/post",
+      "yaml": "/openapi/kv-fastdata/history_by_account.yaml"
     },
     "pageModelId": "kv-fastdata-v0-history-by-account",
     "replaceOperationPage": true,
@@ -1298,6 +1322,14 @@
       "supportsFinality": false,
       "transport": "http"
     },
+    "openapi": {
+      "family": "kv-fastdata",
+      "familyJson": "/openapi/kv-fastdata.json",
+      "familyYaml": "/openapi/kv-fastdata.yaml",
+      "json": "/openapi/kv-fastdata/history_by_predecessor.json",
+      "pointer": "/openapi/kv-fastdata.json#/paths/~1v0~1history~1%7Bcurrent_account_id%7D~1%7Bpredecessor_id%7D/post",
+      "yaml": "/openapi/kv-fastdata/history_by_predecessor.yaml"
+    },
     "pageModelId": "kv-fastdata-v0-history-by-predecessor",
     "replaceOperationPage": true,
     "request": {
@@ -1677,6 +1709,14 @@
       "supportsFinality": false,
       "transport": "http"
     },
+    "openapi": {
+      "family": "kv-fastdata",
+      "familyJson": "/openapi/kv-fastdata.json",
+      "familyYaml": "/openapi/kv-fastdata.yaml",
+      "json": "/openapi/kv-fastdata/get_history_key.json",
+      "pointer": "/openapi/kv-fastdata.json#/paths/~1v0~1history~1%7Bcurrent_account_id%7D~1%7Bpredecessor_id%7D~1%7Bkey%7D/get",
+      "yaml": "/openapi/kv-fastdata/get_history_key.yaml"
+    },
     "pageModelId": "kv-fastdata-v0-get-history-key",
     "replaceOperationPage": true,
     "request": {
@@ -2019,6 +2059,14 @@
       "requestMethod": "latest_by_account",
       "supportsFinality": false,
       "transport": "http"
+    },
+    "openapi": {
+      "family": "kv-fastdata",
+      "familyJson": "/openapi/kv-fastdata.json",
+      "familyYaml": "/openapi/kv-fastdata.yaml",
+      "json": "/openapi/kv-fastdata/latest_by_account.json",
+      "pointer": "/openapi/kv-fastdata.json#/paths/~1v0~1latest~1%7Bcurrent_account_id%7D/post",
+      "yaml": "/openapi/kv-fastdata/latest_by_account.yaml"
     },
     "pageModelId": "kv-fastdata-v0-latest-by-account",
     "replaceOperationPage": true,
@@ -2431,6 +2479,14 @@
       "supportsFinality": false,
       "transport": "http"
     },
+    "openapi": {
+      "family": "kv-fastdata",
+      "familyJson": "/openapi/kv-fastdata.json",
+      "familyYaml": "/openapi/kv-fastdata.yaml",
+      "json": "/openapi/kv-fastdata/latest_by_predecessor.json",
+      "pointer": "/openapi/kv-fastdata.json#/paths/~1v0~1latest~1%7Bcurrent_account_id%7D~1%7Bpredecessor_id%7D/post",
+      "yaml": "/openapi/kv-fastdata/latest_by_predecessor.yaml"
+    },
     "pageModelId": "kv-fastdata-v0-latest-by-predecessor",
     "replaceOperationPage": true,
     "request": {
@@ -2799,6 +2855,14 @@
       "supportsFinality": false,
       "transport": "http"
     },
+    "openapi": {
+      "family": "kv-fastdata",
+      "familyJson": "/openapi/kv-fastdata.json",
+      "familyYaml": "/openapi/kv-fastdata.yaml",
+      "json": "/openapi/kv-fastdata/get_latest_key.json",
+      "pointer": "/openapi/kv-fastdata.json#/paths/~1v0~1latest~1%7Bcurrent_account_id%7D~1%7Bpredecessor_id%7D~1%7Bkey%7D/get",
+      "yaml": "/openapi/kv-fastdata/get_latest_key.yaml"
+    },
     "pageModelId": "kv-fastdata-v0-get-latest-key",
     "replaceOperationPage": true,
     "request": {
@@ -3097,6 +3161,14 @@
       "requestMethod": "multi",
       "supportsFinality": false,
       "transport": "http"
+    },
+    "openapi": {
+      "family": "kv-fastdata",
+      "familyJson": "/openapi/kv-fastdata.json",
+      "familyYaml": "/openapi/kv-fastdata.yaml",
+      "json": "/openapi/kv-fastdata/multi.json",
+      "pointer": "/openapi/kv-fastdata.json#/paths/~1v0~1multi/post",
+      "yaml": "/openapi/kv-fastdata/multi.yaml"
     },
     "pageModelId": "kv-fastdata-v0-multi",
     "replaceOperationPage": true,

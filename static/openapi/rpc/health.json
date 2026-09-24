@@ -1,0 +1,187 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "NEAR Protocol RPC: Check node health",
+    "description": "Ping a node for liveness — returns `null` on success, an error on unhealthy state.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://rpc.mainnet.fastnear.com",
+      "description": "Mainnet"
+    },
+    {
+      "url": "https://rpc.testnet.fastnear.com",
+      "description": "Testnet"
+    },
+    {
+      "url": "https://archival-rpc.mainnet.fastnear.com",
+      "description": "Mainnet Archival"
+    },
+    {
+      "url": "https://archival-rpc.testnet.fastnear.com",
+      "description": "Testnet Archival"
+    }
+  ],
+  "paths": {
+    "/": {
+      "post": {
+        "operationId": "health",
+        "summary": "Check node health",
+        "description": "Ping a node for liveness — returns `null` on success, an error on unhealthy state.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "jsonrpc",
+                  "id",
+                  "method",
+                  "params"
+                ],
+                "properties": {
+                  "jsonrpc": {
+                    "type": "string",
+                    "enum": [
+                      "2.0"
+                    ]
+                  },
+                  "id": {
+                    "type": "string",
+                    "example": "fastnear"
+                  },
+                  "method": {
+                    "type": "string",
+                    "enum": [
+                      "health"
+                    ]
+                  },
+                  "params": {
+                    "type": "array",
+                    "maxItems": 0,
+                    "description": "Empty array as this method takes no parameters",
+                    "example": []
+                  }
+                }
+              },
+              "examples": {
+                "mainnet": {
+                  "summary": "Mainnet Node Health",
+                  "value": {
+                    "jsonrpc": "2.0",
+                    "id": "fastnear",
+                    "method": "health",
+                    "params": []
+                  }
+                },
+                "testnet": {
+                  "summary": "Testnet Node Health",
+                  "value": {
+                    "jsonrpc": "2.0",
+                    "id": "fastnear",
+                    "method": "health",
+                    "params": []
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JsonRpcResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The supplied API key was not recognized.",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                },
+                "example": "Invalid API key"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "security": [
+    {},
+    {
+      "BearerAuth": []
+    },
+    {
+      "ApiKeyAuth": []
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "FastNEAR API key as an `Authorization: Bearer` header. Preferred for backends, workers, and proxies because it keeps the key out of URLs and logs."
+      },
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "query",
+        "name": "apiKey",
+        "description": "FastNEAR API key as the `apiKey` query parameter. Handy for curl or clients that cannot set headers, but the key can end up in URLs, logs, and shell history."
+      }
+    },
+    "schemas": {
+      "JsonRpcResponse": {
+        "type": "object",
+        "required": [
+          "jsonrpc",
+          "id"
+        ],
+        "properties": {
+          "jsonrpc": {
+            "type": "string",
+            "enum": [
+              "2.0"
+            ]
+          },
+          "id": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "number"
+              }
+            ]
+          },
+          "result": {
+            "type": "object",
+            "description": "Health status of the node"
+          },
+          "error": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "integer"
+              },
+              "message": {
+                "type": "string"
+              },
+              "data": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

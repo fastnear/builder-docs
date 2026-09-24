@@ -4,10 +4,20 @@ AI-читабельные индексы для гайдов FastNear, RPC-сп�
 
 ## Индексы
 
+- [Индекс OpenAPI](https://docs.fastnear.com/openapi/index.json)
 - [Индекс гайдов](https://docs.fastnear.com/ru/guides/llms.txt)
 - [Индекс RPC-справочника](https://docs.fastnear.com/ru/rpcs/llms.txt)
 - [Индекс REST API](https://docs.fastnear.com/ru/apis/llms.txt)
 - [Полный архив](https://docs.fastnear.com/ru/llms-full.txt)
+
+## Спецификации OpenAPI
+
+- [FastNEAR RPC OpenAPI](https://docs.fastnear.com/openapi/rpc.json): JSON-RPC, 41 operations; YAML: https://docs.fastnear.com/openapi/rpc.yaml
+- [FastNEAR API OpenAPI](https://docs.fastnear.com/openapi/fastnear.json): REST, 14 operations; YAML: https://docs.fastnear.com/openapi/fastnear.yaml
+- [Transactions API OpenAPI](https://docs.fastnear.com/openapi/transactions.json): REST, 5 operations; YAML: https://docs.fastnear.com/openapi/transactions.yaml
+- [Transfers API OpenAPI](https://docs.fastnear.com/openapi/transfers.json): REST, 1 operations; YAML: https://docs.fastnear.com/openapi/transfers.yaml
+- [KV FastData API OpenAPI](https://docs.fastnear.com/openapi/kv-fastdata.json): REST, 9 operations; YAML: https://docs.fastnear.com/openapi/kv-fastdata.yaml
+- [NEAR Data API OpenAPI](https://docs.fastnear.com/openapi/neardata.json): REST, 9 operations; YAML: https://docs.fastnear.com/openapi/neardata.yaml
 
 ## Гайды по RPC / API
 
@@ -36,6 +46,7 @@ AI-читабельные индексы для гайдов FastNear, RPC-сп�
 - [Браузерные ключи](https://docs.fastnear.com/ru/auth/browser-keys.md): Используйте API-ключ FastNear прямо из браузерного приложения, ограничив его доменами своего сайта, с лимитом частоты на ключ и ротацией в один клик.
 - [Руководство по интернационализации](https://docs.fastnear.com/ru/internationalization.md): Руководство для сопровождающих по добавлению локалей Docusaurus, локализованных оверлеев FastNear и безопасного для discovery процесса перевода.
 - [Примеры NEAR Data](https://docs.fastnear.com/ru/neardata/examples.md): Практические примеры NEAR Data: живой мониторинг, optimistic-проверки и доказательство на уровне shard.
+- [Спецификации OpenAPI](https://docs.fastnear.com/ru/openapi.md): Машиночитаемые документы OpenAPI для каждого семейства API FastNear и каждой операции, а также JSON-индекс для агентов и инструментов.
 - [Примеры Transfers API](https://docs.fastnear.com/ru/transfers/examples.md): Практические примеры: фильтрация ленты переводов, пагинация и переход к истории транзакций.
 - [Примеры Transactions](https://docs.fastnear.com/ru/tx/examples.md): Практические расследования транзакций: хеши, receipts, async-сбои и callback.
 - [Berry Club: как читать живую доску и разбирать одну эпоху](https://docs.fastnear.com/ru/tx/examples/berry-club.md): Прочитайте живую доску Berry Club через RPC get_lines, а затем используйте Transactions API, чтобы восстановить одну более раннюю эпоху.

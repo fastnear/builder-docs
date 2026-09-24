@@ -9,7 +9,10 @@
 - Транспорт: http
 - Метод: GET
 - Путь: `/status`
-- Исходная спецификация: `apis/fastnear/system/status.yaml`
+## OpenAPI
+- Эта операция: https://docs.fastnear.com/openapi/fastnear/get_status.json (https://docs.fastnear.com/openapi/fastnear/get_status.yaml)
+- Полный документ API: https://docs.fastnear.com/openapi/fastnear.json
+- Указатель в полном документе: https://docs.fastnear.com/openapi/fastnear.json#/paths/~1status/get
 ## Сети
 - Mainnet: https://api.fastnear.com/
 - Testnet: https://test.api.fastnear.com/

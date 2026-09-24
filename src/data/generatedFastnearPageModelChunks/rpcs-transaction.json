@@ -51,6 +51,14 @@
       "supportsFinality": false,
       "transport": "json-rpc"
     },
+    "openapi": {
+      "family": "rpc",
+      "familyJson": "/openapi/rpc.json",
+      "familyYaml": "/openapi/rpc.yaml",
+      "json": "/openapi/rpc/EXPERIMENTAL_receipt.json",
+      "pointer": "/openapi/rpc.json#/paths/~1EXPERIMENTAL_receipt/post",
+      "yaml": "/openapi/rpc/EXPERIMENTAL_receipt.yaml"
+    },
     "pageModelId": "rpc-EXPERIMENTAL-receipt",
     "replaceOperationPage": true,
     "request": {
@@ -413,6 +421,14 @@
       "requestMethod": "EXPERIMENTAL_receipt_to_tx",
       "supportsFinality": false,
       "transport": "json-rpc"
+    },
+    "openapi": {
+      "family": "rpc",
+      "familyJson": "/openapi/rpc.json",
+      "familyYaml": "/openapi/rpc.yaml",
+      "json": "/openapi/rpc/EXPERIMENTAL_receipt_to_tx.json",
+      "pointer": "/openapi/rpc.json#/paths/~1EXPERIMENTAL_receipt_to_tx/post",
+      "yaml": "/openapi/rpc/EXPERIMENTAL_receipt_to_tx.yaml"
     },
     "pageModelId": "rpc-EXPERIMENTAL-receipt-to-tx",
     "replaceOperationPage": true,
@@ -785,6 +801,14 @@
       "requestMethod": "EXPERIMENTAL_tx_status",
       "supportsFinality": false,
       "transport": "json-rpc"
+    },
+    "openapi": {
+      "family": "rpc",
+      "familyJson": "/openapi/rpc.json",
+      "familyYaml": "/openapi/rpc.yaml",
+      "json": "/openapi/rpc/EXPERIMENTAL_tx_status.json",
+      "pointer": "/openapi/rpc.json#/paths/~1EXPERIMENTAL_tx_status/post",
+      "yaml": "/openapi/rpc/EXPERIMENTAL_tx_status.yaml"
     },
     "pageModelId": "rpc-EXPERIMENTAL-tx-status",
     "replaceOperationPage": true,
@@ -1176,6 +1200,14 @@
       "supportsFinality": false,
       "transport": "json-rpc"
     },
+    "openapi": {
+      "family": "rpc",
+      "familyJson": "/openapi/rpc.json",
+      "familyYaml": "/openapi/rpc.yaml",
+      "json": "/openapi/rpc/broadcast_tx_async.json",
+      "pointer": "/openapi/rpc.json#/paths/~1broadcast_tx_async/post",
+      "yaml": "/openapi/rpc/broadcast_tx_async.yaml"
+    },
     "pageModelId": "rpc-broadcast-tx-async",
     "replaceOperationPage": true,
     "request": {
@@ -1482,6 +1514,14 @@
       "requestMethod": "broadcast_tx_commit",
       "supportsFinality": false,
       "transport": "json-rpc"
+    },
+    "openapi": {
+      "family": "rpc",
+      "familyJson": "/openapi/rpc.json",
+      "familyYaml": "/openapi/rpc.yaml",
+      "json": "/openapi/rpc/broadcast_tx_commit.json",
+      "pointer": "/openapi/rpc.json#/paths/~1broadcast_tx_commit/post",
+      "yaml": "/openapi/rpc/broadcast_tx_commit.yaml"
     },
     "pageModelId": "rpc-broadcast-tx-commit",
     "replaceOperationPage": true,
@@ -1857,6 +1897,14 @@
       "requestMethod": "send_tx",
       "supportsFinality": false,
       "transport": "json-rpc"
+    },
+    "openapi": {
+      "family": "rpc",
+      "familyJson": "/openapi/rpc.json",
+      "familyYaml": "/openapi/rpc.yaml",
+      "json": "/openapi/rpc/send_tx.json",
+      "pointer": "/openapi/rpc.json#/paths/~1send_tx/post",
+      "yaml": "/openapi/rpc/send_tx.yaml"
     },
     "pageModelId": "rpc-send-tx",
     "replaceOperationPage": true,
@@ -2260,6 +2308,14 @@
       "requestMethod": "tx",
       "supportsFinality": false,
       "transport": "json-rpc"
+    },
+    "openapi": {
+      "family": "rpc",
+      "familyJson": "/openapi/rpc.json",
+      "familyYaml": "/openapi/rpc.yaml",
+      "json": "/openapi/rpc/tx_status.json",
+      "pointer": "/openapi/rpc.json#/paths/~1tx_status/post",
+      "yaml": "/openapi/rpc/tx_status.yaml"
     },
     "pageModelId": "rpc-tx-status",
     "replaceOperationPage": true,

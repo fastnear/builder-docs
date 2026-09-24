@@ -1,0 +1,158 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "FastNEAR API - V1 Account NFT",
+    "version": "3.0.3",
+    "description": "Fetch NFT contract rows for an account, including block-height metadata for each contract."
+  },
+  "paths": {
+    "/v1/account/{account_id}/nft": {
+      "get": {
+        "description": "Fetch NFT contract rows for an account, including block-height metadata for each contract.",
+        "operationId": "account_nft_v1",
+        "parameters": [
+          {
+            "description": "NEAR account ID to inspect.",
+            "example": "sharddog.near",
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "account_id": "sharddog.near",
+                  "tokens": [
+                    {
+                      "contract_id": "nft.example.near",
+                      "last_update_block_height": null
+                    }
+                  ]
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/V1NftResponse"
+                }
+              }
+            },
+            "description": "Indexed NFT contract rows for the requested account"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "403": {
+            "content": {
+              "text/plain": {
+                "example": "Invalid API key",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "The supplied API key was not recognized. Omit the key to use public access."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "Lookup indexed NFT contract rows for an account",
+        "tags": [
+          "non-fungible-tokens"
+        ]
+      }
+    }
+  },
+  "servers": [
+    {
+      "description": "Mainnet",
+      "url": "https://api.fastnear.com"
+    },
+    {
+      "description": "Testnet",
+      "url": "https://test.api.fastnear.com"
+    }
+  ],
+  "security": [
+    {},
+    {
+      "BearerAuth": []
+    },
+    {
+      "ApiKeyAuth": []
+    }
+  ],
+  "components": {
+    "schemas": {
+      "NftRow": {
+        "additionalProperties": false,
+        "properties": {
+          "contract_id": {
+            "type": "string"
+          },
+          "last_update_block_height": {
+            "format": "uint64",
+            "minimum": 0,
+            "nullable": true,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "contract_id",
+          "last_update_block_height"
+        ],
+        "type": "object"
+      },
+      "V1NftResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "account_id": {
+            "type": "string"
+          },
+          "tokens": {
+            "items": {
+              "$ref": "#/components/schemas/NftRow"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "account_id",
+          "tokens"
+        ],
+        "type": "object"
+      }
+    },
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "description": "FastNEAR API key as the `apiKey` query parameter. Handy for curl or clients that cannot set headers, but the key can end up in URLs, logs, and shell history.",
+        "in": "query",
+        "name": "apiKey",
+        "type": "apiKey"
+      },
+      "BearerAuth": {
+        "description": "FastNEAR API key as an `Authorization: Bearer` header. Preferred for backends, workers, and proxies because it keeps the key out of URLs and logs.",
+        "scheme": "bearer",
+        "type": "http"
+      }
+    }
+  }
+}

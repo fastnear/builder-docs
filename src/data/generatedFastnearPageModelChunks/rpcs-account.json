@@ -61,6 +61,14 @@
       "supportsFinality": true,
       "transport": "json-rpc"
     },
+    "openapi": {
+      "family": "rpc",
+      "familyJson": "/openapi/rpc.json",
+      "familyYaml": "/openapi/rpc.yaml",
+      "json": "/openapi/rpc/view_access_key.json",
+      "pointer": "/openapi/rpc.json#/paths/~1view_access_key/post",
+      "yaml": "/openapi/rpc/view_access_key.yaml"
+    },
     "pageModelId": "rpc-view-access-key",
     "replaceOperationPage": true,
     "request": {
@@ -394,6 +402,14 @@
       "supportsFinality": true,
       "transport": "json-rpc"
     },
+    "openapi": {
+      "family": "rpc",
+      "familyJson": "/openapi/rpc.json",
+      "familyYaml": "/openapi/rpc.yaml",
+      "json": "/openapi/rpc/view_access_key_list.json",
+      "pointer": "/openapi/rpc.json#/paths/~1view_access_key_list/post",
+      "yaml": "/openapi/rpc/view_access_key_list.yaml"
+    },
     "pageModelId": "rpc-view-access-key-list",
     "replaceOperationPage": true,
     "request": {
@@ -709,6 +725,14 @@
       "requestType": "view_account",
       "supportsFinality": true,
       "transport": "json-rpc"
+    },
+    "openapi": {
+      "family": "rpc",
+      "familyJson": "/openapi/rpc.json",
+      "familyYaml": "/openapi/rpc.yaml",
+      "json": "/openapi/rpc/view_account.json",
+      "pointer": "/openapi/rpc.json#/paths/~1view_account/post",
+      "yaml": "/openapi/rpc/view_account.yaml"
     },
     "pageModelId": "rpc-view-account",
     "replaceOperationPage": true,

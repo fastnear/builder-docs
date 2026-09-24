@@ -8,7 +8,10 @@
 - Транспорт: http
 - Метод: GET
 - Путь: `/v0/history/{current_account_id}/{predecessor_id}/{key}`
-- Исходная спецификация: `apis/kv-fastdata/v0/get_history_key.yaml`
+## OpenAPI
+- Эта операция: https://docs.fastnear.com/openapi/kv-fastdata/get_history_key.json (https://docs.fastnear.com/openapi/kv-fastdata/get_history_key.yaml)
+- Полный документ API: https://docs.fastnear.com/openapi/kv-fastdata.json
+- Указатель в полном документе: https://docs.fastnear.com/openapi/kv-fastdata.json#/paths/~1v0~1history~1%7Bcurrent_account_id%7D~1%7Bpredecessor_id%7D~1%7Bkey%7D/get
 ## Сети
 - Mainnet: https://kv.main.fastnear.com/
 - Testnet: https://kv.test.fastnear.com/

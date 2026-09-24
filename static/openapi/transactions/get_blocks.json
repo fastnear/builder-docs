@@ -1,0 +1,236 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Transactions API - Block Range",
+    "version": "3.0.3",
+    "description": "Fetch a bounded list of indexed blocks ordered ascending or descending."
+  },
+  "paths": {
+    "/v0/blocks": {
+      "post": {
+        "description": "Fetch a bounded list of indexed blocks ordered ascending or descending.",
+        "operationId": "get_blocks",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "desc": false,
+                "from_block_height": 130000000,
+                "limit": 10,
+                "to_block_height": 130000100
+              },
+              "schema": {
+                "$ref": "#/components/schemas/BlocksInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BlocksResponse"
+                }
+              }
+            },
+            "description": "Block rows"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Bad request"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "ClickHouse query failure"
+          }
+        },
+        "summary": "Fetch a list of blocks",
+        "tags": [
+          "blocks"
+        ]
+      }
+    }
+  },
+  "servers": [
+    {
+      "description": "Mainnet",
+      "url": "https://tx.main.fastnear.com"
+    },
+    {
+      "description": "Testnet",
+      "url": "https://tx.test.fastnear.com"
+    }
+  ],
+  "components": {
+    "schemas": {
+      "ApiError": {
+        "additionalProperties": false,
+        "properties": {
+          "error": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "error",
+          "message"
+        ],
+        "type": "object"
+      },
+      "BlockRow": {
+        "additionalProperties": false,
+        "properties": {
+          "author_id": {
+            "type": "string"
+          },
+          "block_hash": {
+            "type": "string"
+          },
+          "block_height": {
+            "format": "uint64",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "block_ordinal": {
+            "format": "uint64",
+            "minimum": 0,
+            "nullable": true,
+            "type": "integer"
+          },
+          "block_timestamp": {
+            "type": "string"
+          },
+          "chunks_included": {
+            "format": "uint64",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "epoch_id": {
+            "type": "string"
+          },
+          "gas_burnt": {
+            "type": "string"
+          },
+          "gas_price": {
+            "type": "string"
+          },
+          "next_epoch_id": {
+            "type": "string"
+          },
+          "num_receipts": {
+            "format": "uint32",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "num_transactions": {
+            "format": "uint32",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "prev_block_hash": {
+            "type": "string"
+          },
+          "prev_block_height": {
+            "format": "uint64",
+            "minimum": 0,
+            "nullable": true,
+            "type": "integer"
+          },
+          "protocol_version": {
+            "format": "uint32",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "tokens_burnt": {
+            "type": "string"
+          },
+          "total_supply": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "block_height",
+          "block_hash",
+          "prev_block_hash",
+          "block_timestamp",
+          "epoch_id",
+          "next_epoch_id",
+          "chunks_included",
+          "author_id",
+          "protocol_version",
+          "gas_price",
+          "total_supply",
+          "num_transactions",
+          "num_receipts",
+          "gas_burnt",
+          "tokens_burnt"
+        ],
+        "type": "object"
+      },
+      "BlocksInput": {
+        "additionalProperties": false,
+        "properties": {
+          "desc": {
+            "description": "Sort newest-first when true; oldest-first when false or omitted.",
+            "nullable": true,
+            "type": "boolean"
+          },
+          "from_block_height": {
+            "description": "Inclusive lower bound on block height.",
+            "format": "uint64",
+            "minimum": 0,
+            "nullable": true,
+            "type": "integer"
+          },
+          "limit": {
+            "description": "Maximum blocks to return in one page (1–100).",
+            "format": "uint",
+            "maximum": 100,
+            "minimum": 1,
+            "nullable": true,
+            "type": "integer"
+          },
+          "to_block_height": {
+            "description": "Exclusive upper bound on block height.",
+            "format": "uint64",
+            "minimum": 0,
+            "nullable": true,
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "BlocksResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "blocks": {
+            "items": {
+              "$ref": "#/components/schemas/BlockRow"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "blocks"
+        ],
+        "type": "object"
+      }
+    }
+  }
+}

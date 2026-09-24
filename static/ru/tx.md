@@ -6,6 +6,8 @@
 
 ## Базовые URL
 
+OpenAPI: [JSON](https://docs.fastnear.com/ru/openapi/transactions.json) · [YAML](https://docs.fastnear.com/ru/openapi/transactions.yaml) · [все спецификации](https://docs.fastnear.com/ru/openapi)
+
 ```bash title="Transactions API Mainnet"
 https://tx.main.fastnear.com
 ```

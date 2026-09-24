@@ -9,7 +9,10 @@
 - Транспорт: http
 - Метод: POST
 - Путь: `/v0/transfers`
-- Исходная спецификация: `apis/transfers/v0/transfers.yaml`
+## OpenAPI
+- Эта операция: https://docs.fastnear.com/openapi/transfers/get_transfers_by_account.json (https://docs.fastnear.com/openapi/transfers/get_transfers_by_account.yaml)
+- Полный документ API: https://docs.fastnear.com/openapi/transfers.json
+- Указатель в полном документе: https://docs.fastnear.com/openapi/transfers.json#/paths/~1v0~1transfers/post
 ## Сети
 - Mainnet: https://transfers.main.fastnear.com/
 ## Авторизация

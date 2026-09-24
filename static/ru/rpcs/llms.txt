@@ -6,6 +6,10 @@
 
 - [Верхний индекс](https://docs.fastnear.com/ru/llms.txt)
 
+## Спецификации OpenAPI
+
+- [FastNEAR RPC OpenAPI](https://docs.fastnear.com/openapi/rpc.json): JSON-RPC, 41 operations; YAML: https://docs.fastnear.com/openapi/rpc.yaml
+
 ## RPC аккаунта
 
 - [RPC протокола NEAR: Просмотр ключа доступа](https://docs.fastnear.com/ru/rpcs/account/view_access_key.md): Просмотр ключа доступа аккаунта

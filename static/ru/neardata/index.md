@@ -6,6 +6,8 @@ NEAR Data API — это поверхность для недавних блок
 
 ## Базовые URL
 
+OpenAPI: [JSON](https://docs.fastnear.com/ru/openapi/neardata.json) · [YAML](https://docs.fastnear.com/ru/openapi/neardata.yaml) · [все спецификации](https://docs.fastnear.com/ru/openapi)
+
 ```bash title="NEAR Data API Mainnet"
 https://mainnet.neardata.xyz
 ```

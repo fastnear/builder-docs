@@ -1,0 +1,158 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "FastNEAR API - V1 Account Staking",
+    "version": "3.0.3",
+    "description": "Retrieve staking pool rows for an account, including block-height metadata for each pool relationship."
+  },
+  "paths": {
+    "/v1/account/{account_id}/staking": {
+      "get": {
+        "description": "Retrieve staking pool rows for an account, including block-height metadata for each pool relationship.",
+        "operationId": "account_staking_v1",
+        "parameters": [
+          {
+            "description": "NEAR account ID to inspect.",
+            "example": "mob.near",
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "account_id": "mob.near",
+                  "pools": [
+                    {
+                      "last_update_block_height": null,
+                      "pool_id": "zavodil.poolv1.near"
+                    }
+                  ]
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/V1StakingResponse"
+                }
+              }
+            },
+            "description": "Indexed staking pool rows for the requested account"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "403": {
+            "content": {
+              "text/plain": {
+                "example": "Invalid API key",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "The supplied API key was not recognized. Omit the key to use public access."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "Lookup indexed staking pools for an account",
+        "tags": [
+          "staking"
+        ]
+      }
+    }
+  },
+  "servers": [
+    {
+      "description": "Mainnet",
+      "url": "https://api.fastnear.com"
+    },
+    {
+      "description": "Testnet",
+      "url": "https://test.api.fastnear.com"
+    }
+  ],
+  "security": [
+    {},
+    {
+      "BearerAuth": []
+    },
+    {
+      "ApiKeyAuth": []
+    }
+  ],
+  "components": {
+    "schemas": {
+      "PoolRow": {
+        "additionalProperties": false,
+        "properties": {
+          "last_update_block_height": {
+            "format": "uint64",
+            "minimum": 0,
+            "nullable": true,
+            "type": "integer"
+          },
+          "pool_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "pool_id",
+          "last_update_block_height"
+        ],
+        "type": "object"
+      },
+      "V1StakingResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "account_id": {
+            "type": "string"
+          },
+          "pools": {
+            "items": {
+              "$ref": "#/components/schemas/PoolRow"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "account_id",
+          "pools"
+        ],
+        "type": "object"
+      }
+    },
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "description": "FastNEAR API key as the `apiKey` query parameter. Handy for curl or clients that cannot set headers, but the key can end up in URLs, logs, and shell history.",
+        "in": "query",
+        "name": "apiKey",
+        "type": "apiKey"
+      },
+      "BearerAuth": {
+        "description": "FastNEAR API key as an `Authorization: Bearer` header. Preferred for backends, workers, and proxies because it keeps the key out of URLs and logs.",
+        "scheme": "bearer",
+        "type": "http"
+      }
+    }
+  }
+}

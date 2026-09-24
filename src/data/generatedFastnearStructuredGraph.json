@@ -1116,6 +1116,8 @@
       "key": "fastnear",
       "kind": "api",
       "name": "FastNear API",
+      "openapiPath": "/openapi/fastnear.json",
+      "openapiYamlPath": "/openapi/fastnear.yaml",
       "schemaType": "WebAPI"
     },
     {
@@ -1126,6 +1128,8 @@
       "key": "kv-fastdata",
       "kind": "api",
       "name": "KV FastData API",
+      "openapiPath": "/openapi/kv-fastdata.json",
+      "openapiYamlPath": "/openapi/kv-fastdata.yaml",
       "schemaType": "WebAPI"
     },
     {
@@ -1136,6 +1140,8 @@
       "key": "neardata",
       "kind": "api",
       "name": "NEAR Data API",
+      "openapiPath": "/openapi/neardata.json",
+      "openapiYamlPath": "/openapi/neardata.yaml",
       "schemaType": "WebAPI"
     },
     {
@@ -1146,6 +1152,8 @@
       "key": "transactions",
       "kind": "api",
       "name": "Transactions API",
+      "openapiPath": "/openapi/transactions.json",
+      "openapiYamlPath": "/openapi/transactions.yaml",
       "schemaType": "WebAPI"
     },
     {
@@ -1156,6 +1164,8 @@
       "key": "transfers",
       "kind": "api",
       "name": "Transfers API",
+      "openapiPath": "/openapi/transfers.json",
+      "openapiYamlPath": "/openapi/transfers.yaml",
       "schemaType": "WebAPI"
     },
     {
@@ -1166,6 +1176,8 @@
       "key": "account",
       "kind": "rpc",
       "name": "Account RPC",
+      "openapiPath": "/openapi/rpc.json",
+      "openapiYamlPath": "/openapi/rpc.yaml",
       "schemaType": "WebAPI"
     },
     {
@@ -1176,6 +1188,8 @@
       "key": "block",
       "kind": "rpc",
       "name": "Block RPC",
+      "openapiPath": "/openapi/rpc.json",
+      "openapiYamlPath": "/openapi/rpc.yaml",
       "schemaType": "WebAPI"
     },
     {
@@ -1186,6 +1200,8 @@
       "key": "contract",
       "kind": "rpc",
       "name": "Contract RPC",
+      "openapiPath": "/openapi/rpc.json",
+      "openapiYamlPath": "/openapi/rpc.yaml",
       "schemaType": "WebAPI"
     },
     {
@@ -1196,6 +1212,8 @@
       "key": "protocol",
       "kind": "rpc",
       "name": "Protocol RPC",
+      "openapiPath": "/openapi/rpc.json",
+      "openapiYamlPath": "/openapi/rpc.yaml",
       "schemaType": "WebAPI"
     },
     {
@@ -1206,6 +1224,8 @@
       "key": "transaction",
       "kind": "rpc",
       "name": "Transaction RPC",
+      "openapiPath": "/openapi/rpc.json",
+      "openapiYamlPath": "/openapi/rpc.yaml",
       "schemaType": "WebAPI"
     },
     {
@@ -1216,6 +1236,8 @@
       "key": "validators",
       "kind": "rpc",
       "name": "Validators RPC",
+      "openapiPath": "/openapi/rpc.json",
+      "openapiYamlPath": "/openapi/rpc.yaml",
       "schemaType": "WebAPI"
     }
   ],
@@ -1248,6 +1270,9 @@
         "mainnet",
         "testnet"
       ],
+      "openapiFamilyPath": "/openapi/fastnear.json",
+      "openapiPath": "/openapi/fastnear/get_health.json",
+      "openapiPointer": "/openapi/fastnear.json#/paths/~1health/get",
       "operationId": "get_health",
       "pageModelId": "fastnear-system-health",
       "requestPath": "/health",
@@ -1274,6 +1299,9 @@
         "mainnet",
         "testnet"
       ],
+      "openapiFamilyPath": "/openapi/fastnear.json",
+      "openapiPath": "/openapi/fastnear/get_status.json",
+      "openapiPointer": "/openapi/fastnear.json#/paths/~1status/get",
       "operationId": "get_status",
       "pageModelId": "fastnear-system-status",
       "requestPath": "/status",
@@ -1300,6 +1328,9 @@
         "mainnet",
         "testnet"
       ],
+      "openapiFamilyPath": "/openapi/fastnear.json",
+      "openapiPath": "/openapi/fastnear/account_ft_v0.json",
+      "openapiPointer": "/openapi/fastnear.json#/paths/~1v0~1account~1%7Baccount_id%7D~1ft/get",
       "operationId": "account_ft_v0",
       "pageModelId": "fastnear-v0-account-ft",
       "requestPath": "/v0/account/{account_id}/ft",
@@ -1326,6 +1357,9 @@
         "mainnet",
         "testnet"
       ],
+      "openapiFamilyPath": "/openapi/fastnear.json",
+      "openapiPath": "/openapi/fastnear/account_nft_v0.json",
+      "openapiPointer": "/openapi/fastnear.json#/paths/~1v0~1account~1%7Baccount_id%7D~1nft/get",
       "operationId": "account_nft_v0",
       "pageModelId": "fastnear-v0-account-nft",
       "requestPath": "/v0/account/{account_id}/nft",
@@ -1352,6 +1386,9 @@
         "mainnet",
         "testnet"
       ],
+      "openapiFamilyPath": "/openapi/fastnear.json",
+      "openapiPath": "/openapi/fastnear/account_staking_v0.json",
+      "openapiPointer": "/openapi/fastnear.json#/paths/~1v0~1account~1%7Baccount_id%7D~1staking/get",
       "operationId": "account_staking_v0",
       "pageModelId": "fastnear-v0-account-staking",
       "requestPath": "/v0/account/{account_id}/staking",
@@ -1378,6 +1415,9 @@
         "mainnet",
         "testnet"
       ],
+      "openapiFamilyPath": "/openapi/fastnear.json",
+      "openapiPath": "/openapi/fastnear/lookup_by_public_key_v0.json",
+      "openapiPointer": "/openapi/fastnear.json#/paths/~1v0~1public_key~1%7Bpublic_key%7D/get",
       "operationId": "lookup_by_public_key_v0",
       "pageModelId": "fastnear-v0-public-key-lookup",
       "requestPath": "/v0/public_key/{public_key}",
@@ -1404,6 +1444,9 @@
         "mainnet",
         "testnet"
       ],
+      "openapiFamilyPath": "/openapi/fastnear.json",
+      "openapiPath": "/openapi/fastnear/lookup_by_public_key_all_v0.json",
+      "openapiPointer": "/openapi/fastnear.json#/paths/~1v0~1public_key~1%7Bpublic_key%7D~1all/get",
       "operationId": "lookup_by_public_key_all_v0",
       "pageModelId": "fastnear-v0-public-key-lookup-all",
       "requestPath": "/v0/public_key/{public_key}/all",
@@ -1430,6 +1473,9 @@
         "mainnet",
         "testnet"
       ],
+      "openapiFamilyPath": "/openapi/fastnear.json",
+      "openapiPath": "/openapi/fastnear/account_ft_v1.json",
+      "openapiPointer": "/openapi/fastnear.json#/paths/~1v1~1account~1%7Baccount_id%7D~1ft/get",
       "operationId": "account_ft_v1",
       "pageModelId": "fastnear-v1-account-ft",
       "requestPath": "/v1/account/{account_id}/ft",
@@ -1456,6 +1502,9 @@
         "mainnet",
         "testnet"
       ],
+      "openapiFamilyPath": "/openapi/fastnear.json",
+      "openapiPath": "/openapi/fastnear/account_full_v1.json",
+      "openapiPointer": "/openapi/fastnear.json#/paths/~1v1~1account~1%7Baccount_id%7D~1full/get",
       "operationId": "account_full_v1",
       "pageModelId": "fastnear-v1-account-full",
       "requestPath": "/v1/account/{account_id}/full",
@@ -1482,6 +1531,9 @@
         "mainnet",
         "testnet"
       ],
+      "openapiFamilyPath": "/openapi/fastnear.json",
+      "openapiPath": "/openapi/fastnear/account_nft_v1.json",
+      "openapiPointer": "/openapi/fastnear.json#/paths/~1v1~1account~1%7Baccount_id%7D~1nft/get",
       "operationId": "account_nft_v1",
       "pageModelId": "fastnear-v1-account-nft",
       "requestPath": "/v1/account/{account_id}/nft",
@@ -1508,6 +1560,9 @@
         "mainnet",
         "testnet"
       ],
+      "openapiFamilyPath": "/openapi/fastnear.json",
+      "openapiPath": "/openapi/fastnear/account_staking_v1.json",
+      "openapiPointer": "/openapi/fastnear.json#/paths/~1v1~1account~1%7Baccount_id%7D~1staking/get",
       "operationId": "account_staking_v1",
       "pageModelId": "fastnear-v1-account-staking",
       "requestPath": "/v1/account/{account_id}/staking",
@@ -1534,6 +1589,9 @@
         "mainnet",
         "testnet"
       ],
+      "openapiFamilyPath": "/openapi/fastnear.json",
+      "openapiPath": "/openapi/fastnear/ft_top_v1.json",
+      "openapiPointer": "/openapi/fastnear.json#/paths/~1v1~1ft~1%7Btoken_id%7D~1top/get",
       "operationId": "ft_top_v1",
       "pageModelId": "fastnear-v1-ft-top",
       "requestPath": "/v1/ft/{token_id}/top",
@@ -1560,6 +1618,9 @@
         "mainnet",
         "testnet"
       ],
+      "openapiFamilyPath": "/openapi/fastnear.json",
+      "openapiPath": "/openapi/fastnear/lookup_by_public_key_v1.json",
+      "openapiPointer": "/openapi/fastnear.json#/paths/~1v1~1public_key~1%7Bpublic_key%7D/get",
       "operationId": "lookup_by_public_key_v1",
       "pageModelId": "fastnear-v1-public-key-lookup",
       "requestPath": "/v1/public_key/{public_key}",
@@ -1586,6 +1647,9 @@
         "mainnet",
         "testnet"
       ],
+      "openapiFamilyPath": "/openapi/fastnear.json",
+      "openapiPath": "/openapi/fastnear/lookup_by_public_key_all_v1.json",
+      "openapiPointer": "/openapi/fastnear.json#/paths/~1v1~1public_key~1%7Bpublic_key%7D~1all/get",
       "operationId": "lookup_by_public_key_all_v1",
       "pageModelId": "fastnear-v1-public-key-lookup-all",
       "requestPath": "/v1/public_key/{public_key}/all",
@@ -1612,6 +1676,9 @@
         "mainnet",
         "testnet"
       ],
+      "openapiFamilyPath": "/openapi/kv-fastdata.json",
+      "openapiPath": "/openapi/kv-fastdata/all_by_predecessor.json",
+      "openapiPointer": "/openapi/kv-fastdata.json#/paths/~1v0~1all~1%7Bpredecessor_id%7D/post",
       "operationId": "all_by_predecessor",
       "pageModelId": "kv-fastdata-v0-all-by-predecessor",
       "requestPath": "/v0/all/{predecessor_id}",
@@ -1638,6 +1705,9 @@
         "mainnet",
         "testnet"
       ],
+      "openapiFamilyPath": "/openapi/kv-fastdata.json",
+      "openapiPath": "/openapi/kv-fastdata/get_history_key.json",
+      "openapiPointer": "/openapi/kv-fastdata.json#/paths/~1v0~1history~1%7Bcurrent_account_id%7D~1%7Bpredecessor_id%7D~1%7Bkey%7D/get",
       "operationId": "get_history_key",
       "pageModelId": "kv-fastdata-v0-get-history-key",
       "requestPath": "/v0/history/{current_account_id}/{predecessor_id}/{key}",
@@ -1664,6 +1734,9 @@
         "mainnet",
         "testnet"
       ],
+      "openapiFamilyPath": "/openapi/kv-fastdata.json",
+      "openapiPath": "/openapi/kv-fastdata/get_latest_key.json",
+      "openapiPointer": "/openapi/kv-fastdata.json#/paths/~1v0~1latest~1%7Bcurrent_account_id%7D~1%7Bpredecessor_id%7D~1%7Bkey%7D/get",
       "operationId": "get_latest_key",
       "pageModelId": "kv-fastdata-v0-get-latest-key",
       "requestPath": "/v0/latest/{current_account_id}/{predecessor_id}/{key}",
@@ -1690,6 +1763,9 @@
         "mainnet",
         "testnet"
       ],
+      "openapiFamilyPath": "/openapi/kv-fastdata.json",
+      "openapiPath": "/openapi/kv-fastdata/history_by_account.json",
+      "openapiPointer": "/openapi/kv-fastdata.json#/paths/~1v0~1history~1%7Bcurrent_account_id%7D/post",
       "operationId": "history_by_account",
       "pageModelId": "kv-fastdata-v0-history-by-account",
       "requestPath": "/v0/history/{current_account_id}",
@@ -1716,6 +1792,9 @@
         "mainnet",
         "testnet"
       ],
+      "openapiFamilyPath": "/openapi/kv-fastdata.json",
+      "openapiPath": "/openapi/kv-fastdata/history_by_key.json",
+      "openapiPointer": "/openapi/kv-fastdata.json#/paths/~1v0~1history/post",
       "operationId": "history_by_key",
       "pageModelId": "kv-fastdata-v0-history-by-key",
       "requestPath": "/v0/history",
@@ -1742,6 +1821,9 @@
         "mainnet",
         "testnet"
       ],
+      "openapiFamilyPath": "/openapi/kv-fastdata.json",
+      "openapiPath": "/openapi/kv-fastdata/history_by_predecessor.json",
+      "openapiPointer": "/openapi/kv-fastdata.json#/paths/~1v0~1history~1%7Bcurrent_account_id%7D~1%7Bpredecessor_id%7D/post",
       "operationId": "history_by_predecessor",
       "pageModelId": "kv-fastdata-v0-history-by-predecessor",
       "requestPath": "/v0/history/{current_account_id}/{predecessor_id}",
@@ -1768,6 +1850,9 @@
         "mainnet",
         "testnet"
       ],
+      "openapiFamilyPath": "/openapi/kv-fastdata.json",
+      "openapiPath": "/openapi/kv-fastdata/latest_by_account.json",
+      "openapiPointer": "/openapi/kv-fastdata.json#/paths/~1v0~1latest~1%7Bcurrent_account_id%7D/post",
       "operationId": "latest_by_account",
       "pageModelId": "kv-fastdata-v0-latest-by-account",
       "requestPath": "/v0/latest/{current_account_id}",
@@ -1794,6 +1879,9 @@
         "mainnet",
         "testnet"
       ],
+      "openapiFamilyPath": "/openapi/kv-fastdata.json",
+      "openapiPath": "/openapi/kv-fastdata/latest_by_predecessor.json",
+      "openapiPointer": "/openapi/kv-fastdata.json#/paths/~1v0~1latest~1%7Bcurrent_account_id%7D~1%7Bpredecessor_id%7D/post",
       "operationId": "latest_by_predecessor",
       "pageModelId": "kv-fastdata-v0-latest-by-predecessor",
       "requestPath": "/v0/latest/{current_account_id}/{predecessor_id}",
@@ -1820,6 +1908,9 @@
         "mainnet",
         "testnet"
       ],
+      "openapiFamilyPath": "/openapi/kv-fastdata.json",
+      "openapiPath": "/openapi/kv-fastdata/multi.json",
+      "openapiPointer": "/openapi/kv-fastdata.json#/paths/~1v0~1multi/post",
       "operationId": "multi",
       "pageModelId": "kv-fastdata-v0-multi",
       "requestPath": "/v0/multi",
@@ -1846,6 +1937,9 @@
         "mainnet",
         "testnet"
       ],
+      "openapiFamilyPath": "/openapi/neardata.json",
+      "openapiPath": "/openapi/neardata/get_health.json",
+      "openapiPointer": "/openapi/neardata.json#/paths/~1health/get",
       "operationId": "get_health",
       "pageModelId": "neardata-system-health",
       "requestPath": "/health",
@@ -1872,6 +1966,9 @@
         "mainnet",
         "testnet"
       ],
+      "openapiFamilyPath": "/openapi/neardata.json",
+      "openapiPath": "/openapi/neardata/get_block.json",
+      "openapiPointer": "/openapi/neardata.json#/paths/~1v0~1block~1%7Bblock_height%7D/get",
       "operationId": "get_block",
       "pageModelId": "neardata-v0-block",
       "requestPath": "/v0/block/{block_height}",
@@ -1898,6 +1995,9 @@
         "mainnet",
         "testnet"
       ],
+      "openapiFamilyPath": "/openapi/neardata.json",
+      "openapiPath": "/openapi/neardata/get_chunk.json",
+      "openapiPointer": "/openapi/neardata.json#/paths/~1v0~1block~1%7Bblock_height%7D~1chunk~1%7Bshard_id%7D/get",
       "operationId": "get_chunk",
       "pageModelId": "neardata-v0-block-chunk",
       "requestPath": "/v0/block/{block_height}/chunk/{shard_id}",
@@ -1924,6 +2024,9 @@
         "mainnet",
         "testnet"
       ],
+      "openapiFamilyPath": "/openapi/neardata.json",
+      "openapiPath": "/openapi/neardata/get_block_headers.json",
+      "openapiPointer": "/openapi/neardata.json#/paths/~1v0~1block~1%7Bblock_height%7D~1headers/get",
       "operationId": "get_block_headers",
       "pageModelId": "neardata-v0-block-headers",
       "requestPath": "/v0/block/{block_height}/headers",
@@ -1950,6 +2053,9 @@
         "mainnet",
         "testnet"
       ],
+      "openapiFamilyPath": "/openapi/neardata.json",
+      "openapiPath": "/openapi/neardata/get_block_optimistic.json",
+      "openapiPointer": "/openapi/neardata.json#/paths/~1v0~1block_opt~1%7Bblock_height%7D/get",
       "operationId": "get_block_optimistic",
       "pageModelId": "neardata-v0-block-optimistic",
       "requestPath": "/v0/block_opt/{block_height}",
@@ -1976,6 +2082,9 @@
         "mainnet",
         "testnet"
       ],
+      "openapiFamilyPath": "/openapi/neardata.json",
+      "openapiPath": "/openapi/neardata/get_shard.json",
+      "openapiPointer": "/openapi/neardata.json#/paths/~1v0~1block~1%7Bblock_height%7D~1shard~1%7Bshard_id%7D/get",
       "operationId": "get_shard",
       "pageModelId": "neardata-v0-block-shard",
       "requestPath": "/v0/block/{block_height}/shard/{shard_id}",
@@ -2002,6 +2111,9 @@
         "mainnet",
         "testnet"
       ],
+      "openapiFamilyPath": "/openapi/neardata.json",
+      "openapiPath": "/openapi/neardata/get_first_block.json",
+      "openapiPointer": "/openapi/neardata.json#/paths/~1v0~1first_block/get",
       "operationId": "get_first_block",
       "pageModelId": "neardata-v0-first-block",
       "requestPath": "/v0/first_block",
@@ -2028,6 +2140,9 @@
         "mainnet",
         "testnet"
       ],
+      "openapiFamilyPath": "/openapi/neardata.json",
+      "openapiPath": "/openapi/neardata/get_last_block_final.json",
+      "openapiPointer": "/openapi/neardata.json#/paths/~1v0~1last_block~1final/get",
       "operationId": "get_last_block_final",
       "pageModelId": "neardata-v0-last-block-final",
       "requestPath": "/v0/last_block/final",
@@ -2054,6 +2169,9 @@
         "mainnet",
         "testnet"
       ],
+      "openapiFamilyPath": "/openapi/neardata.json",
+      "openapiPath": "/openapi/neardata/get_last_block_optimistic.json",
+      "openapiPointer": "/openapi/neardata.json#/paths/~1v0~1last_block~1optimistic/get",
       "operationId": "get_last_block_optimistic",
       "pageModelId": "neardata-v0-last-block-optimistic",
       "requestPath": "/v0/last_block/optimistic",
@@ -2080,6 +2198,9 @@
         "mainnet",
         "testnet"
       ],
+      "openapiFamilyPath": "/openapi/transactions.json",
+      "openapiPath": "/openapi/transactions/get_account.json",
+      "openapiPointer": "/openapi/transactions.json#/paths/~1v0~1account/post",
       "operationId": "get_account",
       "pageModelId": "transactions-v0-account",
       "requestPath": "/v0/account",
@@ -2106,6 +2227,9 @@
         "mainnet",
         "testnet"
       ],
+      "openapiFamilyPath": "/openapi/transactions.json",
+      "openapiPath": "/openapi/transactions/get_block.json",
+      "openapiPointer": "/openapi/transactions.json#/paths/~1v0~1block/post",
       "operationId": "get_block",
       "pageModelId": "transactions-v0-block",
       "requestPath": "/v0/block",
@@ -2132,6 +2256,9 @@
         "mainnet",
         "testnet"
       ],
+      "openapiFamilyPath": "/openapi/transactions.json",
+      "openapiPath": "/openapi/transactions/get_blocks.json",
+      "openapiPointer": "/openapi/transactions.json#/paths/~1v0~1blocks/post",
       "operationId": "get_blocks",
       "pageModelId": "transactions-v0-blocks",
       "requestPath": "/v0/blocks",
@@ -2158,6 +2285,9 @@
         "mainnet",
         "testnet"
       ],
+      "openapiFamilyPath": "/openapi/transactions.json",
+      "openapiPath": "/openapi/transactions/get_receipt.json",
+      "openapiPointer": "/openapi/transactions.json#/paths/~1v0~1receipt/post",
       "operationId": "get_receipt",
       "pageModelId": "transactions-v0-receipt",
       "requestPath": "/v0/receipt",
@@ -2184,6 +2314,9 @@
         "mainnet",
         "testnet"
       ],
+      "openapiFamilyPath": "/openapi/transactions.json",
+      "openapiPath": "/openapi/transactions/get_transactions.json",
+      "openapiPointer": "/openapi/transactions.json#/paths/~1v0~1transactions/post",
       "operationId": "get_transactions",
       "pageModelId": "transactions-v0-transactions",
       "requestPath": "/v0/transactions",
@@ -2209,6 +2342,9 @@
       "networkKeys": [
         "mainnet"
       ],
+      "openapiFamilyPath": "/openapi/transfers.json",
+      "openapiPath": "/openapi/transfers/get_transfers_by_account.json",
+      "openapiPointer": "/openapi/transfers.json#/paths/~1v0~1transfers/post",
       "operationId": "get_transfers_by_account",
       "pageModelId": "transfers-v0-transfers",
       "requestPath": "/v0/transfers",
@@ -2235,6 +2371,9 @@
         "mainnet",
         "testnet"
       ],
+      "openapiFamilyPath": "/openapi/rpc.json",
+      "openapiPath": "/openapi/rpc/view_access_key.json",
+      "openapiPointer": "/openapi/rpc.json#/paths/~1view_access_key/post",
       "operationId": "view_access_key",
       "pageModelId": "rpc-view-access-key",
       "requestPath": "/",
@@ -2262,6 +2401,9 @@
         "mainnet",
         "testnet"
       ],
+      "openapiFamilyPath": "/openapi/rpc.json",
+      "openapiPath": "/openapi/rpc/view_access_key_list.json",
+      "openapiPointer": "/openapi/rpc.json#/paths/~1view_access_key_list/post",
       "operationId": "view_access_key_list",
       "pageModelId": "rpc-view-access-key-list",
       "requestPath": "/",
@@ -2289,6 +2431,9 @@
         "mainnet",
         "testnet"
       ],
+      "openapiFamilyPath": "/openapi/rpc.json",
+      "openapiPath": "/openapi/rpc/view_account.json",
+      "openapiPointer": "/openapi/rpc.json#/paths/~1view_account/post",
       "operationId": "view_account",
       "pageModelId": "rpc-view-account",
       "requestPath": "/",
@@ -2316,6 +2461,9 @@
         "mainnet",
         "testnet"
       ],
+      "openapiFamilyPath": "/openapi/rpc.json",
+      "openapiPath": "/openapi/rpc/block_by_height.json",
+      "openapiPointer": "/openapi/rpc.json#/paths/~1block_by_height/post",
       "operationId": "block_by_height",
       "pageModelId": "rpc-block-by-height",
       "requestPath": "/",
@@ -2343,6 +2491,9 @@
         "mainnet",
         "testnet"
       ],
+      "openapiFamilyPath": "/openapi/rpc.json",
+      "openapiPath": "/openapi/rpc/block_by_id.json",
+      "openapiPointer": "/openapi/rpc.json#/paths/~1block_by_id/post",
       "operationId": "block_by_id",
       "pageModelId": "rpc-block-by-id",
       "requestPath": "/",
@@ -2370,6 +2521,9 @@
         "mainnet",
         "testnet"
       ],
+      "openapiFamilyPath": "/openapi/rpc.json",
+      "openapiPath": "/openapi/rpc/block_effects.json",
+      "openapiPointer": "/openapi/rpc.json#/paths/~1block_effects/post",
       "operationId": "block_effects",
       "pageModelId": "rpc-block-effects",
       "requestPath": "/",
@@ -2397,6 +2551,9 @@
         "mainnet",
         "testnet"
       ],
+      "openapiFamilyPath": "/openapi/rpc.json",
+      "openapiPath": "/openapi/rpc/call_function.json",
+      "openapiPointer": "/openapi/rpc.json#/paths/~1call_function/post",
       "operationId": "call_function",
       "pageModelId": "rpc-call-function",
       "requestPath": "/",
@@ -2424,6 +2581,9 @@
         "mainnet",
         "testnet"
       ],
+      "openapiFamilyPath": "/openapi/rpc.json",
+      "openapiPath": "/openapi/rpc/view_code.json",
+      "openapiPointer": "/openapi/rpc.json#/paths/~1view_code/post",
       "operationId": "view_code",
       "pageModelId": "rpc-view-code",
       "requestPath": "/",
@@ -2451,6 +2611,9 @@
         "mainnet",
         "testnet"
       ],
+      "openapiFamilyPath": "/openapi/rpc.json",
+      "openapiPath": "/openapi/rpc/view_global_contract_code.json",
+      "openapiPointer": "/openapi/rpc.json#/paths/~1view_global_contract_code/post",
       "operationId": "view_global_contract_code",
       "pageModelId": "rpc-view-global-contract-code",
       "requestPath": "/",
@@ -2478,6 +2641,9 @@
         "mainnet",
         "testnet"
       ],
+      "openapiFamilyPath": "/openapi/rpc.json",
+      "openapiPath": "/openapi/rpc/view_global_contract_code_by_account_id.json",
+      "openapiPointer": "/openapi/rpc.json#/paths/~1view_global_contract_code_by_account_id/post",
       "operationId": "view_global_contract_code_by_account_id",
       "pageModelId": "rpc-view-global-contract-code-by-account-id",
       "requestPath": "/",
@@ -2505,6 +2671,9 @@
         "mainnet",
         "testnet"
       ],
+      "openapiFamilyPath": "/openapi/rpc.json",
+      "openapiPath": "/openapi/rpc/view_state.json",
+      "openapiPointer": "/openapi/rpc.json#/paths/~1view_state/post",
       "operationId": "view_state",
       "pageModelId": "rpc-view-state",
       "requestPath": "/",
@@ -2532,6 +2701,9 @@
         "mainnet",
         "testnet"
       ],
+      "openapiFamilyPath": "/openapi/rpc.json",
+      "openapiPath": "/openapi/rpc/changes.json",
+      "openapiPointer": "/openapi/rpc.json#/paths/~1changes/post",
       "operationId": "changes",
       "pageModelId": "rpc-changes",
       "requestPath": "/",
@@ -2559,6 +2731,9 @@
         "mainnet",
         "testnet"
       ],
+      "openapiFamilyPath": "/openapi/rpc.json",
+      "openapiPath": "/openapi/rpc/chunk_by_block_shard.json",
+      "openapiPointer": "/openapi/rpc.json#/paths/~1chunk_by_block_shard/post",
       "operationId": "chunk_by_block_shard",
       "pageModelId": "rpc-chunk-by-block-shard",
       "requestPath": "/",
@@ -2586,6 +2761,9 @@
         "mainnet",
         "testnet"
       ],
+      "openapiFamilyPath": "/openapi/rpc.json",
+      "openapiPath": "/openapi/rpc/chunk_by_hash.json",
+      "openapiPointer": "/openapi/rpc.json#/paths/~1chunk_by_hash/post",
       "operationId": "chunk_by_hash",
       "pageModelId": "rpc-chunk-by-hash",
       "requestPath": "/",
@@ -2613,6 +2791,9 @@
         "mainnet",
         "testnet"
       ],
+      "openapiFamilyPath": "/openapi/rpc.json",
+      "openapiPath": "/openapi/rpc/client_config.json",
+      "openapiPointer": "/openapi/rpc.json#/paths/~1client_config/post",
       "operationId": "client_config",
       "pageModelId": "rpc-client-config",
       "requestPath": "/",
@@ -2640,6 +2821,9 @@
         "mainnet",
         "testnet"
       ],
+      "openapiFamilyPath": "/openapi/rpc.json",
+      "openapiPath": "/openapi/rpc/EXPERIMENTAL_congestion_level.json",
+      "openapiPointer": "/openapi/rpc.json#/paths/~1EXPERIMENTAL_congestion_level/post",
       "operationId": "EXPERIMENTAL_congestion_level",
       "pageModelId": "rpc-EXPERIMENTAL-congestion-level",
       "requestPath": "/",
@@ -2667,6 +2851,9 @@
         "mainnet",
         "testnet"
       ],
+      "openapiFamilyPath": "/openapi/rpc.json",
+      "openapiPath": "/openapi/rpc/EXPERIMENTAL_light_client_block_proof.json",
+      "openapiPointer": "/openapi/rpc.json#/paths/~1EXPERIMENTAL_light_client_block_proof/post",
       "operationId": "EXPERIMENTAL_light_client_block_proof",
       "pageModelId": "rpc-EXPERIMENTAL-light-client-block-proof",
       "requestPath": "/",
@@ -2694,6 +2881,9 @@
         "mainnet",
         "testnet"
       ],
+      "openapiFamilyPath": "/openapi/rpc.json",
+      "openapiPath": "/openapi/rpc/EXPERIMENTAL_light_client_proof.json",
+      "openapiPointer": "/openapi/rpc.json#/paths/~1EXPERIMENTAL_light_client_proof/post",
       "operationId": "EXPERIMENTAL_light_client_proof",
       "pageModelId": "rpc-EXPERIMENTAL-light-client-proof",
       "requestPath": "/",
@@ -2721,6 +2911,9 @@
         "mainnet",
         "testnet"
       ],
+      "openapiFamilyPath": "/openapi/rpc.json",
+      "openapiPath": "/openapi/rpc/EXPERIMENTAL_protocol_config.json",
+      "openapiPointer": "/openapi/rpc.json#/paths/~1EXPERIMENTAL_protocol_config/post",
       "operationId": "EXPERIMENTAL_protocol_config",
       "pageModelId": "rpc-EXPERIMENTAL-protocol-config",
       "requestPath": "/",
@@ -2748,6 +2941,9 @@
         "mainnet",
         "testnet"
       ],
+      "openapiFamilyPath": "/openapi/rpc.json",
+      "openapiPath": "/openapi/rpc/EXPERIMENTAL_split_storage_info.json",
+      "openapiPointer": "/openapi/rpc.json#/paths/~1EXPERIMENTAL_split_storage_info/post",
       "operationId": "EXPERIMENTAL_split_storage_info",
       "pageModelId": "rpc-EXPERIMENTAL-split-storage-info",
       "requestPath": "/",
@@ -2775,6 +2971,9 @@
         "mainnet",
         "testnet"
       ],
+      "openapiFamilyPath": "/openapi/rpc.json",
+      "openapiPath": "/openapi/rpc/gas_price.json",
+      "openapiPointer": "/openapi/rpc.json#/paths/~1gas_price/post",
       "operationId": "gas_price",
       "pageModelId": "rpc-gas-price",
       "requestPath": "/",
@@ -2802,6 +3001,9 @@
         "mainnet",
         "testnet"
       ],
+      "openapiFamilyPath": "/openapi/rpc.json",
+      "openapiPath": "/openapi/rpc/gas_price_by_block.json",
+      "openapiPointer": "/openapi/rpc.json#/paths/~1gas_price_by_block/post",
       "operationId": "gas_price_by_block",
       "pageModelId": "rpc-gas-price-by-block",
       "requestPath": "/",
@@ -2829,6 +3031,9 @@
         "mainnet",
         "testnet"
       ],
+      "openapiFamilyPath": "/openapi/rpc.json",
+      "openapiPath": "/openapi/rpc/genesis_config.json",
+      "openapiPointer": "/openapi/rpc.json#/paths/~1genesis_config/post",
       "operationId": "genesis_config",
       "pageModelId": "rpc-genesis-config",
       "requestPath": "/",
@@ -2856,6 +3061,9 @@
         "mainnet",
         "testnet"
       ],
+      "openapiFamilyPath": "/openapi/rpc.json",
+      "openapiPath": "/openapi/rpc/health.json",
+      "openapiPointer": "/openapi/rpc.json#/paths/~1health/post",
       "operationId": "health",
       "pageModelId": "rpc-health",
       "requestPath": "/",
@@ -2883,6 +3091,9 @@
         "mainnet",
         "testnet"
       ],
+      "openapiFamilyPath": "/openapi/rpc.json",
+      "openapiPath": "/openapi/rpc/latest_block.json",
+      "openapiPointer": "/openapi/rpc.json#/paths/~1latest_block/post",
       "operationId": "latest_block",
       "pageModelId": "rpc-latest-block",
       "requestPath": "/",
@@ -2910,6 +3121,9 @@
         "mainnet",
         "testnet"
       ],
+      "openapiFamilyPath": "/openapi/rpc.json",
+      "openapiPath": "/openapi/rpc/light_client_proof.json",
+      "openapiPointer": "/openapi/rpc.json#/paths/~1light_client_proof/post",
       "operationId": "light_client_proof",
       "pageModelId": "rpc-light-client-proof",
       "requestPath": "/",
@@ -2937,6 +3151,9 @@
         "mainnet",
         "testnet"
       ],
+      "openapiFamilyPath": "/openapi/rpc.json",
+      "openapiPath": "/openapi/rpc/maintenance_windows.json",
+      "openapiPointer": "/openapi/rpc.json#/paths/~1maintenance_windows/post",
       "operationId": "maintenance_windows",
       "pageModelId": "rpc-maintenance-windows",
       "requestPath": "/",
@@ -2964,6 +3181,9 @@
         "mainnet",
         "testnet"
       ],
+      "openapiFamilyPath": "/openapi/rpc.json",
+      "openapiPath": "/openapi/rpc/metrics.json",
+      "openapiPointer": "/openapi/rpc.json#/paths/~1metrics/get",
       "operationId": "metrics",
       "pageModelId": "rpc-metrics",
       "requestPath": "/metrics",
@@ -2991,6 +3211,9 @@
         "mainnet",
         "testnet"
       ],
+      "openapiFamilyPath": "/openapi/rpc.json",
+      "openapiPath": "/openapi/rpc/network_info.json",
+      "openapiPointer": "/openapi/rpc.json#/paths/~1network_info/post",
       "operationId": "network_info",
       "pageModelId": "rpc-network-info",
       "requestPath": "/",
@@ -3018,6 +3241,9 @@
         "mainnet",
         "testnet"
       ],
+      "openapiFamilyPath": "/openapi/rpc.json",
+      "openapiPath": "/openapi/rpc/next_light_client_block.json",
+      "openapiPointer": "/openapi/rpc.json#/paths/~1next_light_client_block/post",
       "operationId": "next_light_client_block",
       "pageModelId": "rpc-next-light-client-block",
       "requestPath": "/",
@@ -3045,6 +3271,9 @@
         "mainnet",
         "testnet"
       ],
+      "openapiFamilyPath": "/openapi/rpc.json",
+      "openapiPath": "/openapi/rpc/status.json",
+      "openapiPointer": "/openapi/rpc.json#/paths/~1status/post",
       "operationId": "status",
       "pageModelId": "rpc-status",
       "requestPath": "/",
@@ -3072,6 +3301,9 @@
         "mainnet",
         "testnet"
       ],
+      "openapiFamilyPath": "/openapi/rpc.json",
+      "openapiPath": "/openapi/rpc/broadcast_tx_async.json",
+      "openapiPointer": "/openapi/rpc.json#/paths/~1broadcast_tx_async/post",
       "operationId": "broadcast_tx_async",
       "pageModelId": "rpc-broadcast-tx-async",
       "requestPath": "/",
@@ -3099,6 +3331,9 @@
         "mainnet",
         "testnet"
       ],
+      "openapiFamilyPath": "/openapi/rpc.json",
+      "openapiPath": "/openapi/rpc/broadcast_tx_commit.json",
+      "openapiPointer": "/openapi/rpc.json#/paths/~1broadcast_tx_commit/post",
       "operationId": "broadcast_tx_commit",
       "pageModelId": "rpc-broadcast-tx-commit",
       "requestPath": "/",
@@ -3126,6 +3361,9 @@
         "mainnet",
         "testnet"
       ],
+      "openapiFamilyPath": "/openapi/rpc.json",
+      "openapiPath": "/openapi/rpc/EXPERIMENTAL_receipt.json",
+      "openapiPointer": "/openapi/rpc.json#/paths/~1EXPERIMENTAL_receipt/post",
       "operationId": "EXPERIMENTAL_receipt",
       "pageModelId": "rpc-EXPERIMENTAL-receipt",
       "requestPath": "/",
@@ -3153,6 +3391,9 @@
         "mainnet",
         "testnet"
       ],
+      "openapiFamilyPath": "/openapi/rpc.json",
+      "openapiPath": "/openapi/rpc/EXPERIMENTAL_receipt_to_tx.json",
+      "openapiPointer": "/openapi/rpc.json#/paths/~1EXPERIMENTAL_receipt_to_tx/post",
       "operationId": "EXPERIMENTAL_receipt_to_tx",
       "pageModelId": "rpc-EXPERIMENTAL-receipt-to-tx",
       "requestPath": "/",
@@ -3180,6 +3421,9 @@
         "mainnet",
         "testnet"
       ],
+      "openapiFamilyPath": "/openapi/rpc.json",
+      "openapiPath": "/openapi/rpc/EXPERIMENTAL_tx_status.json",
+      "openapiPointer": "/openapi/rpc.json#/paths/~1EXPERIMENTAL_tx_status/post",
       "operationId": "EXPERIMENTAL_tx_status",
       "pageModelId": "rpc-EXPERIMENTAL-tx-status",
       "requestPath": "/",
@@ -3207,6 +3451,9 @@
         "mainnet",
         "testnet"
       ],
+      "openapiFamilyPath": "/openapi/rpc.json",
+      "openapiPath": "/openapi/rpc/send_tx.json",
+      "openapiPointer": "/openapi/rpc.json#/paths/~1send_tx/post",
       "operationId": "send_tx",
       "pageModelId": "rpc-send-tx",
       "requestPath": "/",
@@ -3234,6 +3481,9 @@
         "mainnet",
         "testnet"
       ],
+      "openapiFamilyPath": "/openapi/rpc.json",
+      "openapiPath": "/openapi/rpc/tx_status.json",
+      "openapiPointer": "/openapi/rpc.json#/paths/~1tx_status/post",
       "operationId": "tx_status",
       "pageModelId": "rpc-tx-status",
       "requestPath": "/",
@@ -3261,6 +3511,9 @@
         "mainnet",
         "testnet"
       ],
+      "openapiFamilyPath": "/openapi/rpc.json",
+      "openapiPath": "/openapi/rpc/EXPERIMENTAL_validators_ordered.json",
+      "openapiPointer": "/openapi/rpc.json#/paths/~1EXPERIMENTAL_validators_ordered/post",
       "operationId": "EXPERIMENTAL_validators_ordered",
       "pageModelId": "rpc-EXPERIMENTAL-validators-ordered",
       "requestPath": "/",
@@ -3288,6 +3541,9 @@
         "mainnet",
         "testnet"
       ],
+      "openapiFamilyPath": "/openapi/rpc.json",
+      "openapiPath": "/openapi/rpc/validators_by_epoch.json",
+      "openapiPointer": "/openapi/rpc.json#/paths/~1validators_by_epoch/post",
       "operationId": "validators_by_epoch",
       "pageModelId": "rpc-validators-by-epoch",
       "requestPath": "/",
@@ -3315,6 +3571,9 @@
         "mainnet",
         "testnet"
       ],
+      "openapiFamilyPath": "/openapi/rpc.json",
+      "openapiPath": "/openapi/rpc/validators_current.json",
+      "openapiPointer": "/openapi/rpc.json#/paths/~1validators_current/post",
       "operationId": "validators_current",
       "pageModelId": "rpc-validators-current",
       "requestPath": "/",

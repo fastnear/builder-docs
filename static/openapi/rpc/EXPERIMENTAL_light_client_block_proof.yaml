@@ -1,0 +1,153 @@
+openapi: 3.1.0
+info:
+  title: "NEAR Protocol RPC: Get light client block proof"
+  description: Fetch a Merkle proof — by Base58 block and light-client-head hashes — that the block is included in the light client's verified chain.
+  version: 1.0.0
+servers:
+  - url: https://rpc.mainnet.fastnear.com
+    description: Mainnet
+  - url: https://rpc.testnet.fastnear.com
+    description: Testnet
+  - url: https://archival-rpc.mainnet.fastnear.com
+    description: Mainnet Archival
+  - url: https://archival-rpc.testnet.fastnear.com
+    description: Testnet Archival
+paths:
+  /:
+    post:
+      operationId: EXPERIMENTAL_light_client_block_proof
+      summary: Get light client block proof
+      description: Fetch a Merkle proof — by Base58 block and light-client-head hashes — that the block is included in the light client's verified chain.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - jsonrpc
+                - id
+                - method
+                - params
+              properties:
+                jsonrpc:
+                  type: string
+                  enum:
+                    - "2.0"
+                id:
+                  type: string
+                  example: fastnear
+                method:
+                  type: string
+                  enum:
+                    - EXPERIMENTAL_light_client_block_proof
+                params:
+                  type: object
+                  properties:
+                    block_hash:
+                      type: string
+                      description: Base58-encoded hash
+                    light_client_head:
+                      type: string
+                      description: Base58-encoded hash
+                  required:
+                    - block_hash
+                    - light_client_head
+            examples:
+              mainnet:
+                summary: Get light client block proof (Mainnet)
+                value:
+                  jsonrpc: "2.0"
+                  id: fastnear
+                  method: EXPERIMENTAL_light_client_block_proof
+                  params:
+                    block_hash: 64utzv4G8AwNSxVnj23KPwU46VL435jQbQokbaYFtZ6V
+                    light_client_head: 9XN7MtDywZvfGx6TKy1MT2iCZkKuHikJXmNazxdZ4x6T
+              testnet:
+                summary: Get light client block proof (Testnet)
+                value:
+                  jsonrpc: "2.0"
+                  id: fastnear
+                  method: EXPERIMENTAL_light_client_block_proof
+                  params:
+                    block_hash: GTnMamkzwhsTdaZ48g7BvFALJ4ECZYJZA9aagejnAinp
+                    light_client_head: 6JYj6i1FaUCzdoqy41CqUcZJxa5n9EmLEENRDH2gLm5u
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/JsonRpcResponse"
+        "403":
+          description: The supplied API key was not recognized.
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: Invalid API key
+security:
+  - {}
+  - BearerAuth: []
+  - ApiKeyAuth: []
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      description: "FastNEAR API key as an `Authorization: Bearer` header. Preferred for backends, workers, and proxies because it keeps the key out of URLs and logs."
+    ApiKeyAuth:
+      type: apiKey
+      in: query
+      name: apiKey
+      description: FastNEAR API key as the `apiKey` query parameter. Handy for curl or clients that cannot set headers, but the key can end up in URLs, logs, and shell history.
+  schemas:
+    JsonRpcResponse:
+      type: object
+      required:
+        - jsonrpc
+        - id
+      properties:
+        jsonrpc:
+          type: string
+          enum:
+            - "2.0"
+        id:
+          oneOf:
+            - type: string
+            - type: number
+        result:
+          type: object
+          properties:
+            block_header_lite:
+              type: object
+              properties:
+                inner_lite:
+                  type: object
+                  description: A part of a state for the current head of a light client. More info [here](https://nomicon.io/ChainSpec/LightClient).
+                inner_rest_hash:
+                  type: string
+                  description: Base58-encoded hash
+                prev_block_hash:
+                  type: string
+                  description: Base58-encoded hash
+              required:
+                - prev_block_hash
+                - inner_rest_hash
+                - inner_lite
+            block_proof:
+              type: array
+              items:
+                type: object
+          required:
+            - block_header_lite
+            - block_proof
+        error:
+          type: object
+          properties:
+            code:
+              type: integer
+            message:
+              type: string
+            data:
+              type: object

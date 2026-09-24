@@ -9,7 +9,10 @@
 - Транспорт: http
 - Метод: GET
 - Путь: `/v1/public_key/{public_key}`
-- Исходная спецификация: `apis/fastnear/v1/public_key_lookup.yaml`
+## OpenAPI
+- Эта операция: https://docs.fastnear.com/openapi/fastnear/lookup_by_public_key_v1.json (https://docs.fastnear.com/openapi/fastnear/lookup_by_public_key_v1.yaml)
+- Полный документ API: https://docs.fastnear.com/openapi/fastnear.json
+- Указатель в полном документе: https://docs.fastnear.com/openapi/fastnear.json#/paths/~1v1~1public_key~1%7Bpublic_key%7D/get
 ## Сети
 - Mainnet: https://api.fastnear.com/
 - Testnet: https://test.api.fastnear.com/

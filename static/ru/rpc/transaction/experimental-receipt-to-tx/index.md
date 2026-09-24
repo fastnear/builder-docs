@@ -10,7 +10,10 @@ Resolve a receipt ID to the transaction hash and signer that produced it. Requir
 - Транспорт: json-rpc
 - Метод: POST
 - Путь: `/`
-- Исходная спецификация: `rpcs/transaction/EXPERIMENTAL_receipt_to_tx.yaml`
+## OpenAPI
+- Эта операция: https://docs.fastnear.com/openapi/rpc/EXPERIMENTAL_receipt_to_tx.json (https://docs.fastnear.com/openapi/rpc/EXPERIMENTAL_receipt_to_tx.yaml)
+- Полный документ API: https://docs.fastnear.com/openapi/rpc.json
+- Указатель в полном документе: https://docs.fastnear.com/openapi/rpc.json#/paths/~1EXPERIMENTAL_receipt_to_tx/post
 ## Сети
 - Mainnet: https://archival-rpc.mainnet.fastnear.com/ (archival: Pinned receipt plus block_height anchor, older than standard RPC retention.)
 - Testnet: https://archival-rpc.testnet.fastnear.com/ (archival: Pinned receipt plus block_height anchor, older than standard RPC retention.)

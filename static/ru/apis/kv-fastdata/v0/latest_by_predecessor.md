@@ -8,7 +8,10 @@
 - Транспорт: http
 - Метод: POST
 - Путь: `/v0/latest/{current_account_id}/{predecessor_id}`
-- Исходная спецификация: `apis/kv-fastdata/v0/latest_by_predecessor.yaml`
+## OpenAPI
+- Эта операция: https://docs.fastnear.com/openapi/kv-fastdata/latest_by_predecessor.json (https://docs.fastnear.com/openapi/kv-fastdata/latest_by_predecessor.yaml)
+- Полный документ API: https://docs.fastnear.com/openapi/kv-fastdata.json
+- Указатель в полном документе: https://docs.fastnear.com/openapi/kv-fastdata.json#/paths/~1v0~1latest~1%7Bcurrent_account_id%7D~1%7Bpredecessor_id%7D/post
 ## Сети
 - Mainnet: https://kv.main.fastnear.com/
 - Testnet: https://kv.test.fastnear.com/

@@ -1,0 +1,83 @@
+openapi: 3.0.3
+info:
+  title: Transactions API - Transactions by Hash
+  version: 3.0.3
+  description: Fetch up to 20 indexed transactions by hash in one request.
+paths:
+  /v0/transactions:
+    post:
+      description: Fetch up to 20 indexed transactions by hash in one request.
+      operationId: get_transactions
+      requestBody:
+        content:
+          application/json:
+            example:
+              tx_hashes:
+                - HV42hanyDVK3MYoW8c17Ufxw83htNEQGk93bzyQRocvS
+                - D2pt9ceGUyiGdJeeZLDd3uBGHF11DmPe4aJFMaoWMmDd
+            schema:
+              $ref: "#/components/schemas/TxInput"
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TransactionsResponse"
+          description: Matching transactions
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+          description: Bad request
+        "500":
+          content:
+            application/json:
+              schema:
+                type: string
+          description: ClickHouse query failure
+      summary: Fetch transactions by hash
+      tags:
+        - transactions
+servers:
+  - description: Mainnet
+    url: https://tx.main.fastnear.com
+  - description: Testnet
+    url: https://tx.test.fastnear.com
+components:
+  schemas:
+    ApiError:
+      additionalProperties: false
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+      required:
+        - error
+        - message
+      type: object
+    TransactionsResponse:
+      additionalProperties: false
+      properties:
+        transactions:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+      required:
+        - transactions
+      type: object
+    TxInput:
+      additionalProperties: false
+      properties:
+        tx_hashes:
+          description: Up to 20 base58-encoded transaction hashes to fetch in one request.
+          items:
+            type: string
+          maxItems: 20
+          type: array
+      required:
+        - tx_hashes
+      type: object

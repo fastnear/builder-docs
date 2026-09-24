@@ -6,6 +6,8 @@ FastNear RPC даёт прямой доступ по JSON-RPC к узлам NEAR
 
 ## Базовые URL
 
+OpenAPI: [JSON](https://docs.fastnear.com/ru/openapi/rpc.json) · [YAML](https://docs.fastnear.com/ru/openapi/rpc.yaml) · [все спецификации](https://docs.fastnear.com/ru/openapi)
+
 Обычные RPC хранят самые свежие эпохи состояния и подходят для большинства прикладных запросов по умолчанию:
 
 ```bash title="Обычный RPC mainnet"

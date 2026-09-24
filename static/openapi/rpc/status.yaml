@@ -1,0 +1,274 @@
+openapi: 3.1.0
+info:
+  title: "NEAR Protocol RPC: Get node status"
+  description: Fetch a node's binary version, sync progress, and head block in one snapshot.
+  version: 1.0.0
+servers:
+  - url: https://rpc.mainnet.fastnear.com
+    description: Mainnet
+  - url: https://rpc.testnet.fastnear.com
+    description: Testnet
+  - url: https://archival-rpc.mainnet.fastnear.com
+    description: Mainnet Archival
+  - url: https://archival-rpc.testnet.fastnear.com
+    description: Testnet Archival
+paths:
+  /:
+    post:
+      operationId: status
+      summary: Get node status
+      description: Fetch a node's binary version, sync progress, and head block in one snapshot.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - jsonrpc
+                - id
+                - method
+                - params
+              properties:
+                jsonrpc:
+                  type: string
+                  enum:
+                    - "2.0"
+                id:
+                  type: string
+                  example: fastnear
+                method:
+                  type: string
+                  enum:
+                    - status
+                params:
+                  type: array
+                  maxItems: 0
+                  description: Empty array as this method takes no parameters
+                  example: []
+            examples:
+              mainnet:
+                summary: Mainnet Node Status
+                value:
+                  jsonrpc: "2.0"
+                  id: fastnear
+                  method: status
+                  params: []
+              testnet:
+                summary: Testnet Node Status
+                value:
+                  jsonrpc: "2.0"
+                  id: fastnear
+                  method: status
+                  params: []
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/JsonRpcResponse"
+        "403":
+          description: The supplied API key was not recognized.
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: Invalid API key
+security:
+  - {}
+  - BearerAuth: []
+  - ApiKeyAuth: []
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      description: "FastNEAR API key as an `Authorization: Bearer` header. Preferred for backends, workers, and proxies because it keeps the key out of URLs and logs."
+    ApiKeyAuth:
+      type: apiKey
+      in: query
+      name: apiKey
+      description: FastNEAR API key as the `apiKey` query parameter. Handy for curl or clients that cannot set headers, but the key can end up in URLs, logs, and shell history.
+  schemas:
+    JsonRpcResponse:
+      type: object
+      required:
+        - jsonrpc
+        - id
+      properties:
+        jsonrpc:
+          type: string
+          enum:
+            - "2.0"
+        id:
+          oneOf:
+            - type: string
+            - type: number
+        result:
+          type: object
+          properties:
+            chain_id:
+              type: string
+              description: Unique chain id.
+            detailed_debug_status:
+              type:
+                - object
+                - "null"
+              properties:
+                block_production_delay_millis:
+                  type: integer
+                  format: uint64
+                  minimum: 0
+                catchup_status:
+                  type: array
+                  items:
+                    type: object
+                current_head_status:
+                  type: object
+                  description: Height and hash of a block
+                current_header_head_status:
+                  type: object
+                  description: Height and hash of a block
+                network_info:
+                  type: object
+                sync_status:
+                  type: string
+              required:
+                - network_info
+                - sync_status
+                - catchup_status
+                - current_head_status
+                - current_header_head_status
+                - block_production_delay_millis
+            genesis_hash:
+              type: string
+              description: Base58-encoded hash
+            latest_protocol_version:
+              type: integer
+              description: Latest protocol version that this client supports.
+              format: uint32
+              minimum: 0
+            node_key:
+              type:
+                - string
+                - "null"
+              description: "Public key with its type prefix: ed25519:, secp256k1:, or the full ml-dsa-65: key (never the ml-dsa-65-hash: handle)."
+            node_public_key:
+              type: string
+              description: "Public key with its type prefix: ed25519:, secp256k1:, or the full ml-dsa-65: key (never the ml-dsa-65-hash: handle)."
+            protocol_version:
+              type: integer
+              description: Currently active protocol version.
+              format: uint32
+              minimum: 0
+            rpc_addr:
+              type:
+                - string
+                - "null"
+              description: Address for RPC server.  None if node doesn't have RPC endpoint enabled.
+            sync_info:
+              type: object
+              properties:
+                earliest_block_hash:
+                  type:
+                    - string
+                    - "null"
+                  description: Base58-encoded hash
+                earliest_block_height:
+                  type:
+                    - integer
+                    - "null"
+                  format: uint64
+                  minimum: 0
+                earliest_block_time:
+                  type:
+                    - string
+                    - "null"
+                epoch_id:
+                  type:
+                    - string
+                    - "null"
+                  description: Base58-encoded epoch identifier hash
+                epoch_start_height:
+                  type:
+                    - integer
+                    - "null"
+                  format: uint64
+                  minimum: 0
+                latest_block_hash:
+                  type: string
+                  description: Base58-encoded hash
+                latest_block_height:
+                  type: integer
+                  format: uint64
+                  minimum: 0
+                latest_block_time:
+                  type: string
+                latest_state_root:
+                  type: string
+                  description: Base58-encoded hash
+                syncing:
+                  type: boolean
+              required:
+                - latest_block_hash
+                - latest_block_height
+                - latest_state_root
+                - latest_block_time
+                - syncing
+              description: Sync status of the node.
+            uptime_sec:
+              type: integer
+              description: Uptime of the node.
+              format: int64
+            validator_account_id:
+              type:
+                - string
+                - "null"
+              description: NEAR account ID
+            validator_public_key:
+              type:
+                - string
+                - "null"
+              description: "Public key with its type prefix: ed25519:, secp256k1:, or the full ml-dsa-65: key (never the ml-dsa-65-hash: handle)."
+            validators:
+              type: array
+              items:
+                type: object
+              description: Current epoch validators.
+            version:
+              type: object
+              description: Data structure for semver version and github tag or commit.
+              properties:
+                build:
+                  type: string
+                commit:
+                  type: string
+                rustc_version:
+                  type: string
+                  default: ""
+                version:
+                  type: string
+              required:
+                - version
+                - build
+                - commit
+          required:
+            - version
+            - chain_id
+            - protocol_version
+            - latest_protocol_version
+            - validators
+            - sync_info
+            - node_public_key
+            - uptime_sec
+            - genesis_hash
+        error:
+          type: object
+          properties:
+            code:
+              type: integer
+            message:
+              type: string
+            data:
+              type: object
