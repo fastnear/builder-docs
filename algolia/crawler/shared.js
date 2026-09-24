@@ -271,6 +271,7 @@ function createCrawlerConfig({
       `!${SITE_ROOT}/**/*.md`,
       `!${SITE_ROOT}/**/*.txt`,
       `!${SITE_ROOT}/**/*.json`,
+      `!${SITE_ROOT}/**/*.yaml`,
     ],
     ignoreCanonicalTo: true,
     initialIndexSettings: {

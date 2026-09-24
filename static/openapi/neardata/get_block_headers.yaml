@@ -1,0 +1,163 @@
+openapi: 3.0.3
+info:
+  title: NEAR Data API - Block Headers
+  version: 3.0.3
+  description: Fetch only a finalized block's header and chunk summaries — no per-shard payload.
+paths:
+  /v0/block/{block_height}/headers:
+    get:
+      description: Fetch only a finalized block's header and chunk summaries — no per-shard payload.
+      operationId: get_block_headers
+      parameters:
+        - description: NEAR block height to retrieve.
+          example: "50000000"
+          in: path
+          name: block_height
+          required: true
+          schema:
+            type: string
+        - description: Optional FastNEAR subscription API key. Invalid values may return `401` before redirect handling.
+          in: query
+          name: apiKey
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BlockEnvelope"
+                nullable: true
+          description: Requested document, or `null` when the selected slice is absent
+        "302":
+          description: Redirect to a canonical archive or finalized block URL
+          headers:
+            Location:
+              schema:
+                type: string
+        "401":
+          content:
+            text/plain:
+              example: Unauthorized
+              schema:
+                type: string
+          description: Invalid or unauthorized API key
+        "404":
+          content:
+            application/json:
+              example:
+                error: The block does not exist in this archive range
+                type: BLOCK_DOES_NOT_EXIST
+              schema:
+                $ref: "#/components/schemas/BlockErrorResponse"
+          description: Structured block-height error
+        "500":
+          content:
+            application/json:
+              schema:
+                type: string
+          description: Cache or internal data error
+      summary: Fetch the block-level object for a finalized block
+      tags:
+        - blocks
+servers:
+  - description: Mainnet
+    url: https://mainnet.neardata.xyz
+  - description: Testnet
+    url: https://testnet.neardata.xyz
+components:
+  schemas:
+    BlockEnvelope:
+      additionalProperties: false
+      description: Block-level payload returned by neardata.
+      properties:
+        author:
+          description: Block producer account ID.
+          type: string
+        chunks:
+          items:
+            $ref: "#/components/schemas/ChunkHeader"
+          type: array
+        header:
+          $ref: "#/components/schemas/BlockHeader"
+      required:
+        - author
+        - chunks
+        - header
+      type: object
+    BlockErrorResponse:
+      additionalProperties: false
+      properties:
+        error:
+          type: string
+        type:
+          $ref: "#/components/schemas/BlockErrorType"
+      required:
+        - error
+        - type
+      type: object
+    BlockErrorType:
+      enum:
+        - BLOCK_HEIGHT_TOO_HIGH
+        - BLOCK_HEIGHT_TOO_LOW
+        - BLOCK_DOES_NOT_EXIST
+      type: string
+    BlockHeader:
+      additionalProperties: true
+      description: Block header object as served by neardata.
+      properties:
+        chunks_included:
+          format: uint64
+          type: integer
+        epoch_id:
+          type: string
+        gas_price:
+          type: string
+        hash:
+          type: string
+        height:
+          format: uint64
+          type: integer
+        next_epoch_id:
+          type: string
+        prev_hash:
+          type: string
+        prev_height:
+          format: uint64
+          type: integer
+        timestamp:
+          type: integer
+        timestamp_nanosec:
+          type: string
+        total_supply:
+          type: string
+      type: object
+    ChunkHeader:
+      additionalProperties: true
+      description: Chunk header object as served by neardata.
+      properties:
+        chunk_hash:
+          type: string
+        gas_limit:
+          type: integer
+        gas_used:
+          type: integer
+        height_created:
+          format: uint64
+          type: integer
+        height_included:
+          format: uint64
+          type: integer
+        outcome_root:
+          type: string
+        outgoing_receipts_root:
+          type: string
+        prev_block_hash:
+          type: string
+        shard_id:
+          format: uint64
+          type: integer
+        tx_root:
+          type: string
+      type: object

@@ -14,6 +14,8 @@ API переводов — это самая узкая поверхность �
 
 ## Базовый URL
 
+OpenAPI: [JSON](/openapi/transfers.json) · [YAML](/openapi/transfers.yaml) · [все спецификации](/openapi)
+
 ```bash title="Transfers API Mainnet"
 https://transfers.main.fastnear.com
 ```

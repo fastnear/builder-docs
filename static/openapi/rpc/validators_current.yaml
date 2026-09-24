@@ -1,0 +1,178 @@
+openapi: 3.1.0
+info:
+  title: "NEAR Protocol RPC: Get current validators"
+  description: Fetch the active validator set for the current epoch, with stakes and performance stats.
+  version: 1.0.0
+servers:
+  - url: https://rpc.mainnet.fastnear.com
+    description: Mainnet
+  - url: https://rpc.testnet.fastnear.com
+    description: Testnet
+  - url: https://archival-rpc.mainnet.fastnear.com
+    description: Mainnet Archival
+  - url: https://archival-rpc.testnet.fastnear.com
+    description: Testnet Archival
+paths:
+  /:
+    post:
+      operationId: validators_current
+      summary: Get current validators
+      description: Fetch the active validator set for the current epoch, with stakes and performance stats.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - jsonrpc
+                - id
+                - method
+                - params
+              properties:
+                jsonrpc:
+                  type: string
+                  enum:
+                    - "2.0"
+                id:
+                  type: string
+                  example: fastnear
+                method:
+                  type: string
+                  enum:
+                    - validators
+                params:
+                  type: array
+                  items:
+                    type: "null"
+                  maxItems: 1
+                  minItems: 1
+                  example:
+                    - null
+            examples:
+              mainnet:
+                summary: Get current validators (Mainnet)
+                value:
+                  jsonrpc: "2.0"
+                  id: fastnear
+                  method: validators
+                  params:
+                    - null
+              testnet:
+                summary: Get current validators (Testnet)
+                value:
+                  jsonrpc: "2.0"
+                  id: fastnear
+                  method: validators
+                  params:
+                    - null
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/JsonRpcResponse"
+        "403":
+          description: The supplied API key was not recognized.
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: Invalid API key
+security:
+  - {}
+  - BearerAuth: []
+  - ApiKeyAuth: []
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      description: "FastNEAR API key as an `Authorization: Bearer` header. Preferred for backends, workers, and proxies because it keeps the key out of URLs and logs."
+    ApiKeyAuth:
+      type: apiKey
+      in: query
+      name: apiKey
+      description: FastNEAR API key as the `apiKey` query parameter. Handy for curl or clients that cannot set headers, but the key can end up in URLs, logs, and shell history.
+  schemas:
+    JsonRpcResponse:
+      type: object
+      required:
+        - jsonrpc
+        - id
+      properties:
+        jsonrpc:
+          type: string
+          enum:
+            - "2.0"
+        id:
+          oneOf:
+            - type: string
+            - type: number
+        result:
+          type: object
+          description: Information about this epoch validators and next epoch validators
+          properties:
+            current_fishermen:
+              type: array
+              items:
+                type: object
+                description: One of multiple possible types
+              description: Fishermen for the current epoch
+            current_proposals:
+              type: array
+              items:
+                type: object
+                description: One of multiple possible types
+              description: Proposals in the current epoch
+            current_validators:
+              type: array
+              items:
+                type: object
+                description: Describes information about the current epoch validator
+              description: Validators for the current epoch
+            epoch_height:
+              type: integer
+              description: Epoch height
+              format: uint64
+              minimum: 0
+            epoch_start_height:
+              type: integer
+              description: Epoch start block height
+              format: uint64
+              minimum: 0
+            next_fishermen:
+              type: array
+              items:
+                type: object
+                description: One of multiple possible types
+              description: Fishermen for the next epoch
+            next_validators:
+              type: array
+              items:
+                type: object
+              description: Validators for the next epoch
+            prev_epoch_kickout:
+              type: array
+              items:
+                type: object
+              description: Kickout in the previous epoch
+          required:
+            - current_validators
+            - next_validators
+            - current_fishermen
+            - next_fishermen
+            - current_proposals
+            - prev_epoch_kickout
+            - epoch_start_height
+            - epoch_height
+        error:
+          type: object
+          properties:
+            code:
+              type: integer
+            message:
+              type: string
+            data:
+              type: object

@@ -8,7 +8,10 @@
 - Транспорт: http
 - Метод: GET
 - Путь: `/v0/block/{block_height}/shard/{shard_id}`
-- Исходная спецификация: `apis/neardata/v0/block_shard.yaml`
+## OpenAPI
+- Эта операция: https://docs.fastnear.com/openapi/neardata/get_shard.json (https://docs.fastnear.com/openapi/neardata/get_shard.yaml)
+- Полный документ API: https://docs.fastnear.com/openapi/neardata.json
+- Указатель в полном документе: https://docs.fastnear.com/openapi/neardata.json#/paths/~1v0~1block~1%7Bblock_height%7D~1shard~1%7Bshard_id%7D/get
 ## Сети
 - Mainnet: https://mainnet.neardata.xyz/
 - Testnet: https://testnet.neardata.xyz/

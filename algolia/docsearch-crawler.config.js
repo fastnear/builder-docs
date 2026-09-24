@@ -13,6 +13,7 @@ new Crawler({
         "https://docs.fastnear.com/auth/**",
         "https://docs.fastnear.com/agents/**",
         "https://docs.fastnear.com/snapshots/**",
+        "https://docs.fastnear.com/openapi",
         "https://docs.fastnear.com/ru/",
         "https://docs.fastnear.com/ru/rpc/**",
         "https://docs.fastnear.com/ru/api/**",
@@ -23,6 +24,7 @@ new Crawler({
         "https://docs.fastnear.com/ru/auth/**",
         "https://docs.fastnear.com/ru/agents/**",
         "https://docs.fastnear.com/ru/snapshots/**",
+        "https://docs.fastnear.com/ru/openapi",
         "!https://docs.fastnear.com/transaction-flow",
         "!https://docs.fastnear.com/transaction-flow/**",
         "!https://docs.fastnear.com/rpcs/**",
@@ -235,7 +237,8 @@ new Crawler({
     "https://docs.fastnear.com/**",
     "!https://docs.fastnear.com/**/*.md",
     "!https://docs.fastnear.com/**/*.txt",
-    "!https://docs.fastnear.com/**/*.json"
+    "!https://docs.fastnear.com/**/*.json",
+    "!https://docs.fastnear.com/**/*.yaml"
   ],
   ignoreCanonicalTo: true,
   initialIndexSettings: {

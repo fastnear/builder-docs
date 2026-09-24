@@ -8,7 +8,10 @@
 - Транспорт: http
 - Метод: GET
 - Путь: `/v0/block/{block_height}/headers`
-- Исходная спецификация: `apis/neardata/v0/block_headers.yaml`
+## OpenAPI
+- Эта операция: https://docs.fastnear.com/openapi/neardata/get_block_headers.json (https://docs.fastnear.com/openapi/neardata/get_block_headers.yaml)
+- Полный документ API: https://docs.fastnear.com/openapi/neardata.json
+- Указатель в полном документе: https://docs.fastnear.com/openapi/neardata.json#/paths/~1v0~1block~1%7Bblock_height%7D~1headers/get
 ## Сети
 - Mainnet: https://mainnet.neardata.xyz/
 - Testnet: https://testnet.neardata.xyz/

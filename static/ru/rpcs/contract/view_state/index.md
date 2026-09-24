@@ -9,7 +9,10 @@
 - Транспорт: json-rpc
 - Метод: POST
 - Путь: `/`
-- Исходная спецификация: `rpcs/contract/view_state.yaml`
+## OpenAPI
+- Эта операция: https://docs.fastnear.com/openapi/rpc/view_state.json (https://docs.fastnear.com/openapi/rpc/view_state.yaml)
+- Полный документ API: https://docs.fastnear.com/openapi/rpc.json
+- Указатель в полном документе: https://docs.fastnear.com/openapi/rpc.json#/paths/~1view_state/post
 ## Сети
 - Mainnet: https://rpc.mainnet.fastnear.com/
 - Testnet: https://rpc.testnet.fastnear.com/

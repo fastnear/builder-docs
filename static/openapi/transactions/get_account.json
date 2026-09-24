@@ -1,0 +1,310 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Transactions API - Account History",
+    "version": "3.0.3",
+    "description": "Fetch account transaction history with optional filters for signer, success status, and sort order."
+  },
+  "paths": {
+    "/v0/account": {
+      "post": {
+        "description": "Fetch account transaction history with optional filters for signer, success status, and sort order.",
+        "operationId": "get_account",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "account_id": "intents.near",
+                "desc": true,
+                "is_real_signer": true,
+                "is_success": true,
+                "limit": 50
+              },
+              "schema": {
+                "$ref": "#/components/schemas/AccountInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountResponse"
+                }
+              }
+            },
+            "description": "Account history result set"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Bad request"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "ClickHouse query failure"
+          }
+        },
+        "summary": "Fetch account transaction history",
+        "tags": [
+          "account"
+        ]
+      }
+    }
+  },
+  "servers": [
+    {
+      "description": "Mainnet",
+      "url": "https://tx.main.fastnear.com"
+    },
+    {
+      "description": "Testnet",
+      "url": "https://tx.test.fastnear.com"
+    }
+  ],
+  "components": {
+    "schemas": {
+      "AccountInput": {
+        "additionalProperties": false,
+        "properties": {
+          "account_id": {
+            "description": "NEAR account to query transactions for (may be a signer, predecessor, receiver, or related party).",
+            "type": "string"
+          },
+          "desc": {
+            "description": "Sort newest-first when true; oldest-first when false or omitted.",
+            "nullable": true,
+            "type": "boolean"
+          },
+          "from_tx_block_height": {
+            "description": "Inclusive lower bound on the transaction's block height.",
+            "format": "uint64",
+            "minimum": 0,
+            "nullable": true,
+            "type": "integer"
+          },
+          "is_action_arg": {
+            "description": "Restrict to transactions where this account appeared in action arguments.",
+            "nullable": true,
+            "type": "boolean"
+          },
+          "is_any_signer": {
+            "description": "Restrict to transactions where this account signed either the top-level transaction or a delegated action.",
+            "nullable": true,
+            "type": "boolean"
+          },
+          "is_delegated_signer": {
+            "description": "Restrict to transactions where this account signed a delegated action.",
+            "nullable": true,
+            "type": "boolean"
+          },
+          "is_event_log": {
+            "description": "Restrict to transactions where this account appeared in a JSON event log.",
+            "nullable": true,
+            "type": "boolean"
+          },
+          "is_explicit_refund_to": {
+            "description": "Restrict to transactions where this account was the explicit `refund_to` target of an action receipt.",
+            "nullable": true,
+            "type": "boolean"
+          },
+          "is_function_call": {
+            "description": "Restrict to transactions where this account was the target of a function-call action.",
+            "nullable": true,
+            "type": "boolean"
+          },
+          "is_predecessor": {
+            "description": "Restrict to transactions where this account was the predecessor of a receipt.",
+            "nullable": true,
+            "type": "boolean"
+          },
+          "is_real_receiver": {
+            "description": "Restrict to transactions where this account was the real receiver — excluding relayer receivers and gas refunds.",
+            "nullable": true,
+            "type": "boolean"
+          },
+          "is_real_signer": {
+            "description": "Restrict to transactions where this account was the real signer — direct or delegated, excluding relayer signers.",
+            "nullable": true,
+            "type": "boolean"
+          },
+          "is_receiver": {
+            "description": "Restrict to transactions where this account received a receipt.",
+            "nullable": true,
+            "type": "boolean"
+          },
+          "is_signer": {
+            "description": "Restrict to transactions where this account signed the top-level transaction.",
+            "nullable": true,
+            "type": "boolean"
+          },
+          "is_success": {
+            "description": "Restrict to transactions whose execution succeeded (true) or failed/pending (false).",
+            "nullable": true,
+            "type": "boolean"
+          },
+          "limit": {
+            "description": "Maximum rows to return in one page (1–200).",
+            "format": "uint",
+            "maximum": 200,
+            "minimum": 1,
+            "nullable": true,
+            "type": "integer"
+          },
+          "resume_token": {
+            "default": null,
+            "description": "Opaque pagination token returned on a prior page; omit for the first page.",
+            "nullable": true,
+            "type": "string"
+          },
+          "to_tx_block_height": {
+            "description": "Exclusive upper bound on the transaction's block height.",
+            "format": "uint64",
+            "minimum": 0,
+            "nullable": true,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "account_id"
+        ],
+        "type": "object"
+      },
+      "AccountResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "account_txs": {
+            "items": {
+              "$ref": "#/components/schemas/AccountTxRow"
+            },
+            "type": "array"
+          },
+          "resume_token": {
+            "type": "string"
+          },
+          "txs_count": {
+            "format": "uint64",
+            "minimum": 0,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "account_txs",
+          "resume_token",
+          "txs_count"
+        ],
+        "type": "object"
+      },
+      "AccountTxRow": {
+        "additionalProperties": false,
+        "properties": {
+          "account_id": {
+            "type": "string"
+          },
+          "is_action_arg": {
+            "type": "boolean"
+          },
+          "is_any_signer": {
+            "type": "boolean"
+          },
+          "is_delegated_signer": {
+            "type": "boolean"
+          },
+          "is_event_log": {
+            "type": "boolean"
+          },
+          "is_explicit_refund_to": {
+            "type": "boolean"
+          },
+          "is_function_call": {
+            "type": "boolean"
+          },
+          "is_predecessor": {
+            "type": "boolean"
+          },
+          "is_real_receiver": {
+            "type": "boolean"
+          },
+          "is_real_signer": {
+            "type": "boolean"
+          },
+          "is_receiver": {
+            "type": "boolean"
+          },
+          "is_signer": {
+            "type": "boolean"
+          },
+          "is_success": {
+            "type": "boolean"
+          },
+          "transaction_hash": {
+            "type": "string"
+          },
+          "tx_block_height": {
+            "format": "uint64",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "tx_block_timestamp": {
+            "type": "string"
+          },
+          "tx_index": {
+            "format": "uint32",
+            "minimum": 0,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "account_id",
+          "transaction_hash",
+          "tx_block_height",
+          "tx_block_timestamp",
+          "tx_index",
+          "is_signer",
+          "is_delegated_signer",
+          "is_real_signer",
+          "is_any_signer",
+          "is_predecessor",
+          "is_explicit_refund_to",
+          "is_receiver",
+          "is_real_receiver",
+          "is_function_call",
+          "is_action_arg",
+          "is_event_log",
+          "is_success"
+        ],
+        "type": "object"
+      },
+      "ApiError": {
+        "additionalProperties": false,
+        "properties": {
+          "error": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "error",
+          "message"
+        ],
+        "type": "object"
+      }
+    }
+  }
+}

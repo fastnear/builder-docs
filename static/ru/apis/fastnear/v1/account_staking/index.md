@@ -8,7 +8,10 @@
 - Транспорт: http
 - Метод: GET
 - Путь: `/v1/account/{account_id}/staking`
-- Исходная спецификация: `apis/fastnear/v1/account_staking.yaml`
+## OpenAPI
+- Эта операция: https://docs.fastnear.com/openapi/fastnear/account_staking_v1.json (https://docs.fastnear.com/openapi/fastnear/account_staking_v1.yaml)
+- Полный документ API: https://docs.fastnear.com/openapi/fastnear.json
+- Указатель в полном документе: https://docs.fastnear.com/openapi/fastnear.json#/paths/~1v1~1account~1%7Baccount_id%7D~1staking/get
 ## Сети
 - Mainnet: https://api.fastnear.com/
 - Testnet: https://test.api.fastnear.com/

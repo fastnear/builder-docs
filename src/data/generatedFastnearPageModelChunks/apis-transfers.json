@@ -183,6 +183,14 @@
       "supportsFinality": false,
       "transport": "http"
     },
+    "openapi": {
+      "family": "transfers",
+      "familyJson": "/openapi/transfers.json",
+      "familyYaml": "/openapi/transfers.yaml",
+      "json": "/openapi/transfers/get_transfers_by_account.json",
+      "pointer": "/openapi/transfers.json#/paths/~1v0~1transfers/post",
+      "yaml": "/openapi/transfers/get_transfers_by_account.yaml"
+    },
     "pageModelId": "transfers-v0-transfers",
     "replaceOperationPage": true,
     "request": {

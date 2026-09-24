@@ -10,7 +10,10 @@
 - Транспорт: json-rpc
 - Метод: POST
 - Путь: `/`
-- Исходная спецификация: `rpcs/block/block_by_height.yaml`
+## OpenAPI
+- Эта операция: https://docs.fastnear.com/openapi/rpc/block_by_height.json (https://docs.fastnear.com/openapi/rpc/block_by_height.yaml)
+- Полный документ API: https://docs.fastnear.com/openapi/rpc.json
+- Указатель в полном документе: https://docs.fastnear.com/openapi/rpc.json#/paths/~1block_by_height/post
 ## Сети
 - Mainnet: https://archival-rpc.mainnet.fastnear.com/ (archival: Pinned block height, older than standard RPC retention.)
 - Testnet: https://archival-rpc.testnet.fastnear.com/ (archival: Pinned block height, older than standard RPC retention.)

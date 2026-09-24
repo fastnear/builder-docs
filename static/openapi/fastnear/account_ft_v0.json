@@ -1,0 +1,137 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "FastNEAR API - V0 Account FT",
+    "version": "3.0.3",
+    "description": "Fetch the fungible token contract IDs an account has held — contract IDs only, no balances."
+  },
+  "paths": {
+    "/v0/account/{account_id}/ft": {
+      "get": {
+        "description": "Fetch the fungible token contract IDs an account has held — contract IDs only, no balances.",
+        "operationId": "account_ft_v0",
+        "parameters": [
+          {
+            "description": "NEAR account ID to inspect.",
+            "example": "here.tg",
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "account_id": "here.tg",
+                  "contract_ids": [
+                    "wrap.near",
+                    "usdt.tether-token.near"
+                  ]
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/V0ContractsResponse"
+                }
+              }
+            },
+            "description": "Fungible token contract IDs for the requested account"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "403": {
+            "content": {
+              "text/plain": {
+                "example": "Invalid API key",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "The supplied API key was not recognized. Omit the key to use public access."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "Lookup fungible token contract IDs for an account",
+        "tags": [
+          "fungible-tokens"
+        ]
+      }
+    }
+  },
+  "servers": [
+    {
+      "description": "Mainnet",
+      "url": "https://api.fastnear.com"
+    },
+    {
+      "description": "Testnet",
+      "url": "https://test.api.fastnear.com"
+    }
+  ],
+  "security": [
+    {},
+    {
+      "BearerAuth": []
+    },
+    {
+      "ApiKeyAuth": []
+    }
+  ],
+  "components": {
+    "schemas": {
+      "V0ContractsResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "account_id": {
+            "type": "string"
+          },
+          "contract_ids": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "account_id",
+          "contract_ids"
+        ],
+        "type": "object"
+      }
+    },
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "description": "FastNEAR API key as the `apiKey` query parameter. Handy for curl or clients that cannot set headers, but the key can end up in URLs, logs, and shell history.",
+        "in": "query",
+        "name": "apiKey",
+        "type": "apiKey"
+      },
+      "BearerAuth": {
+        "description": "FastNEAR API key as an `Authorization: Bearer` header. Preferred for backends, workers, and proxies because it keeps the key out of URLs and logs.",
+        "scheme": "bearer",
+        "type": "http"
+      }
+    }
+  }
+}

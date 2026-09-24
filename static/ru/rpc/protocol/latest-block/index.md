@@ -10,7 +10,10 @@
 - Транспорт: json-rpc
 - Метод: POST
 - Путь: `/`
-- Исходная спецификация: `rpcs/protocol/latest_block.yaml`
+## OpenAPI
+- Эта операция: https://docs.fastnear.com/openapi/rpc/latest_block.json (https://docs.fastnear.com/openapi/rpc/latest_block.yaml)
+- Полный документ API: https://docs.fastnear.com/openapi/rpc.json
+- Указатель в полном документе: https://docs.fastnear.com/openapi/rpc.json#/paths/~1latest_block/post
 ## Сети
 - Архивный RPC mainnet: https://rpc.mainnet.fastnear.com/
 - Архивный RPC testnet: https://rpc.testnet.fastnear.com/

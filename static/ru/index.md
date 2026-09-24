@@ -96,6 +96,10 @@
         [Аутентификация и доступ](https://docs.fastnear.com/ru/auth)
         Один API-ключ FastNear работает и для RPC, и для REST API.
 
+        Для агентов и инструментов
+        [Спецификации OpenAPI](https://docs.fastnear.com/ru/openapi)
+        Машиночитаемые документы OpenAPI для каждого семейства API и каждой операции, а также JSON-индекс.
+
         Ключи и оплата
         [FastNear Dashboard](https://dashboard.fastnear.com)
         Войдите, создайте ключи и управляйте проектами, которые их используют.

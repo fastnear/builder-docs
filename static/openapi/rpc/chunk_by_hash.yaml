@@ -1,0 +1,231 @@
+openapi: 3.1.0
+info:
+  title: "NEAR Protocol RPC: Get chunk by hash"
+  description: Fetch a single chunk's transactions and receipts by its Base58 content hash.
+  version: 1.0.0
+servers:
+  - url: https://rpc.mainnet.fastnear.com
+    description: Mainnet
+  - url: https://rpc.testnet.fastnear.com
+    description: Testnet
+  - url: https://archival-rpc.mainnet.fastnear.com
+    description: Mainnet Archival
+  - url: https://archival-rpc.testnet.fastnear.com
+    description: Testnet Archival
+paths:
+  /:
+    post:
+      operationId: chunk_by_hash
+      summary: Get chunk by hash
+      description: Fetch a single chunk's transactions and receipts by its Base58 content hash.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - jsonrpc
+                - id
+                - method
+                - params
+              properties:
+                jsonrpc:
+                  type: string
+                  enum:
+                    - "2.0"
+                id:
+                  type: string
+                  example: fastnear
+                method:
+                  type: string
+                  enum:
+                    - chunk
+                params:
+                  type: object
+                  required:
+                    - chunk_id
+                  properties:
+                    chunk_id:
+                      type: string
+                      description: Base58-encoded chunk hash
+            examples:
+              mainnet:
+                summary: Mainnet Chunk Example
+                value:
+                  jsonrpc: "2.0"
+                  id: fastnear
+                  method: chunk
+                  params:
+                    chunk_id: 349Wr5HMm2Bvyy8GuhExAZ4F353tXCChx1FfAsYnQTAn
+              testnet:
+                summary: Testnet Chunk Example
+                value:
+                  jsonrpc: "2.0"
+                  id: fastnear
+                  method: chunk
+                  params:
+                    chunk_id: FU9wVPLRwa34SSwA9KP83QLSni2bqXgqVijaejnqX4iv
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/JsonRpcResponse"
+        "403":
+          description: The supplied API key was not recognized.
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: Invalid API key
+security:
+  - {}
+  - BearerAuth: []
+  - ApiKeyAuth: []
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      description: "FastNEAR API key as an `Authorization: Bearer` header. Preferred for backends, workers, and proxies because it keeps the key out of URLs and logs."
+    ApiKeyAuth:
+      type: apiKey
+      in: query
+      name: apiKey
+      description: FastNEAR API key as the `apiKey` query parameter. Handy for curl or clients that cannot set headers, but the key can end up in URLs, logs, and shell history.
+  schemas:
+    JsonRpcResponse:
+      type: object
+      required:
+        - jsonrpc
+        - id
+      properties:
+        jsonrpc:
+          type: string
+          enum:
+            - "2.0"
+        id:
+          oneOf:
+            - type: string
+            - type: number
+        result:
+          type: object
+          properties:
+            author:
+              type: string
+              description: NEAR account ID
+            header:
+              type: object
+              description: Contains main info about the chunk.
+              properties:
+                balance_burnt:
+                  type: string
+                  description: Amount in yoctoNEAR
+                bandwidth_requests:
+                  type:
+                    - object
+                    - "null"
+                  description: One of multiple possible types
+                chunk_hash:
+                  type: string
+                  description: Base58-encoded hash
+                congestion_info:
+                  type:
+                    - object
+                    - "null"
+                  description: Stores the congestion level of a shard. More info about congestion [here](https://near.github.io/nearcore/architecture/how/receipt-congestion.html?highlight=congestion#receipt-congestion)
+                encoded_length:
+                  type: integer
+                  format: uint64
+                  minimum: 0
+                encoded_merkle_root:
+                  type: string
+                  description: Base58-encoded hash
+                gas_limit:
+                  type: string
+                  description: Gas amount
+                gas_used:
+                  type: string
+                  description: Gas amount
+                height_created:
+                  type: integer
+                  format: uint64
+                  minimum: 0
+                height_included:
+                  type: integer
+                  format: uint64
+                  minimum: 0
+                outcome_root:
+                  type: string
+                  description: Base58-encoded hash
+                outgoing_receipts_root:
+                  type: string
+                  description: Base58-encoded hash
+                prev_block_hash:
+                  type: string
+                  description: Base58-encoded hash
+                prev_state_root:
+                  type: string
+                  description: Base58-encoded hash
+                rent_paid:
+                  type: string
+                  description: Amount in yoctoNEAR
+                  default: "0"
+                shard_id:
+                  type: integer
+                  description: Shard identifier
+                signature:
+                  type: string
+                  description: Base58-encoded cryptographic signature
+                tx_root:
+                  type: string
+                  description: Base58-encoded hash
+                validator_proposals:
+                  type: array
+                  items:
+                    type: object
+                validator_reward:
+                  type: string
+                  description: Amount in yoctoNEAR
+                  default: "0"
+              required:
+                - chunk_hash
+                - prev_block_hash
+                - outcome_root
+                - prev_state_root
+                - encoded_merkle_root
+                - encoded_length
+                - height_created
+                - height_included
+                - shard_id
+                - gas_used
+                - gas_limit
+                - balance_burnt
+                - outgoing_receipts_root
+                - tx_root
+                - validator_proposals
+                - signature
+            receipts:
+              type: array
+              items:
+                type: object
+            transactions:
+              type: array
+              items:
+                type: object
+          required:
+            - author
+            - header
+            - transactions
+            - receipts
+        error:
+          type: object
+          properties:
+            code:
+              type: integer
+            message:
+              type: string
+            data:
+              type: object

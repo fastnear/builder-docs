@@ -17,6 +17,7 @@ import {
   isPublicDocsPermalink,
 } from '@site/src/utils/seo';
 import { buildDocsStructuredData } from '@site/src/utils/structuredData';
+import { OPENAPI_MEDIA_TYPE, buildStaticAssetUrl, getFamilySpecPathsForSurface } from '@site/src/utils/openapiSpecs';
 
 export default function WrappedDocItemContent(props) {
   const contentRef = useRef(null);
@@ -113,6 +114,11 @@ export default function WrappedDocItemContent(props) {
     siteConfig,
   ]);
 
+  // Operation pages emit their own family + operation links; landing and guide
+  // pages only get the family-level service description.
+  const familySpec =
+    seoMeta?.surface && seoMeta.pageType !== 'reference' ? getFamilySpecPathsForSurface(seoMeta.surface) : null;
+
   return (
     <div
       className="fastnear-doc-content-shell"
@@ -127,6 +133,9 @@ export default function WrappedDocItemContent(props) {
     >
       {seoMeta ? (
         <Head>
+          {familySpec ? (
+            <link rel="service-desc" type={OPENAPI_MEDIA_TYPE} href={buildStaticAssetUrl(familySpec.json, siteConfig)} />
+          ) : null}
           {seoMeta.category ? (
             <meta name="docsearch:category" content={seoMeta.category} />
           ) : null}

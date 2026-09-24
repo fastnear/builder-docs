@@ -1,0 +1,423 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "NEAR Protocol RPC: Get protocol config",
+    "description": "Fetch the runtime protocol config at a chosen block — gas costs, storage prices, and limits currently in force.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://rpc.mainnet.fastnear.com",
+      "description": "Mainnet"
+    },
+    {
+      "url": "https://rpc.testnet.fastnear.com",
+      "description": "Testnet"
+    },
+    {
+      "url": "https://archival-rpc.mainnet.fastnear.com",
+      "description": "Mainnet Archival"
+    },
+    {
+      "url": "https://archival-rpc.testnet.fastnear.com",
+      "description": "Testnet Archival"
+    }
+  ],
+  "paths": {
+    "/": {
+      "post": {
+        "operationId": "EXPERIMENTAL_protocol_config",
+        "summary": "Get protocol config",
+        "description": "Fetch the runtime protocol config at a chosen block — gas costs, storage prices, and limits currently in force.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "jsonrpc",
+                  "id",
+                  "method",
+                  "params"
+                ],
+                "properties": {
+                  "jsonrpc": {
+                    "type": "string",
+                    "enum": [
+                      "2.0"
+                    ]
+                  },
+                  "id": {
+                    "type": "string",
+                    "example": "fastnear"
+                  },
+                  "method": {
+                    "type": "string",
+                    "enum": [
+                      "EXPERIMENTAL_protocol_config"
+                    ]
+                  },
+                  "params": {
+                    "type": "object",
+                    "description": "One of multiple possible types"
+                  }
+                }
+              },
+              "examples": {
+                "mainnet": {
+                  "summary": "Get protocol config (Mainnet)",
+                  "value": {
+                    "jsonrpc": "2.0",
+                    "id": "fastnear",
+                    "method": "EXPERIMENTAL_protocol_config",
+                    "params": {
+                      "finality": "final"
+                    }
+                  }
+                },
+                "testnet": {
+                  "summary": "Get protocol config (Testnet)",
+                  "value": {
+                    "jsonrpc": "2.0",
+                    "id": "fastnear",
+                    "method": "EXPERIMENTAL_protocol_config",
+                    "params": {
+                      "finality": "final"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JsonRpcResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The supplied API key was not recognized.",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                },
+                "example": "Invalid API key"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "security": [
+    {},
+    {
+      "BearerAuth": []
+    },
+    {
+      "ApiKeyAuth": []
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "FastNEAR API key as an `Authorization: Bearer` header. Preferred for backends, workers, and proxies because it keeps the key out of URLs and logs."
+      },
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "query",
+        "name": "apiKey",
+        "description": "FastNEAR API key as the `apiKey` query parameter. Handy for curl or clients that cannot set headers, but the key can end up in URLs, logs, and shell history."
+      }
+    },
+    "schemas": {
+      "JsonRpcResponse": {
+        "type": "object",
+        "required": [
+          "jsonrpc",
+          "id"
+        ],
+        "properties": {
+          "jsonrpc": {
+            "type": "string",
+            "enum": [
+              "2.0"
+            ]
+          },
+          "id": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "number"
+              }
+            ]
+          },
+          "result": {
+            "type": "object",
+            "properties": {
+              "block_producer_kickout_threshold": {
+                "type": "integer",
+                "description": "Threshold for kicking out block producers, between 0 and 100.",
+                "format": "uint8",
+                "minimum": 0
+              },
+              "chain_id": {
+                "type": "string",
+                "description": "ID of the blockchain. This must be unique for every blockchain.\nIf your testnet blockchains do not have unique chain IDs, you will have a bad time."
+              },
+              "chunk_producer_kickout_threshold": {
+                "type": "integer",
+                "description": "Threshold for kicking out chunk producers, between 0 and 100.",
+                "format": "uint8",
+                "minimum": 0
+              },
+              "chunk_validator_only_kickout_threshold": {
+                "type": "integer",
+                "description": "Threshold for kicking out nodes which are only chunk validators, between 0 and 100.",
+                "format": "uint8",
+                "minimum": 0
+              },
+              "dynamic_resharding": {
+                "type": "boolean",
+                "description": "Enable dynamic re-sharding."
+              },
+              "epoch_length": {
+                "type": "integer",
+                "description": "Epoch length counted in block heights.",
+                "format": "uint64",
+                "minimum": 0
+              },
+              "fishermen_threshold": {
+                "type": "string",
+                "description": "Amount in yoctoNEAR"
+              },
+              "gas_limit": {
+                "type": "string",
+                "description": "Gas amount"
+              },
+              "gas_price_adjustment_rate": {
+                "type": "array",
+                "items": {
+                  "type": "integer",
+                  "format": "int32"
+                },
+                "description": "Gas price adjustment rate"
+              },
+              "genesis_height": {
+                "type": "integer",
+                "description": "Height of genesis block.",
+                "format": "uint64",
+                "minimum": 0
+              },
+              "genesis_time": {
+                "type": "string",
+                "description": "Official time of blockchain start.",
+                "format": "date-time"
+              },
+              "max_gas_price": {
+                "type": "string",
+                "description": "Amount in yoctoNEAR"
+              },
+              "max_inflation_rate": {
+                "type": "array",
+                "items": {
+                  "type": "integer",
+                  "format": "int32"
+                },
+                "description": "Maximum inflation on the total supply every epoch."
+              },
+              "max_kickout_stake_perc": {
+                "type": "integer",
+                "description": "Max stake percentage of the validators we will kick out.",
+                "format": "uint8",
+                "minimum": 0
+              },
+              "min_gas_price": {
+                "type": "string",
+                "description": "Amount in yoctoNEAR"
+              },
+              "minimum_stake_divisor": {
+                "type": "integer",
+                "description": "The minimum stake required for staking is last seat price divided by this number.",
+                "format": "uint64",
+                "minimum": 0
+              },
+              "minimum_stake_ratio": {
+                "type": "array",
+                "items": {
+                  "type": "integer",
+                  "format": "int32"
+                },
+                "description": "The lowest ratio s/s_total any block producer can have.\nSee <https://github.com/near/NEPs/pull/167> for details"
+              },
+              "minimum_validators_per_shard": {
+                "type": "integer",
+                "description": "The minimum number of validators each shard must have",
+                "format": "uint64",
+                "minimum": 0
+              },
+              "num_block_producer_seats": {
+                "type": "integer",
+                "description": "Number of block producer seats at genesis.",
+                "format": "uint64",
+                "minimum": 0
+              },
+              "num_blocks_per_year": {
+                "type": "integer",
+                "description": "Expected number of blocks per year",
+                "format": "uint64",
+                "minimum": 0
+              },
+              "online_max_threshold": {
+                "type": "array",
+                "items": {
+                  "type": "integer",
+                  "format": "int32"
+                },
+                "description": "Online maximum threshold above which validator gets full reward."
+              },
+              "online_min_threshold": {
+                "type": "array",
+                "items": {
+                  "type": "integer",
+                  "format": "int32"
+                },
+                "description": "Online minimum threshold below which validator doesn't receive reward."
+              },
+              "protocol_reward_rate": {
+                "type": "array",
+                "items": {
+                  "type": "integer",
+                  "format": "int32"
+                },
+                "description": "Protocol treasury rate"
+              },
+              "protocol_treasury_account": {
+                "type": "string",
+                "description": "NEAR account ID"
+              },
+              "protocol_upgrade_stake_threshold": {
+                "type": "array",
+                "items": {
+                  "type": "integer",
+                  "format": "int32"
+                },
+                "description": "Threshold of stake that needs to indicate that they ready for upgrade."
+              },
+              "protocol_version": {
+                "type": "integer",
+                "description": "Current Protocol Version",
+                "format": "uint32",
+                "minimum": 0
+              },
+              "runtime_config": {
+                "type": "object",
+                "description": "View that preserves JSON format of the runtime config.",
+                "properties": {
+                  "account_creation_charge": {
+                    "type": "string",
+                    "description": "Amount in yoctoNEAR",
+                    "default": "0"
+                  },
+                  "account_creation_config": {
+                    "type": "object",
+                    "description": "The structure describes configuration for creation of new accounts."
+                  },
+                  "congestion_control_config": {
+                    "type": "object",
+                    "description": "The configuration for congestion control. More info about congestion [here](https://near.github.io/nearcore/architecture/how/receipt-congestion.html?highlight=congestion#receipt-congestion)"
+                  },
+                  "min_gas_purchase_price": {
+                    "type": "string",
+                    "description": "Amount in yoctoNEAR",
+                    "default": "0"
+                  },
+                  "storage_amount_per_byte": {
+                    "type": "string",
+                    "description": "Amount in yoctoNEAR"
+                  },
+                  "transaction_costs": {
+                    "type": "object",
+                    "description": "Describes different fees for the runtime"
+                  },
+                  "wasm_config": {
+                    "type": "object",
+                    "description": "Config of wasm operations."
+                  },
+                  "witness_config": {
+                    "type": "object",
+                    "description": "Configuration specific to ChunkStateWitness."
+                  }
+                }
+              },
+              "shard_layout": {
+                "type": "object",
+                "description": "One of multiple possible types"
+              },
+              "shuffle_shard_assignment_for_chunk_producers": {
+                "type": "boolean",
+                "description": "If true, shuffle the chunk producers across shards. In other words, if\nthe shard assignments were `[S_0, S_1, S_2, S_3]` where `S_i` represents\nthe set of chunk producers for shard `i`, if this flag were true, the\nshard assignments might become, for example, `[S_2, S_0, S_3, S_1]`."
+              },
+              "target_validator_mandates_per_shard": {
+                "type": "integer",
+                "description": "Number of target chunk validator mandates for each shard.",
+                "format": "uint64",
+                "minimum": 0
+              },
+              "transaction_validity_period": {
+                "type": "integer",
+                "description": "Number of blocks for which a given transaction is valid",
+                "format": "uint64",
+                "minimum": 0
+              },
+              "avg_hidden_validator_seats_per_shard": {
+                "type": "array",
+                "items": {
+                  "type": "integer",
+                  "format": "uint64",
+                  "minimum": 0
+                },
+                "description": "Expected number of hidden validators per shard."
+              },
+              "num_block_producer_seats_per_shard": {
+                "type": "array",
+                "items": {
+                  "type": "integer",
+                  "format": "uint64",
+                  "minimum": 0
+                },
+                "description": "Defines number of shards and number of block producer seats per each shard at genesis."
+              }
+            }
+          },
+          "error": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "integer"
+              },
+              "message": {
+                "type": "string"
+              },
+              "data": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

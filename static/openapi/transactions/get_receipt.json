@@ -1,0 +1,212 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Transactions API - Receipt Lookup",
+    "version": "3.0.3",
+    "description": "Fetch a receipt by ID along with the transaction that produced it."
+  },
+  "paths": {
+    "/v0/receipt": {
+      "post": {
+        "description": "Fetch a receipt by ID along with the transaction that produced it.",
+        "operationId": "get_receipt",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "receipt_id": "H6Roj3A2SNn7HJXdigLPDHiz2kcob4MHwLg3nnDEH2VZ"
+              },
+              "schema": {
+                "$ref": "#/components/schemas/ReceiptInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReceiptResponse"
+                }
+              }
+            },
+            "description": "Receipt lookup result"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Bad request"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "ClickHouse query failure"
+          }
+        },
+        "summary": "Fetch a receipt by ID",
+        "tags": [
+          "receipts"
+        ]
+      }
+    }
+  },
+  "servers": [
+    {
+      "description": "Mainnet",
+      "url": "https://tx.main.fastnear.com"
+    },
+    {
+      "description": "Testnet",
+      "url": "https://tx.test.fastnear.com"
+    }
+  ],
+  "components": {
+    "schemas": {
+      "ApiError": {
+        "additionalProperties": false,
+        "properties": {
+          "error": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "error",
+          "message"
+        ],
+        "type": "object"
+      },
+      "ReceiptInput": {
+        "additionalProperties": false,
+        "properties": {
+          "receipt_id": {
+            "description": "Base58-encoded receipt ID to look up.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "receipt_id"
+        ],
+        "type": "object"
+      },
+      "ReceiptResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "receipt": {
+            "additionalProperties": false,
+            "nullable": true,
+            "properties": {
+              "appear_block_height": {
+                "format": "uint64",
+                "minimum": 0,
+                "type": "integer"
+              },
+              "appear_receipt_index": {
+                "format": "uint32",
+                "minimum": 0,
+                "type": "integer"
+              },
+              "block_height": {
+                "format": "uint64",
+                "minimum": 0,
+                "type": "integer"
+              },
+              "block_timestamp": {
+                "type": "string"
+              },
+              "is_success": {
+                "type": "boolean"
+              },
+              "predecessor_id": {
+                "type": "string"
+              },
+              "priority": {
+                "format": "uint64",
+                "minimum": 0,
+                "type": "integer"
+              },
+              "receipt_id": {
+                "type": "string"
+              },
+              "receipt_index": {
+                "format": "uint32",
+                "minimum": 0,
+                "type": "integer"
+              },
+              "receipt_type": {
+                "type": "string"
+              },
+              "receiver_id": {
+                "type": "string"
+              },
+              "shard_id": {
+                "format": "uint64",
+                "minimum": 0,
+                "type": "integer"
+              },
+              "transaction_hash": {
+                "type": "string"
+              },
+              "tx_block_height": {
+                "format": "uint64",
+                "minimum": 0,
+                "type": "integer"
+              },
+              "tx_block_timestamp": {
+                "type": "string"
+              },
+              "tx_index": {
+                "format": "uint32",
+                "minimum": 0,
+                "type": "integer"
+              }
+            },
+            "required": [
+              "receipt_id",
+              "block_height",
+              "block_timestamp",
+              "receipt_index",
+              "appear_block_height",
+              "appear_receipt_index",
+              "transaction_hash",
+              "tx_block_height",
+              "tx_block_timestamp",
+              "tx_index",
+              "predecessor_id",
+              "receiver_id",
+              "receipt_type",
+              "priority",
+              "shard_id",
+              "is_success"
+            ],
+            "type": "object"
+          },
+          "transaction": {
+            "additionalProperties": true,
+            "nullable": true,
+            "type": "object"
+          }
+        },
+        "required": [
+          "receipt",
+          "transaction"
+        ],
+        "type": "object"
+      }
+    }
+  }
+}

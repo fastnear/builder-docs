@@ -1008,5 +1008,17 @@
   "theme.SearchPage.algoliaLabel": {
     "message": "При поддержке Algolia",
     "description": "The description label for Algolia mention"
+  },
+  "fastnear.operationUi.openapi": {
+    "message": "OpenAPI"
+  },
+  "fastnear.operationUi.openapiFamilyJson": {
+    "message": "весь API (JSON)"
+  },
+  "fastnear.operationUi.openapiOperationJson": {
+    "message": "эта операция (JSON)"
+  },
+  "fastnear.operationUi.openapiYaml": {
+    "message": "YAML"
   }
 }

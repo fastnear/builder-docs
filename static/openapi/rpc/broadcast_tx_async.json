@@ -1,0 +1,210 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "NEAR Protocol RPC: Send transaction asynchronously",
+    "description": "Broadcast a base64-encoded `SignedTransaction`; returns the transaction hash without awaiting inclusion or execution. Example payloads are placeholders and cannot be replayed.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://rpc.mainnet.fastnear.com",
+      "description": "Mainnet"
+    },
+    {
+      "url": "https://rpc.testnet.fastnear.com",
+      "description": "Testnet"
+    },
+    {
+      "url": "https://archival-rpc.mainnet.fastnear.com",
+      "description": "Mainnet Archival"
+    },
+    {
+      "url": "https://archival-rpc.testnet.fastnear.com",
+      "description": "Testnet Archival"
+    }
+  ],
+  "paths": {
+    "/": {
+      "post": {
+        "operationId": "broadcast_tx_async",
+        "summary": "Send transaction asynchronously",
+        "description": "Broadcast a base64-encoded `SignedTransaction`; returns the transaction hash without awaiting inclusion or execution. Example payloads are placeholders and cannot be replayed.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "jsonrpc",
+                  "id",
+                  "method",
+                  "params"
+                ],
+                "properties": {
+                  "jsonrpc": {
+                    "type": "string",
+                    "enum": [
+                      "2.0"
+                    ]
+                  },
+                  "id": {
+                    "type": "string",
+                    "example": "fastnear"
+                  },
+                  "method": {
+                    "type": "string",
+                    "enum": [
+                      "broadcast_tx_async"
+                    ]
+                  },
+                  "params": {
+                    "type": "object",
+                    "properties": {
+                      "signed_tx_base64": {
+                        "type": "string",
+                        "description": "Base64-encoded signed transaction"
+                      },
+                      "wait_until": {
+                        "type": "string",
+                        "enum": [
+                          "NONE",
+                          "INCLUDED",
+                          "INCLUDED_FINAL",
+                          "EXECUTED",
+                          "EXECUTED_OPTIMISTIC",
+                          "FINAL"
+                        ],
+                        "description": "Desired level of execution status guarantee",
+                        "default": "EXECUTED_OPTIMISTIC"
+                      }
+                    },
+                    "required": [
+                      "signed_tx_base64"
+                    ]
+                  }
+                }
+              },
+              "examples": {
+                "mainnet": {
+                  "summary": "Mainnet Example",
+                  "value": {
+                    "jsonrpc": "2.0",
+                    "id": "fastnear",
+                    "method": "broadcast_tx_async",
+                    "params": {
+                      "signed_tx_base64": "CQAAAG1pa2UubmVhcgCCy5RvHN/3t5Oejtf0aWKCCwJIxXkWWCQKxnaU9nr4nAEAAAAAAAAADQAAAG1pa2V0ZXN0Lm5lYXL6UXoKlIC/UXiHRkiBCYVW69w6N/+7ZXy0+gPAs9TQ5wEAAAADAQAAAAAAAAAAAAAAAAAAAABv/f+CgT7byEQUzraUd1LDQ7ELv5ld7bhFGUYNaxWWRMzl5rAuRhcfkV2jHIqJgu0sfw7B9/npIH69aqsm/GIM"
+                    }
+                  }
+                },
+                "testnet": {
+                  "summary": "Testnet Example",
+                  "value": {
+                    "jsonrpc": "2.0",
+                    "id": "fastnear",
+                    "method": "broadcast_tx_async",
+                    "params": {
+                      "signed_tx_base64": "DAAAAG1pa2UudGVzdG5ldAD7f6gOSLbFPadEDmehA6rmcy+EOXYRGly1GK0ponIwDgEAAAAAAAAAEAAAAG1pa2V0ZXN0LnRlc3RuZXTmqC62j/JHfs1+RJFA5+kaPJY8rDAfhHuh2G548XJ6GQEAAAADAQAAAAAAAAAAAAAAAAAAAADq6qRsj8FW73GukqS5yqwXYL7riy7EcIaZrhZy40hMq4Kux+lp+AsMLtVPqic5xAfX5dlLaFRJ6Nbi2Th185UI"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JsonRpcResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The supplied API key was not recognized.",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                },
+                "example": "Invalid API key"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "security": [
+    {},
+    {
+      "BearerAuth": []
+    },
+    {
+      "ApiKeyAuth": []
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "FastNEAR API key as an `Authorization: Bearer` header. Preferred for backends, workers, and proxies because it keeps the key out of URLs and logs."
+      },
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "query",
+        "name": "apiKey",
+        "description": "FastNEAR API key as the `apiKey` query parameter. Handy for curl or clients that cannot set headers, but the key can end up in URLs, logs, and shell history."
+      }
+    },
+    "schemas": {
+      "JsonRpcResponse": {
+        "type": "object",
+        "required": [
+          "jsonrpc",
+          "id"
+        ],
+        "properties": {
+          "jsonrpc": {
+            "type": "string",
+            "enum": [
+              "2.0"
+            ]
+          },
+          "id": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "number"
+              }
+            ]
+          },
+          "result": {
+            "type": "string",
+            "description": "Base58-encoded hash"
+          },
+          "error": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "integer"
+              },
+              "message": {
+                "type": "string"
+              },
+              "data": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

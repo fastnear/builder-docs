@@ -1,0 +1,143 @@
+openapi: 3.0.3
+info:
+  title: KV FastData API - Multi-Key Lookup
+  version: 3.0.3
+  description: Fetch the latest FastData row for up to 100 keys in a single request.
+paths:
+  /v0/multi:
+    post:
+      description: Fetch the latest FastData row for up to 100 keys in a single request.
+      operationId: multi
+      requestBody:
+        content:
+          application/json:
+            example:
+              include_metadata: true
+              keys:
+                - social.near/james.near/graph/follow/sleet.near
+                - social.near/james.near/graph/follow/missing
+            schema:
+              $ref: "#/components/schemas/MultiRequest"
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              example:
+                entries:
+                  - action_index: 0
+                    block_height: 183302718
+                    block_timestamp: 1769731630602682600
+                    current_account_id: social.near
+                    key: graph/follow/sleet.near
+                    predecessor_id: james.near
+                    receipt_id: gaiLdGpaRwaunXUFnnz9VNj8V7cY18ZPAt2QfZazBkk
+                    signer_id: james.near
+                    tx_hash: FK7qDhHv4otg2wPGrE3DKFjvmmjHhUKBxQDkcAsdH5k3
+                    value: ""
+                  - null
+              schema:
+                $ref: "#/components/schemas/MultiResponse"
+          description: Latest rows for the requested keys
+        "400":
+          content:
+            application/json:
+              example:
+                error: invalid page token
+              schema:
+                $ref: "#/components/schemas/ApiError"
+          description: Invalid key filter or page token
+        "500":
+          content:
+            application/json:
+              example:
+                error: internal server error
+              schema:
+                $ref: "#/components/schemas/ApiError"
+          description: Scylla query failure
+      summary: Fetch the latest rows for multiple fully qualified keys
+      tags:
+        - latest
+servers:
+  - description: Mainnet
+    url: https://kv.main.fastnear.com
+  - description: Testnet
+    url: https://kv.test.fastnear.com
+components:
+  schemas:
+    ApiError:
+      additionalProperties: false
+      properties:
+        error:
+          type: string
+      required:
+        - error
+      type: object
+    MultiRequest:
+      additionalProperties: false
+      properties:
+        include_metadata:
+          default: false
+          description: Include receipt and signer metadata in each entry.
+          type: boolean
+        keys:
+          description: Fully qualified keys in current_account_id/predecessor_id/key form.
+          items:
+            type: string
+          maxItems: 100
+          type: array
+      required:
+        - keys
+      type: object
+    MultiResponse:
+      additionalProperties: false
+      properties:
+        entries:
+          items:
+            oneOf:
+              - additionalProperties: false
+                properties:
+                  action_index:
+                    format: uint32
+                    minimum: 0
+                    nullable: true
+                    type: integer
+                  block_height:
+                    format: uint64
+                    minimum: 0
+                    type: integer
+                  block_timestamp:
+                    format: uint64
+                    minimum: 0
+                    type: integer
+                  current_account_id:
+                    type: string
+                  key:
+                    type: string
+                  predecessor_id:
+                    type: string
+                  receipt_id:
+                    nullable: true
+                    type: string
+                  signer_id:
+                    nullable: true
+                    type: string
+                  tx_hash:
+                    nullable: true
+                    type: string
+                  value:
+                    description: Raw JSON value as stored in FastData.
+                required:
+                  - predecessor_id
+                  - current_account_id
+                  - block_height
+                  - block_timestamp
+                  - key
+                  - value
+                type: object
+              - enum:
+                  - null
+          type: array
+      required:
+        - entries
+      type: object

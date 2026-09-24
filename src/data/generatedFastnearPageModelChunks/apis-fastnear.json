@@ -30,6 +30,14 @@
       "supportsFinality": false,
       "transport": "http"
     },
+    "openapi": {
+      "family": "fastnear",
+      "familyJson": "/openapi/fastnear.json",
+      "familyYaml": "/openapi/fastnear.yaml",
+      "json": "/openapi/fastnear/get_health.json",
+      "pointer": "/openapi/fastnear.json#/paths/~1health/get",
+      "yaml": "/openapi/fastnear/get_health.yaml"
+    },
     "pageModelId": "fastnear-system-health",
     "replaceOperationPage": true,
     "request": {
@@ -162,6 +170,14 @@
       "requestMethod": "get_status",
       "supportsFinality": false,
       "transport": "http"
+    },
+    "openapi": {
+      "family": "fastnear",
+      "familyJson": "/openapi/fastnear.json",
+      "familyYaml": "/openapi/fastnear.yaml",
+      "json": "/openapi/fastnear/get_status.json",
+      "pointer": "/openapi/fastnear.json#/paths/~1status/get",
+      "yaml": "/openapi/fastnear/get_status.yaml"
     },
     "pageModelId": "fastnear-system-status",
     "replaceOperationPage": true,
@@ -347,6 +363,14 @@
       "supportsFinality": false,
       "transport": "http"
     },
+    "openapi": {
+      "family": "fastnear",
+      "familyJson": "/openapi/fastnear.json",
+      "familyYaml": "/openapi/fastnear.yaml",
+      "json": "/openapi/fastnear/account_staking_v0.json",
+      "pointer": "/openapi/fastnear.json#/paths/~1v0~1account~1%7Baccount_id%7D~1staking/get",
+      "yaml": "/openapi/fastnear/account_staking_v0.yaml"
+    },
     "pageModelId": "fastnear-v0-account-staking",
     "replaceOperationPage": true,
     "request": {
@@ -529,6 +553,14 @@
       "requestMethod": "account_ft_v0",
       "supportsFinality": false,
       "transport": "http"
+    },
+    "openapi": {
+      "family": "fastnear",
+      "familyJson": "/openapi/fastnear.json",
+      "familyYaml": "/openapi/fastnear.yaml",
+      "json": "/openapi/fastnear/account_ft_v0.json",
+      "pointer": "/openapi/fastnear.json#/paths/~1v0~1account~1%7Baccount_id%7D~1ft/get",
+      "yaml": "/openapi/fastnear/account_ft_v0.yaml"
     },
     "pageModelId": "fastnear-v0-account-ft",
     "replaceOperationPage": true,
@@ -713,6 +745,14 @@
       "supportsFinality": false,
       "transport": "http"
     },
+    "openapi": {
+      "family": "fastnear",
+      "familyJson": "/openapi/fastnear.json",
+      "familyYaml": "/openapi/fastnear.yaml",
+      "json": "/openapi/fastnear/account_nft_v0.json",
+      "pointer": "/openapi/fastnear.json#/paths/~1v0~1account~1%7Baccount_id%7D~1nft/get",
+      "yaml": "/openapi/fastnear/account_nft_v0.yaml"
+    },
     "pageModelId": "fastnear-v0-account-nft",
     "replaceOperationPage": true,
     "request": {
@@ -895,6 +935,14 @@
       "requestMethod": "lookup_by_public_key_v0",
       "supportsFinality": false,
       "transport": "http"
+    },
+    "openapi": {
+      "family": "fastnear",
+      "familyJson": "/openapi/fastnear.json",
+      "familyYaml": "/openapi/fastnear.yaml",
+      "json": "/openapi/fastnear/lookup_by_public_key_v0.json",
+      "pointer": "/openapi/fastnear.json#/paths/~1v0~1public_key~1%7Bpublic_key%7D/get",
+      "yaml": "/openapi/fastnear/lookup_by_public_key_v0.yaml"
     },
     "pageModelId": "fastnear-v0-public-key-lookup",
     "replaceOperationPage": true,
@@ -1079,6 +1127,14 @@
       "supportsFinality": false,
       "transport": "http"
     },
+    "openapi": {
+      "family": "fastnear",
+      "familyJson": "/openapi/fastnear.json",
+      "familyYaml": "/openapi/fastnear.yaml",
+      "json": "/openapi/fastnear/lookup_by_public_key_all_v0.json",
+      "pointer": "/openapi/fastnear.json#/paths/~1v0~1public_key~1%7Bpublic_key%7D~1all/get",
+      "yaml": "/openapi/fastnear/lookup_by_public_key_all_v0.yaml"
+    },
     "pageModelId": "fastnear-v0-public-key-lookup-all",
     "replaceOperationPage": true,
     "request": {
@@ -1261,6 +1317,14 @@
       "requestMethod": "account_staking_v1",
       "supportsFinality": false,
       "transport": "http"
+    },
+    "openapi": {
+      "family": "fastnear",
+      "familyJson": "/openapi/fastnear.json",
+      "familyYaml": "/openapi/fastnear.yaml",
+      "json": "/openapi/fastnear/account_staking_v1.json",
+      "pointer": "/openapi/fastnear.json#/paths/~1v1~1account~1%7Baccount_id%7D~1staking/get",
+      "yaml": "/openapi/fastnear/account_staking_v1.yaml"
     },
     "pageModelId": "fastnear-v1-account-staking",
     "replaceOperationPage": true,
@@ -1467,6 +1531,14 @@
       "requestMethod": "account_ft_v1",
       "supportsFinality": false,
       "transport": "http"
+    },
+    "openapi": {
+      "family": "fastnear",
+      "familyJson": "/openapi/fastnear.json",
+      "familyYaml": "/openapi/fastnear.yaml",
+      "json": "/openapi/fastnear/account_ft_v1.json",
+      "pointer": "/openapi/fastnear.json#/paths/~1v1~1account~1%7Baccount_id%7D~1ft/get",
+      "yaml": "/openapi/fastnear/account_ft_v1.yaml"
     },
     "pageModelId": "fastnear-v1-account-ft",
     "replaceOperationPage": true,
@@ -1682,6 +1754,14 @@
       "supportsFinality": false,
       "transport": "http"
     },
+    "openapi": {
+      "family": "fastnear",
+      "familyJson": "/openapi/fastnear.json",
+      "familyYaml": "/openapi/fastnear.yaml",
+      "json": "/openapi/fastnear/account_nft_v1.json",
+      "pointer": "/openapi/fastnear.json#/paths/~1v1~1account~1%7Baccount_id%7D~1nft/get",
+      "yaml": "/openapi/fastnear/account_nft_v1.yaml"
+    },
     "pageModelId": "fastnear-v1-account-nft",
     "replaceOperationPage": true,
     "request": {
@@ -1887,6 +1967,14 @@
       "requestMethod": "account_full_v1",
       "supportsFinality": false,
       "transport": "http"
+    },
+    "openapi": {
+      "family": "fastnear",
+      "familyJson": "/openapi/fastnear.json",
+      "familyYaml": "/openapi/fastnear.yaml",
+      "json": "/openapi/fastnear/account_full_v1.json",
+      "pointer": "/openapi/fastnear.json#/paths/~1v1~1account~1%7Baccount_id%7D~1full/get",
+      "yaml": "/openapi/fastnear/account_full_v1.yaml"
     },
     "pageModelId": "fastnear-v1-account-full",
     "replaceOperationPage": true,
@@ -2178,6 +2266,14 @@
       "supportsFinality": false,
       "transport": "http"
     },
+    "openapi": {
+      "family": "fastnear",
+      "familyJson": "/openapi/fastnear.json",
+      "familyYaml": "/openapi/fastnear.yaml",
+      "json": "/openapi/fastnear/lookup_by_public_key_v1.json",
+      "pointer": "/openapi/fastnear.json#/paths/~1v1~1public_key~1%7Bpublic_key%7D/get",
+      "yaml": "/openapi/fastnear/lookup_by_public_key_v1.yaml"
+    },
     "pageModelId": "fastnear-v1-public-key-lookup",
     "replaceOperationPage": true,
     "request": {
@@ -2360,6 +2456,14 @@
       "requestMethod": "ft_top_v1",
       "supportsFinality": false,
       "transport": "http"
+    },
+    "openapi": {
+      "family": "fastnear",
+      "familyJson": "/openapi/fastnear.json",
+      "familyYaml": "/openapi/fastnear.yaml",
+      "json": "/openapi/fastnear/ft_top_v1.json",
+      "pointer": "/openapi/fastnear.json#/paths/~1v1~1ft~1%7Btoken_id%7D~1top/get",
+      "yaml": "/openapi/fastnear/ft_top_v1.yaml"
     },
     "pageModelId": "fastnear-v1-ft-top",
     "replaceOperationPage": true,
@@ -2565,6 +2669,14 @@
       "requestMethod": "lookup_by_public_key_all_v1",
       "supportsFinality": false,
       "transport": "http"
+    },
+    "openapi": {
+      "family": "fastnear",
+      "familyJson": "/openapi/fastnear.json",
+      "familyYaml": "/openapi/fastnear.yaml",
+      "json": "/openapi/fastnear/lookup_by_public_key_all_v1.json",
+      "pointer": "/openapi/fastnear.json#/paths/~1v1~1public_key~1%7Bpublic_key%7D~1all/get",
+      "yaml": "/openapi/fastnear/lookup_by_public_key_all_v1.yaml"
     },
     "pageModelId": "fastnear-v1-public-key-lookup-all",
     "replaceOperationPage": true,

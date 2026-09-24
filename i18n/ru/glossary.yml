@@ -5,6 +5,7 @@ preserve:
   - HTTP
   - HTTPS
   - JSON
+  - YAML
   - JSON-RPC
   - gRPC
   - OAuth

@@ -583,12 +583,8 @@ const config = {
         redirects: [
           ...legacyRedirects,
           {
-            from: ['/rpcs/openapi'],
-            to: '/rpc',
-          },
-          {
-            from: ['/apis/openapi'],
-            to: '/api/reference',
+            from: ['/rpcs/openapi', '/apis/openapi'],
+            to: '/openapi',
           },
         ],
       },

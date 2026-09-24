@@ -8,7 +8,10 @@
 - Транспорт: http
 - Метод: POST
 - Путь: `/v0/transactions`
-- Исходная спецификация: `apis/transactions/v0/transactions.yaml`
+## OpenAPI
+- Эта операция: https://docs.fastnear.com/openapi/transactions/get_transactions.json (https://docs.fastnear.com/openapi/transactions/get_transactions.yaml)
+- Полный документ API: https://docs.fastnear.com/openapi/transactions.json
+- Указатель в полном документе: https://docs.fastnear.com/openapi/transactions.json#/paths/~1v0~1transactions/post
 ## Сети
 - Mainnet: https://tx.main.fastnear.com/
 - Testnet: https://tx.test.fastnear.com/

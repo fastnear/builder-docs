@@ -51,6 +51,14 @@
       "supportsFinality": false,
       "transport": "json-rpc"
     },
+    "openapi": {
+      "family": "rpc",
+      "familyJson": "/openapi/rpc.json",
+      "familyYaml": "/openapi/rpc.yaml",
+      "json": "/openapi/rpc/block_by_height.json",
+      "pointer": "/openapi/rpc.json#/paths/~1block_by_height/post",
+      "yaml": "/openapi/rpc/block_by_height.yaml"
+    },
     "pageModelId": "rpc-block-by-height",
     "replaceOperationPage": true,
     "request": {
@@ -323,6 +331,14 @@
       "requestMethod": "block",
       "supportsFinality": false,
       "transport": "json-rpc"
+    },
+    "openapi": {
+      "family": "rpc",
+      "familyJson": "/openapi/rpc.json",
+      "familyYaml": "/openapi/rpc.yaml",
+      "json": "/openapi/rpc/block_by_id.json",
+      "pointer": "/openapi/rpc.json#/paths/~1block_by_id/post",
+      "yaml": "/openapi/rpc/block_by_id.yaml"
     },
     "pageModelId": "rpc-block-by-id",
     "replaceOperationPage": true,
@@ -597,6 +613,14 @@
       "requestMethod": "block_effects",
       "supportsFinality": true,
       "transport": "json-rpc"
+    },
+    "openapi": {
+      "family": "rpc",
+      "familyJson": "/openapi/rpc.json",
+      "familyYaml": "/openapi/rpc.yaml",
+      "json": "/openapi/rpc/block_effects.json",
+      "pointer": "/openapi/rpc.json#/paths/~1block_effects/post",
+      "yaml": "/openapi/rpc/block_effects.yaml"
     },
     "pageModelId": "rpc-block-effects",
     "replaceOperationPage": true,

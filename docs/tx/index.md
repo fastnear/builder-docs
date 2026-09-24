@@ -15,6 +15,8 @@ views without repeatedly polling raw RPC methods and joining the results yoursel
 
 ## Base URLs
 
+OpenAPI: [JSON](/openapi/transactions.json) · [YAML](/openapi/transactions.yaml) · [all specs](/openapi)
+
 ```bash title="Transactions API Mainnet"
 https://tx.main.fastnear.com
 ```

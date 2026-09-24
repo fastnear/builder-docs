@@ -90,6 +90,7 @@ const rpcSidebar = withExamplesFooter(
     'rpc/index',
     'auth/index',
     'auth/browser-keys',
+    'openapi',
     {
       type: 'category',
       label: 'Account',

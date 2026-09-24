@@ -9,7 +9,10 @@
 - Транспорт: http
 - Метод: POST
 - Путь: `/v0/account`
-- Исходная спецификация: `apis/transactions/v0/account.yaml`
+## OpenAPI
+- Эта операция: https://docs.fastnear.com/openapi/transactions/get_account.json (https://docs.fastnear.com/openapi/transactions/get_account.yaml)
+- Полный документ API: https://docs.fastnear.com/openapi/transactions.json
+- Указатель в полном документе: https://docs.fastnear.com/openapi/transactions.json#/paths/~1v0~1account/post
 ## Сети
 - Mainnet: https://tx.main.fastnear.com/
 - Testnet: https://tx.test.fastnear.com/

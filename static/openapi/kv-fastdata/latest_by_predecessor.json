@@ -1,0 +1,246 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "KV FastData API - Latest by Predecessor",
+    "version": "3.0.3",
+    "description": "Fetch the latest FastData rows for a single predecessor and target account."
+  },
+  "paths": {
+    "/v0/latest/{current_account_id}/{predecessor_id}": {
+      "post": {
+        "description": "Fetch the latest FastData rows for a single predecessor and target account.",
+        "operationId": "latest_by_predecessor",
+        "parameters": [
+          {
+            "description": "Contract account whose FastData keys were written.",
+            "example": "social.near",
+            "in": "path",
+            "name": "current_account_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Calling account that wrote the FastData keys.",
+            "example": "james.near",
+            "in": "path",
+            "name": "predecessor_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "include_metadata": true,
+                "key_prefix": "graph/follow/",
+                "limit": 50
+              },
+              "schema": {
+                "$ref": "#/components/schemas/LatestRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "entries": [
+                    {
+                      "action_index": 0,
+                      "block_height": 183302718,
+                      "block_timestamp": 1769731630602682600,
+                      "current_account_id": "social.near",
+                      "key": "graph/follow/sleet.near",
+                      "predecessor_id": "james.near",
+                      "receipt_id": "gaiLdGpaRwaunXUFnnz9VNj8V7cY18ZPAt2QfZazBkk",
+                      "signer_id": "james.near",
+                      "tx_hash": "FK7qDhHv4otg2wPGrE3DKFjvmmjHhUKBxQDkcAsdH5k3",
+                      "value": ""
+                    }
+                  ],
+                  "page_token": "opaque-next-page-token"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ListResponse"
+                }
+              }
+            },
+            "description": "Latest rows for the selected predecessor and account"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "invalid page token"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Invalid key filter or page token"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "internal server error"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Scylla query failure"
+          }
+        },
+        "summary": "Fetch latest key-value rows for one predecessor and contract",
+        "tags": [
+          "latest"
+        ]
+      }
+    }
+  },
+  "servers": [
+    {
+      "description": "Mainnet",
+      "url": "https://kv.main.fastnear.com"
+    },
+    {
+      "description": "Testnet",
+      "url": "https://kv.test.fastnear.com"
+    }
+  ],
+  "components": {
+    "schemas": {
+      "ApiError": {
+        "additionalProperties": false,
+        "properties": {
+          "error": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "error"
+        ],
+        "type": "object"
+      },
+      "KvEntry": {
+        "additionalProperties": false,
+        "properties": {
+          "action_index": {
+            "format": "uint32",
+            "minimum": 0,
+            "nullable": true,
+            "type": "integer"
+          },
+          "block_height": {
+            "format": "uint64",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "block_timestamp": {
+            "format": "uint64",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "current_account_id": {
+            "type": "string"
+          },
+          "key": {
+            "type": "string"
+          },
+          "predecessor_id": {
+            "type": "string"
+          },
+          "receipt_id": {
+            "nullable": true,
+            "type": "string"
+          },
+          "signer_id": {
+            "nullable": true,
+            "type": "string"
+          },
+          "tx_hash": {
+            "nullable": true,
+            "type": "string"
+          },
+          "value": {
+            "description": "Raw JSON value as stored in FastData."
+          }
+        },
+        "required": [
+          "predecessor_id",
+          "current_account_id",
+          "block_height",
+          "block_timestamp",
+          "key",
+          "value"
+        ],
+        "type": "object"
+      },
+      "LatestRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "include_metadata": {
+            "default": false,
+            "description": "Include receipt and signer metadata in each entry.",
+            "type": "boolean"
+          },
+          "key": {
+            "description": "Exact key filter. Mutually exclusive with `key_prefix`.",
+            "nullable": true,
+            "type": "string"
+          },
+          "key_prefix": {
+            "description": "Prefix filter for matching key namespaces.",
+            "nullable": true,
+            "type": "string"
+          },
+          "limit": {
+            "description": "Maximum number of entries to return in one page (1–200, default 50).",
+            "format": "int32",
+            "maximum": 200,
+            "minimum": 1,
+            "nullable": true,
+            "type": "integer"
+          },
+          "page_token": {
+            "description": "Opaque pagination cursor from a previous response for the same endpoint and filter set.",
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "ListResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "entries": {
+            "items": {
+              "$ref": "#/components/schemas/KvEntry"
+            },
+            "type": "array"
+          },
+          "page_token": {
+            "description": "Opaque pagination cursor for the next page. Absent when there are no more results.",
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "required": [
+          "entries"
+        ],
+        "type": "object"
+      }
+    }
+  }
+}

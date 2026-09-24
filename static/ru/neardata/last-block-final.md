@@ -9,7 +9,10 @@
 - Транспорт: http
 - Метод: GET
 - Путь: `/v0/last_block/final`
-- Исходная спецификация: `apis/neardata/v0/last_block_final.yaml`
+## OpenAPI
+- Эта операция: https://docs.fastnear.com/openapi/neardata/get_last_block_final.json (https://docs.fastnear.com/openapi/neardata/get_last_block_final.yaml)
+- Полный документ API: https://docs.fastnear.com/openapi/neardata.json
+- Указатель в полном документе: https://docs.fastnear.com/openapi/neardata.json#/paths/~1v0~1last_block~1final/get
 ## Сети
 - Mainnet: https://mainnet.neardata.xyz/
 - Testnet: https://testnet.neardata.xyz/

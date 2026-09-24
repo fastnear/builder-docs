@@ -16,6 +16,7 @@ const DOCSEARCH_CATEGORY_RULES = [
   { prefix: "/internationalization", value: "guide" },
   { prefix: "/snapshots", value: "guide" },
   { prefix: "/transaction-flow", value: "guide" },
+  { prefix: "/openapi", value: "guide" },
   { prefix: "/", value: "guide" },
 ];
 
@@ -46,6 +47,7 @@ const DOCSEARCH_SURFACE_RULES = [
   { prefix: "/internationalization", value: "guide" },
   { prefix: "/snapshots", value: "snapshots" },
   { prefix: "/transaction-flow", value: "transaction-flow" },
+  { prefix: "/openapi", value: "guide" },
   { prefix: "/", value: "guide" },
 ];
 

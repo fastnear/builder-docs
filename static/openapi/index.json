@@ -1,0 +1,1090 @@
+{
+  "description": "OpenAPI documents for every FastNear API family and operation published on docs.fastnear.com.",
+  "site": "https://docs.fastnear.com",
+  "specs": [
+    {
+      "docsPath": "/rpc",
+      "id": "rpc",
+      "json": "/openapi/rpc.json",
+      "kind": "json-rpc",
+      "openapi": "3.1.0",
+      "operations": [
+        {
+          "canonicalPath": "/rpcs/account/view_access_key",
+          "docsPath": "/rpc/account/view-access-key",
+          "json": "/openapi/rpc/view_access_key.json",
+          "method": "POST",
+          "operationId": "view_access_key",
+          "pageModelId": "rpc-view-access-key",
+          "path": "/view_access_key",
+          "pointer": "/openapi/rpc.json#/paths/~1view_access_key/post",
+          "summary": "View access key",
+          "yaml": "/openapi/rpc/view_access_key.yaml"
+        },
+        {
+          "canonicalPath": "/rpcs/account/view_access_key_list",
+          "docsPath": "/rpc/account/view-access-key-list",
+          "json": "/openapi/rpc/view_access_key_list.json",
+          "method": "POST",
+          "operationId": "view_access_key_list",
+          "pageModelId": "rpc-view-access-key-list",
+          "path": "/view_access_key_list",
+          "pointer": "/openapi/rpc.json#/paths/~1view_access_key_list/post",
+          "summary": "View access key list",
+          "yaml": "/openapi/rpc/view_access_key_list.yaml"
+        },
+        {
+          "canonicalPath": "/rpcs/account/view_account",
+          "docsPath": "/rpc/account/view-account",
+          "json": "/openapi/rpc/view_account.json",
+          "method": "POST",
+          "operationId": "view_account",
+          "pageModelId": "rpc-view-account",
+          "path": "/view_account",
+          "pointer": "/openapi/rpc.json#/paths/~1view_account/post",
+          "summary": "View account",
+          "yaml": "/openapi/rpc/view_account.yaml"
+        },
+        {
+          "canonicalPath": "/rpcs/block/block_by_height",
+          "docsPath": "/rpc/block/block-by-height",
+          "json": "/openapi/rpc/block_by_height.json",
+          "method": "POST",
+          "operationId": "block_by_height",
+          "pageModelId": "rpc-block-by-height",
+          "path": "/block_by_height",
+          "pointer": "/openapi/rpc.json#/paths/~1block_by_height/post",
+          "summary": "Get block by height",
+          "yaml": "/openapi/rpc/block_by_height.yaml"
+        },
+        {
+          "canonicalPath": "/rpcs/block/block_by_id",
+          "docsPath": "/rpc/block/block-by-id",
+          "json": "/openapi/rpc/block_by_id.json",
+          "method": "POST",
+          "operationId": "block_by_id",
+          "pageModelId": "rpc-block-by-id",
+          "path": "/block_by_id",
+          "pointer": "/openapi/rpc.json#/paths/~1block_by_id/post",
+          "summary": "Get block by hash",
+          "yaml": "/openapi/rpc/block_by_id.yaml"
+        },
+        {
+          "canonicalPath": "/rpcs/block/block_effects",
+          "docsPath": "/rpc/block/block-effects",
+          "json": "/openapi/rpc/block_effects.json",
+          "method": "POST",
+          "operationId": "block_effects",
+          "pageModelId": "rpc-block-effects",
+          "path": "/block_effects",
+          "pointer": "/openapi/rpc.json#/paths/~1block_effects/post",
+          "summary": "Get block effects",
+          "yaml": "/openapi/rpc/block_effects.yaml"
+        },
+        {
+          "canonicalPath": "/rpcs/contract/call",
+          "docsPath": "/rpc/contract/call-function",
+          "json": "/openapi/rpc/call_function.json",
+          "method": "POST",
+          "operationId": "call_function",
+          "pageModelId": "rpc-call-function",
+          "path": "/call_function",
+          "pointer": "/openapi/rpc.json#/paths/~1call_function/post",
+          "summary": "Call contract function",
+          "yaml": "/openapi/rpc/call_function.yaml"
+        },
+        {
+          "canonicalPath": "/rpcs/contract/view_code",
+          "docsPath": "/rpc/contract/view-code",
+          "json": "/openapi/rpc/view_code.json",
+          "method": "POST",
+          "operationId": "view_code",
+          "pageModelId": "rpc-view-code",
+          "path": "/view_code",
+          "pointer": "/openapi/rpc.json#/paths/~1view_code/post",
+          "summary": "View contract code",
+          "yaml": "/openapi/rpc/view_code.yaml"
+        },
+        {
+          "canonicalPath": "/rpcs/contract/view_global_contract_code",
+          "docsPath": "/rpc/contract/view-global-contract-code",
+          "json": "/openapi/rpc/view_global_contract_code.json",
+          "method": "POST",
+          "operationId": "view_global_contract_code",
+          "pageModelId": "rpc-view-global-contract-code",
+          "path": "/view_global_contract_code",
+          "pointer": "/openapi/rpc.json#/paths/~1view_global_contract_code/post",
+          "summary": "View global contract code",
+          "yaml": "/openapi/rpc/view_global_contract_code.yaml"
+        },
+        {
+          "canonicalPath": "/rpcs/contract/view_global_contract_code_by_account_id",
+          "docsPath": "/rpc/contract/view-global-contract-code-by-account-id",
+          "json": "/openapi/rpc/view_global_contract_code_by_account_id.json",
+          "method": "POST",
+          "operationId": "view_global_contract_code_by_account_id",
+          "pageModelId": "rpc-view-global-contract-code-by-account-id",
+          "path": "/view_global_contract_code_by_account_id",
+          "pointer": "/openapi/rpc.json#/paths/~1view_global_contract_code_by_account_id/post",
+          "summary": "View global contract code by account",
+          "yaml": "/openapi/rpc/view_global_contract_code_by_account_id.yaml"
+        },
+        {
+          "canonicalPath": "/rpcs/contract/view_state",
+          "docsPath": "/rpc/contract/view-state",
+          "json": "/openapi/rpc/view_state.json",
+          "method": "POST",
+          "operationId": "view_state",
+          "pageModelId": "rpc-view-state",
+          "path": "/view_state",
+          "pointer": "/openapi/rpc.json#/paths/~1view_state/post",
+          "summary": "View contract state",
+          "yaml": "/openapi/rpc/view_state.yaml"
+        },
+        {
+          "canonicalPath": "/rpcs/protocol/EXPERIMENTAL_congestion_level",
+          "docsPath": "/rpc/protocol/experimental-congestion-level",
+          "json": "/openapi/rpc/EXPERIMENTAL_congestion_level.json",
+          "method": "POST",
+          "operationId": "EXPERIMENTAL_congestion_level",
+          "pageModelId": "rpc-EXPERIMENTAL-congestion-level",
+          "path": "/EXPERIMENTAL_congestion_level",
+          "pointer": "/openapi/rpc.json#/paths/~1EXPERIMENTAL_congestion_level/post",
+          "summary": "Get congestion level",
+          "yaml": "/openapi/rpc/EXPERIMENTAL_congestion_level.yaml"
+        },
+        {
+          "canonicalPath": "/rpcs/protocol/EXPERIMENTAL_light_client_block_proof",
+          "docsPath": "/rpc/protocol/experimental-light-client-block-proof",
+          "json": "/openapi/rpc/EXPERIMENTAL_light_client_block_proof.json",
+          "method": "POST",
+          "operationId": "EXPERIMENTAL_light_client_block_proof",
+          "pageModelId": "rpc-EXPERIMENTAL-light-client-block-proof",
+          "path": "/EXPERIMENTAL_light_client_block_proof",
+          "pointer": "/openapi/rpc.json#/paths/~1EXPERIMENTAL_light_client_block_proof/post",
+          "summary": "Get light client block proof",
+          "yaml": "/openapi/rpc/EXPERIMENTAL_light_client_block_proof.yaml"
+        },
+        {
+          "canonicalPath": "/rpcs/protocol/EXPERIMENTAL_light_client_proof",
+          "docsPath": "/rpc/protocol/experimental-light-client-proof",
+          "json": "/openapi/rpc/EXPERIMENTAL_light_client_proof.json",
+          "method": "POST",
+          "operationId": "EXPERIMENTAL_light_client_proof",
+          "pageModelId": "rpc-EXPERIMENTAL-light-client-proof",
+          "path": "/EXPERIMENTAL_light_client_proof",
+          "pointer": "/openapi/rpc.json#/paths/~1EXPERIMENTAL_light_client_proof/post",
+          "summary": "Get light client execution proof",
+          "yaml": "/openapi/rpc/EXPERIMENTAL_light_client_proof.yaml"
+        },
+        {
+          "canonicalPath": "/rpcs/protocol/EXPERIMENTAL_protocol_config",
+          "docsPath": "/rpc/protocol/experimental-protocol-config",
+          "json": "/openapi/rpc/EXPERIMENTAL_protocol_config.json",
+          "method": "POST",
+          "operationId": "EXPERIMENTAL_protocol_config",
+          "pageModelId": "rpc-EXPERIMENTAL-protocol-config",
+          "path": "/EXPERIMENTAL_protocol_config",
+          "pointer": "/openapi/rpc.json#/paths/~1EXPERIMENTAL_protocol_config/post",
+          "summary": "Get protocol config",
+          "yaml": "/openapi/rpc/EXPERIMENTAL_protocol_config.yaml"
+        },
+        {
+          "canonicalPath": "/rpcs/protocol/EXPERIMENTAL_split_storage_info",
+          "docsPath": "/rpc/protocol/experimental-split-storage-info",
+          "json": "/openapi/rpc/EXPERIMENTAL_split_storage_info.json",
+          "method": "POST",
+          "operationId": "EXPERIMENTAL_split_storage_info",
+          "pageModelId": "rpc-EXPERIMENTAL-split-storage-info",
+          "path": "/EXPERIMENTAL_split_storage_info",
+          "pointer": "/openapi/rpc.json#/paths/~1EXPERIMENTAL_split_storage_info/post",
+          "summary": "Get split storage info",
+          "yaml": "/openapi/rpc/EXPERIMENTAL_split_storage_info.yaml"
+        },
+        {
+          "canonicalPath": "/rpcs/protocol/changes",
+          "docsPath": "/rpc/protocol/changes",
+          "json": "/openapi/rpc/changes.json",
+          "method": "POST",
+          "operationId": "changes",
+          "pageModelId": "rpc-changes",
+          "path": "/changes",
+          "pointer": "/openapi/rpc.json#/paths/~1changes/post",
+          "summary": "Get state changes",
+          "yaml": "/openapi/rpc/changes.yaml"
+        },
+        {
+          "canonicalPath": "/rpcs/protocol/chunk_by_block_shard",
+          "docsPath": "/rpc/protocol/chunk-by-block-shard",
+          "json": "/openapi/rpc/chunk_by_block_shard.json",
+          "method": "POST",
+          "operationId": "chunk_by_block_shard",
+          "pageModelId": "rpc-chunk-by-block-shard",
+          "path": "/chunk_by_block_shard",
+          "pointer": "/openapi/rpc.json#/paths/~1chunk_by_block_shard/post",
+          "summary": "Get chunk by block and shard",
+          "yaml": "/openapi/rpc/chunk_by_block_shard.yaml"
+        },
+        {
+          "canonicalPath": "/rpcs/protocol/chunk_by_hash",
+          "docsPath": "/rpc/protocol/chunk-by-hash",
+          "json": "/openapi/rpc/chunk_by_hash.json",
+          "method": "POST",
+          "operationId": "chunk_by_hash",
+          "pageModelId": "rpc-chunk-by-hash",
+          "path": "/chunk_by_hash",
+          "pointer": "/openapi/rpc.json#/paths/~1chunk_by_hash/post",
+          "summary": "Get chunk by hash",
+          "yaml": "/openapi/rpc/chunk_by_hash.yaml"
+        },
+        {
+          "canonicalPath": "/rpcs/protocol/client_config",
+          "docsPath": "/rpc/protocol/client-config",
+          "json": "/openapi/rpc/client_config.json",
+          "method": "POST",
+          "operationId": "client_config",
+          "pageModelId": "rpc-client-config",
+          "path": "/client_config",
+          "pointer": "/openapi/rpc.json#/paths/~1client_config/post",
+          "summary": "Get client config",
+          "yaml": "/openapi/rpc/client_config.yaml"
+        },
+        {
+          "canonicalPath": "/rpcs/protocol/gas_price",
+          "docsPath": "/rpc/protocol/gas-price",
+          "json": "/openapi/rpc/gas_price.json",
+          "method": "POST",
+          "operationId": "gas_price",
+          "pageModelId": "rpc-gas-price",
+          "path": "/gas_price",
+          "pointer": "/openapi/rpc.json#/paths/~1gas_price/post",
+          "summary": "Get gas price",
+          "yaml": "/openapi/rpc/gas_price.yaml"
+        },
+        {
+          "canonicalPath": "/rpcs/protocol/gas_price_by_block",
+          "docsPath": "/rpc/protocol/gas-price-by-block",
+          "json": "/openapi/rpc/gas_price_by_block.json",
+          "method": "POST",
+          "operationId": "gas_price_by_block",
+          "pageModelId": "rpc-gas-price-by-block",
+          "path": "/gas_price_by_block",
+          "pointer": "/openapi/rpc.json#/paths/~1gas_price_by_block/post",
+          "summary": "Get gas price by block",
+          "yaml": "/openapi/rpc/gas_price_by_block.yaml"
+        },
+        {
+          "canonicalPath": "/rpcs/protocol/genesis_config",
+          "docsPath": "/rpc/protocol/genesis-config",
+          "json": "/openapi/rpc/genesis_config.json",
+          "method": "POST",
+          "operationId": "genesis_config",
+          "pageModelId": "rpc-genesis-config",
+          "path": "/genesis_config",
+          "pointer": "/openapi/rpc.json#/paths/~1genesis_config/post",
+          "summary": "Get genesis config",
+          "yaml": "/openapi/rpc/genesis_config.yaml"
+        },
+        {
+          "canonicalPath": "/rpcs/protocol/health",
+          "docsPath": "/rpc/protocol/health",
+          "json": "/openapi/rpc/health.json",
+          "method": "POST",
+          "operationId": "health",
+          "pageModelId": "rpc-health",
+          "path": "/health",
+          "pointer": "/openapi/rpc.json#/paths/~1health/post",
+          "summary": "Check node health",
+          "yaml": "/openapi/rpc/health.yaml"
+        },
+        {
+          "canonicalPath": "/rpcs/protocol/latest_block",
+          "docsPath": "/rpc/protocol/latest-block",
+          "json": "/openapi/rpc/latest_block.json",
+          "method": "POST",
+          "operationId": "latest_block",
+          "pageModelId": "rpc-latest-block",
+          "path": "/latest_block",
+          "pointer": "/openapi/rpc.json#/paths/~1latest_block/post",
+          "summary": "Get latest block",
+          "yaml": "/openapi/rpc/latest_block.yaml"
+        },
+        {
+          "canonicalPath": "/rpcs/protocol/light_client_proof",
+          "docsPath": "/rpc/protocol/light-client-proof",
+          "json": "/openapi/rpc/light_client_proof.json",
+          "method": "POST",
+          "operationId": "light_client_proof",
+          "pageModelId": "rpc-light-client-proof",
+          "path": "/light_client_proof",
+          "pointer": "/openapi/rpc.json#/paths/~1light_client_proof/post",
+          "summary": "Get light client proof",
+          "yaml": "/openapi/rpc/light_client_proof.yaml"
+        },
+        {
+          "canonicalPath": "/rpcs/protocol/maintenance_windows",
+          "docsPath": "/rpc/protocol/maintenance-windows",
+          "json": "/openapi/rpc/maintenance_windows.json",
+          "method": "POST",
+          "operationId": "maintenance_windows",
+          "pageModelId": "rpc-maintenance-windows",
+          "path": "/maintenance_windows",
+          "pointer": "/openapi/rpc.json#/paths/~1maintenance_windows/post",
+          "summary": "Get maintenance windows",
+          "yaml": "/openapi/rpc/maintenance_windows.yaml"
+        },
+        {
+          "canonicalPath": "/rpcs/protocol/metrics",
+          "docsPath": "/rpc/protocol/metrics",
+          "json": "/openapi/rpc/metrics.json",
+          "method": "GET",
+          "operationId": "metrics",
+          "pageModelId": "rpc-metrics",
+          "path": "/metrics",
+          "pointer": "/openapi/rpc.json#/paths/~1metrics/get",
+          "summary": "Get node metrics",
+          "yaml": "/openapi/rpc/metrics.yaml"
+        },
+        {
+          "canonicalPath": "/rpcs/protocol/network_info",
+          "docsPath": "/rpc/protocol/network-info",
+          "json": "/openapi/rpc/network_info.json",
+          "method": "POST",
+          "operationId": "network_info",
+          "pageModelId": "rpc-network-info",
+          "path": "/network_info",
+          "pointer": "/openapi/rpc.json#/paths/~1network_info/post",
+          "summary": "Get network info",
+          "yaml": "/openapi/rpc/network_info.yaml"
+        },
+        {
+          "canonicalPath": "/rpcs/protocol/next_light_client_block",
+          "docsPath": "/rpc/protocol/next-light-client-block",
+          "json": "/openapi/rpc/next_light_client_block.json",
+          "method": "POST",
+          "operationId": "next_light_client_block",
+          "pageModelId": "rpc-next-light-client-block",
+          "path": "/next_light_client_block",
+          "pointer": "/openapi/rpc.json#/paths/~1next_light_client_block/post",
+          "summary": "Get next light client block",
+          "yaml": "/openapi/rpc/next_light_client_block.yaml"
+        },
+        {
+          "canonicalPath": "/rpcs/protocol/status",
+          "docsPath": "/rpc/protocol/status",
+          "json": "/openapi/rpc/status.json",
+          "method": "POST",
+          "operationId": "status",
+          "pageModelId": "rpc-status",
+          "path": "/status",
+          "pointer": "/openapi/rpc.json#/paths/~1status/post",
+          "summary": "Get node status",
+          "yaml": "/openapi/rpc/status.yaml"
+        },
+        {
+          "canonicalPath": "/rpcs/transaction/EXPERIMENTAL_receipt",
+          "docsPath": "/rpc/transaction/experimental-receipt",
+          "json": "/openapi/rpc/EXPERIMENTAL_receipt.json",
+          "method": "POST",
+          "operationId": "EXPERIMENTAL_receipt",
+          "pageModelId": "rpc-EXPERIMENTAL-receipt",
+          "path": "/EXPERIMENTAL_receipt",
+          "pointer": "/openapi/rpc.json#/paths/~1EXPERIMENTAL_receipt/post",
+          "summary": "Get receipt by ID",
+          "yaml": "/openapi/rpc/EXPERIMENTAL_receipt.yaml"
+        },
+        {
+          "canonicalPath": "/rpcs/transaction/EXPERIMENTAL_receipt_to_tx",
+          "docsPath": "/rpc/transaction/experimental-receipt-to-tx",
+          "json": "/openapi/rpc/EXPERIMENTAL_receipt_to_tx.json",
+          "method": "POST",
+          "operationId": "EXPERIMENTAL_receipt_to_tx",
+          "pageModelId": "rpc-EXPERIMENTAL-receipt-to-tx",
+          "path": "/EXPERIMENTAL_receipt_to_tx",
+          "pointer": "/openapi/rpc.json#/paths/~1EXPERIMENTAL_receipt_to_tx/post",
+          "summary": "Resolve receipt to transaction",
+          "yaml": "/openapi/rpc/EXPERIMENTAL_receipt_to_tx.yaml"
+        },
+        {
+          "canonicalPath": "/rpcs/transaction/EXPERIMENTAL_tx_status",
+          "docsPath": "/rpc/transaction/experimental-tx-status",
+          "json": "/openapi/rpc/EXPERIMENTAL_tx_status.json",
+          "method": "POST",
+          "operationId": "EXPERIMENTAL_tx_status",
+          "pageModelId": "rpc-EXPERIMENTAL-tx-status",
+          "path": "/EXPERIMENTAL_tx_status",
+          "pointer": "/openapi/rpc.json#/paths/~1EXPERIMENTAL_tx_status/post",
+          "summary": "Get detailed transaction status",
+          "yaml": "/openapi/rpc/EXPERIMENTAL_tx_status.yaml"
+        },
+        {
+          "canonicalPath": "/rpcs/transaction/broadcast_tx_async",
+          "docsPath": "/rpc/transaction/broadcast-tx-async",
+          "json": "/openapi/rpc/broadcast_tx_async.json",
+          "method": "POST",
+          "operationId": "broadcast_tx_async",
+          "pageModelId": "rpc-broadcast-tx-async",
+          "path": "/broadcast_tx_async",
+          "pointer": "/openapi/rpc.json#/paths/~1broadcast_tx_async/post",
+          "summary": "Send transaction asynchronously",
+          "yaml": "/openapi/rpc/broadcast_tx_async.yaml"
+        },
+        {
+          "canonicalPath": "/rpcs/transaction/broadcast_tx_commit",
+          "docsPath": "/rpc/transaction/broadcast-tx-commit",
+          "json": "/openapi/rpc/broadcast_tx_commit.json",
+          "method": "POST",
+          "operationId": "broadcast_tx_commit",
+          "pageModelId": "rpc-broadcast-tx-commit",
+          "path": "/broadcast_tx_commit",
+          "pointer": "/openapi/rpc.json#/paths/~1broadcast_tx_commit/post",
+          "summary": "Send transaction and wait",
+          "yaml": "/openapi/rpc/broadcast_tx_commit.yaml"
+        },
+        {
+          "canonicalPath": "/rpcs/transaction/send_tx",
+          "docsPath": "/rpc/transaction/send-tx",
+          "json": "/openapi/rpc/send_tx.json",
+          "method": "POST",
+          "operationId": "send_tx",
+          "pageModelId": "rpc-send-tx",
+          "path": "/send_tx",
+          "pointer": "/openapi/rpc.json#/paths/~1send_tx/post",
+          "summary": "Send transaction",
+          "yaml": "/openapi/rpc/send_tx.yaml"
+        },
+        {
+          "canonicalPath": "/rpcs/transaction/tx_status",
+          "docsPath": "/rpc/transaction/tx-status",
+          "json": "/openapi/rpc/tx_status.json",
+          "method": "POST",
+          "operationId": "tx_status",
+          "pageModelId": "rpc-tx-status",
+          "path": "/tx_status",
+          "pointer": "/openapi/rpc.json#/paths/~1tx_status/post",
+          "summary": "Get transaction status",
+          "yaml": "/openapi/rpc/tx_status.yaml"
+        },
+        {
+          "canonicalPath": "/rpcs/validators/EXPERIMENTAL_validators_ordered",
+          "docsPath": "/rpc/validators/experimental-validators-ordered",
+          "json": "/openapi/rpc/EXPERIMENTAL_validators_ordered.json",
+          "method": "POST",
+          "operationId": "EXPERIMENTAL_validators_ordered",
+          "pageModelId": "rpc-EXPERIMENTAL-validators-ordered",
+          "path": "/EXPERIMENTAL_validators_ordered",
+          "pointer": "/openapi/rpc.json#/paths/~1EXPERIMENTAL_validators_ordered/post",
+          "summary": "Get validators ordered",
+          "yaml": "/openapi/rpc/EXPERIMENTAL_validators_ordered.yaml"
+        },
+        {
+          "canonicalPath": "/rpcs/validators/validators_by_epoch",
+          "docsPath": "/rpc/validators/validators-by-epoch",
+          "json": "/openapi/rpc/validators_by_epoch.json",
+          "method": "POST",
+          "operationId": "validators_by_epoch",
+          "pageModelId": "rpc-validators-by-epoch",
+          "path": "/validators_by_epoch",
+          "pointer": "/openapi/rpc.json#/paths/~1validators_by_epoch/post",
+          "summary": "Get validators by epoch",
+          "yaml": "/openapi/rpc/validators_by_epoch.yaml"
+        },
+        {
+          "canonicalPath": "/rpcs/validators/validators_current",
+          "docsPath": "/rpc/validators/validators-current",
+          "json": "/openapi/rpc/validators_current.json",
+          "method": "POST",
+          "operationId": "validators_current",
+          "pageModelId": "rpc-validators-current",
+          "path": "/validators_current",
+          "pointer": "/openapi/rpc.json#/paths/~1validators_current/post",
+          "summary": "Get current validators",
+          "yaml": "/openapi/rpc/validators_current.yaml"
+        }
+      ],
+      "servers": [
+        {
+          "description": "Mainnet",
+          "url": "https://rpc.mainnet.fastnear.com"
+        },
+        {
+          "description": "Testnet",
+          "url": "https://rpc.testnet.fastnear.com"
+        },
+        {
+          "description": "Mainnet Archival",
+          "url": "https://archival-rpc.mainnet.fastnear.com"
+        },
+        {
+          "description": "Testnet Archival",
+          "url": "https://archival-rpc.testnet.fastnear.com"
+        }
+      ],
+      "title": "FastNEAR RPC",
+      "version": "1.0.0",
+      "yaml": "/openapi/rpc.yaml"
+    },
+    {
+      "docsPath": "/api",
+      "id": "fastnear",
+      "json": "/openapi/fastnear.json",
+      "kind": "rest",
+      "openapi": "3.0.3",
+      "operations": [
+        {
+          "canonicalPath": "/apis/fastnear/system/health",
+          "docsPath": "/api/system/health",
+          "json": "/openapi/fastnear/get_health.json",
+          "method": "GET",
+          "operationId": "get_health",
+          "pageModelId": "fastnear-system-health",
+          "path": "/health",
+          "pointer": "/openapi/fastnear.json#/paths/~1health/get",
+          "summary": "Get service health",
+          "yaml": "/openapi/fastnear/get_health.yaml"
+        },
+        {
+          "canonicalPath": "/apis/fastnear/system/status",
+          "docsPath": "/api/system/status",
+          "json": "/openapi/fastnear/get_status.json",
+          "method": "GET",
+          "operationId": "get_status",
+          "pageModelId": "fastnear-system-status",
+          "path": "/status",
+          "pointer": "/openapi/fastnear.json#/paths/~1status/get",
+          "summary": "Get service sync status",
+          "yaml": "/openapi/fastnear/get_status.yaml"
+        },
+        {
+          "canonicalPath": "/apis/fastnear/v0/account_staking",
+          "docsPath": "/api/v0/account-staking",
+          "json": "/openapi/fastnear/account_staking_v0.json",
+          "method": "GET",
+          "operationId": "account_staking_v0",
+          "pageModelId": "fastnear-v0-account-staking",
+          "path": "/v0/account/{account_id}/staking",
+          "pointer": "/openapi/fastnear.json#/paths/~1v0~1account~1%7Baccount_id%7D~1staking/get",
+          "summary": "Lookup staking pool account IDs for an account",
+          "yaml": "/openapi/fastnear/account_staking_v0.yaml"
+        },
+        {
+          "canonicalPath": "/apis/fastnear/v0/account_ft",
+          "docsPath": "/api/v0/account-ft",
+          "json": "/openapi/fastnear/account_ft_v0.json",
+          "method": "GET",
+          "operationId": "account_ft_v0",
+          "pageModelId": "fastnear-v0-account-ft",
+          "path": "/v0/account/{account_id}/ft",
+          "pointer": "/openapi/fastnear.json#/paths/~1v0~1account~1%7Baccount_id%7D~1ft/get",
+          "summary": "Lookup fungible token contract IDs for an account",
+          "yaml": "/openapi/fastnear/account_ft_v0.yaml"
+        },
+        {
+          "canonicalPath": "/apis/fastnear/v0/account_nft",
+          "docsPath": "/api/v0/account-nft",
+          "json": "/openapi/fastnear/account_nft_v0.json",
+          "method": "GET",
+          "operationId": "account_nft_v0",
+          "pageModelId": "fastnear-v0-account-nft",
+          "path": "/v0/account/{account_id}/nft",
+          "pointer": "/openapi/fastnear.json#/paths/~1v0~1account~1%7Baccount_id%7D~1nft/get",
+          "summary": "Lookup NFT contract IDs for an account",
+          "yaml": "/openapi/fastnear/account_nft_v0.yaml"
+        },
+        {
+          "canonicalPath": "/apis/fastnear/v0/public_key_lookup",
+          "docsPath": "/api/v0/public-key",
+          "json": "/openapi/fastnear/lookup_by_public_key_v0.json",
+          "method": "GET",
+          "operationId": "lookup_by_public_key_v0",
+          "pageModelId": "fastnear-v0-public-key-lookup",
+          "path": "/v0/public_key/{public_key}",
+          "pointer": "/openapi/fastnear.json#/paths/~1v0~1public_key~1%7Bpublic_key%7D/get",
+          "summary": "Lookup full-access accounts by public key",
+          "yaml": "/openapi/fastnear/lookup_by_public_key_v0.yaml"
+        },
+        {
+          "canonicalPath": "/apis/fastnear/v0/public_key_lookup_all",
+          "docsPath": "/api/v0/public-key-all",
+          "json": "/openapi/fastnear/lookup_by_public_key_all_v0.json",
+          "method": "GET",
+          "operationId": "lookup_by_public_key_all_v0",
+          "pageModelId": "fastnear-v0-public-key-lookup-all",
+          "path": "/v0/public_key/{public_key}/all",
+          "pointer": "/openapi/fastnear.json#/paths/~1v0~1public_key~1%7Bpublic_key%7D~1all/get",
+          "summary": "Lookup all indexed accounts by public key",
+          "yaml": "/openapi/fastnear/lookup_by_public_key_all_v0.yaml"
+        },
+        {
+          "canonicalPath": "/apis/fastnear/v1/account_staking",
+          "docsPath": "/api/v1/account-staking",
+          "json": "/openapi/fastnear/account_staking_v1.json",
+          "method": "GET",
+          "operationId": "account_staking_v1",
+          "pageModelId": "fastnear-v1-account-staking",
+          "path": "/v1/account/{account_id}/staking",
+          "pointer": "/openapi/fastnear.json#/paths/~1v1~1account~1%7Baccount_id%7D~1staking/get",
+          "summary": "Lookup indexed staking pools for an account",
+          "yaml": "/openapi/fastnear/account_staking_v1.yaml"
+        },
+        {
+          "canonicalPath": "/apis/fastnear/v1/account_ft",
+          "docsPath": "/api/v1/account-ft",
+          "json": "/openapi/fastnear/account_ft_v1.json",
+          "method": "GET",
+          "operationId": "account_ft_v1",
+          "pageModelId": "fastnear-v1-account-ft",
+          "path": "/v1/account/{account_id}/ft",
+          "pointer": "/openapi/fastnear.json#/paths/~1v1~1account~1%7Baccount_id%7D~1ft/get",
+          "summary": "Lookup indexed fungible token rows for an account",
+          "yaml": "/openapi/fastnear/account_ft_v1.yaml"
+        },
+        {
+          "canonicalPath": "/apis/fastnear/v1/account_nft",
+          "docsPath": "/api/v1/account-nft",
+          "json": "/openapi/fastnear/account_nft_v1.json",
+          "method": "GET",
+          "operationId": "account_nft_v1",
+          "pageModelId": "fastnear-v1-account-nft",
+          "path": "/v1/account/{account_id}/nft",
+          "pointer": "/openapi/fastnear.json#/paths/~1v1~1account~1%7Baccount_id%7D~1nft/get",
+          "summary": "Lookup indexed NFT contract rows for an account",
+          "yaml": "/openapi/fastnear/account_nft_v1.yaml"
+        },
+        {
+          "canonicalPath": "/apis/fastnear/v1/account_full",
+          "docsPath": "/api/v1/account-full",
+          "json": "/openapi/fastnear/account_full_v1.json",
+          "method": "GET",
+          "operationId": "account_full_v1",
+          "pageModelId": "fastnear-v1-account-full",
+          "path": "/v1/account/{account_id}/full",
+          "pointer": "/openapi/fastnear.json#/paths/~1v1~1account~1%7Baccount_id%7D~1full/get",
+          "summary": "Lookup full indexed account information",
+          "yaml": "/openapi/fastnear/account_full_v1.yaml"
+        },
+        {
+          "canonicalPath": "/apis/fastnear/v1/public_key_lookup",
+          "docsPath": "/api/v1/public-key",
+          "json": "/openapi/fastnear/lookup_by_public_key_v1.json",
+          "method": "GET",
+          "operationId": "lookup_by_public_key_v1",
+          "pageModelId": "fastnear-v1-public-key-lookup",
+          "path": "/v1/public_key/{public_key}",
+          "pointer": "/openapi/fastnear.json#/paths/~1v1~1public_key~1%7Bpublic_key%7D/get",
+          "summary": "Lookup full-access accounts by public key",
+          "yaml": "/openapi/fastnear/lookup_by_public_key_v1.yaml"
+        },
+        {
+          "canonicalPath": "/apis/fastnear/v1/ft_top",
+          "docsPath": "/api/v1/ft-top",
+          "json": "/openapi/fastnear/ft_top_v1.json",
+          "method": "GET",
+          "operationId": "ft_top_v1",
+          "pageModelId": "fastnear-v1-ft-top",
+          "path": "/v1/ft/{token_id}/top",
+          "pointer": "/openapi/fastnear.json#/paths/~1v1~1ft~1%7Btoken_id%7D~1top/get",
+          "summary": "Lookup top indexed holders for a fungible token",
+          "yaml": "/openapi/fastnear/ft_top_v1.yaml"
+        },
+        {
+          "canonicalPath": "/apis/fastnear/v1/public_key_lookup_all",
+          "docsPath": "/api/v1/public-key-all",
+          "json": "/openapi/fastnear/lookup_by_public_key_all_v1.json",
+          "method": "GET",
+          "operationId": "lookup_by_public_key_all_v1",
+          "pageModelId": "fastnear-v1-public-key-lookup-all",
+          "path": "/v1/public_key/{public_key}/all",
+          "pointer": "/openapi/fastnear.json#/paths/~1v1~1public_key~1%7Bpublic_key%7D~1all/get",
+          "summary": "Lookup all indexed accounts by public key",
+          "yaml": "/openapi/fastnear/lookup_by_public_key_all_v1.yaml"
+        }
+      ],
+      "servers": [
+        {
+          "description": "Mainnet",
+          "url": "https://api.fastnear.com"
+        },
+        {
+          "description": "Testnet",
+          "url": "https://test.api.fastnear.com"
+        }
+      ],
+      "title": "FastNEAR API",
+      "version": "3.0.3",
+      "yaml": "/openapi/fastnear.yaml"
+    },
+    {
+      "docsPath": "/tx",
+      "id": "transactions",
+      "json": "/openapi/transactions.json",
+      "kind": "rest",
+      "openapi": "3.0.3",
+      "operations": [
+        {
+          "canonicalPath": "/apis/transactions/v0/account",
+          "docsPath": "/tx/account",
+          "json": "/openapi/transactions/get_account.json",
+          "method": "POST",
+          "operationId": "get_account",
+          "pageModelId": "transactions-v0-account",
+          "path": "/v0/account",
+          "pointer": "/openapi/transactions.json#/paths/~1v0~1account/post",
+          "summary": "Fetch account transaction history",
+          "yaml": "/openapi/transactions/get_account.yaml"
+        },
+        {
+          "canonicalPath": "/apis/transactions/v0/block",
+          "docsPath": "/tx/block",
+          "json": "/openapi/transactions/get_block.json",
+          "method": "POST",
+          "operationId": "get_block",
+          "pageModelId": "transactions-v0-block",
+          "path": "/v0/block",
+          "pointer": "/openapi/transactions.json#/paths/~1v0~1block/post",
+          "summary": "Fetch a block by height or hash",
+          "yaml": "/openapi/transactions/get_block.yaml"
+        },
+        {
+          "canonicalPath": "/apis/transactions/v0/blocks",
+          "docsPath": "/tx/blocks",
+          "json": "/openapi/transactions/get_blocks.json",
+          "method": "POST",
+          "operationId": "get_blocks",
+          "pageModelId": "transactions-v0-blocks",
+          "path": "/v0/blocks",
+          "pointer": "/openapi/transactions.json#/paths/~1v0~1blocks/post",
+          "summary": "Fetch a list of blocks",
+          "yaml": "/openapi/transactions/get_blocks.yaml"
+        },
+        {
+          "canonicalPath": "/apis/transactions/v0/receipt",
+          "docsPath": "/tx/receipt",
+          "json": "/openapi/transactions/get_receipt.json",
+          "method": "POST",
+          "operationId": "get_receipt",
+          "pageModelId": "transactions-v0-receipt",
+          "path": "/v0/receipt",
+          "pointer": "/openapi/transactions.json#/paths/~1v0~1receipt/post",
+          "summary": "Fetch a receipt by ID",
+          "yaml": "/openapi/transactions/get_receipt.yaml"
+        },
+        {
+          "canonicalPath": "/apis/transactions/v0/transactions",
+          "docsPath": "/tx/transactions",
+          "json": "/openapi/transactions/get_transactions.json",
+          "method": "POST",
+          "operationId": "get_transactions",
+          "pageModelId": "transactions-v0-transactions",
+          "path": "/v0/transactions",
+          "pointer": "/openapi/transactions.json#/paths/~1v0~1transactions/post",
+          "summary": "Fetch transactions by hash",
+          "yaml": "/openapi/transactions/get_transactions.yaml"
+        }
+      ],
+      "servers": [
+        {
+          "description": "Mainnet",
+          "url": "https://tx.main.fastnear.com"
+        },
+        {
+          "description": "Testnet",
+          "url": "https://tx.test.fastnear.com"
+        }
+      ],
+      "title": "Transactions API",
+      "version": "3.0.3",
+      "yaml": "/openapi/transactions.yaml"
+    },
+    {
+      "docsPath": "/transfers",
+      "id": "transfers",
+      "json": "/openapi/transfers.json",
+      "kind": "rest",
+      "openapi": "3.0.3",
+      "operations": [
+        {
+          "canonicalPath": "/apis/transfers/v0/transfers",
+          "docsPath": "/transfers/query",
+          "json": "/openapi/transfers/get_transfers_by_account.json",
+          "method": "POST",
+          "operationId": "get_transfers_by_account",
+          "pageModelId": "transfers-v0-transfers",
+          "path": "/v0/transfers",
+          "pointer": "/openapi/transfers.json#/paths/~1v0~1transfers/post",
+          "summary": "Query transfers for an account",
+          "yaml": "/openapi/transfers/get_transfers_by_account.yaml"
+        }
+      ],
+      "servers": [
+        {
+          "description": "Mainnet",
+          "url": "https://transfers.main.fastnear.com"
+        }
+      ],
+      "title": "Transfers API",
+      "version": "3.0.3",
+      "yaml": "/openapi/transfers.yaml"
+    },
+    {
+      "docsPath": "/fastdata/kv",
+      "id": "kv-fastdata",
+      "json": "/openapi/kv-fastdata.json",
+      "kind": "rest",
+      "openapi": "3.0.3",
+      "operations": [
+        {
+          "canonicalPath": "/apis/kv-fastdata/v0/all_by_predecessor",
+          "docsPath": "/fastdata/kv/all-by-predecessor",
+          "json": "/openapi/kv-fastdata/all_by_predecessor.json",
+          "method": "POST",
+          "operationId": "all_by_predecessor",
+          "pageModelId": "kv-fastdata-v0-all-by-predecessor",
+          "path": "/v0/all/{predecessor_id}",
+          "pointer": "/openapi/kv-fastdata.json#/paths/~1v0~1all~1%7Bpredecessor_id%7D/post",
+          "summary": "Fetch latest key-value rows for one predecessor across all contracts",
+          "yaml": "/openapi/kv-fastdata/all_by_predecessor.yaml"
+        },
+        {
+          "canonicalPath": "/apis/kv-fastdata/v0/history_by_key",
+          "docsPath": "/fastdata/kv/history-by-key",
+          "json": "/openapi/kv-fastdata/history_by_key.json",
+          "method": "POST",
+          "operationId": "history_by_key",
+          "pageModelId": "kv-fastdata-v0-history-by-key",
+          "path": "/v0/history",
+          "pointer": "/openapi/kv-fastdata.json#/paths/~1v0~1history/post",
+          "summary": "Fetch historical rows by exact key across all indexed contracts",
+          "yaml": "/openapi/kv-fastdata/history_by_key.yaml"
+        },
+        {
+          "canonicalPath": "/apis/kv-fastdata/v0/history_by_account",
+          "docsPath": "/fastdata/kv/history-by-account",
+          "json": "/openapi/kv-fastdata/history_by_account.json",
+          "method": "POST",
+          "operationId": "history_by_account",
+          "pageModelId": "kv-fastdata-v0-history-by-account",
+          "path": "/v0/history/{current_account_id}",
+          "pointer": "/openapi/kv-fastdata.json#/paths/~1v0~1history~1%7Bcurrent_account_id%7D/post",
+          "summary": "Fetch historical key-value writes for one contract across all predecessors",
+          "yaml": "/openapi/kv-fastdata/history_by_account.yaml"
+        },
+        {
+          "canonicalPath": "/apis/kv-fastdata/v0/history_by_predecessor",
+          "docsPath": "/fastdata/kv/history-by-predecessor",
+          "json": "/openapi/kv-fastdata/history_by_predecessor.json",
+          "method": "POST",
+          "operationId": "history_by_predecessor",
+          "pageModelId": "kv-fastdata-v0-history-by-predecessor",
+          "path": "/v0/history/{current_account_id}/{predecessor_id}",
+          "pointer": "/openapi/kv-fastdata.json#/paths/~1v0~1history~1%7Bcurrent_account_id%7D~1%7Bpredecessor_id%7D/post",
+          "summary": "Fetch historical key-value writes for one predecessor and contract",
+          "yaml": "/openapi/kv-fastdata/history_by_predecessor.yaml"
+        },
+        {
+          "canonicalPath": "/apis/kv-fastdata/v0/get_history_key",
+          "docsPath": "/fastdata/kv/get-history-key",
+          "json": "/openapi/kv-fastdata/get_history_key.json",
+          "method": "GET",
+          "operationId": "get_history_key",
+          "pageModelId": "kv-fastdata-v0-get-history-key",
+          "path": "/v0/history/{current_account_id}/{predecessor_id}/{key}",
+          "pointer": "/openapi/kv-fastdata.json#/paths/~1v0~1history~1%7Bcurrent_account_id%7D~1%7Bpredecessor_id%7D~1%7Bkey%7D/get",
+          "summary": "Fetch historical rows for one exact key under one predecessor and contract",
+          "yaml": "/openapi/kv-fastdata/get_history_key.yaml"
+        },
+        {
+          "canonicalPath": "/apis/kv-fastdata/v0/latest_by_account",
+          "docsPath": "/fastdata/kv/latest-by-account",
+          "json": "/openapi/kv-fastdata/latest_by_account.json",
+          "method": "POST",
+          "operationId": "latest_by_account",
+          "pageModelId": "kv-fastdata-v0-latest-by-account",
+          "path": "/v0/latest/{current_account_id}",
+          "pointer": "/openapi/kv-fastdata.json#/paths/~1v0~1latest~1%7Bcurrent_account_id%7D/post",
+          "summary": "Fetch latest key-value rows for one contract across all predecessors",
+          "yaml": "/openapi/kv-fastdata/latest_by_account.yaml"
+        },
+        {
+          "canonicalPath": "/apis/kv-fastdata/v0/latest_by_predecessor",
+          "docsPath": "/fastdata/kv/latest-by-predecessor",
+          "json": "/openapi/kv-fastdata/latest_by_predecessor.json",
+          "method": "POST",
+          "operationId": "latest_by_predecessor",
+          "pageModelId": "kv-fastdata-v0-latest-by-predecessor",
+          "path": "/v0/latest/{current_account_id}/{predecessor_id}",
+          "pointer": "/openapi/kv-fastdata.json#/paths/~1v0~1latest~1%7Bcurrent_account_id%7D~1%7Bpredecessor_id%7D/post",
+          "summary": "Fetch latest key-value rows for one predecessor and contract",
+          "yaml": "/openapi/kv-fastdata/latest_by_predecessor.yaml"
+        },
+        {
+          "canonicalPath": "/apis/kv-fastdata/v0/get_latest_key",
+          "docsPath": "/fastdata/kv/get-latest-key",
+          "json": "/openapi/kv-fastdata/get_latest_key.json",
+          "method": "GET",
+          "operationId": "get_latest_key",
+          "pageModelId": "kv-fastdata-v0-get-latest-key",
+          "path": "/v0/latest/{current_account_id}/{predecessor_id}/{key}",
+          "pointer": "/openapi/kv-fastdata.json#/paths/~1v0~1latest~1%7Bcurrent_account_id%7D~1%7Bpredecessor_id%7D~1%7Bkey%7D/get",
+          "summary": "Fetch the latest row for one exact key under one predecessor and contract",
+          "yaml": "/openapi/kv-fastdata/get_latest_key.yaml"
+        },
+        {
+          "canonicalPath": "/apis/kv-fastdata/v0/multi",
+          "docsPath": "/fastdata/kv/multi",
+          "json": "/openapi/kv-fastdata/multi.json",
+          "method": "POST",
+          "operationId": "multi",
+          "pageModelId": "kv-fastdata-v0-multi",
+          "path": "/v0/multi",
+          "pointer": "/openapi/kv-fastdata.json#/paths/~1v0~1multi/post",
+          "summary": "Fetch the latest rows for multiple fully qualified keys",
+          "yaml": "/openapi/kv-fastdata/multi.yaml"
+        }
+      ],
+      "servers": [
+        {
+          "description": "Mainnet",
+          "url": "https://kv.main.fastnear.com"
+        },
+        {
+          "description": "Testnet",
+          "url": "https://kv.test.fastnear.com"
+        }
+      ],
+      "title": "KV FastData API",
+      "version": "3.0.3",
+      "yaml": "/openapi/kv-fastdata.yaml"
+    },
+    {
+      "docsPath": "/neardata",
+      "id": "neardata",
+      "json": "/openapi/neardata.json",
+      "kind": "rest",
+      "openapi": "3.0.3",
+      "operations": [
+        {
+          "canonicalPath": "/apis/neardata/system/health",
+          "docsPath": "/neardata/system/health",
+          "json": "/openapi/neardata/get_health.json",
+          "method": "GET",
+          "operationId": "get_health",
+          "pageModelId": "neardata-system-health",
+          "path": "/health",
+          "pointer": "/openapi/neardata.json#/paths/~1health/get",
+          "summary": "Get service health",
+          "yaml": "/openapi/neardata/get_health.yaml"
+        },
+        {
+          "canonicalPath": "/apis/neardata/v0/first_block",
+          "docsPath": "/neardata/first-block",
+          "json": "/openapi/neardata/get_first_block.json",
+          "method": "GET",
+          "operationId": "get_first_block",
+          "pageModelId": "neardata-v0-first-block",
+          "path": "/v0/first_block",
+          "pointer": "/openapi/neardata.json#/paths/~1v0~1first_block/get",
+          "summary": "Redirect to the first block after genesis",
+          "yaml": "/openapi/neardata/get_first_block.yaml"
+        },
+        {
+          "canonicalPath": "/apis/neardata/v0/block",
+          "docsPath": "/neardata/block",
+          "json": "/openapi/neardata/get_block.json",
+          "method": "GET",
+          "operationId": "get_block",
+          "pageModelId": "neardata-v0-block",
+          "path": "/v0/block/{block_height}",
+          "pointer": "/openapi/neardata.json#/paths/~1v0~1block~1%7Bblock_height%7D/get",
+          "summary": "Fetch a finalized block by height",
+          "yaml": "/openapi/neardata/get_block.yaml"
+        },
+        {
+          "canonicalPath": "/apis/neardata/v0/block_headers",
+          "docsPath": "/neardata/block-headers",
+          "json": "/openapi/neardata/get_block_headers.json",
+          "method": "GET",
+          "operationId": "get_block_headers",
+          "pageModelId": "neardata-v0-block-headers",
+          "path": "/v0/block/{block_height}/headers",
+          "pointer": "/openapi/neardata.json#/paths/~1v0~1block~1%7Bblock_height%7D~1headers/get",
+          "summary": "Fetch the block-level object for a finalized block",
+          "yaml": "/openapi/neardata/get_block_headers.yaml"
+        },
+        {
+          "canonicalPath": "/apis/neardata/v0/block_chunk",
+          "docsPath": "/neardata/block-chunk",
+          "json": "/openapi/neardata/get_chunk.json",
+          "method": "GET",
+          "operationId": "get_chunk",
+          "pageModelId": "neardata-v0-block-chunk",
+          "path": "/v0/block/{block_height}/chunk/{shard_id}",
+          "pointer": "/openapi/neardata.json#/paths/~1v0~1block~1%7Bblock_height%7D~1chunk~1%7Bshard_id%7D/get",
+          "summary": "Fetch one chunk from a finalized block",
+          "yaml": "/openapi/neardata/get_chunk.yaml"
+        },
+        {
+          "canonicalPath": "/apis/neardata/v0/block_shard",
+          "docsPath": "/neardata/block-shard",
+          "json": "/openapi/neardata/get_shard.json",
+          "method": "GET",
+          "operationId": "get_shard",
+          "pageModelId": "neardata-v0-block-shard",
+          "path": "/v0/block/{block_height}/shard/{shard_id}",
+          "pointer": "/openapi/neardata.json#/paths/~1v0~1block~1%7Bblock_height%7D~1shard~1%7Bshard_id%7D/get",
+          "summary": "Fetch one shard from a finalized block",
+          "yaml": "/openapi/neardata/get_shard.yaml"
+        },
+        {
+          "canonicalPath": "/apis/neardata/v0/block_optimistic",
+          "docsPath": "/neardata/block-optimistic",
+          "json": "/openapi/neardata/get_block_optimistic.json",
+          "method": "GET",
+          "operationId": "get_block_optimistic",
+          "pageModelId": "neardata-v0-block-optimistic",
+          "path": "/v0/block_opt/{block_height}",
+          "pointer": "/openapi/neardata.json#/paths/~1v0~1block_opt~1%7Bblock_height%7D/get",
+          "summary": "Fetch an optimistic block by height",
+          "yaml": "/openapi/neardata/get_block_optimistic.yaml"
+        },
+        {
+          "canonicalPath": "/apis/neardata/v0/last_block_final",
+          "docsPath": "/neardata/last-block-final",
+          "json": "/openapi/neardata/get_last_block_final.json",
+          "method": "GET",
+          "operationId": "get_last_block_final",
+          "pageModelId": "neardata-v0-last-block-final",
+          "path": "/v0/last_block/final",
+          "pointer": "/openapi/neardata.json#/paths/~1v0~1last_block~1final/get",
+          "summary": "Redirect to the latest finalized block",
+          "yaml": "/openapi/neardata/get_last_block_final.yaml"
+        },
+        {
+          "canonicalPath": "/apis/neardata/v0/last_block_optimistic",
+          "docsPath": "/neardata/last-block-optimistic",
+          "json": "/openapi/neardata/get_last_block_optimistic.json",
+          "method": "GET",
+          "operationId": "get_last_block_optimistic",
+          "pageModelId": "neardata-v0-last-block-optimistic",
+          "path": "/v0/last_block/optimistic",
+          "pointer": "/openapi/neardata.json#/paths/~1v0~1last_block~1optimistic/get",
+          "summary": "Redirect to the latest optimistic block",
+          "yaml": "/openapi/neardata/get_last_block_optimistic.yaml"
+        }
+      ],
+      "servers": [
+        {
+          "description": "Mainnet",
+          "url": "https://mainnet.neardata.xyz"
+        },
+        {
+          "description": "Testnet",
+          "url": "https://testnet.neardata.xyz"
+        }
+      ],
+      "title": "NEAR Data API",
+      "version": "3.0.3",
+      "yaml": "/openapi/neardata.yaml"
+    }
+  ]
+}

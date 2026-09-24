@@ -6,6 +6,14 @@
 
 - [Верхний индекс](https://docs.fastnear.com/ru/llms.txt)
 
+## Спецификации OpenAPI
+
+- [FastNEAR API OpenAPI](https://docs.fastnear.com/openapi/fastnear.json): REST, 14 operations; YAML: https://docs.fastnear.com/openapi/fastnear.yaml
+- [Transactions API OpenAPI](https://docs.fastnear.com/openapi/transactions.json): REST, 5 operations; YAML: https://docs.fastnear.com/openapi/transactions.yaml
+- [Transfers API OpenAPI](https://docs.fastnear.com/openapi/transfers.json): REST, 1 operations; YAML: https://docs.fastnear.com/openapi/transfers.yaml
+- [KV FastData API OpenAPI](https://docs.fastnear.com/openapi/kv-fastdata.json): REST, 9 operations; YAML: https://docs.fastnear.com/openapi/kv-fastdata.yaml
+- [NEAR Data API OpenAPI](https://docs.fastnear.com/openapi/neardata.json): REST, 9 operations; YAML: https://docs.fastnear.com/openapi/neardata.yaml
+
 ## FastNear API
 
 - [FastNear API - Состояние](https://docs.fastnear.com/ru/apis/fastnear/system/health.md): Проверить состояние сервиса

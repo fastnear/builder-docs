@@ -14,6 +14,8 @@ FastNear API — это индексированное REST-семейство �
 
 ## Базовые URL
 
+OpenAPI: [JSON](/openapi/fastnear.json) · [YAML](/openapi/fastnear.yaml) · [все спецификации](/openapi)
+
 ```bash title="FastNear API Mainnet"
 https://api.fastnear.com
 ```

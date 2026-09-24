@@ -14,6 +14,8 @@ page_actions:
 
 ## Базовые URL
 
+OpenAPI: [JSON](/openapi/transactions.json) · [YAML](/openapi/transactions.yaml) · [все спецификации](/openapi)
+
 ```bash title="Transactions API Mainnet"
 https://tx.main.fastnear.com
 ```

@@ -14,6 +14,7 @@ const PUBLIC_DOC_ROUTE_PATTERNS = [
   "/auth/**",
   "/agents/**",
   "/snapshots/**",
+  "/openapi",
 ];
 
 const EXCLUDED_ROUTE_PATTERNS = [
@@ -55,6 +56,7 @@ const COLLECTION_ROUTE_SET = new Set([
   "/auth",
   "/fastdata/kv",
   "/neardata",
+  "/openapi",
   "/rpc",
   "/snapshots",
   "/transaction-flow",

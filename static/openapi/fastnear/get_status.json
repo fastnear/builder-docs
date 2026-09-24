@@ -1,0 +1,133 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "FastNEAR API - Status",
+    "version": "3.0.3",
+    "description": "Check the current indexed block height, latency, and deployed service version."
+  },
+  "paths": {
+    "/status": {
+      "get": {
+        "description": "Check the current indexed block height, latency, and deployed service version.",
+        "operationId": "get_status",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "sync_balance_block_height": 129734103,
+                  "sync_block_height": 129734103,
+                  "sync_block_timestamp_nanosec": "1728256282197171397",
+                  "sync_latency_sec": 4.671730603,
+                  "version": "0.10.0"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/StatusResponse"
+                }
+              }
+            },
+            "description": "Current FastNEAR API sync status"
+          },
+          "403": {
+            "content": {
+              "text/plain": {
+                "example": "Invalid API key",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "The supplied API key was not recognized. Omit the key to use public access."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "Get service sync status",
+        "tags": [
+          "system"
+        ]
+      }
+    }
+  },
+  "servers": [
+    {
+      "description": "Mainnet",
+      "url": "https://api.fastnear.com"
+    },
+    {
+      "description": "Testnet",
+      "url": "https://test.api.fastnear.com"
+    }
+  ],
+  "security": [
+    {},
+    {
+      "BearerAuth": []
+    },
+    {
+      "ApiKeyAuth": []
+    }
+  ],
+  "components": {
+    "schemas": {
+      "StatusResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "sync_balance_block_height": {
+            "format": "uint64",
+            "minimum": 0,
+            "nullable": true,
+            "type": "integer"
+          },
+          "sync_block_height": {
+            "format": "uint64",
+            "minimum": 0,
+            "nullable": true,
+            "type": "integer"
+          },
+          "sync_block_timestamp_nanosec": {
+            "nullable": true,
+            "type": "string"
+          },
+          "sync_latency_sec": {
+            "format": "double",
+            "nullable": true,
+            "type": "number"
+          },
+          "version": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "version",
+          "sync_block_height",
+          "sync_latency_sec",
+          "sync_block_timestamp_nanosec",
+          "sync_balance_block_height"
+        ],
+        "type": "object"
+      }
+    },
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "description": "FastNEAR API key as the `apiKey` query parameter. Handy for curl or clients that cannot set headers, but the key can end up in URLs, logs, and shell history.",
+        "in": "query",
+        "name": "apiKey",
+        "type": "apiKey"
+      },
+      "BearerAuth": {
+        "description": "FastNEAR API key as an `Authorization: Bearer` header. Preferred for backends, workers, and proxies because it keeps the key out of URLs and logs.",
+        "scheme": "bearer",
+        "type": "http"
+      }
+    }
+  }
+}

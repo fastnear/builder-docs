@@ -10,7 +10,10 @@
 - Транспорт: json-rpc
 - Метод: POST
 - Путь: `/`
-- Исходная спецификация: `rpcs/protocol/gas_price.yaml`
+## OpenAPI
+- Эта операция: https://docs.fastnear.com/openapi/rpc/gas_price.json (https://docs.fastnear.com/openapi/rpc/gas_price.yaml)
+- Полный документ API: https://docs.fastnear.com/openapi/rpc.json
+- Указатель в полном документе: https://docs.fastnear.com/openapi/rpc.json#/paths/~1gas_price/post
 ## Сети
 - Mainnet: https://rpc.mainnet.fastnear.com/
 - Testnet: https://rpc.testnet.fastnear.com/

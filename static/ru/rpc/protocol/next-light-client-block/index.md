@@ -10,7 +10,10 @@
 - Транспорт: json-rpc
 - Метод: POST
 - Путь: `/`
-- Исходная спецификация: `rpcs/protocol/next_light_client_block.yaml`
+## OpenAPI
+- Эта операция: https://docs.fastnear.com/openapi/rpc/next_light_client_block.json (https://docs.fastnear.com/openapi/rpc/next_light_client_block.yaml)
+- Полный документ API: https://docs.fastnear.com/openapi/rpc.json
+- Указатель в полном документе: https://docs.fastnear.com/openapi/rpc.json#/paths/~1next_light_client_block/post
 ## Сети
 - Mainnet: https://archival-rpc.mainnet.fastnear.com/ (archival: Pinned light-client head, older than standard RPC retention.)
 - Testnet: https://archival-rpc.testnet.fastnear.com/ (archival: Pinned light-client head, older than standard RPC retention.)

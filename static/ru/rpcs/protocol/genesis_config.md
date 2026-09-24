@@ -9,7 +9,10 @@
 - Транспорт: json-rpc
 - Метод: POST
 - Путь: `/`
-- Исходная спецификация: `rpcs/protocol/genesis_config.yaml`
+## OpenAPI
+- Эта операция: https://docs.fastnear.com/openapi/rpc/genesis_config.json (https://docs.fastnear.com/openapi/rpc/genesis_config.yaml)
+- Полный документ API: https://docs.fastnear.com/openapi/rpc.json
+- Указатель в полном документе: https://docs.fastnear.com/openapi/rpc.json#/paths/~1genesis_config/post
 ## Сети
 - Mainnet: https://rpc.mainnet.fastnear.com/
 - Testnet: https://rpc.testnet.fastnear.com/

@@ -30,6 +30,14 @@
       "supportsFinality": false,
       "transport": "http"
     },
+    "openapi": {
+      "family": "neardata",
+      "familyJson": "/openapi/neardata.json",
+      "familyYaml": "/openapi/neardata.yaml",
+      "json": "/openapi/neardata/get_health.json",
+      "pointer": "/openapi/neardata.json#/paths/~1health/get",
+      "yaml": "/openapi/neardata/get_health.yaml"
+    },
     "pageModelId": "neardata-system-health",
     "replaceOperationPage": true,
     "request": {
@@ -165,6 +173,14 @@
       "requestMethod": "get_first_block",
       "supportsFinality": false,
       "transport": "http"
+    },
+    "openapi": {
+      "family": "neardata",
+      "familyJson": "/openapi/neardata.json",
+      "familyYaml": "/openapi/neardata.yaml",
+      "json": "/openapi/neardata/get_first_block.json",
+      "pointer": "/openapi/neardata.json#/paths/~1v0~1first_block/get",
+      "yaml": "/openapi/neardata/get_first_block.yaml"
     },
     "pageModelId": "neardata-v0-first-block",
     "replaceOperationPage": true,
@@ -2098,6 +2114,14 @@
       "requestMethod": "get_block",
       "supportsFinality": false,
       "transport": "http"
+    },
+    "openapi": {
+      "family": "neardata",
+      "familyJson": "/openapi/neardata.json",
+      "familyYaml": "/openapi/neardata.yaml",
+      "json": "/openapi/neardata/get_block.json",
+      "pointer": "/openapi/neardata.json#/paths/~1v0~1block~1%7Bblock_height%7D/get",
+      "yaml": "/openapi/neardata/get_block.yaml"
     },
     "pageModelId": "neardata-v0-block",
     "replaceOperationPage": true,
@@ -4091,6 +4115,14 @@
       "supportsFinality": false,
       "transport": "http"
     },
+    "openapi": {
+      "family": "neardata",
+      "familyJson": "/openapi/neardata.json",
+      "familyYaml": "/openapi/neardata.yaml",
+      "json": "/openapi/neardata/get_block_headers.json",
+      "pointer": "/openapi/neardata.json#/paths/~1v0~1block~1%7Bblock_height%7D~1headers/get",
+      "yaml": "/openapi/neardata/get_block_headers.yaml"
+    },
     "pageModelId": "neardata-v0-block-headers",
     "replaceOperationPage": true,
     "request": {
@@ -4495,6 +4527,14 @@
       "requestMethod": "get_chunk",
       "supportsFinality": false,
       "transport": "http"
+    },
+    "openapi": {
+      "family": "neardata",
+      "familyJson": "/openapi/neardata.json",
+      "familyYaml": "/openapi/neardata.yaml",
+      "json": "/openapi/neardata/get_chunk.json",
+      "pointer": "/openapi/neardata.json#/paths/~1v0~1block~1%7Bblock_height%7D~1chunk~1%7Bshard_id%7D/get",
+      "yaml": "/openapi/neardata/get_chunk.yaml"
     },
     "pageModelId": "neardata-v0-block-chunk",
     "replaceOperationPage": true,
@@ -5564,6 +5604,14 @@
       "requestMethod": "get_shard",
       "supportsFinality": false,
       "transport": "http"
+    },
+    "openapi": {
+      "family": "neardata",
+      "familyJson": "/openapi/neardata.json",
+      "familyYaml": "/openapi/neardata.yaml",
+      "json": "/openapi/neardata/get_shard.json",
+      "pointer": "/openapi/neardata.json#/paths/~1v0~1block~1%7Bblock_height%7D~1shard~1%7Bshard_id%7D/get",
+      "yaml": "/openapi/neardata/get_shard.yaml"
     },
     "pageModelId": "neardata-v0-block-shard",
     "replaceOperationPage": true,
@@ -7344,6 +7392,14 @@
       "requestMethod": "get_block_optimistic",
       "supportsFinality": false,
       "transport": "http"
+    },
+    "openapi": {
+      "family": "neardata",
+      "familyJson": "/openapi/neardata.json",
+      "familyYaml": "/openapi/neardata.yaml",
+      "json": "/openapi/neardata/get_block_optimistic.json",
+      "pointer": "/openapi/neardata.json#/paths/~1v0~1block_opt~1%7Bblock_height%7D/get",
+      "yaml": "/openapi/neardata/get_block_optimistic.yaml"
     },
     "pageModelId": "neardata-v0-block-optimistic",
     "replaceOperationPage": true,
@@ -9321,6 +9377,14 @@
       "supportsFinality": false,
       "transport": "http"
     },
+    "openapi": {
+      "family": "neardata",
+      "familyJson": "/openapi/neardata.json",
+      "familyYaml": "/openapi/neardata.yaml",
+      "json": "/openapi/neardata/get_last_block_final.json",
+      "pointer": "/openapi/neardata.json#/paths/~1v0~1last_block~1final/get",
+      "yaml": "/openapi/neardata/get_last_block_final.yaml"
+    },
     "pageModelId": "neardata-v0-last-block-final",
     "replaceOperationPage": true,
     "request": {
@@ -11245,6 +11309,14 @@
       "requestMethod": "get_last_block_optimistic",
       "supportsFinality": false,
       "transport": "http"
+    },
+    "openapi": {
+      "family": "neardata",
+      "familyJson": "/openapi/neardata.json",
+      "familyYaml": "/openapi/neardata.yaml",
+      "json": "/openapi/neardata/get_last_block_optimistic.json",
+      "pointer": "/openapi/neardata.json#/paths/~1v0~1last_block~1optimistic/get",
+      "yaml": "/openapi/neardata/get_last_block_optimistic.yaml"
     },
     "pageModelId": "neardata-v0-last-block-optimistic",
     "replaceOperationPage": true,

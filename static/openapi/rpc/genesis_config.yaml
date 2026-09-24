@@ -1,0 +1,364 @@
+openapi: 3.1.0
+info:
+  title: "NEAR Protocol RPC: Get genesis config"
+  description: Fetch the chain's immutable genesis config — initial records, protocol settings, and epoch length at block 0.
+  version: 1.0.0
+servers:
+  - url: https://rpc.mainnet.fastnear.com
+    description: Mainnet
+  - url: https://rpc.testnet.fastnear.com
+    description: Testnet
+  - url: https://archival-rpc.mainnet.fastnear.com
+    description: Mainnet Archival
+  - url: https://archival-rpc.testnet.fastnear.com
+    description: Testnet Archival
+paths:
+  /:
+    post:
+      operationId: genesis_config
+      summary: Get genesis config
+      description: Fetch the chain's immutable genesis config — initial records, protocol settings, and epoch length at block 0.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - jsonrpc
+                - id
+                - method
+                - params
+              properties:
+                jsonrpc:
+                  type: string
+                  enum:
+                    - "2.0"
+                id:
+                  type: string
+                  example: fastnear
+                method:
+                  type: string
+                  enum:
+                    - genesis_config
+                params:
+                  type: array
+                  maxItems: 0
+                  description: Empty array as this method takes no parameters
+                  example: []
+            examples:
+              mainnet:
+                summary: Get genesis config (Mainnet)
+                value:
+                  jsonrpc: "2.0"
+                  id: fastnear
+                  method: genesis_config
+                  params: []
+              testnet:
+                summary: Get genesis config (Testnet)
+                value:
+                  jsonrpc: "2.0"
+                  id: fastnear
+                  method: genesis_config
+                  params: []
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/JsonRpcResponse"
+        "403":
+          description: The supplied API key was not recognized.
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: Invalid API key
+security:
+  - {}
+  - BearerAuth: []
+  - ApiKeyAuth: []
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      description: "FastNEAR API key as an `Authorization: Bearer` header. Preferred for backends, workers, and proxies because it keeps the key out of URLs and logs."
+    ApiKeyAuth:
+      type: apiKey
+      in: query
+      name: apiKey
+      description: FastNEAR API key as the `apiKey` query parameter. Handy for curl or clients that cannot set headers, but the key can end up in URLs, logs, and shell history.
+  schemas:
+    JsonRpcResponse:
+      type: object
+      required:
+        - jsonrpc
+        - id
+      properties:
+        jsonrpc:
+          type: string
+          enum:
+            - "2.0"
+        id:
+          oneOf:
+            - type: string
+            - type: number
+        result:
+          type: object
+          properties:
+            block_producer_kickout_threshold:
+              type: integer
+              description: Threshold for kicking out block producers, between 0 and 100.
+              format: uint8
+              minimum: 0
+            chain_id:
+              type: string
+              description: |-
+                ID of the blockchain. This must be unique for every blockchain.
+                If your testnet blockchains do not have unique chain IDs, you will have a bad time.
+            chunk_producer_assignment_changes_limit:
+              type: integer
+              description: |-
+                Limits the number of shard changes in chunk producer assignments,
+                if algorithm is able to choose assignment with better balance of
+                number of chunk producers for shards.
+              format: uint64
+              default: 5
+              minimum: 0
+            chunk_producer_kickout_threshold:
+              type: integer
+              description: Threshold for kicking out chunk producers, between 0 and 100.
+              format: uint8
+              minimum: 0
+            chunk_validator_only_kickout_threshold:
+              type: integer
+              description: Threshold for kicking out nodes which are only chunk validators, between 0 and 100.
+              format: uint8
+              default: 80
+              minimum: 0
+            dynamic_resharding:
+              type: boolean
+              description: Enable dynamic re-sharding.
+            epoch_length:
+              type: integer
+              description: Epoch length counted in block heights.
+              format: uint64
+              minimum: 0
+            fishermen_threshold:
+              type: string
+              description: Amount in yoctoNEAR
+            gas_limit:
+              type: string
+              description: Gas amount
+            gas_price_adjustment_rate:
+              type: array
+              items:
+                type: integer
+                format: int32
+              description: Gas price adjustment rate
+            genesis_height:
+              type: integer
+              description: Height of genesis block.
+              format: uint64
+              minimum: 0
+            genesis_time:
+              type: string
+              description: Official time of blockchain start.
+              format: date-time
+            max_gas_price:
+              type: string
+              description: Amount in yoctoNEAR
+            max_inflation_rate:
+              type: array
+              items:
+                type: integer
+                format: int32
+              description: Maximum inflation on the total supply every epoch.
+            max_kickout_stake_perc:
+              type: integer
+              description: Max stake percentage of the validators we will kick out.
+              format: uint8
+              default: 100
+              minimum: 0
+            min_gas_price:
+              type: string
+              description: Amount in yoctoNEAR
+            minimum_stake_divisor:
+              type: integer
+              description: The minimum stake required for staking is last seat price divided by this number.
+              format: uint64
+              default: 10
+              minimum: 0
+            minimum_stake_ratio:
+              type: array
+              items:
+                type: integer
+                format: int32
+              description: |-
+                The lowest ratio s/s_total any block producer can have.
+                See <https://github.com/near/NEPs/pull/167> for details
+            minimum_validators_per_shard:
+              type: integer
+              description: The minimum number of validators each shard must have
+              format: uint64
+              default: 1
+              minimum: 0
+            num_block_producer_seats:
+              type: integer
+              description: Number of block producer seats at genesis.
+              format: uint64
+              minimum: 0
+            num_blocks_per_year:
+              type: integer
+              description: Expected number of blocks per year
+              format: uint64
+              minimum: 0
+            num_chunk_producer_seats:
+              type: integer
+              description: |-
+                Number of chunk producers.
+                Don't mess it up with chunk-only producers feature which is deprecated.
+              format: uint64
+              default: 100
+              minimum: 0
+            num_chunk_validator_seats:
+              type: integer
+              format: uint64
+              default: 300
+              minimum: 0
+            online_max_threshold:
+              type: array
+              items:
+                type: integer
+                format: int32
+              description: Online maximum threshold above which validator gets full reward.
+            online_min_threshold:
+              type: array
+              items:
+                type: integer
+                format: int32
+              description: Online minimum threshold below which validator doesn't receive reward.
+            protocol_reward_rate:
+              type: array
+              items:
+                type: integer
+                format: int32
+              description: Protocol treasury rate
+            protocol_treasury_account:
+              type: string
+              description: NEAR account ID
+            protocol_upgrade_stake_threshold:
+              type: array
+              items:
+                type: integer
+                format: int32
+              description: Threshold of stake that needs to indicate that they ready for upgrade.
+            protocol_version:
+              type: integer
+              description: Protocol version that this genesis works with.
+              format: uint32
+              minimum: 0
+            shard_layout:
+              type: object
+              description: One of multiple possible types
+              default:
+                V2:
+                  boundary_accounts: []
+                  id_to_index_map:
+                    "0": 0
+                  index_to_id_map:
+                    "0": 0
+                  shard_ids:
+                    - 0
+                  version: 0
+            shuffle_shard_assignment_for_chunk_producers:
+              type: boolean
+              description: |-
+                If true, shuffle the chunk producers across shards. In other words, if
+                the shard assignments were `[S_0, S_1, S_2, S_3]` where `S_i` represents
+                the set of chunk producers for shard `i`, if this flag were true, the
+                shard assignments might become, for example, `[S_2, S_0, S_3, S_1]`.
+              default: false
+            target_validator_mandates_per_shard:
+              type: integer
+              description: Number of target chunk validator mandates for each shard.
+              format: uint64
+              default: 68
+              minimum: 0
+            total_supply:
+              type: string
+              description: Amount in yoctoNEAR
+            transaction_validity_period:
+              type: integer
+              description: Number of blocks for which a given transaction is valid
+              format: uint64
+              minimum: 0
+            use_production_config:
+              type: boolean
+              description: |-
+                This is only for test purposes. We hard code some configs for mainnet and testnet
+                in AllEpochConfig, and we want to have a way to test that code path. This flag is for that.
+                If set to true, the node will use the same config override path as mainnet and testnet.
+              default: false
+            validators:
+              type: array
+              items:
+                type: object
+                description: Account info for validators
+              description: List of initial validators.
+            avg_hidden_validator_seats_per_shard:
+              type: array
+              items:
+                type: integer
+                format: uint64
+                minimum: 0
+              description: Expected number of hidden validators per shard.
+            num_block_producer_seats_per_shard:
+              type: array
+              items:
+                type: integer
+                format: uint64
+                minimum: 0
+              description: |-
+                Defines number of shards and number of block producer seats per each shard at genesis.
+                Note: not used with protocol_feature_chunk_only_producers -- replaced by minimum_validators_per_shard
+                Note: not used before as all block producers produce chunks for all shards
+            num_chunk_only_producer_seats:
+              type: integer
+              description: Deprecated.
+              format: uint64
+              default: 300
+              minimum: 0
+          required:
+            - protocol_version
+            - genesis_time
+            - chain_id
+            - genesis_height
+            - num_block_producer_seats
+            - dynamic_resharding
+            - epoch_length
+            - gas_limit
+            - min_gas_price
+            - max_gas_price
+            - block_producer_kickout_threshold
+            - chunk_producer_kickout_threshold
+            - gas_price_adjustment_rate
+            - validators
+            - transaction_validity_period
+            - protocol_reward_rate
+            - max_inflation_rate
+            - total_supply
+            - num_blocks_per_year
+            - protocol_treasury_account
+            - fishermen_threshold
+        error:
+          type: object
+          properties:
+            code:
+              type: integer
+            message:
+              type: string
+            data:
+              type: object

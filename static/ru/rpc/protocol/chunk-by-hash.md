@@ -10,7 +10,10 @@
 - Транспорт: json-rpc
 - Метод: POST
 - Путь: `/`
-- Исходная спецификация: `rpcs/protocol/chunk_by_hash.yaml`
+## OpenAPI
+- Эта операция: https://docs.fastnear.com/openapi/rpc/chunk_by_hash.json (https://docs.fastnear.com/openapi/rpc/chunk_by_hash.yaml)
+- Полный документ API: https://docs.fastnear.com/openapi/rpc.json
+- Указатель в полном документе: https://docs.fastnear.com/openapi/rpc.json#/paths/~1chunk_by_hash/post
 ## Сети
 - Mainnet: https://archival-rpc.mainnet.fastnear.com/ (archival: Pinned chunk hash, older than standard RPC retention.)
 - Testnet: https://archival-rpc.testnet.fastnear.com/ (archival: Pinned chunk hash, older than standard RPC retention.)

@@ -171,6 +171,11 @@ import Link from '@site/src/components/LocalizedLink';
         <p>Один API-ключ FastNear работает и для RPC, и для REST API.</p>
       </div>
       <div className="fastnear-home-utility-card">
+        <span className="fastnear-home-utility-card__eyebrow">Для агентов и инструментов</span>
+        <Link className="fastnear-home-utility-card__title" to="/openapi">Спецификации OpenAPI</Link>
+        <p>Машиночитаемые документы OpenAPI для каждого семейства API и каждой операции, а также JSON-индекс.</p>
+      </div>
+      <div className="fastnear-home-utility-card">
         <span className="fastnear-home-utility-card__eyebrow">Ключи и оплата</span>
         <Link className="fastnear-home-utility-card__title" to="https://dashboard.fastnear.com">FastNear Dashboard</Link>
         <p>Войдите, создайте ключи и управляйте проектами, которые их используют.</p>

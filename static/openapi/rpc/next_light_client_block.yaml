@@ -1,0 +1,189 @@
+openapi: 3.1.0
+info:
+  title: "NEAR Protocol RPC: Get next light client block"
+  description: Advance a light client's verified chain by fetching the next block header after a known Base58 head hash.
+  version: 1.0.0
+servers:
+  - url: https://rpc.mainnet.fastnear.com
+    description: Mainnet
+  - url: https://rpc.testnet.fastnear.com
+    description: Testnet
+  - url: https://archival-rpc.mainnet.fastnear.com
+    description: Mainnet Archival
+  - url: https://archival-rpc.testnet.fastnear.com
+    description: Testnet Archival
+paths:
+  /:
+    post:
+      operationId: next_light_client_block
+      summary: Get next light client block
+      description: Advance a light client's verified chain by fetching the next block header after a known Base58 head hash.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - jsonrpc
+                - id
+                - method
+                - params
+              properties:
+                jsonrpc:
+                  type: string
+                  enum:
+                    - "2.0"
+                id:
+                  type: string
+                  example: fastnear
+                method:
+                  type: string
+                  enum:
+                    - next_light_client_block
+                params:
+                  type: object
+                  properties:
+                    last_block_hash:
+                      type: string
+                      description: Base58-encoded hash
+                  required:
+                    - last_block_hash
+            examples:
+              mainnet:
+                summary: Get next light client block (Mainnet)
+                value:
+                  jsonrpc: "2.0"
+                  id: fastnear
+                  method: next_light_client_block
+                  params:
+                    last_block_hash: 9XN7MtDywZvfGx6TKy1MT2iCZkKuHikJXmNazxdZ4x6T
+              testnet:
+                summary: Get next light client block (Testnet)
+                value:
+                  jsonrpc: "2.0"
+                  id: fastnear
+                  method: next_light_client_block
+                  params:
+                    last_block_hash: 6JYj6i1FaUCzdoqy41CqUcZJxa5n9EmLEENRDH2gLm5u
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/JsonRpcResponse"
+        "403":
+          description: The supplied API key was not recognized.
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: Invalid API key
+security:
+  - {}
+  - BearerAuth: []
+  - ApiKeyAuth: []
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      description: "FastNEAR API key as an `Authorization: Bearer` header. Preferred for backends, workers, and proxies because it keeps the key out of URLs and logs."
+    ApiKeyAuth:
+      type: apiKey
+      in: query
+      name: apiKey
+      description: FastNEAR API key as the `apiKey` query parameter. Handy for curl or clients that cannot set headers, but the key can end up in URLs, logs, and shell history.
+  schemas:
+    JsonRpcResponse:
+      type: object
+      required:
+        - jsonrpc
+        - id
+      properties:
+        jsonrpc:
+          type: string
+          enum:
+            - "2.0"
+        id:
+          oneOf:
+            - type: string
+            - type: number
+        result:
+          type: object
+          description: A state for the current head of a light client. More info [here](https://nomicon.io/ChainSpec/LightClient).
+          properties:
+            approvals_after_next:
+              type: array
+              items:
+                type:
+                  - string
+                  - "null"
+                description: Base58-encoded cryptographic signature
+            inner_lite:
+              type: object
+              description: A part of a state for the current head of a light client. More info [here](https://nomicon.io/ChainSpec/LightClient).
+              properties:
+                block_merkle_root:
+                  type: string
+                  description: Base58-encoded hash
+                epoch_id:
+                  type: string
+                  description: Base58-encoded hash
+                height:
+                  type: integer
+                  format: uint64
+                  minimum: 0
+                next_bp_hash:
+                  type: string
+                  description: Base58-encoded hash
+                next_epoch_id:
+                  type: string
+                  description: Base58-encoded hash
+                outcome_root:
+                  type: string
+                  description: Base58-encoded hash
+                prev_state_root:
+                  type: string
+                  description: Base58-encoded hash
+                timestamp:
+                  type: integer
+                  description: Legacy json number. Should not be used.
+                  format: uint64
+                  minimum: 0
+                timestamp_nanosec:
+                  type: string
+              required:
+                - height
+                - epoch_id
+                - next_epoch_id
+                - prev_state_root
+                - outcome_root
+                - timestamp
+                - timestamp_nanosec
+                - next_bp_hash
+                - block_merkle_root
+            inner_rest_hash:
+              type: string
+              description: Base58-encoded hash
+            next_block_inner_hash:
+              type: string
+              description: Base58-encoded hash
+            next_bps:
+              type: array
+              items:
+                type: object
+                description: One of multiple possible types
+            prev_block_hash:
+              type: string
+              description: Base58-encoded hash
+        error:
+          type: object
+          properties:
+            code:
+              type: integer
+            message:
+              type: string
+            data:
+              type: object

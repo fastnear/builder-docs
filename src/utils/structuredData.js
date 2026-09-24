@@ -19,6 +19,7 @@ const COLLECTION_ROUTE_SET = new Set([
   '/auth',
   '/fastdata/kv',
   '/neardata',
+  '/openapi',
   '/rpc',
   '/snapshots',
   '/transaction-flow',
@@ -197,6 +198,14 @@ function buildFamilyEntity(family, siteConfig, locale = DEFAULT_LOCALE) {
     name: family.name,
     provider: { '@id': buildOrganizationId(siteConfig) },
     serviceType: family.kind === 'rpc' ? 'JSON-RPC API' : 'REST API',
+    subjectOf: family.openapiPath
+      ? {
+          '@type': 'CreativeWork',
+          encodingFormat: 'application/vnd.oai.openapi+json',
+          name: 'OpenAPI document',
+          url: buildAbsoluteUrl(family.openapiPath, siteConfig, locale, { localized: false }),
+        }
+      : undefined,
     url: docsUrl,
   };
 }
@@ -226,6 +235,13 @@ function buildOperationEntity(operation, siteConfig, locale = DEFAULT_LOCALE) {
     headline: operation.headline || operation.name,
     identifier: operation.pageModelId,
     inLanguage: locale,
+    isBasedOn: operation.openapiPath
+      ? {
+          '@type': 'CreativeWork',
+          encodingFormat: 'application/vnd.oai.openapi+json',
+          url: buildAbsoluteUrl(operation.openapiPath, siteConfig, locale, { localized: false }),
+        }
+      : undefined,
     isPartOf: { '@id': buildFamilyEntityId(siteConfig, operation.familyId) },
     mainEntityOfPage: docsPageRef || undefined,
     name: operation.name,

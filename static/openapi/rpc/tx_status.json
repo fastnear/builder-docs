@@ -1,0 +1,259 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "NEAR Protocol RPC: Get transaction status",
+    "description": "Check a transaction's final outcome by Base58 hash — succeeded, failed, or still unresolved.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://rpc.mainnet.fastnear.com",
+      "description": "Mainnet"
+    },
+    {
+      "url": "https://rpc.testnet.fastnear.com",
+      "description": "Testnet"
+    },
+    {
+      "url": "https://archival-rpc.mainnet.fastnear.com",
+      "description": "Mainnet Archival"
+    },
+    {
+      "url": "https://archival-rpc.testnet.fastnear.com",
+      "description": "Testnet Archival"
+    }
+  ],
+  "paths": {
+    "/": {
+      "post": {
+        "operationId": "tx_status",
+        "summary": "Get transaction status",
+        "description": "Check a transaction's final outcome by Base58 hash — succeeded, failed, or still unresolved.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "jsonrpc",
+                  "id",
+                  "method",
+                  "params"
+                ],
+                "properties": {
+                  "jsonrpc": {
+                    "type": "string",
+                    "enum": [
+                      "2.0"
+                    ]
+                  },
+                  "id": {
+                    "type": "string",
+                    "example": "fastnear"
+                  },
+                  "method": {
+                    "type": "string",
+                    "enum": [
+                      "tx"
+                    ]
+                  },
+                  "params": {
+                    "type": "object",
+                    "properties": {
+                      "wait_until": {
+                        "type": "string",
+                        "enum": [
+                          "NONE",
+                          "INCLUDED",
+                          "INCLUDED_FINAL",
+                          "EXECUTED",
+                          "EXECUTED_OPTIMISTIC",
+                          "FINAL"
+                        ],
+                        "description": "Desired level of execution status guarantee",
+                        "default": "EXECUTED_OPTIMISTIC"
+                      },
+                      "signed_tx_base64": {
+                        "type": "string",
+                        "description": "Base64-encoded Borsh serialization of a `SignedTransaction`; must be freshly signed (nonce above the access key's current value)."
+                      },
+                      "sender_account_id": {
+                        "type": "string",
+                        "description": "NEAR account ID"
+                      },
+                      "tx_hash": {
+                        "type": "string",
+                        "description": "Base58-encoded hash"
+                      }
+                    }
+                  }
+                }
+              },
+              "examples": {
+                "mainnet": {
+                  "summary": "Mainnet Example",
+                  "value": {
+                    "jsonrpc": "2.0",
+                    "id": "fastnear",
+                    "method": "tx",
+                    "params": {
+                      "tx_hash": "34E7weKCDqXh3xPKdBgSWRqo44yTWjbka9deMK8JbAxx",
+                      "sender_account_id": "escrow.ai.near"
+                    }
+                  }
+                },
+                "testnet": {
+                  "summary": "Testnet Example",
+                  "value": {
+                    "jsonrpc": "2.0",
+                    "id": "fastnear",
+                    "method": "tx",
+                    "params": {
+                      "tx_hash": "9LPbkwJ26HYgda7KHrURc6jozBcpdA1kUMSEzwm81JPx",
+                      "sender_account_id": "near-mpc-staking4all-01.testnet"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JsonRpcResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The supplied API key was not recognized.",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                },
+                "example": "Invalid API key"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "security": [
+    {},
+    {
+      "BearerAuth": []
+    },
+    {
+      "ApiKeyAuth": []
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "FastNEAR API key as an `Authorization: Bearer` header. Preferred for backends, workers, and proxies because it keeps the key out of URLs and logs."
+      },
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "query",
+        "name": "apiKey",
+        "description": "FastNEAR API key as the `apiKey` query parameter. Handy for curl or clients that cannot set headers, but the key can end up in URLs, logs, and shell history."
+      }
+    },
+    "schemas": {
+      "JsonRpcResponse": {
+        "type": "object",
+        "required": [
+          "jsonrpc",
+          "id"
+        ],
+        "properties": {
+          "jsonrpc": {
+            "type": "string",
+            "enum": [
+              "2.0"
+            ]
+          },
+          "id": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "number"
+              }
+            ]
+          },
+          "result": {
+            "type": "object",
+            "properties": {
+              "final_execution_status": {
+                "type": "string",
+                "enum": [
+                  "NONE",
+                  "INCLUDED",
+                  "INCLUDED_FINAL",
+                  "EXECUTED",
+                  "EXECUTED_OPTIMISTIC",
+                  "FINAL"
+                ],
+                "description": "Desired level of execution status guarantee"
+              },
+              "receipts": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                },
+                "description": "Receipts generated from the transaction"
+              },
+              "receipts_outcome": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                },
+                "description": "The execution outcome of receipts."
+              },
+              "status": {
+                "type": "object",
+                "description": "One of multiple possible types"
+              },
+              "transaction": {
+                "type": "object",
+                "description": "Signed Transaction"
+              },
+              "transaction_outcome": {
+                "type": "object",
+                "description": "The execution outcome of the signed transaction."
+              }
+            },
+            "required": [
+              "final_execution_status"
+            ]
+          },
+          "error": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "integer"
+              },
+              "message": {
+                "type": "string"
+              },
+              "data": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

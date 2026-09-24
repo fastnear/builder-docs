@@ -9,7 +9,10 @@
 - Транспорт: http
 - Метод: GET
 - Путь: `/v0/block/{block_height}/chunk/{shard_id}`
-- Исходная спецификация: `apis/neardata/v0/block_chunk.yaml`
+## OpenAPI
+- Эта операция: https://docs.fastnear.com/openapi/neardata/get_chunk.json (https://docs.fastnear.com/openapi/neardata/get_chunk.yaml)
+- Полный документ API: https://docs.fastnear.com/openapi/neardata.json
+- Указатель в полном документе: https://docs.fastnear.com/openapi/neardata.json#/paths/~1v0~1block~1%7Bblock_height%7D~1chunk~1%7Bshard_id%7D/get
 ## Сети
 - Mainnet: https://mainnet.neardata.xyz/
 - Testnet: https://testnet.neardata.xyz/

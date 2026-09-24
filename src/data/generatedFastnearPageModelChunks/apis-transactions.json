@@ -272,6 +272,14 @@
       "supportsFinality": false,
       "transport": "http"
     },
+    "openapi": {
+      "family": "transactions",
+      "familyJson": "/openapi/transactions.json",
+      "familyYaml": "/openapi/transactions.yaml",
+      "json": "/openapi/transactions/get_account.json",
+      "pointer": "/openapi/transactions.json#/paths/~1v0~1account/post",
+      "yaml": "/openapi/transactions/get_account.yaml"
+    },
     "pageModelId": "transactions-v0-account",
     "replaceOperationPage": true,
     "request": {
@@ -794,6 +802,14 @@
       "requestMethod": "get_block",
       "supportsFinality": false,
       "transport": "http"
+    },
+    "openapi": {
+      "family": "transactions",
+      "familyJson": "/openapi/transactions.json",
+      "familyYaml": "/openapi/transactions.yaml",
+      "json": "/openapi/transactions/get_block.json",
+      "pointer": "/openapi/transactions.json#/paths/~1v0~1block/post",
+      "yaml": "/openapi/transactions/get_block.yaml"
     },
     "pageModelId": "transactions-v0-block",
     "replaceOperationPage": true,
@@ -1517,6 +1533,14 @@
       "supportsFinality": false,
       "transport": "http"
     },
+    "openapi": {
+      "family": "transactions",
+      "familyJson": "/openapi/transactions.json",
+      "familyYaml": "/openapi/transactions.yaml",
+      "json": "/openapi/transactions/get_blocks.json",
+      "pointer": "/openapi/transactions.json#/paths/~1v0~1blocks/post",
+      "yaml": "/openapi/transactions/get_blocks.yaml"
+    },
     "pageModelId": "transactions-v0-blocks",
     "replaceOperationPage": true,
     "request": {
@@ -1875,6 +1899,14 @@
       "supportsFinality": false,
       "transport": "http"
     },
+    "openapi": {
+      "family": "transactions",
+      "familyJson": "/openapi/transactions.json",
+      "familyYaml": "/openapi/transactions.yaml",
+      "json": "/openapi/transactions/get_receipt.json",
+      "pointer": "/openapi/transactions.json#/paths/~1v0~1receipt/post",
+      "yaml": "/openapi/transactions/get_receipt.yaml"
+    },
     "pageModelId": "transactions-v0-receipt",
     "replaceOperationPage": true,
     "request": {
@@ -2211,6 +2243,14 @@
       "requestMethod": "get_transactions",
       "supportsFinality": false,
       "transport": "http"
+    },
+    "openapi": {
+      "family": "transactions",
+      "familyJson": "/openapi/transactions.json",
+      "familyYaml": "/openapi/transactions.yaml",
+      "json": "/openapi/transactions/get_transactions.json",
+      "pointer": "/openapi/transactions.json#/paths/~1v0~1transactions/post",
+      "yaml": "/openapi/transactions/get_transactions.yaml"
     },
     "pageModelId": "transactions-v0-transactions",
     "replaceOperationPage": true,

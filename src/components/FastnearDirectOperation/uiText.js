@@ -110,6 +110,22 @@ export function getFastnearOperationUiText() {
       id: 'fastnear.operationUi.endpoint',
       message: 'Endpoint',
     }),
+    openapi: translate({
+      id: 'fastnear.operationUi.openapi',
+      message: 'OpenAPI',
+    }),
+    openapiFamilyJson: translate({
+      id: 'fastnear.operationUi.openapiFamilyJson',
+      message: 'full API (JSON)',
+    }),
+    openapiOperationJson: translate({
+      id: 'fastnear.operationUi.openapiOperationJson',
+      message: 'this operation (JSON)',
+    }),
+    openapiYaml: translate({
+      id: 'fastnear.operationUi.openapiYaml',
+      message: 'YAML',
+    }),
     error: translate({
       id: 'fastnear.operationUi.error',
       message: 'Error',

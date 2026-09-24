@@ -12,6 +12,8 @@ import React, {
 import Head from "@docusaurus/Head";
 import { translate } from "@docusaurus/Translate";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
+import useBaseUrl from "@docusaurus/useBaseUrl";
+import { OPENAPI_MEDIA_TYPE, buildStaticAssetUrl } from "@site/src/utils/openapiSpecs";
 
 import FastnearOperationSearchContent from "@site/src/components/FastnearDirectOperation/SearchContent";
 import PageActions from "@site/src/components/PageActions";
@@ -1439,6 +1441,9 @@ function FastnearOperationPage({ pageModel }) {
   const apiKeyStatus = getApiKeyStatus(auth);
   const isUrlApiKeyOverride = auth.apiKeySource === "url";
   const effectiveAuthSummary = getAuthSummary(pageModel, auth);
+  const openapiOperationJsonHref = useBaseUrl(pageModel.openapi?.json || "/openapi/index.json");
+  const openapiOperationYamlHref = useBaseUrl(pageModel.openapi?.yaml || "/openapi/index.json");
+  const openapiFamilyJsonHref = useBaseUrl(pageModel.openapi?.familyJson || "/openapi/index.json");
   const apiKeyInputValue = isUrlApiKeyOverride ? auth.urlApiKey || "" : apiKeyDraft;
   const canSaveApiKey =
     !isUrlApiKeyOverride &&
@@ -2318,6 +2323,22 @@ function FastnearOperationPage({ pageModel }) {
                 <span className="fastnear-interaction__meta-label">{uiText.auth}</span>
                 <span className="fastnear-interaction__meta-value">{effectiveAuthSummary}</span>
               </div>
+              {pageModel.openapi ? (
+                <div className="fastnear-interaction__meta-item" data-fastnear-openapi="links">
+                  <span className="fastnear-interaction__meta-label">{uiText.openapi}</span>
+                  <span className="fastnear-interaction__meta-value">
+                    <a href={openapiOperationJsonHref} data-fastnear-openapi="operation">
+                      {uiText.openapiOperationJson}
+                    </a>
+                    {" · "}
+                    <a href={openapiOperationYamlHref}>{uiText.openapiYaml}</a>
+                    {" · "}
+                    <a href={openapiFamilyJsonHref} data-fastnear-openapi="family">
+                      {uiText.openapiFamilyJson}
+                    </a>
+                  </span>
+                </div>
+              ) : null}
             </div>
           </form>
 
@@ -2741,6 +2762,7 @@ function FastnearOperationLoading() {
 function ResolvedFastnearDirectOperation({ currentLocale, pageModelId, renderDescription }) {
   const pageModel = useFastnearPageModelById(pageModelId, currentLocale);
   const canonicalPageModel = useFastnearPageModelById(pageModelId, "en");
+  const { siteConfig } = useDocusaurusContext();
   const operationMeta = useMemo(
     () => getOperationDocsearchMeta(canonicalPageModel),
     [canonicalPageModel]
@@ -2772,6 +2794,12 @@ function ResolvedFastnearDirectOperation({ currentLocale, pageModelId, renderDes
       data-fastnear-page-type={semanticMeta?.pageType || undefined}
       data-fastnear-surface={semanticMeta?.surface || undefined}
     >
+      {pageModel.openapi ? (
+        <Head>
+          <link rel="service-desc" type={OPENAPI_MEDIA_TYPE} href={buildStaticAssetUrl(pageModel.openapi.familyJson, siteConfig)} />
+          <link rel="describedby" type={OPENAPI_MEDIA_TYPE} href={buildStaticAssetUrl(pageModel.openapi.json, siteConfig)} />
+        </Head>
+      ) : null}
       {seoKeywords.length || operationMeta.transport || operationMeta.operationId || operationMeta.canonicalTarget ? (
         <Head>
           {seoKeywords.length ? (
