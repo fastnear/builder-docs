@@ -2,7 +2,7 @@
   {
     "canonicalPath": "/rpcs/account/view_access_key",
     "info": {
-      "description": "Fetch one access key's permissions and nonce by public key on a given account.",
+      "description": "Fetch one access key's permissions and nonce by public key on a given account. Pass the full public key with its type prefix. For an ML-DSA-65 key that is the full ml-dsa-65: key, not the ml-dsa-65-hash: handle that view_access_key_list reports; the handle is rejected with a parse error (unknown key type).",
       "operationId": "view_access_key",
       "summary": "View access key",
       "title": "NEAR Protocol RPC: View access key",
@@ -24,14 +24,14 @@
           }
         },
         {
-          "description": "ed25519: or secp256k1: prefixed public key",
+          "description": "Public key with its type prefix: ed25519:, secp256k1:, or the full ml-dsa-65: key (never the ml-dsa-65-hash: handle).",
           "label": "Public Key",
           "location": "body",
           "name": "public_key",
           "required": true,
           "schema": {
             "type": "string",
-            "description": "ed25519: or secp256k1: prefixed public key"
+            "description": "Public key with its type prefix: ed25519:, secp256k1:, or the full ml-dsa-65: key (never the ml-dsa-65-hash: handle)."
           }
         }
       ],
@@ -126,7 +126,7 @@
                   "required": true,
                   "schema": {
                     "type": "string",
-                    "description": "ed25519: or secp256k1: prefixed public key"
+                    "description": "Public key with its type prefix: ed25519:, secp256k1:, or the full ml-dsa-65: key (never the ml-dsa-65-hash: handle)."
                   }
                 },
                 {
@@ -339,7 +339,7 @@
   {
     "canonicalPath": "/rpcs/account/view_access_key_list",
     "info": {
-      "description": "Fetch every access key attached to an account, each with its permissions and nonce.",
+      "description": "Fetch every access key attached to an account, each with its permissions and nonce. ML-DSA-65 keys are listed by their ml-dsa-65-hash: handle; to query one with view_access_key, or to reference it in an action, use the full ml-dsa-65: public key instead.",
       "operationId": "view_access_key_list",
       "summary": "View access key list",
       "title": "NEAR Protocol RPC: View access key list",

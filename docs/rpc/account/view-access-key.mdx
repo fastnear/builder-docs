@@ -12,5 +12,8 @@ import FastnearDirectOperation from '@site/src/components/FastnearDirectOperatio
 
 `view_access_key` request type
 
+:::note ML-DSA-65 keys: pass the full key, not the handle
+`view_access_key_list` reports post-quantum keys by their on-chain handle, `ml-dsa-65-hash:<base58>`. This request, and every action that references a key (`DeleteKey`, `TransferToGasKey`, `WithdrawFromGasKey`), needs the full `ml-dsa-65:` public key instead. Sending the handle fails with `REQUEST_VALIDATION_ERROR` / `PARSE_ERROR`: *unknown key type 'ml-dsa-65-hash'*. The FastNear [public-key lookup](/api/v1/public-key) accepts either form.
+:::
 
 <FastnearDirectOperation pageModelId="rpc-view-access-key" renderDescription />

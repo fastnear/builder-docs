@@ -12,5 +12,8 @@ import FastnearDirectOperation from '@site/src/components/FastnearDirectOperatio
 
 `view_access_key_list` request type
 
+:::note ML-DSA-65 keys are listed by handle
+Post-quantum keys appear here as `ml-dsa-65-hash:<base58>`, the SHA3-256 handle the chain stores, not the 2,676-character key that was added. The handle is what the FastNear [public-key lookup](/api/v1/public-key) indexes, but `view_access_key` and key-referencing actions still need the full `ml-dsa-65:` public key, so keep that from the original `AddKey`.
+:::
 
 <FastnearDirectOperation pageModelId="rpc-view-access-key-list" renderDescription />
