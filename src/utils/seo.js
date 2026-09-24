@@ -103,6 +103,38 @@ function extractRoutePathKeywords(pageModel) {
   return segments.slice(0, 4);
 }
 
+// Raw machine-name tokens, un-humanized: the index keeps "_" inside a token,
+// so the humanized variants above ("account id", "call function") never match
+// a query for `{account_id}` or `call_function`. Emitting the literal route
+// path, its segments, and the JSON-RPC `method request_type` pair lets
+// path-literal and canonical-target queries land on the reference page.
+function extractMachineKeywords(pageModel) {
+  const routePath = pageModel?.route?.path || '';
+  const httpMethod = pageModel?.route?.method || '';
+  const transport = pageModel?.route?.transport || '';
+  const requestMethod = pageModel?.interaction?.requestMethod || '';
+  const requestType = pageModel?.interaction?.requestType || '';
+  const keywords = [];
+
+  if (transport === 'http' && routePath && routePath !== '/') {
+    keywords.push(routePath, `${httpMethod} ${routePath}`.trim());
+    routePath
+      .split('/')
+      .map((segment) => segment.replace(/[{}]/g, '').trim())
+      .filter((segment) => segment && !STOP_WORDS.has(segment.toLowerCase()))
+      .forEach((segment) => keywords.push(segment));
+  }
+
+  if (requestType) {
+    keywords.push(requestType);
+    if (requestMethod) {
+      keywords.push(`${requestMethod} ${requestType}`, `request_type=${requestType}`);
+    }
+  }
+
+  return keywords;
+}
+
 function extractNetworkKeywords(pageModel) {
   return (pageModel?.interaction?.networks || []).flatMap((network) => {
     const key = String(network?.key || '').toLowerCase();
@@ -145,6 +177,7 @@ export function buildOperationKeywords(pageModel) {
     requestTypeKeyword,
     ...transportKeyword,
     ...extractRoutePathKeywords(pageModel),
+    ...extractMachineKeywords(pageModel),
     ...extractNetworkKeywords(pageModel),
   ]);
 }
