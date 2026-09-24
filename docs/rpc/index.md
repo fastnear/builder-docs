@@ -65,8 +65,7 @@ In those cases, move to the indexed REST families such as [FastNear API](/api), 
 
 ## Auth and limits
 
-- FastNear API keys are optional; the public endpoints work without one.
-- Higher-limit or standardized authenticated access goes through [Auth & Access](/auth), where the same key works on both the regular and archival RPC hosts as either an `Authorization: Bearer` header or an `?apiKey=` URL parameter.
+- Send your FastNear API key on both the regular and archival RPC hosts as either an `Authorization: Bearer` header or an `?apiKey=` URL parameter; see [Auth & Access](/auth).
 
 ## Shareable live examples
 

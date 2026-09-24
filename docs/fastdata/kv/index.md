@@ -95,7 +95,7 @@ Use [KV FastData Examples](/fastdata/kv/examples) for worked examples like exact
 
 ## Auth and availability
 
-- Public indexed storage reads often work without a key.
+- Send your FastNear API key with every request.
 - If you standardize on one FastNear API key across FastNear surfaces, reuse the same header or query-param shape here too.
 - Add `?network=testnet` to switch the page to the testnet backend where supported.
 - List responses omit `page_token` when there are no more results.

@@ -2,7 +2,7 @@
 sidebar_position: 1
 slug: /
 title: "Справочник RPC / API"
-description: "Выберите подходящий API FastNear, справочник RPC или операторское руководство для балансов, истории транзакций, снапшотов, повышенных лимитов и чтения данных почти в реальном времени."
+description: "Выберите подходящий API FastNear, справочник RPC или операторское руководство для балансов, истории транзакций, снапшотов, аутентификации и чтения данных почти в реальном времени."
 sidebar_label: "Эндпоинты"
 displayed_sidebar: null
 hide_table_of_contents: true
@@ -166,14 +166,14 @@ import Link from '@site/src/components/LocalizedLink';
 
     <div className="fastnear-home-utility-grid">
       <div className="fastnear-home-utility-card">
-        <span className="fastnear-home-utility-card__eyebrow">Повышенные лимиты</span>
+        <span className="fastnear-home-utility-card__eyebrow">API-ключи</span>
         <Link className="fastnear-home-utility-card__title" to="/auth">Аутентификация и доступ</Link>
         <p>Один API-ключ FastNear работает и для RPC, и для REST API.</p>
       </div>
       <div className="fastnear-home-utility-card">
         <span className="fastnear-home-utility-card__eyebrow">Ключи и оплата</span>
         <Link className="fastnear-home-utility-card__title" to="https://dashboard.fastnear.com">FastNear Dashboard</Link>
-        <p>Войдите, создайте ключи и переходите на сценарии с более высокими лимитами, когда понадобится.</p>
+        <p>Войдите, создайте ключи и управляйте проектами, которые их используют.</p>
       </div>
       <div className="fastnear-home-utility-card">
         <span className="fastnear-home-utility-card__eyebrow">Живые операции</span>

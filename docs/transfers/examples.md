@@ -10,7 +10,7 @@ page_actions:
 
 ## Examples
 
-These shell examples work on the public Transfers and Transactions endpoints. If `FASTNEAR_API_KEY` is set in your shell, the snippets pass it as an `apiKey` query parameter automatically; if it is unset, they fall back to the public unauthenticated path. Bearer auth with `Authorization: Bearer ${FASTNEAR_API_KEY}` is also supported when headers fit your client better.
+These shell examples run against the Transfers and Transactions endpoints and pass `FASTNEAR_API_KEY` from your shell as an `apiKey` query parameter, so set it first. Bearer auth with `Authorization: Bearer ${FASTNEAR_API_KEY}` is also supported when headers fit your client better.
 
 ### What's this account's recent transfer activity?
 

@@ -36,7 +36,7 @@ https://testnet.neardata.xyz
 
 ## Auth and availability
 
-- The same FastNear API key works here too; public reads can still use an optional `apiKey` query parameter on supported traffic.
+- The same FastNear API key works here too, as an `Authorization: Bearer` header or an `apiKey` query parameter.
 - An invalid API key returns `403` before the redirect helpers run, so invalid-key debugging will not surface the canonical target URL.
 - Add `?network=testnet` to switch compatible pages to testnet defaults.
 

@@ -2,7 +2,7 @@
 sidebar_position: 1
 slug: /
 title: RPC / API Reference
-description: Choose the right FastNear API, RPC reference, or operator guide for balances, transaction history, snapshots, higher limits, and near-realtime reads.
+description: Choose the right FastNear API, RPC reference, or operator guide for balances, transaction history, snapshots, authentication, and near-realtime reads.
 sidebar_label: Endpoints
 displayed_sidebar: null
 hide_table_of_contents: true
@@ -159,14 +159,14 @@ import Link from '@site/src/components/LocalizedLink';
 
     <div className="fastnear-home-utility-grid">
       <div className="fastnear-home-utility-card">
-        <span className="fastnear-home-utility-card__eyebrow">Higher limits</span>
+        <span className="fastnear-home-utility-card__eyebrow">API keys</span>
         <Link className="fastnear-home-utility-card__title" to="/auth">Auth &amp; Access</Link>
         <p>Use one FastNear API key across both the RPC and REST APIs.</p>
       </div>
       <div className="fastnear-home-utility-card">
         <span className="fastnear-home-utility-card__eyebrow">Keys and billing</span>
         <Link className="fastnear-home-utility-card__title" to="https://dashboard.fastnear.com">FastNear Dashboard</Link>
-        <p>Sign in, create keys, and move to higher-limit usage patterns when you need them.</p>
+        <p>Sign in, create keys, and manage the projects that use them.</p>
       </div>
       <div className="fastnear-home-utility-card">
         <span className="fastnear-home-utility-card__eyebrow">Live operations</span>

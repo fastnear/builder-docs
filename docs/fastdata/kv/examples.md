@@ -10,7 +10,7 @@ page_actions:
 
 ## Examples
 
-All shell examples below work on the public KV FastData hosts as-is. If `FASTNEAR_API_KEY` is set in your shell, they pass it as an `apiKey` query parameter automatically; if it is unset, they fall back to the public unauthenticated path. Bearer auth with `Authorization: Bearer ${FASTNEAR_API_KEY}` is also supported when headers fit your client better.
+The shell examples below run against the KV FastData hosts and pass `FASTNEAR_API_KEY` from your shell as an `apiKey` query parameter, so set it first. Bearer auth with `Authorization: Bearer ${FASTNEAR_API_KEY}` is also supported when headers fit your client better.
 
 ### Check one exact key, then replay its history
 
