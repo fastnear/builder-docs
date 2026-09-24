@@ -68,7 +68,9 @@ Important notes:
 - `DOCSEARCH_INDEX_NAME` is the index name, not the crawler display name.
 - `ALGOLIA_CRAWLER_NAME` is the crawler display name, for example `prod_fastnear_docs_crawler`.
 - The repo now constructs crawler Basic auth internally. You do not need to precompute it.
-- This repo does **not** use an Algolia admin key. Rules (`algolia/rules.json`) and synonyms (`algolia/synonyms.json`) are managed through the Algolia dashboard UI — the JSON files in `algolia/` are the intended-state reference, not a machine-synced artifact. See `algolia/operations.md` for the "dashboard curation baseline" framing. `scripts/audit-indexing-surface.js` enforces that `.env.example` never documents an admin key so this posture stays explicit.
+- This repo does **not** use an Algolia admin key, and none can be created: the application is DocSearch-provisioned, so the dashboard exposes only the search, analytics, usage and monitoring keys. `scripts/audit-indexing-surface.js` enforces that `.env.example` never documents an admin key so this posture stays explicit.
+- **Rules are unavailable on this plan.** The Rules quota is zero, so `algolia/rules.json` cannot be applied by any means; it is kept only as intent. Ranking problems are solved with index settings, crawler `pageRank`, keywords, and synonyms instead.
+- **Synonyms can be pushed** with `yarn algolia:synonyms:push --apply`. The write credential is the index key carried by the crawler's own configuration, fetched through the Crawler API with the crawler credentials already in `.env` and never stored. The same key can apply `algolia/index-settings.json` live when a ranking change must not wait for a reindex.
 
 ---
 

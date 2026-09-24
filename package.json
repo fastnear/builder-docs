@@ -32,6 +32,7 @@
     "algolia:inspect": "node scripts/algolia-inspect.js",
     "algolia:status": "node scripts/algolia-status.js",
     "algolia:sync": "node scripts/algolia-sync.js",
+    "algolia:synonyms:push": "node scripts/algolia-push-synonyms.js",
     "algolia:crawler:status": "node scripts/algolia-crawler-status.js",
     "algolia:crawler:sync": "node scripts/algolia-crawler-sync.js",
     "algolia:crawler:start": "node scripts/algolia-crawler-start.js",
