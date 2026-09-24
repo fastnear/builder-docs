@@ -291,6 +291,14 @@
           "refName": "JsonRpcResponse"
         },
         "status": "200"
+      },
+      {
+        "description": "The supplied API key was not recognized. Omit the key to use public access.",
+        "mediaType": "text/plain",
+        "schema": {
+          "type": "string"
+        },
+        "status": "403"
       }
     ],
     "route": {
@@ -302,15 +310,16 @@
       "/rpcs/protocol/EXPERIMENTAL_congestion_level/other/EXPERIMENTAL_congestion_level",
       "/reference/operation/EXPERIMENTAL_congestion_level"
     ],
+    "securityOptional": true,
     "securitySchemes": [
       {
-        "description": "FastNEAR API key sent as an `Authorization: Bearer` header; recommended when you control the client.",
+        "description": "FastNEAR API key as an `Authorization: Bearer` header. Preferred for backends, workers, and proxies because it keeps the key out of URLs and logs.",
         "id": "BearerAuth",
         "scheme": "bearer",
         "type": "http"
       },
       {
-        "description": "FastNEAR API key as the `apiKey` query parameter; convenient for browsers, but the key appears in URLs and logs.",
+        "description": "FastNEAR API key as the `apiKey` query parameter. Handy for curl or clients that cannot set headers, but the key can end up in URLs, logs, and shell history.",
         "id": "ApiKeyAuth",
         "in": "query",
         "name": "apiKey",
@@ -633,6 +642,14 @@
           "refName": "JsonRpcResponse"
         },
         "status": "200"
+      },
+      {
+        "description": "The supplied API key was not recognized. Omit the key to use public access.",
+        "mediaType": "text/plain",
+        "schema": {
+          "type": "string"
+        },
+        "status": "403"
       }
     ],
     "route": {
@@ -644,15 +661,16 @@
       "/rpcs/protocol/EXPERIMENTAL_light_client_block_proof/other/EXPERIMENTAL_light_client_block_proof",
       "/reference/operation/EXPERIMENTAL_light_client_block_proof"
     ],
+    "securityOptional": true,
     "securitySchemes": [
       {
-        "description": "FastNEAR API key sent as an `Authorization: Bearer` header; recommended when you control the client.",
+        "description": "FastNEAR API key as an `Authorization: Bearer` header. Preferred for backends, workers, and proxies because it keeps the key out of URLs and logs.",
         "id": "BearerAuth",
         "scheme": "bearer",
         "type": "http"
       },
       {
-        "description": "FastNEAR API key as the `apiKey` query parameter; convenient for browsers, but the key appears in URLs and logs.",
+        "description": "FastNEAR API key as the `apiKey` query parameter. Handy for curl or clients that cannot set headers, but the key can end up in URLs, logs, and shell history.",
         "id": "ApiKeyAuth",
         "in": "query",
         "name": "apiKey",
@@ -1126,6 +1144,14 @@
           "refName": "JsonRpcResponse"
         },
         "status": "200"
+      },
+      {
+        "description": "The supplied API key was not recognized. Omit the key to use public access.",
+        "mediaType": "text/plain",
+        "schema": {
+          "type": "string"
+        },
+        "status": "403"
       }
     ],
     "route": {
@@ -1137,15 +1163,16 @@
       "/rpcs/protocol/EXPERIMENTAL_light_client_proof/other/EXPERIMENTAL_light_client_proof",
       "/reference/operation/EXPERIMENTAL_light_client_proof"
     ],
+    "securityOptional": true,
     "securitySchemes": [
       {
-        "description": "FastNEAR API key sent as an `Authorization: Bearer` header; recommended when you control the client.",
+        "description": "FastNEAR API key as an `Authorization: Bearer` header. Preferred for backends, workers, and proxies because it keeps the key out of URLs and logs.",
         "id": "BearerAuth",
         "scheme": "bearer",
         "type": "http"
       },
       {
-        "description": "FastNEAR API key as the `apiKey` query parameter; convenient for browsers, but the key appears in URLs and logs.",
+        "description": "FastNEAR API key as the `apiKey` query parameter. Handy for curl or clients that cannot set headers, but the key can end up in URLs, logs, and shell history.",
         "id": "ApiKeyAuth",
         "in": "query",
         "name": "apiKey",
@@ -1742,6 +1769,14 @@
           "refName": "JsonRpcResponse"
         },
         "status": "200"
+      },
+      {
+        "description": "The supplied API key was not recognized. Omit the key to use public access.",
+        "mediaType": "text/plain",
+        "schema": {
+          "type": "string"
+        },
+        "status": "403"
       }
     ],
     "route": {
@@ -1753,15 +1788,16 @@
       "/rpcs/protocol/EXPERIMENTAL_protocol_config/other/EXPERIMENTAL_protocol_config",
       "/reference/operation/EXPERIMENTAL_protocol_config"
     ],
+    "securityOptional": true,
     "securitySchemes": [
       {
-        "description": "FastNEAR API key sent as an `Authorization: Bearer` header; recommended when you control the client.",
+        "description": "FastNEAR API key as an `Authorization: Bearer` header. Preferred for backends, workers, and proxies because it keeps the key out of URLs and logs.",
         "id": "BearerAuth",
         "scheme": "bearer",
         "type": "http"
       },
       {
-        "description": "FastNEAR API key as the `apiKey` query parameter; convenient for browsers, but the key appears in URLs and logs.",
+        "description": "FastNEAR API key as the `apiKey` query parameter. Handy for curl or clients that cannot set headers, but the key can end up in URLs, logs, and shell history.",
         "id": "ApiKeyAuth",
         "in": "query",
         "name": "apiKey",
@@ -2009,6 +2045,14 @@
           "refName": "JsonRpcResponse"
         },
         "status": "200"
+      },
+      {
+        "description": "The supplied API key was not recognized. Omit the key to use public access.",
+        "mediaType": "text/plain",
+        "schema": {
+          "type": "string"
+        },
+        "status": "403"
       }
     ],
     "route": {
@@ -2020,15 +2064,16 @@
       "/rpcs/protocol/EXPERIMENTAL_split_storage_info/other/EXPERIMENTAL_split_storage_info",
       "/reference/operation/EXPERIMENTAL_split_storage_info"
     ],
+    "securityOptional": true,
     "securitySchemes": [
       {
-        "description": "FastNEAR API key sent as an `Authorization: Bearer` header; recommended when you control the client.",
+        "description": "FastNEAR API key as an `Authorization: Bearer` header. Preferred for backends, workers, and proxies because it keeps the key out of URLs and logs.",
         "id": "BearerAuth",
         "scheme": "bearer",
         "type": "http"
       },
       {
-        "description": "FastNEAR API key as the `apiKey` query parameter; convenient for browsers, but the key appears in URLs and logs.",
+        "description": "FastNEAR API key as the `apiKey` query parameter. Handy for curl or clients that cannot set headers, but the key can end up in URLs, logs, and shell history.",
         "id": "ApiKeyAuth",
         "in": "query",
         "name": "apiKey",
@@ -2286,6 +2331,14 @@
           "refName": "JsonRpcResponse"
         },
         "status": "200"
+      },
+      {
+        "description": "The supplied API key was not recognized. Omit the key to use public access.",
+        "mediaType": "text/plain",
+        "schema": {
+          "type": "string"
+        },
+        "status": "403"
       }
     ],
     "route": {
@@ -2297,15 +2350,16 @@
       "/rpcs/protocol/changes/other/changes",
       "/reference/operation/changes"
     ],
+    "securityOptional": true,
     "securitySchemes": [
       {
-        "description": "FastNEAR API key sent as an `Authorization: Bearer` header; recommended when you control the client.",
+        "description": "FastNEAR API key as an `Authorization: Bearer` header. Preferred for backends, workers, and proxies because it keeps the key out of URLs and logs.",
         "id": "BearerAuth",
         "scheme": "bearer",
         "type": "http"
       },
       {
-        "description": "FastNEAR API key as the `apiKey` query parameter; convenient for browsers, but the key appears in URLs and logs.",
+        "description": "FastNEAR API key as the `apiKey` query parameter. Handy for curl or clients that cannot set headers, but the key can end up in URLs, logs, and shell history.",
         "id": "ApiKeyAuth",
         "in": "query",
         "name": "apiKey",
@@ -2822,6 +2876,14 @@
           "refName": "JsonRpcResponse"
         },
         "status": "200"
+      },
+      {
+        "description": "The supplied API key was not recognized. Omit the key to use public access.",
+        "mediaType": "text/plain",
+        "schema": {
+          "type": "string"
+        },
+        "status": "403"
       }
     ],
     "route": {
@@ -2833,15 +2895,16 @@
       "/rpcs/protocol/chunk_by_block_shard/other/chunk_by_block_shard",
       "/reference/operation/chunk_by_block_shard"
     ],
+    "securityOptional": true,
     "securitySchemes": [
       {
-        "description": "FastNEAR API key sent as an `Authorization: Bearer` header; recommended when you control the client.",
+        "description": "FastNEAR API key as an `Authorization: Bearer` header. Preferred for backends, workers, and proxies because it keeps the key out of URLs and logs.",
         "id": "BearerAuth",
         "scheme": "bearer",
         "type": "http"
       },
       {
-        "description": "FastNEAR API key as the `apiKey` query parameter; convenient for browsers, but the key appears in URLs and logs.",
+        "description": "FastNEAR API key as the `apiKey` query parameter. Handy for curl or clients that cannot set headers, but the key can end up in URLs, logs, and shell history.",
         "id": "ApiKeyAuth",
         "in": "query",
         "name": "apiKey",
@@ -3316,6 +3379,14 @@
           "refName": "JsonRpcResponse"
         },
         "status": "200"
+      },
+      {
+        "description": "The supplied API key was not recognized. Omit the key to use public access.",
+        "mediaType": "text/plain",
+        "schema": {
+          "type": "string"
+        },
+        "status": "403"
       }
     ],
     "route": {
@@ -3327,15 +3398,16 @@
       "/rpcs/protocol/chunk_by_hash/other/chunk_by_hash",
       "/reference/operation/chunk_by_hash"
     ],
+    "securityOptional": true,
     "securitySchemes": [
       {
-        "description": "FastNEAR API key sent as an `Authorization: Bearer` header; recommended when you control the client.",
+        "description": "FastNEAR API key as an `Authorization: Bearer` header. Preferred for backends, workers, and proxies because it keeps the key out of URLs and logs.",
         "id": "BearerAuth",
         "scheme": "bearer",
         "type": "http"
       },
       {
-        "description": "FastNEAR API key as the `apiKey` query parameter; convenient for browsers, but the key appears in URLs and logs.",
+        "description": "FastNEAR API key as the `apiKey` query parameter. Handy for curl or clients that cannot set headers, but the key can end up in URLs, logs, and shell history.",
         "id": "ApiKeyAuth",
         "in": "query",
         "name": "apiKey",
@@ -4429,6 +4501,14 @@
           "refName": "JsonRpcResponse"
         },
         "status": "200"
+      },
+      {
+        "description": "The supplied API key was not recognized. Omit the key to use public access.",
+        "mediaType": "text/plain",
+        "schema": {
+          "type": "string"
+        },
+        "status": "403"
       }
     ],
     "route": {
@@ -4440,15 +4520,16 @@
       "/rpcs/protocol/client_config/other/client_config",
       "/reference/operation/client_config"
     ],
+    "securityOptional": true,
     "securitySchemes": [
       {
-        "description": "FastNEAR API key sent as an `Authorization: Bearer` header; recommended when you control the client.",
+        "description": "FastNEAR API key as an `Authorization: Bearer` header. Preferred for backends, workers, and proxies because it keeps the key out of URLs and logs.",
         "id": "BearerAuth",
         "scheme": "bearer",
         "type": "http"
       },
       {
-        "description": "FastNEAR API key as the `apiKey` query parameter; convenient for browsers, but the key appears in URLs and logs.",
+        "description": "FastNEAR API key as the `apiKey` query parameter. Handy for curl or clients that cannot set headers, but the key can end up in URLs, logs, and shell history.",
         "id": "ApiKeyAuth",
         "in": "query",
         "name": "apiKey",
@@ -4679,6 +4760,14 @@
           "refName": "JsonRpcResponse"
         },
         "status": "200"
+      },
+      {
+        "description": "The supplied API key was not recognized. Omit the key to use public access.",
+        "mediaType": "text/plain",
+        "schema": {
+          "type": "string"
+        },
+        "status": "403"
       }
     ],
     "route": {
@@ -4690,15 +4779,16 @@
       "/rpcs/protocol/gas_price/other/gas_price",
       "/reference/operation/gas_price"
     ],
+    "securityOptional": true,
     "securitySchemes": [
       {
-        "description": "FastNEAR API key sent as an `Authorization: Bearer` header; recommended when you control the client.",
+        "description": "FastNEAR API key as an `Authorization: Bearer` header. Preferred for backends, workers, and proxies because it keeps the key out of URLs and logs.",
         "id": "BearerAuth",
         "scheme": "bearer",
         "type": "http"
       },
       {
-        "description": "FastNEAR API key as the `apiKey` query parameter; convenient for browsers, but the key appears in URLs and logs.",
+        "description": "FastNEAR API key as the `apiKey` query parameter. Handy for curl or clients that cannot set headers, but the key can end up in URLs, logs, and shell history.",
         "id": "ApiKeyAuth",
         "in": "query",
         "name": "apiKey",
@@ -4974,6 +5064,14 @@
           "refName": "JsonRpcResponse"
         },
         "status": "200"
+      },
+      {
+        "description": "The supplied API key was not recognized. Omit the key to use public access.",
+        "mediaType": "text/plain",
+        "schema": {
+          "type": "string"
+        },
+        "status": "403"
       }
     ],
     "route": {
@@ -4985,15 +5083,16 @@
       "/rpcs/protocol/gas_price_by_block/other/gas_price_by_block",
       "/reference/operation/gas_price_by_block"
     ],
+    "securityOptional": true,
     "securitySchemes": [
       {
-        "description": "FastNEAR API key sent as an `Authorization: Bearer` header; recommended when you control the client.",
+        "description": "FastNEAR API key as an `Authorization: Bearer` header. Preferred for backends, workers, and proxies because it keeps the key out of URLs and logs.",
         "id": "BearerAuth",
         "scheme": "bearer",
         "type": "http"
       },
       {
-        "description": "FastNEAR API key as the `apiKey` query parameter; convenient for browsers, but the key appears in URLs and logs.",
+        "description": "FastNEAR API key as the `apiKey` query parameter. Handy for curl or clients that cannot set headers, but the key can end up in URLs, logs, and shell history.",
         "id": "ApiKeyAuth",
         "in": "query",
         "name": "apiKey",
@@ -5623,6 +5722,14 @@
           "refName": "JsonRpcResponse"
         },
         "status": "200"
+      },
+      {
+        "description": "The supplied API key was not recognized. Omit the key to use public access.",
+        "mediaType": "text/plain",
+        "schema": {
+          "type": "string"
+        },
+        "status": "403"
       }
     ],
     "route": {
@@ -5634,15 +5741,16 @@
       "/rpcs/protocol/genesis_config/other/genesis_config",
       "/reference/operation/genesis_config"
     ],
+    "securityOptional": true,
     "securitySchemes": [
       {
-        "description": "FastNEAR API key sent as an `Authorization: Bearer` header; recommended when you control the client.",
+        "description": "FastNEAR API key as an `Authorization: Bearer` header. Preferred for backends, workers, and proxies because it keeps the key out of URLs and logs.",
         "id": "BearerAuth",
         "scheme": "bearer",
         "type": "http"
       },
       {
-        "description": "FastNEAR API key as the `apiKey` query parameter; convenient for browsers, but the key appears in URLs and logs.",
+        "description": "FastNEAR API key as the `apiKey` query parameter. Handy for curl or clients that cannot set headers, but the key can end up in URLs, logs, and shell history.",
         "id": "ApiKeyAuth",
         "in": "query",
         "name": "apiKey",
@@ -5853,6 +5961,14 @@
           "refName": "JsonRpcResponse"
         },
         "status": "200"
+      },
+      {
+        "description": "The supplied API key was not recognized. Omit the key to use public access.",
+        "mediaType": "text/plain",
+        "schema": {
+          "type": "string"
+        },
+        "status": "403"
       }
     ],
     "route": {
@@ -5864,15 +5980,16 @@
       "/rpcs/protocol/health/other/health",
       "/reference/operation/health"
     ],
+    "securityOptional": true,
     "securitySchemes": [
       {
-        "description": "FastNEAR API key sent as an `Authorization: Bearer` header; recommended when you control the client.",
+        "description": "FastNEAR API key as an `Authorization: Bearer` header. Preferred for backends, workers, and proxies because it keeps the key out of URLs and logs.",
         "id": "BearerAuth",
         "scheme": "bearer",
         "type": "http"
       },
       {
-        "description": "FastNEAR API key as the `apiKey` query parameter; convenient for browsers, but the key appears in URLs and logs.",
+        "description": "FastNEAR API key as the `apiKey` query parameter. Handy for curl or clients that cannot set headers, but the key can end up in URLs, logs, and shell history.",
         "id": "ApiKeyAuth",
         "in": "query",
         "name": "apiKey",
@@ -6102,6 +6219,14 @@
           "refName": "JsonRpcResponse"
         },
         "status": "200"
+      },
+      {
+        "description": "The supplied API key was not recognized. Omit the key to use public access.",
+        "mediaType": "text/plain",
+        "schema": {
+          "type": "string"
+        },
+        "status": "403"
       }
     ],
     "route": {
@@ -6113,15 +6238,16 @@
       "/rpcs/protocol/latest_block/other/latest_block",
       "/reference/operation/latest_block"
     ],
+    "securityOptional": true,
     "securitySchemes": [
       {
-        "description": "FastNEAR API key sent as an `Authorization: Bearer` header; recommended when you control the client.",
+        "description": "FastNEAR API key as an `Authorization: Bearer` header. Preferred for backends, workers, and proxies because it keeps the key out of URLs and logs.",
         "id": "BearerAuth",
         "scheme": "bearer",
         "type": "http"
       },
       {
-        "description": "FastNEAR API key as the `apiKey` query parameter; convenient for browsers, but the key appears in URLs and logs.",
+        "description": "FastNEAR API key as the `apiKey` query parameter. Handy for curl or clients that cannot set headers, but the key can end up in URLs, logs, and shell history.",
         "id": "ApiKeyAuth",
         "in": "query",
         "name": "apiKey",
@@ -6595,6 +6721,14 @@
           "refName": "JsonRpcResponse"
         },
         "status": "200"
+      },
+      {
+        "description": "The supplied API key was not recognized. Omit the key to use public access.",
+        "mediaType": "text/plain",
+        "schema": {
+          "type": "string"
+        },
+        "status": "403"
       }
     ],
     "route": {
@@ -6606,15 +6740,16 @@
       "/rpcs/protocol/light_client_proof/other/light_client_proof",
       "/reference/operation/light_client_proof"
     ],
+    "securityOptional": true,
     "securitySchemes": [
       {
-        "description": "FastNEAR API key sent as an `Authorization: Bearer` header; recommended when you control the client.",
+        "description": "FastNEAR API key as an `Authorization: Bearer` header. Preferred for backends, workers, and proxies because it keeps the key out of URLs and logs.",
         "id": "BearerAuth",
         "scheme": "bearer",
         "type": "http"
       },
       {
-        "description": "FastNEAR API key as the `apiKey` query parameter; convenient for browsers, but the key appears in URLs and logs.",
+        "description": "FastNEAR API key as the `apiKey` query parameter. Handy for curl or clients that cannot set headers, but the key can end up in URLs, logs, and shell history.",
         "id": "ApiKeyAuth",
         "in": "query",
         "name": "apiKey",
@@ -6880,6 +7015,14 @@
           "refName": "JsonRpcResponse"
         },
         "status": "200"
+      },
+      {
+        "description": "The supplied API key was not recognized. Omit the key to use public access.",
+        "mediaType": "text/plain",
+        "schema": {
+          "type": "string"
+        },
+        "status": "403"
       }
     ],
     "route": {
@@ -6891,15 +7034,16 @@
       "/rpcs/protocol/maintenance_windows/other/maintenance_windows",
       "/reference/operation/maintenance_windows"
     ],
+    "securityOptional": true,
     "securitySchemes": [
       {
-        "description": "FastNEAR API key sent as an `Authorization: Bearer` header; recommended when you control the client.",
+        "description": "FastNEAR API key as an `Authorization: Bearer` header. Preferred for backends, workers, and proxies because it keeps the key out of URLs and logs.",
         "id": "BearerAuth",
         "scheme": "bearer",
         "type": "http"
       },
       {
-        "description": "FastNEAR API key as the `apiKey` query parameter; convenient for browsers, but the key appears in URLs and logs.",
+        "description": "FastNEAR API key as the `apiKey` query parameter. Handy for curl or clients that cannot set headers, but the key can end up in URLs, logs, and shell history.",
         "id": "ApiKeyAuth",
         "in": "query",
         "name": "apiKey",
@@ -6985,13 +7129,13 @@
     ],
     "securitySchemes": [
       {
-        "description": "FastNEAR API key sent as an `Authorization: Bearer` header; recommended when you control the client.",
+        "description": "FastNEAR API key as an `Authorization: Bearer` header. Preferred for backends, workers, and proxies because it keeps the key out of URLs and logs.",
         "id": "BearerAuth",
         "scheme": "bearer",
         "type": "http"
       },
       {
-        "description": "FastNEAR API key as the `apiKey` query parameter; convenient for browsers, but the key appears in URLs and logs.",
+        "description": "FastNEAR API key as the `apiKey` query parameter. Handy for curl or clients that cannot set headers, but the key can end up in URLs, logs, and shell history.",
         "id": "ApiKeyAuth",
         "in": "query",
         "name": "apiKey",
@@ -7264,6 +7408,14 @@
           "refName": "JsonRpcResponse"
         },
         "status": "200"
+      },
+      {
+        "description": "The supplied API key was not recognized. Omit the key to use public access.",
+        "mediaType": "text/plain",
+        "schema": {
+          "type": "string"
+        },
+        "status": "403"
       }
     ],
     "route": {
@@ -7275,15 +7427,16 @@
       "/rpcs/protocol/network_info/other/network_info",
       "/reference/operation/network_info"
     ],
+    "securityOptional": true,
     "securitySchemes": [
       {
-        "description": "FastNEAR API key sent as an `Authorization: Bearer` header; recommended when you control the client.",
+        "description": "FastNEAR API key as an `Authorization: Bearer` header. Preferred for backends, workers, and proxies because it keeps the key out of URLs and logs.",
         "id": "BearerAuth",
         "scheme": "bearer",
         "type": "http"
       },
       {
-        "description": "FastNEAR API key as the `apiKey` query parameter; convenient for browsers, but the key appears in URLs and logs.",
+        "description": "FastNEAR API key as the `apiKey` query parameter. Handy for curl or clients that cannot set headers, but the key can end up in URLs, logs, and shell history.",
         "id": "ApiKeyAuth",
         "in": "query",
         "name": "apiKey",
@@ -7671,6 +7824,14 @@
           "refName": "JsonRpcResponse"
         },
         "status": "200"
+      },
+      {
+        "description": "The supplied API key was not recognized. Omit the key to use public access.",
+        "mediaType": "text/plain",
+        "schema": {
+          "type": "string"
+        },
+        "status": "403"
       }
     ],
     "route": {
@@ -7682,15 +7843,16 @@
       "/rpcs/protocol/next_light_client_block/other/next_light_client_block",
       "/reference/operation/next_light_client_block"
     ],
+    "securityOptional": true,
     "securitySchemes": [
       {
-        "description": "FastNEAR API key sent as an `Authorization: Bearer` header; recommended when you control the client.",
+        "description": "FastNEAR API key as an `Authorization: Bearer` header. Preferred for backends, workers, and proxies because it keeps the key out of URLs and logs.",
         "id": "BearerAuth",
         "scheme": "bearer",
         "type": "http"
       },
       {
-        "description": "FastNEAR API key as the `apiKey` query parameter; convenient for browsers, but the key appears in URLs and logs.",
+        "description": "FastNEAR API key as the `apiKey` query parameter. Handy for curl or clients that cannot set headers, but the key can end up in URLs, logs, and shell history.",
         "id": "ApiKeyAuth",
         "in": "query",
         "name": "apiKey",
@@ -7973,7 +8135,7 @@
                     "schema": {
                       "type": "string",
                       "nullable": true,
-                      "description": "ed25519: or secp256k1: prefixed public key"
+                      "description": "Public key with its type prefix: ed25519:, secp256k1:, or the full ml-dsa-65: key (never the ml-dsa-65-hash: handle)."
                     }
                   },
                   {
@@ -7981,7 +8143,7 @@
                     "required": true,
                     "schema": {
                       "type": "string",
-                      "description": "ed25519: or secp256k1: prefixed public key"
+                      "description": "Public key with its type prefix: ed25519:, secp256k1:, or the full ml-dsa-65: key (never the ml-dsa-65-hash: handle)."
                     }
                   },
                   {
@@ -8125,7 +8287,7 @@
                     "schema": {
                       "type": "string",
                       "nullable": true,
-                      "description": "ed25519: or secp256k1: prefixed public key"
+                      "description": "Public key with its type prefix: ed25519:, secp256k1:, or the full ml-dsa-65: key (never the ml-dsa-65-hash: handle)."
                     }
                   },
                   {
@@ -8220,6 +8382,14 @@
           "refName": "JsonRpcResponse"
         },
         "status": "200"
+      },
+      {
+        "description": "The supplied API key was not recognized. Omit the key to use public access.",
+        "mediaType": "text/plain",
+        "schema": {
+          "type": "string"
+        },
+        "status": "403"
       }
     ],
     "route": {
@@ -8231,15 +8401,16 @@
       "/rpcs/protocol/status/other/status",
       "/reference/operation/status"
     ],
+    "securityOptional": true,
     "securitySchemes": [
       {
-        "description": "FastNEAR API key sent as an `Authorization: Bearer` header; recommended when you control the client.",
+        "description": "FastNEAR API key as an `Authorization: Bearer` header. Preferred for backends, workers, and proxies because it keeps the key out of URLs and logs.",
         "id": "BearerAuth",
         "scheme": "bearer",
         "type": "http"
       },
       {
-        "description": "FastNEAR API key as the `apiKey` query parameter; convenient for browsers, but the key appears in URLs and logs.",
+        "description": "FastNEAR API key as the `apiKey` query parameter. Handy for curl or clients that cannot set headers, but the key can end up in URLs, logs, and shell history.",
         "id": "ApiKeyAuth",
         "in": "query",
         "name": "apiKey",

@@ -69,7 +69,6 @@ Current navigation model:
 
 ### Other Notable Files
 
-- **`src/pages/near-rpc-openapi.yaml`** — A local snapshot of the OpenAPI spec. The canonical source of truth is `rpcs/openapi.yaml` in the mike-docs repo (auto-generated from nearcore via `npm run generate-rpc`). This local copy may drift from the upstream.
 - **`static/js-loaded-globally/`** — Vendored JS bundles (`near-api-js` 5.1.1, `@fastnear/api` 0.9.7) loaded globally for interactive docs. The vendored bundles are separate pinned copies for browser use and are not managed via `package.json`.
 - **`src/data/generatedFastnearPageModels.json`** — Vendored page-model registry generated in `mike-docs`. This is the source of truth for native docs rendering here.
   - `interaction.networks[]` is `{ key, label, url, defaultFields }` plus optional `archival` / `archivalReason`. `key` is unique per model — the renderer resolves the endpoint with `networks.find((n) => n.key === selectedNetwork)`, so duplicate keys would make an entry unreachable. Exactly one entry exists per network even when the upstream spec declares several endpoints for it.

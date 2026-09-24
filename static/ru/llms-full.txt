@@ -3509,8 +3509,9 @@ curl -s "https://tx.main.fastnear.com/v0/transactions" \
 - Mainnet: https://rpc.mainnet.fastnear.com/
 - Testnet: https://rpc.testnet.fastnear.com/
 ## Авторизация
+- Необязательно: запрос работает и без ключа
 - Bearer-токен через заголовок `Authorization: Bearer <token>`
-- API-ключ через query `apiKey`: Контракт OpenAPI описывает API-ключ FastNear как параметр запроса `apiKey`.
+- API-ключ через query `apiKey`: API-ключ FastNEAR в параметре запроса `apiKey`. Удобно для curl и клиентов, которые не могут задавать заголовки, но ключ может попасть в URL, логи и историю команд оболочки.
 - Этот экспорт намеренно не включает локально сохранённые учётные данные
 ## Текущий запрос
 - Сеть: Mainnet
@@ -3552,7 +3553,7 @@ curl -s "https://tx.main.fastnear.com/v0/transactions" \
 ```
 ### Входные данные
 - `account_id` (body, обязательный, string): ID аккаунта NEAR.
-- `public_key` (body, обязательный, string): Публичный ключ в формате `ed25519:...` или `secp256k1:...`.
+- `public_key` (body, обязательный, string): Публичный ключ с префиксом типа: `ed25519:`, `secp256k1:` или полный ключ `ml-dsa-65:` (но не хеш-идентификатор `ml-dsa-65-hash:`).
 ### Схема запроса
 ```json
 {
@@ -3617,7 +3618,7 @@ curl -s "https://tx.main.fastnear.com/v0/transactions" \
             "required": true,
             "schema": {
               "type": "string",
-              "description": "Публичный ключ с префиксом ed25519: или secp256k1:"
+              "description": "Публичный ключ с префиксом типа: `ed25519:`, `secp256k1:` или полный ключ `ml-dsa-65:` (но не хеш-идентификатор `ml-dsa-65-hash:`)."
             }
           },
           {
@@ -3774,8 +3775,9 @@ curl -s "https://tx.main.fastnear.com/v0/transactions" \
 - Mainnet: https://rpc.mainnet.fastnear.com/
 - Testnet: https://rpc.testnet.fastnear.com/
 ## Авторизация
+- Необязательно: запрос работает и без ключа
 - Bearer-токен через заголовок `Authorization: Bearer <token>`
-- API-ключ через query `apiKey`: Контракт OpenAPI описывает API-ключ FastNear как параметр запроса `apiKey`.
+- API-ключ через query `apiKey`: API-ключ FastNEAR в параметре запроса `apiKey`. Удобно для curl и клиентов, которые не могут задавать заголовки, но ключ может попасть в URL, логи и историю команд оболочки.
 - Этот экспорт намеренно не включает локально сохранённые учётные данные
 ## Текущий запрос
 - Сеть: Mainnet
@@ -4021,8 +4023,9 @@ curl -s "https://tx.main.fastnear.com/v0/transactions" \
 - Mainnet: https://rpc.mainnet.fastnear.com/
 - Testnet: https://rpc.testnet.fastnear.com/
 ## Авторизация
+- Необязательно: запрос работает и без ключа
 - Bearer-токен через заголовок `Authorization: Bearer <token>`
-- API-ключ через query `apiKey`: Контракт OpenAPI описывает API-ключ FastNear как параметр запроса `apiKey`.
+- API-ключ через query `apiKey`: API-ключ FastNEAR в параметре запроса `apiKey`. Удобно для curl и клиентов, которые не могут задавать заголовки, но ключ может попасть в URL, логи и историю команд оболочки.
 - Этот экспорт намеренно не включает локально сохранённые учётные данные
 ## Текущий запрос
 - Сеть: Mainnet
@@ -4320,8 +4323,9 @@ curl -s "https://tx.main.fastnear.com/v0/transactions" \
 - Mainnet: https://archival-rpc.mainnet.fastnear.com/ (archival: Pinned block height, older than standard RPC retention.)
 - Testnet: https://archival-rpc.testnet.fastnear.com/ (archival: Pinned block height, older than standard RPC retention.)
 ## Авторизация
+- Необязательно: запрос работает и без ключа
 - Bearer-токен через заголовок `Authorization: Bearer <token>`
-- API-ключ через query `apiKey`: Контракт OpenAPI описывает API-ключ FastNear как параметр запроса `apiKey`.
+- API-ключ через query `apiKey`: API-ключ FastNEAR в параметре запроса `apiKey`. Удобно для curl и клиентов, которые не могут задавать заголовки, но ключ может попасть в URL, логи и историю команд оболочки.
 - Этот экспорт намеренно не включает локально сохранённые учётные данные
 ## Текущий запрос
 - Сеть: Mainnet
@@ -4521,8 +4525,9 @@ curl -s "https://tx.main.fastnear.com/v0/transactions" \
 - Mainnet: https://archival-rpc.mainnet.fastnear.com/ (archival: Pinned block hash, older than standard RPC retention.)
 - Testnet: https://archival-rpc.testnet.fastnear.com/ (archival: Pinned block hash, older than standard RPC retention.)
 ## Авторизация
+- Необязательно: запрос работает и без ключа
 - Bearer-токен через заголовок `Authorization: Bearer <token>`
-- API-ключ через query `apiKey`: Контракт OpenAPI описывает API-ключ FastNear как параметр запроса `apiKey`.
+- API-ключ через query `apiKey`: API-ключ FastNEAR в параметре запроса `apiKey`. Удобно для curl и клиентов, которые не могут задавать заголовки, но ключ может попасть в URL, логи и историю команд оболочки.
 - Этот экспорт намеренно не включает локально сохранённые учётные данные
 ## Текущий запрос
 - Сеть: Mainnet
@@ -4722,8 +4727,9 @@ curl -s "https://tx.main.fastnear.com/v0/transactions" \
 - Mainnet: https://rpc.mainnet.fastnear.com/
 - Testnet: https://rpc.testnet.fastnear.com/
 ## Авторизация
+- Необязательно: запрос работает и без ключа
 - Bearer-токен через заголовок `Authorization: Bearer <token>`
-- API-ключ через query `apiKey`: Контракт OpenAPI описывает API-ключ FastNear как параметр запроса `apiKey`.
+- API-ключ через query `apiKey`: API-ключ FastNEAR в параметре запроса `apiKey`. Удобно для curl и клиентов, которые не могут задавать заголовки, но ключ может попасть в URL, логи и историю команд оболочки.
 - Этот экспорт намеренно не включает локально сохранённые учётные данные
 ## Текущий запрос
 - Сеть: Mainnet
@@ -4967,8 +4973,9 @@ curl -s "https://tx.main.fastnear.com/v0/transactions" \
 - Mainnet: https://rpc.mainnet.fastnear.com/
 - Testnet: https://rpc.testnet.fastnear.com/
 ## Авторизация
+- Необязательно: запрос работает и без ключа
 - Bearer-токен через заголовок `Authorization: Bearer <token>`
-- API-ключ через query `apiKey`: Контракт OpenAPI описывает API-ключ FastNear как параметр запроса `apiKey`.
+- API-ключ через query `apiKey`: API-ключ FastNEAR в параметре запроса `apiKey`. Удобно для curl и клиентов, которые не могут задавать заголовки, но ключ может попасть в URL, логи и историю команд оболочки.
 - Этот экспорт намеренно не включает локально сохранённые учётные данные
 ## Текущий запрос
 - Сеть: Mainnet
@@ -5249,8 +5256,9 @@ curl -s "https://tx.main.fastnear.com/v0/transactions" \
 - Mainnet: https://rpc.mainnet.fastnear.com/
 - Testnet: https://rpc.testnet.fastnear.com/
 ## Авторизация
+- Необязательно: запрос работает и без ключа
 - Bearer-токен через заголовок `Authorization: Bearer <token>`
-- API-ключ через query `apiKey`: Контракт OpenAPI описывает API-ключ FastNear как параметр запроса `apiKey`.
+- API-ключ через query `apiKey`: API-ключ FastNEAR в параметре запроса `apiKey`. Удобно для curl и клиентов, которые не могут задавать заголовки, но ключ может попасть в URL, логи и историю команд оболочки.
 - Этот экспорт намеренно не включает локально сохранённые учётные данные
 ## Текущий запрос
 - Сеть: Mainnet
@@ -5501,8 +5509,9 @@ curl -s "https://tx.main.fastnear.com/v0/transactions" \
 - Mainnet: https://rpc.mainnet.fastnear.com/
 - Testnet: https://rpc.testnet.fastnear.com/
 ## Авторизация
+- Необязательно: запрос работает и без ключа
 - Bearer-токен через заголовок `Authorization: Bearer <token>`
-- API-ключ через query `apiKey`: Контракт OpenAPI описывает API-ключ FastNear как параметр запроса `apiKey`.
+- API-ключ через query `apiKey`: API-ключ FastNEAR в параметре запроса `apiKey`. Удобно для curl и клиентов, которые не могут задавать заголовки, но ключ может попасть в URL, логи и историю команд оболочки.
 - Этот экспорт намеренно не включает локально сохранённые учётные данные
 ## Текущий запрос
 - Сеть: Mainnet
@@ -5753,8 +5762,9 @@ curl -s "https://tx.main.fastnear.com/v0/transactions" \
 - Mainnet: https://rpc.mainnet.fastnear.com/
 - Testnet: https://rpc.testnet.fastnear.com/
 ## Авторизация
+- Необязательно: запрос работает и без ключа
 - Bearer-токен через заголовок `Authorization: Bearer <token>`
-- API-ключ через query `apiKey`: Контракт OpenAPI описывает API-ключ FastNear как параметр запроса `apiKey`.
+- API-ключ через query `apiKey`: API-ключ FastNEAR в параметре запроса `apiKey`. Удобно для curl и клиентов, которые не могут задавать заголовки, но ключ может попасть в URL, логи и историю команд оболочки.
 - Этот экспорт намеренно не включает локально сохранённые учётные данные
 ## Текущий запрос
 - Сеть: Mainnet
@@ -6005,8 +6015,9 @@ curl -s "https://tx.main.fastnear.com/v0/transactions" \
 - Mainnet: https://rpc.mainnet.fastnear.com/
 - Testnet: https://rpc.testnet.fastnear.com/
 ## Авторизация
+- Необязательно: запрос работает и без ключа
 - Bearer-токен через заголовок `Authorization: Bearer <token>`
-- API-ключ через query `apiKey`: Контракт OpenAPI описывает API-ключ FastNear как параметр запроса `apiKey`.
+- API-ключ через query `apiKey`: API-ключ FastNEAR в параметре запроса `apiKey`. Удобно для curl и клиентов, которые не могут задавать заголовки, но ключ может попасть в URL, логи и историю команд оболочки.
 - Этот экспорт намеренно не включает локально сохранённые учётные данные
 ## Текущий запрос
 - Сеть: Mainnet
@@ -6313,8 +6324,9 @@ curl -s "https://tx.main.fastnear.com/v0/transactions" \
 - Mainnet: https://rpc.mainnet.fastnear.com/
 - Testnet: https://rpc.testnet.fastnear.com/
 ## Авторизация
+- Необязательно: запрос работает и без ключа
 - Bearer-токен через заголовок `Authorization: Bearer <token>`
-- API-ключ через query `apiKey`: Контракт OpenAPI описывает API-ключ FastNear как параметр запроса `apiKey`.
+- API-ключ через query `apiKey`: API-ключ FastNEAR в параметре запроса `apiKey`. Удобно для curl и клиентов, которые не могут задавать заголовки, но ключ может попасть в URL, логи и историю команд оболочки.
 - Этот экспорт намеренно не включает локально сохранённые учётные данные
 ## Текущий запрос
 - Сеть: Mainnet
@@ -6545,8 +6557,9 @@ curl -s "https://tx.main.fastnear.com/v0/transactions" \
 - Mainnet: https://archival-rpc.mainnet.fastnear.com/ (archival: Pinned parent block, older than standard RPC retention.)
 - Testnet: https://archival-rpc.testnet.fastnear.com/ (archival: Pinned parent block, older than standard RPC retention.)
 ## Авторизация
+- Необязательно: запрос работает и без ключа
 - Bearer-токен через заголовок `Authorization: Bearer <token>`
-- API-ключ через query `apiKey`: Контракт OpenAPI описывает API-ключ FastNear как параметр запроса `apiKey`.
+- API-ключ через query `apiKey`: API-ключ FastNEAR в параметре запроса `apiKey`. Удобно для curl и клиентов, которые не могут задавать заголовки, но ключ может попасть в URL, логи и историю команд оболочки.
 - Этот экспорт намеренно не включает локально сохранённые учётные данные
 ## Текущий запрос
 - Сеть: Mainnet
@@ -6997,8 +7010,9 @@ curl -s "https://tx.main.fastnear.com/v0/transactions" \
 - Mainnet: https://archival-rpc.mainnet.fastnear.com/ (archival: Pinned chunk hash, older than standard RPC retention.)
 - Testnet: https://archival-rpc.testnet.fastnear.com/ (archival: Pinned chunk hash, older than standard RPC retention.)
 ## Авторизация
+- Необязательно: запрос работает и без ключа
 - Bearer-токен через заголовок `Authorization: Bearer <token>`
-- API-ключ через query `apiKey`: Контракт OpenAPI описывает API-ключ FastNear как параметр запроса `apiKey`.
+- API-ключ через query `apiKey`: API-ключ FastNEAR в параметре запроса `apiKey`. Удобно для curl и клиентов, которые не могут задавать заголовки, но ключ может попасть в URL, логи и историю команд оболочки.
 - Этот экспорт намеренно не включает локально сохранённые учётные данные
 ## Текущий запрос
 - Сеть: Mainnet
@@ -7428,8 +7442,9 @@ curl -s "https://tx.main.fastnear.com/v0/transactions" \
 - Mainnet: https://rpc.mainnet.fastnear.com/
 - Testnet: https://rpc.testnet.fastnear.com/
 ## Авторизация
+- Необязательно: запрос работает и без ключа
 - Bearer-токен через заголовок `Authorization: Bearer <token>`
-- API-ключ через query `apiKey`: Контракт OpenAPI описывает API-ключ FastNear как параметр запроса `apiKey`.
+- API-ключ через query `apiKey`: API-ключ FastNEAR в параметре запроса `apiKey`. Удобно для curl и клиентов, которые не могут задавать заголовки, но ключ может попасть в URL, логи и историю команд оболочки.
 - Этот экспорт намеренно не включает локально сохранённые учётные данные
 ## Текущий запрос
 - Сеть: Mainnet
@@ -8496,8 +8511,9 @@ curl -s "https://tx.main.fastnear.com/v0/transactions" \
 - Mainnet: https://archival-rpc.mainnet.fastnear.com/ (archival: Pinned block, older than standard RPC retention.)
 - Testnet: https://archival-rpc.testnet.fastnear.com/ (archival: Pinned block, older than standard RPC retention.)
 ## Авторизация
+- Необязательно: запрос работает и без ключа
 - Bearer-токен через заголовок `Authorization: Bearer <token>`
-- API-ключ через query `apiKey`: Контракт OpenAPI описывает API-ключ FastNear как параметр запроса `apiKey`.
+- API-ключ через query `apiKey`: API-ключ FastNEAR в параметре запроса `apiKey`. Удобно для curl и клиентов, которые не могут задавать заголовки, но ключ может попасть в URL, логи и историю команд оболочки.
 - Этот экспорт намеренно не включает локально сохранённые учётные данные
 ## Текущий запрос
 - Сеть: Mainnet
@@ -8732,8 +8748,9 @@ curl -s "https://tx.main.fastnear.com/v0/transactions" \
 - Mainnet: https://archival-rpc.mainnet.fastnear.com/ (archival: Pinned block, older than standard RPC retention.)
 - Testnet: https://archival-rpc.testnet.fastnear.com/ (archival: Pinned block, older than standard RPC retention.)
 ## Авторизация
+- Необязательно: запрос работает и без ключа
 - Bearer-токен через заголовок `Authorization: Bearer <token>`
-- API-ключ через query `apiKey`: Контракт OpenAPI описывает API-ключ FastNear как параметр запроса `apiKey`.
+- API-ключ через query `apiKey`: API-ключ FastNEAR в параметре запроса `apiKey`. Удобно для curl и клиентов, которые не могут задавать заголовки, но ключ может попасть в URL, логи и историю команд оболочки.
 - Этот экспорт намеренно не включает локально сохранённые учётные данные
 ## Текущий запрос
 - Сеть: Mainnet
@@ -8999,8 +9016,9 @@ curl -s "https://tx.main.fastnear.com/v0/transactions" \
 - Mainnet: https://archival-rpc.mainnet.fastnear.com/ (archival: Pinned transaction, older than standard RPC retention.)
 - Testnet: https://archival-rpc.testnet.fastnear.com/ (archival: Pinned transaction, older than standard RPC retention.)
 ## Авторизация
+- Необязательно: запрос работает и без ключа
 - Bearer-токен через заголовок `Authorization: Bearer <token>`
-- API-ключ через query `apiKey`: Контракт OpenAPI описывает API-ключ FastNear как параметр запроса `apiKey`.
+- API-ключ через query `apiKey`: API-ключ FastNEAR в параметре запроса `apiKey`. Удобно для curl и клиентов, которые не могут задавать заголовки, но ключ может попасть в URL, логи и историю команд оболочки.
 - Этот экспорт намеренно не включает локально сохранённые учётные данные
 ## Текущий запрос
 - Сеть: Mainnet
@@ -9369,8 +9387,9 @@ curl -s "https://tx.main.fastnear.com/v0/transactions" \
 - Mainnet: https://rpc.mainnet.fastnear.com/
 - Testnet: https://rpc.testnet.fastnear.com/
 ## Авторизация
+- Необязательно: запрос работает и без ключа
 - Bearer-токен через заголовок `Authorization: Bearer <token>`
-- API-ключ через query `apiKey`: Контракт OpenAPI описывает API-ключ FastNear как параметр запроса `apiKey`.
+- API-ключ через query `apiKey`: API-ключ FastNEAR в параметре запроса `apiKey`. Удобно для curl и клиентов, которые не могут задавать заголовки, но ключ может попасть в URL, логи и историю команд оболочки.
 - Этот экспорт намеренно не включает локально сохранённые учётные данные
 ## Текущий запрос
 - Сеть: Mainnet
@@ -9940,8 +9959,9 @@ curl -s "https://tx.main.fastnear.com/v0/transactions" \
 - Mainnet: https://rpc.mainnet.fastnear.com/
 - Testnet: https://rpc.testnet.fastnear.com/
 ## Авторизация
+- Необязательно: запрос работает и без ключа
 - Bearer-токен через заголовок `Authorization: Bearer <token>`
-- API-ключ через query `apiKey`: Контракт OpenAPI описывает API-ключ FastNear как параметр запроса `apiKey`.
+- API-ключ через query `apiKey`: API-ключ FastNEAR в параметре запроса `apiKey`. Удобно для curl и клиентов, которые не могут задавать заголовки, но ключ может попасть в URL, логи и историю команд оболочки.
 - Этот экспорт намеренно не включает локально сохранённые учётные данные
 ## Текущий запрос
 - Сеть: Mainnet
@@ -10162,8 +10182,9 @@ curl -s "https://tx.main.fastnear.com/v0/transactions" \
 - Mainnet: https://rpc.mainnet.fastnear.com/
 - Testnet: https://rpc.testnet.fastnear.com/
 ## Авторизация
+- Необязательно: запрос работает и без ключа
 - Bearer-токен через заголовок `Authorization: Bearer <token>`
-- API-ключ через query `apiKey`: Контракт OpenAPI описывает API-ключ FastNear как параметр запроса `apiKey`.
+- API-ключ через query `apiKey`: API-ключ FastNEAR в параметре запроса `apiKey`. Удобно для curl и клиентов, которые не могут задавать заголовки, но ключ может попасть в URL, логи и историю команд оболочки.
 - Этот экспорт намеренно не включает локально сохранённые учётные данные
 ## Текущий запрос
 - Сеть: Mainnet
@@ -10367,8 +10388,9 @@ curl -s "https://tx.main.fastnear.com/v0/transactions" \
 - Mainnet: https://archival-rpc.mainnet.fastnear.com/ (archival: Pinned block, older than standard RPC retention.)
 - Testnet: https://archival-rpc.testnet.fastnear.com/ (archival: Pinned block, older than standard RPC retention.)
 ## Авторизация
+- Необязательно: запрос работает и без ключа
 - Bearer-токен через заголовок `Authorization: Bearer <token>`
-- API-ключ через query `apiKey`: Контракт OpenAPI описывает API-ключ FastNear как параметр запроса `apiKey`.
+- API-ключ через query `apiKey`: API-ключ FastNEAR в параметре запроса `apiKey`. Удобно для curl и клиентов, которые не могут задавать заголовки, но ключ может попасть в URL, логи и историю команд оболочки.
 - Этот экспорт намеренно не включает локально сохранённые учётные данные
 ## Текущий запрос
 - Сеть: Mainnet
@@ -10590,8 +10612,9 @@ curl -s "https://tx.main.fastnear.com/v0/transactions" \
 - Mainnet: https://rpc.mainnet.fastnear.com/
 - Testnet: https://rpc.testnet.fastnear.com/
 ## Авторизация
+- Необязательно: запрос работает и без ключа
 - Bearer-токен через заголовок `Authorization: Bearer <token>`
-- API-ключ через query `apiKey`: Контракт OpenAPI описывает API-ключ FastNear как параметр запроса `apiKey`.
+- API-ключ через query `apiKey`: API-ключ FastNEAR в параметре запроса `apiKey`. Удобно для curl и клиентов, которые не могут задавать заголовки, но ключ может попасть в URL, логи и историю команд оболочки.
 - Этот экспорт намеренно не включает локально сохранённые учётные данные
 ## Текущий запрос
 - Сеть: Mainnet
@@ -11194,8 +11217,9 @@ curl -s "https://tx.main.fastnear.com/v0/transactions" \
 - Mainnet: https://rpc.mainnet.fastnear.com/
 - Testnet: https://rpc.testnet.fastnear.com/
 ## Авторизация
+- Необязательно: запрос работает и без ключа
 - Bearer-токен через заголовок `Authorization: Bearer <token>`
-- API-ключ через query `apiKey`: Контракт OpenAPI описывает API-ключ FastNear как параметр запроса `apiKey`.
+- API-ключ через query `apiKey`: API-ключ FastNEAR в параметре запроса `apiKey`. Удобно для curl и клиентов, которые не могут задавать заголовки, но ключ может попасть в URL, логи и историю команд оболочки.
 - Этот экспорт намеренно не включает локально сохранённые учётные данные
 ## Текущий запрос
 - Сеть: Mainnet
@@ -11379,8 +11403,9 @@ curl -s "https://tx.main.fastnear.com/v0/transactions" \
 - Архивный RPC mainnet: https://rpc.mainnet.fastnear.com/
 - Архивный RPC testnet: https://rpc.testnet.fastnear.com/
 ## Авторизация
+- Необязательно: запрос работает и без ключа
 - Bearer-токен через заголовок `Authorization: Bearer <token>`
-- API-ключ через query `apiKey`: Контракт OpenAPI описывает API-ключ FastNear как параметр запроса `apiKey`.
+- API-ключ через query `apiKey`: API-ключ FastNEAR в параметре запроса `apiKey`. Удобно для curl и клиентов, которые не могут задавать заголовки, но ключ может попасть в URL, логи и историю команд оболочки.
 - Этот экспорт намеренно не включает локально сохранённые учётные данные
 ## Текущий запрос
 - Сеть: Архивный RPC mainnet
@@ -11583,8 +11608,9 @@ curl -s "https://tx.main.fastnear.com/v0/transactions" \
 - Mainnet: https://archival-rpc.mainnet.fastnear.com/ (archival: Pinned transaction, older than standard RPC retention.)
 - Testnet: https://archival-rpc.testnet.fastnear.com/ (archival: Pinned transaction, older than standard RPC retention.)
 ## Авторизация
+- Необязательно: запрос работает и без ключа
 - Bearer-токен через заголовок `Authorization: Bearer <token>`
-- API-ключ через query `apiKey`: Контракт OpenAPI описывает API-ключ FastNear как параметр запроса `apiKey`.
+- API-ключ через query `apiKey`: API-ключ FastNEAR в параметре запроса `apiKey`. Удобно для curl и клиентов, которые не могут задавать заголовки, но ключ может попасть в URL, логи и историю команд оболочки.
 - Этот экспорт намеренно не включает локально сохранённые учётные данные
 ## Текущий запрос
 - Сеть: Mainnet
@@ -11953,8 +11979,9 @@ curl -s "https://tx.main.fastnear.com/v0/transactions" \
 - Mainnet: https://rpc.mainnet.fastnear.com/
 - Testnet: https://rpc.testnet.fastnear.com/
 ## Авторизация
+- Необязательно: запрос работает и без ключа
 - Bearer-токен через заголовок `Authorization: Bearer <token>`
-- API-ключ через query `apiKey`: Контракт OpenAPI описывает API-ключ FastNear как параметр запроса `apiKey`.
+- API-ключ через query `apiKey`: API-ключ FastNEAR в параметре запроса `apiKey`. Удобно для curl и клиентов, которые не могут задавать заголовки, но ключ может попасть в URL, логи и историю команд оболочки.
 - Этот экспорт намеренно не включает локально сохранённые учётные данные
 ## Текущий запрос
 - Сеть: Mainnet
@@ -12180,7 +12207,7 @@ curl -s "https://tx.main.fastnear.com/v0/transactions" \
 - Testnet: https://rpc.testnet.fastnear.com/
 ## Авторизация
 - Bearer-токен через заголовок `Authorization: Bearer <token>`
-- API-ключ через query `apiKey`: Контракт OpenAPI описывает API-ключ FastNear как параметр запроса `apiKey`.
+- API-ключ через query `apiKey`: API-ключ FastNEAR в параметре запроса `apiKey`. Удобно для curl и клиентов, которые не могут задавать заголовки, но ключ может попасть в URL, логи и историю команд оболочки.
 - Этот экспорт намеренно не включает локально сохранённые учётные данные
 ## Текущий запрос
 - Сеть: Mainnet
@@ -12232,8 +12259,9 @@ curl -s "https://tx.main.fastnear.com/v0/transactions" \
 - Mainnet: https://rpc.mainnet.fastnear.com/
 - Testnet: https://rpc.testnet.fastnear.com/
 ## Авторизация
+- Необязательно: запрос работает и без ключа
 - Bearer-токен через заголовок `Authorization: Bearer <token>`
-- API-ключ через query `apiKey`: Контракт OpenAPI описывает API-ключ FastNear как параметр запроса `apiKey`.
+- API-ключ через query `apiKey`: API-ключ FastNEAR в параметре запроса `apiKey`. Удобно для curl и клиентов, которые не могут задавать заголовки, но ключ может попасть в URL, логи и историю команд оболочки.
 - Этот экспорт намеренно не включает локально сохранённые учётные данные
 ## Текущий запрос
 - Сеть: Mainnet
@@ -12479,8 +12507,9 @@ curl -s "https://tx.main.fastnear.com/v0/transactions" \
 - Mainnet: https://archival-rpc.mainnet.fastnear.com/ (archival: Pinned light-client head, older than standard RPC retention.)
 - Testnet: https://archival-rpc.testnet.fastnear.com/ (archival: Pinned light-client head, older than standard RPC retention.)
 ## Авторизация
+- Необязательно: запрос работает и без ключа
 - Bearer-токен через заголовок `Authorization: Bearer <token>`
-- API-ключ через query `apiKey`: Контракт OpenAPI описывает API-ключ FastNear как параметр запроса `apiKey`.
+- API-ключ через query `apiKey`: API-ключ FastNEAR в параметре запроса `apiKey`. Удобно для curl и клиентов, которые не могут задавать заголовки, но ключ может попасть в URL, логи и историю команд оболочки.
 - Этот экспорт намеренно не включает локально сохранённые учётные данные
 ## Текущий запрос
 - Сеть: Mainnet
@@ -12823,8 +12852,9 @@ curl -s "https://tx.main.fastnear.com/v0/transactions" \
 - Mainnet: https://rpc.mainnet.fastnear.com/
 - Testnet: https://rpc.testnet.fastnear.com/
 ## Авторизация
+- Необязательно: запрос работает и без ключа
 - Bearer-токен через заголовок `Authorization: Bearer <token>`
-- API-ключ через query `apiKey`: Контракт OpenAPI описывает API-ключ FastNear как параметр запроса `apiKey`.
+- API-ключ через query `apiKey`: API-ключ FastNEAR в параметре запроса `apiKey`. Удобно для curl и клиентов, которые не могут задавать заголовки, но ключ может попасть в URL, логи и историю команд оболочки.
 - Этот экспорт намеренно не включает локально сохранённые учётные данные
 ## Текущий запрос
 - Сеть: Mainnet
@@ -13056,7 +13086,7 @@ curl -s "https://tx.main.fastnear.com/v0/transactions" \
             "schema": {
               "type": "string",
               "nullable": true,
-              "description": "Публичный ключ с префиксом ed25519: или secp256k1:"
+              "description": "Публичный ключ с префиксом типа: `ed25519:`, `secp256k1:` или полный ключ `ml-dsa-65:` (но не хеш-идентификатор `ml-dsa-65-hash:`)."
             }
           },
           {
@@ -13064,7 +13094,7 @@ curl -s "https://tx.main.fastnear.com/v0/transactions" \
             "required": true,
             "schema": {
               "type": "string",
-              "description": "Публичный ключ с префиксом ed25519: или secp256k1:"
+              "description": "Публичный ключ с префиксом типа: `ed25519:`, `secp256k1:` или полный ключ `ml-dsa-65:` (но не хеш-идентификатор `ml-dsa-65-hash:`)."
             }
           },
           {
@@ -13208,7 +13238,7 @@ curl -s "https://tx.main.fastnear.com/v0/transactions" \
             "schema": {
               "type": "string",
               "nullable": true,
-              "description": "Публичный ключ с префиксом ed25519: или secp256k1:"
+              "description": "Публичный ключ с префиксом типа: `ed25519:`, `secp256k1:` или полный ключ `ml-dsa-65:` (но не хеш-идентификатор `ml-dsa-65-hash:`)."
             }
           },
           {
@@ -13327,8 +13357,9 @@ curl -s "https://tx.main.fastnear.com/v0/transactions" \
 - Mainnet: https://rpc.mainnet.fastnear.com/
 - Testnet: https://rpc.testnet.fastnear.com/
 ## Авторизация
+- Необязательно: запрос работает и без ключа
 - Bearer-токен через заголовок `Authorization: Bearer <token>`
-- API-ключ через query `apiKey`: Контракт OpenAPI описывает API-ключ FastNear как параметр запроса `apiKey`.
+- API-ключ через query `apiKey`: API-ключ FastNEAR в параметре запроса `apiKey`. Удобно для curl и клиентов, которые не могут задавать заголовки, но ключ может попасть в URL, логи и историю команд оболочки.
 - Этот экспорт намеренно не включает локально сохранённые учётные данные
 ## Текущий запрос
 - Сеть: Mainnet
@@ -13547,8 +13578,9 @@ curl -s "https://tx.main.fastnear.com/v0/transactions" \
 - Mainnet: https://rpc.mainnet.fastnear.com/
 - Testnet: https://rpc.testnet.fastnear.com/
 ## Авторизация
+- Необязательно: запрос работает и без ключа
 - Bearer-токен через заголовок `Authorization: Bearer <token>`
-- API-ключ через query `apiKey`: Контракт OpenAPI описывает API-ключ FastNear как параметр запроса `apiKey`.
+- API-ключ через query `apiKey`: API-ключ FastNEAR в параметре запроса `apiKey`. Удобно для curl и клиентов, которые не могут задавать заголовки, но ключ может попасть в URL, логи и историю команд оболочки.
 - Этот экспорт намеренно не включает локально сохранённые учётные данные
 ## Текущий запрос
 - Сеть: Mainnet
@@ -13833,8 +13865,9 @@ curl -s "https://tx.main.fastnear.com/v0/transactions" \
 - Mainnet: https://archival-rpc.mainnet.fastnear.com/ (archival: Pinned receipt, older than standard RPC retention.)
 - Testnet: https://archival-rpc.testnet.fastnear.com/ (archival: Pinned receipt, older than standard RPC retention.)
 ## Авторизация
+- Необязательно: запрос работает и без ключа
 - Bearer-токен через заголовок `Authorization: Bearer <token>`
-- API-ключ через query `apiKey`: Контракт OpenAPI описывает API-ключ FastNear как параметр запроса `apiKey`.
+- API-ключ через query `apiKey`: API-ключ FastNEAR в параметре запроса `apiKey`. Удобно для curl и клиентов, которые не могут задавать заголовки, но ключ может попасть в URL, логи и историю команд оболочки.
 - Этот экспорт намеренно не включает локально сохранённые учётные данные
 ## Текущий запрос
 - Сеть: Mainnet
@@ -14084,8 +14117,9 @@ Resolve a receipt ID to the transaction hash and signer that produced it. Requir
 - Mainnet: https://archival-rpc.mainnet.fastnear.com/ (archival: Pinned receipt plus block_height anchor, older than standard RPC retention.)
 - Testnet: https://archival-rpc.testnet.fastnear.com/ (archival: Pinned receipt plus block_height anchor, older than standard RPC retention.)
 ## Авторизация
+- Необязательно: запрос работает и без ключа
 - Bearer-токен через заголовок `Authorization: Bearer <token>`
-- API-ключ через query `apiKey`: FastNEAR API key as the `apiKey` query parameter; convenient for browsers, but the key appears in URLs and logs.
+- API-ключ через query `apiKey`: API-ключ FastNEAR в параметре запроса `apiKey`. Удобно для curl и клиентов, которые не могут задавать заголовки, но ключ может попасть в URL, логи и историю команд оболочки.
 - Этот экспорт намеренно не включает локально сохранённые учётные данные
 ## Текущий запрос
 - Сеть: Mainnet
@@ -14341,8 +14375,9 @@ Resolve a receipt ID to the transaction hash and signer that produced it. Requir
 - Mainnet: https://archival-rpc.mainnet.fastnear.com/ (archival: Pinned transaction, older than standard RPC retention.)
 - Testnet: https://archival-rpc.testnet.fastnear.com/ (archival: Pinned transaction, older than standard RPC retention.)
 ## Авторизация
+- Необязательно: запрос работает и без ключа
 - Bearer-токен через заголовок `Authorization: Bearer <token>`
-- API-ключ через query `apiKey`: Контракт OpenAPI описывает API-ключ FastNear как параметр запроса `apiKey`.
+- API-ключ через query `apiKey`: API-ключ FastNEAR в параметре запроса `apiKey`. Удобно для curl и клиентов, которые не могут задавать заголовки, но ключ может попасть в URL, логи и историю команд оболочки.
 - Этот экспорт намеренно не включает локально сохранённые учётные данные
 ## Текущий запрос
 - Сеть: Mainnet
@@ -14646,8 +14681,9 @@ Resolve a receipt ID to the transaction hash and signer that produced it. Requir
 - Mainnet: https://rpc.mainnet.fastnear.com/
 - Testnet: https://rpc.testnet.fastnear.com/
 ## Авторизация
+- Необязательно: запрос работает и без ключа
 - Bearer-токен через заголовок `Authorization: Bearer <token>`
-- API-ключ через query `apiKey`: Контракт OpenAPI описывает API-ключ FastNear как параметр запроса `apiKey`.
+- API-ключ через query `apiKey`: API-ключ FastNEAR в параметре запроса `apiKey`. Удобно для curl и клиентов, которые не могут задавать заголовки, но ключ может попасть в URL, логи и историю команд оболочки.
 - Этот экспорт намеренно не включает локально сохранённые учётные данные
 ## Текущий запрос
 - Сеть: Mainnet
@@ -14934,8 +14970,9 @@ Resolve a receipt ID to the transaction hash and signer that produced it. Requir
 - Mainnet: https://archival-rpc.mainnet.fastnear.com/ (archival: Pinned transaction, older than standard RPC retention.)
 - Testnet: https://archival-rpc.testnet.fastnear.com/ (archival: Pinned transaction, older than standard RPC retention.)
 ## Авторизация
+- Необязательно: запрос работает и без ключа
 - Bearer-токен через заголовок `Authorization: Bearer <token>`
-- API-ключ через query `apiKey`: Контракт OpenAPI описывает API-ключ FastNear как параметр запроса `apiKey`.
+- API-ключ через query `apiKey`: API-ключ FastNEAR в параметре запроса `apiKey`. Удобно для curl и клиентов, которые не могут задавать заголовки, но ключ может попасть в URL, логи и историю команд оболочки.
 - Этот экспорт намеренно не включает локально сохранённые учётные данные
 ## Текущий запрос
 - Сеть: Mainnet
@@ -15237,8 +15274,9 @@ Resolve a receipt ID to the transaction hash and signer that produced it. Requir
 - Mainnet: https://archival-rpc.mainnet.fastnear.com/ (archival: Pinned epoch, older than standard RPC retention.)
 - Testnet: https://archival-rpc.testnet.fastnear.com/ (archival: Pinned epoch, older than standard RPC retention.)
 ## Авторизация
+- Необязательно: запрос работает и без ключа
 - Bearer-токен через заголовок `Authorization: Bearer <token>`
-- API-ключ через query `apiKey`: Контракт OpenAPI описывает API-ключ FastNear как параметр запроса `apiKey`.
+- API-ключ через query `apiKey`: API-ключ FastNEAR в параметре запроса `apiKey`. Удобно для curl и клиентов, которые не могут задавать заголовки, но ключ может попасть в URL, логи и историю команд оболочки.
 - Этот экспорт намеренно не включает локально сохранённые учётные данные
 ## Текущий запрос
 - Сеть: Mainnet
@@ -15451,8 +15489,9 @@ Resolve a receipt ID to the transaction hash and signer that produced it. Requir
 - Mainnet: https://archival-rpc.mainnet.fastnear.com/ (archival: Pinned epoch, older than standard RPC retention.)
 - Testnet: https://archival-rpc.testnet.fastnear.com/ (archival: Pinned epoch, older than standard RPC retention.)
 ## Авторизация
+- Необязательно: запрос работает и без ключа
 - Bearer-токен через заголовок `Authorization: Bearer <token>`
-- API-ключ через query `apiKey`: Контракт OpenAPI описывает API-ключ FastNear как параметр запроса `apiKey`.
+- API-ключ через query `apiKey`: API-ключ FastNEAR в параметре запроса `apiKey`. Удобно для curl и клиентов, которые не могут задавать заголовки, но ключ может попасть в URL, логи и историю команд оболочки.
 - Этот экспорт намеренно не включает локально сохранённые учётные данные
 ## Текущий запрос
 - Сеть: Mainnet
@@ -15753,8 +15792,9 @@ Resolve a receipt ID to the transaction hash and signer that produced it. Requir
 - Mainnet: https://rpc.mainnet.fastnear.com/
 - Testnet: https://rpc.testnet.fastnear.com/
 ## Авторизация
+- Необязательно: запрос работает и без ключа
 - Bearer-токен через заголовок `Authorization: Bearer <token>`
-- API-ключ через query `apiKey`: Контракт OpenAPI описывает API-ключ FastNear как параметр запроса `apiKey`.
+- API-ключ через query `apiKey`: API-ключ FastNEAR в параметре запроса `apiKey`. Удобно для curl и клиентов, которые не могут задавать заголовки, но ключ может попасть в URL, логи и историю команд оболочки.
 - Этот экспорт намеренно не включает локально сохранённые учётные данные
 ## Текущий запрос
 - Сеть: Mainnet
@@ -16045,7 +16085,9 @@ Resolve a receipt ID to the transaction hash and signer that produced it. Requir
 - Mainnet: https://api.fastnear.com/
 - Testnet: https://test.api.fastnear.com/
 ## Авторизация
-- API-ключ через query `apiKey`: Необязательный API-ключ, который могут передавать встроенные клиенты портала. Публичный FastNear API не требует его.
+- Необязательно: запрос работает и без ключа
+- Bearer-токен через заголовок `Authorization: Bearer <token>`
+- API-ключ через query `apiKey`: API-ключ FastNEAR в параметре запроса `apiKey`. Удобно для curl и клиентов, которые не могут задавать заголовки, но ключ может попасть в URL, логи и историю команд оболочки.
 - Этот экспорт намеренно не включает локально сохранённые учётные данные
 ## Текущий запрос
 - Сеть: Mainnet
@@ -16062,10 +16104,6 @@ Resolve a receipt ID to the transaction hash and signer that produced it. Requir
   "query": {}
 }
 ```
-### Параметры запроса
-
-- `apiKey` (query, string): Необязательный API-ключ, который могут передавать встроенные клиенты портала. Публичный FastNear API не требует его.
-
 ## Справка по ответу
 - Статус: 200
 - Тип данных: application/json
@@ -16113,7 +16151,9 @@ Resolve a receipt ID to the transaction hash and signer that produced it. Requir
 - Mainnet: https://api.fastnear.com/
 - Testnet: https://test.api.fastnear.com/
 ## Авторизация
-- API-ключ через query `apiKey`: Необязательный API-ключ, который могут передавать встроенные клиенты портала. Публичный FastNear API не требует его.
+- Необязательно: запрос работает и без ключа
+- Bearer-токен через заголовок `Authorization: Bearer <token>`
+- API-ключ через query `apiKey`: API-ключ FastNEAR в параметре запроса `apiKey`. Удобно для curl и клиентов, которые не могут задавать заголовки, но ключ может попасть в URL, логи и историю команд оболочки.
 - Этот экспорт намеренно не включает локально сохранённые учётные данные
 ## Текущий запрос
 - Сеть: Mainnet
@@ -16130,10 +16170,6 @@ Resolve a receipt ID to the transaction hash and signer that produced it. Requir
   "query": {}
 }
 ```
-### Параметры запроса
-
-- `apiKey` (query, string): Необязательный API-ключ, который могут передавать встроенные клиенты портала. Публичный FastNear API не требует его.
-
 ## Справка по ответу
 - Статус: 200
 - Тип данных: application/json
@@ -16216,7 +16252,9 @@ Resolve a receipt ID to the transaction hash and signer that produced it. Requir
 - Mainnet: https://api.fastnear.com/
 - Testnet: https://test.api.fastnear.com/
 ## Авторизация
-- API-ключ через query `apiKey`: Необязательный API-ключ, который передают встроенные клиенты портала. Публичный FastNear API его не требует.
+- Необязательно: запрос работает и без ключа
+- Bearer-токен через заголовок `Authorization: Bearer <token>`
+- API-ключ через query `apiKey`: API-ключ FastNEAR в параметре запроса `apiKey`. Удобно для curl и клиентов, которые не могут задавать заголовки, но ключ может попасть в URL, логи и историю команд оболочки.
 - Этот экспорт намеренно не включает локально сохранённые учётные данные
 ## Текущий запрос
 - Сеть: Mainnet
@@ -16240,10 +16278,6 @@ Resolve a receipt ID to the transaction hash and signer that produced it. Requir
 ### Параметры пути
 
 - `account_id` (путь, обязательный, string): ID аккаунта NEAR для проверки.
-
-### Параметры запроса
-
-- `apiKey` (query, string): Необязательный API-ключ, который передают встроенные клиенты портала. Публичный FastNear API его не требует.
 
 ## Справка по ответу
 - Статус: 200
@@ -16303,7 +16337,9 @@ Resolve a receipt ID to the transaction hash and signer that produced it. Requir
 - Mainnet: https://api.fastnear.com/
 - Testnet: https://test.api.fastnear.com/
 ## Авторизация
-- API-ключ через query `apiKey`: Необязательный API-ключ, который передают встроенные клиенты портала. Публичный FastNear API его не требует.
+- Необязательно: запрос работает и без ключа
+- Bearer-токен через заголовок `Authorization: Bearer <token>`
+- API-ключ через query `apiKey`: API-ключ FastNEAR в параметре запроса `apiKey`. Удобно для curl и клиентов, которые не могут задавать заголовки, но ключ может попасть в URL, логи и историю команд оболочки.
 - Этот экспорт намеренно не включает локально сохранённые учётные данные
 ## Текущий запрос
 - Сеть: Mainnet
@@ -16327,10 +16363,6 @@ Resolve a receipt ID to the transaction hash and signer that produced it. Requir
 ### Параметры пути
 
 - `account_id` (путь, обязательный, string): ID аккаунта NEAR для проверки.
-
-### Параметры запроса
-
-- `apiKey` (query, string): Необязательный API-ключ, который передают встроенные клиенты портала. Публичный FastNear API его не требует.
 
 ## Справка по ответу
 - Статус: 200
@@ -16390,7 +16422,9 @@ Resolve a receipt ID to the transaction hash and signer that produced it. Requir
 - Mainnet: https://api.fastnear.com/
 - Testnet: https://test.api.fastnear.com/
 ## Авторизация
-- API-ключ через query `apiKey`: Необязательный API-ключ, который передают встроенные клиенты портала. Публичный FastNear API его не требует.
+- Необязательно: запрос работает и без ключа
+- Bearer-токен через заголовок `Authorization: Bearer <token>`
+- API-ключ через query `apiKey`: API-ключ FastNEAR в параметре запроса `apiKey`. Удобно для curl и клиентов, которые не могут задавать заголовки, но ключ может попасть в URL, логи и историю команд оболочки.
 - Этот экспорт намеренно не включает локально сохранённые учётные данные
 ## Текущий запрос
 - Сеть: Mainnet
@@ -16414,10 +16448,6 @@ Resolve a receipt ID to the transaction hash and signer that produced it. Requir
 ### Параметры пути
 
 - `account_id` (путь, обязательный, string): ID аккаунта NEAR для проверки.
-
-### Параметры запроса
-
-- `apiKey` (query, string): Необязательный API-ключ, который передают встроенные клиенты портала. Публичный FastNear API его не требует.
 
 ## Справка по ответу
 - Статус: 200
@@ -16477,7 +16507,9 @@ Resolve a receipt ID to the transaction hash and signer that produced it. Requir
 - Mainnet: https://api.fastnear.com/
 - Testnet: https://test.api.fastnear.com/
 ## Авторизация
-- API-ключ через query `apiKey`: Необязательный API-ключ, который могут передавать встроенные клиенты портала. Публичный FastNear API не требует его.
+- Необязательно: запрос работает и без ключа
+- Bearer-токен через заголовок `Authorization: Bearer <token>`
+- API-ключ через query `apiKey`: API-ключ FastNEAR в параметре запроса `apiKey`. Удобно для curl и клиентов, которые не могут задавать заголовки, но ключ может попасть в URL, логи и историю команд оболочки.
 - Этот экспорт намеренно не включает локально сохранённые учётные данные
 ## Текущий запрос
 - Сеть: Mainnet
@@ -16501,10 +16533,6 @@ Resolve a receipt ID to the transaction hash and signer that produced it. Requir
 ### Параметры пути
 
 - `public_key` (путь, обязательный, string): Публичный ключ NEAR в формате `ed25519:...` или `secp256k1:...`.
-
-### Параметры запроса
-
-- `apiKey` (query, string): Необязательный API-ключ, который могут передавать встроенные клиенты портала. Публичный FastNear API не требует его.
 
 ## Справка по ответу
 - Статус: 200
@@ -16564,7 +16592,9 @@ Resolve a receipt ID to the transaction hash and signer that produced it. Requir
 - Mainnet: https://api.fastnear.com/
 - Testnet: https://test.api.fastnear.com/
 ## Авторизация
-- API-ключ через query `apiKey`: Необязательный API-ключ, который могут передавать встроенные клиенты портала. Публичный FastNear API не требует его.
+- Необязательно: запрос работает и без ключа
+- Bearer-токен через заголовок `Authorization: Bearer <token>`
+- API-ключ через query `apiKey`: API-ключ FastNEAR в параметре запроса `apiKey`. Удобно для curl и клиентов, которые не могут задавать заголовки, но ключ может попасть в URL, логи и историю команд оболочки.
 - Этот экспорт намеренно не включает локально сохранённые учётные данные
 ## Текущий запрос
 - Сеть: Mainnet
@@ -16588,10 +16618,6 @@ Resolve a receipt ID to the transaction hash and signer that produced it. Requir
 ### Параметры пути
 
 - `public_key` (путь, обязательный, string): Публичный ключ NEAR в формате `ed25519:...` или `secp256k1:...`.
-
-### Параметры запроса
-
-- `apiKey` (query, string): Необязательный API-ключ, который могут передавать встроенные клиенты портала. Публичный FastNear API не требует его.
 
 ## Справка по ответу
 - Статус: 200
@@ -16651,7 +16677,9 @@ Resolve a receipt ID to the transaction hash and signer that produced it. Requir
 - Mainnet: https://api.fastnear.com/
 - Testnet: https://test.api.fastnear.com/
 ## Авторизация
-- API-ключ через query `apiKey`: Необязательный API-ключ, который могут передавать встроенные клиенты портала. Публичный FastNear API не требует его.
+- Необязательно: запрос работает и без ключа
+- Bearer-токен через заголовок `Authorization: Bearer <token>`
+- API-ключ через query `apiKey`: API-ключ FastNEAR в параметре запроса `apiKey`. Удобно для curl и клиентов, которые не могут задавать заголовки, но ключ может попасть в URL, логи и историю команд оболочки.
 - Этот экспорт намеренно не включает локально сохранённые учётные данные
 ## Текущий запрос
 - Сеть: Mainnet
@@ -16675,10 +16703,6 @@ Resolve a receipt ID to the transaction hash and signer that produced it. Requir
 ### Параметры пути
 
 - `account_id` (путь, обязательный, string): ID аккаунта NEAR для проверки.
-
-### Параметры запроса
-
-- `apiKey` (query, string): Необязательный API-ключ, который могут передавать встроенные клиенты портала. Публичный FastNear API не требует его.
 
 ## Справка по ответу
 - Статус: 200
@@ -16769,7 +16793,9 @@ Resolve a receipt ID to the transaction hash and signer that produced it. Requir
 - Mainnet: https://api.fastnear.com/
 - Testnet: https://test.api.fastnear.com/
 ## Авторизация
-- API-ключ через query `apiKey`: Необязательный API-ключ, который могут передавать встроенные клиенты портала. Публичный FastNear API не требует его.
+- Необязательно: запрос работает и без ключа
+- Bearer-токен через заголовок `Authorization: Bearer <token>`
+- API-ключ через query `apiKey`: API-ключ FastNEAR в параметре запроса `apiKey`. Удобно для curl и клиентов, которые не могут задавать заголовки, но ключ может попасть в URL, логи и историю команд оболочки.
 - Этот экспорт намеренно не включает локально сохранённые учётные данные
 ## Текущий запрос
 - Сеть: Mainnet
@@ -16793,10 +16819,6 @@ Resolve a receipt ID to the transaction hash and signer that produced it. Requir
 ### Параметры пути
 
 - `account_id` (путь, обязательный, string): ID аккаунта NEAR для проверки.
-
-### Параметры запроса
-
-- `apiKey` (query, string): Необязательный API-ключ, который могут передавать встроенные клиенты портала. Публичный FastNear API не требует его.
 
 ## Справка по ответу
 - Статус: 200
@@ -16963,7 +16985,9 @@ Resolve a receipt ID to the transaction hash and signer that produced it. Requir
 - Mainnet: https://api.fastnear.com/
 - Testnet: https://test.api.fastnear.com/
 ## Авторизация
-- API-ключ через query `apiKey`: Необязательный API-ключ, который могут передавать встроенные клиенты портала. Публичный FastNear API не требует его.
+- Необязательно: запрос работает и без ключа
+- Bearer-токен через заголовок `Authorization: Bearer <token>`
+- API-ключ через query `apiKey`: API-ключ FastNEAR в параметре запроса `apiKey`. Удобно для curl и клиентов, которые не могут задавать заголовки, но ключ может попасть в URL, логи и историю команд оболочки.
 - Этот экспорт намеренно не включает локально сохранённые учётные данные
 ## Текущий запрос
 - Сеть: Mainnet
@@ -16987,10 +17011,6 @@ Resolve a receipt ID to the transaction hash and signer that produced it. Requir
 ### Параметры пути
 
 - `account_id` (путь, обязательный, string): ID аккаунта NEAR для проверки.
-
-### Параметры запроса
-
-- `apiKey` (query, string): Необязательный API-ключ, который могут передавать встроенные клиенты портала. Публичный FastNear API не требует его.
 
 ## Справка по ответу
 - Статус: 200
@@ -17073,7 +17093,9 @@ Resolve a receipt ID to the transaction hash and signer that produced it. Requir
 - Mainnet: https://api.fastnear.com/
 - Testnet: https://test.api.fastnear.com/
 ## Авторизация
-- API-ключ через query `apiKey`: Необязательный API-ключ, передаваемый встраиваемыми клиентами портала. Публичный FastNEAR API его не требует.
+- Необязательно: запрос работает и без ключа
+- Bearer-токен через заголовок `Authorization: Bearer <token>`
+- API-ключ через query `apiKey`: API-ключ FastNEAR в параметре запроса `apiKey`. Удобно для curl и клиентов, которые не могут задавать заголовки, но ключ может попасть в URL, логи и историю команд оболочки.
 - Этот экспорт намеренно не включает локально сохранённые учётные данные
 ## Текущий запрос
 - Сеть: Mainnet
@@ -17097,10 +17119,6 @@ Resolve a receipt ID to the transaction hash and signer that produced it. Requir
 ### Параметры пути
 
 - `account_id` (путь, обязательный, string): ID аккаунта NEAR для проверки.
-
-### Параметры запроса
-
-- `apiKey` (query, string): Необязательный API-ключ, передаваемый встраиваемыми клиентами портала. Публичный FastNEAR API его не требует.
 
 ## Справка по ответу
 - Статус: 200
@@ -17183,7 +17201,9 @@ Resolve a receipt ID to the transaction hash and signer that produced it. Requir
 - Mainnet: https://api.fastnear.com/
 - Testnet: https://test.api.fastnear.com/
 ## Авторизация
-- API-ключ через query `apiKey`: Необязательный API-ключ, передаваемый встраиваемыми клиентами портала. Публичный FastNEAR API его не требует.
+- Необязательно: запрос работает и без ключа
+- Bearer-токен через заголовок `Authorization: Bearer <token>`
+- API-ключ через query `apiKey`: API-ключ FastNEAR в параметре запроса `apiKey`. Удобно для curl и клиентов, которые не могут задавать заголовки, но ключ может попасть в URL, логи и историю команд оболочки.
 - Этот экспорт намеренно не включает локально сохранённые учётные данные
 ## Текущий запрос
 - Сеть: Mainnet
@@ -17207,10 +17227,6 @@ Resolve a receipt ID to the transaction hash and signer that produced it. Requir
 ### Параметры пути
 
 - `token_id` (путь, обязательный, string): ID аккаунта контракта FT-токена.
-
-### Параметры запроса
-
-- `apiKey` (query, string): Необязательный API-ключ, передаваемый встраиваемыми клиентами портала. Публичный FastNEAR API его не требует.
 
 ## Справка по ответу
 - Статус: 200
@@ -17292,7 +17308,9 @@ Resolve a receipt ID to the transaction hash and signer that produced it. Requir
 - Mainnet: https://api.fastnear.com/
 - Testnet: https://test.api.fastnear.com/
 ## Авторизация
-- API-ключ через query `apiKey`: Необязательный API-ключ, который могут передавать встроенные клиенты портала. Публичный FastNear API не требует его.
+- Необязательно: запрос работает и без ключа
+- Bearer-токен через заголовок `Authorization: Bearer <token>`
+- API-ключ через query `apiKey`: API-ключ FastNEAR в параметре запроса `apiKey`. Удобно для curl и клиентов, которые не могут задавать заголовки, но ключ может попасть в URL, логи и историю команд оболочки.
 - Этот экспорт намеренно не включает локально сохранённые учётные данные
 ## Текущий запрос
 - Сеть: Mainnet
@@ -17316,10 +17334,6 @@ Resolve a receipt ID to the transaction hash and signer that produced it. Requir
 ### Параметры пути
 
 - `public_key` (путь, обязательный, string): Публичный ключ NEAR в формате `ed25519:...` или `secp256k1:...`.
-
-### Параметры запроса
-
-- `apiKey` (query, string): Необязательный API-ключ, который могут передавать встроенные клиенты портала. Публичный FastNear API не требует его.
 
 ## Справка по ответу
 - Статус: 200
@@ -17379,7 +17393,9 @@ Resolve a receipt ID to the transaction hash and signer that produced it. Requir
 - Mainnet: https://api.fastnear.com/
 - Testnet: https://test.api.fastnear.com/
 ## Авторизация
-- API-ключ через query `apiKey`: Необязательный API-ключ, который могут передавать встроенные клиенты портала. Публичный FastNear API не требует его.
+- Необязательно: запрос работает и без ключа
+- Bearer-токен через заголовок `Authorization: Bearer <token>`
+- API-ключ через query `apiKey`: API-ключ FastNEAR в параметре запроса `apiKey`. Удобно для curl и клиентов, которые не могут задавать заголовки, но ключ может попасть в URL, логи и историю команд оболочки.
 - Этот экспорт намеренно не включает локально сохранённые учётные данные
 ## Текущий запрос
 - Сеть: Mainnet
@@ -17403,10 +17419,6 @@ Resolve a receipt ID to the transaction hash and signer that produced it. Requir
 ### Параметры пути
 
 - `public_key` (путь, обязательный, string): Публичный ключ NEAR в формате `ed25519:...` или `secp256k1:...`.
-
-### Параметры запроса
-
-- `apiKey` (query, string): Необязательный API-ключ, который могут передавать встроенные клиенты портала. Публичный FastNear API не требует его.
 
 ## Справка по ответу
 - Статус: 200

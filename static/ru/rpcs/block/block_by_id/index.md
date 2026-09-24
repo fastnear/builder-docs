@@ -14,8 +14,9 @@
 - Mainnet: https://archival-rpc.mainnet.fastnear.com/ (archival: Pinned block hash, older than standard RPC retention.)
 - Testnet: https://archival-rpc.testnet.fastnear.com/ (archival: Pinned block hash, older than standard RPC retention.)
 ## Авторизация
+- Необязательно: запрос работает и без ключа
 - Bearer-токен через заголовок `Authorization: Bearer <token>`
-- API-ключ через query `apiKey`: Контракт OpenAPI описывает API-ключ FastNear как параметр запроса `apiKey`.
+- API-ключ через query `apiKey`: API-ключ FastNEAR в параметре запроса `apiKey`. Удобно для curl и клиентов, которые не могут задавать заголовки, но ключ может попасть в URL, логи и историю команд оболочки.
 - Этот экспорт намеренно не включает локально сохранённые учётные данные
 ## Текущий запрос
 - Сеть: Mainnet
