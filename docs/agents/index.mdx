@@ -118,6 +118,22 @@ curl "https://rpc.mainnet.fastnear.com?apiKey=$FASTNEAR_API_KEY"
 
 Get your API key from [FastNear Dashboard](https://dashboard.fastnear.com). Operational posture for non-interactive runtimes: [Auth for Agents](/agents/auth) — keys go in env vars or a secret manager, never in browser storage, chat logs, or prompts. Full flow and header details: [Auth & Access](/auth).
 
+## Install the FastNear skill
+
+The shortest path for a coding agent is the FastNear skill: one Markdown file that routes a task to the right API, states the credential rules, and links the references on this site so the agent loads only what it needs.
+
+```bash
+npx skills add fastnear/builder-docs
+```
+
+Or save the served copy where your agent discovers skills. For Claude Code:
+
+```bash
+curl -fsS --create-dirs https://docs.fastnear.com/SKILL.md -o ~/.claude/skills/fastnear/SKILL.md
+```
+
+The skill carries a docs-version stamp, a content hash of the agent-facing docs. Before trusting a cached copy, compare it with `docs_version` at [`/.well-known/docs-version.json`](https://docs.fastnear.com/.well-known/docs-version.json); a different value means refetch. The beacon also lists the hash of every file it covers, so an agent can tell which one changed.
+
 ## Pull clean docs into a prompt
 
 - Every page has a **Copy Markdown** button in the top-right toolbar. It emits a navigation-chrome-free Markdown version of the page, ready to paste into a prompt or RAG store.
@@ -127,6 +143,7 @@ Get your API key from [FastNear Dashboard](https://dashboard.fastnear.com). Oper
   - Russian-locale equivalents live at [`/ru/llms.txt`](/ru/llms.txt) and [`/ru/llms-full.txt`](/ru/llms-full.txt).
 - Machine-readable site structure for graph-aware ingestion: [`/structured-data/site-graph.json`](/structured-data/site-graph.json) (mirrored in `/ru/`).
 - Per-page Markdown mirrors live under the same slug with a `.md` suffix if you prefer direct fetches over the Copy Markdown button.
+- Host-level discovery for clients that only know the domain: the RFC 9727 API catalog at [`/.well-known/api-catalog`](https://docs.fastnear.com/.well-known/api-catalog) lists every API base URL with its OpenAPI document, reference page, and health endpoint, and [`/.well-known/agent-skills/index.json`](https://docs.fastnear.com/.well-known/agent-skills/index.json) lists the published skill with its digest. The site root advertises both as HTTP `Link` headers.
 
 ## Per-call hints an agent should know
 

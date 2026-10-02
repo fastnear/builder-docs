@@ -124,6 +124,9 @@ const AUTHORED_MARKDOWN_LABELS = {
       "AI-readable indexes for FastNear guides, RPC reference, and REST API reference.",
     llmsRootTitle: "FastNear Builder Docs",
     openapiIndex: "OpenAPI index",
+    agentSkill: "Agent skill (SKILL.md)",
+    apiCatalog: "API catalog (RFC 9727)",
+    docsVersionBeacon: "Docs version beacon",
     openapiSpecs: "OpenAPI specs",
     llmsTopLevelIndex: "Top-level index",
     markdownPath: "Markdown path",
@@ -161,6 +164,9 @@ const AUTHORED_MARKDOWN_LABELS = {
       "AI-читабельные индексы для гайдов FastNear, RPC-справочника и справочника REST API.",
     llmsRootTitle: "FastNear Builder Docs",
     openapiIndex: "Индекс OpenAPI",
+    agentSkill: "Навык для агентов (SKILL.md)",
+    apiCatalog: "Каталог API (RFC 9727)",
+    docsVersionBeacon: "Маяк версии документации",
     openapiSpecs: "Спецификации OpenAPI",
     llmsTopLevelIndex: "Верхний индекс",
     markdownPath: "Markdown-маршрут",
@@ -1842,6 +1848,11 @@ function main() {
         labels.llmsIntro,
         [
           { href: "/openapi/index.json", label: labels.openapiIndex },
+          // Host-level discovery files written by generate-well-known.js, which
+          // runs after this script and hashes this file into the beacon.
+          { href: "/SKILL.md", label: labels.agentSkill },
+          { href: "/.well-known/api-catalog", label: labels.apiCatalog },
+          { href: "/.well-known/docs-version.json", label: labels.docsVersionBeacon },
           { href: localizeRoute("/guides/llms.txt", locale), label: labels.llmsGuidesIndex },
           { href: localizeRoute("/rpcs/llms.txt", locale), label: labels.rpcReferenceIndex },
           { href: localizeRoute("/apis/llms.txt", locale), label: labels.restApiReferenceIndex },
