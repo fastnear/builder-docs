@@ -1,0 +1,14 @@
+# Cloudflare Pages response headers. A path without a splat matches exactly,
+# so the Link header below applies to the site root only.
+#
+# The root advertises the agent discovery surfaces (RFC 8288 Link relations,
+# RFC 9727 api-catalog) so a client that only knows the host can find them
+# without guessing paths. Access-Control-Allow-Origin is already set for every
+# response at the edge and is intentionally not repeated here.
+/
+  Link: </.well-known/api-catalog>; rel="api-catalog"; type="application/linkset+json", </SKILL.md>; rel="describedby"; type="text/markdown"; title="FastNear agent skill", </llms.txt>; rel="describedby"; type="text/plain"; title="llms.txt index", </.well-known/docs-version.json>; rel="service-meta"; type="application/json"; title="Docs version beacon"
+
+# RFC 9727 requires this exact extensionless path, so the media type cannot be
+# inferred from the filename.
+/.well-known/api-catalog
+  Content-Type: application/linkset+json
