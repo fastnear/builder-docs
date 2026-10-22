@@ -8,6 +8,11 @@
  * `docusaurus_tag:*` refinements when `contextualSearch` is on. The prod_fastnear_docs_crawler
  * index has no `docusaurus_tag` attribute, so with contextual search on this page returned zero
  * results, and with it off it mixed every locale together. Everything else is upstream as-is.
+ *
+ * When the DocSearch env vars are absent (CI, preview builds) docusaurus.config.js falls back to
+ * @easyops-cn/docusaurus-search-local, which mounts its own /search page under the same
+ * @theme/SearchPage alias. This override therefore defers to @theme-original/SearchPage unless
+ * the adapter's themeConfig.docsearch block is present.
  */
 /* eslint-disable jsx-a11y/no-autofocus */
 import React, { useEffect, useReducer, useRef, useState } from 'react';
@@ -20,7 +25,9 @@ import {
   useEvent,
   usePluralForm,
   useSearchQueryString,
+  useThemeConfig,
 } from '@docusaurus/theme-common';
+import OriginalSearchPage from '@theme-original/SearchPage';
 import Translate, { translate } from '@docusaurus/Translate';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Heading from '@theme/Heading';
@@ -497,6 +504,11 @@ function SearchPageContent() {
 }
 
 export default function SearchPage() {
+  const { docsearch } = useThemeConfig();
+  if (!docsearch) {
+    // Local search provider is active: render its own /search page untouched.
+    return <OriginalSearchPage />;
+  }
   return (
     <HtmlClassNameProvider className="search-page-wrapper">
       <SearchPageContent />
