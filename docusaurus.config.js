@@ -694,8 +694,9 @@ const config = {
               indexName: docsearchConfig.indexName,
               // Keep this off: contextual search adds docusaurus_tag:* facet filters, and the
               // prod_fastnear_docs_crawler index has no docusaurus_tag attribute (only language),
-              // so every query would return zero hits. The SearchBar runtime already scopes
-              // results with language:<locale> on its own (see useSearchParameters).
+              // so every query would return zero hits. Locale scoping is handled by our own
+              // code instead: the SearchBar runtime adds language:<locale> in useSearchParameters,
+              // and src/theme/SearchPage (the swizzled full-page /search route) does the same.
               contextualSearch: false,
               ...docsearchInsightsConfig,
             },
