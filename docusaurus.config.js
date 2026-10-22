@@ -692,7 +692,11 @@ const config = {
               appId: docsearchConfig.appId,
               apiKey: docsearchConfig.apiKey,
               indexName: docsearchConfig.indexName,
-              contextualSearch: true,
+              // Keep this off: contextual search adds docusaurus_tag:* facet filters, and the
+              // prod_fastnear_docs_crawler index has no docusaurus_tag attribute (only language),
+              // so every query would return zero hits. The SearchBar runtime already scopes
+              // results with language:<locale> on its own (see useSearchParameters).
+              contextualSearch: false,
               ...docsearchInsightsConfig,
             },
           }

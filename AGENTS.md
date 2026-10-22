@@ -160,7 +160,7 @@ Public RPC and API pages are no longer iframe embeds. They render directly in `b
 - **`plugins/finalizeLocalizedStaticAssets.cjs`** — finalizes localized static discovery assets after build.
 - **`algolia/`** — crawler config, index settings, relevance cases, and search ops docs for the repo-managed Algolia setup.
 - **`.env.example`** — template for DocSearch and crawler env vars plus optional `HIDE_EARLY_API_FAMILIES`.
-- **`static/js-loaded-globally/`** — vendored browser bundles (`near-api-js`, `@fastnear/api`) loaded globally for interactive docs.
+- **`static/js-loaded-globally/`** — vendored `near-api-js` browser bundle loaded globally for interactive docs.
 - **`/Users/mikepurvis/near/mike-docs/README.md`** — authoritative backend/generation workflow for spec sync and page-model generation.
 - **`/Users/mikepurvis/near/mike-docs/INTEGRATION_GUIDE.md`** — current portal-side and cross-repo integration contract.
 
