@@ -56,3 +56,42 @@ test('RPC page keeps search working while the operation UI stays interactive', a
 
   await expectSearchResult(page);
 });
+
+// The full-page /search route (the "See all N results" link in the modal) must stay scoped to
+// the current locale. It is served by src/theme/SearchPage and only exists with the Algolia
+// provider, so the test skips itself when the local provider is active.
+async function expectFullPageSearchScopedToLocale(page, { path, query, expectedPath, foreignPrefix }) {
+  await page.goto(`${path}?q=${encodeURIComponent(query)}`);
+
+  const resultLinks = page.locator('main article h2 a[href]');
+  await expect(resultLinks.first()).toBeVisible({ timeout: 15000 });
+
+  const hrefs = await resultLinks.evaluateAll((anchors) =>
+    anchors.map((a) => new URL(a.getAttribute('href'), window.location.origin).pathname)
+  );
+  expect(hrefs.length).toBeGreaterThan(0);
+  expect(hrefs).toContain(expectedPath);
+  expect(hrefs.filter((href) => foreignPrefix(href))).toEqual([]);
+}
+
+test('full-page search results stay scoped to the current locale', async ({ page }) => {
+  await page.goto('/');
+  test.skip(
+    (await page.locator('.fastnear-search-shell__button').count()) === 0,
+    'full-page Algolia search route is only mounted with the Algolia provider'
+  );
+
+  await expectFullPageSearchScopedToLocale(page, {
+    path: '/search',
+    query: 'view account',
+    expectedPath: '/rpc/account/view-account',
+    foreignPrefix: (href) => href.startsWith('/ru/'),
+  });
+
+  await expectFullPageSearchScopedToLocale(page, {
+    path: '/ru/search',
+    query: 'история аккаунта',
+    expectedPath: '/ru/tx/account',
+    foreignPrefix: (href) => !href.startsWith('/ru/'),
+  });
+});
