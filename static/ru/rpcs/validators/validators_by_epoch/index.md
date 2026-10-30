@@ -257,6 +257,14 @@
                 "type": "object"
               }
             }
+          },
+          {
+            "name": "validator_reward_paid_prev_epoch",
+            "required": false,
+            "schema": {
+              "type": "object",
+              "description": "Per-validator rewards paid out at the start of the previous epoch.\nFor epoch E, this contains the rewards earned in epoch E-2 that were\nadded to validator and treasury balances at the first block of epoch\nE-1 (via `ValidatorAccountsUpdate`)."
+            }
           }
         ]
       }

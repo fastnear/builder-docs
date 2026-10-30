@@ -157,7 +157,398 @@
       "name": "result",
       "required": false,
       "schema": {
-        "type": "object"
+        "type": "object",
+        "required": [
+          "author",
+          "header",
+          "chunks"
+        ],
+        "properties": [
+          {
+            "name": "author",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "ID аккаунта NEAR"
+            }
+          },
+          {
+            "name": "chunks",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "description": "Contains main info about the chunk."
+              }
+            }
+          },
+          {
+            "name": "header",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "description": "Contains main info about the block.",
+              "required": [
+                "height",
+                "epoch_id",
+                "next_epoch_id",
+                "hash",
+                "prev_hash",
+                "prev_state_root",
+                "chunk_receipts_root",
+                "chunk_headers_root",
+                "chunk_tx_root",
+                "outcome_root",
+                "chunks_included",
+                "challenges_root",
+                "timestamp",
+                "timestamp_nanosec",
+                "random_value",
+                "validator_proposals",
+                "chunk_mask",
+                "gas_price",
+                "total_supply",
+                "challenges_result",
+                "last_final_block",
+                "last_ds_final_block",
+                "next_bp_hash",
+                "block_merkle_root",
+                "approvals",
+                "signature",
+                "latest_protocol_version"
+              ],
+              "properties": [
+                {
+                  "name": "approvals",
+                  "required": true,
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    }
+                  }
+                },
+                {
+                  "name": "block_body_hash",
+                  "required": false,
+                  "schema": {
+                    "type": "string",
+                    "nullable": true,
+                    "description": "Base58-encoded hash"
+                  }
+                },
+                {
+                  "name": "block_merkle_root",
+                  "required": true,
+                  "schema": {
+                    "type": "string",
+                    "description": "Base58-encoded hash"
+                  }
+                },
+                {
+                  "name": "block_ordinal",
+                  "required": false,
+                  "schema": {
+                    "type": "integer",
+                    "nullable": true,
+                    "format": "uint64"
+                  }
+                },
+                {
+                  "name": "challenges_result",
+                  "required": true,
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    }
+                  }
+                },
+                {
+                  "name": "challenges_root",
+                  "required": true,
+                  "schema": {
+                    "type": "string",
+                    "description": "Base58-encoded hash"
+                  }
+                },
+                {
+                  "name": "chunk_endorsements",
+                  "required": false,
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    }
+                  }
+                },
+                {
+                  "name": "chunk_execution_root",
+                  "required": false,
+                  "schema": {
+                    "type": "string",
+                    "nullable": true,
+                    "description": "Base58-encoded hash"
+                  }
+                },
+                {
+                  "name": "chunk_headers_root",
+                  "required": true,
+                  "schema": {
+                    "type": "string",
+                    "description": "Base58-encoded hash"
+                  }
+                },
+                {
+                  "name": "chunk_mask",
+                  "required": true,
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    }
+                  }
+                },
+                {
+                  "name": "chunk_receipts_root",
+                  "required": true,
+                  "schema": {
+                    "type": "string",
+                    "description": "Base58-encoded hash"
+                  }
+                },
+                {
+                  "name": "chunk_tx_root",
+                  "required": true,
+                  "schema": {
+                    "type": "string",
+                    "description": "Base58-encoded hash"
+                  }
+                },
+                {
+                  "name": "chunks_included",
+                  "required": true,
+                  "schema": {
+                    "type": "integer",
+                    "format": "uint64"
+                  }
+                },
+                {
+                  "name": "epoch_id",
+                  "required": true,
+                  "schema": {
+                    "type": "string",
+                    "description": "Base58-encoded hash"
+                  }
+                },
+                {
+                  "name": "epoch_sync_data_hash",
+                  "required": false,
+                  "schema": {
+                    "type": "string",
+                    "nullable": true,
+                    "description": "Base58-encoded hash"
+                  }
+                },
+                {
+                  "name": "gas_price",
+                  "required": true,
+                  "schema": {
+                    "type": "string",
+                    "description": "Amount in yoctoNEAR"
+                  }
+                },
+                {
+                  "name": "hash",
+                  "required": true,
+                  "schema": {
+                    "type": "string",
+                    "description": "Base58-encoded hash"
+                  }
+                },
+                {
+                  "name": "height",
+                  "required": true,
+                  "schema": {
+                    "type": "integer",
+                    "format": "uint64"
+                  }
+                },
+                {
+                  "name": "last_ds_final_block",
+                  "required": true,
+                  "schema": {
+                    "type": "string",
+                    "description": "Base58-encoded hash"
+                  }
+                },
+                {
+                  "name": "last_final_block",
+                  "required": true,
+                  "schema": {
+                    "type": "string",
+                    "description": "Base58-encoded hash"
+                  }
+                },
+                {
+                  "name": "latest_protocol_version",
+                  "required": true,
+                  "schema": {
+                    "type": "integer",
+                    "format": "uint32"
+                  }
+                },
+                {
+                  "name": "next_bp_hash",
+                  "required": true,
+                  "schema": {
+                    "type": "string",
+                    "description": "Base58-encoded hash"
+                  }
+                },
+                {
+                  "name": "next_epoch_id",
+                  "required": true,
+                  "schema": {
+                    "type": "string",
+                    "description": "Base58-encoded hash"
+                  }
+                },
+                {
+                  "name": "outcome_root",
+                  "required": true,
+                  "schema": {
+                    "type": "string",
+                    "description": "Base58-encoded hash"
+                  }
+                },
+                {
+                  "name": "prev_hash",
+                  "required": true,
+                  "schema": {
+                    "type": "string",
+                    "description": "Base58-encoded hash"
+                  }
+                },
+                {
+                  "name": "prev_height",
+                  "required": false,
+                  "schema": {
+                    "type": "integer",
+                    "nullable": true,
+                    "format": "uint64"
+                  }
+                },
+                {
+                  "name": "prev_last_certified_block_epoch_id",
+                  "required": false,
+                  "schema": {
+                    "type": "string",
+                    "nullable": true,
+                    "description": "Base58-encoded epoch identifier hash"
+                  }
+                },
+                {
+                  "name": "prev_state_root",
+                  "required": true,
+                  "schema": {
+                    "type": "string",
+                    "description": "Base58-encoded hash"
+                  }
+                },
+                {
+                  "name": "random_value",
+                  "required": true,
+                  "schema": {
+                    "type": "string",
+                    "description": "Base58-encoded hash"
+                  }
+                },
+                {
+                  "name": "rent_paid",
+                  "required": false,
+                  "schema": {
+                    "type": "string",
+                    "description": "Amount in yoctoNEAR",
+                    "default": "0"
+                  }
+                },
+                {
+                  "name": "shard_split",
+                  "required": false,
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    }
+                  }
+                },
+                {
+                  "name": "signature",
+                  "required": true,
+                  "schema": {
+                    "type": "string",
+                    "description": "Base58-encoded cryptographic signature"
+                  }
+                },
+                {
+                  "name": "spice_chunk_endorsement_stats",
+                  "required": false,
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    }
+                  }
+                },
+                {
+                  "name": "timestamp",
+                  "required": true,
+                  "schema": {
+                    "type": "integer",
+                    "description": "Legacy json number. Should not be used.",
+                    "format": "uint64"
+                  }
+                },
+                {
+                  "name": "timestamp_nanosec",
+                  "required": true,
+                  "schema": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "name": "total_supply",
+                  "required": true,
+                  "schema": {
+                    "type": "string",
+                    "description": "Amount in yoctoNEAR"
+                  }
+                },
+                {
+                  "name": "validator_proposals",
+                  "required": true,
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    }
+                  }
+                },
+                {
+                  "name": "validator_reward",
+                  "required": false,
+                  "schema": {
+                    "type": "string",
+                    "description": "Amount in yoctoNEAR",
+                    "default": "0"
+                  }
+                }
+              ]
+            }
+          }
+        ]
       }
     },
     {

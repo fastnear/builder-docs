@@ -313,6 +313,15 @@
                   }
                 },
                 {
+                  "name": "proposed_split",
+                  "required": false,
+                  "schema": {
+                    "type": "object",
+                    "nullable": true,
+                    "description": "The result of splitting a memtrie into two possibly even parts, according to `memory_usage`\nstored in the trie nodes.\n**NOTE: This is an artificial value calculated according to `TRIE_COST`. Hence, it does not\nrepresent actual memory allocation, but the split ratio should be roughly consistent with that.**"
+                  }
+                },
+                {
                   "name": "rent_paid",
                   "required": false,
                   "schema": {

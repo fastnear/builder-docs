@@ -177,7 +177,252 @@
             ]
           },
           "result": {
-            "type": "object"
+            "type": "object",
+            "properties": {
+              "author": {
+                "type": "string",
+                "description": "NEAR account ID"
+              },
+              "chunks": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "description": "Contains main info about the chunk."
+                }
+              },
+              "header": {
+                "type": "object",
+                "description": "Contains main info about the block.",
+                "properties": {
+                  "approvals": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    }
+                  },
+                  "block_body_hash": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Base58-encoded hash"
+                  },
+                  "block_merkle_root": {
+                    "type": "string",
+                    "description": "Base58-encoded hash"
+                  },
+                  "block_ordinal": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "format": "uint64",
+                    "minimum": 0
+                  },
+                  "challenges_result": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    }
+                  },
+                  "challenges_root": {
+                    "type": "string",
+                    "description": "Base58-encoded hash"
+                  },
+                  "chunk_endorsements": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    }
+                  },
+                  "chunk_execution_root": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Base58-encoded hash"
+                  },
+                  "chunk_headers_root": {
+                    "type": "string",
+                    "description": "Base58-encoded hash"
+                  },
+                  "chunk_mask": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    }
+                  },
+                  "chunk_receipts_root": {
+                    "type": "string",
+                    "description": "Base58-encoded hash"
+                  },
+                  "chunk_tx_root": {
+                    "type": "string",
+                    "description": "Base58-encoded hash"
+                  },
+                  "chunks_included": {
+                    "type": "integer",
+                    "format": "uint64",
+                    "minimum": 0
+                  },
+                  "epoch_id": {
+                    "type": "string",
+                    "description": "Base58-encoded hash"
+                  },
+                  "epoch_sync_data_hash": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Base58-encoded hash"
+                  },
+                  "gas_price": {
+                    "type": "string",
+                    "description": "Amount in yoctoNEAR"
+                  },
+                  "hash": {
+                    "type": "string",
+                    "description": "Base58-encoded hash"
+                  },
+                  "height": {
+                    "type": "integer",
+                    "format": "uint64",
+                    "minimum": 0
+                  },
+                  "last_ds_final_block": {
+                    "type": "string",
+                    "description": "Base58-encoded hash"
+                  },
+                  "last_final_block": {
+                    "type": "string",
+                    "description": "Base58-encoded hash"
+                  },
+                  "latest_protocol_version": {
+                    "type": "integer",
+                    "format": "uint32",
+                    "minimum": 0
+                  },
+                  "next_bp_hash": {
+                    "type": "string",
+                    "description": "Base58-encoded hash"
+                  },
+                  "next_epoch_id": {
+                    "type": "string",
+                    "description": "Base58-encoded hash"
+                  },
+                  "outcome_root": {
+                    "type": "string",
+                    "description": "Base58-encoded hash"
+                  },
+                  "prev_hash": {
+                    "type": "string",
+                    "description": "Base58-encoded hash"
+                  },
+                  "prev_height": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "format": "uint64",
+                    "minimum": 0
+                  },
+                  "prev_last_certified_block_epoch_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Base58-encoded epoch identifier hash"
+                  },
+                  "prev_state_root": {
+                    "type": "string",
+                    "description": "Base58-encoded hash"
+                  },
+                  "random_value": {
+                    "type": "string",
+                    "description": "Base58-encoded hash"
+                  },
+                  "rent_paid": {
+                    "type": "string",
+                    "description": "Amount in yoctoNEAR",
+                    "default": "0"
+                  },
+                  "shard_split": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    }
+                  },
+                  "signature": {
+                    "type": "string",
+                    "description": "Base58-encoded cryptographic signature"
+                  },
+                  "spice_chunk_endorsement_stats": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    }
+                  },
+                  "timestamp": {
+                    "type": "integer",
+                    "description": "Legacy json number. Should not be used.",
+                    "format": "uint64",
+                    "minimum": 0
+                  },
+                  "timestamp_nanosec": {
+                    "type": "string"
+                  },
+                  "total_supply": {
+                    "type": "string",
+                    "description": "Amount in yoctoNEAR"
+                  },
+                  "validator_proposals": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    }
+                  },
+                  "validator_reward": {
+                    "type": "string",
+                    "description": "Amount in yoctoNEAR",
+                    "default": "0"
+                  }
+                },
+                "required": [
+                  "height",
+                  "epoch_id",
+                  "next_epoch_id",
+                  "hash",
+                  "prev_hash",
+                  "prev_state_root",
+                  "chunk_receipts_root",
+                  "chunk_headers_root",
+                  "chunk_tx_root",
+                  "outcome_root",
+                  "chunks_included",
+                  "challenges_root",
+                  "timestamp",
+                  "timestamp_nanosec",
+                  "random_value",
+                  "validator_proposals",
+                  "chunk_mask",
+                  "gas_price",
+                  "total_supply",
+                  "challenges_result",
+                  "last_final_block",
+                  "last_ds_final_block",
+                  "next_bp_hash",
+                  "block_merkle_root",
+                  "approvals",
+                  "signature",
+                  "latest_protocol_version"
+                ]
+              }
+            },
+            "required": [
+              "author",
+              "header",
+              "chunks"
+            ]
           },
           "error": {
             "type": "object",
