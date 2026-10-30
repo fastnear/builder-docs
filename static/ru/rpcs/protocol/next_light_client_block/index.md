@@ -199,6 +199,15 @@
                   }
                 },
                 {
+                  "name": "chunk_execution_root",
+                  "required": false,
+                  "schema": {
+                    "type": "string",
+                    "nullable": true,
+                    "description": "Base58-encoded hash"
+                  }
+                },
+                {
                   "name": "epoch_id",
                   "required": true,
                   "schema": {

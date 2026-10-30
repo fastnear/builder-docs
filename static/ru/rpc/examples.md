@@ -55,7 +55,7 @@ curl -s "https://archival-rpc.testnet.fastnear.com?apiKey=${FASTNEAR_API_KEY:-}"
 Два перехода отсюда:
 
 - **Отправляете в реальном времени?** [`broadcast_tx_async`](https://docs.fastnear.com/ru/rpc/transaction/broadcast-tx-async) возвращает хеш сразу после того, как узел принял payload — отслеживайте отдельно через `tx`. [`send_tx`](https://docs.fastnear.com/ru/rpc/transaction/send-tx) одновременно отправляет и блокируется на выбранном `wait_until` в одном запросе.
-- **Нужно дерево receipts, а не только outcome?** `tx` уже включает `receipts_outcome`; расширяйте поверхность до [`EXPERIMENTAL_tx_status`](https://docs.fastnear.com/ru/rpc/transaction/experimental-tx-status) только тогда, когда дополнительно нужны сырые записи receipts.
+- **Нужно дерево receipts, а не только outcome?** `tx` уже включает `receipts_outcome`; используйте [`tx_status`](https://docs.fastnear.com/ru/rpc/transaction/tx-status), когда дополнительно нужны сырые записи receipts.
 
 ## Инспекция блока на tip
 

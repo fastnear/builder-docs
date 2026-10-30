@@ -3795,7 +3795,7 @@
     {
       "authSummary": "Bearer token via Authorization header; API key via query apiKey",
       "canonicalPath": "/ru/rpcs/transaction/EXPERIMENTAL_tx_status",
-      "description": "Получите полное дерево квитанций и результаты исполнения каждой квитанции по хешу в кодировке Base58 — богаче, чем `tx_status`.",
+      "description": "Получите полное дерево квитанций и результаты исполнения каждой квитанции по хешу в кодировке Base58. Устарел начиная с nearcore 2.14 — используйте `tx_status`, который возвращает те же квитанции.",
       "docsPath": "/ru/rpc/transaction/experimental-tx-status",
       "familyId": "rpc-transaction",
       "headline": "NEAR Protocol RPC: подробный статус транзакции",
@@ -3894,8 +3894,58 @@
     },
     {
       "authSummary": "Bearer token via Authorization header; API key via query apiKey",
+      "canonicalPath": "/ru/rpcs/transaction/tx",
+      "description": "Проверьте итоговый результат транзакции по её хешу в кодировке Base58 без списка квитанций — облегчённый вариант `tx_status`.",
+      "docsPath": "/ru/rpc/transaction/tx",
+      "familyId": "rpc-transaction",
+      "headline": "NEAR Protocol RPC: Get transaction result",
+      "httpMethod": "POST",
+      "id": "rpc-tx",
+      "name": "NEAR Protocol RPC: Get transaction result",
+      "networkKeys": [
+        "mainnet",
+        "testnet"
+      ],
+      "openapiFamilyPath": "/openapi/rpc.json",
+      "openapiPath": "/openapi/rpc/tx.json",
+      "openapiPointer": "/openapi/rpc.json#/paths/~1tx/post",
+      "operationId": "tx",
+      "pageModelId": "rpc-tx",
+      "requestPath": "/",
+      "requestType": null,
+      "routeAliases": [
+        "/ru/rpcs/transaction/tx/other/tx",
+        "/ru/reference/operation/tx"
+      ],
+      "schemaType": "APIReference",
+      "sourceSpec": "rpcs/transaction/tx.yaml",
+      "summary": "Получить результат транзакции",
+      "transport": "json-rpc",
+      "@id": "https://docs.fastnear.com/structured-data/operations/rpc-tx",
+      "abstract": "Получить результат транзакции",
+      "canonicalPageId": "https://docs.fastnear.com/ru/rpcs/transaction/tx#page",
+      "canonicalUrl": "https://docs.fastnear.com/ru/rpcs/transaction/tx",
+      "docsPageId": "https://docs.fastnear.com/ru/rpc/transaction/tx#page",
+      "docsUrl": "https://docs.fastnear.com/ru/rpc/transaction/tx",
+      "familyEntityId": "https://docs.fastnear.com/structured-data/families/rpc-transaction",
+      "inLanguage": "ru",
+      "mainEntityOfPageId": "https://docs.fastnear.com/ru/rpc/transaction/tx#page",
+      "publisherId": "https://docs.fastnear.com/#organization",
+      "sameAs": [
+        "https://docs.fastnear.com/ru/rpc/transaction/tx",
+        "https://docs.fastnear.com/ru/rpcs/transaction/tx",
+        "https://docs.fastnear.com/ru/rpcs/transaction/tx/other/tx",
+        "https://docs.fastnear.com/ru/reference/operation/tx"
+      ],
+      "subjectOfPageIds": [
+        "https://docs.fastnear.com/ru/rpc/transaction/tx#page",
+        "https://docs.fastnear.com/ru/rpcs/transaction/tx#page"
+      ]
+    },
+    {
+      "authSummary": "Bearer token via Authorization header; API key via query apiKey",
       "canonicalPath": "/ru/rpcs/transaction/tx_status",
-      "description": "Проверьте итоговый результат транзакции по её хешу в кодировке Base58 — успех, сбой или ещё не завершена.",
+      "description": "Проверьте итоговый результат транзакции по её хешу в кодировке Base58 и получите все порождённые ею квитанции — успех, сбой или ещё не завершена.",
       "docsPath": "/ru/rpc/transaction/tx-status",
       "familyId": "rpc-transaction",
       "headline": "NEAR Protocol RPC: Get transaction status",
@@ -5963,6 +6013,21 @@
         "familyIds": [
           "https://docs.fastnear.com/structured-data/families/rpc-transaction"
         ],
+        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/rpc-tx",
+        "pageId": "https://docs.fastnear.com/ru/rpc/transaction/tx#page"
+      },
+      "indexable": true,
+      "markdownMirrorUrl": "https://docs.fastnear.com/ru/rpc/transaction/tx.md",
+      "pageSchemaType": "WebPage",
+      "route": "/ru/rpc/transaction/tx",
+      "routeType": "docs",
+      "url": "https://docs.fastnear.com/ru/rpc/transaction/tx"
+    },
+    {
+      "entityIds": {
+        "familyIds": [
+          "https://docs.fastnear.com/structured-data/families/rpc-transaction"
+        ],
         "mainEntityId": "https://docs.fastnear.com/structured-data/operations/rpc-tx-status",
         "pageId": "https://docs.fastnear.com/ru/rpc/transaction/tx-status#page"
       },
@@ -6572,6 +6637,21 @@
       "route": "/ru/rpcs/transaction/send_tx",
       "routeType": "hosted-rpc",
       "url": "https://docs.fastnear.com/ru/rpcs/transaction/send_tx"
+    },
+    {
+      "entityIds": {
+        "familyIds": [
+          "https://docs.fastnear.com/structured-data/families/rpc-transaction"
+        ],
+        "mainEntityId": "https://docs.fastnear.com/structured-data/operations/rpc-tx",
+        "pageId": "https://docs.fastnear.com/ru/rpcs/transaction/tx#page"
+      },
+      "indexable": false,
+      "markdownMirrorUrl": "https://docs.fastnear.com/ru/rpcs/transaction/tx.md",
+      "pageSchemaType": "WebPage",
+      "route": "/ru/rpcs/transaction/tx",
+      "routeType": "hosted-rpc",
+      "url": "https://docs.fastnear.com/ru/rpcs/transaction/tx"
     },
     {
       "entityIds": {

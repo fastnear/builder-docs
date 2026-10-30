@@ -169,6 +169,18 @@
             }
           },
           {
+            "name": "block_request_timeout",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "description": "How long to wait for a state sync block request response",
+              "items": {
+                "type": "integer",
+                "format": "uint64"
+              }
+            }
+          },
+          {
             "name": "catchup_step_period",
             "required": false,
             "schema": {
@@ -279,6 +291,18 @@
                   }
                 },
                 {
+                  "name": "catch_up_throttle",
+                  "required": false,
+                  "schema": {
+                    "type": "object",
+                    "description": "Delay between consecutive batches while the writer is catching up, pacing\nhow fast it uploads to the storage backend.",
+                    "default": {
+                      "nanos": 100000000,
+                      "secs": 1
+                    }
+                  }
+                },
+                {
                   "name": "polling_interval",
                   "required": false,
                   "schema": {
@@ -286,7 +310,7 @@
                     "description": "Интервал, с которым система проверяет новые блоки или чанки для архивации.",
                     "default": {
                       "nanos": 0,
-                      "secs": 1
+                      "secs": 5
                     }
                   }
                 },
@@ -780,38 +804,13 @@
                   "required": false,
                   "schema": {
                     "type": "string",
-                    "nullable": true,
-                    "description": "Синхронизирует состояние от пиров, не читая ничего из внешнего хранилища.",
+                    "description": "Желаемый уровень гарантии статуса исполнения",
                     "enum": [
                       "Peers"
                     ]
                   }
                 }
               ]
-            }
-          },
-          {
-            "name": "state_sync_external_backoff",
-            "required": false,
-            "schema": {
-              "type": "array",
-              "description": "Дополнительное время ожидания после неудачного запроса к внешнему хранилищу",
-              "items": {
-                "type": "integer",
-                "format": "uint64"
-              }
-            }
-          },
-          {
-            "name": "state_sync_external_timeout",
-            "required": false,
-            "schema": {
-              "type": "array",
-              "description": "Как долго ждать ответа от централизованной синхронизации состояния",
-              "items": {
-                "type": "integer",
-                "format": "uint64"
-              }
             }
           },
           {
@@ -988,6 +987,15 @@
                   }
                 }
               ]
+            }
+          },
+          {
+            "name": "view_access_keys_limit",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "description": "Upper bound on the number of access keys returned by a `view_access_key_list`\nquery.",
+              "format": "uint32"
             }
           },
           {

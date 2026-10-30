@@ -113,7 +113,7 @@ paths:
     post:
       operationId: view_access_key
       summary: View access key
-      description: "Fetch one access key's permissions and nonce by public key on a given account. Pass the full public key with its type prefix. For an ML-DSA-65 key that is the full ml-dsa-65: key, not the ml-dsa-65-hash: handle that view_access_key_list reports; the handle is rejected with a parse error (unknown key type)."
+      description: "Fetch one access key's permissions and nonce by public key on a given account. Pass the full public key with its type prefix — for ML-DSA-65 the ml-dsa-65: key, not the ml-dsa-65-hash: handle, which is rejected as an unknown key type."
       x-fastnear-interaction:
         kind: rpc-view-access-key
       x-hideReplay: true
@@ -206,7 +206,7 @@ paths:
     post:
       operationId: view_access_key_list
       summary: View access key list
-      description: "Fetch every access key attached to an account, each with its permissions and nonce. ML-DSA-65 keys are listed by their ml-dsa-65-hash: handle; to query one with view_access_key, or to reference it in an action, use the full ml-dsa-65: public key instead."
+      description: "Fetch every access key attached to an account, each with its permissions and nonce. ML-DSA-65 keys are listed by their ml-dsa-65-hash: handle; query or reference one with the full ml-dsa-65: public key instead."
       x-fastnear-interaction:
         kind: rpc-view-access-key-list
       x-hideReplay: true
@@ -239,6 +239,18 @@ paths:
                     account_id:
                       type: string
                       description: NEAR account ID
+                    after_key:
+                      type:
+                        - string
+                        - "null"
+                      description: Exclusive pagination cursor — the `last_key` handle returned by the previous page; omit to start from the first key.
+                    limit:
+                      type:
+                        - integer
+                        - "null"
+                      format: uint32
+                      minimum: 1
+                      description: Maximum access keys per response (≥ 1). Omit for no client-set bound; the node caps it at its `view_access_keys_limit`.
                     request_type:
                       type: string
                       enum:
@@ -2466,7 +2478,91 @@ paths:
     post:
       operationId: tx_status
       summary: Get transaction status
-      description: Check a transaction's final outcome by Base58 hash — succeeded, failed, or still unresolved.
+      description: Check a transaction's final outcome by Base58 hash and get every receipt it produced — succeeded, failed, or still unresolved.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - jsonrpc
+                - id
+                - method
+                - params
+              properties:
+                jsonrpc:
+                  type: string
+                  enum:
+                    - "2.0"
+                id:
+                  type: string
+                  example: fastnear
+                method:
+                  type: string
+                  enum:
+                    - tx_status
+                params:
+                  type: object
+                  properties:
+                    wait_until:
+                      type: string
+                      enum:
+                        - NONE
+                        - INCLUDED
+                        - INCLUDED_FINAL
+                        - EXECUTED
+                        - EXECUTED_OPTIMISTIC
+                        - FINAL
+                      description: Desired level of execution status guarantee
+                      default: EXECUTED_OPTIMISTIC
+                    signed_tx_base64:
+                      type: string
+                      description: Base64-encoded Borsh serialization of a `SignedTransaction`; must be freshly signed (nonce above the access key's current value).
+                    sender_account_id:
+                      type: string
+                      description: NEAR account ID
+                    tx_hash:
+                      type: string
+                      description: Base58-encoded hash
+            examples:
+              mainnet:
+                summary: Mainnet Example
+                value:
+                  jsonrpc: "2.0"
+                  id: fastnear
+                  method: tx_status
+                  params:
+                    tx_hash: 34E7weKCDqXh3xPKdBgSWRqo44yTWjbka9deMK8JbAxx
+                    sender_account_id: escrow.ai.near
+              testnet:
+                summary: Testnet Example
+                value:
+                  jsonrpc: "2.0"
+                  id: fastnear
+                  method: tx_status
+                  params:
+                    tx_hash: 9LPbkwJ26HYgda7KHrURc6jozBcpdA1kUMSEzwm81JPx
+                    sender_account_id: near-mpc-staking4all-01.testnet
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/JsonRpcResponse_tx_status"
+        "403":
+          description: The supplied API key was not recognized.
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: Invalid API key
+  /tx:
+    post:
+      operationId: tx
+      summary: Get transaction result
+      description: Check a transaction's final outcome by Base58 hash without the receipt list — the lighter form of `tx_status`.
       requestBody:
         required: true
         content:
@@ -2515,7 +2611,7 @@ paths:
                       description: Base58-encoded hash
             examples:
               mainnet:
-                summary: Mainnet Example
+                summary: Get transaction result (Mainnet)
                 value:
                   jsonrpc: "2.0"
                   id: fastnear
@@ -2524,7 +2620,7 @@ paths:
                     tx_hash: 34E7weKCDqXh3xPKdBgSWRqo44yTWjbka9deMK8JbAxx
                     sender_account_id: escrow.ai.near
               testnet:
-                summary: Testnet Example
+                summary: Get transaction result (Testnet)
                 value:
                   jsonrpc: "2.0"
                   id: fastnear
@@ -2538,7 +2634,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/JsonRpcResponse_tx_status"
+                $ref: "#/components/schemas/JsonRpcResponse_tx"
         "403":
           description: The supplied API key was not recognized.
           content:
@@ -2630,7 +2726,7 @@ paths:
     post:
       operationId: EXPERIMENTAL_tx_status
       summary: Get detailed transaction status
-      description: Fetch a transaction's full receipt tree and per-receipt outcomes by Base58 hash — richer than `tx_status`.
+      description: Fetch a transaction's full receipt tree and per-receipt outcomes by Base58 hash. Deprecated in nearcore 2.14 — prefer `tx_status`, which returns the same receipts.
       requestBody:
         required: true
         content:
@@ -3104,6 +3200,17 @@ components:
             amount:
               type: string
               description: Amount in yoctoNEAR
+            bootstrap_nonce:
+              type:
+                - integer
+                - "null"
+              description: |-
+                The nonce an uninitialized account's own transactions must use, present
+                only while it is uninitialized. A self-signed state init is the one
+                transaction such an account can send, and this is the only way for a
+                client to learn the nonce it must carry: there is no access key to query.
+              format: uint64
+              minimum: 0
             code_hash:
               type: string
               description: Base58-encoded hash
@@ -3120,14 +3227,26 @@ components:
             locked:
               type: string
               description: Amount in yoctoNEAR
+            state:
+              type: string
+              enum:
+                - initialized
+                - uninitialized
+              description: |-
+                Whether an account's state has been installed.
+                Only universal accounts can be uninitialized: they come into existence when
+                a transfer funds a `0u` id whose state init has not been applied yet. A
+                deterministic `0s` account waiting for its state init is an ordinary V1
+                account with no contract, not this.
             storage_paid_at:
               type: integer
-              description: "TODO(2271): deprecated."
+              description: Deprecated and unused; nodes always return 0.
               format: uint64
               default: 0
               minimum: 0
             storage_usage:
               type: integer
+              description: Total storage used by the account, in bytes.
               format: uint64
               minimum: 0
           required:
@@ -3164,6 +3283,7 @@ components:
           properties:
             nonce:
               type: integer
+              description: Current nonce; each transaction signed with this key must use a strictly greater value.
               format: uint64
               minimum: 0
             permission:
@@ -3209,6 +3329,11 @@ components:
                   is the full public key (string form unchanged from before); for
                   ML-DSA-65 access keys it is a `ml-dsa-65-hash:...` SHA3-256 digest
                   (the full pubkey is not stored on-chain).
+            last_key:
+              type:
+                - string
+                - "null"
+              description: Pagination cursor — the handle of the last key returned when the listing was truncated. Pass it as `after_key` to fetch the next page; absent on the last page.
           required:
             - keys
         error:
@@ -4488,6 +4613,13 @@ components:
             block_production_tracking_delay:
               type: string
               description: Duration to check for producing / skipping block.
+            block_request_timeout:
+              type: array
+              items:
+                type: integer
+                format: uint64
+                minimum: 0
+              description: How long to wait for a state sync block request response
             catchup_step_period:
               type: array
               items:
@@ -4554,11 +4686,19 @@ components:
                   type: boolean
                   description: Determines whether block-related data should be written to cloud storage.
                   default: false
+                catch_up_throttle:
+                  type: object
+                  default:
+                    nanos: 100000000
+                    secs: 1
+                  description: |-
+                    Delay between consecutive batches while the writer is catching up, pacing
+                    how fast it uploads to the storage backend.
                 polling_interval:
                   type: object
                   default:
                     nanos: 0
-                    secs: 1
+                    secs: 5
                   description: Interval at which the system checks for new blocks or chunks to archive.
                 snapshot_every_n_epochs:
                   type: integer
@@ -4853,27 +4993,11 @@ components:
                   format: int32
                   default: 1
                 sync:
-                  type:
-                    - string
-                    - "null"
+                  type: string
                   enum:
                     - Peers
-                  description: Syncs state from the peers without reading anything from external storage.
+                  description: Desired level of execution status guarantee
               description: Options for syncing state.
-            state_sync_external_backoff:
-              type: array
-              items:
-                type: integer
-                format: uint64
-                minimum: 0
-              description: Additional waiting period after a failed request to external storage
-            state_sync_external_timeout:
-              type: array
-              items:
-                type: integer
-                format: uint64
-                minimum: 0
-              description: How long to wait for a response from centralized state sync
             state_sync_p2p_timeout:
               type: array
               items:
@@ -4974,6 +5098,13 @@ components:
                 - version
                 - build
                 - commit
+            view_access_keys_limit:
+              type: integer
+              description: |-
+                Upper bound on the number of access keys returned by a `view_access_key_list`
+                query.
+              format: uint32
+              minimum: 0
             view_client_threads:
               type: integer
               description: Number of threads for ViewClientActor pool.
@@ -5115,6 +5246,11 @@ components:
               properties:
                 block_merkle_root:
                   type: string
+                  description: Base58-encoded hash
+                chunk_execution_root:
+                  type:
+                    - string
+                    - "null"
                   description: Base58-encoded hash
                 epoch_id:
                   type: string
@@ -5710,6 +5846,63 @@ components:
               items:
                 type: object
               description: Receipts generated from the transaction
+            receipts_outcome:
+              type: array
+              items:
+                type: object
+              description: The execution outcome of receipts.
+            status:
+              type: object
+              description: One of multiple possible types
+            transaction:
+              type: object
+              description: Signed Transaction
+            transaction_outcome:
+              type: object
+              description: The execution outcome of the signed transaction.
+          required:
+            - final_execution_status
+        error:
+          type: object
+          properties:
+            code:
+              type: integer
+            message:
+              type: string
+            data:
+              type: object
+    JsonRpcResponse_tx:
+      type: object
+      required:
+        - jsonrpc
+        - id
+      properties:
+        jsonrpc:
+          type: string
+          enum:
+            - "2.0"
+        id:
+          oneOf:
+            - type: string
+            - type: number
+        result:
+          type: object
+          properties:
+            final_execution_status:
+              type: string
+              enum:
+                - NONE
+                - INCLUDED
+                - INCLUDED_FINAL
+                - EXECUTED
+                - EXECUTED_OPTIMISTIC
+                - FINAL
+              description: Desired level of execution status guarantee
+            receipts:
+              type: array
+              items:
+                type: object
+              description: Only `tx_status` returns this list; the legacy `tx` method omits it.
             receipts_outcome:
               type: array
               items:

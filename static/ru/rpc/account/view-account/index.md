@@ -205,6 +205,16 @@
             }
           },
           {
+            "name": "bootstrap_nonce",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "nullable": true,
+              "description": "The nonce an uninitialized account's own transactions must use, present\nonly while it is uninitialized. A self-signed state init is the one\ntransaction such an account can send, and this is the only way for a\nclient to learn the nonce it must carry: there is no access key to query.",
+              "format": "uint64"
+            }
+          },
+          {
             "name": "code_hash",
             "required": true,
             "schema": {
@@ -239,11 +249,23 @@
             }
           },
           {
+            "name": "состояние",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "Whether an account's state has been installed.\nOnly universal accounts can be uninitialized: they come into existence when\na transfer funds a `0u` id whose state init has not been applied yet. A\ndeterministic `0s` account waiting for its state init is an ordinary V1\naccount with no contract, not this.",
+              "enum": [
+                "initialized",
+                "uninitialized"
+              ]
+            }
+          },
+          {
             "name": "storage_paid_at",
             "required": false,
             "schema": {
               "type": "integer",
-              "description": "TODO(2271): deprecated.",
+              "description": "Deprecated and unused; nodes always return 0.",
               "format": "uint64",
               "default": 0
             }
@@ -253,6 +275,7 @@
             "required": true,
             "schema": {
               "type": "integer",
+              "description": "Total storage used by the account, in bytes.",
               "format": "uint64"
             }
           }

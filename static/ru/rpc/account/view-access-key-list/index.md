@@ -59,6 +59,8 @@
 ```
 ### Входные данные
 - `account_id` (body, обязательный, string): ID аккаунта NEAR.
+- `after_key` (body, string): Курсор пагинации (исключающий): значение `last_key` из предыдущей страницы. Опустите, чтобы начать с первого ключа.
+- `limit` (body, integer): Максимальное число ключей доступа в ответе (≥ 1). Опустите, чтобы не задавать ограничение на стороне клиента; узел ограничивает его значением `view_access_keys_limit`.
 ### Схема запроса
 ```json
 {
@@ -115,6 +117,25 @@
             "schema": {
               "type": "string",
               "description": "ID аккаунта NEAR"
+            }
+          },
+          {
+            "name": "after_key",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "nullable": true,
+              "description": "Exclusive pagination cursor — the `last_key` handle returned by the previous page; omit to start from the first key."
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "nullable": true,
+              "description": "Maximum access keys per response (≥ 1). Omit for no client-set bound; the node caps it at its `view_access_keys_limit`.",
+              "format": "uint32"
             }
           },
           {
@@ -202,6 +223,15 @@
                 "type": "object",
                 "description": "Describes information about an access key including its on-trie\nidentifier. For ed25519/secp256k1 access keys the `public_key` field\nis the full public key (string form unchanged from before); for\nML-DSA-65 access keys it is a `ml-dsa-65-hash:...` SHA3-256 digest\n(the full pubkey is not stored on-chain)."
               }
+            }
+          },
+          {
+            "name": "last_key",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "nullable": true,
+              "description": "Pagination cursor — the handle of the last key returned when the listing was truncated. Pass it as `after_key` to fetch the next page; absent on the last page."
             }
           }
         ]

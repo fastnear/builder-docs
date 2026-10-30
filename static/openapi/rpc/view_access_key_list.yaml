@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: "NEAR Protocol RPC: View access key list"
-  description: "Fetch every access key attached to an account, each with its permissions and nonce. ML-DSA-65 keys are listed by their ml-dsa-65-hash: handle; to query one with view_access_key, or to reference it in an action, use the full ml-dsa-65: public key instead."
+  description: "Fetch every access key attached to an account, each with its permissions and nonce. ML-DSA-65 keys are listed by their ml-dsa-65-hash: handle; query or reference one with the full ml-dsa-65: public key instead."
   version: 1.0.0
 servers:
   - url: https://rpc.mainnet.fastnear.com
@@ -17,7 +17,7 @@ paths:
     post:
       operationId: view_access_key_list
       summary: View access key list
-      description: "Fetch every access key attached to an account, each with its permissions and nonce. ML-DSA-65 keys are listed by their ml-dsa-65-hash: handle; to query one with view_access_key, or to reference it in an action, use the full ml-dsa-65: public key instead."
+      description: "Fetch every access key attached to an account, each with its permissions and nonce. ML-DSA-65 keys are listed by their ml-dsa-65-hash: handle; query or reference one with the full ml-dsa-65: public key instead."
       x-fastnear-interaction:
         kind: rpc-view-access-key-list
       x-hideReplay: true
@@ -50,6 +50,18 @@ paths:
                     account_id:
                       type: string
                       description: NEAR account ID
+                    after_key:
+                      type:
+                        - string
+                        - "null"
+                      description: Exclusive pagination cursor — the `last_key` handle returned by the previous page; omit to start from the first key.
+                    limit:
+                      type:
+                        - integer
+                        - "null"
+                      format: uint32
+                      minimum: 1
+                      description: Maximum access keys per response (≥ 1). Omit for no client-set bound; the node caps it at its `view_access_keys_limit`.
                     request_type:
                       type: string
                       enum:
@@ -144,6 +156,11 @@ components:
                   is the full public key (string form unchanged from before); for
                   ML-DSA-65 access keys it is a `ml-dsa-65-hash:...` SHA3-256 digest
                   (the full pubkey is not stored on-chain).
+            last_key:
+              type:
+                - string
+                - "null"
+              description: Pagination cursor — the handle of the last key returned when the listing was truncated. Pass it as `after_key` to fetch the next page; absent on the last page.
           required:
             - keys
         error:

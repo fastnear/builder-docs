@@ -1,0 +1,306 @@
+# RPC протокола NEAR: Результат транзакции
+Получить результат транзакции
+Проверьте итоговый результат транзакции по её хешу в кодировке Base58 без списка квитанций — облегчённый вариант `tx_status`.
+## Ссылки на источник
+- https://docs.fastnear.com/ru/rpc/transaction/tx
+- https://docs.fastnear.com/ru/rpcs/transaction/tx
+- https://docs.fastnear.com/ru/rpcs/transaction/tx/other/tx
+- https://docs.fastnear.com/ru/reference/operation/tx
+## Операция
+- Транспорт: json-rpc
+- Метод: POST
+- Путь: `/`
+## OpenAPI
+- Эта операция: https://docs.fastnear.com/openapi/rpc/tx.json (https://docs.fastnear.com/openapi/rpc/tx.yaml)
+- Полный документ API: https://docs.fastnear.com/openapi/rpc.json
+- Указатель в полном документе: https://docs.fastnear.com/openapi/rpc.json#/paths/~1tx/post
+## Сети
+- Mainnet: https://archival-rpc.mainnet.fastnear.com/ (archival: Pinned transaction, older than standard RPC retention.)
+- Testnet: https://archival-rpc.testnet.fastnear.com/ (archival: Pinned transaction, older than standard RPC retention.)
+## Авторизация
+- Bearer-токен через заголовок `Authorization: Bearer <token>`
+- API-ключ через query `apiKey`: API-ключ FastNEAR в параметре запроса `apiKey`. Удобно для curl и клиентов, которые не могут задавать заголовки, но ключ может попасть в URL, логи и историю команд оболочки.
+- Этот экспорт намеренно не включает локально сохранённые учётные данные
+## Текущий запрос
+- Сеть: Mainnet
+- Финальность: final
+- Эндпоинт: https://archival-rpc.mainnet.fastnear.com/
+### Тело запроса
+```json
+{
+  "jsonrpc": "2.0",
+  "id": "fastnear",
+  "method": "tx",
+  "params": {
+    "tx_hash": "34E7weKCDqXh3xPKdBgSWRqo44yTWjbka9deMK8JbAxx",
+    "sender_account_id": "escrow.ai.near"
+  }
+}
+```
+## Справка по запросу
+### Активный пример
+```json
+{
+  "body": {
+    "jsonrpc": "2.0",
+    "id": "fastnear",
+    "method": "tx",
+    "params": {
+      "tx_hash": "34E7weKCDqXh3xPKdBgSWRqo44yTWjbka9deMK8JbAxx",
+      "sender_account_id": "escrow.ai.near"
+    }
+  },
+  "headers": {},
+  "path": {},
+  "query": {}
+}
+```
+### Входные данные
+- `wait_until` (body, string): Желаемый уровень гарантии статуса исполнения.
+- `signed_tx_base64` (body, string): Подписанная транзакция в кодировке Base64. Сгенерируйте новый подписанный пакет данных для подписывающего аккаунта непосредственно перед отправкой или запросом статуса.
+- `sender_account_id` (body, string): ID аккаунта NEAR.
+- `tx_hash` (body, string): Хеш транзакции в кодировке Base58.
+### Схема запроса
+```json
+{
+  "type": "object",
+  "required": [
+    "jsonrpc",
+    "id",
+    "method",
+    "params"
+  ],
+  "properties": [
+    {
+      "name": "jsonrpc",
+      "required": true,
+      "schema": {
+        "type": "string",
+        "enum": [
+          "2.0"
+        ]
+      }
+    },
+    {
+      "name": "id",
+      "required": true,
+      "schema": {
+        "type": "string",
+        "example": "fastnear"
+      }
+    },
+    {
+      "name": "method",
+      "required": true,
+      "schema": {
+        "type": "string",
+        "enum": [
+          "tx"
+        ]
+      }
+    },
+    {
+      "name": "params",
+      "required": true,
+      "schema": {
+        "type": "object",
+        "properties": [
+          {
+            "name": "wait_until",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "Желаемый уровень гарантии статуса исполнения",
+              "default": "EXECUTED_OPTIMISTIC",
+              "enum": [
+                "NONE",
+                "INCLUDED",
+                "INCLUDED_FINAL",
+                "EXECUTED",
+                "EXECUTED_OPTIMISTIC",
+                "FINAL"
+              ]
+            }
+          },
+          {
+            "name": "signed_tx_base64",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "Base64-encoded Borsh serialization of a `SignedTransaction`; must be freshly signed (nonce above the access key's current value)."
+            }
+          },
+          {
+            "name": "sender_account_id",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "ID аккаунта NEAR"
+            }
+          },
+          {
+            "name": "tx_hash",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "Base58-encoded hash"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
+```
+## Справка по ответу
+- Статус: 200
+- Тип данных: application/json
+- Краткое описание: Успешный ответ
+### Схема ответа
+```json
+{
+  "type": "object",
+  "required": [
+    "jsonrpc",
+    "id"
+  ],
+  "properties": [
+    {
+      "name": "jsonrpc",
+      "required": true,
+      "schema": {
+        "type": "string",
+        "enum": [
+          "2.0"
+        ]
+      }
+    },
+    {
+      "name": "id",
+      "required": true,
+      "schema": {
+        "oneOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "name": "result",
+      "required": false,
+      "schema": {
+        "type": "object",
+        "required": [
+          "final_execution_status"
+        ],
+        "properties": [
+          {
+            "name": "final_execution_status",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "Желаемый уровень гарантии статуса исполнения",
+              "enum": [
+                "NONE",
+                "INCLUDED",
+                "INCLUDED_FINAL",
+                "EXECUTED",
+                "EXECUTED_OPTIMISTIC",
+                "FINAL"
+              ]
+            }
+          },
+          {
+            "name": "квитанции",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "description": "Only `tx_status` returns this list; the legacy `tx` method omits it.",
+              "items": {
+                "type": "object"
+              }
+            }
+          },
+          {
+            "name": "receipts_outcome",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "description": "Результаты исполнения квитанций.",
+              "items": {
+                "type": "object"
+              }
+            }
+          },
+          {
+            "name": "статус",
+            "required": false,
+            "schema": {
+              "type": "object",
+              "description": "One of multiple possible types"
+            }
+          },
+          {
+            "name": "транзакция",
+            "required": false,
+            "schema": {
+              "type": "object",
+              "description": "Подписанная транзакция"
+            }
+          },
+          {
+            "name": "transaction_outcome",
+            "required": false,
+            "schema": {
+              "type": "object",
+              "description": "Результат исполнения подписанной транзакции."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "error",
+      "required": false,
+      "schema": {
+        "type": "object",
+        "properties": [
+          {
+            "name": "код",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "message",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "data",
+            "required": false,
+            "schema": {
+              "type": "object"
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "refName": "JsonRpcResponse"
+}
+```
+---
+## О FastNear
+
+- FastNear обрабатывает более 10 млрд запросов в месяц.
+- FastNear управляет более чем 100 нодами по всему миру.
+- Один API-ключ FastNear работает и для RPC, и для индексированных API.
+- Получите API-ключ на [dashboard.fastnear.com](https://dashboard.fastnear.com).

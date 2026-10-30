@@ -2,7 +2,7 @@
   {
     "canonicalPath": "/rpcs/account/view_access_key",
     "info": {
-      "description": "Fetch one access key's permissions and nonce by public key on a given account. Pass the full public key with its type prefix. For an ML-DSA-65 key that is the full ml-dsa-65: key, not the ml-dsa-65-hash: handle that view_access_key_list reports; the handle is rejected with a parse error (unknown key type).",
+      "description": "Fetch one access key's permissions and nonce by public key on a given account. Pass the full public key with its type prefix — for ML-DSA-65 the ml-dsa-65: key, not the ml-dsa-65-hash: handle, which is rejected as an unknown key type.",
       "operationId": "view_access_key",
       "summary": "View access key",
       "title": "NEAR Protocol RPC: View access key",
@@ -268,6 +268,7 @@
                     "required": true,
                     "schema": {
                       "type": "integer",
+                      "description": "Current nonce; each transaction signed with this key must use a strictly greater value.",
                       "format": "uint64"
                     }
                   },
@@ -356,7 +357,7 @@
   {
     "canonicalPath": "/rpcs/account/view_access_key_list",
     "info": {
-      "description": "Fetch every access key attached to an account, each with its permissions and nonce. ML-DSA-65 keys are listed by their ml-dsa-65-hash: handle; to query one with view_access_key, or to reference it in an action, use the full ml-dsa-65: public key instead.",
+      "description": "Fetch every access key attached to an account, each with its permissions and nonce. ML-DSA-65 keys are listed by their ml-dsa-65-hash: handle; query or reference one with the full ml-dsa-65: public key instead.",
       "operationId": "view_access_key_list",
       "summary": "View access key list",
       "title": "NEAR Protocol RPC: View access key list",
@@ -375,6 +376,31 @@
           "schema": {
             "type": "string",
             "description": "NEAR account ID"
+          }
+        },
+        {
+          "description": "Exclusive pagination cursor — the `last_key` handle returned by the previous page; omit to start from the first key.",
+          "label": "After Key",
+          "location": "body",
+          "name": "after_key",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "nullable": true,
+            "description": "Exclusive pagination cursor — the `last_key` handle returned by the previous page; omit to start from the first key."
+          }
+        },
+        {
+          "description": "Maximum access keys per response (≥ 1). Omit for no client-set bound; the node caps it at its `view_access_keys_limit`.",
+          "label": "Limit",
+          "location": "body",
+          "name": "limit",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Maximum access keys per response (≥ 1). Omit for no client-set bound; the node caps it at its `view_access_keys_limit`.",
+            "format": "uint32"
           }
         }
       ],
@@ -467,6 +493,25 @@
                   "schema": {
                     "type": "string",
                     "description": "NEAR account ID"
+                  }
+                },
+                {
+                  "name": "after_key",
+                  "required": false,
+                  "schema": {
+                    "type": "string",
+                    "nullable": true,
+                    "description": "Exclusive pagination cursor — the `last_key` handle returned by the previous page; omit to start from the first key."
+                  }
+                },
+                {
+                  "name": "limit",
+                  "required": false,
+                  "schema": {
+                    "type": "integer",
+                    "nullable": true,
+                    "description": "Maximum access keys per response (≥ 1). Omit for no client-set bound; the node caps it at its `view_access_keys_limit`.",
+                    "format": "uint32"
                   }
                 },
                 {
@@ -601,6 +646,15 @@
                         "type": "object",
                         "description": "Describes information about an access key including its on-trie\nidentifier. For ed25519/secp256k1 access keys the `public_key` field\nis the full public key (string form unchanged from before); for\nML-DSA-65 access keys it is a `ml-dsa-65-hash:...` SHA3-256 digest\n(the full pubkey is not stored on-chain)."
                       }
+                    }
+                  },
+                  {
+                    "name": "last_key",
+                    "required": false,
+                    "schema": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Pagination cursor — the handle of the last key returned when the listing was truncated. Pass it as `after_key` to fetch the next page; absent on the last page."
                     }
                   }
                 ]
@@ -928,6 +982,16 @@
                     }
                   },
                   {
+                    "name": "bootstrap_nonce",
+                    "required": false,
+                    "schema": {
+                      "type": "integer",
+                      "nullable": true,
+                      "description": "The nonce an uninitialized account's own transactions must use, present\nonly while it is uninitialized. A self-signed state init is the one\ntransaction such an account can send, and this is the only way for a\nclient to learn the nonce it must carry: there is no access key to query.",
+                      "format": "uint64"
+                    }
+                  },
+                  {
                     "name": "code_hash",
                     "required": true,
                     "schema": {
@@ -962,11 +1026,23 @@
                     }
                   },
                   {
+                    "name": "state",
+                    "required": false,
+                    "schema": {
+                      "type": "string",
+                      "description": "Whether an account's state has been installed.\nOnly universal accounts can be uninitialized: they come into existence when\na transfer funds a `0u` id whose state init has not been applied yet. A\ndeterministic `0s` account waiting for its state init is an ordinary V1\naccount with no contract, not this.",
+                      "enum": [
+                        "initialized",
+                        "uninitialized"
+                      ]
+                    }
+                  },
+                  {
                     "name": "storage_paid_at",
                     "required": false,
                     "schema": {
                       "type": "integer",
-                      "description": "TODO(2271): deprecated.",
+                      "description": "Deprecated and unused; nodes always return 0.",
                       "format": "uint64",
                       "default": 0
                     }
@@ -976,6 +1052,7 @@
                     "required": true,
                     "schema": {
                       "type": "integer",
+                      "description": "Total storage used by the account, in bytes.",
                       "format": "uint64"
                     }
                   }
@@ -7423,6 +7500,18 @@
                     }
                   },
                   {
+                    "name": "block_request_timeout",
+                    "required": false,
+                    "schema": {
+                      "type": "array",
+                      "description": "How long to wait for a state sync block request response",
+                      "items": {
+                        "type": "integer",
+                        "format": "uint64"
+                      }
+                    }
+                  },
+                  {
                     "name": "catchup_step_period",
                     "required": false,
                     "schema": {
@@ -7533,6 +7622,18 @@
                           }
                         },
                         {
+                          "name": "catch_up_throttle",
+                          "required": false,
+                          "schema": {
+                            "type": "object",
+                            "description": "Delay between consecutive batches while the writer is catching up, pacing\nhow fast it uploads to the storage backend.",
+                            "default": {
+                              "nanos": 100000000,
+                              "secs": 1
+                            }
+                          }
+                        },
+                        {
                           "name": "polling_interval",
                           "required": false,
                           "schema": {
@@ -7540,7 +7641,7 @@
                             "description": "Interval at which the system checks for new blocks or chunks to archive.",
                             "default": {
                               "nanos": 0,
-                              "secs": 1
+                              "secs": 5
                             }
                           }
                         },
@@ -8034,38 +8135,13 @@
                           "required": false,
                           "schema": {
                             "type": "string",
-                            "nullable": true,
-                            "description": "Syncs state from the peers without reading anything from external storage.",
+                            "description": "Desired level of execution status guarantee",
                             "enum": [
                               "Peers"
                             ]
                           }
                         }
                       ]
-                    }
-                  },
-                  {
-                    "name": "state_sync_external_backoff",
-                    "required": false,
-                    "schema": {
-                      "type": "array",
-                      "description": "Additional waiting period after a failed request to external storage",
-                      "items": {
-                        "type": "integer",
-                        "format": "uint64"
-                      }
-                    }
-                  },
-                  {
-                    "name": "state_sync_external_timeout",
-                    "required": false,
-                    "schema": {
-                      "type": "array",
-                      "description": "How long to wait for a response from centralized state sync",
-                      "items": {
-                        "type": "integer",
-                        "format": "uint64"
-                      }
                     }
                   },
                   {
@@ -8242,6 +8318,15 @@
                           }
                         }
                       ]
+                    }
+                  },
+                  {
+                    "name": "view_access_keys_limit",
+                    "required": false,
+                    "schema": {
+                      "type": "integer",
+                      "description": "Upper bound on the number of access keys returned by a `view_access_key_list`\nquery.",
+                      "format": "uint32"
                     }
                   },
                   {
@@ -11580,6 +11665,15 @@
                           }
                         },
                         {
+                          "name": "chunk_execution_root",
+                          "required": false,
+                          "schema": {
+                            "type": "string",
+                            "nullable": true,
+                            "description": "Base58-encoded hash"
+                          }
+                        },
+                        {
                           "name": "epoch_id",
                           "required": true,
                           "schema": {
@@ -13029,7 +13123,7 @@
   {
     "canonicalPath": "/rpcs/transaction/EXPERIMENTAL_tx_status",
     "info": {
-      "description": "Fetch a transaction's full receipt tree and per-receipt outcomes by Base58 hash — richer than `tx_status`.",
+      "description": "Fetch a transaction's full receipt tree and per-receipt outcomes by Base58 hash. Deprecated in nearcore 2.14 — prefer `tx_status`, which returns the same receipts.",
       "operationId": "EXPERIMENTAL_tx_status",
       "summary": "Get detailed transaction status",
       "title": "NEAR Protocol RPC: Get detailed transaction status",
@@ -14536,12 +14630,12 @@
     "sourceSpec": "rpcs/transaction/send_tx.yaml"
   },
   {
-    "canonicalPath": "/rpcs/transaction/tx_status",
+    "canonicalPath": "/rpcs/transaction/tx",
     "info": {
-      "description": "Check a transaction's final outcome by Base58 hash — succeeded, failed, or still unresolved.",
-      "operationId": "tx_status",
-      "summary": "Get transaction status",
-      "title": "NEAR Protocol RPC: Get transaction status",
+      "description": "Check a transaction's final outcome by Base58 hash without the receipt list — the lighter form of `tx_status`.",
+      "operationId": "tx",
+      "summary": "Get transaction result",
+      "title": "NEAR Protocol RPC: Get transaction result",
       "version": "1.0.0"
     },
     "interaction": {
@@ -14602,7 +14696,7 @@
           }
         }
       ],
-      "kind": "rpc-tx-status",
+      "kind": "rpc-tx",
       "networks": [
         {
           "defaultFields": {
@@ -14635,11 +14729,11 @@
       "family": "rpc",
       "familyJson": "/openapi/rpc.json",
       "familyYaml": "/openapi/rpc.yaml",
-      "json": "/openapi/rpc/tx_status.json",
-      "pointer": "/openapi/rpc.json#/paths/~1tx_status/post",
-      "yaml": "/openapi/rpc/tx_status.yaml"
+      "json": "/openapi/rpc/tx.json",
+      "pointer": "/openapi/rpc.json#/paths/~1tx/post",
+      "yaml": "/openapi/rpc/tx.yaml"
     },
-    "pageModelId": "rpc-tx-status",
+    "pageModelId": "rpc-tx",
     "replaceOperationPage": true,
     "request": {
       "bodySchema": {
@@ -14734,7 +14828,7 @@
       "examples": [
         {
           "id": "mainnet",
-          "label": "Mainnet Example",
+          "label": "Get transaction result (Mainnet)",
           "network": "mainnet",
           "request": {
             "body": {
@@ -14753,13 +14847,437 @@
         },
         {
           "id": "testnet",
-          "label": "Testnet Example",
+          "label": "Get transaction result (Testnet)",
           "network": "testnet",
           "request": {
             "body": {
               "jsonrpc": "2.0",
               "id": "fastnear",
               "method": "tx",
+              "params": {
+                "tx_hash": "9LPbkwJ26HYgda7KHrURc6jozBcpdA1kUMSEzwm81JPx",
+                "sender_account_id": "near-mpc-staking4all-01.testnet"
+              }
+            },
+            "headers": {},
+            "path": {},
+            "query": {}
+          }
+        }
+      ],
+      "mediaType": "application/json",
+      "parameters": {
+        "header": [],
+        "path": [],
+        "query": []
+      },
+      "required": true
+    },
+    "responses": [
+      {
+        "description": "Successful response",
+        "mediaType": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "jsonrpc",
+            "id"
+          ],
+          "properties": [
+            {
+              "name": "jsonrpc",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "enum": [
+                  "2.0"
+                ]
+              }
+            },
+            {
+              "name": "id",
+              "required": true,
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "number"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "result",
+              "required": false,
+              "schema": {
+                "type": "object",
+                "required": [
+                  "final_execution_status"
+                ],
+                "properties": [
+                  {
+                    "name": "final_execution_status",
+                    "required": true,
+                    "schema": {
+                      "type": "string",
+                      "description": "Desired level of execution status guarantee",
+                      "enum": [
+                        "NONE",
+                        "INCLUDED",
+                        "INCLUDED_FINAL",
+                        "EXECUTED",
+                        "EXECUTED_OPTIMISTIC",
+                        "FINAL"
+                      ]
+                    }
+                  },
+                  {
+                    "name": "receipts",
+                    "required": false,
+                    "schema": {
+                      "type": "array",
+                      "description": "Only `tx_status` returns this list; the legacy `tx` method omits it.",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  },
+                  {
+                    "name": "receipts_outcome",
+                    "required": false,
+                    "schema": {
+                      "type": "array",
+                      "description": "The execution outcome of receipts.",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  },
+                  {
+                    "name": "status",
+                    "required": false,
+                    "schema": {
+                      "type": "object",
+                      "description": "One of multiple possible types"
+                    }
+                  },
+                  {
+                    "name": "transaction",
+                    "required": false,
+                    "schema": {
+                      "type": "object",
+                      "description": "Signed Transaction"
+                    }
+                  },
+                  {
+                    "name": "transaction_outcome",
+                    "required": false,
+                    "schema": {
+                      "type": "object",
+                      "description": "The execution outcome of the signed transaction."
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "name": "error",
+              "required": false,
+              "schema": {
+                "type": "object",
+                "properties": [
+                  {
+                    "name": "code",
+                    "required": false,
+                    "schema": {
+                      "type": "integer"
+                    }
+                  },
+                  {
+                    "name": "message",
+                    "required": false,
+                    "schema": {
+                      "type": "string"
+                    }
+                  },
+                  {
+                    "name": "data",
+                    "required": false,
+                    "schema": {
+                      "type": "object"
+                    }
+                  }
+                ]
+              }
+            }
+          ],
+          "refName": "JsonRpcResponse"
+        },
+        "status": "200"
+      },
+      {
+        "description": "The supplied API key was not recognized.",
+        "mediaType": "text/plain",
+        "schema": {
+          "type": "string"
+        },
+        "status": "403"
+      }
+    ],
+    "route": {
+      "method": "POST",
+      "path": "/",
+      "transport": "json-rpc"
+    },
+    "routeAliases": [
+      "/rpcs/transaction/tx/other/tx",
+      "/reference/operation/tx"
+    ],
+    "securityOptional": true,
+    "securitySchemes": [
+      {
+        "description": "FastNEAR API key as an `Authorization: Bearer` header. Preferred for backends, workers, and proxies because it keeps the key out of URLs and logs.",
+        "id": "BearerAuth",
+        "scheme": "bearer",
+        "type": "http"
+      },
+      {
+        "description": "FastNEAR API key as the `apiKey` query parameter. Handy for curl or clients that cannot set headers, but the key can end up in URLs, logs, and shell history.",
+        "id": "ApiKeyAuth",
+        "in": "query",
+        "name": "apiKey",
+        "type": "apiKey"
+      }
+    ],
+    "sourceSpec": "rpcs/transaction/tx.yaml"
+  },
+  {
+    "canonicalPath": "/rpcs/transaction/tx_status",
+    "info": {
+      "description": "Check a transaction's final outcome by Base58 hash and get every receipt it produced — succeeded, failed, or still unresolved.",
+      "operationId": "tx_status",
+      "summary": "Get transaction status",
+      "title": "NEAR Protocol RPC: Get transaction status",
+      "version": "1.0.0"
+    },
+    "interaction": {
+      "authTransport": "bearer",
+      "defaultId": "fastnear",
+      "fields": [
+        {
+          "description": "Desired level of execution status guarantee",
+          "label": "Wait Until",
+          "location": "body",
+          "name": "wait_until",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "description": "Desired level of execution status guarantee",
+            "default": "EXECUTED_OPTIMISTIC",
+            "enum": [
+              "NONE",
+              "INCLUDED",
+              "INCLUDED_FINAL",
+              "EXECUTED",
+              "EXECUTED_OPTIMISTIC",
+              "FINAL"
+            ]
+          }
+        },
+        {
+          "description": "Base64-encoded Borsh serialization of a `SignedTransaction`; must be freshly signed (nonce above the access key's current value).",
+          "label": "Signed Tx Base64",
+          "location": "body",
+          "name": "signed_tx_base64",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "description": "Base64-encoded Borsh serialization of a `SignedTransaction`; must be freshly signed (nonce above the access key's current value)."
+          }
+        },
+        {
+          "description": "NEAR account ID",
+          "label": "Sender Account Id",
+          "location": "body",
+          "name": "sender_account_id",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "description": "NEAR account ID"
+          }
+        },
+        {
+          "description": "Base58-encoded hash",
+          "label": "Tx Hash",
+          "location": "body",
+          "name": "tx_hash",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "description": "Base58-encoded hash"
+          }
+        }
+      ],
+      "kind": "rpc-tx-status",
+      "networks": [
+        {
+          "defaultFields": {
+            "sender_account_id": "escrow.ai.near",
+            "tx_hash": "34E7weKCDqXh3xPKdBgSWRqo44yTWjbka9deMK8JbAxx"
+          },
+          "key": "mainnet",
+          "label": "Mainnet",
+          "url": "https://archival-rpc.mainnet.fastnear.com",
+          "archival": true,
+          "archivalReason": "Pinned transaction, older than standard RPC retention."
+        },
+        {
+          "defaultFields": {
+            "sender_account_id": "near-mpc-staking4all-01.testnet",
+            "tx_hash": "9LPbkwJ26HYgda7KHrURc6jozBcpdA1kUMSEzwm81JPx"
+          },
+          "key": "testnet",
+          "label": "Testnet",
+          "url": "https://archival-rpc.testnet.fastnear.com",
+          "archival": true,
+          "archivalReason": "Pinned transaction, older than standard RPC retention."
+        }
+      ],
+      "requestMethod": "tx_status",
+      "supportsFinality": false,
+      "transport": "json-rpc"
+    },
+    "openapi": {
+      "family": "rpc",
+      "familyJson": "/openapi/rpc.json",
+      "familyYaml": "/openapi/rpc.yaml",
+      "json": "/openapi/rpc/tx_status.json",
+      "pointer": "/openapi/rpc.json#/paths/~1tx_status/post",
+      "yaml": "/openapi/rpc/tx_status.yaml"
+    },
+    "pageModelId": "rpc-tx-status",
+    "replaceOperationPage": true,
+    "request": {
+      "bodySchema": {
+        "type": "object",
+        "required": [
+          "jsonrpc",
+          "id",
+          "method",
+          "params"
+        ],
+        "properties": [
+          {
+            "name": "jsonrpc",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "2.0"
+              ]
+            }
+          },
+          {
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "fastnear"
+            }
+          },
+          {
+            "name": "method",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "tx_status"
+              ]
+            }
+          },
+          {
+            "name": "params",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": [
+                {
+                  "name": "wait_until",
+                  "required": false,
+                  "schema": {
+                    "type": "string",
+                    "description": "Desired level of execution status guarantee",
+                    "default": "EXECUTED_OPTIMISTIC",
+                    "enum": [
+                      "NONE",
+                      "INCLUDED",
+                      "INCLUDED_FINAL",
+                      "EXECUTED",
+                      "EXECUTED_OPTIMISTIC",
+                      "FINAL"
+                    ]
+                  }
+                },
+                {
+                  "name": "signed_tx_base64",
+                  "required": false,
+                  "schema": {
+                    "type": "string",
+                    "description": "Base64-encoded Borsh serialization of a `SignedTransaction`; must be freshly signed (nonce above the access key's current value)."
+                  }
+                },
+                {
+                  "name": "sender_account_id",
+                  "required": false,
+                  "schema": {
+                    "type": "string",
+                    "description": "NEAR account ID"
+                  }
+                },
+                {
+                  "name": "tx_hash",
+                  "required": false,
+                  "schema": {
+                    "type": "string",
+                    "description": "Base58-encoded hash"
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "examples": [
+        {
+          "id": "mainnet",
+          "label": "Mainnet Example",
+          "network": "mainnet",
+          "request": {
+            "body": {
+              "jsonrpc": "2.0",
+              "id": "fastnear",
+              "method": "tx_status",
+              "params": {
+                "tx_hash": "34E7weKCDqXh3xPKdBgSWRqo44yTWjbka9deMK8JbAxx",
+                "sender_account_id": "escrow.ai.near"
+              }
+            },
+            "headers": {},
+            "path": {},
+            "query": {}
+          }
+        },
+        {
+          "id": "testnet",
+          "label": "Testnet Example",
+          "network": "testnet",
+          "request": {
+            "body": {
+              "jsonrpc": "2.0",
+              "id": "fastnear",
+              "method": "tx_status",
               "params": {
                 "tx_hash": "9LPbkwJ26HYgda7KHrURc6jozBcpdA1kUMSEzwm81JPx",
                 "sender_account_id": "near-mpc-staking4all-01.testnet"

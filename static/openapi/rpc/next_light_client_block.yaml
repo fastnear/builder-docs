@@ -128,6 +128,11 @@ components:
                 block_merkle_root:
                   type: string
                   description: Base58-encoded hash
+                chunk_execution_root:
+                  type:
+                    - string
+                    - "null"
+                  description: Base58-encoded hash
                 epoch_id:
                   type: string
                   description: Base58-encoded hash

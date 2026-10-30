@@ -1,6 +1,6 @@
 # RPC протокола NEAR: Статус транзакции
 Проверить статус транзакции
-Проверьте итоговый результат транзакции по её хешу в кодировке Base58 — успех, сбой или ещё не завершена.
+Проверьте итоговый результат транзакции по её хешу в кодировке Base58 и получите все порождённые ею квитанции — успех, сбой или ещё не завершена.
 ## Ссылки на источник
 - https://docs.fastnear.com/ru/rpcs/transaction/tx_status
 - https://docs.fastnear.com/ru/rpcs/transaction/tx_status/other/tx_status
@@ -29,7 +29,7 @@
 {
   "jsonrpc": "2.0",
   "id": "fastnear",
-  "method": "tx",
+  "method": "tx_status",
   "params": {
     "tx_hash": "34E7weKCDqXh3xPKdBgSWRqo44yTWjbka9deMK8JbAxx",
     "sender_account_id": "escrow.ai.near"
@@ -43,7 +43,7 @@
   "body": {
     "jsonrpc": "2.0",
     "id": "fastnear",
-    "method": "tx",
+    "method": "tx_status",
     "params": {
       "tx_hash": "34E7weKCDqXh3xPKdBgSWRqo44yTWjbka9deMK8JbAxx",
       "sender_account_id": "escrow.ai.near"
@@ -94,7 +94,7 @@
       "schema": {
         "type": "string",
         "enum": [
-          "tx"
+          "tx_status"
         ]
       }
     },
