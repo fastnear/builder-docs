@@ -63,7 +63,7 @@ For the pinned historical tx (a 1-yocto self-transfer from `mike.testnet`), the 
 Two handoffs from here:
 
 - **Submitting live?** [`broadcast_tx_async`](/rpc/transaction/broadcast-tx-async) returns the hash as soon as the node accepts the payload — track separately with `tx`. [`send_tx`](/rpc/transaction/send-tx) submits and blocks on your chosen `wait_until` in a single call.
-- **Need the receipt tree, not just outcomes?** `tx` already includes `receipts_outcome`; widen to [`EXPERIMENTAL_tx_status`](/rpc/transaction/experimental-tx-status) only when you also need the raw receipt records.
+- **Need the receipt tree, not just outcomes?** `tx` already includes `receipts_outcome`; use [`tx_status`](/rpc/transaction/tx-status) when you also need the raw receipt records.
 
 ## Tip Block Inspection
 

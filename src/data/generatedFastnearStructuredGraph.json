@@ -1051,6 +1051,20 @@
       "pageModelId": "rpc-send-tx"
     },
     {
+      "canonicalPath": "/rpcs/transaction/tx",
+      "items": [
+        {
+          "label": "Transaction RPC",
+          "path": "/rpc"
+        },
+        {
+          "label": "Get transaction result",
+          "path": "/rpcs/transaction/tx"
+        }
+      ],
+      "pageModelId": "rpc-tx"
+    },
+    {
       "canonicalPath": "/rpcs/transaction/tx_status",
       "items": [
         {
@@ -1244,14 +1258,14 @@
   "metadata": {
     "nearcoreSource": {
       "branch": "HEAD",
-      "commitSha": "5af9ca74631e6cf0dae33e77d1a632e94d2952ce",
+      "commitSha": "bc4e9e8cfb03d9e82f027883055624e18576993e",
       "dirty": false,
-      "generatedAt": "2026-09-24T03:01:23.704Z",
-      "releaseUrl": "https://github.com/near/nearcore/releases/tag/2.13.3",
-      "repoRoot": "../nearcore-2.13.3",
+      "generatedAt": "2026-10-30T18:36:37.768Z",
+      "releaseUrl": "https://github.com/near/nearcore/releases/tag/2.14.0",
+      "repoRoot": "../nearcore-2.14.0",
       "repoUrl": "https://github.com/near/nearcore",
-      "specPath": "../nearcore-2.13.3/chain/jsonrpc/openapi/openapi.json",
-      "tag": "2.13.3",
+      "specPath": "../nearcore-2.14.0/chain/jsonrpc/openapi/openapi.json",
+      "tag": "2.14.0",
       "tagSource": "exact"
     }
   },
@@ -2360,7 +2374,7 @@
     {
       "authSummary": "Bearer token via Authorization header; API key via query apiKey",
       "canonicalPath": "/rpcs/account/view_access_key",
-      "description": "Fetch one access key's permissions and nonce by public key on a given account. Pass the full public key with its type prefix. For an ML-DSA-65 key that is the full ml-dsa-65: key, not the ml-dsa-65-hash: handle that view_access_key_list reports; the handle is rejected with a parse error (unknown key type).",
+      "description": "Fetch one access key's permissions and nonce by public key on a given account. Pass the full public key with its type prefix — for ML-DSA-65 the ml-dsa-65: key, not the ml-dsa-65-hash: handle, which is rejected as an unknown key type.",
       "docsPath": "/rpc/account/view-access-key",
       "familyId": "rpc-account",
       "headline": "NEAR Protocol RPC: View access key",
@@ -2390,7 +2404,7 @@
     {
       "authSummary": "Bearer token via Authorization header; API key via query apiKey",
       "canonicalPath": "/rpcs/account/view_access_key_list",
-      "description": "Fetch every access key attached to an account, each with its permissions and nonce. ML-DSA-65 keys are listed by their ml-dsa-65-hash: handle; to query one with view_access_key, or to reference it in an action, use the full ml-dsa-65: public key instead.",
+      "description": "Fetch every access key attached to an account, each with its permissions and nonce. ML-DSA-65 keys are listed by their ml-dsa-65-hash: handle; query or reference one with the full ml-dsa-65: public key instead.",
       "docsPath": "/rpc/account/view-access-key-list",
       "familyId": "rpc-account",
       "headline": "NEAR Protocol RPC: View access key list",
@@ -3410,7 +3424,7 @@
     {
       "authSummary": "Bearer token via Authorization header; API key via query apiKey",
       "canonicalPath": "/rpcs/transaction/EXPERIMENTAL_tx_status",
-      "description": "Fetch a transaction's full receipt tree and per-receipt outcomes by Base58 hash — richer than `tx_status`.",
+      "description": "Fetch a transaction's full receipt tree and per-receipt outcomes by Base58 hash. Deprecated in nearcore 2.14 — prefer `tx_status`, which returns the same receipts.",
       "docsPath": "/rpc/transaction/experimental-tx-status",
       "familyId": "rpc-transaction",
       "headline": "NEAR Protocol RPC: Get detailed transaction status",
@@ -3469,8 +3483,38 @@
     },
     {
       "authSummary": "Bearer token via Authorization header; API key via query apiKey",
+      "canonicalPath": "/rpcs/transaction/tx",
+      "description": "Check a transaction's final outcome by Base58 hash without the receipt list — the lighter form of `tx_status`.",
+      "docsPath": "/rpc/transaction/tx",
+      "familyId": "rpc-transaction",
+      "headline": "NEAR Protocol RPC: Get transaction result",
+      "httpMethod": "POST",
+      "id": "rpc-tx",
+      "name": "NEAR Protocol RPC: Get transaction result",
+      "networkKeys": [
+        "mainnet",
+        "testnet"
+      ],
+      "openapiFamilyPath": "/openapi/rpc.json",
+      "openapiPath": "/openapi/rpc/tx.json",
+      "openapiPointer": "/openapi/rpc.json#/paths/~1tx/post",
+      "operationId": "tx",
+      "pageModelId": "rpc-tx",
+      "requestPath": "/",
+      "requestType": null,
+      "routeAliases": [
+        "/rpcs/transaction/tx/other/tx",
+        "/reference/operation/tx"
+      ],
+      "schemaType": "APIReference",
+      "sourceSpec": "rpcs/transaction/tx.yaml",
+      "summary": "Get transaction result",
+      "transport": "json-rpc"
+    },
+    {
+      "authSummary": "Bearer token via Authorization header; API key via query apiKey",
       "canonicalPath": "/rpcs/transaction/tx_status",
-      "description": "Check a transaction's final outcome by Base58 hash — succeeded, failed, or still unresolved.",
+      "description": "Check a transaction's final outcome by Base58 hash and get every receipt it produced — succeeded, failed, or still unresolved.",
       "docsPath": "/rpc/transaction/tx-status",
       "familyId": "rpc-transaction",
       "headline": "NEAR Protocol RPC: Get transaction status",

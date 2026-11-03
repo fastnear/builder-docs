@@ -2,7 +2,7 @@
   {
     "canonicalPath": "/rpcs/account/view_access_key",
     "info": {
-      "description": "Fetch one access key's permissions and nonce by public key on a given account. Pass the full public key with its type prefix. For an ML-DSA-65 key that is the full ml-dsa-65: key, not the ml-dsa-65-hash: handle that view_access_key_list reports; the handle is rejected with a parse error (unknown key type).",
+      "description": "Fetch one access key's permissions and nonce by public key on a given account. Pass the full public key with its type prefix — for ML-DSA-65 the ml-dsa-65: key, not the ml-dsa-65-hash: handle, which is rejected as an unknown key type.",
       "operationId": "view_access_key",
       "summary": "View access key",
       "title": "NEAR Protocol RPC: View access key",
@@ -268,6 +268,7 @@
                     "required": true,
                     "schema": {
                       "type": "integer",
+                      "description": "Current nonce; each transaction signed with this key must use a strictly greater value.",
                       "format": "uint64"
                     }
                   },
@@ -356,7 +357,7 @@
   {
     "canonicalPath": "/rpcs/account/view_access_key_list",
     "info": {
-      "description": "Fetch every access key attached to an account, each with its permissions and nonce. ML-DSA-65 keys are listed by their ml-dsa-65-hash: handle; to query one with view_access_key, or to reference it in an action, use the full ml-dsa-65: public key instead.",
+      "description": "Fetch every access key attached to an account, each with its permissions and nonce. ML-DSA-65 keys are listed by their ml-dsa-65-hash: handle; query or reference one with the full ml-dsa-65: public key instead.",
       "operationId": "view_access_key_list",
       "summary": "View access key list",
       "title": "NEAR Protocol RPC: View access key list",
@@ -375,6 +376,31 @@
           "schema": {
             "type": "string",
             "description": "NEAR account ID"
+          }
+        },
+        {
+          "description": "Exclusive pagination cursor — the `last_key` handle returned by the previous page; omit to start from the first key.",
+          "label": "After Key",
+          "location": "body",
+          "name": "after_key",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "nullable": true,
+            "description": "Exclusive pagination cursor — the `last_key` handle returned by the previous page; omit to start from the first key."
+          }
+        },
+        {
+          "description": "Maximum access keys per response (≥ 1). Omit for no client-set bound; the node caps it at its `view_access_keys_limit`.",
+          "label": "Limit",
+          "location": "body",
+          "name": "limit",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Maximum access keys per response (≥ 1). Omit for no client-set bound; the node caps it at its `view_access_keys_limit`.",
+            "format": "uint32"
           }
         }
       ],
@@ -467,6 +493,25 @@
                   "schema": {
                     "type": "string",
                     "description": "NEAR account ID"
+                  }
+                },
+                {
+                  "name": "after_key",
+                  "required": false,
+                  "schema": {
+                    "type": "string",
+                    "nullable": true,
+                    "description": "Exclusive pagination cursor — the `last_key` handle returned by the previous page; omit to start from the first key."
+                  }
+                },
+                {
+                  "name": "limit",
+                  "required": false,
+                  "schema": {
+                    "type": "integer",
+                    "nullable": true,
+                    "description": "Maximum access keys per response (≥ 1). Omit for no client-set bound; the node caps it at its `view_access_keys_limit`.",
+                    "format": "uint32"
                   }
                 },
                 {
@@ -601,6 +646,15 @@
                         "type": "object",
                         "description": "Describes information about an access key including its on-trie\nidentifier. For ed25519/secp256k1 access keys the `public_key` field\nis the full public key (string form unchanged from before); for\nML-DSA-65 access keys it is a `ml-dsa-65-hash:...` SHA3-256 digest\n(the full pubkey is not stored on-chain)."
                       }
+                    }
+                  },
+                  {
+                    "name": "last_key",
+                    "required": false,
+                    "schema": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Pagination cursor — the handle of the last key returned when the listing was truncated. Pass it as `after_key` to fetch the next page; absent on the last page."
                     }
                   }
                 ]
@@ -928,6 +982,16 @@
                     }
                   },
                   {
+                    "name": "bootstrap_nonce",
+                    "required": false,
+                    "schema": {
+                      "type": "integer",
+                      "nullable": true,
+                      "description": "The nonce an uninitialized account's own transactions must use, present\nonly while it is uninitialized. A self-signed state init is the one\ntransaction such an account can send, and this is the only way for a\nclient to learn the nonce it must carry: there is no access key to query.",
+                      "format": "uint64"
+                    }
+                  },
+                  {
                     "name": "code_hash",
                     "required": true,
                     "schema": {
@@ -962,11 +1026,23 @@
                     }
                   },
                   {
+                    "name": "state",
+                    "required": false,
+                    "schema": {
+                      "type": "string",
+                      "description": "Whether an account's state has been installed.\nOnly universal accounts can be uninitialized: they come into existence when\na transfer funds a `0u` id whose state init has not been applied yet. A\ndeterministic `0s` account waiting for its state init is an ordinary V1\naccount with no contract, not this.",
+                      "enum": [
+                        "initialized",
+                        "uninitialized"
+                      ]
+                    }
+                  },
+                  {
                     "name": "storage_paid_at",
                     "required": false,
                     "schema": {
                       "type": "integer",
-                      "description": "TODO(2271): deprecated.",
+                      "description": "Deprecated and unused; nodes always return 0.",
                       "format": "uint64",
                       "default": 0
                     }
@@ -976,6 +1052,7 @@
                     "required": true,
                     "schema": {
                       "type": "integer",
+                      "description": "Total storage used by the account, in bytes.",
                       "format": "uint64"
                     }
                   }

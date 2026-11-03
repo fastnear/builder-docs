@@ -120,6 +120,13 @@ components:
             block_production_tracking_delay:
               type: string
               description: Duration to check for producing / skipping block.
+            block_request_timeout:
+              type: array
+              items:
+                type: integer
+                format: uint64
+                minimum: 0
+              description: How long to wait for a state sync block request response
             catchup_step_period:
               type: array
               items:
@@ -186,11 +193,19 @@ components:
                   type: boolean
                   description: Determines whether block-related data should be written to cloud storage.
                   default: false
+                catch_up_throttle:
+                  type: object
+                  default:
+                    nanos: 100000000
+                    secs: 1
+                  description: |-
+                    Delay between consecutive batches while the writer is catching up, pacing
+                    how fast it uploads to the storage backend.
                 polling_interval:
                   type: object
                   default:
                     nanos: 0
-                    secs: 1
+                    secs: 5
                   description: Interval at which the system checks for new blocks or chunks to archive.
                 snapshot_every_n_epochs:
                   type: integer
@@ -485,27 +500,11 @@ components:
                   format: int32
                   default: 1
                 sync:
-                  type:
-                    - string
-                    - "null"
+                  type: string
                   enum:
                     - Peers
-                  description: Syncs state from the peers without reading anything from external storage.
+                  description: Desired level of execution status guarantee
               description: Options for syncing state.
-            state_sync_external_backoff:
-              type: array
-              items:
-                type: integer
-                format: uint64
-                minimum: 0
-              description: Additional waiting period after a failed request to external storage
-            state_sync_external_timeout:
-              type: array
-              items:
-                type: integer
-                format: uint64
-                minimum: 0
-              description: How long to wait for a response from centralized state sync
             state_sync_p2p_timeout:
               type: array
               items:
@@ -606,6 +605,13 @@ components:
                 - version
                 - build
                 - commit
+            view_access_keys_limit:
+              type: integer
+              description: |-
+                Upper bound on the number of access keys returned by a `view_access_key_list`
+                query.
+              format: uint32
+              minimum: 0
             view_client_threads:
               type: integer
               description: Number of threads for ViewClientActor pool.

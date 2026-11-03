@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: "NEAR Protocol RPC: Get transaction status"
-  description: Check a transaction's final outcome by Base58 hash — succeeded, failed, or still unresolved.
+  description: Check a transaction's final outcome by Base58 hash and get every receipt it produced — succeeded, failed, or still unresolved.
   version: 1.0.0
 servers:
   - url: https://rpc.mainnet.fastnear.com
@@ -17,7 +17,7 @@ paths:
     post:
       operationId: tx_status
       summary: Get transaction status
-      description: Check a transaction's final outcome by Base58 hash — succeeded, failed, or still unresolved.
+      description: Check a transaction's final outcome by Base58 hash and get every receipt it produced — succeeded, failed, or still unresolved.
       requestBody:
         required: true
         content:
@@ -40,7 +40,7 @@ paths:
                 method:
                   type: string
                   enum:
-                    - tx
+                    - tx_status
                 params:
                   type: object
                   properties:
@@ -70,7 +70,7 @@ paths:
                 value:
                   jsonrpc: "2.0"
                   id: fastnear
-                  method: tx
+                  method: tx_status
                   params:
                     tx_hash: 34E7weKCDqXh3xPKdBgSWRqo44yTWjbka9deMK8JbAxx
                     sender_account_id: escrow.ai.near
@@ -79,7 +79,7 @@ paths:
                 value:
                   jsonrpc: "2.0"
                   id: fastnear
-                  method: tx
+                  method: tx_status
                   params:
                     tx_hash: 9LPbkwJ26HYgda7KHrURc6jozBcpdA1kUMSEzwm81JPx
                     sender_account_id: near-mpc-staking4all-01.testnet

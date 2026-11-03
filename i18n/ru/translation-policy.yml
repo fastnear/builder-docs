@@ -72,6 +72,7 @@ waves:
       - rpc-changes
       - rpc-send-tx
       - rpc-tx-status
+      - rpc-tx
       - rpc-validators-current
       - rpc-validators-by-epoch
       - fastnear-v0-account-ft
@@ -151,6 +152,7 @@ waves:
       - rpc/transaction/experimental-tx-status.mdx
       - rpc/transaction/send-tx.mdx
       - rpc/transaction/tx-status.mdx
+      - rpc/transaction/tx.mdx
       - rpc/validators/experimental-validators-ordered.mdx
       - tx/examples.md
     pageModels:

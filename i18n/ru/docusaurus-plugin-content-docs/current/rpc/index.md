@@ -42,7 +42,7 @@ https://archival-rpc.testnet.fastnear.com
 - [`block`](/rpc/block/block-by-id) — поиск по высоте или хешу; [`block_effects`](/rpc/block/block-effects) — изменения внутри блока.
 - [`call_function`](/rpc/contract/call-function), [`view_code`](/rpc/contract/view-code), [`view_state`](/rpc/contract/view-state) — работа с контрактами.
 - [`status`](/rpc/protocol/status), [`health`](/rpc/protocol/health), [`gas_price`](/rpc/protocol/gas-price) — диагностика узла и протокола.
-- [`send_tx`](/rpc/transaction/send-tx) — отправка транзакций; [`tx`](/rpc/transaction/tx-status) — статус исполнения.
+- [`send_tx`](/rpc/transaction/send-tx) — отправка транзакций; [`tx_status`](/rpc/transaction/tx-status) — статус исполнения вместе с квитанциями, [`tx`](/rpc/transaction/tx) — облегчённый результат.
 - [`validators`](/rpc/validators/validators-current) — валидаторы текущей эпохи.
 
 ## Нужен сценарий?

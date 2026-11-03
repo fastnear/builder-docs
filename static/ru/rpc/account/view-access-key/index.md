@@ -211,6 +211,7 @@
             "required": true,
             "schema": {
               "type": "integer",
+              "description": "Current nonce; each transaction signed with this key must use a strictly greater value.",
               "format": "uint64"
             }
           },

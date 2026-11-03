@@ -34,7 +34,7 @@ https://archival-rpc.testnet.fastnear.com
 - [`block`](https://docs.fastnear.com/ru/rpc/block/block-by-id) — поиск по высоте или хешу; [`block_effects`](https://docs.fastnear.com/ru/rpc/block/block-effects) — изменения внутри блока.
 - [`call_function`](https://docs.fastnear.com/ru/rpc/contract/call-function), [`view_code`](https://docs.fastnear.com/ru/rpc/contract/view-code), [`view_state`](https://docs.fastnear.com/ru/rpc/contract/view-state) — работа с контрактами.
 - [`status`](https://docs.fastnear.com/ru/rpc/protocol/status), [`health`](https://docs.fastnear.com/ru/rpc/protocol/health), [`gas_price`](https://docs.fastnear.com/ru/rpc/protocol/gas-price) — диагностика узла и протокола.
-- [`send_tx`](https://docs.fastnear.com/ru/rpc/transaction/send-tx) — отправка транзакций; [`tx`](https://docs.fastnear.com/ru/rpc/transaction/tx-status) — статус исполнения.
+- [`send_tx`](https://docs.fastnear.com/ru/rpc/transaction/send-tx) — отправка транзакций; [`tx_status`](https://docs.fastnear.com/ru/rpc/transaction/tx-status) — статус исполнения вместе с квитанциями, [`tx`](https://docs.fastnear.com/ru/rpc/transaction/tx) — облегчённый результат.
 - [`validators`](https://docs.fastnear.com/ru/rpc/validators/validators-current) — валидаторы текущей эпохи.
 
 ## Нужен сценарий?

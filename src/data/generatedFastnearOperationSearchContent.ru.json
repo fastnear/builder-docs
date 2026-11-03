@@ -1372,6 +1372,10 @@
         "description": "Интервал проверки необходимости выпустить или пропустить блок."
       },
       {
+        "name": "block_request_timeout",
+        "description": "How long to wait for a state sync block request response"
+      },
+      {
         "name": "catchup_step_period",
         "description": "Time between check to perform catchup."
       },
@@ -1414,6 +1418,10 @@
       {
         "name": "archive_block_data",
         "description": "Определяет, должны ли данные, связанные с блоками, записываться в облачное хранилище."
+      },
+      {
+        "name": "catch_up_throttle",
+        "description": "Delay between consecutive batches while the writer is catching up, pacing how fast it uploads to the storage backend."
       },
       {
         "name": "polling_interval",
@@ -1621,15 +1629,7 @@
       },
       {
         "name": "sync",
-        "description": "Синхронизирует состояние от пиров, не читая ничего из внешнего хранилища."
-      },
-      {
-        "name": "state_sync_external_backoff",
-        "description": "Дополнительное время ожидания после неудачного запроса к внешнему хранилищу"
-      },
-      {
-        "name": "state_sync_external_timeout",
-        "description": "Как долго ждать ответа от централизованной синхронизации состояния"
+        "description": "Желаемый уровень гарантии статуса исполнения"
       },
       {
         "name": "state_sync_p2p_timeout",
@@ -1682,6 +1682,10 @@
       {
         "name": "version",
         "description": "Data structure for semver version and github tag or commit."
+      },
+      {
+        "name": "view_access_keys_limit",
+        "description": "Upper bound on the number of access keys returned by a `view_access_key_list` query."
       },
       {
         "name": "view_client_threads",
@@ -2040,7 +2044,7 @@
     ]
   },
   "rpc-EXPERIMENTAL-tx-status": {
-    "description": "Получите полное дерево квитанций и результаты исполнения каждой квитанции по хешу в кодировке Base58 — богаче, чем `tx_status`.",
+    "description": "Получите полное дерево квитанций и результаты исполнения каждой квитанции по хешу в кодировке Base58. Устарел начиная с nearcore 2.14 — используйте `tx_status`, который возвращает те же квитанции.",
     "parameters": [
       {
         "name": "wait_until",
@@ -2394,6 +2398,10 @@
         "description": "Base58-encoded hash"
       },
       {
+        "name": "chunk_execution_root",
+        "description": "Base58-encoded hash"
+      },
+      {
         "name": "epoch_id",
         "description": "Base58-encoded hash"
       },
@@ -2553,8 +2561,56 @@
       }
     ]
   },
+  "rpc-tx": {
+    "description": "Проверьте итоговый результат транзакции по её хешу в кодировке Base58 без списка квитанций — облегчённый вариант `tx_status`.",
+    "parameters": [
+      {
+        "name": "wait_until",
+        "description": "Желаемый уровень гарантии статуса исполнения."
+      },
+      {
+        "name": "signed_tx_base64",
+        "description": "Подписанная транзакция в кодировке Base64. Сгенерируйте новый подписанный пакет данных для подписывающего аккаунта непосредственно перед отправкой или запросом статуса."
+      },
+      {
+        "name": "sender_account_id",
+        "description": "ID аккаунта NEAR."
+      },
+      {
+        "name": "tx_hash",
+        "description": "Хеш транзакции в кодировке Base58."
+      }
+    ],
+    "response": "Успешный ответ Переданный API-ключ не распознан.",
+    "schema": [
+      {
+        "name": "final_execution_status",
+        "description": "Желаемый уровень гарантии статуса исполнения"
+      },
+      {
+        "name": "квитанции",
+        "description": "Only `tx_status` returns this list; the legacy `tx` method omits it."
+      },
+      {
+        "name": "receipts_outcome",
+        "description": "Результаты исполнения квитанций."
+      },
+      {
+        "name": "статус",
+        "description": "One of multiple possible types"
+      },
+      {
+        "name": "транзакция",
+        "description": "Подписанная транзакция"
+      },
+      {
+        "name": "transaction_outcome",
+        "description": "Результат исполнения подписанной транзакции."
+      }
+    ]
+  },
   "rpc-tx-status": {
-    "description": "Проверьте итоговый результат транзакции по её хешу в кодировке Base58 — успех, сбой или ещё не завершена.",
+    "description": "Проверьте итоговый результат транзакции по её хешу в кодировке Base58 и получите все порождённые ею квитанции — успех, сбой или ещё не завершена.",
     "parameters": [
       {
         "name": "wait_until",
@@ -2710,6 +2766,10 @@
         "description": "Описывает область действия ключа доступа и nonce."
       },
       {
+        "name": "nonce",
+        "description": "Current nonce; each transaction signed with this key must use a strictly greater value."
+      },
+      {
         "name": "permission",
         "description": "One of multiple possible types"
       }
@@ -2721,6 +2781,14 @@
       {
         "name": "account_id",
         "description": "ID аккаунта NEAR."
+      },
+      {
+        "name": "after_key",
+        "description": "Курсор пагинации (исключающий): значение `last_key` из предыдущей страницы. Опустите, чтобы начать с первого ключа."
+      },
+      {
+        "name": "limit",
+        "description": "Максимальное число ключей доступа в ответе (≥ 1). Опустите, чтобы не задавать ограничение на стороне клиента; узел ограничивает его значением `view_access_keys_limit`."
       }
     ],
     "response": "Список ключей доступа аккаунта Переданный API-ключ не распознан.",
@@ -2728,6 +2796,10 @@
       {
         "name": "result",
         "description": "Список ключей доступа"
+      },
+      {
+        "name": "last_key",
+        "description": "Pagination cursor — the handle of the last key returned when the listing was truncated. Pass it as `after_key` to fetch the next page; absent on the last page."
       }
     ]
   },
@@ -2750,6 +2822,10 @@
         "description": "Amount in yoctoNEAR"
       },
       {
+        "name": "bootstrap_nonce",
+        "description": "The nonce an uninitialized account's own transactions must use, present only while it is uninitialized. A self-signed state init is the one transaction such an account can send, and this is the only way for a client to learn the nonce it must carry: there is no access key to query."
+      },
+      {
         "name": "code_hash",
         "description": "Base58-encoded hash"
       },
@@ -2766,8 +2842,16 @@
         "description": "Amount in yoctoNEAR"
       },
       {
+        "name": "состояние",
+        "description": "Whether an account's state has been installed. Only universal accounts can be uninitialized: they come into existence when a transfer funds a `0u` id whose state init has not been applied yet. A deterministic `0s` account waiting for its state init is an ordinary V1 account with no contract, not this."
+      },
+      {
         "name": "storage_paid_at",
-        "description": "TODO(2271): deprecated."
+        "description": "Deprecated and unused; nodes always return 0."
+      },
+      {
+        "name": "storage_usage",
+        "description": "Total storage used by the account, in bytes."
       }
     ]
   },

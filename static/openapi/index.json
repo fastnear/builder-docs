@@ -454,6 +454,18 @@
           "yaml": "/openapi/rpc/send_tx.yaml"
         },
         {
+          "canonicalPath": "/rpcs/transaction/tx",
+          "docsPath": "/rpc/transaction/tx",
+          "json": "/openapi/rpc/tx.json",
+          "method": "POST",
+          "operationId": "tx",
+          "pageModelId": "rpc-tx",
+          "path": "/tx",
+          "pointer": "/openapi/rpc.json#/paths/~1tx/post",
+          "summary": "Get transaction result",
+          "yaml": "/openapi/rpc/tx.yaml"
+        },
+        {
           "canonicalPath": "/rpcs/transaction/tx_status",
           "docsPath": "/rpc/transaction/tx-status",
           "json": "/openapi/rpc/tx_status.json",

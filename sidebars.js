@@ -151,6 +151,7 @@ const rpcSidebar = withExamplesFooter(
       label: 'Transaction',
       items: [
         'rpc/transaction/tx-status',
+        'rpc/transaction/tx',
         'rpc/transaction/send-tx',
         'rpc/transaction/broadcast-tx-async',
         'rpc/transaction/broadcast-tx-commit',

@@ -62,6 +62,7 @@
   "rpc-next-light-client-block": "rpcs/protocol",
   "rpc-send-tx": "rpcs/transaction",
   "rpc-status": "rpcs/protocol",
+  "rpc-tx": "rpcs/transaction",
   "rpc-tx-status": "rpcs/transaction",
   "rpc-validators-by-epoch": "rpcs/validators",
   "rpc-validators-current": "rpcs/validators",

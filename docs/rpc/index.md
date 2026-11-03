@@ -43,7 +43,7 @@ https://archival-rpc.testnet.fastnear.com
 - [`block`](/rpc/block/block-by-id) for height or hash lookup; [`block_effects`](/rpc/block/block-effects) for changes within a block.
 - [`call_function`](/rpc/contract/call-function), [`view_code`](/rpc/contract/view-code), [`view_state`](/rpc/contract/view-state) for contract introspection.
 - [`status`](/rpc/protocol/status), [`health`](/rpc/protocol/health), [`gas_price`](/rpc/protocol/gas-price) for node and protocol diagnostics.
-- [`send_tx`](/rpc/transaction/send-tx) for transaction submission; [`tx`](/rpc/transaction/tx-status) for execution status.
+- [`send_tx`](/rpc/transaction/send-tx) for transaction submission; [`tx_status`](/rpc/transaction/tx-status) for execution status with receipts, [`tx`](/rpc/transaction/tx) for the lighter result.
 - [`validators`](/rpc/validators/validators-current) for the current epoch's validator set.
 
 ## Need a workflow?
