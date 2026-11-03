@@ -1053,7 +1053,117 @@
         "description": "Block height to query"
       }
     ],
-    "response": "Successful response The supplied API key was not recognized."
+    "response": "Successful response The supplied API key was not recognized.",
+    "schema": [
+      {
+        "name": "author",
+        "description": "NEAR account ID"
+      },
+      {
+        "name": "header",
+        "description": "Contains main info about the block."
+      },
+      {
+        "name": "block_body_hash",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "block_merkle_root",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "challenges_root",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "chunk_execution_root",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "chunk_headers_root",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "chunk_receipts_root",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "chunk_tx_root",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "epoch_id",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "epoch_sync_data_hash",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "gas_price",
+        "description": "Amount in yoctoNEAR"
+      },
+      {
+        "name": "hash",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "last_ds_final_block",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "last_final_block",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "next_bp_hash",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "next_epoch_id",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "outcome_root",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "prev_hash",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "prev_last_certified_block_epoch_id",
+        "description": "Base58-encoded epoch identifier hash"
+      },
+      {
+        "name": "prev_state_root",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "random_value",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "rent_paid",
+        "description": "Amount in yoctoNEAR"
+      },
+      {
+        "name": "signature",
+        "description": "Base58-encoded cryptographic signature"
+      },
+      {
+        "name": "timestamp",
+        "description": "Legacy json number. Should not be used."
+      },
+      {
+        "name": "total_supply",
+        "description": "Amount in yoctoNEAR"
+      },
+      {
+        "name": "validator_reward",
+        "description": "Amount in yoctoNEAR"
+      }
+    ]
   },
   "rpc-block-by-id": {
     "description": "Fetch a block's header and chunk summaries by its Base58-encoded SHA-256 hash.",
@@ -1063,7 +1173,117 @@
         "description": "Base58-encoded block hash"
       }
     ],
-    "response": "Successful response The supplied API key was not recognized."
+    "response": "Successful response The supplied API key was not recognized.",
+    "schema": [
+      {
+        "name": "author",
+        "description": "NEAR account ID"
+      },
+      {
+        "name": "header",
+        "description": "Contains main info about the block."
+      },
+      {
+        "name": "block_body_hash",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "block_merkle_root",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "challenges_root",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "chunk_execution_root",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "chunk_headers_root",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "chunk_receipts_root",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "chunk_tx_root",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "epoch_id",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "epoch_sync_data_hash",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "gas_price",
+        "description": "Amount in yoctoNEAR"
+      },
+      {
+        "name": "hash",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "last_ds_final_block",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "last_final_block",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "next_bp_hash",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "next_epoch_id",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "outcome_root",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "prev_hash",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "prev_last_certified_block_epoch_id",
+        "description": "Base58-encoded epoch identifier hash"
+      },
+      {
+        "name": "prev_state_root",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "random_value",
+        "description": "Base58-encoded hash"
+      },
+      {
+        "name": "rent_paid",
+        "description": "Amount in yoctoNEAR"
+      },
+      {
+        "name": "signature",
+        "description": "Base58-encoded cryptographic signature"
+      },
+      {
+        "name": "timestamp",
+        "description": "Legacy json number. Should not be used."
+      },
+      {
+        "name": "total_supply",
+        "description": "Amount in yoctoNEAR"
+      },
+      {
+        "name": "validator_reward",
+        "description": "Amount in yoctoNEAR"
+      }
+    ]
   },
   "rpc-block-effects": {
     "description": "Summarize every state change in a block — which accounts, keys, and contract-state entries were touched.",
@@ -1246,6 +1466,10 @@
         "description": "Base58-encoded hash"
       },
       {
+        "name": "proposed_split",
+        "description": "The result of splitting a memtrie into two possibly even parts, according to `memory_usage` stored in the trie nodes. **NOTE: This is an artificial value calculated according to `TRIE_COST`. Hence, it does not represent actual memory allocation, but the split ratio should be roughly consistent with that.**"
+      },
+      {
         "name": "rent_paid",
         "description": "Amount in yoctoNEAR"
       },
@@ -1328,6 +1552,10 @@
       {
         "name": "prev_state_root",
         "description": "Base58-encoded hash"
+      },
+      {
+        "name": "proposed_split",
+        "description": "The result of splitting a memtrie into two possibly even parts, according to `memory_usage` stored in the trie nodes. **NOTE: This is an artificial value calculated according to `TRIE_COST`. Hence, it does not represent actual memory allocation, but the split ratio should be roughly consistent with that.**"
       },
       {
         "name": "rent_paid",
@@ -2702,6 +2930,10 @@
       {
         "name": "prev_epoch_kickout",
         "description": "Kickout in the previous epoch"
+      },
+      {
+        "name": "validator_reward_paid_prev_epoch",
+        "description": "Per-validator rewards paid out at the start of the previous epoch. For epoch E, this contains the rewards earned in epoch E-2 that were added to validator and treasury balances at the first block of epoch E-1 (via `ValidatorAccountsUpdate`)."
       }
     ]
   },
@@ -2744,6 +2976,10 @@
       {
         "name": "prev_epoch_kickout",
         "description": "Kickout in the previous epoch"
+      },
+      {
+        "name": "validator_reward_paid_prev_epoch",
+        "description": "Per-validator rewards paid out at the start of the previous epoch. For epoch E, this contains the rewards earned in epoch E-2 that were added to validator and treasury balances at the first block of epoch E-1 (via `ValidatorAccountsUpdate`)."
       }
     ]
   },
