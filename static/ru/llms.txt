@@ -5,6 +5,9 @@ AI-читабельные индексы для гайдов FastNear, RPC-сп�
 ## Индексы
 
 - [Индекс OpenAPI](https://docs.fastnear.com/openapi/index.json)
+- [Навык для агентов (SKILL.md)](https://docs.fastnear.com/SKILL.md)
+- [Каталог API (RFC 9727)](https://docs.fastnear.com/.well-known/api-catalog)
+- [Маяк версии документации](https://docs.fastnear.com/.well-known/docs-version.json)
 - [Индекс гайдов](https://docs.fastnear.com/ru/guides/llms.txt)
 - [Индекс RPC-справочника](https://docs.fastnear.com/ru/rpcs/llms.txt)
 - [Индекс REST API](https://docs.fastnear.com/ru/apis/llms.txt)
