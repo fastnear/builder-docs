@@ -1258,14 +1258,14 @@
   "metadata": {
     "nearcoreSource": {
       "branch": "HEAD",
-      "commitSha": "bc4e9e8cfb03d9e82f027883055624e18576993e",
+      "commitSha": "0ad2bdb2630e85bbacecab2a3b77072c78b46bc6",
       "dirty": false,
-      "generatedAt": "2026-10-30T19:23:08.773Z",
-      "releaseUrl": "https://github.com/near/nearcore/releases/tag/2.14.0",
-      "repoRoot": "../nearcore-2.14.0",
+      "generatedAt": "2026-11-12T23:14:24.244Z",
+      "releaseUrl": "https://github.com/near/nearcore/releases/tag/2.14.1",
+      "repoRoot": "../nearcore-2.14.1",
       "repoUrl": "https://github.com/near/nearcore",
-      "specPath": "../nearcore-2.14.0/chain/jsonrpc/openapi/openapi.json",
-      "tag": "2.14.0",
+      "specPath": "../nearcore-2.14.1/chain/jsonrpc/openapi/openapi.json",
+      "tag": "2.14.1",
       "tagSource": "exact"
     }
   },
