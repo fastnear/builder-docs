@@ -56,6 +56,7 @@ const GENERATED_STATIC_ROOTS = [
   path.join(STATIC_ROOT, "auth"),
   path.join(STATIC_ROOT, "agents"),
   path.join(STATIC_ROOT, "snapshots"),
+  path.join(STATIC_ROOT, "pricing"),
   path.join(STATIC_ROOT, "transaction-flow"),
   path.join(STATIC_ROOT, "rpcs"),
   path.join(STATIC_ROOT, "apis"),

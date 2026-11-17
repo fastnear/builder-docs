@@ -15,6 +15,7 @@ const PUBLIC_DOC_ROUTE_PATTERNS = [
   "/agents/**",
   "/snapshots/**",
   "/openapi",
+  "/pricing",
 ];
 
 const EXCLUDED_ROUTE_PATTERNS = [
