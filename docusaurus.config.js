@@ -447,6 +447,16 @@ const config = {
         sameAs: ['https://github.com/fastnear', 'https://x.com/fast_near'],
       }),
     },
+    // RFC 9727 lets an HTML page point at the host's API catalog; static/_headers
+    // sends the same relation as a Link header on the root response.
+    {
+      tagName: 'link',
+      attributes: {
+        rel: 'api-catalog',
+        href: 'https://docs.fastnear.com/.well-known/api-catalog',
+        type: 'application/linkset+json',
+      },
+    },
   ],
 
   scripts: [

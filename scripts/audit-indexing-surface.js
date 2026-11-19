@@ -23,6 +23,7 @@ const {
   createCrawlerConfig,
   renderCrawlerConfigSource,
 } = require("../algolia/crawler/shared");
+const wellKnown = require("./lib/well-known");
 
 const ROOT = path.resolve(__dirname, "..");
 const DOCS_ROOT = path.join(ROOT, "docs");
@@ -42,6 +43,8 @@ const SEARCH_BAR_PATH = path.join(ROOT, "src/theme/SearchBar/index.js");
 const SEARCH_BAR_RUNTIME_PATH = path.join(ROOT, "src/theme/SearchBar/AlgoliaSearchRuntime.js");
 const SEARCH_BAR_STYLES_PATH = path.join(ROOT, "src/theme/SearchBar/styles.css");
 const REDIRECTS_PATH = path.join(BUILD_ROOT, "_redirects");
+const HEADERS_PATH = path.join(BUILD_ROOT, "_headers");
+const ROOT_HTML_PATH = path.join(BUILD_ROOT, "index.html");
 const ROBOTS_PATH = path.join(BUILD_ROOT, "robots.txt");
 const PAGE_MODELS_PATH = path.join(ROOT, "src/data/generatedFastnearPageModels.json");
 const STRUCTURED_GRAPH_PATH = path.join(ROOT, "src/data/generatedFastnearStructuredGraph.json");
@@ -1379,6 +1382,143 @@ function auditSiteGraphArtifact({ routeEntries, structuredGraph }) {
   });
 }
 
+// The skill, the API catalog, the skills index, and the version beacon are
+// generated together by scripts/generate-well-known.js. This checks that the
+// built copies still agree with each other: every hash in the beacon matches
+// the bytes next to it, the stamp in SKILL.md is the beacon's version, the
+// skills index digests the served SKILL.md, and the catalog cites files that
+// exist. It also keeps the skill inside the API key wording rule.
+function auditAgentDiscoveryArtifacts() {
+  const skillPath = routeToBuildAssetPath(wellKnown.SKILL_ROUTE);
+  assert(fs.existsSync(skillPath), `build is missing ${wellKnown.SKILL_ROUTE}`);
+  const skillBytes = fs.readFileSync(skillPath);
+  const skillText = skillBytes.toString("utf8");
+  const frontmatter = wellKnown.parseSkillFrontmatter(skillText);
+  assert(frontmatter.name === "fastnear", "SKILL.md frontmatter name must be fastnear");
+  assert(frontmatter.description, "SKILL.md frontmatter must carry a description");
+  assert(
+    !/without (an? )?(api )?key|no auth(entication)? (is )?required|keys? (is|are) optional/i.test(skillText),
+    "SKILL.md must not state or imply that an endpoint works without an API key"
+  );
+
+  const manifest = loadJson(routeToBuildAssetPath(wellKnown.DOCS_VERSION_ROUTE), "docs version beacon");
+  assert(
+    new RegExp(`^[0-9a-f]{${wellKnown.DOCS_VERSION_LENGTH}}$`).test(manifest.docs_version),
+    "docs-version.json has a malformed docs_version"
+  );
+  assert(
+    manifest.beacon_url === wellKnown.buildAbsoluteUrl(wellKnown.DOCS_VERSION_ROUTE),
+    "docs-version.json beacon_url must point at itself on the production host"
+  );
+  assert(
+    skillText.includes(`_Docs version \`${manifest.docs_version}\`.`),
+    "SKILL.md stamp must carry the beacon's docs_version"
+  );
+
+  const openapiIndex = loadJson(routeToBuildAssetPath(wellKnown.OPENAPI_INDEX_ROUTE), "OpenAPI index");
+  wellKnown.listDocsVersionInputRoutes(openapiIndex).forEach((route) => {
+    assert(manifest.files[route], `docs-version.json is missing input ${route}`);
+  });
+  Object.entries(manifest.files).forEach(([route, record]) => {
+    const filePath = routeToBuildAssetPath(route);
+    assert(fs.existsSync(filePath), `docs-version.json lists ${route} but the build does not serve it`);
+    assert(
+      record.url === wellKnown.buildAbsoluteUrl(route),
+      `docs-version.json has the wrong url for ${route}`
+    );
+    assert(
+      wellKnown.sha256Hex(fs.readFileSync(filePath)) === record.sha256,
+      `docs-version.json sha256 for ${route} does not match the built file`
+    );
+  });
+  assert(
+    manifest.files[wellKnown.SKILL_ROUTE].content_sha256 ===
+      wellKnown.sha256Hex(wellKnown.stripDocsVersionStamp(skillText)),
+    "docs-version.json content_sha256 for SKILL.md must exclude the stamp"
+  );
+  assert(
+    wellKnown.computeDocsVersion(
+      Object.entries(manifest.files).map(([route, record]) => ({
+        route,
+        contentSha256: record.content_sha256,
+      }))
+    ) === manifest.docs_version,
+    "docs_version must be the hash of the content hashes it lists"
+  );
+
+  const skillsIndex = loadJson(
+    routeToBuildAssetPath(wellKnown.AGENT_SKILLS_INDEX_ROUTE),
+    "Agent Skills discovery index"
+  );
+  assert(skillsIndex.$schema === wellKnown.AGENT_SKILLS_SCHEMA, "agent-skills index has the wrong $schema");
+  assert(skillsIndex.skills?.length === 1, "agent-skills index should list exactly one skill");
+  const [skillEntry] = skillsIndex.skills;
+  assert(skillEntry.name === "fastnear" && skillEntry.type === "skill-md", "agent-skills entry is malformed");
+  assert(
+    skillEntry.url === wellKnown.buildAbsoluteUrl(wellKnown.SKILL_ROUTE),
+    "agent-skills entry must point at the served SKILL.md"
+  );
+  assert(
+    skillEntry.digest === `sha256:${wellKnown.sha256Hex(skillBytes)}`,
+    "agent-skills digest must match the served SKILL.md bytes"
+  );
+
+  const catalog = loadJson(routeToBuildAssetPath(wellKnown.API_CATALOG_ROUTE), "API catalog");
+  assert(Array.isArray(catalog.linkset) && catalog.linkset.length > 1, "API catalog must be a linkset");
+  assert(
+    catalog.linkset[0].anchor === wellKnown.buildAbsoluteUrl(wellKnown.API_CATALOG_ROUTE),
+    "API catalog's first context must be anchored at the catalog itself"
+  );
+  openapiIndex.specs.forEach((spec) => {
+    const hidden = isHiddenDocsRoute(spec.docsPath, { hideEarlyApiFamilies });
+    (spec.servers || []).forEach((server) => {
+      const context = catalog.linkset.find((candidate) => candidate.anchor === server.url);
+      if (hidden) {
+        assert(!context, `API catalog should not list hidden family server ${server.url}`);
+        return;
+      }
+
+      assert(context, `API catalog is missing a context for ${server.url}`);
+      assert(
+        context["service-desc"].some((link) => link.href === wellKnown.buildAbsoluteUrl(spec.json)),
+        `API catalog context ${server.url} must cite ${spec.json}`
+      );
+      assert(
+        context["service-doc"].some((link) => link.href === wellKnown.buildAbsoluteUrl(spec.docsPath)),
+        `API catalog context ${server.url} must cite the ${spec.docsPath} docs page`
+      );
+      const mirrorLink = context["service-doc"].find((link) => link.type === "text/markdown");
+      assert(
+        mirrorLink && fs.existsSync(routeToBuildAssetPath(new URL(mirrorLink.href).pathname)),
+        `API catalog context ${server.url} cites a Markdown mirror the build does not serve`
+      );
+      assert(
+        context.status.some((link) => link.href === wellKnown.STATUS_PAGE_URL),
+        `API catalog context ${server.url} must cite the status page`
+      );
+    });
+  });
+
+  assert(fs.existsSync(HEADERS_PATH), `Missing headers file: ${path.relative(ROOT, HEADERS_PATH)}`);
+  const headersText = fs.readFileSync(HEADERS_PATH, "utf8");
+  assert(
+    headersText.includes(`<${wellKnown.API_CATALOG_ROUTE}>; rel="api-catalog"; type="${wellKnown.API_CATALOG_CONTENT_TYPE}"`),
+    "_headers must advertise the API catalog as a Link relation on the root"
+  );
+  assert(
+    new RegExp(`^${escapeRegExp(wellKnown.API_CATALOG_ROUTE)}\\n\\s+Content-Type: ${escapeRegExp(wellKnown.API_CATALOG_CONTENT_TYPE)}`, "m").test(headersText),
+    "_headers must set the linkset media type on the extensionless API catalog"
+  );
+
+  const rootHtml = fs.readFileSync(ROOT_HTML_PATH, "utf8");
+  const catalogLinkTag = rootHtml.match(/<link[^>]*rel="api-catalog"[^>]*>/);
+  assert(catalogLinkTag, "Root HTML is missing the rel=api-catalog link tag");
+  assert(
+    catalogLinkTag[0].includes(`href="${wellKnown.buildAbsoluteUrl(wellKnown.API_CATALOG_ROUTE)}"`),
+    "Root HTML rel=api-catalog link must point at the production catalog URL"
+  );
+}
+
 function main() {
   auditConfigSurface();
   const structuredGraph = loadJson(STRUCTURED_GRAPH_PATH, "structured graph registry");
@@ -1387,6 +1527,7 @@ function main() {
   auditHostedBuildOutput(structuredGraph);
   auditGeneratedTextArtifacts({ routeEntries, structuredGraph });
   auditSiteGraphArtifact({ routeEntries, structuredGraph });
+  auditAgentDiscoveryArtifacts();
 
   console.log(
     `Indexing surface audit passed for ${routes.length} explicit docs routes, ${routeEntries.filter((entry) => entry.hasFastnearOperation).length} docs operation pages, and ${structuredGraph.operations.filter((operation) => !isHiddenCanonicalRoute(operation.canonicalPath)).length} hosted operation pages.`

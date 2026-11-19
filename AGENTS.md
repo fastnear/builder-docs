@@ -156,6 +156,9 @@ Public RPC and API pages are no longer iframe embeds. They render directly in `b
 - **`src/pages/near-rpc-openapi.yaml`** — local snapshot of the aggregate RPC OpenAPI spec. The canonical source of truth is `rpcs/openapi.yaml` in `mike-docs`.
 - **`scripts/generate-bespoke-host-pages.js`** — generates canonical hosted route pages under `src/pages/rpcs/**` and `src/pages/apis/**`.
 - **`scripts/generate-ai-surfaces.js`** — generates Markdown mirrors, `llms.txt`, `llms-full.txt`, per-family indexes, and `/structured-data/site-graph.json`.
+- **`skills/fastnear/SKILL.md`** — source of the agent skill. Served at `/SKILL.md` and installed by `npx skills add fastnear/builder-docs`. The docs-version stamp under its title is rewritten by the generator; edit the prose, not the stamp.
+- **`scripts/generate-well-known.js`** — generates `static/SKILL.md`, `static/.well-known/api-catalog` (RFC 9727), `static/.well-known/agent-skills/index.json`, and `static/.well-known/docs-version.json` from the skill source, `static/openapi/index.json`, and the AI surfaces. Runs after `generate-ai-surfaces.js` in `build`, `start:full`, and `deploy`.
+- **`static/_headers`** — Cloudflare Pages headers: `Link` relations for the discovery files on the root response and the linkset media type for the extensionless catalog.
 - **`scripts/submit-indexnow.js`** — submits changed canonical docs URLs to IndexNow after deploys or explicit manual runs.
 - **`plugins/finalizeLocalizedStaticAssets.cjs`** — finalizes localized static discovery assets after build.
 - **`algolia/`** — crawler config, index settings, relevance cases, and search ops docs for the repo-managed Algolia setup.
@@ -375,6 +378,7 @@ Relevant env vars:
 - localized equivalents such as `/ru/llms.txt`
 - public machine-readable site graph at `/structured-data/site-graph.json`
 - page-level and operation-level structured data generated from authored docs plus `generatedFastnearStructuredGraph.json`
+- agent skill at `/SKILL.md`, RFC 9727 API catalog at `/.well-known/api-catalog`, Agent Skills index at `/.well-known/agent-skills/index.json`, and the content-hash beacon at `/.well-known/docs-version.json`
 
 ### Operational guidance
 
@@ -382,7 +386,8 @@ Relevant env vars:
 - Keep `/rpcs/**`, `/apis/**`, `/**/*.md`, `llms.txt`, `llms-full.txt`, and `/structured-data/**` out of the public crawler surface.
 - The interactive playground is intentionally marked so crawlers can skip UI controls while still indexing the reference prose.
 - `src/theme/SearchBar/index.js` is swizzled and customized for FastNear-specific grouped search results.
-- `yarn audit:indexing` rebuilds the site, validates discovery outputs, checks `noindex` behavior for hosted canonical routes, and verifies the root IndexNow key file.
+- `yarn audit:indexing` rebuilds the site, validates discovery outputs, checks `noindex` behavior for hosted canonical routes, verifies the root IndexNow key file, and checks that the beacon hashes, the SKILL.md stamp, the skills-index digest, and the API catalog agree with the built files.
+- Never hand-edit `static/SKILL.md` or `static/.well-known/**`; change `skills/fastnear/SKILL.md` and rerun the build. The API key wording rule applies to the skill.
 - `yarn deploy` publishes the site and then submits the canonical route set to IndexNow automatically.
 
 Use `algolia/operations.md` as the operator checklist for repo-managed Algolia sync and crawl control.

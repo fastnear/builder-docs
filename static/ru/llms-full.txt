@@ -250,6 +250,22 @@ curl "https://rpc.mainnet.fastnear.com?apiKey=$FASTNEAR_API_KEY"
 
 Получите API-ключ в [FastNear Dashboard](https://dashboard.fastnear.com). Операционный режим для неинтерактивных сред: [Аутентификация для агентов](https://docs.fastnear.com/ru/agents/auth) — ключи должны жить в переменных окружения или менеджере секретов, а не в браузерном хранилище, логах чатов или промптах. Полный сценарий и детали заголовков: [Аутентификация и доступ](https://docs.fastnear.com/ru/auth).
 
+## Установите навык FastNear
+
+Самый короткий путь для агента, работающего с кодом, — навык FastNear (Agent Skill): один Markdown-файл, который направляет задачу к нужному API, формулирует правила обращения с учётными данными и ссылается на справочники этого сайта, чтобы агент загружал только необходимое.
+
+```bash
+npx skills add fastnear/builder-docs
+```
+
+Или сохраните опубликованную копию туда, где ваш агент ищет навыки. Для Claude Code:
+
+```bash
+curl -fsS --create-dirs https://docs.fastnear.com/SKILL.md -o ~/.claude/skills/fastnear/SKILL.md
+```
+
+В навык встроена метка версии документации — хеш содержимого документации для агентов. Прежде чем доверять кешированной копии, сравните метку со значением `docs_version` в [`/.well-known/docs-version.json`](https://docs.fastnear.com/.well-known/docs-version.json); если значения различаются, скачайте файл заново. Маяк также перечисляет хеш каждого охваченного файла, поэтому агент может определить, какой именно файл изменился.
+
 ## Как вынимать чистую документацию в промпт
 
 - На каждой странице в правом верхнем углу есть кнопка **Копировать Markdown**. Она отдаёт Markdown-версию страницы без навигации, готовую к вставке в промпт или RAG-хранилище.
@@ -259,6 +275,7 @@ curl "https://rpc.mainnet.fastnear.com?apiKey=$FASTNEAR_API_KEY"
   - Русскоязычные аналоги: [`/ru/llms.txt`](https://docs.fastnear.com/ru/llms.txt) и [`/ru/llms-full.txt`](https://docs.fastnear.com/ru/llms-full.txt).
 - Машиночитаемая структура сайта для поглощения с учётом графа: [`/structured-data/site-graph.json`](https://docs.fastnear.com/ru/structured-data/site-graph.json) (зеркало в `/ru/`).
 - Под тем же slug с суффиксом `.md` лежит Markdown-зеркало каждой страницы, если прямой запрос удобнее кнопки «Копировать Markdown».
+- Обнаружение на уровне хоста для клиентов, которые знают только домен: каталог API по RFC 9727 в [`/.well-known/api-catalog`](https://docs.fastnear.com/.well-known/api-catalog) перечисляет каждый базовый URL API вместе с его OpenAPI-документом, страницей справочника и эндпоинтом health, а [`/.well-known/agent-skills/index.json`](https://docs.fastnear.com/.well-known/agent-skills/index.json) перечисляет опубликованный навык с его дайджестом. Корень сайта также объявляет оба ресурса через HTTP-заголовки `Link`.
 
 ## Подсказки на каждый вызов
 

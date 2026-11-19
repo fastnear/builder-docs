@@ -24,6 +24,9 @@ Public API and RPC pages are no longer iframe embeds. They render directly in `b
 - `src/data/generatedFastnearStructuredGraph.json`, vendored from `mike-docs`
 - `scripts/generate-bespoke-host-pages.js`, which generates `src/pages/rpcs/**` and `src/pages/apis/**`
 - `scripts/generate-ai-surfaces.js`, which generates Markdown mirrors, `llms.txt`, and `/structured-data/site-graph.json`
+- `skills/fastnear/SKILL.md`, the agent skill installed by `npx skills add fastnear/builder-docs` and served at `/SKILL.md`
+- `scripts/generate-well-known.js`, which generates `/SKILL.md`, the RFC 9727 `/.well-known/api-catalog`, `/.well-known/agent-skills/index.json`, and the `/.well-known/docs-version.json` content-hash beacon
+- `static/_headers`, the Cloudflare Pages headers that advertise those files from the site root
 - `scripts/submit-indexnow.js`, which submits changed canonical docs URLs to IndexNow after production deploys
 
 ## Development
@@ -57,6 +60,19 @@ That additionally regenerates:
 - `llms.txt` and `llms-full.txt`
 - per-family `guides/llms.txt`, `rpcs/llms.txt`, and `apis/llms.txt`
 - `/structured-data/site-graph.json`
+
+### Agent discovery surfaces
+
+`yarn build`, `yarn start:full`, and `yarn deploy` run `scripts/generate-well-known.js` after the AI surfaces. It writes:
+
+- `/SKILL.md`: the agent skill, copied from `skills/fastnear/SKILL.md` with a docs-version stamp under the title
+- `/.well-known/api-catalog`: an RFC 9727 linkset with one context per API server (mainnet, testnet, archival), each citing its OpenAPI document, reference page, Markdown mirror, and health URL, read from `static/openapi/index.json`
+- `/.well-known/agent-skills/index.json`: the Agent Skills discovery index the `skills` CLI reads, with the sha256 digest of the served `SKILL.md`
+- `/.well-known/docs-version.json`: `docs_version`, a 12-hex content hash over the agent-facing docs (the unstamped skill, every `llms.txt`, the OpenAPI documents, the `/agents` mirrors, and the site graph), plus a served and a content hash per file
+
+Edit `skills/fastnear/SKILL.md`, never `static/SKILL.md` or `static/.well-known/**`. The generator rewrites the stamp inside the source skill so the committed copy carries the version that was built; commit that change with the build. The skill is agent-facing prose, so the API key wording rule in `CLAUDE.md` applies to it. `yarn audit:indexing` verifies that every hash in the beacon matches the built bytes, that the stamp, digest, and version agree, and that the catalog only cites files the build serves.
+
+`static/_headers` sends the `Link` relations for these files on the root response and sets `Content-Type: application/linkset+json` on the extensionless catalog. After a deploy, confirm with `curl -sI https://docs.fastnear.com/ | grep -i '^link'` and `curl -sI https://docs.fastnear.com/.well-known/api-catalog | grep -i content-type`.
 
 If you want hot reload instead of a production-like preview, use the single-locale Docusaurus dev server explicitly:
 
