@@ -49,6 +49,20 @@ Reserve credits are a one-time purchase that never expires. Use them on their ow
 
 You can also set a per-key rate cap below your plan's limit, so a leaked key cannot use up your whole quota. See [Browser Keys](/auth/browser-keys).
 
+## Usage alerts
+
+FastNear emails the project owner as credits run low and when they run out.
+
+| Plan | Emails |
+| --- | --- |
+| Monthly plan | At 80% and 90% of the month's credits, when they run out and requests start using reserve credits, and when all credits are used |
+| Reserve credits only | At 80% of your reserve credits, and when they are used up |
+
+- Each email is sent once per billing period. Warnings go out at most once a day unless usage reaches a more serious stage.
+- The 80% email is skipped when your recent usage would last until your plan resets.
+- Once credits run out, requests return HTTP `402` until you add credits or upgrade.
+- [FastNear Dashboard](https://dashboard.fastnear.com) shows your usage and remaining credits at any time.
+
 ## Changing plans
 
 - Upgrades take effect immediately, with prorated billing.
